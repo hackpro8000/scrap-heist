@@ -19,6 +19,10 @@ local TAU = 2 * math.pi
 local LARGE_TEXTURE = 1024
 local SMALL_TEXTURE = 256
 
+-- Auto smooth: round surfaces (rollers, pulleys) shade smoothly, while edges
+-- sharper than this many degrees (box corners, teeth) stay crisp.
+local SMOOTH_ANGLE = 30
+
 local function box(mesh, cx, cy, cz, sx, sy, sz)
 	local v = {}
 	for i = 0, 7 do
@@ -129,6 +133,7 @@ local function hopperColor(bottomZ, height)
 end
 
 local function part(name, mesh, color, group, size, paint)
+	mesh:setSmooth(SMOOTH_ANGLE)
 	mesh:unwrap()
 	local image = Image.new(size, size, color[1], color[2], color[3])
 	if paint then
