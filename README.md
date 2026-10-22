@@ -65,3 +65,9 @@ stylua --check src
 - `src/server` → `ServerScriptService.Server` (services)
 - `src/client` → `StarterPlayer.StarterPlayerScripts.Client` (controllers, UI)
 - `Packages`, `ServerPackages` → installed by Wally, not committed
+
+## Cloud environment
+
+`scripts/cloud-setup.sh` sets up a Claude Code cloud environment. Paste it
+into the environment's **Setup script** setting. It installs Blender 5.2.2
+(checksum-verified) to `/opt/blender-5.2.2` and puts `blender` on the PATH.
