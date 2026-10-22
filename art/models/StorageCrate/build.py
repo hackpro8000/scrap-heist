@@ -336,7 +336,11 @@ tub = scrapkit.link(body(), collection, green)
 scrapkit.link(hazard_band(tub), collection, hazard_material())
 patches, plate_bolts = plates(tub)
 scrapkit.link(patches, collection, grey)
-scrapkit.link(bolts(tub, plate_bolts), collection, steel)
-scrapkit.link(trim(), collection, orange)
+studs = scrapkit.link(bolts(tub, plate_bolts), collection, steel)
+rim = scrapkit.link(trim(), collection, orange)
+
+# Hand-painted edge highlights and crease shadows, baked per part.
+for part, size in ((tub, 1024), (patches, 512), (rim, 512), (studs, 256)):
+	scrapkit.paint_shading(part, size)
 
 scrapkit.finish(collection)
