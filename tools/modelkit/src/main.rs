@@ -188,6 +188,12 @@ fn run(dir: &Path, turntable: usize) -> Result<(), String> {
 	for part in parts.iter() {
 		let png = dir.join(format!("{}.png", part.name));
 		std::fs::write(png, part.image.borrow().encode_png()).map_err(|e| e.to_string())?;
+		// Flat maps for the SurfaceAppearance: no metal, fully rough, so
+		// Roblox adds no highlights over the painted shading.
+		for (map, value) in [("Metalness", 0.0), ("Roughness", 1.0)] {
+			let flat = Image::new(4, 4, [value; 3]).encode_png();
+			std::fs::write(dir.join(format!("{}_{map}.png", part.name)), flat).map_err(|e| e.to_string())?;
+		}
 	}
 	let shown: Vec<&Part> = parts.iter().filter(|p| p.preview).collect();
 	let preview = render::render(&shown, &render::View { size: PREVIEW_SIZE, spin: 0.0 });
