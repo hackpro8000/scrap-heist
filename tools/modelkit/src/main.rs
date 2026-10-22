@@ -8,6 +8,7 @@
 // below; this engine does the heavy, generic work (triangulating, export,
 // rendering) so scripts change without a recompile.
 
+mod bake;
 mod glb;
 mod image;
 mod mesh;
@@ -73,6 +74,58 @@ impl UserData for MeshHandle {
 			Ok(())
 		});
 		methods.add_method("vertexCount", |_, this, ()| Ok(this.0.borrow().positions.len()));
+		// Lays every face out in UV space, packed with a margin between charts.
+		methods.add_method("unwrap", |_, this, margin: Option<f64>| {
+			bake::unwrap(&mut this.0.borrow_mut(), margin.unwrap_or(0.01));
+			Ok(())
+		});
+		// Paints each texel the color fn(x, y, z, nx, ny, nz) returns for the
+		// surface point behind it.
+		methods.add_method("paint", |_, this, (image, color): (AnyUserData, mlua::Function)| {
+			let image = image.borrow::<ImageHandle>()?.0.clone();
+			let (width, height) = {
+				let image = image.borrow();
+				(image.width, image.height)
+			};
+			let texels = bake::texels(&this.0.borrow(), width, height);
+			let mut colors = Vec::with_capacity(texels.len());
+			for t in &texels {
+				let [x, y, z] = t.position;
+				let [nx, ny, nz] = t.normal;
+				colors.push(color.call::<(f32, f32, f32)>((x, y, z, nx, ny, nz))?);
+			}
+			let mut image = image.borrow_mut();
+			let mut covered = vec![false; width * height];
+			for (t, (r, g, b)) in texels.iter().zip(colors) {
+				image.pixels[t.pixel] = [r, g, b];
+				covered[t.pixel] = true;
+			}
+			bake::dilate(&mut image.pixels, &mut covered, width, height, 8);
+			Ok(())
+		});
+		// Paints edge highlights and contact shadows over the base colors.
+		methods.add_method("paintShading", |_, this, (image, options): (AnyUserData, Option<Table>)| {
+			let get = |key: &str, default: f64| -> mlua::Result<f64> {
+				Ok(options.as_ref().map(|o| o.get::<Option<f64>>(key)).transpose()?.flatten().unwrap_or(default))
+			};
+			let shading = bake::Shading {
+				highlight: get("highlight", 0.7)?,
+				shadow: get("shadow", 0.75)?,
+				bands: get("bands", 0.0)? as usize,
+				sharp: get("sharp", 30.0)?,
+			};
+			let mut occluders = Vec::new();
+			if let Some(list) = options.as_ref().map(|o| o.get::<Option<Vec<AnyUserData>>>("occluders")).transpose()?.flatten() {
+				for handle in list {
+					occluders.push(handle.borrow::<MeshHandle>()?.0.clone());
+				}
+			}
+			let borrowed: Vec<_> = occluders.iter().map(|m| m.borrow()).collect();
+			let refs: Vec<&Mesh> = borrowed.iter().map(|m| &**m).collect();
+			let image = image.borrow::<ImageHandle>()?.0.clone();
+			bake::paint_shading(&this.0.borrow(), &refs, &mut image.borrow_mut(), &shading);
+			Ok(())
+		});
 	}
 }
 
