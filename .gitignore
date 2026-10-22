@@ -14,3 +14,6 @@ sourcemap.json
 
 # Blender backup saves
 *.blend1
+
+# Python bytecode
+__pycache__/
