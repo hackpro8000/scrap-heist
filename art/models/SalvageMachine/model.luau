@@ -62,6 +62,38 @@ local function cylinder(mesh, cx, cy, cz, radius, length, axis)
 	mesh:face(b)
 end
 
+-- Shredder roller along X: a stack of toothed cutter discs on a shaft. Each
+-- disc is a star-shaped prism, and neighbours are turned half a tooth so the
+-- teeth stagger along the roller.
+local function toothedRoller(mesh, cx, cy, cz, radius, length, teeth, discs)
+	local points = teeth * 2
+	local width = length / discs
+	for d = 0, discs - 1 do
+		local x0 = cx - length / 2 + d * width
+		local x1 = x0 + width * 0.8
+		local phase = if d % 2 == 0 then 0 else math.pi / teeth
+		local a, b = {}, {}
+		for i = 0, points - 1 do
+			local t = i / points * TAU + phase
+			local r = if i % 2 == 0 then radius else radius * 0.7
+			local y, z = cy + math.cos(t) * r, cz + math.sin(t) * r
+			a[i + 1] = mesh:vertex(x0, y, z)
+			b[i + 1] = mesh:vertex(x1, y, z)
+		end
+		for i = 1, points do
+			local j = i % points + 1
+			mesh:face({ a[i], a[j], b[j], b[i] })
+		end
+		local capA = {}
+		for i = points, 1, -1 do
+			table.insert(capA, a[i])
+		end
+		mesh:face(capA)
+		mesh:face(b)
+	end
+	cylinder(mesh, cx, cy, cz, radius * 0.45, length + 0.1, "x")
+end
+
 -- Open-topped hopper flaring out from the shredder throat.
 local function hopper(mesh, cx, z, bottom, top, height)
 	local low, high = {}, {}
@@ -121,7 +153,7 @@ for tier = 1, 3 do
 
 	local rollers = Mesh.new()
 	for _, y in { -0.3, 0.3 } do
-		cylinder(rollers, cx, y * scale, 2.15 * scale, 0.28 * scale, 1.9 * scale, "x")
+		toothedRoller(rollers, cx, y * scale, 2.15 * scale, 0.28 * scale, 1.9 * scale, 6, 7)
 	end
 	part(`{group}_Rollers`, rollers, ROLLER, group, SMALL_TEXTURE)
 
