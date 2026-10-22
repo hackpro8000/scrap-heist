@@ -70,11 +70,34 @@ local function hopper(mesh, cx, z, bottom, top, height)
 		mesh:face({ low[i], low[j], high[j], high[i] })
 	end
 	mesh:solidify(-0.08)
+	-- Reinforced rim: a flat lip band around the top edge.
+	local lip = 0.12
+	box(mesh, cx, -top / 2, z + height, top + lip, lip, lip)
+	box(mesh, cx, top / 2, z + height, top + lip, lip, lip)
+	box(mesh, cx - top / 2, 0, z + height, lip, top, lip)
+	box(mesh, cx + top / 2, 0, z + height, lip, top, lip)
 end
 
-local function part(name, mesh, color, group)
+-- Hopper paint: orange that darkens with grime toward the throat, and a dark
+-- band on the rim. bottomZ and height bound the funnel.
+local function hopperColor(bottomZ, height)
+	return function(x, y, z)
+		local t = math.clamp((z - bottomZ) / height, 0, 1)
+		local grime = (1 - t) * 0.45 + math.noise(x * 3, y * 3, z * 3) * 0.12
+		if t > 0.97 then
+			grime = 0.35
+		end
+		local k = 1 - math.clamp(grime, 0, 0.6)
+		return HOPPER[1] * k, HOPPER[2] * k, HOPPER[3] * k
+	end
+end
+
+local function part(name, mesh, color, group, paint)
 	mesh:unwrap()
 	local image = Image.new(256, 256, color[1], color[2], color[3])
+	if paint then
+		mesh:paint(image, paint)
+	end
 	mesh:paintShading(image, {})
 	model.part(name, mesh, image, { group = group, preview = true })
 end
@@ -100,7 +123,7 @@ for tier = 1, 3 do
 
 	local bin = Mesh.new()
 	hopper(bin, cx, 2.1 * scale, 1.9 * scale, 3 * scale, 1.1 * scale)
-	part(`{group}_Hopper`, bin, HOPPER, group)
+	part(`{group}_Hopper`, bin, HOPPER, group, hopperColor(2.1 * scale, 1.1 * scale))
 
 	local chute = Mesh.new()
 	box(chute, cx, 1.3 * scale, 0.3, 1 * scale, 1.4 * scale, 0.15)
