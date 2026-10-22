@@ -333,7 +333,7 @@ orange = scrapkit.material("Trim", linear(TRIM), roughness=0.5)
 grey = scrapkit.material("Plate", linear(PLATE), metallic=0.5, roughness=0.5)
 
 tub = scrapkit.link(body(), collection, green)
-scrapkit.link(hazard_band(tub), collection, hazard_material())
+band = scrapkit.link(hazard_band(tub), collection, hazard_material())
 patches, plate_bolts = plates(tub)
 scrapkit.link(patches, collection, grey)
 studs = scrapkit.link(bolts(tub, plate_bolts), collection, steel)
@@ -342,5 +342,7 @@ rim = scrapkit.link(trim(), collection, orange)
 # Hand-painted edge highlights and crease shadows, baked per part.
 for part, size in ((tub, 1024), (patches, 512), (rim, 512), (studs, 256)):
 	scrapkit.paint_shading(part, size)
+# The band keeps its round-the-tub UVs, so a long strip fits it best.
+scrapkit.paint_shading(band, 1024, 64)
 
 scrapkit.finish(collection)
