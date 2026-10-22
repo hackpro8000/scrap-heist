@@ -12,6 +12,7 @@ local ROLLER = { 0.3, 0.3, 0.32 }
 local MOTOR = { 0.7, 0.2, 0.18 }
 local MAGNET = { 0.25, 0.4, 0.75 }
 local CHUTE = { 0.6, 0.62, 0.6 }
+local BOLT = { 0.62, 0.58, 0.52 }
 
 local TAU = 2 * math.pi
 
@@ -132,6 +133,57 @@ local function hopperColor(bottomZ, height)
 	end
 end
 
+-- Chunky cartoon bolt heads, like the scrap crate's: fat 8-sided cones
+-- standing out from the housing's side faces in rows along its edges.
+local BOLT_SIZE = 0.1
+local BOLT_SPACING = 0.5
+
+-- Bolt head on a side face at (x, y, z), pointing out along normalX/normalY.
+local function bolt(mesh, x, y, z, normalX, normalY)
+	local segments = 8
+	local base, top = {}, {}
+	for k = 0, segments - 1 do
+		local a = k / segments * TAU
+		local side, up = math.cos(a), math.sin(a)
+		local function ring(out, radius)
+			return mesh:vertex(
+				x + normalX * out + normalY * side * radius,
+				y + normalY * out + normalX * side * radius,
+				z + up * radius
+			)
+		end
+		base[k + 1] = ring(-BOLT_SIZE / 2, BOLT_SIZE)
+		top[k + 1] = ring(BOLT_SIZE / 2, BOLT_SIZE * 0.8)
+	end
+	for k = 1, segments do
+		local j = k % segments + 1
+		mesh:face({ base[k], base[j], top[j], top[k] })
+	end
+	local cap = {}
+	for k = segments, 1, -1 do
+		table.insert(cap, top[k])
+	end
+	mesh:face(cap)
+end
+
+local function housingBolts(mesh, cx, scale)
+	local halfX, halfY = 1.1 * scale, 0.9 * scale
+	for _, z in { 1.35 * scale, 1.95 * scale } do
+		local countX = math.floor(2 * halfX / BOLT_SPACING)
+		for i = 0, countX do
+			local x = cx - countX * BOLT_SPACING / 2 + i * BOLT_SPACING
+			bolt(mesh, x, -halfY, z, 0, -1)
+			bolt(mesh, x, halfY, z, 0, 1)
+		end
+		local countY = math.floor(2 * halfY / BOLT_SPACING)
+		for i = 0, countY do
+			local y = -countY * BOLT_SPACING / 2 + i * BOLT_SPACING
+			bolt(mesh, cx - halfX, y, z, -1, 0)
+			bolt(mesh, cx + halfX, y, z, 1, 0)
+		end
+	end
+end
+
 local function part(name, mesh, color, group, size, paint)
 	mesh:setSmooth(SMOOTH_ANGLE)
 	mesh:unwrap()
@@ -147,13 +199,11 @@ end
 -- streaks running down from the housing, and grime rising from the feet.
 local BARE_METAL = { 0.68, 0.7, 0.72 }
 local RUST = { 0.45, 0.24, 0.12 }
-local RIVET_SPACING = 0.3
 
 -- Frame paint for one tier's frame, whose housing is centred on cx at scale.
--- Rivet rows run along the housing's top and bottom edges, and a seam splits
--- each long side into two panels.
+-- A seam splits each long side of the housing into two panels.
 local function frameColor(cx, scale)
-	local bottom, top = 1.2 * scale, 2.1 * scale
+	local bottom = 1.2 * scale
 	return function(x, y, z)
 		local r, g, b = FRAME[1], FRAME[2], FRAME[3]
 		-- Rust streaks: noise stretched tall so it runs in vertical drips.
@@ -162,19 +212,9 @@ local function frameColor(cx, scale)
 		if math.noise(x * 5 + 5, y * 5, z * 5) > 0.4 then
 			r, g, b = BARE_METAL[1], BARE_METAL[2], BARE_METAL[3]
 		end
-		if z > bottom - 0.01 then
-			-- Distance to the nearest rivet: along the edge rows, spaced evenly.
-			local along = (x - cx + y) / RIVET_SPACING
-			local dAlong = math.abs(along - math.round(along)) * RIVET_SPACING
-			local dRow = math.min(math.abs(z - bottom - 0.1), math.abs(z - top + 0.1))
-			local d = math.sqrt(dAlong * dAlong + dRow * dRow)
-			if d < 0.06 then
-				local k = if d < 0.035 then 1.3 else 0.5
-				return r * k, g * k, b * k
-			end
-			if math.abs(x - cx) < 0.03 then
-				return r * 0.45, g * 0.45, b * 0.45
-			end
+		if z > bottom - 0.01 and math.abs(x - cx) < 0.03 then
+			-- Seam splitting each long side into two panels.
+			return r * 0.45, g * 0.45, b * 0.45
 		end
 		local grime = 1 - math.clamp(0.5 - z * 0.4, 0, 0.5)
 		return r * grime, g * grime, b * grime
@@ -203,6 +243,10 @@ for tier = 1, 3 do
 	end
 	box(frame, cx, 0, 1.2 * scale, 2.2 * scale, 1.8 * scale, 0.9 * scale)
 	part(`{group}_Frame`, frame, FRAME, group, LARGE_TEXTURE, frameColor(cx, scale))
+
+	local bolts = Mesh.new()
+	housingBolts(bolts, cx, scale)
+	part(`{group}_Bolts`, bolts, BOLT, group, SMALL_TEXTURE)
 
 	local rollers = Mesh.new()
 	for _, y in { -0.3, 0.3 } do
