@@ -58,6 +58,16 @@ FILL_MOUND = 0.35
 FILL_LUMPS = 0.12
 SCRAP = (0.6, 0.5, 0.42)
 
+# Junk poking out of the fill, in sRGB: tire rubber and its chalky wear,
+# brass cog and its rust, spring steel, cone orange (the trim's) and its band.
+RUBBER = (0.2, 0.2, 0.23)
+CHALK = (0.45, 0.46, 0.5)
+BRASS = (0.8, 0.62, 0.26)
+RUST = (0.6, 0.3, 0.13)
+SPRING_STEEL = (0.7, 0.74, 0.8)
+CONE_BAND = (0.95, 0.94, 0.88)
+GRIME = (0.35, 0.3, 0.28)
+
 PLATE_SEED = 7
 PLATE_THICKNESS = 0.05
 PLATE = (0.55, 0.57, 0.6)
@@ -367,6 +377,180 @@ def fill() -> bpy.types.Object:
 	return bpy.data.objects.new("Fill", mesh)
 
 
+def smooth(obj: bpy.types.Object, angle: float = 40) -> None:
+	# Auto smooth: rounds curved faces, keeps hard edges crisp.
+	bpy.context.view_layer.objects.active = obj
+	obj.select_set(True)
+	bpy.ops.object.shade_auto_smooth(angle=math.radians(angle))
+	obj.select_set(False)
+
+
+def blotches(mat: bpy.types.Material, color, scale: float, amount: float) -> None:
+	# Hard-edged noise blobs of color over the base, like painted-on wear.
+	# amount 0-1 is roughly how much of the surface they cover.
+	nodes, links = mat.node_tree.nodes, mat.node_tree.links
+	bsdf = nodes["Principled BSDF"]
+	coords = nodes.new("ShaderNodeTexCoord")
+	texture = nodes.new("ShaderNodeTexNoise")
+	texture.inputs["Scale"].default_value = scale
+	texture.inputs["Detail"].default_value = 1.0
+	links.new(coords.outputs["Object"], texture.inputs["Vector"])
+	edge = nodes.new("ShaderNodeMapRange")
+	edge.inputs["From Min"].default_value = 0.62 - amount * 0.25
+	edge.inputs["From Max"].default_value = 0.65 - amount * 0.25
+	links.new(texture.outputs["Fac"], edge.inputs["Value"])
+	blend = nodes.new("ShaderNodeMix")
+	blend.data_type = "RGBA"
+	links.new(edge.outputs["Result"], blend.inputs["Factor"])
+	base = bsdf.inputs["Base Color"]
+	if base.is_linked:
+		links.new(base.links[0].from_socket, blend.inputs["A"])
+	else:
+		blend.inputs["A"].default_value = base.default_value
+	blend.inputs["B"].default_value = (*linear(color), 1.0)
+	links.new(blend.outputs["Result"], base)
+
+
+def tire() -> bpy.types.Object:
+	# Fat squashed donut; every other pair of outer columns bulges out as a tread block.
+	segments, sides = 24, 8
+	major, minor, squash = 0.62, 0.3, 0.75
+	mesh = bpy.data.meshes.new("Tire")
+	bm = bmesh.new()
+	rings = []
+	for i in range(segments):
+		angle = 2 * math.pi * i / segments
+		tread = 0.07 if i // 2 % 2 == 0 else 0.0
+		ring = []
+		for j in range(sides):
+			around = 2 * math.pi * j / sides
+			out = math.cos(around)
+			radius = major + minor * out + (tread if out > 0.5 else 0.0)
+			ring.append(bm.verts.new((math.cos(angle) * radius, math.sin(angle) * radius, minor * squash * math.sin(around))))
+		rings.append(ring)
+	for i in range(segments):
+		a, b = rings[i], rings[(i + 1) % segments]
+		for j in range(sides):
+			k = (j + 1) % sides
+			bm.faces.new((a[j], b[j], b[k], a[k]))
+	bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+	bm.to_mesh(mesh)
+	bm.free()
+	return bpy.data.objects.new("Tire", mesh)
+
+
+def cog() -> bpy.types.Object:
+	# Flat gear: 8 chunky teeth round a hole, thickened and bevelled round.
+	teeth, thickness = 8, 0.2
+	outer = [0.62 if i % 4 in (1, 2) else 0.46 for i in range(teeth * 4)]
+	mesh = bpy.data.meshes.new("Cog")
+	bm = bmesh.new()
+	count = len(outer)
+	rim = [bm.verts.new((math.cos(2 * math.pi * (i - 0.5) / count) * r, math.sin(2 * math.pi * (i - 0.5) / count) * r, 0)) for i, r in enumerate(outer)]
+	hole = [bm.verts.new((math.cos(2 * math.pi * (i - 0.5) / count) * 0.16, math.sin(2 * math.pi * (i - 0.5) / count) * 0.16, 0)) for i in range(count)]
+	for i in range(count):
+		j = (i + 1) % count
+		bm.faces.new((hole[i], hole[j], rim[j], rim[i]))
+	bmesh.ops.translate(bm, vec=(0, 0, -thickness / 2), verts=bm.verts)
+	bm.to_mesh(mesh)
+	bm.free()
+	obj = bpy.data.objects.new("Cog", mesh)
+	bpy.context.scene.collection.objects.link(obj)
+	bpy.context.view_layer.objects.active = obj
+	solidify = obj.modifiers.new("Thickness", "SOLIDIFY")
+	solidify.thickness = thickness
+	solidify.offset = 1.0
+	bevel = obj.modifiers.new("Soften", "BEVEL")
+	bevel.width = 0.05
+	bevel.segments = 2
+	bevel.limit_method = "ANGLE"
+	for modifier in list(obj.modifiers):
+		bpy.ops.object.modifier_apply(modifier=modifier.name)
+	return obj
+
+
+def spring() -> bpy.types.Object:
+	# Fat wire coiled 5 times, leaning and wobbling as it rises.
+	coils, radius, height, steps = 5, 0.3, 1.1, 10
+	curve = bpy.data.curves.new("Spring", "CURVE")
+	curve.dimensions = "3D"
+	curve.bevel_depth = 0.075
+	curve.bevel_resolution = 1
+	spline = curve.splines.new("POLY")
+	total = coils * steps
+	spline.points.add(total)
+	for i, point in enumerate(spline.points):
+		t = i / total
+		angle = 2 * math.pi * coils * t
+		lean = 0.25 * t * t + 0.05 * math.sin(t * 9)
+		point.co = (math.cos(angle) * radius + lean, math.sin(angle) * radius, height * t, 1)
+	obj = bpy.data.objects.new("Spring", curve)
+	bpy.context.scene.collection.objects.link(obj)
+	bpy.context.view_layer.objects.active = obj
+	obj.select_set(True)
+	bpy.ops.object.convert(target="MESH")
+	obj = bpy.context.view_layer.objects.active
+	obj.select_set(False)
+	return obj
+
+
+def cone() -> bpy.types.Object:
+	# Squat lathed cone that bends over near the tip, on a chunky square foot.
+	segments = 12
+	profile = [(0.42, 0.12), (0.36, 0.4), (0.27, 0.75), (0.17, 1.05), (0.09, 1.25), (0.0, 1.3)]
+	mesh = bpy.data.meshes.new("Cone")
+	bm = bmesh.new()
+	rings = []
+	for radius, z in profile:
+		bend = 0.18 * (z / 1.3) ** 2
+		rings.append([bm.verts.new((math.cos(2 * math.pi * i / segments) * radius + bend, math.sin(2 * math.pi * i / segments) * radius, z)) for i in range(segments)])
+	for low, high in zip(rings, rings[1:]):
+		for i in range(segments):
+			j = (i + 1) % segments
+			bm.faces.new((low[i], low[j], high[j], high[i]))
+	bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-5)
+	foot = bmesh.ops.create_cube(bm, size=1.0)["verts"]
+	bmesh.ops.scale(bm, vec=(1.0, 1.0, 0.12), verts=foot)
+	bmesh.ops.translate(bm, vec=(0, 0, 0.06), verts=foot)
+	bmesh.ops.bevel(bm, geom=[e for e in bm.edges if all(v in foot for v in e.verts)], offset=0.08, segments=2, affect="EDGES")
+	bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+	bm.to_mesh(mesh)
+	bm.free()
+	return bpy.data.objects.new("Cone", mesh)
+
+
+def cone_material() -> bpy.types.Material:
+	# Orange with one white band partway up, and grime darkening the foot.
+	mat = scrapkit.material("Cone", linear(TRIM), roughness=0.4)
+	nodes, links = mat.node_tree.nodes, mat.node_tree.links
+	coords = nodes.new("ShaderNodeTexCoord")
+	height = nodes.new("ShaderNodeSeparateXYZ")
+	links.new(coords.outputs["Object"], height.inputs["Vector"])
+	ramp = nodes.new("ShaderNodeValToRGB")
+	ramp.color_ramp.interpolation = "CONSTANT"
+	stops = ramp.color_ramp.elements
+	stops[0].color = (*linear(GRIME), 1)
+	stops[1].position = 0.15 / 1.3
+	stops[1].color = (*linear(TRIM), 1)
+	for position, color in ((0.55, CONE_BAND), (0.75, TRIM)):
+		stop = stops.new(position / 1.3)
+		stop.color = (*linear(color), 1)
+	scale = nodes.new("ShaderNodeMath")
+	scale.operation = "DIVIDE"
+	scale.inputs[1].default_value = 1.3
+	links.new(height.outputs["Z"], scale.inputs[0])
+	links.new(scale.outputs["Value"], ramp.inputs["Fac"])
+	links.new(ramp.outputs["Color"], nodes["Principled BSDF"].inputs["Base Color"])
+	return mat
+
+
+def bury(obj: bpy.types.Object, heap: bpy.types.Object, x: float, y: float, sink: float, tilt) -> None:
+	# Stand obj on the fill surface at (x, y), sunk sink below it and tilted.
+	_, hit, _, _ = heap.ray_cast((x, y, HEIGHT * 2), (0, 0, -1))
+	obj.location = (x, y, hit.z - sink)
+	obj.rotation_euler = tilt
+
+
 collection = scrapkit.new_scene()
 green = scrapkit.material("Body", linear(BODY), roughness=0.55)
 steel = scrapkit.material("Bolt", linear(BOLT), metallic=0.6, roughness=0.45)
@@ -379,10 +563,30 @@ patches, plate_bolts = plates(tub)
 scrapkit.link(patches, collection, grey)
 studs = scrapkit.link(bolts(tub, plate_bolts), collection, steel)
 rim = scrapkit.link(trim(), collection, orange)
-scrapkit.link(fill(), collection, scrapkit.material("Scrap", linear(SCRAP), metallic=0.3, roughness=0.6))
+heap = scrapkit.link(fill(), collection, scrapkit.material("Scrap", linear(SCRAP), metallic=0.3, roughness=0.6))
+
+rubber = scrapkit.material("Tire", linear(RUBBER), roughness=0.9)
+blotches(rubber, CHALK, 3.0, 0.25)
+brass = scrapkit.material("Cog", linear(BRASS), metallic=0.5, roughness=0.5)
+blotches(brass, RUST, 2.5, 0.35)
+coil = scrapkit.material("Spring", linear(SPRING_STEEL), metallic=0.7, roughness=0.35)
+blotches(coil, RUST, 4.0, 0.12)
+junk = [
+	scrapkit.link(tire(), collection, rubber),
+	scrapkit.link(cog(), collection, brass),
+	scrapkit.link(spring(), collection, coil),
+	scrapkit.link(cone(), collection, cone_material()),
+]
+for part in junk:
+	smooth(part)
+tire_part, cog_part, spring_part, cone_part = junk
+bury(tire_part, heap, -1.2, -0.3, 0.12, (math.radians(25), math.radians(-10), 0.4))
+bury(cog_part, heap, 0.4, 0.7, 0.2, (math.radians(80), math.radians(15), 0.3))
+bury(spring_part, heap, 1.2, -0.6, 0.3, (math.radians(-12), math.radians(8), 0))
+bury(cone_part, heap, 2.1, 0.5, 0.35, (math.radians(10), math.radians(-35), 0.8))
 
 # Hand-painted edge highlights and crease shadows, baked per part.
-for part, size in ((tub, 1024), (patches, 512), (rim, 512), (studs, 256)):
+for part, size in ((tub, 1024), (patches, 512), (rim, 512), (studs, 256), *((part, 256) for part in junk)):
 	scrapkit.paint_shading(part, size)
 # The band keeps its round-the-tub UVs, so a long strip fits it best.
 scrapkit.paint_shading(band, 1024, 64)
