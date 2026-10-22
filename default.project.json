@@ -1,0 +1,31 @@
+{
+	"name": "ScrapHeist",
+	"tree": {
+		"$className": "DataModel",
+		"ReplicatedStorage": {
+			"Shared": {
+				"$path": "src/shared"
+			},
+			"Packages": {
+				"$path": { "optional": "Packages" }
+			}
+		},
+		"ServerStorage": {
+			"ServerPackages": {
+				"$path": { "optional": "ServerPackages" }
+			}
+		},
+		"ServerScriptService": {
+			"Server": {
+				"$path": "src/server"
+			}
+		},
+		"StarterPlayer": {
+			"StarterPlayerScripts": {
+				"Client": {
+					"$path": "src/client"
+				}
+			}
+		}
+	}
+}
