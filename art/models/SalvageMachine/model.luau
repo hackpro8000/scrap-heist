@@ -138,6 +138,13 @@ local function part(name, mesh, color, group, size, paint)
 	model.part(name, mesh, image, { group = group, preview = true })
 end
 
+-- Motor paint: red, with soot creeping down the exhaust stack from its mouth.
+local function motorColor(x, y, z)
+	local soot = math.clamp((z - 1.8) / 0.9, 0, 1) * (0.8 + math.noise(x * 6, y * 6, z * 6) * 0.3)
+	local k = 1 - math.clamp(soot, 0, 0.85)
+	return MOTOR[1] * k, MOTOR[2] * k, MOTOR[3] * k
+end
+
 for tier = 1, 3 do
 	local group = `Tier_{tier}`
 	local cx = (tier - 2) * SPACING
@@ -155,6 +162,16 @@ for tier = 1, 3 do
 	for _, y in { -0.3, 0.3 } do
 		toothedRoller(rollers, cx, y * scale, 2.15 * scale, 0.28 * scale, 1.9 * scale, 6, 7)
 	end
+	if tier > 1 then
+		-- Belt drive in the gap between housing and motor: a small pulley on
+		-- the motor, a large one on the housing, and the belt's two runs.
+		local beltX = cx + 1.1 * scale + 0.06
+		local low, high = 1.2, 1.65 * scale
+		cylinder(rollers, beltX, 0, low, 0.15, 0.08, "x")
+		cylinder(rollers, beltX, 0, high, 0.25, 0.08, "x")
+		box(rollers, beltX, -0.2, low, 0.05, 0.04, high - low)
+		box(rollers, beltX, 0.2, low, 0.05, 0.04, high - low)
+	end
 	part(`{group}_Rollers`, rollers, ROLLER, group, SMALL_TEXTURE)
 
 	local bin = Mesh.new()
@@ -171,11 +188,15 @@ for tier = 1, 3 do
 		cylinder(extras, cx + 1.25 * scale, 0, 1.6 * scale, 0.08, 0.3, "x")
 		box(extras, cx + 1.4, 0, 1.6 * scale, 0.1, 0.1, 0.6)
 	else
-		-- Motor block with an exhaust stack.
-		box(extras, cx + 1.6 * scale, 0, 0.6, 0.9, 1, 0.9)
+		-- Motor block with cooling fins on top and an exhaust stack.
+		local motorX = cx + 1.6 * scale
+		box(extras, motorX, 0, 0.6, 0.9, 1, 0.9)
+		for _, offset in { -0.35, -0.2, -0.05 } do
+			box(extras, motorX + offset, 0, 1.5, 0.04, 1, 0.1)
+		end
 		cylinder(extras, cx + 1.8 * scale, 0.3, 1.5, 0.1, 1.2, "z")
 	end
-	part(`{group}_Extras`, extras, if tier == 1 then FRAME else MOTOR, group, SMALL_TEXTURE)
+	part(`{group}_Extras`, extras, if tier == 1 then FRAME else MOTOR, group, SMALL_TEXTURE, if tier == 1 then nil else motorColor)
 
 	if tier == 3 then
 		-- Magnet crane: mast, boom, hanging magnet over the hopper.
