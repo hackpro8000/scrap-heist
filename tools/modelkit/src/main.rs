@@ -69,8 +69,21 @@ impl UserData for MeshHandle {
 			this.0.borrow_mut().weld(distance.unwrap_or(1e-5));
 			Ok(())
 		});
-		methods.add_method("setSmooth", |_, this, smooth: bool| {
-			this.0.borrow_mut().smooth = smooth;
+		// true smooths everything, false is flat, a number smooths only across
+		// edges sharper than that many degrees (auto smooth).
+		methods.add_method("setSmooth", |_, this, smooth: mlua::Value| {
+			let angle = match smooth {
+				mlua::Value::Boolean(on) => if on { 180.0 } else { 0.0 },
+				mlua::Value::Number(n) => n,
+				mlua::Value::Integer(n) => n as f64,
+				_ => return Err(mlua::Error::runtime("setSmooth takes a bool or an angle in degrees")),
+			};
+			this.0.borrow_mut().smooth_angle = angle;
+			Ok(())
+		});
+		// Thickens an open surface; negative thickness grows inward.
+		methods.add_method("solidify", |_, this, thickness: f64| {
+			this.0.borrow_mut().solidify(thickness);
 			Ok(())
 		});
 		methods.add_method("vertexCount", |_, this, ()| Ok(this.0.borrow().positions.len()));
