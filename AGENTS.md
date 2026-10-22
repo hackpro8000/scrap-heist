@@ -21,3 +21,6 @@ Supplementary rules for agents working on Scrap Heist.
 - Generalize only when reuse actually recurs. No speculative or empty abstractions.
 - Names say what things mean in the game. No generic names that hide meaning.
 - Dependencies point one way: `shared` never requires `server` or `client`, and reusable systems never require game-specific modules.
+
+## Blender work
+- After every Blender change, run `scripts/checkpoint-model.sh` (see `docs/art/pipeline.md`) and send the user the screenshot. Never batch changes or leave progress unpushed.

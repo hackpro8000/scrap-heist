@@ -58,11 +58,15 @@ Rendering is software OpenGL (Mesa llvmpipe), so the viewport is slower than
 on a real GPU. On first launch, press Escape to dismiss the splash screen.
 
 ## Saving changes
-Every Blender change ends with the `.blend` saved to the repo:
+Every Blender change, however small, ends with a checkpoint so no progress is lost:
 
-1. Save `art/models/<Name>/<Name>.blend`. Builds do this automatically via `scrapkit.finish()`. For GUI edits, press Ctrl+S, or run `bpy.ops.wm.save_mainfile()`.
-2. Rebuild the `.fbx` and `preview.png` if the export meshes changed (`scripts/build-model.sh <Name>`).
-3. Commit the `.blend` along with its outputs (`phase N: <model> - <change>`) to the `models` branch and push.
+```
+scripts/checkpoint-model.sh <Name> "phase N: <Name> - <change>"
+```
+
+It rebuilds the model (saving the `.blend`, `.fbx` and `preview.png`), takes a screenshot of the virtual desktop into `art/models/<Name>/screenshot.png`, and commits and pushes the `models` branch. Send that screenshot to the user after each change. GUI edits must be saved first (Ctrl+S, or `bpy.ops.wm.save_mainfile()`), and ported back into `build.py` so a rebuild doesn't discard them.
+
+Never leave an edit only in a running Blender session.
 
 ### Branches
 Model binaries (`.blend`, `.fbx`, `preview.png`) live only on the `models` branch, so the code branch stays free of binary noise. The code branch keeps the tooling (`scrapkit`, build scripts, `build.py` sources) and these docs. Merge the code branch into `models` to pick up tooling changes.
