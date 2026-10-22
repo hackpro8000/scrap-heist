@@ -147,16 +147,38 @@ end
 -- streaks running down from the housing, and grime rising from the feet.
 local BARE_METAL = { 0.68, 0.7, 0.72 }
 local RUST = { 0.45, 0.24, 0.12 }
-local function frameColor(x, y, z)
-	local r, g, b = FRAME[1], FRAME[2], FRAME[3]
-	-- Rust streaks: noise stretched tall so it runs in vertical drips.
-	local streak = math.clamp(math.noise(x * 7, y * 7, z * 0.8) * 2.5 - 0.3, 0, 0.7)
-	r, g, b = r + (RUST[1] - r) * streak, g + (RUST[2] - g) * streak, b + (RUST[3] - b) * streak
-	if math.noise(x * 5 + 5, y * 5, z * 5) > 0.4 then
-		r, g, b = BARE_METAL[1], BARE_METAL[2], BARE_METAL[3]
+local RIVET_SPACING = 0.3
+
+-- Frame paint for one tier's frame, whose housing is centred on cx at scale.
+-- Rivet rows run along the housing's top and bottom edges, and a seam splits
+-- each long side into two panels.
+local function frameColor(cx, scale)
+	local bottom, top = 1.2 * scale, 2.1 * scale
+	return function(x, y, z)
+		local r, g, b = FRAME[1], FRAME[2], FRAME[3]
+		-- Rust streaks: noise stretched tall so it runs in vertical drips.
+		local streak = math.clamp(math.noise(x * 7, y * 7, z * 0.8) * 2.5 - 0.3, 0, 0.7)
+		r, g, b = r + (RUST[1] - r) * streak, g + (RUST[2] - g) * streak, b + (RUST[3] - b) * streak
+		if math.noise(x * 5 + 5, y * 5, z * 5) > 0.4 then
+			r, g, b = BARE_METAL[1], BARE_METAL[2], BARE_METAL[3]
+		end
+		if z > bottom - 0.01 then
+			-- Distance to the nearest rivet: along the edge rows, spaced evenly.
+			local along = (x - cx + y) / RIVET_SPACING
+			local dAlong = math.abs(along - math.round(along)) * RIVET_SPACING
+			local dRow = math.min(math.abs(z - bottom - 0.1), math.abs(z - top + 0.1))
+			local d = math.sqrt(dAlong * dAlong + dRow * dRow)
+			if d < 0.06 then
+				local k = if d < 0.035 then 1.3 else 0.5
+				return r * k, g * k, b * k
+			end
+			if math.abs(x - cx) < 0.03 then
+				return r * 0.45, g * 0.45, b * 0.45
+			end
+		end
+		local grime = 1 - math.clamp(0.5 - z * 0.4, 0, 0.5)
+		return r * grime, g * grime, b * grime
 	end
-	local grime = 1 - math.clamp(0.5 - z * 0.4, 0, 0.5)
-	return r * grime, g * grime, b * grime
 end
 
 -- Motor paint: red, with soot creeping down the exhaust stack from its mouth.
@@ -177,7 +199,7 @@ for tier = 1, 3 do
 		box(frame, cx + corner[1] * 0.9 * scale, corner[2] * 0.7 * scale, 0, 0.2, 0.2, 1.2 * scale)
 	end
 	box(frame, cx, 0, 1.2 * scale, 2.2 * scale, 1.8 * scale, 0.9 * scale)
-	part(`{group}_Frame`, frame, FRAME, group, LARGE_TEXTURE, frameColor)
+	part(`{group}_Frame`, frame, FRAME, group, LARGE_TEXTURE, frameColor(cx, scale))
 
 	local rollers = Mesh.new()
 	for _, y in { -0.3, 0.3 } do
