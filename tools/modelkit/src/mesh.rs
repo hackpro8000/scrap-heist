@@ -15,7 +15,9 @@ pub struct Face {
 pub struct Mesh {
 	pub positions: Vec<Vec3>,
 	pub faces: Vec<Face>,
-	pub smooth: bool,
+	// Faces meeting at less than this many degrees share smoothed normals:
+	// 0 is flat shading, 180 smooths everything.
+	pub smooth_angle: f64,
 }
 
 pub fn sub(a: Vec3, b: Vec3) -> Vec3 {
@@ -53,7 +55,7 @@ pub struct Corner {
 
 impl Mesh {
 	pub fn new() -> Self {
-		Mesh { positions: Vec::new(), faces: Vec::new(), smooth: true }
+		Mesh { positions: Vec::new(), faces: Vec::new(), smooth_angle: 180.0 }
 	}
 
 	// Merges vertices closer than `distance`, like Blender's merge by distance.
@@ -113,26 +115,86 @@ impl Mesh {
 	// Triangles as corner triples, fanned from each face's first corner.
 	pub fn triangles(&self) -> Vec<[Corner; 3]> {
 		let face_normals: Vec<Vec3> = self.faces.iter().map(|face| self.face_normal(face)).collect();
-		let mut vertex_normals = vec![[0.0; 3]; self.positions.len()];
-		if self.smooth {
-			for (face, &normal) in self.faces.iter().zip(&face_normals) {
-				for &vert in &face.verts {
-					vertex_normals[vert] = add(vertex_normals[vert], normal);
-				}
+		let mut vertex_faces = vec![Vec::new(); self.positions.len()];
+		for (index, face) in self.faces.iter().enumerate() {
+			for &vert in &face.verts {
+				vertex_faces[vert].push(index);
 			}
 		}
+		let limit = self.smooth_angle.to_radians().cos();
 		let mut triangles = Vec::new();
 		for (face, &face_normal) in self.faces.iter().zip(&face_normals) {
+			// Smooth each corner over the neighbouring faces within the angle.
+			let normal = |vert: usize| {
+				if self.smooth_angle <= 0.0 {
+					return face_normal;
+				}
+				let mut sum = [0.0; 3];
+				for &other in &vertex_faces[vert] {
+					let other_normal = face_normals[other];
+					if self.smooth_angle >= 180.0 || dot(other_normal, face_normal) >= limit - 1e-9 {
+						sum = add(sum, other_normal);
+					}
+				}
+				normalize(sum)
+			};
 			let corner = |k: usize| Corner {
 				position: self.positions[face.verts[k]],
 				uv: face.uvs.as_ref().map_or([0.0, 0.0], |uvs| uvs[k]),
-				normal: if self.smooth { normalize(vertex_normals[face.verts[k]]) } else { face_normal },
+				normal: normal(face.verts[k]),
 			};
 			for k in 1..face.verts.len() - 1 {
 				triangles.push([corner(0), corner(k), corner(k + 1)]);
 			}
 		}
 		triangles
+	}
+
+	// Gives an open surface thickness, like Blender's solidify: a copy offset
+	// along the vertex normals (negative goes inward), facing the other way,
+	// with the open edges bridged by a rim. Existing UVs are dropped.
+	pub fn solidify(&mut self, thickness: f64) {
+		let mut normals = vec![[0.0; 3]; self.positions.len()];
+		for face in &self.faces {
+			let normal = self.face_normal(face);
+			for &vert in &face.verts {
+				normals[vert] = add(normals[vert], normal);
+			}
+		}
+		let count = self.positions.len();
+		for vert in 0..count {
+			let offset = scale(normalize(normals[vert]), thickness);
+			self.positions.push(add(self.positions[vert], offset));
+		}
+		let mut edge_uses: HashMap<(usize, usize), usize> = HashMap::new();
+		for face in &self.faces {
+			for (i, &a) in face.verts.iter().enumerate() {
+				let b = face.verts[(i + 1) % face.verts.len()];
+				*edge_uses.entry((a.min(b), a.max(b))).or_insert(0) += 1;
+			}
+		}
+		// Offsetting inward keeps the original as the outside; outward makes
+		// the copy the outside. The inside skin is wound the other way.
+		let inward = thickness < 0.0;
+		let faces = std::mem::take(&mut self.faces);
+		for face in &faces {
+			let len = face.verts.len();
+			for (i, &a) in face.verts.iter().enumerate() {
+				let b = face.verts[(i + 1) % len];
+				if edge_uses[&(a.min(b), a.max(b))] > 1 {
+					continue;
+				}
+				let rim = if inward { vec![b, a, a + count, b + count] } else { vec![a, b, b + count, a + count] };
+				self.faces.push(Face { verts: rim, uvs: None });
+			}
+		}
+		for face in faces {
+			let copy: Vec<usize> = face.verts.iter().map(|v| v + count).collect();
+			let (outside, mut inside) = if inward { (face.verts, copy) } else { (copy, face.verts) };
+			inside.reverse();
+			self.faces.push(Face { verts: outside, uvs: None });
+			self.faces.push(Face { verts: inside, uvs: None });
+		}
 	}
 
 	// Corners deduplicated into an indexed vertex list for export.
