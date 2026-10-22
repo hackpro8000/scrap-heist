@@ -3,6 +3,8 @@
 //   modelkit art/models/StarterWeapon            build <Name>.glb and preview.png
 //   modelkit art/models/StarterWeapon --turntable 48
 //                                                also write turntable frames
+//   modelkit art/models/StarterWeapon --size 2048
+//                                                render previews at 2048px square
 //
 // The script (model.luau) builds meshes and paints textures through the API
 // below; this engine does the heavy, generic work (triangulating, export,
@@ -25,7 +27,7 @@ use mlua::{AnyUserData, Lua, Table, UserData, UserDataMethods, Value};
 use image::Image;
 use mesh::{Face, Mesh};
 
-const PREVIEW_SIZE: usize = 768;
+const DEFAULT_PREVIEW_SIZE: usize = 768;
 
 #[derive(Clone)]
 struct MeshHandle(Rc<RefCell<Mesh>>);
@@ -231,7 +233,7 @@ fn write_png(path: &Path, size: usize, data: &[u8]) -> std::io::Result<()> {
 	std::fs::write(path, image::encode_rgb(size, size, data))
 }
 
-fn run(dir: &Path, turntable: usize) -> Result<(), String> {
+fn run(dir: &Path, turntable: usize, size: usize) -> Result<(), String> {
 	let started = Instant::now();
 	let name = dir.file_name().and_then(|n| n.to_str()).ok_or("bad model folder")?.to_string();
 	let script = dir.join("model.luau");
@@ -262,16 +264,16 @@ fn run(dir: &Path, turntable: usize) -> Result<(), String> {
 		}
 	}
 	let shown: Vec<&Part> = parts.iter().filter(|p| p.preview).collect();
-	let preview = render::render(&shown, &render::View { size: PREVIEW_SIZE, spin: 0.0 });
-	write_png(&dir.join("preview.png"), PREVIEW_SIZE, &preview).map_err(|e| e.to_string())?;
+	let preview = render::render(&shown, &render::View { size, spin: 0.0 });
+	write_png(&dir.join("preview.png"), size, &preview).map_err(|e| e.to_string())?;
 
 	if turntable > 0 {
 		let frames = dir.join("turntable");
 		std::fs::create_dir_all(&frames).map_err(|e| e.to_string())?;
 		for frame in 0..turntable {
 			let spin = frame as f64 / turntable as f64 * std::f64::consts::TAU;
-			let data = render::render(&shown, &render::View { size: PREVIEW_SIZE, spin });
-			write_png(&frames.join(format!("{frame:04}.png")), PREVIEW_SIZE, &data).map_err(|e| e.to_string())?;
+			let data = render::render(&shown, &render::View { size, spin });
+			write_png(&frames.join(format!("{frame:04}.png")), size, &data).map_err(|e| e.to_string())?;
 		}
 	}
 	eprintln!("{name}: {} parts, script {:.2?}, total {:.2?}", parts.len(), scripted, started.elapsed());
@@ -281,14 +283,18 @@ fn run(dir: &Path, turntable: usize) -> Result<(), String> {
 fn main() {
 	let args: Vec<String> = std::env::args().skip(1).collect();
 	let Some(dir) = args.first() else {
-		eprintln!("usage: modelkit <model folder> [--turntable FRAMES]");
+		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS]");
 		std::process::exit(2);
 	};
 	let turntable = match args.iter().position(|a| a == "--turntable") {
 		Some(at) => args.get(at + 1).and_then(|n| n.parse().ok()).unwrap_or(48),
 		None => 0,
 	};
-	if let Err(error) = run(Path::new(dir), turntable) {
+	let size = match args.iter().position(|a| a == "--size") {
+		Some(at) => args.get(at + 1).and_then(|n| n.parse().ok()).unwrap_or(DEFAULT_PREVIEW_SIZE),
+		None => DEFAULT_PREVIEW_SIZE,
+	};
+	if let Err(error) = run(Path::new(dir), turntable, size) {
 		eprintln!("error: {error}");
 		std::process::exit(1);
 	}
