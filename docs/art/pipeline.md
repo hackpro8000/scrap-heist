@@ -72,3 +72,20 @@ Never leave an edit only in a running Blender session.
 Model binaries (`.blend`, `.fbx`, `preview.png`) live only on the `models` branch, so the code branch stays free of binary noise. The code branch keeps the tooling (`scrapkit`, build scripts, `build.py` sources) and these docs. Merge the code branch into `models` to pick up tooling changes.
 
 Never leave an edit only in a running Blender session.
+
+## Lessons from past models
+
+### Working with Tristen
+- Sketch a new model first and get approval before modeling it.
+- One change at a time, each followed by a checkpoint and a screenshot, so Tristen can steer early.
+- Keep geometry efficient. Get detail from baked painting (`scrapkit.paint_shading`) rather than extra polygons.
+- Send videos as MP4, never GIF. Put any tool installs in `scripts/cloud-setup.sh`.
+- If something can't be seen in a screenshot, say so instead of waiting for Tristen to notice.
+
+### Technique
+- To compare variants (fill levels, upgrade tiers), render them in a row headless: lay them out in a script and use an orthographic camera. Laying them out with a timer in the GUI didn't work; the variants stayed overlapped.
+- Look at the full render before cropping it.
+- `paint_shading` writes into the object's material. Give each baked object its own material copy (`material.copy()`) so one bake doesn't overwrite others that share it.
+- The shadow bake in `paint_shading` isn't limited to the object, so nearby objects cast contact shadows onto it. Use this to ground parts on a surface: place them first, then bake the surface.
+- For parts stacked on each other, settling them with a physics simulation looks more natural than placing them by hand.
+- Check that every variant reads from the game camera. A low fill level can hide behind the crate wall.
