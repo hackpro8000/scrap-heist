@@ -30,9 +30,7 @@ ROWS = 3
 # Bright cartoon green, in sRGB.
 BODY = (0.44, 0.68, 0.35)
 
-# Wear on the tub, in sRGB: chipped paint showing bare metal, and rust
-# stains in the scuffed patches.
-BARE_METAL = (0.5, 0.5, 0.48)
+# Rust stains worn into the tub's paint, in sRGB.
 STAIN = (0.42, 0.33, 0.2)
 
 # Bolt heads: radius and a warm gunmetal, in sRGB.
@@ -562,8 +560,7 @@ steel = scrapkit.material("Bolt", linear(BOLT), metallic=0.6, roughness=0.45)
 orange = scrapkit.material("Trim", linear(TRIM), roughness=0.5)
 grey = scrapkit.material("Plate", linear(PLATE), metallic=0.5, roughness=0.5)
 
-blotches(green, STAIN, 1.2, -0.05)
-blotches(green, BARE_METAL, 8.0, -0.1)
+blotches(green, STAIN, 0.86, 0.4)
 tub = scrapkit.link(body(), collection, green)
 band = scrapkit.link(hazard_band(tub), collection, hazard_material())
 patches, plate_bolts = plates(tub)
