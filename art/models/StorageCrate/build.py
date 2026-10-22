@@ -4,7 +4,7 @@ import random
 import bmesh
 import bpy
 import scrapkit
-from mathutils import Vector
+from mathutils import Vector, noise
 
 # Storage crate: the yard's open-top bin, cartoony. The body flares wider at
 # the top, leans and twists as it rises, its walls bulge out like an
@@ -49,6 +49,15 @@ HAZARD_YELLOW = (0.98, 0.8, 0.12)
 HAZARD_BLACK = (0.08, 0.08, 0.08)
 
 # Patch plates bolted over the walls: how many, thickness and a dull grey.
+# Scrap inside: a lumpy surface standing in for the heap of parts, sat at
+# FILL of the way up the walls and mounded in the middle.
+FILL = 0.7
+FILL_RINGS = 6
+FILL_PER_SIDE = 8
+FILL_MOUND = 0.35
+FILL_LUMPS = 0.12
+SCRAP = (0.6, 0.5, 0.42)
+
 PLATE_SEED = 7
 PLATE_THICKNESS = 0.05
 PLATE = (0.55, 0.57, 0.6)
@@ -326,6 +335,38 @@ def plates(tub: bpy.types.Object):
 	return obj, plate_bolts
 
 
+def fill() -> bpy.types.Object:
+	# Loops from the inner wall in to the centre; lumps are noise on height.
+	edge = [Vector(ring_point(side, col / FILL_PER_SIDE, FILL)) for side in range(4) for col in range(FILL_PER_SIDE)]
+	middle = sum(edge, Vector()) / len(edge)
+	mesh = bpy.data.meshes.new("Fill")
+	bm = bmesh.new()
+	loops = []
+	for ring in range(FILL_RINGS):
+		t = 1 - ring / FILL_RINGS
+		loop = []
+		for point in edge:
+			# Tuck the outer loop just inside the wall's inner face.
+			flat = middle + (point - middle) * t
+			flat -= (point - middle).normalized() * WALL * 1.2 * t
+			height = middle.z + FILL_MOUND * (1 - t * t) + FILL_LUMPS * noise.noise(flat * 1.3)
+			loop.append(bm.verts.new((flat.x, flat.y, height)))
+		loops.append(loop)
+	top = bm.verts.new((middle.x, middle.y, middle.z + FILL_MOUND + FILL_LUMPS * noise.noise(middle * 1.3)))
+	count = len(edge)
+	for outer, inner in zip(loops, loops[1:]):
+		for i in range(count):
+			j = (i + 1) % count
+			bm.faces.new((outer[i], outer[j], inner[j], inner[i]))
+	for i in range(count):
+		bm.faces.new((loops[-1][i], loops[-1][(i + 1) % count], top))
+	bm.to_mesh(mesh)
+	bm.free()
+	for polygon in mesh.polygons:
+		polygon.use_smooth = True
+	return bpy.data.objects.new("Fill", mesh)
+
+
 collection = scrapkit.new_scene()
 green = scrapkit.material("Body", linear(BODY), roughness=0.55)
 steel = scrapkit.material("Bolt", linear(BOLT), metallic=0.6, roughness=0.45)
@@ -338,6 +379,7 @@ patches, plate_bolts = plates(tub)
 scrapkit.link(patches, collection, grey)
 studs = scrapkit.link(bolts(tub, plate_bolts), collection, steel)
 rim = scrapkit.link(trim(), collection, orange)
+scrapkit.link(fill(), collection, scrapkit.material("Scrap", linear(SCRAP), metallic=0.3, roughness=0.6))
 
 # Hand-painted edge highlights and crease shadows, baked per part.
 for part, size in ((tub, 1024), (patches, 512), (rim, 512), (studs, 256)):
