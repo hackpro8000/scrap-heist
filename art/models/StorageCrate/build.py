@@ -162,7 +162,7 @@ def snap(tub: bpy.types.Object, side: int, s: float, v: float, lift: float = 0.0
 
 def bolts(tub: bpy.types.Object, extra) -> bpy.types.Object:
 	# Short 8-sided bolt heads; auto smooth rounds the sides, keeps the caps flat.
-	# extra is (point, normal) pairs for bolts placed by other parts, like plates.
+	# extra is (point, normal, size) for bolts placed by other parts, like plates.
 	mesh = bpy.data.meshes.new("Bolts")
 	bm = bmesh.new()
 	spots = []
@@ -174,11 +174,11 @@ def bolts(tub: bpy.types.Object, extra) -> bpy.types.Object:
 			# hitched up, so top bolts stay tucked into the corner under the lip.
 			guess.z += (ring_point(side, s, 1)[2] - HEIGHT) * 1.6
 		_, point, normal, _ = tub.closest_point_on_mesh(guess + outward * 0.3)
-		spots.append((point, normal))
-	for point, normal in spots + list(extra):
-		head = bmesh.ops.create_cone(bm, segments=8, radius1=BOLT_SIZE, radius2=BOLT_SIZE * 0.8, depth=BOLT_SIZE, cap_ends=True)["verts"]
+		spots.append((point, normal, BOLT_SIZE))
+	for point, normal, size in spots + list(extra):
+		head = bmesh.ops.create_cone(bm, segments=8, radius1=size, radius2=size * 0.8, depth=size, cap_ends=True)["verts"]
 		bmesh.ops.rotate(bm, cent=(0, 0, 0), matrix=normal.to_track_quat("Z", "Y").to_matrix(), verts=head)
-		bmesh.ops.translate(bm, vec=point + normal * BOLT_SIZE * 0.3, verts=head)
+		bmesh.ops.translate(bm, vec=point + normal * size * 0.3, verts=head)
 	bm.to_mesh(mesh)
 	bm.free()
 	obj = bpy.data.objects.new("Bolts", mesh)
@@ -294,19 +294,21 @@ def plates(tub: bpy.types.Object):
 		center, outward = wall_frame(side, s, v)
 		along = (Vector(ring_point(side, min(s + 0.01, 1), v)) - Vector(ring_point(side, s - 0.01, v))).normalized()
 		up = outward.cross(along).normalized()
-		half_w = rng.uniform(0.35, 0.7)
-		half_h = rng.uniform(0.25, 0.45)
-		shape = rng.choice(("rect", "trapezoid", "skew"))
-		taper = rng.uniform(0.5, 0.8) if shape == "trapezoid" else 1.0
-		shear = rng.uniform(-0.3, 0.3) if shape == "skew" else 0.0
+		half_w = rng.uniform(0.22, 0.85)
+		half_h = rng.uniform(0.16, 0.5)
+		shape = rng.choice(("rect", "trapezoid", "skew", "wedge"))
+		taper = rng.uniform(0.3, 0.75) if shape == "trapezoid" else 1.0
+		shear = rng.uniform(-0.5, 0.5) if shape == "skew" else 0.0
+		# A wedge drops one top corner, so the plate reads as a torn-off offcut.
+		drop = rng.uniform(0.4, 0.8) if shape == "wedge" else 0.0
 		corners = [
 			(-half_w, -half_h),
 			(half_w, -half_h),
-			(half_w * taper + shear, half_h),
+			(half_w * taper + shear, half_h - half_h * 2 * drop),
 			(-half_w * taper + shear, half_h),
 		]
-		corners = [(x + rng.uniform(-0.06, 0.06), y + rng.uniform(-0.06, 0.06)) for x, y in corners]
-		tilt = rng.uniform(-0.15, 0.15)
+		corners = [(x + rng.uniform(-0.12, 0.12), y + rng.uniform(-0.1, 0.1)) for x, y in corners]
+		tilt = rng.uniform(-0.3, 0.3)
 		corners = [(x * math.cos(tilt) - y * math.sin(tilt), x * math.sin(tilt) + y * math.cos(tilt)) for x, y in corners]
 
 		def at(a: float, b: float):
@@ -323,7 +325,7 @@ def plates(tub: bpy.types.Object):
 				bm.faces.new((grid[j][i], grid[j][i + 1], grid[j + 1][i + 1], grid[j + 1][i]))
 		for a, b in ((0.15, 0.18), (0.85, 0.18), (0.85, 0.82), (0.15, 0.82)):
 			point, normal = at(a, b)
-			plate_bolts.append((point + normal * (STANDOFF + PLATE_THICKNESS), normal))
+			plate_bolts.append((point + normal * (STANDOFF + PLATE_THICKNESS), normal, BOLT_SIZE * 0.5))
 	bm.to_mesh(mesh)
 	bm.free()
 	obj = bpy.data.objects.new("Plates", mesh)
