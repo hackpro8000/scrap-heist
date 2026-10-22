@@ -29,7 +29,7 @@ ROWS = 3
 BODY = (0.44, 0.68, 0.35)
 
 # Bolt heads: radius and a warm gunmetal, in sRGB.
-BOLT_SIZE = 0.11
+BOLT_SIZE = 0.17
 BOLT = (0.62, 0.58, 0.52)
 
 
@@ -105,29 +105,22 @@ def wall_frame(side: int, s: float, v: float):
 
 def bolt_spots():
 	# One bolt tucked into each corner of every wall panel.
-	inset_s = 0.18 / COLUMNS
-	inset_v = 0.2 / ROWS
-	spots = []
-	for side in range(4):
-		for col in range(COLUMNS):
-			for row in range(ROWS):
-				s0, s1 = col / COLUMNS, (col + 1) / COLUMNS
-				v0, v1 = row / ROWS, (row + 1) / ROWS
-				for s in (s0 + inset_s, s1 - inset_s):
-					for v in (v0 + inset_v, v1 - inset_v):
-						spots.append((side, s, v))
-	return spots
+	inset_s = 0.1
+	inset_v = 0.12
+	return [(side, s, v) for side in range(4) for s in (inset_s, 1 - inset_s) for v in (inset_v, 1 - inset_v)]
 
 
-def bolts() -> bpy.types.Object:
+def bolts(tub: bpy.types.Object) -> bpy.types.Object:
 	# Short 8-sided bolt heads; auto smooth rounds the sides, keeps the caps flat.
 	mesh = bpy.data.meshes.new("Bolts")
 	bm = bmesh.new()
 	for side, s, v in bolt_spots():
-		point, normal = wall_frame(side, s, v)
+		# Snap to the finished tub so each bolt hugs the bulge and lean there.
+		guess, outward = wall_frame(side, s, v)
+		_, point, normal, _ = tub.closest_point_on_mesh(guess + outward * 0.3)
 		head = bmesh.ops.create_cone(bm, segments=8, radius1=BOLT_SIZE, radius2=BOLT_SIZE * 0.8, depth=BOLT_SIZE, cap_ends=True)["verts"]
 		bmesh.ops.rotate(bm, cent=(0, 0, 0), matrix=normal.to_track_quat("Z", "Y").to_matrix(), verts=head)
-		bmesh.ops.translate(bm, vec=point, verts=head)
+		bmesh.ops.translate(bm, vec=point + normal * BOLT_SIZE * 0.3, verts=head)
 	bm.to_mesh(mesh)
 	bm.free()
 	obj = bpy.data.objects.new("Bolts", mesh)
@@ -143,7 +136,7 @@ collection = scrapkit.new_scene()
 green = scrapkit.material("Body", linear(BODY), roughness=0.55)
 steel = scrapkit.material("Bolt", linear(BOLT), metallic=0.6, roughness=0.45)
 
-scrapkit.link(body(), collection, green)
-scrapkit.link(bolts(), collection, steel)
+tub = scrapkit.link(body(), collection, green)
+scrapkit.link(bolts(tub), collection, steel)
 
 scrapkit.finish(collection)
