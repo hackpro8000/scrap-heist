@@ -29,7 +29,7 @@ ROWS = 3
 BODY = (0.44, 0.68, 0.35)
 
 # Bolt heads: radius and a warm gunmetal, in sRGB.
-BOLT_SIZE = 0.17
+BOLT_SIZE = 0.102
 BOLT = (0.62, 0.58, 0.52)
 
 
