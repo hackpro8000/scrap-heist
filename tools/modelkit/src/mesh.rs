@@ -97,7 +97,7 @@ impl Mesh {
 		}
 	}
 
-	fn face_normal(&self, face: &Face) -> Vec3 {
+	pub fn face_normal(&self, face: &Face) -> Vec3 {
 		// Newell's method: robust for any planar-ish polygon.
 		let mut normal = [0.0; 3];
 		for (i, &a) in face.verts.iter().enumerate() {
