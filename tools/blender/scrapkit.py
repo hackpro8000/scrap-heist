@@ -119,7 +119,17 @@ def paint_shading(obj: bpy.types.Object, size: int = 512, height: int | None = N
 	dot.operation = "DOT_PRODUCT"
 	links.new(bevel.outputs["Normal"], dot.inputs[0])
 	links.new(geometry.outputs["Normal"], dot.inputs[1])
-	edge = math_node("MULTIPLY", math_node("SUBTRACT", 1.0, dot.outputs["Value"]), 12.0)
+	# A slow noise swells and thins the stroke along each edge, like a brush.
+	noise = nodes.new("ShaderNodeTexNoise")
+	noise.inputs["Scale"].default_value = 2.5
+	noise.inputs["Detail"].default_value = 1.0
+	stroke = nodes.new("ShaderNodeMapRange")
+	stroke.inputs["From Min"].default_value = 0.3
+	stroke.inputs["From Max"].default_value = 0.7
+	stroke.inputs["To Min"].default_value = 4.0
+	stroke.inputs["To Max"].default_value = 24.0
+	links.new(noise.outputs["Fac"], stroke.inputs["Value"])
+	edge = math_node("MULTIPLY", math_node("SUBTRACT", 1.0, dot.outputs["Value"]), stroke.outputs["Result"])
 
 	# Openness: dark in creases and where other parts crowd in.
 	ao = nodes.new("ShaderNodeAmbientOcclusion")

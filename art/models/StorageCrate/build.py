@@ -110,7 +110,7 @@ def body() -> bpy.types.Object:
 	# A small bevel rounds the corners and lip; only those edges get extra
 	# loops. Smooth shading hides the few facets on the bulging walls.
 	bevel = obj.modifiers.new("Soften", "BEVEL")
-	bevel.width = 0.08
+	bevel.width = 0.03
 	bevel.segments = 2
 	bevel.limit_method = "ANGLE"
 	for modifier in list(obj.modifiers):
