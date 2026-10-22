@@ -63,7 +63,7 @@ def link(obj: bpy.types.Object, collection: bpy.types.Collection, mat: bpy.types
 	return obj
 
 
-def paint_shading(obj: bpy.types.Object, size: int = 512, highlight: float = 0.7, shadow: float = 0.75) -> None:
+def paint_shading(obj: bpy.types.Object, size: int = 512, height: int | None = None, highlight: float = 0.7, shadow: float = 0.75) -> None:
 	"""Bake hand-painted, light-independent shading into obj's base color.
 
 	Edges that stick out get a pale highlight, creases and contact spots get a
@@ -134,7 +134,7 @@ def paint_shading(obj: bpy.types.Object, size: int = 512, highlight: float = 0.7
 	color = mix(lit, color, (1.0, 0.97, 0.85, 1.0), "SCREEN")
 	color = mix(dark, color, (0.32, 0.3, 0.5, 1.0), "MULTIPLY")
 
-	image = bpy.data.images.new(f"{obj.name}_Shaded", size, size)
+	image = bpy.data.images.new(f"{obj.name}_Shaded", size, height or size)
 	texture = nodes.new("ShaderNodeTexImage")
 	texture.image = image
 	nodes.active = texture
