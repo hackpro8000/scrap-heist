@@ -117,6 +117,10 @@ def bolts(tub: bpy.types.Object) -> bpy.types.Object:
 	for side, s, v in bolt_spots():
 		# Snap to the finished tub so each bolt hugs the bulge and lean there.
 		guess, outward = wall_frame(side, s, v)
+		if v > 0.5:
+			# Ride up with the wobbly top edge, and further where a corner is
+			# hitched up, so top bolts stay tucked into the corner under the lip.
+			guess.z += (ring_point(side, s, 1)[2] - HEIGHT) * 1.6
 		_, point, normal, _ = tub.closest_point_on_mesh(guess + outward * 0.3)
 		head = bmesh.ops.create_cone(bm, segments=8, radius1=BOLT_SIZE, radius2=BOLT_SIZE * 0.8, depth=BOLT_SIZE, cap_ends=True)["verts"]
 		bmesh.ops.rotate(bm, cent=(0, 0, 0), matrix=normal.to_track_quat("Z", "Y").to_matrix(), verts=head)
