@@ -69,8 +69,8 @@ def paint_shading(obj: bpy.types.Object, size: int = 512, height: int | None = N
 	Edges that stick out get a pale highlight, creases and contact spots get a
 	cool shadow, judged from shape alone (bevel normals and ambient occlusion),
 	so it reads the same under any light. Bands above zero also darken it
-	in that many flat steps from bottom to top, each step nudged by its own
-	bit of noise. The result is a texture saved next
+	in that many flat steps over the bottom half, fading to nothing midway up,
+	each step nudged by its own bit of noise. The result is a texture saved next
 	to the model, which replaces the material's base color.
 	"""
 	mat = obj.data.materials[0]
@@ -101,10 +101,10 @@ def paint_shading(obj: bpy.types.Object, size: int = 512, height: int | None = N
 				socket.default_value = value
 		return node.outputs[2]
 
-	def math_node(operation, a, b=0.0):
+	def math_node(operation, a, b=0.0, clamp=True):
 		node = nodes.new("ShaderNodeMath")
 		node.operation = operation
-		node.use_clamp = True
+		node.use_clamp = clamp
 		for socket, value in zip(node.inputs, (a, b)):
 			if isinstance(value, bpy.types.NodeSocket):
 				links.new(value, socket)
@@ -181,17 +181,17 @@ def paint_shading(obj: bpy.types.Object, size: int = 512, height: int | None = N
 	color = mix(dark, color, (0.32, 0.3, 0.5, 1.0), "MULTIPLY")
 	if bands > 0:
 		# Height through the bounding box, 0 at the bottom to 1 at the top,
-		# snapped into flat bands.
+		# snapped into flat bands that only cover the bottom half.
 		coords = nodes.new("ShaderNodeTexCoord")
 		rise = nodes.new("ShaderNodeSeparateXYZ")
 		links.new(coords.outputs["Generated"], rise.inputs[0])
-		band = math_node("FLOOR", math_node("MULTIPLY", rise.outputs["Z"], bands))
+		band = math_node("FLOOR", math_node("MULTIPLY", rise.outputs["Z"], bands * 2, clamp=False), clamp=False)
 		# Each band gets its own random nudge so the steps aren't even.
 		noise = nodes.new("ShaderNodeTexWhiteNoise")
 		noise.noise_dimensions = "1D"
 		links.new(band, noise.inputs["W"])
-		jitter = math_node("MULTIPLY", math_node("SUBTRACT", noise.outputs["Value"], 0.5), 0.6)
-		darkness = math_node("SUBTRACT", 1.0, math_node("DIVIDE", math_node("ADD", band, jitter), bands))
+		jitter = math_node("MULTIPLY", math_node("SUBTRACT", noise.outputs["Value"], 0.5, clamp=False), 0.6, clamp=False)
+		darkness = math_node("SUBTRACT", 1.0, math_node("DIVIDE", math_node("ADD", band, jitter, clamp=False), bands))
 		color = mix(math_node("MULTIPLY", darkness, 0.9), color, (0.25, 0.22, 0.4, 1.0), "MULTIPLY")
 
 	image = bpy.data.images.new(f"{obj.name}_Shaded", size, height or size)
