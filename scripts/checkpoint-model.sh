@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Checkpoints a model after every Blender change: rebuilds it (saving the
-# .blend, .fbx and preview), screenshots the desktop, then commits and pushes
-# the models branch. Send the printed screenshot to the user.
+# Checkpoints a model after every change: rebuilds it (saving the .glb,
+# textures and preview), copies the preview to screenshot.png, then commits
+# and pushes the models branch. Send the printed screenshot to the user.
 #
 #   scripts/checkpoint-model.sh StarterWeapon "phase 1: StarterWeapon - shape the grip"
 
@@ -20,7 +20,7 @@ if [ "${branch}" != "models" ]; then
 fi
 
 "${root}/scripts/build-model.sh" "${name}"
-"${root}/scripts/desktop.sh" screenshot "${shot}"
+cp "${dir}/preview.png" "${shot}"
 
 git -C "${root}" add "${dir}"
 git -C "${root}" commit -q -m "${message}"
