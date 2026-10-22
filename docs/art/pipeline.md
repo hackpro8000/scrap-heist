@@ -37,10 +37,12 @@ hand edits are lost on the next build.
 1. Avatar or Home tab → **Import 3D**, pick `<Name>.fbx`.
 2. Upload it, then paste the asset ID into `src/shared/Assets.luau`.
 
-The export scale has only been checked inside Blender (the FBX round-trips at
-2 × 2 × 2). Before the first real model, import `ReferenceCube.fbx` and check
-it matches a default 2 × 2 × 2 Part. If it doesn't, change `FBX_GLOBAL_SCALE`
-in `scrapkit.py` and rebuild.
+The FBX is exported at `FBX_GLOBAL_SCALE = 0.02` (in `scrapkit.py`), the
+scale Tristen's hand-made exports used. The build exports with Apply Scalings
+set to "FBX Units Scale", which may differ from those hand exports, so the
+scale is not confirmed yet: import `ReferenceCube.fbx` and check it matches a
+default 2 × 2 × 2 Part. If it doesn't, change `FBX_GLOBAL_SCALE` and rebuild
+every model.
 
 ## Virtual desktop
 
