@@ -62,6 +62,9 @@ Every Blender change ends with the `.blend` saved to the repo:
 
 1. Save `art/models/<Name>/<Name>.blend`. Builds do this automatically via `scrapkit.finish()`. For GUI edits, press Ctrl+S, or run `bpy.ops.wm.save_mainfile()`.
 2. Rebuild the `.fbx` and `preview.png` if the export meshes changed (`scripts/build-model.sh <Name>`).
-3. Commit the `.blend` along with its outputs (`phase N: <model> - <change>`) and push.
+3. Commit the `.blend` along with its outputs (`phase N: <model> - <change>`) to the `models` branch and push.
+
+### Branches
+Model binaries (`.blend`, `.fbx`, `preview.png`) live only on the `models` branch, so the code branch stays free of binary noise. The code branch keeps the tooling (`scrapkit`, build scripts, `build.py` sources) and these docs. Merge the code branch into `models` to pick up tooling changes.
 
 Never leave an edit only in a running Blender session.
