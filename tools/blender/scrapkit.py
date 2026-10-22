@@ -69,7 +69,8 @@ def paint_shading(obj: bpy.types.Object, size: int = 512, height: int | None = N
 	Edges that stick out get a pale highlight, creases and contact spots get a
 	cool shadow, judged from shape alone (bevel normals and ambient occlusion),
 	so it reads the same under any light. A halftone above zero also prints
-	comic-book dots that size, growing with the shadow. The result is a texture saved next
+	comic-book dots that far apart, big at the bottom and shrinking to
+	nothing at the top. The result is a texture saved next
 	to the model, which replaces the material's base color.
 	"""
 	mat = obj.data.materials[0]
@@ -179,7 +180,7 @@ def paint_shading(obj: bpy.types.Object, size: int = 512, height: int | None = N
 	color = mix(lit, color, (1.0, 0.97, 0.85, 1.0), "SCREEN")
 	color = mix(dark, color, (0.32, 0.3, 0.5, 1.0), "MULTIPLY")
 	if halftone > 0.0:
-		# A grid of dots in object space, each one swelling as it gets darker.
+		# A grid of dots in object space, swelling toward the bottom.
 		coords = nodes.new("ShaderNodeTexCoord")
 		cell = nodes.new("ShaderNodeVectorMath")
 		cell.operation = "SCALE"
@@ -192,7 +193,10 @@ def paint_shading(obj: bpy.types.Object, size: int = 512, height: int | None = N
 		center.operation = "DISTANCE"
 		links.new(offset.outputs[0], center.inputs[0])
 		center.inputs[1].default_value = (0.5, 0.5, 0.5)
-		dot_radius = math_node("MULTIPLY", math_node("SQRT", math_node("MULTIPLY", math_node("SUBTRACT", 1.0, openness), 2.5)), 0.6)
+		# Height through the bounding box, 0 at the bottom to 1 at the top.
+		rise = nodes.new("ShaderNodeSeparateXYZ")
+		links.new(coords.outputs["Generated"], rise.inputs[0])
+		dot_radius = math_node("MULTIPLY", math_node("SUBTRACT", 1.0, rise.outputs["Z"]), 0.6)
 		dots = math_node("LESS_THAN", center.outputs["Value"], dot_radius)
 		color = mix(math_node("MULTIPLY", dots, 0.6), color, (0.25, 0.22, 0.4, 1.0), "MULTIPLY")
 
