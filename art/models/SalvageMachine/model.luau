@@ -15,6 +15,10 @@ local CHUTE = { 0.6, 0.62, 0.6 }
 
 local TAU = 2 * math.pi
 
+-- Texture sizes: large parts (frame, hopper) get detail, small ones stay cheap.
+local LARGE_TEXTURE = 1024
+local SMALL_TEXTURE = 256
+
 local function box(mesh, cx, cy, cz, sx, sy, sz)
 	local v = {}
 	for i = 0, 7 do
@@ -92,9 +96,9 @@ local function hopperColor(bottomZ, height)
 	end
 end
 
-local function part(name, mesh, color, group, paint)
+local function part(name, mesh, color, group, size, paint)
 	mesh:unwrap()
-	local image = Image.new(256, 256, color[1], color[2], color[3])
+	local image = Image.new(size, size, color[1], color[2], color[3])
 	if paint then
 		mesh:paint(image, paint)
 	end
@@ -113,21 +117,21 @@ for tier = 1, 3 do
 		box(frame, cx + corner[1] * 0.9 * scale, corner[2] * 0.7 * scale, 0, 0.2, 0.2, 1.2 * scale)
 	end
 	box(frame, cx, 0, 1.2 * scale, 2.2 * scale, 1.8 * scale, 0.9 * scale)
-	part(`{group}_Frame`, frame, FRAME, group)
+	part(`{group}_Frame`, frame, FRAME, group, LARGE_TEXTURE)
 
 	local rollers = Mesh.new()
 	for _, y in { -0.3, 0.3 } do
 		cylinder(rollers, cx, y * scale, 2.15 * scale, 0.28 * scale, 1.9 * scale, "x")
 	end
-	part(`{group}_Rollers`, rollers, ROLLER, group)
+	part(`{group}_Rollers`, rollers, ROLLER, group, SMALL_TEXTURE)
 
 	local bin = Mesh.new()
 	hopper(bin, cx, 2.1 * scale, 1.9 * scale, 3 * scale, 1.1 * scale)
-	part(`{group}_Hopper`, bin, HOPPER, group, hopperColor(2.1 * scale, 1.1 * scale))
+	part(`{group}_Hopper`, bin, HOPPER, group, LARGE_TEXTURE, hopperColor(2.1 * scale, 1.1 * scale))
 
 	local chute = Mesh.new()
 	box(chute, cx, 1.3 * scale, 0.3, 1 * scale, 1.4 * scale, 0.15)
-	part(`{group}_Chute`, chute, CHUTE, group)
+	part(`{group}_Chute`, chute, CHUTE, group, SMALL_TEXTURE)
 
 	local extras = Mesh.new()
 	if tier == 1 then
@@ -145,5 +149,5 @@ for tier = 1, 3 do
 		box(extras, cx - 0.8 * scale, 0, 4.4, 2.8, 0.25, 0.25)
 		cylinder(extras, cx + 0.3, 0, 3.4, 0.45, 0.25, "z")
 	end
-	part(`{group}_Extras`, extras, if tier == 1 then FRAME else if tier == 3 then MAGNET else MOTOR, group)
+	part(`{group}_Extras`, extras, if tier == 1 then FRAME else if tier == 3 then MAGNET else MOTOR, group, SMALL_TEXTURE)
 end
