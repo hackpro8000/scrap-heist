@@ -63,6 +63,108 @@ def link(obj: bpy.types.Object, collection: bpy.types.Collection, mat: bpy.types
 	return obj
 
 
+def paint_shading(obj: bpy.types.Object, size: int = 512, highlight: float = 0.7, shadow: float = 0.75) -> None:
+	"""Bake hand-painted, light-independent shading into obj's base color.
+
+	Edges that stick out get a pale highlight, creases and contact spots get a
+	cool shadow, judged from shape alone (bevel normals and ambient occlusion),
+	so it reads the same under any light. The result is a texture saved next
+	to the model, which replaces the material's base color.
+	"""
+	mat = obj.data.materials[0]
+	nodes, links = mat.node_tree.nodes, mat.node_tree.links
+	bsdf = nodes["Principled BSDF"]
+	output = nodes["Material Output"]
+	base_input = bsdf.inputs["Base Color"]
+	base = base_input.links[0].from_socket if base_input.is_linked else None
+
+	if not obj.data.uv_layers:
+		bpy.ops.object.select_all(action="DESELECT")
+		obj.select_set(True)
+		bpy.context.view_layer.objects.active = obj
+		bpy.ops.object.mode_set(mode="EDIT")
+		bpy.ops.mesh.select_all(action="SELECT")
+		bpy.ops.uv.smart_project(island_margin=0.02)
+		bpy.ops.object.mode_set(mode="OBJECT")
+
+	def mix(factor, a, b, blend="MIX"):
+		node = nodes.new("ShaderNodeMix")
+		node.data_type = "RGBA"
+		node.blend_type = blend
+		node.clamp_result = True
+		for socket, value in ((node.inputs[0], factor), (node.inputs[6], a), (node.inputs[7], b)):
+			if isinstance(value, bpy.types.NodeSocket):
+				links.new(value, socket)
+			else:
+				socket.default_value = value
+		return node.outputs[2]
+
+	def math_node(operation, a, b=0.0):
+		node = nodes.new("ShaderNodeMath")
+		node.operation = operation
+		node.use_clamp = True
+		for socket, value in zip(node.inputs, (a, b)):
+			if isinstance(value, bpy.types.NodeSocket):
+				links.new(value, socket)
+			else:
+				socket.default_value = value
+		return node.outputs[0]
+
+	# Edge mask: where a rounded normal turns away from the real one.
+	bevel = nodes.new("ShaderNodeBevel")
+	bevel.inputs["Radius"].default_value = 0.1
+	bevel.samples = 8
+	geometry = nodes.new("ShaderNodeNewGeometry")
+	dot = nodes.new("ShaderNodeVectorMath")
+	dot.operation = "DOT_PRODUCT"
+	links.new(bevel.outputs["Normal"], dot.inputs[0])
+	links.new(geometry.outputs["Normal"], dot.inputs[1])
+	edge = math_node("MULTIPLY", math_node("SUBTRACT", 1.0, dot.outputs["Value"]), 12.0)
+
+	# Openness: dark in creases and where other parts crowd in.
+	ao = nodes.new("ShaderNodeAmbientOcclusion")
+	ao.inputs["Distance"].default_value = 0.8
+	ao.samples = 16
+	openness = ao.outputs["AO"]
+
+	# Highlight only convex edges (open ones); shadow where it's closed in.
+	lit = math_node("MULTIPLY", math_node("MULTIPLY", edge, openness), highlight)
+	dark = math_node("MULTIPLY", math_node("MULTIPLY", math_node("SUBTRACT", 1.0, openness), 1.6), shadow)
+	color = base if base is not None else tuple(base_input.default_value)
+	color = mix(lit, color, (1.0, 0.97, 0.85, 1.0), "SCREEN")
+	color = mix(dark, color, (0.32, 0.3, 0.5, 1.0), "MULTIPLY")
+
+	image = bpy.data.images.new(f"{obj.name}_Shaded", size, size)
+	texture = nodes.new("ShaderNodeTexImage")
+	texture.image = image
+	nodes.active = texture
+
+	# Bake the painted color straight out through an emission shader.
+	emission = nodes.new("ShaderNodeEmission")
+	links.new(color, emission.inputs["Color"])
+	links.new(emission.outputs[0], output.inputs["Surface"])
+	scene = bpy.context.scene
+	scene.render.engine = "CYCLES"
+	scene.cycles.device = "CPU"
+	scene.cycles.samples = 16
+	bpy.ops.object.select_all(action="DESELECT")
+	obj.select_set(True)
+	bpy.context.view_layer.objects.active = obj
+	bpy.ops.object.bake(type="EMIT", margin=4)
+
+	# Swap the baked image in and drop the painting nodes.
+	links.new(bsdf.outputs[0], output.inputs["Surface"])
+	for node in list(nodes):
+		if node not in (bsdf, output, texture):
+			nodes.remove(node)
+	links.new(texture.outputs["Color"], base_input)
+	image.filepath_raw = str(model_dir() / f"{image.name}.png")
+	image.file_format = "PNG"
+	image.save()
+	image.pack()
+	obj.select_set(False)
+
+
 def _export_objects(collection: bpy.types.Collection) -> list[bpy.types.Object]:
 	return [obj for obj in collection.all_objects if obj.type == "MESH"]
 
