@@ -1,4 +1,5 @@
 import math
+import random
 
 import bmesh
 import bpy
@@ -7,7 +8,8 @@ from mathutils import Vector
 
 # Storage crate: the yard's open-top bin, cartoony. The body flares wider at
 # the top, leans and twists as it rises, its walls bulge out like an
-# overstuffed bag and the top edge wobbles. Rim, feet and decals come later.
+# overstuffed bag and the top edge wobbles. Hazard stripes run round the foot
+# and scrap plates are bolted over the walls.
 # Sits on the ground with its base at the origin.
 
 BOTTOM_WIDTH = 4.2
@@ -36,6 +38,23 @@ BOLT = (0.62, 0.58, 0.52)
 TRIM_SIZE = 0.16
 TRIM_SAMPLES = 12
 TRIM = (0.95, 0.55, 0.18)
+
+# Hazard band painted around the foot: wall heights it spans (0-1), stripes
+# all the way round, their slant, and the sRGB yellow/black.
+HAZARD_LOW = 0.03
+HAZARD_HIGH = 0.2
+HAZARD_STRIPES = 48
+HAZARD_SLANT = 1.9
+HAZARD_YELLOW = (0.98, 0.8, 0.12)
+HAZARD_BLACK = (0.08, 0.08, 0.08)
+
+# Patch plates bolted over the walls: how many, thickness and a dull grey.
+PLATE_SEED = 7
+PLATE_THICKNESS = 0.05
+PLATE = (0.55, 0.57, 0.6)
+
+# Gap kept between the wall and anything stuck onto it, so faces don't fight.
+STANDOFF = 0.015
 
 
 def linear(color):
@@ -115,10 +134,19 @@ def bolt_spots():
 	return [(side, s, v) for side in range(4) for s in (inset_s, 1 - inset_s) for v in (inset_v, 1 - inset_v)]
 
 
-def bolts(tub: bpy.types.Object) -> bpy.types.Object:
+def snap(tub: bpy.types.Object, side: int, s: float, v: float, lift: float = 0.0):
+	# Point on the finished tub's outer wall near (s, v), lifted along its normal.
+	guess, outward = wall_frame(side, s, v)
+	_, point, normal, _ = tub.closest_point_on_mesh(guess + outward * 0.3)
+	return point + normal * lift, normal
+
+
+def bolts(tub: bpy.types.Object, extra) -> bpy.types.Object:
 	# Short 8-sided bolt heads; auto smooth rounds the sides, keeps the caps flat.
+	# extra is (point, normal) pairs for bolts placed by other parts, like plates.
 	mesh = bpy.data.meshes.new("Bolts")
 	bm = bmesh.new()
+	spots = []
 	for side, s, v in bolt_spots():
 		# Snap to the finished tub so each bolt hugs the bulge and lean there.
 		guess, outward = wall_frame(side, s, v)
@@ -127,6 +155,8 @@ def bolts(tub: bpy.types.Object) -> bpy.types.Object:
 			# hitched up, so top bolts stay tucked into the corner under the lip.
 			guess.z += (ring_point(side, s, 1)[2] - HEIGHT) * 1.6
 		_, point, normal, _ = tub.closest_point_on_mesh(guess + outward * 0.3)
+		spots.append((point, normal))
+	for point, normal in spots + list(extra):
 		head = bmesh.ops.create_cone(bm, segments=8, radius1=BOLT_SIZE, radius2=BOLT_SIZE * 0.8, depth=BOLT_SIZE, cap_ends=True)["verts"]
 		bmesh.ops.rotate(bm, cent=(0, 0, 0), matrix=normal.to_track_quat("Z", "Y").to_matrix(), verts=head)
 		bmesh.ops.translate(bm, vec=point + normal * BOLT_SIZE * 0.3, verts=head)
@@ -170,13 +200,143 @@ def trim() -> bpy.types.Object:
 	return obj
 
 
+def hazard_band(tub: bpy.types.Object) -> bpy.types.Object:
+	# A thin skin hugging the foot of the walls, UV'd round the tub so the
+	# stripe texture slants evenly across every side and corner.
+	columns = 16
+	rows = 2
+	mesh = bpy.data.meshes.new("Hazard")
+	bm = bmesh.new()
+	uv_layer = bm.loops.layers.uv.new("UVMap")
+	for side in range(4):
+		grid = []
+		for row in range(rows + 1):
+			band = row / rows
+			v = HAZARD_LOW + (HAZARD_HIGH - HAZARD_LOW) * band
+			grid.append([(bm.verts.new(snap(tub, side, col / columns, v, STANDOFF)[0]), ((side + col / columns) / 4, band)) for col in range(columns + 1)])
+		for low, high in zip(grid, grid[1:]):
+			for col in range(columns):
+				corners = (low[col], low[col + 1], high[col + 1], high[col])
+				face = bm.faces.new([vert for vert, _ in corners])
+				for loop, (_, uv) in zip(face.loops, corners):
+					loop[uv_layer].uv = uv
+	bm.to_mesh(mesh)
+	bm.free()
+	for polygon in mesh.polygons:
+		polygon.use_smooth = True
+	obj = bpy.data.objects.new("Hazard", mesh)
+	bpy.context.scene.collection.objects.link(obj)
+	return obj
+
+
+def hazard_material() -> bpy.types.Material:
+	# Slanted yellow/black stripes with a black edge line top and bottom.
+	width, height = 1024, 32
+	yellow, black = linear(HAZARD_YELLOW), linear(HAZARD_BLACK)
+	pixels = []
+	for y in range(height):
+		band = (y + 0.5) / height
+		for x in range(width):
+			stripe = math.floor((x + 0.5) / width * HAZARD_STRIPES + band * HAZARD_SLANT) % 2
+			edge = band < 0.08 or band > 0.92
+			pixels.extend((*(black if edge or stripe else yellow), 1.0))
+	image = bpy.data.images.new("StorageCrate_Hazard", width, height)
+	image.pixels = pixels
+	image.filepath_raw = str(scrapkit.model_dir() / "StorageCrate_Hazard.png")
+	image.file_format = "PNG"
+	image.save()
+	image.pack()
+	mat = scrapkit.material("Hazard", yellow, roughness=0.6)
+	nodes = mat.node_tree.nodes
+	texture = nodes.new("ShaderNodeTexImage")
+	texture.image = image
+	mat.node_tree.links.new(texture.outputs["Color"], nodes["Principled BSDF"].inputs["Base Color"])
+	return mat
+
+
+def plate_spots():
+	# Where patch plates go: (side, s range). Kept clear of the corner bolts,
+	# the hazard band and the rim.
+	return [(0, (0.22, 0.38)), (0, (0.62, 0.75)), (1, (0.4, 0.6)), (2, (0.25, 0.45)), (2, (0.6, 0.72)), (3, (0.4, 0.6))]
+
+
+def plates(tub: bpy.types.Object):
+	# Odd-sized scrap plates slapped onto the walls: each is a jittered
+	# rectangle, trapezoid or skewed quad bent to the wall, with a bolt near
+	# each corner. Returns the plates and their bolt spots.
+	rng = random.Random(PLATE_SEED)
+	steps = 3
+	mesh = bpy.data.meshes.new("Plates")
+	bm = bmesh.new()
+	plate_bolts = []
+	for side, (s_low, s_high) in plate_spots():
+		s = rng.uniform(s_low, s_high)
+		v = rng.uniform(0.42, 0.62)
+		center, outward = wall_frame(side, s, v)
+		along = (Vector(ring_point(side, min(s + 0.01, 1), v)) - Vector(ring_point(side, s - 0.01, v))).normalized()
+		up = outward.cross(along).normalized()
+		half_w = rng.uniform(0.35, 0.7)
+		half_h = rng.uniform(0.25, 0.45)
+		shape = rng.choice(("rect", "trapezoid", "skew"))
+		taper = rng.uniform(0.5, 0.8) if shape == "trapezoid" else 1.0
+		shear = rng.uniform(-0.3, 0.3) if shape == "skew" else 0.0
+		corners = [
+			(-half_w, -half_h),
+			(half_w, -half_h),
+			(half_w * taper + shear, half_h),
+			(-half_w * taper + shear, half_h),
+		]
+		corners = [(x + rng.uniform(-0.06, 0.06), y + rng.uniform(-0.06, 0.06)) for x, y in corners]
+		tilt = rng.uniform(-0.15, 0.15)
+		corners = [(x * math.cos(tilt) - y * math.sin(tilt), x * math.sin(tilt) + y * math.cos(tilt)) for x, y in corners]
+
+		def at(a: float, b: float):
+			# Bilinear spot inside the plate, snapped onto the wall.
+			(x0, y0), (x1, y1), (x2, y2), (x3, y3) = corners
+			x = (x0 * (1 - a) + x1 * a) * (1 - b) + (x3 * (1 - a) + x2 * a) * b
+			y = (y0 * (1 - a) + y1 * a) * (1 - b) + (y3 * (1 - a) + y2 * a) * b
+			_, point, normal, _ = tub.closest_point_on_mesh(center + along * x + up * y + outward * 0.3)
+			return point, normal
+
+		grid = [[bm.verts.new(at(i / steps, j / steps)[0] + at(i / steps, j / steps)[1] * (STANDOFF + PLATE_THICKNESS)) for i in range(steps + 1)] for j in range(steps + 1)]
+		for j in range(steps):
+			for i in range(steps):
+				bm.faces.new((grid[j][i], grid[j][i + 1], grid[j + 1][i + 1], grid[j + 1][i]))
+		for a, b in ((0.15, 0.18), (0.85, 0.18), (0.85, 0.82), (0.15, 0.82)):
+			point, normal = at(a, b)
+			plate_bolts.append((point + normal * (STANDOFF + PLATE_THICKNESS), normal))
+	bm.to_mesh(mesh)
+	bm.free()
+	obj = bpy.data.objects.new("Plates", mesh)
+	bpy.context.scene.collection.objects.link(obj)
+	bpy.context.view_layer.objects.active = obj
+	# Thickness grows back toward the wall; a small bevel softens the edges.
+	solidify = obj.modifiers.new("Thickness", "SOLIDIFY")
+	solidify.thickness = PLATE_THICKNESS
+	solidify.offset = -1.0
+	bevel = obj.modifiers.new("Soften", "BEVEL")
+	bevel.width = 0.015
+	bevel.segments = 1
+	bevel.limit_method = "ANGLE"
+	for modifier in list(obj.modifiers):
+		bpy.ops.object.modifier_apply(modifier=modifier.name)
+	obj.select_set(True)
+	bpy.ops.object.shade_auto_smooth(angle=math.radians(40))
+	obj.select_set(False)
+	return obj, plate_bolts
+
+
 collection = scrapkit.new_scene()
 green = scrapkit.material("Body", linear(BODY), roughness=0.55)
 steel = scrapkit.material("Bolt", linear(BOLT), metallic=0.6, roughness=0.45)
 orange = scrapkit.material("Trim", linear(TRIM), roughness=0.5)
+grey = scrapkit.material("Plate", linear(PLATE), metallic=0.5, roughness=0.5)
 
 tub = scrapkit.link(body(), collection, green)
-scrapkit.link(bolts(tub), collection, steel)
+scrapkit.link(hazard_band(tub), collection, hazard_material())
+patches, plate_bolts = plates(tub)
+scrapkit.link(patches, collection, grey)
+scrapkit.link(bolts(tub, plate_bolts), collection, steel)
 scrapkit.link(trim(), collection, orange)
 
 scrapkit.finish(collection)
