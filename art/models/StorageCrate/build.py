@@ -590,7 +590,8 @@ bury(spring_part, heap, 1.2, -0.6, 0.3, (math.radians(-12), math.radians(8), 0))
 bury(cone_part, heap, 2.1, 0.5, 0.35, (math.radians(10), math.radians(-35), 0.8))
 
 # Hand-painted edge highlights and crease shadows, baked per part.
-for part, size in ((tub, 1024), (patches, 512), (rim, 512), (studs, 256), *((part, 256) for part in junk)):
+scrapkit.paint_shading(tub, 2048, halftone=0.14)
+for part, size in ((patches, 512), (rim, 512), (studs, 256), *((part, 256) for part in junk)):
 	scrapkit.paint_shading(part, size)
 # The band keeps its round-the-tub UVs, so a long strip fits it best.
 scrapkit.paint_shading(band, 1024, 64)
