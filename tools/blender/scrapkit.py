@@ -111,25 +111,59 @@ def paint_shading(obj: bpy.types.Object, size: int = 512, height: int | None = N
 		return node.outputs[0]
 
 	# Edge mask: where a rounded normal turns away from the real one.
-	bevel = nodes.new("ShaderNodeBevel")
-	bevel.inputs["Radius"].default_value = 0.1
-	bevel.samples = 8
+	radius = 0.1
 	geometry = nodes.new("ShaderNodeNewGeometry")
-	dot = nodes.new("ShaderNodeVectorMath")
-	dot.operation = "DOT_PRODUCT"
-	links.new(bevel.outputs["Normal"], dot.inputs[0])
-	links.new(geometry.outputs["Normal"], dot.inputs[1])
-	# A slow noise swells and thins the stroke along each edge, like a brush.
-	noise = nodes.new("ShaderNodeTexNoise")
-	noise.inputs["Scale"].default_value = 2.5
-	noise.inputs["Detail"].default_value = 1.0
-	stroke = nodes.new("ShaderNodeMapRange")
-	stroke.inputs["From Min"].default_value = 0.3
-	stroke.inputs["From Max"].default_value = 0.7
-	stroke.inputs["To Min"].default_value = 4.0
-	stroke.inputs["To Max"].default_value = 24.0
-	links.new(noise.outputs["Fac"], stroke.inputs["Value"])
-	edge = math_node("MULTIPLY", math_node("SUBTRACT", 1.0, dot.outputs["Value"]), stroke.outputs["Result"])
+	# Several overlapping brush strokes rather than one even line: each has
+	# its own width wobble and breaks off in places, and where strokes
+	# cross the paint builds up brighter.
+	edge = None
+	for seed, (reach, scale, thin, wide, strength) in enumerate(((1.0, 3.0, 6.0, 24.0, 0.8), (2.2, 5.0, 3.0, 14.0, 0.6), (0.5, 9.0, 8.0, 36.0, 0.7))):
+		# Each stroke reaches its own distance off the edge, so they fan out.
+		probe = nodes.new("ShaderNodeBevel")
+		probe.inputs["Radius"].default_value = radius * reach
+		probe.samples = 8
+		facing = nodes.new("ShaderNodeVectorMath")
+		facing.operation = "DOT_PRODUCT"
+		links.new(probe.outputs["Normal"], facing.inputs[0])
+		links.new(geometry.outputs["Normal"], facing.inputs[1])
+		bend = math_node("SUBTRACT", 1.0, facing.outputs["Value"])
+		width = nodes.new("ShaderNodeTexNoise")
+		width.noise_dimensions = "4D"
+		width.inputs["W"].default_value = seed * 3.1
+		width.inputs["Scale"].default_value = scale
+		width.inputs["Detail"].default_value = 1.0
+		gain = nodes.new("ShaderNodeMapRange")
+		gain.inputs["From Min"].default_value = 0.3
+		gain.inputs["From Max"].default_value = 0.7
+		gain.inputs["To Min"].default_value = thin
+		gain.inputs["To Max"].default_value = wide
+		links.new(width.outputs["Fac"], gain.inputs["Value"])
+		# Where this noise dips low the stroke lifts off, leaving a gap.
+		lift = nodes.new("ShaderNodeTexNoise")
+		lift.noise_dimensions = "4D"
+		lift.inputs["W"].default_value = seed * 5.7 + 1.3
+		lift.inputs["Scale"].default_value = scale * 0.8
+		lift.inputs["Detail"].default_value = 0.0
+		painted = nodes.new("ShaderNodeMapRange")
+		painted.inputs["From Min"].default_value = 0.42
+		painted.inputs["From Max"].default_value = 0.5
+		links.new(lift.outputs["Fac"], painted.inputs["Value"])
+		stroke = math_node("MULTIPLY", math_node("MULTIPLY", bend, gain.outputs["Result"]), painted.outputs["Result"])
+		# Pen pressure: the hand presses and eases off along the stroke, so its
+		# brightness swells and fades rather than staying even.
+		push = nodes.new("ShaderNodeTexNoise")
+		push.noise_dimensions = "4D"
+		push.inputs["W"].default_value = seed * 2.3 + 7.9
+		push.inputs["Scale"].default_value = scale * 0.5
+		push.inputs["Detail"].default_value = 0.0
+		pressure = nodes.new("ShaderNodeMapRange")
+		pressure.inputs["From Min"].default_value = 0.35
+		pressure.inputs["From Max"].default_value = 0.65
+		pressure.inputs["To Min"].default_value = 0.35 * strength
+		pressure.inputs["To Max"].default_value = strength
+		links.new(push.outputs["Fac"], pressure.inputs["Value"])
+		stroke = math_node("MULTIPLY", stroke, pressure.outputs["Result"])
+		edge = stroke if edge is None else math_node("ADD", edge, stroke)
 
 	# Openness: dark in creases and where other parts crowd in.
 	ao = nodes.new("ShaderNodeAmbientOcclusion")
