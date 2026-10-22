@@ -7,7 +7,6 @@ import scrapkit
 # Starter weapon: a wooden baseball bat, built along +Z with the knob at the
 # origin so the tool's grip sits at the handle.
 SEGMENTS = 24
-GRIP_LENGTH = 1.1
 
 # Bat profile as (radius, height) pairs from the knob up to the barrel cap.
 PROFILE = [
@@ -51,13 +50,8 @@ def lathe(name: str, profile: list[tuple[float, float]]) -> bpy.types.Object:
 
 collection = scrapkit.new_scene()
 wood = scrapkit.material("Wood", (0.62, 0.42, 0.22), roughness=0.55)
-tape = scrapkit.material("Tape", (0.08, 0.08, 0.08), roughness=0.9)
 
 scrapkit.link(lathe("StarterWeapon", PROFILE), collection, wood)
 
-# Grip: black tape wrapped around the handle above the knob.
-bpy.ops.mesh.primitive_cylinder_add(vertices=SEGMENTS, radius=0.115, depth=GRIP_LENGTH, location=(0, 0, 0.18 + GRIP_LENGTH / 2))
-grip = scrapkit.link(bpy.context.object, collection, tape)
-grip.name = "Grip"
 
 scrapkit.finish(collection)
