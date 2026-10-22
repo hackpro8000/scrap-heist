@@ -20,6 +20,11 @@ RUST = (0.55, 0.28, 0.12)
 SCRAP_COLORS = [(0.7, 0.7, 0.68), (0.5, 0.52, 0.55), (0.75, 0.55, 0.2), (0.6, 0.3, 0.15)]
 
 
+def linear(color):
+	# Palette is picked in sRGB; Blender's base color wants linear.
+	return tuple(c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in color)
+
+
 def box(name: str, size, location, rotation=(0.0, 0.0, 0.0)) -> bpy.types.Object:
 	bpy.ops.mesh.primitive_cube_add(size=1.0, location=location, rotation=rotation)
 	obj = bpy.context.object
@@ -30,10 +35,10 @@ def box(name: str, size, location, rotation=(0.0, 0.0, 0.0)) -> bpy.types.Object
 
 
 collection = scrapkit.new_scene()
-panel = scrapkit.material("Panel", PANEL, metallic=0.3)
-panel_dark = scrapkit.material("PanelDark", PANEL_DARK)
-frame = scrapkit.material("Frame", FRAME, metallic=0.5, roughness=0.5)
-rust = scrapkit.material("Rust", RUST, roughness=0.9)
+panel = scrapkit.material("Panel", linear(PANEL), metallic=0.3)
+panel_dark = scrapkit.material("PanelDark", linear(PANEL_DARK))
+frame = scrapkit.material("Frame", linear(FRAME), metallic=0.5, roughness=0.5)
+rust = scrapkit.material("Rust", linear(RUST), roughness=0.9)
 
 # Walls and floor, with the dark inside face so the bin reads as hollow.
 scrapkit.link(box("Floor", (WIDTH, DEPTH, WALL), (0, 0, WALL / 2)), collection, panel_dark)
@@ -63,6 +68,17 @@ for index in range(14):
 	location = (rng.uniform(-1.6, 1.6), rng.uniform(-0.9, 0.9), HEIGHT - 0.3 + rng.uniform(0, 0.5))
 	rotation = tuple(rng.uniform(-0.6, 0.6) for _ in range(2)) + (rng.uniform(0, math.pi),)
 	color = SCRAP_COLORS[index % len(SCRAP_COLORS)]
-	scrapkit.link(box("Scrap", size, location, rotation), collection, scrapkit.material(f"Scrap{index % len(SCRAP_COLORS)}", color, metallic=0.6, roughness=0.5))
+	scrapkit.link(box("Scrap", size, location, rotation), collection, scrapkit.material(f"Scrap{index % len(SCRAP_COLORS)}", linear(color), metallic=0.6, roughness=0.5))
+
+# A big gear leaning on the heap, the yard's "scrap" read from a distance.
+bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=0.55, depth=0.16, location=(0.6, 0.1, HEIGHT + 0.45), rotation=(1.2, 0.3, 0.4))
+gear = bpy.context.object
+gear.name = "Gear"
+scrapkit.link(gear, collection, frame)
+for tooth in range(10):
+	angle = tooth * 2 * math.pi / 10
+	cog = box("GearTooth", (0.22, 0.14, 0.16), (0.68 * math.cos(angle), 0.68 * math.sin(angle), 0), (0, 0, angle))
+	cog.parent = gear
+	scrapkit.link(cog, collection, frame)
 
 scrapkit.finish(collection)
