@@ -15,13 +15,14 @@ BLENDER_ARCHIVE="blender-${BLENDER_VERSION}-linux-x64.tar.xz"
 BLENDER_URL="https://download.blender.org/release/Blender${BLENDER_SERIES}/${BLENDER_ARCHIVE}"
 
 # Libraries Blender needs, plus a virtual desktop (Xvfb + Openbox) so the
-# Blender window can run and be screenshotted (see scripts/desktop.sh).
+# Blender window can run, be screenshotted and be screen-recorded with
+# ffmpeg (see scripts/desktop.sh).
 apt-get update -qq
 DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
 	ca-certificates curl xz-utils \
 	libgl1 libegl1 libglx-mesa0 libx11-6 libxi6 libxxf86vm1 libxfixes3 \
 	libxrender1 libxkbcommon0 libsm6 libice6 libwayland-client0 libdbus-1-3 \
-	xvfb x11-utils xdotool imagemagick openbox mesa-utils \
+	xvfb x11-utils xdotool imagemagick openbox mesa-utils ffmpeg \
 	>/dev/null
 
 if [ ! -x "${BLENDER_DIR}/blender" ]; then
