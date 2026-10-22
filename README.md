@@ -70,4 +70,5 @@ stylua --check src
 
 `scripts/cloud-setup.sh` sets up a Claude Code cloud environment. Paste it
 into the environment's **Setup script** setting. It installs Blender 5.2.2
-(checksum-verified) to `/opt/blender-5.2.2` and puts `blender` on the PATH.
+(checksum-verified) to `/opt/blender-5.2.2`, puts `blender` on the PATH, and
+starts a virtual 1920 × 1080 desktop on `:99` for running Blender's window.

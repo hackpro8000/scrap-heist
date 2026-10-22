@@ -41,3 +41,18 @@ The export scale has only been checked inside Blender (the FBX round-trips at
 2 × 2 × 2). Before the first real model, import `ReferenceCube.fbx` and check
 it matches a default 2 × 2 × 2 Part. If it doesn't, change `FBX_GLOBAL_SCALE`
 in `scrapkit.py` and rebuild.
+
+## Virtual desktop
+
+Cloud sessions have a virtual 1920 × 1080 desktop on display `:99`, started
+by the setup script (or `scripts/desktop.sh start`). Use it to open Blender's
+window and take screenshots:
+
+```sh
+scripts/desktop.sh start
+DISPLAY=:99 blender --factory-startup art/models/<Name>/<Name>.blend &
+scripts/desktop.sh screenshot shot.png
+```
+
+Rendering is software OpenGL (Mesa llvmpipe), so the viewport is slower than
+on a real GPU. On first launch, press Escape to dismiss the splash screen.
