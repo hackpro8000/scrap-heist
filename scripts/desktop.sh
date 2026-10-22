@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Virtual 1920x1080 desktop for running GUI apps (Blender) in the cloud.
+# Virtual 1920x1080 desktop for running GUI apps in the cloud.
 #
 #   scripts/desktop.sh start            start the desktop on :99 (no-op if running)
 #   scripts/desktop.sh screenshot FILE  save a PNG of the whole screen
