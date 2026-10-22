@@ -261,9 +261,8 @@ def _render_preview(collection: bpy.types.Collection, path: Path) -> None:
 	world.node_tree.nodes["Background"].inputs["Color"].default_value = (0.35, 0.37, 0.4, 1)
 	scene.world = world
 
-	scene.render.engine = "CYCLES"
-	scene.cycles.device = "CPU"
-	scene.cycles.samples = 32
+	scene.render.engine = "BLENDER_EEVEE"
+	scene.eevee.taa_render_samples = 32
 	scene.render.resolution_x = 768
 	scene.render.resolution_y = 768
 	scene.render.filepath = str(path)
