@@ -175,11 +175,14 @@ for tier = 1, 3 do
 		box(extras, cx + 1.6 * scale, 0, 0.6, 0.9, 1, 0.9)
 		cylinder(extras, cx + 1.8 * scale, 0.3, 1.5, 0.1, 1.2, "z")
 	end
+	part(`{group}_Extras`, extras, if tier == 1 then FRAME else MOTOR, group, SMALL_TEXTURE)
+
 	if tier == 3 then
 		-- Magnet crane: mast, boom, hanging magnet over the hopper.
-		box(extras, cx - 1.8 * scale, 0, 0, 0.3, 0.3, 4.6)
-		box(extras, cx - 0.8 * scale, 0, 4.4, 2.8, 0.25, 0.25)
-		cylinder(extras, cx + 0.3, 0, 3.4, 0.45, 0.25, "z")
+		local crane = Mesh.new()
+		box(crane, cx - 1.8 * scale, 0, 0, 0.3, 0.3, 4.6)
+		box(crane, cx - 0.8 * scale, 0, 4.4, 2.8, 0.25, 0.25)
+		cylinder(crane, cx + 0.3, 0, 3.4, 0.45, 0.25, "z")
+		part(`{group}_Crane`, crane, MAGNET, group, SMALL_TEXTURE)
 	end
-	part(`{group}_Extras`, extras, if tier == 1 then FRAME else if tier == 3 then MAGNET else MOTOR, group, SMALL_TEXTURE)
 end
