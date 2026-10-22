@@ -196,7 +196,10 @@ for tier = 1, 3 do
 	local frame = Mesh.new()
 	-- Legs and shredder housing.
 	for _, corner in { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } } do
-		box(frame, cx + corner[1] * 0.9 * scale, corner[2] * 0.7 * scale, 0, 0.2, 0.2, 1.2 * scale)
+		local legX, legY = cx + corner[1] * 0.9 * scale, corner[2] * 0.7 * scale
+		box(frame, legX, legY, 0, 0.2, 0.2, 1.2 * scale)
+		-- Foot plate bolted to the pad.
+		box(frame, legX, legY, 0, 0.4, 0.4, 0.05)
 	end
 	box(frame, cx, 0, 1.2 * scale, 2.2 * scale, 1.8 * scale, 0.9 * scale)
 	part(`{group}_Frame`, frame, FRAME, group, LARGE_TEXTURE, frameColor(cx, scale))
