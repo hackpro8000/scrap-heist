@@ -7,17 +7,13 @@
 
 set -euo pipefail
 
-# Build tools for the modelkit engine, ffmpeg for MP4 turntables, and a
-# virtual desktop (Xvfb + Openbox) for GUI apps (see scripts/desktop.sh).
+# ffmpeg for MP4 turntables, and a virtual desktop (Xvfb + Openbox) for GUI
+# apps (see scripts/desktop.sh).
 apt-get update -qq
 DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
-	ca-certificates curl build-essential \
+	ca-certificates curl \
 	xvfb x11-utils xdotool imagemagick openbox mesa-utils ffmpeg \
 	>/dev/null
-
-if ! command -v cargo >/dev/null 2>&1 && [ ! -x "${HOME}/.cargo/bin/cargo" ]; then
-	curl -sSLf https://sh.rustup.rs | sh -s -- -y -q --profile minimal
-fi
 
 # Start the virtual 1920x1080 desktop on :99. Inlined rather than calling
 # scripts/desktop.sh, since the repo may not be cloned yet when this runs.
