@@ -1,10 +1,9 @@
 import math
-import random
 
 import bmesh
 import bpy
 import scrapkit
-from mathutils import Matrix, Vector
+from mathutils import Vector
 
 # Storage crate: the yard's open-top bin, cartoony. The body flares wider at
 # the top, leans and twists as it rises, its walls bulge out like an
@@ -105,41 +104,38 @@ def wall_frame(side: int, s: float, v: float):
 
 
 def bolt_spots():
-	# Bolts run up each corner seam, along the middle seam of each wall and
-	# under the lip. Spacing jitters, a few are missing and some are oversized.
-	rng = random.Random(7)
+	# One bolt tucked into each corner of every wall panel.
+	inset_s = 0.18 / COLUMNS
+	inset_v = 0.2 / ROWS
 	spots = []
 	for side in range(4):
-		lines = [(0.03, v) for v in (0.15, 0.4, 0.62, 0.85)]
-		lines += [(0.5, v) for v in (0.2, 0.5, 0.8)]
-		lines += [(s, 0.9) for s in (0.18, 0.34, 0.66, 0.82)]
-		for s, v in lines:
-			if rng.random() < 0.12:
-				continue
-			s = min(max(s + rng.uniform(-0.03, 0.03), 0.02), 0.98)
-			v += rng.uniform(-0.04, 0.04)
-			size = BOLT_SIZE * (1.8 if rng.random() < 0.15 else rng.uniform(0.8, 1.2))
-			spots.append((side, s, v, size, rng.uniform(-0.35, 0.35), rng.uniform(0, math.pi)))
+		for col in range(COLUMNS):
+			for row in range(ROWS):
+				s0, s1 = col / COLUMNS, (col + 1) / COLUMNS
+				v0, v1 = row / ROWS, (row + 1) / ROWS
+				for s in (s0 + inset_s, s1 - inset_s):
+					for v in (v0 + inset_v, v1 - inset_v):
+						spots.append((side, s, v))
 	return spots
 
 
 def bolts() -> bpy.types.Object:
-	# Squashed 6-sided domes, tilted at odd angles; one mesh for all of them.
+	# Short 8-sided bolt heads; auto smooth rounds the sides, keeps the caps flat.
 	mesh = bpy.data.meshes.new("Bolts")
 	bm = bmesh.new()
-	for side, s, v, size, tilt, spin in bolt_spots():
+	for side, s, v in bolt_spots():
 		point, normal = wall_frame(side, s, v)
-		head = bmesh.ops.create_uvsphere(bm, u_segments=6, v_segments=3, radius=1.0)["verts"]
-		bmesh.ops.scale(bm, vec=(size, size, size * 0.55), verts=head)
-		bmesh.ops.rotate(bm, cent=(0, 0, 0), matrix=Matrix.Rotation(spin, 3, "Z") @ Matrix.Rotation(tilt, 3, "X"), verts=head)
+		head = bmesh.ops.create_cone(bm, segments=8, radius1=BOLT_SIZE, radius2=BOLT_SIZE * 0.8, depth=BOLT_SIZE, cap_ends=True)["verts"]
 		bmesh.ops.rotate(bm, cent=(0, 0, 0), matrix=normal.to_track_quat("Z", "Y").to_matrix(), verts=head)
 		bmesh.ops.translate(bm, vec=point, verts=head)
 	bm.to_mesh(mesh)
 	bm.free()
-	for polygon in mesh.polygons:
-		polygon.use_smooth = True
 	obj = bpy.data.objects.new("Bolts", mesh)
 	bpy.context.scene.collection.objects.link(obj)
+	bpy.context.view_layer.objects.active = obj
+	obj.select_set(True)
+	bpy.ops.object.shade_auto_smooth(angle=math.radians(40))
+	obj.select_set(False)
 	return obj
 
 
