@@ -192,7 +192,7 @@ def paint_shading(obj: bpy.types.Object, size: int = 512, height: int | None = N
 		links.new(band, noise.inputs["W"])
 		jitter = math_node("MULTIPLY", math_node("SUBTRACT", noise.outputs["Value"], 0.5), 0.6)
 		darkness = math_node("SUBTRACT", 1.0, math_node("DIVIDE", math_node("ADD", band, jitter), bands))
-		color = mix(math_node("MULTIPLY", darkness, 0.55), color, (0.25, 0.22, 0.4, 1.0), "MULTIPLY")
+		color = mix(math_node("MULTIPLY", darkness, 0.9), color, (0.25, 0.22, 0.4, 1.0), "MULTIPLY")
 
 	image = bpy.data.images.new(f"{obj.name}_Shaded", size, height or size)
 	texture = nodes.new("ShaderNodeTexImage")
