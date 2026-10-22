@@ -69,6 +69,5 @@ stylua --check src
 ## Cloud environment
 
 `scripts/cloud-setup.sh` sets up a Claude Code cloud environment. Paste it
-into the environment's **Setup script** setting. It installs the Rust
-toolchain for the `modelkit` model engine, ffmpeg, and starts a virtual
-1920 × 1080 desktop on `:99` for GUI apps.
+into the environment's **Setup script** setting. It installs ffmpeg and
+starts a virtual 1920 × 1080 desktop on `:99` for GUI apps.
