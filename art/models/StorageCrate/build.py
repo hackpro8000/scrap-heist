@@ -32,6 +32,11 @@ BODY = (0.44, 0.68, 0.35)
 BOLT_SIZE = 0.102
 BOLT = (0.62, 0.58, 0.52)
 
+# Trim capping the opening: tube radius, path samples per side, cartoon orange in sRGB.
+TRIM_SIZE = 0.16
+TRIM_SAMPLES = 12
+TRIM = (0.95, 0.55, 0.18)
+
 
 def linear(color):
 	# Palette is picked in sRGB; Blender's base color wants linear.
@@ -136,11 +141,42 @@ def bolts(tub: bpy.types.Object) -> bpy.types.Object:
 	return obj
 
 
+def trim() -> bpy.types.Object:
+	# A round tube riding the wobbly top edge, centered over the wall's thickness.
+	curve = bpy.data.curves.new("Trim", "CURVE")
+	curve.dimensions = "3D"
+	curve.bevel_depth = TRIM_SIZE
+	curve.bevel_resolution = 1
+	spline = curve.splines.new("POLY")
+	spline.use_cyclic_u = True
+	path = []
+	for side in range(4):
+		for i in range(TRIM_SAMPLES):
+			s = i / TRIM_SAMPLES
+			_, outward = wall_frame(side, max(s, 0.02), 1)
+			path.append(Vector(ring_point(side, s, 1)) - outward * WALL / 2)
+	spline.points.add(len(path) - 1)
+	for point, position in zip(spline.points, path):
+		point.co = (*position, 1)
+	obj = bpy.data.objects.new("Trim", curve)
+	bpy.context.scene.collection.objects.link(obj)
+	bpy.context.view_layer.objects.active = obj
+	obj.select_set(True)
+	bpy.ops.object.convert(target="MESH")
+	obj = bpy.context.view_layer.objects.active
+	for polygon in obj.data.polygons:
+		polygon.use_smooth = True
+	obj.select_set(False)
+	return obj
+
+
 collection = scrapkit.new_scene()
 green = scrapkit.material("Body", linear(BODY), roughness=0.55)
 steel = scrapkit.material("Bolt", linear(BOLT), metallic=0.6, roughness=0.45)
+orange = scrapkit.material("Trim", linear(TRIM), roughness=0.5)
 
 tub = scrapkit.link(body(), collection, green)
 scrapkit.link(bolts(tub), collection, steel)
+scrapkit.link(trim(), collection, orange)
 
 scrapkit.finish(collection)
