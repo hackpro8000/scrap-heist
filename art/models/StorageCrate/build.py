@@ -21,8 +21,8 @@ TOP_WOBBLE = 0.12
 WALL = 0.22
 
 # Wall grid: columns per side and rows from floor to top edge.
-COLUMNS = 8
-ROWS = 6
+COLUMNS = 4
+ROWS = 3
 
 # Bright cartoon green, in sRGB.
 BODY = (0.44, 0.68, 0.35)
@@ -78,9 +78,12 @@ def body() -> bpy.types.Object:
 	solidify = obj.modifiers.new("Wall", "SOLIDIFY")
 	solidify.thickness = WALL
 	solidify.offset = -1.0
-	# Subdivision rounds the corners and lip into soft cartoon curves.
-	soften = obj.modifiers.new("Soften", "SUBSURF")
-	soften.levels = 2
+	# A small bevel rounds the corners and lip; only those edges get extra
+	# loops. Smooth shading hides the few facets on the bulging walls.
+	bevel = obj.modifiers.new("Soften", "BEVEL")
+	bevel.width = 0.08
+	bevel.segments = 2
+	bevel.limit_method = "ANGLE"
 	for modifier in list(obj.modifiers):
 		bpy.ops.object.modifier_apply(modifier=modifier.name)
 	return obj
