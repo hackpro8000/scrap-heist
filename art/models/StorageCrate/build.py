@@ -561,7 +561,7 @@ def cone_material() -> bpy.types.Material:
 # Junk in the heap, in the order it shows up as the crate fills: kind,
 # where on the heap (x/y as -1 to 1 across the fill), how far sunk, tilt in
 # degrees and scale. A part with "on" set to an earlier part's index is
-# stacked on top of it instead, offset by x/y in metres.
+# dropped onto it instead, offset by x/y in metres, and settled by physics.
 JUNK = (
 	{"kind": "tire", "at": (-0.45, -0.2), "sink": 0.12, "tilt": (25, -10, 23)},
 	{"kind": "cog", "at": (0.2, 0.45), "sink": 0.05, "tilt": (70, 15, 17)},
@@ -582,12 +582,44 @@ def top_of(obj: bpy.types.Object) -> float:
 	return max((obj.matrix_world @ Vector(corner)).z for corner in obj.bound_box)
 
 
+DROP_HEIGHT = 0.3
+SETTLE_FRAMES = 60
+
+
+def settle(falling, resting) -> None:
+	# Drop the falling parts onto the resting ones with a rigid body sim, then
+	# keep where they land and strip the physics off again.
+	scene = bpy.context.scene
+	bpy.ops.rigidbody.world_add()
+	scene.rigidbody_world.point_cache.frame_end = SETTLE_FRAMES
+	bodies = [(obj, "PASSIVE", "MESH") for obj in resting] + [(obj, "ACTIVE", "CONVEX_HULL") for obj in falling]
+	for obj, kind, shape in bodies:
+		bpy.context.view_layer.objects.active = obj
+		bpy.ops.rigidbody.object_add(type=kind)
+		obj.rigid_body.collision_shape = shape
+		obj.rigid_body.friction = 0.9
+		obj.rigid_body.restitution = 0.0
+		obj.rigid_body.linear_damping = 0.4
+		obj.rigid_body.angular_damping = 0.6
+	for frame in range(1, SETTLE_FRAMES + 1):
+		scene.frame_set(frame)
+	landed = {obj: obj.matrix_world.copy() for obj in falling}
+	for obj, _, _ in bodies:
+		bpy.context.view_layer.objects.active = obj
+		bpy.ops.rigidbody.object_remove()
+	bpy.ops.rigidbody.world_remove()
+	scene.frame_set(1)
+	for obj, matrix in landed.items():
+		obj.matrix_world = matrix
+
+
 def place_junk(collection, prototypes, heap, level: float, count: int, prefix: str) -> None:
 	# Copies the first count JUNK parts onto heap, sharing the prototypes' meshes.
 	edge, middle = fill_edge(level)
 	half_x = max(abs(p.x - middle.x) for p in edge) * 0.75
 	half_y = max(abs(p.y - middle.y) for p in edge) * 0.75
 	placed = []
+	dropped = []
 	for index, spec in enumerate(JUNK[:count]):
 		part = prototypes[spec["kind"]].copy()
 		part.name = f"{prefix}_{spec['kind'].capitalize()}{index + 1}"
@@ -598,15 +630,18 @@ def place_junk(collection, prototypes, heap, level: float, count: int, prefix: s
 			base = placed[spec["on"]]
 			x, y = base.location.x + spec["at"][0], base.location.y + spec["at"][1]
 			part.location = (x, y, 0)
-			# Rest the part's bottom on the base's top.
+			# Hold the part's bottom just above the base's top, ready to drop.
 			bpy.context.view_layer.update()
 			bottom = min((part.matrix_world @ Vector(corner)).z for corner in part.bound_box)
-			part.location.z = top_of(base) - bottom - spec["sink"]
+			part.location.z = top_of(base) - bottom + DROP_HEIGHT
+			dropped.append(part)
 		else:
 			x, y = middle.x + spec["at"][0] * half_x, middle.y + spec["at"][1] * half_y
 			_, hit, _, _ = heap.ray_cast((x, y, HEIGHT * 2), (0, 0, -1))
 			part.location = (x, y, hit.z - spec["sink"])
 		placed.append(part)
+	if dropped:
+		settle(dropped, [heap, *(part for part in placed if part not in dropped)])
 
 
 collection = scrapkit.new_scene()
