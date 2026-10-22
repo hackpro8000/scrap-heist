@@ -136,5 +136,8 @@ def finish(collection: bpy.types.Collection) -> None:
 		bake_space_transform=True,
 		mesh_smooth_type="FACE",
 		add_leaf_bones=False,
+		# Embed textures so Studio picks them up with the mesh.
+		path_mode="COPY",
+		embed_textures=True,
 	)
 	print(f"built {name}")
