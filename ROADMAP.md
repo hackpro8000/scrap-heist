@@ -196,7 +196,7 @@ runs; the agent writes the steps into `docs/testing/phase-N.md`.
 
 ### Phase 0: Audit and setup
 
-- [ ] Create `default.project.json` (Rojo tree mapping `src/shared`,
+- [x] Create `default.project.json` (Rojo tree mapping `src/shared`,
       `src/server`, `src/client`) and `.gitignore` (ignores `.rbxl`/`.rbxlx`,
       `Packages/` and other build output).
   - *Done when:* `rojo build -o test.rbxl` succeeds on the empty tree.
@@ -204,10 +204,14 @@ runs; the agent writes the steps into `docs/testing/phase-N.md`.
       ProfileStore via Wally and add `Packages` to the Rojo tree.
   - *Done when:* `rojo build -o test.rbxl` succeeds and `selene src` plus
     `stylua --check src` pass.
+  - *Note:* Rojo build and StyLua pass. Selene still needs a local run:
+    it couldn't download Roblox's API data in the cloud sandbox.
 - [ ] Create server and client entry scripts with the `init()`/`start()`
       boot order, plus `Util/` helpers (Signal, Trove, rate limiter).
   - *Done when:* Studio test: play solo, output shows each service booting in
     order with no errors.
+  - *Note:* boot lives in `src/shared/Util/Boot.luau`. No services exist
+    yet, so the test checks for `booted 0 module(s)` (`docs/testing/phase-0.md`).
 - [ ] Write `README.md` (install tools, `rojo serve`, connect in Studio).
   - *Done when:* Tristen can follow it from a fresh clone.
 
