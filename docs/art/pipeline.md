@@ -56,3 +56,12 @@ scripts/desktop.sh screenshot shot.png
 
 Rendering is software OpenGL (Mesa llvmpipe), so the viewport is slower than
 on a real GPU. On first launch, press Escape to dismiss the splash screen.
+
+## Saving changes
+Every Blender change ends with the `.blend` saved to the repo:
+
+1. Save `art/models/<Name>/<Name>.blend`. Builds do this automatically via `scrapkit.finish()`. For GUI edits, press Ctrl+S, or run `bpy.ops.wm.save_mainfile()`.
+2. Rebuild the `.fbx` and `preview.png` if the export meshes changed (`scripts/build-model.sh <Name>`).
+3. Commit the `.blend` along with its outputs (`phase N: <model> - <change>`) and push.
+
+Never leave an edit only in a running Blender session.
