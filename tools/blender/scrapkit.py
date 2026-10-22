@@ -63,14 +63,14 @@ def link(obj: bpy.types.Object, collection: bpy.types.Collection, mat: bpy.types
 	return obj
 
 
-def paint_shading(obj: bpy.types.Object, size: int = 512, height: int | None = None, highlight: float = 0.7, shadow: float = 0.75, halftone: float = 0.0) -> None:
+def paint_shading(obj: bpy.types.Object, size: int = 512, height: int | None = None, highlight: float = 0.7, shadow: float = 0.75, bands: int = 0) -> None:
 	"""Bake hand-painted, light-independent shading into obj's base color.
 
 	Edges that stick out get a pale highlight, creases and contact spots get a
 	cool shadow, judged from shape alone (bevel normals and ambient occlusion),
-	so it reads the same under any light. A halftone above zero also prints
-	comic-book dots that far apart, big at the bottom and shrinking to
-	nothing at the top. The result is a texture saved next
+	so it reads the same under any light. Bands above zero also darken it
+	in that many flat steps from bottom to top, each step nudged by its own
+	bit of noise. The result is a texture saved next
 	to the model, which replaces the material's base color.
 	"""
 	mat = obj.data.materials[0]
@@ -179,26 +179,20 @@ def paint_shading(obj: bpy.types.Object, size: int = 512, height: int | None = N
 	color = base if base is not None else tuple(base_input.default_value)
 	color = mix(lit, color, (1.0, 0.97, 0.85, 1.0), "SCREEN")
 	color = mix(dark, color, (0.32, 0.3, 0.5, 1.0), "MULTIPLY")
-	if halftone > 0.0:
-		# A grid of dots in object space, swelling toward the bottom.
+	if bands > 0:
+		# Height through the bounding box, 0 at the bottom to 1 at the top,
+		# snapped into flat bands.
 		coords = nodes.new("ShaderNodeTexCoord")
-		cell = nodes.new("ShaderNodeVectorMath")
-		cell.operation = "SCALE"
-		cell.inputs["Scale"].default_value = 1.0 / halftone
-		links.new(coords.outputs["Object"], cell.inputs[0])
-		offset = nodes.new("ShaderNodeVectorMath")
-		offset.operation = "FRACTION"
-		links.new(cell.outputs[0], offset.inputs[0])
-		center = nodes.new("ShaderNodeVectorMath")
-		center.operation = "DISTANCE"
-		links.new(offset.outputs[0], center.inputs[0])
-		center.inputs[1].default_value = (0.5, 0.5, 0.5)
-		# Height through the bounding box, 0 at the bottom to 1 at the top.
 		rise = nodes.new("ShaderNodeSeparateXYZ")
 		links.new(coords.outputs["Generated"], rise.inputs[0])
-		dot_radius = math_node("MULTIPLY", math_node("SUBTRACT", 1.0, rise.outputs["Z"]), 0.6)
-		dots = math_node("LESS_THAN", center.outputs["Value"], dot_radius)
-		color = mix(math_node("MULTIPLY", dots, 0.6), color, (0.25, 0.22, 0.4, 1.0), "MULTIPLY")
+		band = math_node("FLOOR", math_node("MULTIPLY", rise.outputs["Z"], bands))
+		# Each band gets its own random nudge so the steps aren't even.
+		noise = nodes.new("ShaderNodeTexWhiteNoise")
+		noise.noise_dimensions = "1D"
+		links.new(band, noise.inputs["W"])
+		jitter = math_node("MULTIPLY", math_node("SUBTRACT", noise.outputs["Value"], 0.5), 0.6)
+		darkness = math_node("SUBTRACT", 1.0, math_node("DIVIDE", math_node("ADD", band, jitter), bands))
+		color = mix(math_node("MULTIPLY", darkness, 0.55), color, (0.25, 0.22, 0.4, 1.0), "MULTIPLY")
 
 	image = bpy.data.images.new(f"{obj.name}_Shaded", size, height or size)
 	texture = nodes.new("ShaderNodeTexImage")
