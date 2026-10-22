@@ -1,0 +1,133 @@
+// GLB export: one binary glTF holding every part with its texture embedded.
+// One unit is one stud; in Studio's 3D Importer, set the file's scale unit to
+// Stud. glTF is Y up, so our Z-up positions turn (x, y, z) into (x, z, -y).
+// Parts sharing a group sit under one parent node, so the game can show one
+// group (like a fill level) at a time.
+
+use crate::Part;
+
+fn to_y_up(p: [f64; 3]) -> [f32; 3] {
+	[p[0] as f32, p[2] as f32, -p[1] as f32]
+}
+
+fn pad(bytes: &mut Vec<u8>, fill: u8) {
+	while bytes.len() % 4 != 0 {
+		bytes.push(fill);
+	}
+}
+
+pub fn write(parts: &[Part]) -> Vec<u8> {
+	let mut bin: Vec<u8> = Vec::new();
+	let mut views = Vec::new();
+	let mut accessors = Vec::new();
+	let mut meshes = Vec::new();
+	let mut materials = Vec::new();
+	let mut images = Vec::new();
+	let mut textures = Vec::new();
+	let mut nodes: Vec<String> = Vec::new();
+	let mut roots: Vec<usize> = Vec::new();
+	let mut groups: Vec<(String, Vec<usize>)> = Vec::new();
+
+	let mut push_view = |bin: &mut Vec<u8>, data: &[u8], target: Option<u32>| -> usize {
+		let offset = bin.len();
+		bin.extend_from_slice(data);
+		pad(bin, 0);
+		let target = target.map_or(String::new(), |t| format!(",\"target\":{t}"));
+		views.push(format!("{{\"buffer\":0,\"byteOffset\":{offset},\"byteLength\":{}{target}}}", data.len()));
+		views.len() - 1
+	};
+
+	for (index, part) in parts.iter().enumerate() {
+		let mesh = part.mesh.borrow();
+		let (corners, indices) = mesh.indexed();
+		let mut positions = Vec::new();
+		let mut normals = Vec::new();
+		let mut uvs = Vec::new();
+		let mut low = [f32::MAX; 3];
+		let mut high = [f32::MIN; 3];
+		for corner in &corners {
+			let p = to_y_up(corner.position);
+			for axis in 0..3 {
+				low[axis] = low[axis].min(p[axis]);
+				high[axis] = high[axis].max(p[axis]);
+			}
+			positions.extend(p.iter().flat_map(|x| x.to_le_bytes()));
+			normals.extend(to_y_up(corner.normal).iter().flat_map(|x| x.to_le_bytes()));
+			// glTF's V runs down from the top of the image.
+			let uv = [corner.uv[0] as f32, 1.0 - corner.uv[1] as f32];
+			uvs.extend(uv.iter().flat_map(|x| x.to_le_bytes()));
+		}
+		let index_bytes: Vec<u8> = indices.iter().flat_map(|i| i.to_le_bytes()).collect();
+		let count = corners.len();
+		let base = accessors.len();
+		let view = push_view(&mut bin, &positions, Some(34962));
+		accessors.push(format!(
+			"{{\"bufferView\":{view},\"componentType\":5126,\"count\":{count},\"type\":\"VEC3\",\"min\":[{},{},{}],\"max\":[{},{},{}]}}",
+			low[0], low[1], low[2], high[0], high[1], high[2]
+		));
+		let view = push_view(&mut bin, &normals, Some(34962));
+		accessors.push(format!("{{\"bufferView\":{view},\"componentType\":5126,\"count\":{count},\"type\":\"VEC3\"}}"));
+		let view = push_view(&mut bin, &uvs, Some(34962));
+		accessors.push(format!("{{\"bufferView\":{view},\"componentType\":5126,\"count\":{count},\"type\":\"VEC2\"}}"));
+		let view = push_view(&mut bin, &index_bytes, Some(34963));
+		accessors.push(format!("{{\"bufferView\":{view},\"componentType\":5125,\"count\":{},\"type\":\"SCALAR\"}}", indices.len()));
+
+		let view = push_view(&mut bin, &part.image.borrow().encode_png(), None);
+		images.push(format!("{{\"bufferView\":{view},\"mimeType\":\"image/png\"}}"));
+		textures.push(format!("{{\"source\":{index}}}"));
+		materials.push(format!(
+			"{{\"name\":\"{}\",\"pbrMetallicRoughness\":{{\"baseColorTexture\":{{\"index\":{index}}},\"metallicFactor\":0,\"roughnessFactor\":1}}}}",
+			part.name
+		));
+		meshes.push(format!(
+			"{{\"name\":\"{}\",\"primitives\":[{{\"attributes\":{{\"POSITION\":{},\"NORMAL\":{},\"TEXCOORD_0\":{}}},\"indices\":{},\"material\":{index}}}]}}",
+			part.name,
+			base,
+			base + 1,
+			base + 2,
+			base + 3
+		));
+		nodes.push(format!("{{\"name\":\"{}\",\"mesh\":{index}}}", part.name));
+		match &part.group {
+			None => roots.push(index),
+			Some(group) => match groups.iter_mut().find(|(name, _)| name == group) {
+				Some((_, children)) => children.push(index),
+				None => groups.push((group.clone(), vec![index])),
+			},
+		}
+	}
+	for (name, children) in &groups {
+		let list: Vec<String> = children.iter().map(|c| c.to_string()).collect();
+		nodes.push(format!("{{\"name\":\"{name}\",\"children\":[{}]}}", list.join(",")));
+		roots.push(nodes.len() - 1);
+	}
+	let root_list: Vec<String> = roots.iter().map(|r| r.to_string()).collect();
+
+	let mut json = format!(
+		"{{\"asset\":{{\"version\":\"2.0\",\"generator\":\"modelkit\"}},\"scene\":0,\"scenes\":[{{\"nodes\":[{}]}}],\"nodes\":[{}],\"meshes\":[{}],\"materials\":[{}],\"textures\":[{}],\"images\":[{}],\"accessors\":[{}],\"bufferViews\":[{}],\"buffers\":[{{\"byteLength\":{}}}]}}",
+		root_list.join(","),
+		nodes.join(","),
+		meshes.join(","),
+		materials.join(","),
+		textures.join(","),
+		images.join(","),
+		accessors.join(","),
+		views.join(","),
+		bin.len()
+	)
+	.into_bytes();
+	pad(&mut json, b' ');
+
+	let total = 12 + 8 + json.len() + 8 + bin.len();
+	let mut out = Vec::with_capacity(total);
+	out.extend_from_slice(b"glTF");
+	out.extend_from_slice(&2u32.to_le_bytes());
+	out.extend_from_slice(&(total as u32).to_le_bytes());
+	out.extend_from_slice(&(json.len() as u32).to_le_bytes());
+	out.extend_from_slice(b"JSON");
+	out.extend_from_slice(&json);
+	out.extend_from_slice(&(bin.len() as u32).to_le_bytes());
+	out.extend_from_slice(b"BIN\0");
+	out.extend_from_slice(&bin);
+	out
+}
