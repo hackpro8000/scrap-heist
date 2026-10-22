@@ -21,8 +21,8 @@ from mathutils import Vector
 EXPORT_COLLECTION = "Export"
 
 # Roblox's FBX importer reads centimetres; our scene unit is one stud.
-# Verify with ReferenceCube (2 x 2 x 2) in Studio before changing this.
-FBX_GLOBAL_SCALE = 1.0
+# 0.02 is the scale Tristen's hand-made exports used in Studio.
+FBX_GLOBAL_SCALE = 0.02
 
 
 def model_dir() -> Path:
