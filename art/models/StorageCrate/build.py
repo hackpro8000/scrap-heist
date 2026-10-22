@@ -49,12 +49,19 @@ HAZARD_YELLOW = (0.98, 0.8, 0.12)
 HAZARD_BLACK = (0.08, 0.08, 0.08)
 
 # Patch plates bolted over the walls: how many, thickness and a dull grey.
-# Scrap inside: a lumpy surface standing in for the heap of parts, sat at
-# FILL of the way up the walls and mounded in the middle.
-FILL = 0.7
+# Scrap inside: a lumpy surface standing in for the heap of parts. Six fill
+# levels, each as (height up the walls 0-1, mound in the middle, junk parts
+# showing); the game shows one level's Fill_N collection at a time.
+FILL_LEVELS = (
+	(0.15, 0.1, 1),
+	(0.3, 0.15, 2),
+	(0.45, 0.2, 4),
+	(0.6, 0.28, 6),
+	(0.75, 0.35, 8),
+	(0.9, 0.45, 11),
+)
 FILL_RINGS = 6
 FILL_PER_SIDE = 8
-FILL_MOUND = 0.35
 FILL_LUMPS = 0.12
 SCRAP = (0.6, 0.5, 0.42)
 
@@ -347,11 +354,16 @@ def plates(tub: bpy.types.Object):
 	return obj, plate_bolts
 
 
-def fill() -> bpy.types.Object:
+def fill_edge(level: float):
+	# Inner wall ring at a fill height, and its middle.
+	edge = [Vector(ring_point(side, col / FILL_PER_SIDE, level)) for side in range(4) for col in range(FILL_PER_SIDE)]
+	return edge, sum(edge, Vector()) / len(edge)
+
+
+def fill(name: str, level: float, mound: float) -> bpy.types.Object:
 	# Loops from the inner wall in to the centre; lumps are noise on height.
-	edge = [Vector(ring_point(side, col / FILL_PER_SIDE, FILL)) for side in range(4) for col in range(FILL_PER_SIDE)]
-	middle = sum(edge, Vector()) / len(edge)
-	mesh = bpy.data.meshes.new("Fill")
+	edge, middle = fill_edge(level)
+	mesh = bpy.data.meshes.new(name)
 	bm = bmesh.new()
 	loops = []
 	for ring in range(FILL_RINGS):
@@ -361,10 +373,10 @@ def fill() -> bpy.types.Object:
 			# Tuck the outer loop just inside the wall's inner face.
 			flat = middle + (point - middle) * t
 			flat -= (point - middle).normalized() * WALL * 1.2 * t
-			height = middle.z + FILL_MOUND * (1 - t * t) + FILL_LUMPS * noise.noise(flat * 1.3)
+			height = middle.z + mound * (1 - t * t) + FILL_LUMPS * noise.noise(flat * 1.3)
 			loop.append(bm.verts.new((flat.x, flat.y, height)))
 		loops.append(loop)
-	top = bm.verts.new((middle.x, middle.y, middle.z + FILL_MOUND + FILL_LUMPS * noise.noise(middle * 1.3)))
+	top = bm.verts.new((middle.x, middle.y, middle.z + mound + FILL_LUMPS * noise.noise(middle * 1.3)))
 	count = len(edge)
 	for outer, inner in zip(loops, loops[1:]):
 		for i in range(count):
@@ -376,7 +388,7 @@ def fill() -> bpy.types.Object:
 	bm.free()
 	for polygon in mesh.polygons:
 		polygon.use_smooth = True
-	return bpy.data.objects.new("Fill", mesh)
+	return bpy.data.objects.new(name, mesh)
 
 
 def smooth(obj: bpy.types.Object, angle: float = 40) -> None:
@@ -546,11 +558,55 @@ def cone_material() -> bpy.types.Material:
 	return mat
 
 
-def bury(obj: bpy.types.Object, heap: bpy.types.Object, x: float, y: float, sink: float, tilt) -> None:
-	# Stand obj on the fill surface at (x, y), sunk sink below it and tilted.
-	_, hit, _, _ = heap.ray_cast((x, y, HEIGHT * 2), (0, 0, -1))
-	obj.location = (x, y, hit.z - sink)
-	obj.rotation_euler = tilt
+# Junk in the heap, in the order it shows up as the crate fills: kind,
+# where on the heap (x/y as -1 to 1 across the fill), how far sunk, tilt in
+# degrees and scale. A part with "on" set to an earlier part's index is
+# stacked on top of it instead, offset by x/y in metres.
+JUNK = (
+	{"kind": "tire", "at": (-0.45, -0.2), "sink": 0.12, "tilt": (25, -10, 23)},
+	{"kind": "cog", "at": (0.2, 0.45), "sink": 0.05, "tilt": (70, 15, 17)},
+	{"kind": "spring", "at": (0.45, -0.35), "sink": 0.3, "tilt": (-12, 8, 0)},
+	{"kind": "cone", "at": (0.75, 0.3), "sink": 0.35, "tilt": (10, -35, 46)},
+	{"kind": "cog", "at": (-0.7, 0.5), "sink": 0.08, "tilt": (60, -20, 70), "scale": 0.8},
+	{"kind": "spring", "at": (-0.1, -0.6), "sink": 0.25, "tilt": (55, 10, 30), "scale": 0.9},
+	{"kind": "tire", "at": (0.35, 0.0), "sink": 0.15, "tilt": (-12, 15, 60), "scale": 0.8},
+	{"kind": "cone", "at": (-0.35, 0.4), "sink": 0.3, "tilt": (-30, 10, 110)},
+	{"kind": "spring", "at": (0.8, -0.55), "sink": 0.2, "tilt": (-40, -20, 0), "scale": 0.8},
+	{"kind": "tire", "on": 6, "at": (0.1, -0.05), "sink": 0.05, "tilt": (-6, 8, 15), "scale": 0.7},
+	{"kind": "cog", "on": 0, "at": (0.15, 0.1), "sink": 0.1, "tilt": (35, 5, 80), "scale": 0.9},
+)
+
+
+def top_of(obj: bpy.types.Object) -> float:
+	bpy.context.view_layer.update()
+	return max((obj.matrix_world @ Vector(corner)).z for corner in obj.bound_box)
+
+
+def place_junk(collection, prototypes, heap, level: float, count: int, prefix: str) -> None:
+	# Copies the first count JUNK parts onto heap, sharing the prototypes' meshes.
+	edge, middle = fill_edge(level)
+	half_x = max(abs(p.x - middle.x) for p in edge) * 0.75
+	half_y = max(abs(p.y - middle.y) for p in edge) * 0.75
+	placed = []
+	for index, spec in enumerate(JUNK[:count]):
+		part = prototypes[spec["kind"]].copy()
+		part.name = f"{prefix}_{spec['kind'].capitalize()}{index + 1}"
+		collection.objects.link(part)
+		part.scale = (spec.get("scale", 1.0),) * 3
+		part.rotation_euler = tuple(math.radians(angle) for angle in spec["tilt"])
+		if "on" in spec:
+			base = placed[spec["on"]]
+			x, y = base.location.x + spec["at"][0], base.location.y + spec["at"][1]
+			part.location = (x, y, 0)
+			# Rest the part's bottom on the base's top.
+			bpy.context.view_layer.update()
+			bottom = min((part.matrix_world @ Vector(corner)).z for corner in part.bound_box)
+			part.location.z = top_of(base) - bottom - spec["sink"]
+		else:
+			x, y = middle.x + spec["at"][0] * half_x, middle.y + spec["at"][1] * half_y
+			_, hit, _, _ = heap.ray_cast((x, y, HEIGHT * 2), (0, 0, -1))
+			part.location = (x, y, hit.z - spec["sink"])
+		placed.append(part)
 
 
 collection = scrapkit.new_scene()
@@ -565,33 +621,43 @@ patches, plate_bolts = plates(tub)
 scrapkit.link(patches, collection, grey)
 studs = scrapkit.link(bolts(tub, plate_bolts), collection, steel)
 rim = scrapkit.link(trim(), collection, orange)
-heap = scrapkit.link(fill(), collection, scrapkit.material("Scrap", linear(SCRAP), metallic=0.3, roughness=0.6))
+scrap = scrapkit.material("Scrap", linear(SCRAP), metallic=0.3, roughness=0.6)
 
 rubber = scrapkit.material("Tire", linear(RUBBER), roughness=0.9)
-blotches(rubber, CHALK, 3.0, 0.25)
+blotches(rubber, CHALK, 1.5, 0.1)
 brass = scrapkit.material("Cog", linear(BRASS), metallic=0.5, roughness=0.5)
 blotches(brass, RUST, 2.5, 0.35)
 coil = scrapkit.material("Spring", linear(SPRING_STEEL), metallic=0.7, roughness=0.35)
 blotches(coil, RUST, 4.0, 0.12)
-junk = [
-	scrapkit.link(tire(), collection, rubber),
-	scrapkit.link(cog(), collection, brass),
-	scrapkit.link(spring(), collection, coil),
-	scrapkit.link(cone(), collection, cone_material()),
-]
-for part in junk:
+prototypes = {
+	"tire": scrapkit.link(tire(), collection, rubber),
+	"cog": scrapkit.link(cog(), collection, brass),
+	"spring": scrapkit.link(spring(), collection, coil),
+	"cone": scrapkit.link(cone(), collection, cone_material()),
+}
+for part in prototypes.values():
 	smooth(part)
-tire_part, cog_part, spring_part, cone_part = junk
-bury(tire_part, heap, -1.2, -0.3, 0.12, (math.radians(25), math.radians(-10), 0.4))
-bury(cog_part, heap, 0.4, 0.7, 0.2, (math.radians(80), math.radians(15), 0.3))
-bury(spring_part, heap, 1.2, -0.6, 0.3, (math.radians(-12), math.radians(8), 0))
-bury(cone_part, heap, 2.1, 0.5, 0.35, (math.radians(10), math.radians(-35), 0.8))
 
 # Hand-painted edge highlights and crease shadows, baked per part.
 scrapkit.paint_shading(tub, 2048, bands=6)
-for part, size in ((patches, 512), (rim, 512), (studs, 256), *((part, 256) for part in junk)):
+for part, size in ((patches, 512), (rim, 512), (studs, 256), *((part, 256) for part in prototypes.values())):
 	scrapkit.paint_shading(part, size)
 # The band keeps its round-the-tub UVs, so a long strip fits it best.
 scrapkit.paint_shading(band, 1024, 64)
+
+for number, (level, mound, count) in enumerate(FILL_LEVELS, 1):
+	name = f"Fill_{number}"
+	group = bpy.data.collections.new(name)
+	collection.children.link(group)
+	heap = scrapkit.link(fill(name, level, mound), group, scrap)
+	place_junk(group, prototypes, heap, level, count, name)
+	# The preview shows the fullest crate only.
+	if number < len(FILL_LEVELS):
+		for obj in group.objects:
+			obj.hide_render = True
+
+# Prototypes only lend their meshes to the copies.
+for part in prototypes.values():
+	bpy.data.objects.remove(part)
 
 scrapkit.finish(collection)
