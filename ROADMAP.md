@@ -91,21 +91,10 @@ than a missing one.
 
 ## 5. Existing code
 
-There are two sources of existing code. Check both before writing anything new.
-
-1. **Starter combat kit (already in this repo).** These files exist and should
-   be kept and built on, not rewritten:
-   - `default.project.json`: Rojo tree mapping `src/shared`, `src/server`,
-     `src/client`.
-   - `src/shared/Assets.luau`: the single asset ID file, with `PLACEHOLDER`
-     and `Assets.isSet()`.
-   - `src/shared/Combat/WeaponConfig.luau`: all combat tuning (combo steps,
-     block, parry, posture, stun).
-   - `src/shared/Combat/Remotes.luau`: combat RemoteEvents (`Attack`,
-     `SetBlocking`, `PlaySwing`, `HitEffect`, `Knockback`).
-2. **Tristen's older project code.** Location not known yet. In Phase 0, ask
-   Tristen where it is. If they provide it, put it in `legacy/` (ignored by
-   Rojo), review it, and list what is worth reusing before reusing any of it.
+None. The project is built from the ground up: there is no starter combat kit
+and no older code to reuse. Every file, including `default.project.json`,
+`src/shared/Assets.luau` and the combat config, is created by the phases
+below.
 
 ---
 
@@ -126,7 +115,6 @@ scrap-heist/
 ├── docs/
 │   ├── systems/               # one short explainer per system (for clients)
 │   └── testing/               # Studio test checklists per phase
-├── legacy/                    # Tristen's old code, reference only, not synced
 └── src/
     ├── shared/                # ReplicatedStorage.Shared
     │   ├── Assets.luau        # EVERY asset ID lives here
@@ -134,7 +122,7 @@ scrap-heist/
     │   ├── Net/               # remote definitions, one module per system
     │   ├── Types.luau         # shared type definitions
     │   ├── Util/              # small pure helpers (Signal, Maid/Trove, etc.)
-    │   └── Combat/            # existing: WeaponConfig, Remotes
+    │   └── Combat/            # WeaponConfig, Remotes
     ├── server/                # ServerScriptService.Server
     │   ├── init.server.luau   # single entry point, boots services in order
     │   ├── Services/
@@ -197,7 +185,7 @@ Tristen will explain this code to clients on calls, so comments must teach.
 
 ### Git
 - Small commits, one task per commit, message format: `phase N: short summary`.
-- Never commit `.rbxl` / `.rbxlx` place files (already in `.gitignore`).
+- Never commit `.rbxl` / `.rbxlx` place files (ignored in `.gitignore`).
 
 ---
 
@@ -208,10 +196,10 @@ runs; the agent writes the steps into `docs/testing/phase-N.md`.
 
 ### Phase 0: Audit and setup
 
-- [ ] Ask Tristen where their older project code is. Review it into
-      `legacy/` and write `docs/legacy-review.md` listing what to reuse.
-  - *Done when:* the review lists each reusable file with a keep/rewrite/drop
-    call, or Tristen confirms there's nothing to reuse.
+- [ ] Create `default.project.json` (Rojo tree mapping `src/shared`,
+      `src/server`, `src/client`) and `.gitignore` (ignores `.rbxl`/`.rbxlx`,
+      `Packages/` and other build output).
+  - *Done when:* `rojo build -o test.rbxl` succeeds on the empty tree.
 - [ ] Add `rokit.toml`, `wally.toml`, `selene.toml`, `stylua.toml`; install
       ProfileStore via Wally and add `Packages` to the Rojo tree.
   - *Done when:* `rojo build -o test.rbxl` succeeds and `selene src` plus
@@ -223,9 +211,14 @@ runs; the agent writes the steps into `docs/testing/phase-N.md`.
 - [ ] Write `README.md` (install tools, `rojo serve`, connect in Studio).
   - *Done when:* Tristen can follow it from a fresh clone.
 
-### Phase 1: Combat kit (finish the starter)
+### Phase 1: Combat kit
 
-Builds on the existing `WeaponConfig` and `Remotes`.
+- [ ] `src/shared/Assets.luau` (single asset ID file with `PLACEHOLDER` and
+      `Assets.isSet()`), `src/shared/Combat/WeaponConfig.luau` (combo steps,
+      block, parry, posture, stun tuning) and `src/shared/Combat/Remotes.luau`
+      (`Attack`, `SetBlocking`, `PlaySwing`, `HitEffect`, `Knockback`).
+  - *Done when:* the modules require cleanly in Studio and every combat number
+    lives in `WeaponConfig`.
 
 - [ ] `CombatService`: combo tracking, windup/recovery timing, server-side
       hitbox (spatial query in front of the attacker), damage, knockback.
@@ -374,12 +367,11 @@ assets swapped in through `Assets.luau`.
 
 ## 10. Rules for the agent
 
-1. Read this file and the existing code before each session.
+1. Read this file and the current code before each session.
 2. Don't skip ahead. Finish a phase's acceptance criteria first.
-3. Don't rewrite the starter combat files; extend them.
-4. Don't add frameworks or libraries beyond those in section 4 without asking.
-5. Don't wait on art. Placeholders always.
-6. When a task needs a Studio check, write the test steps and tell Tristen
+3. Don't add frameworks or libraries beyond those in section 4 without asking.
+4. Don't wait on art. Placeholders always.
+5. When a task needs a Studio check, write the test steps and tell Tristen
    exactly what to try.
-7. Keep this file updated: tick boxes, and add a short note under a task if
+6. Keep this file updated: tick boxes, and add a short note under a task if
    the plan changed.
