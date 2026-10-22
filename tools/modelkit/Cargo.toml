@@ -1,0 +1,19 @@
+[package]
+name = "modelkit"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mlua = { version = "0.12", features = ["luau", "luau-jit"] }
+png = "0.17"
+
+# Dependencies (Luau's C++ included) build optimized once; our own code stays
+# quick to rebuild but still fast enough to bake textures.
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.release]
+opt-level = 3
