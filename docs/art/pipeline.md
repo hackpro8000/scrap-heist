@@ -14,7 +14,8 @@ art/models/<Name>/
 ├── <Part>_Metalness.png, <Part>_Roughness.png   # flat: zero metal, fully rough
 └── preview.png       # generated 3/4 render for review
 tools/modelkit/             # the engine (Rust, mlua + Luau)
-scripts/build-model.sh      # rebuilds modelkit if needed, then runs model.luau
+tools/modelkit/bin/         # prebuilt engine, so sessions need no Rust
+scripts/build-model.sh      # runs model.luau with the prebuilt engine
 ```
 
 ## Building
@@ -22,8 +23,17 @@ scripts/build-model.sh      # rebuilds modelkit if needed, then runs model.luau
 ```sh
 scripts/build-model.sh StarterWeapon   # one model
 scripts/build-model.sh                 # every model
-tools/modelkit/target/release/modelkit art/models/<Name> --turntable 60   # MP4 frames
+tools/modelkit/bin/modelkit-linux-x64 art/models/<Name> --turntable 60   # MP4 frames
 ```
+
+## Changing the engine
+
+The cloud setup doesn't install Rust. To change `tools/modelkit/src`, install
+it first (`curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal`
+and `apt-get install build-essential`). With Rust present,
+`scripts/build-model.sh` rebuilds the engine and refreshes
+`tools/modelkit/bin/modelkit-linux-x64`; commit that binary with the source
+change.
 
 ## Script API
 
