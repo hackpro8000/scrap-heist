@@ -1,8 +1,10 @@
 import math
+import random
 
 import bmesh
 import bpy
 import scrapkit
+from mathutils import Matrix, Vector
 
 # Storage crate: the yard's open-top bin, cartoony. The body flares wider at
 # the top, leans and twists as it rises, its walls bulge out like an
@@ -26,6 +28,10 @@ ROWS = 3
 
 # Bright cartoon green, in sRGB.
 BODY = (0.44, 0.68, 0.35)
+
+# Bolt heads: radius and a warm gunmetal, in sRGB.
+BOLT_SIZE = 0.11
+BOLT = (0.62, 0.58, 0.52)
 
 
 def linear(color):
@@ -89,9 +95,59 @@ def body() -> bpy.types.Object:
 	return obj
 
 
+def wall_frame(side: int, s: float, v: float):
+	# Position and outward normal of the outer wall surface at (s, v).
+	step = 0.01
+	point = Vector(ring_point(side, s, v))
+	along = Vector(ring_point(side, min(s + step, 1), v)) - Vector(ring_point(side, max(s - step, 0), v))
+	up = Vector(ring_point(side, s, min(v + step, 0.99))) - Vector(ring_point(side, s, max(v - step, 0)))
+	return point, along.cross(up).normalized()
+
+
+def bolt_spots():
+	# Bolts run up each corner seam, along the middle seam of each wall and
+	# under the lip. Spacing jitters, a few are missing and some are oversized.
+	rng = random.Random(7)
+	spots = []
+	for side in range(4):
+		lines = [(0.03, v) for v in (0.15, 0.4, 0.62, 0.85)]
+		lines += [(0.5, v) for v in (0.2, 0.5, 0.8)]
+		lines += [(s, 0.9) for s in (0.18, 0.34, 0.66, 0.82)]
+		for s, v in lines:
+			if rng.random() < 0.12:
+				continue
+			s = min(max(s + rng.uniform(-0.03, 0.03), 0.02), 0.98)
+			v += rng.uniform(-0.04, 0.04)
+			size = BOLT_SIZE * (1.8 if rng.random() < 0.15 else rng.uniform(0.8, 1.2))
+			spots.append((side, s, v, size, rng.uniform(-0.35, 0.35), rng.uniform(0, math.pi)))
+	return spots
+
+
+def bolts() -> bpy.types.Object:
+	# Squashed 6-sided domes, tilted at odd angles; one mesh for all of them.
+	mesh = bpy.data.meshes.new("Bolts")
+	bm = bmesh.new()
+	for side, s, v, size, tilt, spin in bolt_spots():
+		point, normal = wall_frame(side, s, v)
+		head = bmesh.ops.create_uvsphere(bm, u_segments=6, v_segments=3, radius=1.0)["verts"]
+		bmesh.ops.scale(bm, vec=(size, size, size * 0.55), verts=head)
+		bmesh.ops.rotate(bm, cent=(0, 0, 0), matrix=Matrix.Rotation(spin, 3, "Z") @ Matrix.Rotation(tilt, 3, "X"), verts=head)
+		bmesh.ops.rotate(bm, cent=(0, 0, 0), matrix=normal.to_track_quat("Z", "Y").to_matrix(), verts=head)
+		bmesh.ops.translate(bm, vec=point, verts=head)
+	bm.to_mesh(mesh)
+	bm.free()
+	for polygon in mesh.polygons:
+		polygon.use_smooth = True
+	obj = bpy.data.objects.new("Bolts", mesh)
+	bpy.context.scene.collection.objects.link(obj)
+	return obj
+
+
 collection = scrapkit.new_scene()
 green = scrapkit.material("Body", linear(BODY), roughness=0.55)
+steel = scrapkit.material("Bolt", linear(BOLT), metallic=0.6, roughness=0.45)
 
 scrapkit.link(body(), collection, green)
+scrapkit.link(bolts(), collection, steel)
 
 scrapkit.finish(collection)
