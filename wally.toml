@@ -1,0 +1,10 @@
+[package]
+name = "hackpro8000/scrap-heist"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+
+[server-dependencies]
+ProfileStore = "lm-loleris/profilestore@1.0.3"
