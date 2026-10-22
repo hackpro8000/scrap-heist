@@ -684,8 +684,10 @@ for number, (level, mound, count) in enumerate(FILL_LEVELS, 1):
 	name = f"Fill_{number}"
 	group = bpy.data.collections.new(name)
 	collection.children.link(group)
-	heap = scrapkit.link(fill(name, level, mound), group, scrap)
+	heap = scrapkit.link(fill(name, level, mound), group, scrap.copy())
 	place_junk(group, prototypes, heap, level, count, name)
+	# The junk leaves hand-painted contact shadows on its own pile.
+	scrapkit.paint_shading(heap, 1024)
 	# The preview shows the fullest crate only.
 	if number < len(FILL_LEVELS):
 		for obj in group.objects:
