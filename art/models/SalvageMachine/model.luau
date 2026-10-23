@@ -341,6 +341,10 @@ local function warpedMesh(warp)
 	}
 end
 
+-- Edge highlight strength, about 36% under modelkit's 0.7 default so the
+-- rims blend into the paint instead of reading as pale outlines.
+local EDGE_HIGHLIGHT = 0.45
+
 local function part(name, warped, color, group, size, paint)
 	local mesh = warped.mesh
 	mesh:setSmooth(SMOOTH_ANGLE)
@@ -349,7 +353,7 @@ local function part(name, warped, color, group, size, paint)
 	if paint then
 		mesh:paint(image, paint)
 	end
-	mesh:paintShading(image, {})
+	mesh:paintShading(image, { highlight = EDGE_HIGHLIGHT })
 	model.part(name, mesh, image, { group = group, preview = true })
 end
 
