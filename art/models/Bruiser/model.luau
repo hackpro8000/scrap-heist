@@ -225,9 +225,31 @@ local function weathered(color, rust)
 	end
 end
 
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+
+-- Paint fn for rubber: dust settled low and in patches, and pale scuffs where
+-- it has rubbed. Rubber doesn't rust.
+local function scuffed(color)
+	return function(x, y, z, nx, ny, nz)
+		local dust = math.clamp((0.9 - z) * 0.3, 0, 0.3)
+			+ math.clamp(math.noise(x * 3 + 2, y * 3, z * 3) * 0.5, 0, 0.35)
+			+ math.clamp(nz, 0, 1) * 0.15
+		local c = {
+			color[1] + (DUST[1] - color[1]) * dust,
+			color[2] + (DUST[2] - color[2]) * dust,
+			color[3] + (DUST[3] - color[3]) * dust,
+		}
+		if scratchAt(x, y, z, nx, ny, nz) > 0 then
+			return c[1] * 1.6, c[2] * 1.6, c[3] * 1.6
+		end
+		return c[1], c[2], c[3]
+	end
+end
+
 -- Part following one bone. `smooth` overrides the auto-smooth angle (true
 -- for fully round parts like the zapper's body). `rust` sets how worn it
--- is, default 0.4; 0 for glowing eyes and visors.
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
 local function part(name, bone, color, build, smooth, rust)
 	local mesh = Mesh.new()
 	build(mesh)
@@ -235,7 +257,9 @@ local function part(name, bone, color, build, smooth, rust)
 	mesh:unwrap()
 	local image = Image.new(TEXTURE, TEXTURE, color[1], color[2], color[3])
 	rust = rust or 0.4
-	if rust > 0 then
+	if rust == RUBBER then
+		mesh:paint(image, scuffed(color))
+	elseif rust > 0 then
 		mesh:paint(image, weathered(color, rust))
 	end
 	mesh:paintShading(image, { highlight = EDGE_HIGHLIGHT, blend = EDGE_BLEND })
@@ -264,7 +288,7 @@ part("Treads", treads, TREAD, function(mesh)
 		end
 	end
 	box(mesh, 0, 0, 0.3, 1.5, 1.6, 0.5)
-end, nil, 0)
+end, nil, RUBBER)
 part("RoadWheels", treads, DARK_STEEL, function(mesh)
 	local radius = TREAD_HEIGHT / 2
 	for _, side in { -1, 1 } do
