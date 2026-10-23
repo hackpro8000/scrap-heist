@@ -30677,7 +30677,7 @@ slab("Beacon", function()
 					box(mesh, sx * half, sy * half, z, 0.45, 0.45, (MAST_TOP - 1.8) / legs + 0.05)
 				end
 			end
-			if i % 2 == 0 and math.abs(floor + 1.8 + t * (MAST_TOP - 1.8) - CORE_Z) > 2.5 then
+			if i % 2 == 0 and math.abs(z - floor - CORE_Z) > 2.5 then
 				box(mesh, 0, half, z, half * 2, 0.25, 0.25)
 				box(mesh, 0, -half, z, half * 2, 0.25, 0.25)
 				box(mesh, half, 0, z, 0.25, half * 2, 0.25)
@@ -30686,22 +30686,22 @@ slab("Beacon", function()
 		end
 	end, nil, 0.6)
 	part("Core", nil, STORM_GLOW, function(mesh)
-		cylinder(mesh, 0, 0, CORE_Z, 1.1, 3, "z", 16)
+		cylinder(mesh, 0, 0, floor + CORE_Z, 1.1, 3, "z", 16)
 	end, nil, 0)
 	part("CoreCage", nil, STEEL, function(mesh)
-		ring(mesh, 0, 0, CORE_Z - 1.6, 1.3, 1.6, 0.3, "z", 16)
-		ring(mesh, 0, 0, CORE_Z + 1.6, 1.3, 1.6, 0.3, "z", 16)
+		ring(mesh, 0, 0, floor + CORE_Z - 1.6, 1.3, 1.6, 0.3, "z", 16)
+		ring(mesh, 0, 0, floor + CORE_Z + 1.6, 1.3, 1.6, 0.3, "z", 16)
 		for k = 0, 5 do
 			local angle = math.rad(k * 60)
-			box(mesh, math.cos(angle) * 1.45, math.sin(angle) * 1.45, CORE_Z - 1.6, 0.18, 0.18, 3.2)
+			box(mesh, math.cos(angle) * 1.45, math.sin(angle) * 1.45, floor + CORE_Z - 1.6, 0.18, 0.18, 3.2)
 		end
 	end, nil, 0.3)
 	part("Rod", nil, STEEL, function(mesh)
-		cylinder(mesh, 0, 0, MAST_TOP + 2.5, 0.15, 5, "z", 8)
-		cylinder(mesh, 0, 0, MAST_TOP + 0.3, 1.2, 0.6, "z", 12)
+		cylinder(mesh, 0, 0, floor + MAST_TOP + 2.5, 0.15, 5, "z", 8)
+		cylinder(mesh, 0, 0, floor + MAST_TOP + 0.3, 1.2, 0.6, "z", 12)
 	end, nil, 0.2)
 	part("RodTip", nil, STORM_GLOW, function(mesh)
-		cylinder(mesh, 0, 0, MAST_TOP + 5.2, 0.35, 0.5, "z", 8)
+		cylinder(mesh, 0, 0, floor + MAST_TOP + 5.2, 0.35, 0.5, "z", 8)
 	end, nil, 0)
 end, 0, 0)
 
