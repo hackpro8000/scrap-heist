@@ -107,9 +107,9 @@ local function scuff(x: number, y: number): number
 	local u = x * math.cos(angle) + y * math.sin(angle)
 	local v = y * math.cos(angle) - x * math.sin(angle)
 	local streak = math.noise(u / 1.6, v * 7, 19)
-	local patch = fbm(x / 6, y / 6, 23) - 0.12
+	local patch = fbm(x / 6, y / 6, 23) + 0.02
 	if patch <= 0 then return 0 end
-	return math.clamp(math.abs(streak) - 0.25, 0, 1) * math.sign(streak) * math.min(1, patch * 6)
+	return math.clamp(math.abs(streak) - 0.12, 0, 1) * math.sign(streak) * math.min(1, patch * 8)
 end
 local function arenaConcrete(x: number, y: number, _z: number)
 	local stain = warpedFbm(x / 14, y / 14, 3)
@@ -122,7 +122,7 @@ local function arenaConcrete(x: number, y: number, _z: number)
 		k -= 0.08
 	end
 	local mark = scuff(x, y)
-	k += if mark > 0 then mark * 0.18 else mark * 0.25
+	k += if mark > 0 then mark * 0.4 else mark * 0.5
 	return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * (k - math.max(0, stain) * 0.04)
 end
 slab("Arena", function()
