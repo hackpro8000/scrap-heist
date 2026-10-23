@@ -168,12 +168,42 @@ end
 local RUST_DARK = { 0.3, 0.2, 0.12 }
 local RUST_ORANGE = { 0.62, 0.36, 0.15 }
 local RUST_FLAKE = { 0.78, 0.52, 0.3 }
-local SCRATCH = { 0.75, 0.74, 0.72 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- Scratch coverage at a point: 1 in a scratch, -1 in its dark burr, 0 clear.
+-- Scratches run in clusters, each cluster in its own direction across the
+-- surface, and every line starts and stops on its own so the ends taper.
+local function scratchAt(x, y, z, nx, ny, nz)
+	if math.noise(x * 1.8 + 20, y * 1.8, z * 1.8) < 0.05 then
+		return 0
+	end
+	-- Surface tangents from the normal.
+	local tx, ty, tz = 1, 0, 0
+	if math.abs(nz) < 0.9 then
+		tx, ty, tz = -ny, nx, 0
+	end
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local bx, by, bz = ny * tz - nz * ty, nz * tx - nx * tz, nx * ty - ny * tx
+	local angle = math.noise(x * 0.9 + 4, y * 0.9, z * 0.9) * math.pi
+	local c, s = math.cos(angle), math.sin(angle)
+	local along = (x * tx + y * ty + z * tz) * c + (x * bx + y * by + z * bz) * s
+	local across = (x * bx + y * by + z * bz) * c - (x * tx + y * ty + z * tz) * s
+	local u = across * 9 + math.noise(x * 5, y * 5, z * 5) * 0.4
+	local line = math.floor(u)
+	local reach = math.noise(along * 2.2, line * 1.37, 9)
+	if reach < 0.25 then
+		return 0
+	end
+	local width = 0.07 + (reach - 0.25) * 0.12
+	local d = math.abs(u - line - 0.5)
+	return if d < width then 1 elseif d < width * 2 then -1 else 0
+end
 
 -- Paint fn for `color` worn by `rust` (0 clean, 1 eaten through).
 local function weathered(color, rust)
 	local edge = 0.75 - rust * 0.6
-	return function(x, y, z)
+	return function(x, y, z, nx, ny, nz)
 		local grime = math.clamp((1.2 - z) * 0.18, 0, 0.25) + math.noise(x * 3, y * 3, z * 3) * 0.08
 		local k = 1 - math.clamp(grime, 0, 0.35)
 		local patch = math.noise(x * 2.5 + 7, y * 2.5, z * 2.5) * 0.8 + math.noise(x * 8, y * 8, z * 8 + 5) * 0.3
@@ -190,8 +220,13 @@ local function weathered(color, rust)
 			local drip = math.noise(x * 16, y * 16, z * 0.8 + 3)
 			if above > edge - 0.05 and drip > 0.3 then
 				c = RUST_ORANGE
-			elseif math.noise(x * 2, y * 2, z * 18 + 11) > 0.55 then
-				c = SCRATCH
+			else
+				local scratch = scratchAt(x, y, z, nx, ny, nz)
+				if scratch > 0 then
+					c = { (color[1] + BARE_METAL[1] * 2) / 3, (color[2] + BARE_METAL[2] * 2) / 3, (color[3] + BARE_METAL[3] * 2) / 3 }
+				elseif scratch < 0 then
+					c = { color[1] * 0.8, color[2] * 0.8, color[3] * 0.8 }
+				end
 			end
 		end
 		return c[1] * k, c[2] * k, c[3] * k
