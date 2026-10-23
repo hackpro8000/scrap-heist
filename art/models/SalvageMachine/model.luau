@@ -366,9 +366,11 @@ local function frameColor(cx, scale, wear)
 	return function(x, y, z)
 		local r, g, b = FRAME[1], FRAME[2], FRAME[3]
 		-- Rust streaks: noise stretched tall so it runs in vertical drips.
-		local streak = math.clamp(math.noise(x * 7, y * 7, z * 0.8) * 2.5 - 0.3, 0, 0.7) * wear
+		-- Banded to a few flat steps so it reads as cartoon paint, not grit.
+		local streak = math.floor(math.clamp(math.noise(x * 3, y * 3, z * 0.5) * 2 - 0.4, 0, 0.6) * 3) / 3 * 0.5 * wear
 		r, g, b = r + (RUST[1] - r) * streak, g + (RUST[2] - g) * streak, b + (RUST[3] - b) * streak
-		if math.noise(x * 5 + 5, y * 5, z * 5) > 0.4 + (1 - wear) * 0.5 then
+		-- Few, big chips rather than fine speckle.
+		if math.noise(x * 2 + 5, y * 2, z * 2) > 0.45 + (1 - wear) * 0.4 then
 			r, g, b = BARE_METAL[1], BARE_METAL[2], BARE_METAL[3]
 		end
 		if z > bottom - 0.01 and math.abs(x - cx) < 0.03 then
