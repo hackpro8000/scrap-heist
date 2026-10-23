@@ -7217,23 +7217,50 @@ for i = 1, 8 do
 			box(mesh, 0, BRIDGE_MID, -0.2, 6, BRIDGE_LENGTH, 0.3)
 		end, nil, bridgeDeck(degrees, x, y), 1024)
 		part("Girders", nil, DARK_STEEL, function(mesh)
+			-- I-beams: a web between two flanges, ribbed on the outside, with
+			-- bolted splice plates where the beam sections join.
 			for _, side in { -2.6, 2.6 } do
-				box(mesh, side, BRIDGE_MID, -1.4, 0.4, BRIDGE_LENGTH, 1.2)
+				local out = math.sign(side)
+				box(mesh, side, BRIDGE_MID, -1.4, 0.2, BRIDGE_LENGTH, 1.2)
+				box(mesh, side, BRIDGE_MID, -1.4, 0.6, BRIDGE_LENGTH, 0.15)
+				box(mesh, side, BRIDGE_MID, -0.4, 0.6, BRIDGE_LENGTH, 0.15)
+				for n = 0, math.floor(BRIDGE_LENGTH / 2) do
+					box(mesh, side + out * 0.17, BRIDGE_TO + 1 + n * 2, -1.25, 0.14, 0.1, 0.85)
+				end
+				for n = 1, math.floor(BRIDGE_LENGTH / 8) do
+					local at = BRIDGE_TO + n * 8
+					box(mesh, side + out * 0.13, at, -1.15, 0.06, 0.9, 0.65)
+					for _, dy in { -0.3, 0.3 } do
+						for _, dz in { -1.0, -0.65 } do
+							box(mesh, side + out * 0.18, at + dy, dz, 0.06, 0.1, 0.1)
+						end
+					end
+				end
 			end
 			for n = 0, math.floor(BRIDGE_LENGTH / 4) do
 				box(mesh, 0, BRIDGE_TO + 1 + n * 4, -0.6, 5.6, 0.3, 0.4)
 			end
 		end, nil, bridgeGirders(degrees, x, y), 1024)
+		-- Railing posts spaced evenly so both ends get one, each bolted down
+		-- on a base plate and capped.
+		local postCount = math.ceil((BRIDGE_LENGTH - 0.3) / 2.5)
+		local postGap = (BRIDGE_LENGTH - 0.3) / postCount
 		part("Posts", nil, STEEL, function(mesh)
-			for _, side in { -3, 3 } do
-				for n = 0, math.floor(BRIDGE_LENGTH / 3) do
-					box(mesh, side, BRIDGE_TO + 0.5 + n * 3, 0.1, 0.15, 0.15, 1.1)
+			for _, side in { -2.9, 2.9 } do
+				for n = 0, postCount do
+					local at = BRIDGE_TO + 0.15 + n * postGap
+					box(mesh, side, at, -0.05, 0.36, 0.36, 0.06)
+					box(mesh, side, at, 0.01, 0.14, 0.14, 1.27)
+					box(mesh, side, at, 1.28, 0.2, 0.2, 0.06)
 				end
 			end
 		end, nil, 0.4)
+		-- Handrail on top, a thinner mid rail and a kick plate at the deck.
 		part("Rail", nil, MARK, function(mesh)
-			for _, side in { -3, 3 } do
-				box(mesh, side, BRIDGE_MID, 1.1, 0.14, BRIDGE_LENGTH, 0.14)
+			for _, side in { -2.9, 2.9 } do
+				box(mesh, side, BRIDGE_MID, 1.16, 0.16, BRIDGE_LENGTH - 0.2, 0.12)
+				box(mesh, side, BRIDGE_MID, 0.62, 0.08, BRIDGE_LENGTH - 0.3, 0.08)
+				box(mesh, side + math.sign(side) * 0.1, BRIDGE_MID, -0.05, 0.04, BRIDGE_LENGTH - 0.3, 0.22)
 			end
 		end, nil, 0.3)
 	end, x, y, degrees - 90)
