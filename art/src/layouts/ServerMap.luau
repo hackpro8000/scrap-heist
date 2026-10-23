@@ -34,10 +34,49 @@ local function polar(radius: number, degrees: number): (number, number)
 	return math.cos(angle) * radius, math.sin(angle) * radius
 end
 
+-- Ground height. The arena, ring road, spokes and plots stay flat so the
+-- slabs sit on it; everywhere else rolls in low hills that climb into a
+-- ridge at the map edge.
+local function smoothstep(low: number, high: number, value: number): number
+	local t = math.clamp((value - low) / (high - low), 0, 1)
+	return t * t * (3 - 2 * t)
+end
+
+local function heightAt(x: number, y: number): number
+	local radius = math.sqrt(x * x + y * y)
+	local hilly = smoothstep(ROAD_OUTER + 2, ROAD_OUTER + 9, radius)
+	for i = 1, 8 do
+		local plotX, plotY = polar(YARD_RADIUS, (i - 1) * 45)
+		local along = (x * plotX + y * plotY) / YARD_RADIUS
+		local across = math.abs(x * plotY - y * plotX) / YARD_RADIUS
+		local spoke = if along > 0 and along < YARD_RADIUS then smoothstep(5, 10, across) else 1
+		local plot = smoothstep(19, 27, math.max(math.abs(along - YARD_RADIUS), across))
+		hilly = math.min(hilly, spoke, plot)
+	end
+	local edge = math.max(math.abs(x), math.abs(y))
+	local rolling = 2.5 + 4 * math.noise(x / 23, y / 23, 0.5) + 1.5 * math.noise(x / 9, y / 9, 3.5)
+	local ridge = smoothstep(108, MAP_SIZE / 2, edge) * (12 + 6 * math.noise(x / 30, y / 30, 7.5))
+	return hilly * math.max(rolling + ridge, -0.6)
+end
+
+local GROUND_CELLS = 80
 slab("Ground", function()
-	part("Slab", nil, GROUND, function(mesh)
-		box(mesh, 0, 0, -0.4, MAP_SIZE, MAP_SIZE, 0.4)
-	end, nil, 0)
+	part("Surface", nil, GROUND, function(mesh)
+		local rows = {}
+		for j = 0, GROUND_CELLS do
+			local y = -MAP_SIZE / 2 + MAP_SIZE * j / GROUND_CELLS
+			rows[j] = {}
+			for i = 0, GROUND_CELLS do
+				local x = -MAP_SIZE / 2 + MAP_SIZE * i / GROUND_CELLS
+				rows[j][i] = mesh:vertex(x, y, heightAt(x, y))
+			end
+		end
+		for j = 0, GROUND_CELLS - 1 do
+			for i = 0, GROUND_CELLS - 1 do
+				mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+			end
+		end
+	end, true, 0)
 end, 0, 0)
 slab("Road", function()
 	part("Ring", nil, ROAD, function(mesh)
@@ -110,7 +149,7 @@ for w = 1, 8 do
 			local u, v = prop[2], prop[3] + cluster[2]
 			local x = radialX * v - radialY * u
 			local y = radialY * v + radialX * u
-			place(`Wedge{w}{if r == 1 then "Inner" else "Outer"}_{n}`, prop[1], x, y, 0, degrees + n * 70)
+			place(`Wedge{w}{if r == 1 then "Inner" else "Outer"}_{n}`, prop[1], x, y, heightAt(x, y), degrees + n * 70)
 		end
 	end
 end
