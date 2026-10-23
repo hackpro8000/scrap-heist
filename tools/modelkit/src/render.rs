@@ -87,7 +87,7 @@ pub fn render(parts: &[&Part], view: &View) -> Vec<u8> {
 					if dot(normal, forward) > 0.0 {
 						normal = scale(normal, -1.0);
 					}
-					let shade = (0.72 + 0.38 * dot(normal, light).max(0.0)) as f32;
+					let shade = if part.emissive { 1.0 } else { (0.72 + 0.38 * dot(normal, light).max(0.0)) as f32 };
 					color[at] = image.sample(u, v).map(|c| c * shade);
 				}
 			}

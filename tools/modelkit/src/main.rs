@@ -40,6 +40,8 @@ pub struct Part {
 	pub name: String,
 	pub group: Option<String>,
 	pub preview: bool,
+	// Glows with its own color: full bright in previews, emissive in the glb.
+	pub emissive: bool,
 	pub mesh: Rc<RefCell<Mesh>>,
 	pub image: Rc<RefCell<Image>>,
 	pub bone: Option<usize>,
@@ -228,6 +230,7 @@ fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<R
 		lua.create_function(move |_, (name, mesh, image, options): (String, AnyUserData, AnyUserData, Option<Table>)| {
 			let group = options.as_ref().map(|o| o.get::<Option<String>>("group")).transpose()?.flatten();
 			let preview = options.as_ref().map(|o| o.get::<Option<bool>>("preview")).transpose()?.flatten().unwrap_or(true);
+			let emissive = options.as_ref().map(|o| o.get::<Option<bool>>("emissive")).transpose()?.flatten().unwrap_or(false);
 			let bone = match options.as_ref().map(|o| o.get::<Option<String>>("bone")).transpose()?.flatten() {
 				None => None,
 				Some(b) => Some(bones.borrow().iter().position(|x| x.name == b).ok_or_else(|| mlua::Error::runtime(format!("no bone {b} (add it before its parts)")))?),
@@ -237,6 +240,7 @@ fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<R
 				name,
 				group,
 				preview,
+				emissive,
 				mesh: mesh.borrow::<MeshHandle>()?.0.clone(),
 				image: image.borrow::<ImageHandle>()?.0.clone(),
 			});

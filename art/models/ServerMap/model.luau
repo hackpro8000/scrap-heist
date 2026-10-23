@@ -631,7 +631,8 @@ end
 local parts = {}
 
 -- `texture` overrides the texture size for parts that need more detail.
-local function part(name, bone, color, build, smooth, rust, texture: number?)
+-- `emissive` parts give off their own light and skip shading.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: boolean?)
 	local mesh = Mesh.new()
 	build(if rust == 0 then mesh else imperfect(mesh, name))
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
@@ -644,13 +645,17 @@ local function part(name, bone, color, build, smooth, rust, texture: number?)
 	elseif rust > 0 then
 		mesh:paint(image, weathered(color, rust))
 	end
-	table.insert(parts, { name = name, bone = bone, mesh = mesh, image = image })
+	table.insert(parts, { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive })
 end
 
 -- Shades every part with all the others as occluders, so parts darken where
 -- they touch or tuck under each other, then adds them to the model.
 local function finishParts()
 	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = true })
+			continue
+		end
 		local occluders = {}
 		for _, other in parts do
 			if other ~= entry then
@@ -30712,7 +30717,7 @@ slab("Beacon", function()
 	-- The core sits on top of the mast and is the part that glows during a storm.
 	part("Core", nil, STORM_GLOW, function(mesh)
 		cylinder(mesh, 0, 0, floor + MAST_TOP + 2.3, 1.4, 3.4, "z", 16)
-	end, nil, 0, TOWER_TEXTURE)
+	end, nil, 0, TOWER_TEXTURE, true)
 	part("CoreCage", nil, DARK_STEEL, function(mesh)
 		for k = 0, 5 do
 			local angle = math.rad(k * 60)
