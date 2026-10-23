@@ -175,9 +175,10 @@ local function arenaConcrete(x: number, y: number, _z: number)
 	return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * (k - math.max(0, stain) * 0.04)
 end
 -- Bridge deck: riveted steel tread plates laid across the span, with dark
--- seams, raised diamond treads worn smooth down the two wheel paths, and
--- grime and rust bleeding in from the edges. Painted in the bridge's own
--- frame so every bridge wears the same way along its length.
+-- seams, raised diamond treads worn smooth down the two wheel paths, hazard
+-- chevrons painted along both outer plates, and grime and rust bleeding in
+-- from the edges. Painted in the bridge's own frame so every bridge wears
+-- the same way along its length.
 local function bridgeDeck(degrees: number, cx: number, cy: number)
 	local angle = math.rad(degrees - 90)
 	local c, s = math.cos(angle), math.sin(angle)
@@ -206,7 +207,16 @@ local function bridgeDeck(degrees: number, cx: number, cy: number)
 		local grime = math.clamp(1 - edge / 0.9, 0, 1) * (0.6 + fbm(v / 1.5, u, 41) * 0.8)
 		k -= grime * 0.3 + math.max(0, warpedFbm(u / 3, v / 3, 43)) * 0.25
 		local rust = math.clamp(grime + math.max(0, fbm(u, v / 1.2, 47)) - 0.35, 0, 1)
-		return STEEL[1] * k + rust * 0.12, STEEL[2] * k + rust * 0.02, STEEL[3] * k - rust * 0.06
+		local r, g, b = STEEL[1], STEEL[2], STEEL[3]
+		-- Hazard chevrons painted onto the outer plates, leaning toward the
+		-- arena and worn through to bare steel on the raised treads.
+		if math.abs(math.abs(u) - 2.45) < 0.25 then
+			local paint = if math.floor((v + math.abs(u) * 1.2) / 0.45) % 2 == 0 then MARK else { 0.1, 0.1, 0.1 }
+			local wear = math.clamp(fbm(u * 4, v, 53) * 0.8 + (if tread then 0.35 else 0), 0, 1)
+			r, g, b = paint[1] + (r - paint[1]) * wear, paint[2] + (g - paint[2]) * wear, paint[3] + (b - paint[3]) * wear
+			k = 0.75 + (k - 0.75) * 0.5
+		end
+		return r * k + rust * 0.12, g * k + rust * 0.02, b * k - rust * 0.06
 	end
 end
 -- Bridge girders: dark paint flaking off in patches to bare rust, with
