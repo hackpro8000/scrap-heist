@@ -154,14 +154,55 @@ local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
 	end
 end
 
+-- Weathering, in sRGB: rust patches (dark pitted core, orange rust, pale
+-- flaky rim) with drips running down out of them, bright scratches, and
+-- grime that darkens toward the ground.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local SCRATCH = { 0.75, 0.74, 0.72 }
+
+-- Paint fn for `color` worn by `rust` (0 clean, 1 eaten through).
+local function weathered(color, rust)
+	local edge = 0.75 - rust * 0.6
+	return function(x, y, z)
+		local grime = math.clamp((1.2 - z) * 0.18, 0, 0.25) + math.noise(x * 3, y * 3, z * 3) * 0.08
+		local k = 1 - math.clamp(grime, 0, 0.35)
+		local patch = math.noise(x * 2.5 + 7, y * 2.5, z * 2.5) * 0.8 + math.noise(x * 8, y * 8, z * 8 + 5) * 0.3
+		local c = color
+		if patch > edge + 0.18 then
+			local pit = if math.noise(x * 25, y * 25, z * 25) > 0.25 then 0.7 else 1
+			c = { RUST_DARK[1] * pit, RUST_DARK[2] * pit, RUST_DARK[3] * pit }
+		elseif patch > edge + 0.06 then
+			c = RUST_ORANGE
+		elseif patch > edge then
+			c = RUST_FLAKE
+		else
+			local above = math.noise(x * 2.5 + 7, y * 2.5, (z + 0.2) * 2.5) * 0.8
+			local drip = math.noise(x * 16, y * 16, z * 0.8 + 3)
+			if above > edge - 0.05 and drip > 0.3 then
+				c = RUST_ORANGE
+			elseif math.noise(x * 2, y * 2, z * 18 + 11) > 0.55 then
+				c = SCRATCH
+			end
+		end
+		return c[1] * k, c[2] * k, c[3] * k
+	end
+end
+
 -- Part following one bone. `smooth` overrides the auto-smooth angle (true
--- for fully round parts like the zapper's body).
-local function part(name, bone, color, build, smooth)
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors.
+local function part(name, bone, color, build, smooth, rust)
 	local mesh = Mesh.new()
 	build(mesh)
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
 	mesh:unwrap()
 	local image = Image.new(TEXTURE, TEXTURE, color[1], color[2], color[3])
+	rust = rust or 0.4
+	if rust > 0 then
+		mesh:paint(image, weathered(color, rust))
+	end
 	mesh:paintShading(image, { highlight = EDGE_HIGHLIGHT, blend = EDGE_BLEND })
 	model.part(name, mesh, image, { bone = bone, preview = true })
 end
@@ -282,11 +323,14 @@ part("VisorFrame", body, GREY, function(mesh)
 end)
 part("Visor", visor, VISOR, function(mesh)
 	box(mesh, 0, BODY_FRONT - 0.05, 3.48, 1.54, 0.1, 0.24)
-end, true)
+end, true, 0)
 for _, side in { { "L", shoulderL, -1 }, { "R", shoulderR, 1 } } do
 	local name, bone, s = side[1], side[2], side[3]
 	part("Shoulder" .. name, bone, GREY, function(mesh)
-		local x = s * 1.45
+		-- Pivot hub along X at the bone, with a gap so the arm turns clear of the body.
+		cylinder(mesh, s * 1.14, 0, SHOULDER_Z, 0.28, 0.1, "x", 14)
+		cylinder(mesh, s * 1.14, 0, SHOULDER_Z, 0.08, 0.16, "x", 6)
+		local x = s * 1.53
 		box(mesh, x, 0, SHOULDER_Z - 0.4, 0.7, 1.4, 0.9)
 		-- A thinner armour plate overlapping the top, bolted down.
 		box(mesh, x + s * 0.05, 0, SHOULDER_Z + 0.5, 0.75, 1.45, 0.08)
