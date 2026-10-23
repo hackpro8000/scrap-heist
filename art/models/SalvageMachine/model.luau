@@ -361,6 +361,8 @@ end
 local BOLT_SIZE = 0.1
 local BOLT_SPACING = 0.5
 local PATCH_THICKNESS = 0.04
+-- Plates stand this far off the housing so warped faces never poke through.
+local PATCH_STANDOFF = 0.025
 
 -- Bolt head on a side face at (x, y, z), pointing out along normalX/normalY.
 local function bolt(mesh, x, y, z, normalX, normalY, size)
@@ -404,11 +406,12 @@ local function patchPlate(plates, bolts, x, y, z, normalX, normalY)
 		local u, v = c[1] + uniform(-0.09, 0.09), c[2] + uniform(-0.07, 0.07)
 		u, v = u * math.cos(tilt) - v * math.sin(tilt), u * math.sin(tilt) + v * math.cos(tilt)
 		local px, py, pz = x + normalY * u, y + normalX * u, z + v
-		inner[i] = plates:vertex(px, py, pz)
-		outer[i] = plates:vertex(px + normalX * PATCH_THICKNESS, py + normalY * PATCH_THICKNESS, pz)
+		inner[i] = plates:vertex(px + normalX * PATCH_STANDOFF, py + normalY * PATCH_STANDOFF, pz)
+		local lift = PATCH_STANDOFF + PATCH_THICKNESS
+		outer[i] = plates:vertex(px + normalX * lift, py + normalY * lift, pz)
 		local inset = 0.75
 		local bx, by = x + normalY * u * inset, y + normalX * u * inset
-		bolt(bolts, bx + normalX * PATCH_THICKNESS, by + normalY * PATCH_THICKNESS, z + v * inset, normalX, normalY, BOLT_SIZE * 0.55)
+		bolt(bolts, bx + normalX * (PATCH_STANDOFF + PATCH_THICKNESS), by + normalY * (PATCH_STANDOFF + PATCH_THICKNESS), z + v * inset, normalX, normalY, BOLT_SIZE * 0.55)
 	end
 	-- Winding flips with the side so the faces point outward.
 	local flip = normalX + normalY < 0
@@ -428,11 +431,26 @@ end
 local function housingBolts(bolts, plates, cx, scale, seed)
 	math.randomseed(seed)
 	local halfX, halfY = 1.1 * scale, 0.9 * scale
+	local mid = 1.65 * scale
+	local patches = {
+		{ x = cx + uniform(-0.5, 0.5) * scale, y = -halfY, z = mid + uniform(-0.05, 0.05), normalX = 0, normalY = -1 },
+		{ x = cx + uniform(-0.5, 0.5) * scale, y = halfY, z = mid + uniform(-0.05, 0.05), normalX = 0, normalY = 1 },
+		{ x = cx - halfX, y = uniform(-0.3, 0.3) * scale, z = mid, normalX = -1, normalY = 0 },
+	}
+	local function underPatch(x, y, z, normalX, normalY)
+		for _, p in patches do
+			local along = if normalX == 0 then x - p.x else y - p.y
+			if p.normalX == normalX and p.normalY == normalY and math.abs(along) < 0.6 and math.abs(z - p.z) < 0.5 then
+				return true
+			end
+		end
+		return false
+	end
 	local function scrappyBolt(x, y, z, normalX, normalY)
 		-- Leave the corners clear for angle iron, and the +x face clear for the drive.
 		local nearCorner = math.abs(x - cx) > halfX - 0.2 and math.abs(y) > halfY - 0.2
 		local behindDrive = normalX > 0 and math.abs(y) < 0.45
-		if math.random() < 0.12 or nearCorner or behindDrive then
+		if math.random() < 0.12 or nearCorner or behindDrive or underPatch(x, y, z, normalX, normalY) then
 			return
 		end
 		local size = BOLT_SIZE * uniform(0.7, 1.5)
@@ -453,10 +471,9 @@ local function housingBolts(bolts, plates, cx, scale, seed)
 			scrappyBolt(cx + halfX, y, z, 1, 0)
 		end
 	end
-	local mid = 1.65 * scale
-	patchPlate(plates, bolts, cx + uniform(-0.5, 0.5) * scale, -halfY, mid + uniform(-0.05, 0.05), 0, -1)
-	patchPlate(plates, bolts, cx + uniform(-0.5, 0.5) * scale, halfY, mid + uniform(-0.05, 0.05), 0, 1)
-	patchPlate(plates, bolts, cx - halfX, uniform(-0.3, 0.3) * scale, mid, -1, 0)
+	for _, p in patches do
+		patchPlate(plates, bolts, p.x, p.y, p.z, p.normalX, p.normalY)
+	end
 end
 
 -- Cartoon wobble, like the scrap crate. It moves from chaos to order up the
@@ -539,10 +556,50 @@ local function part(name, warped, color, group, size, paint)
 	model.part(name, mesh, image, { group = group, preview = true })
 end
 
--- Frame paint: grey steel with chips worn through to bare metal, rust
--- streaks running down from the housing, and grime rising from the feet.
+-- Frame paint: grey steel with chips worn through to bare metal, layered
+-- rust patches dripping down the housing, and grime rising from the feet.
 local BARE_METAL = { 0.68, 0.7, 0.72 }
 local RUST = { 0.45, 0.24, 0.12 }
+local RUST_DARK = { 0.26, 0.13, 0.07 }
+local RUST_FLAKE = { 0.7, 0.47, 0.3 }
+
+-- Layered rust on metal: a pitted dark core inside orange rust inside a pale
+-- flaky rim, with drips running down out of each patch. amount 0-1 grows the
+-- patches; seed shifts the pattern. Returns a colour, or nil for clean metal.
+local function layeredRust(x, y, z, amount, seed)
+	local function patchAt(pz)
+		return math.noise(x * 2.6 + seed, y * 2.6, pz * 2.6) * 0.8 + math.noise(x * 8, y * 8 + seed, pz * 8) * 0.3
+	end
+	local patch = patchAt(z)
+	local edge = 0.62 - amount * 0.55
+	if patch > edge + 0.18 then
+		local pit = if math.noise(x * 25, y * 25, z * 25 + seed) > 0.25 then 0.7 else 1
+		return RUST_DARK[1] * pit, RUST_DARK[2] * pit, RUST_DARK[3] * pit
+	end
+	if patch > edge + 0.05 then
+		return RUST[1], RUST[2], RUST[3]
+	end
+	if patch > edge then
+		return RUST_FLAKE[1], RUST_FLAKE[2], RUST_FLAKE[3]
+	end
+	-- Drips: thin vertical runs below a patch, sampled from slightly above.
+	if patchAt(z + 0.3) > edge - 0.03 and math.noise(x * 14, y * 14, z * 0.8 + seed) > 0.3 then
+		return RUST[1], RUST[2], RUST[3]
+	end
+	return nil
+end
+
+-- Patch plate paint: salvaged copper-brown sheet, heavily rusted on worn tiers.
+local function plateColor(wear)
+	return function(x, y, z)
+		local r, g, b = layeredRust(x, y, z, 0.35 + wear * 0.5, 31)
+		if r then
+			return r, g, b
+		end
+		local k = 0.9 + math.noise(x * 12, y * 12, z * 12) * 0.15
+		return PATCH[1] * k, PATCH[2] * k, PATCH[3] * k
+	end
+end
 
 -- Frame paint for one tier's frame, whose housing is centred on cx at scale.
 -- A seam splits each long side of the housing into two panels. wear 0-1
@@ -551,12 +608,12 @@ local function frameColor(cx, scale, wear)
 	local bottom = 1.2 * scale
 	return function(x, y, z)
 		local r, g, b = FRAME[1], FRAME[2], FRAME[3]
-		-- Rust streaks: noise stretched tall so it runs in vertical drips.
-		-- Banded to a few flat steps so it reads as cartoon paint, not grit.
-		local streak = math.floor(math.clamp(math.noise(x * 3, y * 3, z * 0.5) * 2 - 0.4, 0, 0.6) * 3) / 3 * 0.5 * wear
-		r, g, b = r + (RUST[1] - r) * streak, g + (RUST[2] - g) * streak, b + (RUST[3] - b) * streak
-		-- Few, big chips rather than fine speckle.
-		if math.noise(x * 2 + 5, y * 2, z * 2) > 0.45 + (1 - wear) * 0.4 then
+		-- Layered rust patches with drips.
+		local rr, rg, rb = layeredRust(x, y, z, wear * 0.7, 11)
+		if rr then
+			r, g, b = rr, rg, rb
+		elseif math.noise(x * 2 + 5, y * 2, z * 2) > 0.45 + (1 - wear) * 0.4 then
+			-- Few, big chips rather than fine speckle.
 			r, g, b = BARE_METAL[1], BARE_METAL[2], BARE_METAL[3]
 		end
 		if z > bottom - 0.01 and math.abs(x - cx) < 0.03 then
@@ -613,7 +670,7 @@ for tier = 1, 3 do
 	local bolts, plates = warpedMesh(warp), warpedMesh(warp)
 	housingBolts(bolts, plates, cx, scale, tier * 17)
 	part(`{group}_Bolts`, bolts, BOLT, group, SMALL_TEXTURE)
-	part(`{group}_PatchPlates`, plates, PATCH, group, SMALL_TEXTURE)
+	part(`{group}_PatchPlates`, plates, PATCH, group, SMALL_TEXTURE, plateColor(wear))
 
 	local rollers = warpedMesh(warp)
 	-- Better tiers pack more, finer rollers: 2 → 3 → 4, with more teeth each.
