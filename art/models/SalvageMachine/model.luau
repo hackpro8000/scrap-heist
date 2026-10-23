@@ -301,8 +301,8 @@ end
 -- grime, so newer tiers look cleaner.
 local SCUFF = { 0.62, 0.6, 0.56 }
 local HAZARD_BLACK = { 0.1, 0.1, 0.1 }
-local HOPPER_RUST = { 0.6, 0.3, 0.12 }
-local HOPPER_RUST_DARK = { 0.3, 0.14, 0.07 }
+local HOPPER_RUST = { 0.62, 0.38, 0.16 }
+local HOPPER_RUST_DARK = { 0.32, 0.22, 0.13 }
 local HOPPER_RUST_FLAKE = { 0.78, 0.52, 0.3 }
 
 -- Tier contrast: tier 1's walls are scuffed through to bare metal, tier 2
@@ -343,7 +343,7 @@ local function hopperColor(bottomZ, height, wear, tier)
 		local above = math.noise(x * 2.2 + 7, y * 2.2, (z + 0.25) * 2.2) * 0.8 + (1 - t) * 0.35
 		local drip = math.noise(x * 14, y * 14, z * 0.8 + 3)
 		if above > edge - 0.05 and drip > 0.3 then
-			return HOPPER_RUST[1] * k, HOPPER_RUST[2] * k, HOPPER_RUST[3] * k
+			return HOPPER_RUST_FLAKE[1] * k, HOPPER_RUST_FLAKE[2] * k, HOPPER_RUST_FLAKE[3] * k
 		end
 		-- Scuffs: long horizontal scrape streaks where scrap hit the wall.
 		local scuffAmount = if tier == 1 then 0.32 elseif tier == 2 then 0.12 else 0
@@ -559,8 +559,8 @@ end
 -- Frame paint: grey steel with chips worn through to bare metal, layered
 -- rust patches dripping down the housing, and grime rising from the feet.
 local BARE_METAL = { 0.68, 0.7, 0.72 }
-local RUST = { 0.45, 0.24, 0.12 }
-local RUST_DARK = { 0.26, 0.13, 0.07 }
+local RUST = { 0.55, 0.35, 0.16 }
+local RUST_DARK = { 0.3, 0.21, 0.13 }
 local RUST_FLAKE = { 0.7, 0.47, 0.3 }
 
 -- Layered rust on metal: a pitted dark core inside orange rust inside a pale
@@ -584,7 +584,7 @@ local function layeredRust(x, y, z, amount, seed)
 	end
 	-- Drips: thin vertical runs below a patch, sampled from slightly above.
 	if patchAt(z + 0.3) > edge - 0.03 and math.noise(x * 14, y * 14, z * 0.8 + seed) > 0.3 then
-		return RUST[1], RUST[2], RUST[3]
+		return RUST_FLAKE[1], RUST_FLAKE[2], RUST_FLAKE[3]
 	end
 	return nil
 end
