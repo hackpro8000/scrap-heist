@@ -306,16 +306,17 @@ local HOPPER_RUST_DARK = { 0.32, 0.22, 0.13 }
 local HOPPER_RUST_FLAKE = { 0.78, 0.52, 0.3 }
 
 -- Tier contrast: tier 1's walls are scuffed through to bare metal, tier 2
--- keeps a few scrapes, and tier 3 wears a hazard-striped band below the rim.
+-- keeps a few scrapes, and tier 3 wears a hazard-striped band below the rim,
+-- kept out of the height gradient so the warning stays crisp.
 local function hopperColor(bottomZ, height, wear, tier)
 	return function(x, y, z)
 		local t = math.clamp((z - bottomZ) / height, 0, 1)
 		if tier == 3 and t > 0.72 and t < 0.86 then
 			local stripe = ((x + y + z) * 2.5) % 1
 			if stripe < 0.5 then
-				return HAZARD_BLACK[1], HAZARD_BLACK[2], HAZARD_BLACK[3]
+				return HAZARD_BLACK[1], HAZARD_BLACK[2], HAZARD_BLACK[3], true
 			end
-			return HOPPER[1], HOPPER[2] * 1.1, HOPPER[3] * 0.4
+			return HOPPER[1], HOPPER[2] * 1.1, HOPPER[3] * 0.4, true
 		end
 		local grime = ((1 - t) * 0.45 + math.noise(x * 3, y * 3, z * 3) * 0.12) * wear
 		if t > 0.97 then
@@ -546,7 +547,8 @@ local EDGE_BLEND = 0.7
 
 -- Height gradient over every part: dark at the floor, true colour at
 -- GRADIENT_MIDDLE, washed lighter towards GRADIENT_TOP, so the machines look
--- grounded underneath and catch the light up top.
+-- grounded underneath and catch the light up top. A paint function can
+-- return true as a fourth value to keep a texel out of the gradient.
 local GRADIENT_FLOOR = 0.5
 local GRADIENT_MIDDLE = 2
 local GRADIENT_TOP = 3.5
@@ -559,8 +561,12 @@ local function part(name, warped, color, group, size, paint)
 	local image = Image.new(size, size, color[1], color[2], color[3])
 	mesh:paint(image, function(x, y, z)
 		local r, g, b = color[1], color[2], color[3]
+		local skipGradient = false
 		if paint then
-			r, g, b = paint(x, y, z)
+			r, g, b, skipGradient = paint(x, y, z)
+		end
+		if skipGradient then
+			return r, g, b
 		end
 		if z < GRADIENT_MIDDLE then
 			local k = GRADIENT_FLOOR + (1 - GRADIENT_FLOOR) * math.max(z / GRADIENT_MIDDLE, 0)
