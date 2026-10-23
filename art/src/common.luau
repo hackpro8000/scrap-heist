@@ -12,6 +12,14 @@ local TEXTURE = 256
 -- `part` can bend and dent flat panels.
 local GRID = 0.4
 
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+local texelDensity: number? = nil
+
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud
+end
+
 local function gridFace(mesh, origin, u, v, nu, nv)
 	local rows = {}
 	for j = 0, nv do
@@ -538,8 +546,10 @@ local function part(name, bone, color, build, smooth, rust, texture: number?, em
 	local mesh = Mesh.new()
 	build(if rust == 0 then mesh else imperfect(mesh, name))
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
-	mesh:unwrap()
-	local size = texture or TEXTURE
+	local fit = mesh:unwrap()
+	local size = if texelDensity
+		then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else texture or TEXTURE
 	local image = Image.new(size, size, color[1], color[2], color[3])
 	rust = rust or 0.4
 	if type(rust) == "function" then
