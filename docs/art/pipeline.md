@@ -35,6 +35,29 @@ re-runs the props whose source changed. A script can cache its own work with
 `{name, mesh, image, preview}` and `key` changes whenever the result would.
 Delete `.cache` to force a full rebuild.
 
+Layout pieces built in place (slabs: islands, bridges, the road) are cached
+too, in place rather than at the origin, because their paint can read world
+position. `scripts/assemble-model.sh` keys each slab on its own body plus
+everything around the slab bodies, so editing one slab rebuilds only that
+slab and editing a shared helper rebuilds them all. Parts the layout's
+`skipPart` leaves out never reach the cache.
+
+Rules that keep rebuilds fast:
+
+- Every piece a layout builds itself goes through `placeSlab` (in ServerMap,
+  `slab(label, function() ... end, x, y, turn)`). Start the body on a line
+  ending in `function()` and close it with `end` at the same indent, so the
+  assembler finds it; `placeSlab` errors on a body it has no key for.
+- A slab body may depend only on its own code, code outside the slab
+  bodies, and its label and placement. It must not read state another slab
+  body changes, since that wouldn't change its key.
+- Prop textures are at most 1024×1024. A prop's cache file is a few MB; one
+  over 20MB means a texture is oversized or the prop builds parts no layout
+  shows. Check with `ls -laS art/models/<Layout>/.cache`.
+- After a layout change, a second build with nothing changed should finish
+  in seconds (ServerMap: about 15s against 100s cold). If it doesn't, find
+  what isn't cached before going on.
+
 ## Changing the engine
 
 The cloud setup doesn't install Rust. To change `tools/modelkit/src`, install

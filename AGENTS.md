@@ -24,3 +24,4 @@ Supplementary rules for agents working on Scrap Heist.
 
 ## Model work
 - After every model change, run `scripts/checkpoint-model.sh` (see `docs/art/pipeline.md`) and send the user the screenshot. Never batch changes or leave progress unpushed.
+- Keep model builds cached: layout slabs go through `placeSlab`, prop textures stay at or under 1024×1024, and an unchanged rebuild finishes in seconds. See the caching rules in `docs/art/pipeline.md`.
