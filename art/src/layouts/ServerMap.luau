@@ -381,6 +381,34 @@ end, 0, 0)
 -- The arena edge stands out from the yards around it: hazard stripes ring the
 -- fight floor, and a low concrete wall with yellow caps tops the bowl,
 -- broken where each spoke comes in.
+-- The arena wall runs along each octagon side in two halves, one each side
+-- of the spoke. A half starts square at `near` across the spoke, where it
+-- meets the ramp wall, and ends mitred at the octagon corner.
+local WALL_INNER, WALL_OUTER = ROAD_INNER - 1.2, ROAD_INNER - 0.4
+local WALL_TOP = 1.25
+local RAMP_WALL_SIDE = 3.6
+local function wallRun(mesh, degrees: number, side: number, inner: number, outer: number, near: number, bottom: number, top: number)
+	local angle = math.rad(degrees)
+	local c, n = math.cos(angle), math.sin(angle)
+	local corner = math.tan(math.rad(22.5))
+	-- Footprint counter-clockwise seen from above.
+	local footprint = { { inner, near }, { outer, near }, { outer, outer * corner }, { inner, inner * corner } }
+	if side < 0 then
+		footprint = { { inner, -inner * corner }, { outer, -outer * corner }, { outer, -near }, { inner, -near } }
+	end
+	local low, high = {}, {}
+	for k, p in footprint do
+		local x, y = c * p[1] - n * p[2], n * p[1] + c * p[2]
+		low[k] = mesh:vertex(x, y, bottom)
+		high[k] = mesh:vertex(x, y, top)
+	end
+	mesh:face({ high[1], high[2], high[3], high[4] })
+	mesh:face({ low[4], low[3], low[2], low[1] })
+	for k = 1, 4 do
+		local l = k % 4 + 1
+		mesh:face({ low[k], low[l], high[l], high[k] })
+	end
+end
 local STRIPES = 72
 slab("ArenaEdge", function()
 	local floor = 0.1 - ARENA_DEPTH
@@ -393,14 +421,16 @@ slab("ArenaEdge", function()
 	end
 	part("Wall", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
-			local from = (i - 1) * 45
-			arc(mesh, ROAD_INNER - 1.2, ROAD_INNER - 0.4, -0.5, 0.9, from + 5, from + 40, true)
+			for _, side in { -1, 1 } do
+				wallRun(mesh, (i - 1) * 45, side, WALL_INNER, WALL_OUTER, RAMP_WALL_SIDE, -0.5, WALL_TOP)
+			end
 		end
 	end, nil, 0.4)
 	part("WallCap", nil, MARK, function(mesh)
 		for i = 1, 8 do
-			local from = (i - 1) * 45
-			arc(mesh, ROAD_INNER - 1.3, ROAD_INNER - 0.3, 0.9, 1.05, from + 5, from + 40, true)
+			for _, side in { -1, 1 } do
+				wallRun(mesh, (i - 1) * 45, side, WALL_INNER - 0.1, WALL_OUTER + 0.1, RAMP_WALL_SIDE - 0.1, WALL_TOP, WALL_TOP + 0.15)
+			end
 		end
 	end, nil, 0.3)
 end, 0, 0)
@@ -460,11 +490,13 @@ local function rampTop(radius: number): number
 end
 -- A solid block under the deck between `from` and `to` across it, raised
 -- `lift` above the deck, down to the arena floor or `depth` below its top.
-local function rampBlock(mesh, degrees: number, from: number, to: number, lift: number, depth: number?)
+local function rampBlock(mesh, degrees: number, from: number, to: number, lift: number, depth: number?, outer: number?)
+	local radii = table.clone(RAMP_RADII)
+	radii[#radii] = outer or radii[#radii]
 	local angle = math.rad(degrees)
 	local c, n = math.cos(angle), math.sin(angle)
 	local rows = {}
-	for s, radius in RAMP_RADII do
+	for s, radius in radii do
 		local top = rampTop(radius) + lift
 		local bottom = if depth then top - depth else RAMP_FLOOR - 0.1
 		rows[s] = {}
@@ -474,14 +506,14 @@ local function rampBlock(mesh, degrees: number, from: number, to: number, lift: 
 			rows[s][k + 2] = mesh:vertex(x, y, bottom)
 		end
 	end
-	for s = 1, #RAMP_RADII - 1 do
+	for s = 1, #radii - 1 do
 		local a, b = rows[s], rows[s + 1]
 		mesh:face({ b[1], b[2], a[2], a[1] })
 		mesh:face({ a[4], b[4], b[3], a[3] })
 		mesh:face({ a[3], b[3], b[1], a[1] })
 		mesh:face({ b[2], b[4], a[4], a[2] })
 	end
-	local first, last = rows[1], rows[#RAMP_RADII]
+	local first, last = rows[1], rows[#radii]
 	mesh:face({ first[2], first[4], first[3], first[1] })
 	mesh:face({ last[3], last[4], last[2], last[1] })
 end
@@ -493,14 +525,14 @@ slab("Ramps", function()
 	end, nil, 0.25)
 	part("SideWall", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
-			rampBlock(mesh, (i - 1) * 45, -4.4, -3.6, 0.9)
-			rampBlock(mesh, (i - 1) * 45, 3.6, 4.4, 0.9)
+			rampBlock(mesh, (i - 1) * 45, -4.4, -RAMP_WALL_SIDE, 0.9, nil, WALL_INNER)
+			rampBlock(mesh, (i - 1) * 45, RAMP_WALL_SIDE, 4.4, 0.9, nil, WALL_INNER)
 		end
 	end, nil, 0.4)
 	part("SideCap", nil, MARK, function(mesh)
 		for i = 1, 8 do
-			rampBlock(mesh, (i - 1) * 45, -4.5, -3.5, 1.05, 0.15)
-			rampBlock(mesh, (i - 1) * 45, 3.5, 4.5, 1.05, 0.15)
+			rampBlock(mesh, (i - 1) * 45, -4.5, -3.5, 1.05, 0.15, WALL_INNER - 0.1)
+			rampBlock(mesh, (i - 1) * 45, 3.5, 4.5, 1.05, 0.15, WALL_INNER - 0.1)
 		end
 	end, nil, 0.3)
 end, 0, 0)
