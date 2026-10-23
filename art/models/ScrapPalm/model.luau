@@ -600,7 +600,16 @@ part("Fronds", nil, STEEL, function(mesh)
 			{ 2 + dx * 1.4, dy * 1.4, 9.2 },
 			{ 2 + dx * 2.8, dy * 2.8, 8.6 },
 			{ 2 + dx * 3.6, dy * 3.6, 7.4 },
-		}, 0.16, 4)
+		}, 0.1, 4)
+		-- Strips cut along each frond, drooping off both sides like leaflets.
+		for step = 1, 6 do
+			local d = step * 0.55
+			local x, y = 2 + dx * d, dy * d
+			local z = 8.6 + math.sin(step / 7 * math.pi) * 0.7 - (if step > 4 then (step - 4) * 0.4 else 0)
+			for _, side in { -1, 1 } do
+				strut(mesh, x, y, z, x - dy * side * 0.7 + dx * 0.2, y + dx * side * 0.7 + dy * 0.2, z - 0.5, 0.12)
+			end
+		end
 	end
 end, nil, 0.3)
 
