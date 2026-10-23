@@ -37,20 +37,41 @@ local EDGE_BLEND = 0.7
 local SMOOTH_ANGLE = 30
 local TEXTURE = 256
 
-local function box(mesh, cx, cy, cz, sx, sy, sz)
-	local v = {}
-	for i = 0, 7 do
-		local x = cx + (if i % 2 == 0 then -sx else sx) / 2
-		local y = cy + (if i // 2 % 2 == 0 then -sy else sy) / 2
-		local z = cz + (if i // 4 == 0 then 0 else sz)
-		v[i + 1] = mesh:vertex(x, y, z)
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
 	end
-	mesh:face({ v[1], v[3], v[4], v[2] })
-	mesh:face({ v[5], v[6], v[8], v[7] })
-	mesh:face({ v[1], v[2], v[6], v[5] })
-	mesh:face({ v[3], v[7], v[8], v[4] })
-	mesh:face({ v[1], v[5], v[7], v[3] })
-	mesh:face({ v[2], v[4], v[8], v[6] })
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
 end
 
 -- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
