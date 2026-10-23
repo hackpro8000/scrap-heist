@@ -301,7 +301,9 @@ end
 -- grime, so newer tiers look cleaner.
 local SCUFF = { 0.62, 0.6, 0.56 }
 local HAZARD_BLACK = { 0.1, 0.1, 0.1 }
-local HOPPER_RUST = { 0.5, 0.25, 0.11 }
+local HOPPER_RUST = { 0.6, 0.3, 0.12 }
+local HOPPER_RUST_DARK = { 0.3, 0.14, 0.07 }
+local HOPPER_RUST_FLAKE = { 0.78, 0.52, 0.3 }
 
 -- Tier contrast: tier 1's walls are scuffed through to bare metal, tier 2
 -- keeps a few scrapes, and tier 3 wears a hazard-striped band below the rim.
@@ -320,12 +322,27 @@ local function hopperColor(bottomZ, height, wear, tier)
 			grime = 0.35
 		end
 		local k = 1 - math.clamp(grime, 0, 0.6)
-		-- Rust: blotches pooling toward the throat plus streaks running down
-		-- the walls. Tier 1 is eaten through, tier 2 is spotty, tier 3 clean.
+		-- Rust: layered patches - a dark pitted core inside orange rust inside
+		-- a pale flaky rim - with drips running down out of each patch.
 		local rustAmount = if tier == 1 then 0.75 elseif tier == 2 then 0.35 else 0.08
-		local blotch = math.noise(x * 2.2 + 7, y * 2.2, z * 2.2) + (1 - t) * 0.35
-		local streak = math.noise(x * 11, y * 11, z * 1.2 + 3) * 0.6 + (1 - t) * 0.2
-		if math.max(blotch, streak) > 0.95 - rustAmount * 0.6 then
+		local patch = math.noise(x * 2.2 + 7, y * 2.2, z * 2.2) * 0.8
+			+ math.noise(x * 7, y * 7, z * 7 + 5) * 0.3
+			+ (1 - t) * 0.35
+		local edge = 0.72 - rustAmount * 0.55
+		if patch > edge + 0.18 then
+			local pit = if math.noise(x * 25, y * 25, z * 25) > 0.25 then 0.55 else 0.8
+			return HOPPER_RUST_DARK[1] * k * pit / 0.8, HOPPER_RUST_DARK[2] * k * pit / 0.8, HOPPER_RUST_DARK[3] * k * pit / 0.8
+		end
+		if patch > edge + 0.05 then
+			return HOPPER_RUST[1] * k, HOPPER_RUST[2] * k, HOPPER_RUST[3] * k
+		end
+		if patch > edge then
+			return HOPPER_RUST_FLAKE[1] * k, HOPPER_RUST_FLAKE[2] * k, HOPPER_RUST_FLAKE[3] * k
+		end
+		-- Drips: thin vertical runs below a patch, sampled from slightly above.
+		local above = math.noise(x * 2.2 + 7, y * 2.2, (z + 0.25) * 2.2) * 0.8 + (1 - t) * 0.35
+		local drip = math.noise(x * 14, y * 14, z * 0.8 + 3)
+		if above > edge - 0.05 and drip > 0.3 then
 			return HOPPER_RUST[1] * k, HOPPER_RUST[2] * k, HOPPER_RUST[3] * k
 		end
 		-- Scuffs: long horizontal scrape streaks where scrap hit the wall.
