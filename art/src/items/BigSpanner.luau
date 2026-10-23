@@ -2,28 +2,54 @@
 -- steel bar with taped grip, an open-end head tilted 15 degrees on top and
 -- a box-end ring below. Built along +Z with the grip end at the origin.
 
--- Open jaw: a ring around the y axis with a slot cut out, the slot centered
--- on angle `tilt` from +Z. The cut ends are capped so the jaw reads solid.
-local function openJaw(mesh, cx, cz, inner, outer, depth, tilt, slot, sides)
-	local t0, t1 = tilt + slot / 2, tilt + TAU - slot / 2
-	local function at(r, t, d)
-		return mesh:vertex(cx + math.sin(t) * r, d, cz + math.cos(t) * r)
+-- Flat plate: a convex outline in the x/z plane extruded along y.
+local function plate(mesh, outline, depth)
+	local front, back = {}, {}
+	for i, point in outline do
+		front[i] = mesh:vertex(point[1], -depth / 2, point[2])
+		back[i] = mesh:vertex(point[1], depth / 2, point[2])
 	end
-	local rows = {}
-	for i = 0, sides do
-		local t = t0 + (t1 - t0) * i / sides
-		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	local n = #outline
+	local reversed = {}
+	for i = n, 1, -1 do
+		table.insert(reversed, back[i])
 	end
-	for i = 1, sides do
-		local a, b = rows[i], rows[i + 1]
-		for k = 1, 4 do
-			local l = k % 4 + 1
-			mesh:face({ a[k], b[k], b[l], a[l] })
+	mesh:face(front)
+	mesh:face(reversed)
+	for i = 1, n do
+		local j = i % n + 1
+		mesh:face({ front[j], front[i], back[i], back[j] })
+	end
+end
+
+-- Open jaw: a rounded palm with two straight prongs either side of a
+-- parallel slot, the whole head tilted by `tilt` about its center.
+local function openJaw(mesh, cx, cz, halfWidth, slotHalf, prongLength, depth, tilt)
+	local c, s = math.cos(tilt), math.sin(tilt)
+	local function place(points)
+		local placed = {}
+		for i, point in points do
+			placed[i] = { cx + point[1] * c + point[2] * s, cz - point[1] * s + point[2] * c }
 		end
+		return placed
 	end
-	local first, last = rows[1], rows[sides + 1]
-	mesh:face({ first[4], first[3], first[2], first[1] })
-	mesh:face({ last[1], last[2], last[3], last[4] })
+	local palm = {}
+	for i = 0, 8 do
+		local t = math.pi * i / 8
+		table.insert(palm, { -math.cos(t) * halfWidth, -math.sin(t) * halfWidth * 0.75 })
+	end
+	plate(mesh, place(palm), depth)
+	local chamfer = (halfWidth - slotHalf) * 0.4
+	for _, side in { -1, 1 } do
+		local inner, outer = slotHalf * side, halfWidth * side
+		local prong = {
+			{ inner, 0 }, { outer, 0 }, { outer, prongLength - chamfer }, { outer - chamfer * side, prongLength }, { inner, prongLength },
+		}
+		if side < 0 then
+			prong = { prong[5], prong[4], prong[3], prong[2], prong[1] }
+		end
+		plate(mesh, place(prong), depth)
+	end
 end
 
 part("Shaft", nil, STEEL, function(mesh)
@@ -31,7 +57,7 @@ part("Shaft", nil, STEEL, function(mesh)
 	ring(mesh, 0, 0, 0.2, 0.15, 0.36, 0.16, "y", 12)
 end, nil, 0.45)
 part("Jaw", nil, DARK_STEEL, function(mesh)
-	openJaw(mesh, 0, 4.0, 0.2, 0.5, 0.18, math.rad(15), math.rad(80), 14)
+	openJaw(mesh, 0, 3.85, 0.48, 0.2, 0.5, 0.18, math.rad(15))
 	box(mesh, 0, 0, 3.55, 0.42, 0.16, 0.12)
 end, nil, 0.55)
 part("Grip", nil, TAPE, function(mesh)
