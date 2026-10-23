@@ -108,14 +108,16 @@ end
 local function reinforcement(mesh, cx, scale, tier, rollerYs, rollerRadius)
 	local legX, legY, top = 0.9 * scale, 0.7 * scale, 1.2 * scale
 	local halfX, halfY, housingTop = 1.1 * scale, 0.9 * scale, 2.1 * scale
+	-- Braces on the +y side start above the chute so they don't pass through it.
 	local function crossSide(x0, y0, x1, y1, thick)
-		strut(mesh, x0, y0, 0.15, x1, y1, top - 0.05, thick)
-		strut(mesh, x0, y0, top - 0.05, x1, y1, 0.15, thick)
+		local low = if y0 > 0 and y1 > 0 then 0.6 else 0.15
+		strut(mesh, x0, y0, low, x1, y1, top - 0.05, thick)
+		strut(mesh, x0, y0, top - 0.05, x1, y1, low, thick)
 	end
 	if tier == 1 then
 		for _, side in { -1, 1 } do
 			-- One bent rebar brace, not quite reaching the far leg's foot.
-			strut(mesh, cx - legX, side * legY, 0.3, cx + legX - 0.05, side * legY, top * 0.85, 0.07)
+			strut(mesh, cx - legX, side * legY, if side > 0 then 0.6 else 0.3, cx + legX - 0.05, side * legY, top * 0.85, 0.07)
 		end
 		for _, c in { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } } do
 			-- Wire lashing wrapped round the leg.
@@ -158,7 +160,9 @@ local function reinforcement(mesh, cx, scale, tier, rollerYs, rollerRadius)
 	for _, y in rollerYs do
 		-- Bearing cap on each end of every roller shaft.
 		for _, side in { -1, 1 } do
-			cylinder(mesh, cx + side * (halfX + 0.06), y, 2.15 * scale, rollerRadius * 0.6, 0.12, "x")
+			local capX = cx + side * (halfX + 0.06)
+			box(mesh, capX, y, housingTop - 0.15, 0.12, rollerRadius, 2.15 * scale - housingTop + 0.15)
+			cylinder(mesh, capX, y, 2.15 * scale, rollerRadius * 0.6, 0.12, "x")
 		end
 	end
 end
@@ -344,7 +348,10 @@ local function housingBolts(bolts, plates, cx, scale, seed)
 	math.randomseed(seed)
 	local halfX, halfY = 1.1 * scale, 0.9 * scale
 	local function scrappyBolt(x, y, z, normalX, normalY)
-		if math.random() < 0.12 then
+		-- Leave the corners clear for angle iron, and the +x face clear for the drive.
+		local nearCorner = math.abs(x - cx) > halfX - 0.2 and math.abs(y) > halfY - 0.2
+		local behindDrive = normalX > 0 and math.abs(y) < 0.45
+		if math.random() < 0.12 or nearCorner or behindDrive then
 			return
 		end
 		local size = BOLT_SIZE * uniform(0.7, 1.5)
@@ -368,7 +375,7 @@ local function housingBolts(bolts, plates, cx, scale, seed)
 	local mid = 1.65 * scale
 	patchPlate(plates, bolts, cx + uniform(-0.5, 0.5) * scale, -halfY, mid + uniform(-0.05, 0.05), 0, -1)
 	patchPlate(plates, bolts, cx + uniform(-0.5, 0.5) * scale, halfY, mid + uniform(-0.05, 0.05), 0, 1)
-	patchPlate(plates, bolts, cx + halfX, uniform(-0.3, 0.3) * scale, mid, 1, 0)
+	patchPlate(plates, bolts, cx - halfX, uniform(-0.3, 0.3) * scale, mid, -1, 0)
 end
 
 -- Cartoon wobble, like the scrap crate. It moves from chaos to order up the
@@ -544,7 +551,7 @@ for tier = 1, 3 do
 		toothedRoller(rollers, gearX, 0, 1.25, 0.2, 0.12, 8, 1)
 		toothedRoller(rollers, gearX, 0, 1.25 + 0.2 + 0.32, 0.36, 0.12, 14, 1)
 		-- Conveyor off the end of the chute: a belt on two end drums.
-		local beltY0, beltY1 = 2 * scale, 4.2 * scale
+		local beltY0, beltY1 = 2.1 * scale, 4.2 * scale
 		box(rollers, cx, (beltY0 + beltY1) / 2, 0.42, 1 * scale, beltY1 - beltY0, 0.06)
 		for _, y in { beltY0, beltY1 } do
 			cylinder(rollers, cx, y, 0.45, 0.1, 1.05 * scale, "x")
@@ -561,7 +568,6 @@ for tier = 1, 3 do
 		-- Guards hiding the drive, shaped like stamped covers: flat sides
 		-- with rounded ends that follow the pulleys or gears inside.
 		local guards = warpedMesh(warp)
-		local guardX = cx + 1.1 * scale + if tier == 2 then 0.06 else 0.1
 		local lowZ, lowR, highZ, highR
 		if tier == 2 then
 			lowZ, lowR, highZ, highR = 1.2, 0.24, 1.65 * scale, 0.34
@@ -569,6 +575,7 @@ for tier = 1, 3 do
 			lowZ, lowR, highZ, highR = 1.25, 0.3, 1.25 + 0.52, 0.46
 		end
 		local width = 0.22
+		local guardX = cx + 1.1 * scale + width / 2 + 0.01
 		cylinder(guards, guardX, 0, lowZ, lowR, width, "x")
 		cylinder(guards, guardX, 0, highZ, highR, width, "x")
 		box(guards, guardX, 0, lowZ, width, lowR * 2, highZ - lowZ)
@@ -579,7 +586,7 @@ for tier = 1, 3 do
 				box(guards, guardX + width / 2, 0, highZ - 0.15 + k * 0.12, 0.04, highR * 1.2, 0.04)
 			end
 			for _, side in { -1, 1 } do
-				box(guards, cx + side * 0.55 * scale, 3.1 * scale, 0.32, 0.05, 2.2 * scale, 0.22)
+				box(guards, cx + side * 0.55 * scale, 3.15 * scale, 0.32, 0.05, 2.1 * scale, 0.22)
 			end
 		end
 		part(`{group}_Guards`, guards, GUARD[tier - 1], group, SMALL_TEXTURE)
@@ -601,12 +608,12 @@ for tier = 1, 3 do
 	elseif tier == 2 then
 		-- Petrol engine with cooling fins, an exhaust stack, a heavy flywheel
 		-- on its far side and a pressure gauge on top.
-		local motorX = cx + 1.6 * scale
+		local motorX = cx + 1.1 * scale + 0.75
 		box(extras, motorX, 0, 0.6, 0.9, 1, 0.9)
 		for _, offset in { -0.35, -0.2, -0.05 } do
 			box(extras, motorX + offset, 0, 1.5, 0.04, 1, 0.1)
 		end
-		cylinder(extras, cx + 1.8 * scale, 0.3, 1.5, 0.1, 1.2, "z")
+		cylinder(extras, motorX + 0.24, 0.3, 1.5, 0.1, 1.2, "z")
 		cylinder(extras, motorX + 0.55, 0, 1.05, 0.42, 0.12, "x")
 		cylinder(extras, motorX + 0.55, 0, 1.05, 0.08, 0.3, "x")
 		cylinder(extras, motorX + 0.2, -0.3, 1.5, 0.05, 0.25, "z")
@@ -616,7 +623,7 @@ for tier = 1, 3 do
 		local motorX = cx + 1.7 * scale
 		-- Bolted down on a base plate with a bracket arm back to the frame.
 		box(extras, motorX, 0, 0, 1.1, 1.1, 0.2)
-		box(extras, (cx + 1.1 * scale + motorX) / 2, 0, 0.9, motorX - cx - 1.1 * scale + 0.2, 0.5, 0.15)
+		box(extras, (cx + 1.1 * scale + motorX) / 2, 0, 0.6, motorX - cx - 1.1 * scale + 0.2, 0.5, 0.15)
 		cylinder(extras, motorX, 0, 0.2, 0.45, 1.3, "z")
 		for k = 0, 4 do
 			cylinder(extras, motorX, 0, 0.35 + k * 0.22, 0.52, 0.05, "z")
