@@ -1,17 +1,33 @@
 -- Scrapper: the fast, weak scrap bot, about 2.5 studs tall. A rusty box body
--- balanced on one wobbly wheel, a red eye, a buzzsaw on a side arm and a bent
--- antenna. Faces -Y; stands with the wheel on the origin.
--- Rig: Root > Body > Wheel (spins), SawArm > Saw (spins), Antenna (wobbles).
--- Rigged blockout.
+-- patched with odd plates, carried on a swing arm over one wobbly wheel. A
+-- red eye in a steel rim, a buzzsaw on a side arm and a bent antenna
+-- topped with a little radar dish. Faces -Y; stands with the wheel on the
+-- origin.
+-- Rig: Root > Body > Suspension > Wheel (spins), SawArm > Saw (spins),
+-- Antenna (wobbles).
 
+-- Mismatched scrap: rusty box steel, a galvanised panel, a sky-blue panel
+-- off an old appliance, dark steel running gear, a bright saw, in sRGB.
 local RUST = { 0.55, 0.35, 0.16 }
+local GALVANISED = { 0.6, 0.63, 0.62 }
+local APPLIANCE = { 0.36, 0.55, 0.66 }
 local DARK_STEEL = { 0.3, 0.3, 0.32 }
 local STEEL = { 0.62, 0.64, 0.66 }
+local TYRE = { 0.16, 0.16, 0.17 }
 local EYE = { 0.95, 0.15, 0.1 }
 
 local WHEEL_RADIUS = 0.42
-local BODY_BOTTOM, BODY_HEIGHT = 0.75, 0.95
-local SAW_X, SAW_Z = 1.05, 1.1
+-- The wheel trails behind the body, held on the swing arm's axle.
+local AXLE_Y = 0.3
+local AXLE_LENGTH = 0.8
+local BODY_BOTTOM, BODY_HEIGHT = 0.95, 0.9
+local BODY_WIDTH, BODY_DEPTH = 1.05, 0.9
+-- Swing arm pivot, under the body on the +X side.
+local PIVOT = { 0.36, -0.15, BODY_BOTTOM - 0.08 }
+local SAW_X, SAW_Z = 1.05, 1.35
+local SAW_RADIUS = 0.42
+local SAW_TEETH = 14
+local EYE_Z = 1.5
 local TAU = 2 * math.pi
 
 -- Edge highlight and feathering, matching the salvage machine.
@@ -68,8 +84,8 @@ local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
 end
 
 -- UV sphere, squashed per axis by (rx, ry, rz).
-local function sphere(mesh, cx, cy, cz, rx, ry, rz)
-	local rings, sides = 8, 16
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
 	local grid = {}
 	for r = 0, rings do
 		local phi = r / rings * math.pi
@@ -87,6 +103,39 @@ local function sphere(mesh, cx, cy, cz, rx, ry, rz)
 			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
 		end
 	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
 end
 
 -- Square beam from one point to another, for limbs and antennae.
@@ -113,45 +162,158 @@ local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
 	end
 end
 
--- Flat-coloured blockout part following one bone.
-local function part(name, bone, color, build)
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body).
+local function part(name, bone, color, build, smooth)
 	local mesh = Mesh.new()
 	build(mesh)
-	mesh:setSmooth(SMOOTH_ANGLE)
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
 	mesh:unwrap()
 	local image = Image.new(TEXTURE, TEXTURE, color[1], color[2], color[3])
 	mesh:paintShading(image, { highlight = EDGE_HIGHLIGHT, blend = EDGE_BLEND })
 	model.part(name, mesh, image, { bone = bone, preview = true })
 end
 
+-- Disc in the YZ plane with sawtooth edge, centred at (cx, cy, cz).
+local function sawBlade(mesh, cx, cy, cz, radius, thick, teeth)
+	local front, back = {}, {}
+	for i = 0, teeth * 2 - 1 do
+		local t = i / (teeth * 2) * TAU
+		-- Hooked teeth: tips lean round the spin direction.
+		local r = if i % 2 == 0 then radius else radius * 0.82
+		local lean = if i % 2 == 0 then 0.12 else 0
+		front[i + 1] = mesh:vertex(cx + thick / 2, cy + math.cos(t + lean) * r, cz + math.sin(t + lean) * r)
+		back[i + 1] = mesh:vertex(cx - thick / 2, cy + math.cos(t + lean) * r, cz + math.sin(t + lean) * r)
+	end
+	local n = #front
+	for i = 1, n do
+		local j = i % n + 1
+		mesh:face({ back[i], back[j], front[j], front[i] })
+	end
+	mesh:face(front)
+	local capBack = {}
+	for i = n, 1, -1 do
+		table.insert(capBack, back[i])
+	end
+	mesh:face(capBack)
+end
+
+-- Shallow dish opening along +Z then tilted toward -Y, apex at (cx, cy, cz).
+local function radarDish(mesh, cx, cy, cz, radius, depth)
+	local sides = 12
+	local tilt = 0.6
+	local function at(x, y, z)
+		-- Tilt about X so the dish faces up and forward.
+		local c, s = math.cos(tilt), math.sin(tilt)
+		return mesh:vertex(cx + x, cy + y * c + z * s, cz - y * s + z * c)
+	end
+	local apex = at(0, 0, 0)
+	local rim, lip = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rim[i + 1] = at(math.cos(t) * radius, math.sin(t) * radius, depth)
+		lip[i + 1] = at(math.cos(t) * radius * 0.9, math.sin(t) * radius * 0.9, depth * 0.75)
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ apex, rim[j], rim[i] })
+		mesh:face({ rim[i], rim[j], lip[j], lip[i] })
+	end
+	local inner = {}
+	for i = sides, 1, -1 do
+		table.insert(inner, lip[i])
+	end
+	mesh:face(inner)
+end
+
 local root = model.bone("Root", { at = { 0, 0, 0 } })
-local body = model.bone("Body", { at = { 0, 0, WHEEL_RADIUS }, parent = root })
-local wheel = model.bone("Wheel", { at = { 0, 0, WHEEL_RADIUS }, parent = body })
-local sawArm = model.bone("SawArm", { at = { 0.55, 0, SAW_Z }, parent = body })
-local saw = model.bone("Saw", { at = { SAW_X, -0.1, SAW_Z }, parent = sawArm })
+local body = model.bone("Body", { at = { 0, 0, BODY_BOTTOM }, parent = root })
+local suspension = model.bone("Suspension", { at = PIVOT, parent = body })
+local wheel = model.bone("Wheel", { at = { 0, AXLE_Y, WHEEL_RADIUS }, parent = suspension })
+local sawArm = model.bone("SawArm", { at = { BODY_WIDTH / 2, 0, SAW_Z }, parent = body })
+local saw = model.bone("Saw", { at = { SAW_X, -0.15, SAW_Z }, parent = sawArm })
 local antenna = model.bone("Antenna", { at = { -0.3, 0.2, BODY_BOTTOM + BODY_HEIGHT }, parent = body })
 
-part("Wheel", wheel, DARK_STEEL, function(mesh)
-	cylinder(mesh, 0, 0, WHEEL_RADIUS, WHEEL_RADIUS, 0.3, "x", 20)
+local top = BODY_BOTTOM + BODY_HEIGHT
+local front = -BODY_DEPTH / 2
+
+part("Wheel", wheel, TYRE, function(mesh)
+	cylinder(mesh, 0, AXLE_Y, WHEEL_RADIUS, WHEEL_RADIUS, 0.3, "x", 20)
+end)
+part("WheelHub", wheel, STEEL, function(mesh)
+	-- Hub rims on both faces, with lug bolts round each.
+	for _, side in { -1, 1 } do
+		ring(mesh, side * 0.16, AXLE_Y, WHEEL_RADIUS, 0.1, 0.24, 0.04, "x")
+		for i = 0, 4 do
+			local t = i / 5 * TAU
+			bolt(mesh, side * 0.18, AXLE_Y + math.cos(t) * 0.17, WHEEL_RADIUS + math.sin(t) * 0.17, "x", 0.03)
+		end
+	end
+end)
+part("SwingArm", suspension, DARK_STEEL, function(mesh)
+	-- Axle right through the wheel, capped with nuts.
+	cylinder(mesh, 0.08, AXLE_Y, WHEEL_RADIUS, 0.06, AXLE_LENGTH, "x", 10)
+	bolt(mesh, -AXLE_LENGTH / 2 + 0.08, AXLE_Y, WHEEL_RADIUS, "x", 0.09)
+	-- Arm from the pivot bracket back and down to the axle end.
+	local ax = AXLE_LENGTH / 2 + 0.02
+	strut(mesh, PIVOT[1], PIVOT[2], PIVOT[3], ax, AXLE_Y, WHEEL_RADIUS, 0.13)
+	cylinder(mesh, ax, AXLE_Y, WHEEL_RADIUS, 0.1, 0.12, "x", 10)
+	cylinder(mesh, PIVOT[1], PIVOT[2], PIVOT[3], 0.09, 0.2, "x", 10)
+	-- Coil-over shock from the arm's middle up to the body's rear corner.
+	strut(mesh, ax - 0.03, AXLE_Y - 0.12, WHEEL_RADIUS + 0.25, 0.3, 0.35, BODY_BOTTOM + 0.05, 0.06)
+	for i = 0, 3 do
+		local k = (i + 0.5) / 4
+		ring(mesh, ax - 0.03 + (0.3 - ax + 0.03) * k, AXLE_Y - 0.12 + 0.47 * k, WHEEL_RADIUS + 0.25 + (BODY_BOTTOM - WHEEL_RADIUS - 0.2) * k, 0.03, 0.07, 0.03, "z", 8)
+	end
 end)
 part("Body", body, RUST, function(mesh)
-	box(mesh, 0, 0, BODY_BOTTOM, 1.1, 0.95, BODY_HEIGHT)
-	-- Fork straddling the wheel.
-	box(mesh, -0.24, 0, WHEEL_RADIUS - 0.05, 0.1, 0.18, BODY_BOTTOM - WHEEL_RADIUS + 0.1)
-	box(mesh, 0.24, 0, WHEEL_RADIUS - 0.05, 0.1, 0.18, BODY_BOTTOM - WHEEL_RADIUS + 0.1)
+	box(mesh, 0, 0, BODY_BOTTOM, BODY_WIDTH, BODY_DEPTH, BODY_HEIGHT)
+	-- Lid lip round the top, like the box it was cut from.
+	box(mesh, 0, 0, top - 0.08, BODY_WIDTH + 0.06, BODY_DEPTH + 0.06, 0.08)
+end)
+part("Plates", body, GALVANISED, function(mesh)
+	-- Galvanised panel bolted low on the front, a strap riveted over the top.
+	box(mesh, -0.12, front - 0.02, BODY_BOTTOM + 0.08, 0.7, 0.04, 0.32)
+	box(mesh, 0.25, 0, top, 0.16, BODY_DEPTH + 0.1, 0.03)
+	for _, x in { -0.42, 0.18 } do
+		for _, z in { BODY_BOTTOM + 0.13, BODY_BOTTOM + 0.35 } do
+			bolt(mesh, x, front - 0.05, z, "y", 0.035)
+		end
+	end
+end)
+part("AppliancePanel", body, APPLIANCE, function(mesh)
+	-- Off-square panel on the -X side, from an old washing machine.
+	box(mesh, -BODY_WIDTH / 2 - 0.02, 0.05, BODY_BOTTOM + 0.3, 0.04, 0.62, 0.48)
+	for _, y in { -0.21, 0.31 } do
+		for _, z in { BODY_BOTTOM + 0.36, BODY_BOTTOM + 0.72 } do
+			bolt(mesh, -BODY_WIDTH / 2 - 0.05, y, z, "x", 0.035)
+		end
+	end
+end)
+part("EyeRim", body, STEEL, function(mesh)
+	ring(mesh, 0.12, front - 0.03, EYE_Z, 0.17, 0.27, 0.08, "y", 20)
+	for i = 0, 5 do
+		local t = i / 6 * TAU
+		bolt(mesh, 0.12 + math.cos(t) * 0.22, front - 0.08, EYE_Z + math.sin(t) * 0.22, "y", 0.025)
+	end
 end)
 part("Eye", body, EYE, function(mesh)
-	sphere(mesh, 0.1, -0.48, 1.35, 0.2, 0.1, 0.2)
-end)
-part("SawArm", sawArm, STEEL, function(mesh)
-	strut(mesh, 0.5, 0, SAW_Z, SAW_X, -0.1, SAW_Z, 0.14)
+	sphere(mesh, 0.12, front - 0.01, EYE_Z, 0.18, 0.08, 0.18)
+end, true)
+part("SawArm", sawArm, DARK_STEEL, function(mesh)
+	box(mesh, BODY_WIDTH / 2 + 0.03, 0, SAW_Z - 0.18, 0.06, 0.3, 0.36)
+	strut(mesh, BODY_WIDTH / 2, 0, SAW_Z, SAW_X - 0.05, -0.15, SAW_Z, 0.14)
+	cylinder(mesh, SAW_X - 0.08, -0.15, SAW_Z, 0.09, 0.12, "x", 10)
 end)
 part("Saw", saw, STEEL, function(mesh)
-	cylinder(mesh, SAW_X, -0.1, SAW_Z, 0.45, 0.05, "x", 12)
+	sawBlade(mesh, SAW_X, -0.15, SAW_Z, SAW_RADIUS, 0.04, SAW_TEETH)
+	bolt(mesh, SAW_X + 0.04, -0.15, SAW_Z, "x", 0.08)
 end)
 part("Antenna", antenna, DARK_STEEL, function(mesh)
-	local top = BODY_BOTTOM + BODY_HEIGHT
-	strut(mesh, -0.3, 0.2, top, -0.35, 0.25, top + 0.45, 0.05)
-	strut(mesh, -0.35, 0.25, top + 0.45, -0.1, 0.35, top + 0.75, 0.05)
-	sphere(mesh, -0.1, 0.35, top + 0.78, 0.07, 0.07, 0.07)
+	cylinder(mesh, -0.3, 0.2, top + 0.04, 0.07, 0.08, "z", 8)
+	strut(mesh, -0.3, 0.2, top, -0.35, 0.25, top + 0.4, 0.05)
+	strut(mesh, -0.35, 0.25, top + 0.4, -0.12, 0.3, top + 0.62, 0.05)
+end)
+part("RadarDish", antenna, GALVANISED, function(mesh)
+	radarDish(mesh, -0.12, 0.3, top + 0.6, 0.3, 0.14)
 end)
