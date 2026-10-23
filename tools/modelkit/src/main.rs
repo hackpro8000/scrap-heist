@@ -321,7 +321,10 @@ fn write_png(path: &Path, size: usize, data: &[u8]) -> std::io::Result<()> {
 	std::fs::write(path, image::encode_rgb(size, size, data))
 }
 
-fn run(dir: &Path, turntable: usize, size: usize) -> Result<(), String> {
+// A close-up: focus point x, y, z, framing radius, and camera spin in degrees.
+type Closeup = (f64, f64, f64, f64, f64);
+
+fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup]) -> Result<(), String> {
 	let started = Instant::now();
 	let name = dir.file_name().and_then(|n| n.to_str()).ok_or("bad model folder")?.to_string();
 	let script = dir.join("model.luau");
@@ -367,7 +370,7 @@ fn run(dir: &Path, turntable: usize, size: usize) -> Result<(), String> {
 		}
 	}
 	let shown: Vec<&Part> = parts.iter().filter(|p| p.preview).collect();
-	let preview = render::render(&shown, &render::View { size, spin: 0.0 });
+	let preview = render::render(&shown, &render::View { size, spin: 0.0, focus: None });
 	write_png(&dir.join("preview.png"), size, &preview).map_err(|e| e.to_string())?;
 
 	if turntable > 0 {
@@ -375,9 +378,14 @@ fn run(dir: &Path, turntable: usize, size: usize) -> Result<(), String> {
 		std::fs::create_dir_all(&frames).map_err(|e| e.to_string())?;
 		for frame in 0..turntable {
 			let spin = frame as f64 / turntable as f64 * std::f64::consts::TAU;
-			let data = render::render(&shown, &render::View { size, spin });
+			let data = render::render(&shown, &render::View { size, spin, focus: None });
 			write_png(&frames.join(format!("{frame:04}.png")), size, &data).map_err(|e| e.to_string())?;
 		}
+	}
+	for (n, &(x, y, z, radius, degrees)) in closeups.iter().enumerate() {
+		let focus = Some(([x, y, z], radius));
+		let data = render::render(&shown, &render::View { size, spin: degrees.to_radians(), focus });
+		write_png(&dir.join(format!("closeup_{}.png", n + 1)), size, &data).map_err(|e| e.to_string())?;
 	}
 	eprintln!("{name}: {} parts, script {:.2?}, total {:.2?}", parts.len(), scripted, started.elapsed());
 	Ok(())
@@ -386,7 +394,7 @@ fn run(dir: &Path, turntable: usize, size: usize) -> Result<(), String> {
 fn main() {
 	let args: Vec<String> = std::env::args().skip(1).collect();
 	let Some(dir) = args.first() else {
-		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS]");
+		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]...");
 		std::process::exit(2);
 	};
 	let turntable = match args.iter().position(|a| a == "--turntable") {
@@ -397,7 +405,16 @@ fn main() {
 		Some(at) => args.get(at + 1).and_then(|n| n.parse().ok()).unwrap_or(DEFAULT_PREVIEW_SIZE),
 		None => DEFAULT_PREVIEW_SIZE,
 	};
-	if let Err(error) = run(Path::new(dir), turntable, size) {
+	let mut closeups = Vec::new();
+	for (at, _) in args.iter().enumerate().filter(|(_, a)| *a == "--closeup") {
+		let numbers: Vec<f64> = args.get(at + 1).map_or(vec![], |list| list.split(',').filter_map(|n| n.parse().ok()).collect());
+		let [x, y, z, radius, spin] = numbers[..] else {
+			eprintln!("--closeup takes X,Y,Z,RADIUS,SPIN");
+			std::process::exit(2);
+		};
+		closeups.push((x, y, z, radius, spin));
+	}
+	if let Err(error) = run(Path::new(dir), turntable, size, &closeups) {
 		eprintln!("error: {error}");
 		std::process::exit(1);
 	}
