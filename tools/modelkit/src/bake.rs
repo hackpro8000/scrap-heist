@@ -410,6 +410,8 @@ pub struct Shading {
 	// 0-1: feathers highlight strokes and tints them toward a lighter base
 	// color instead of cream, so they melt into the paint. 0 keeps the classic look.
 	pub blend: f64,
+	// 0-1: smooth top-to-bottom darkening across each part, cool in the low end.
+	pub gradient: f64,
 }
 
 const AO_DISTANCE: f64 = 0.8;
@@ -592,6 +594,14 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 			let screened = 1.0 - (1.0 - color[k]) * (1.0 - screen[k]);
 			color[k] += (screened - color[k]) * lit;
 			color[k] += (color[k] * multiply[k] - color[k]) * dark;
+		}
+		if shading.gradient > 0.0 {
+			let t = 1.0 - g[2];
+			let factor = t * t * (3.0 - 2.0 * t) * shading.gradient;
+			let tint = [0.45, 0.42, 0.6].map(to_linear_f64);
+			for k in 0..3 {
+				color[k] += (color[k] * tint[k] - color[k]) * factor;
+			}
 		}
 		if shading.bands > 0 {
 			let bands = shading.bands as f64;
