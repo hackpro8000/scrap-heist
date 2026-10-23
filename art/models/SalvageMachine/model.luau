@@ -1,7 +1,10 @@
 -- Salvage machine: a junk shredder that chews scrap dropped in its hopper and
--- spits parts down a chute. Three upgrade tiers, each a group: a hand-cranked
--- shredder, then a motor with a belt and exhaust, then a magnet crane that
--- feeds the hopper. Sits on its pad with the base at the origin.
+-- spits parts down a chute. Three upgrade tiers, each a group, each a step up
+-- in technology: a hand-cranked two-roller shredder; a three-roller shredder
+-- run by a petrol engine with a flywheel, belt and pressure gauge; and an
+-- electric four-roller shredder with a geared drive, a control box with a
+-- status light, a conveyor carrying parts off the chute, and a magnet crane
+-- that feeds the hopper. Sits on its pad with the base at the origin.
 -- Sketch blockout: tiers stand side by side for review.
 
 local SPACING = 6
@@ -14,6 +17,8 @@ local MAGNET = { 0.25, 0.4, 0.75 }
 local CHUTE = { 0.6, 0.62, 0.6 }
 local BOLT = { 0.62, 0.58, 0.52 }
 local PATCH = { 0.74, 0.46, 0.28 }
+local ELECTRICS = { 0.9, 0.78, 0.2 }
+local LAMP = { 0.3, 0.95, 0.4 }
 
 local TAU = 2 * math.pi
 
@@ -386,10 +391,14 @@ for tier = 1, 3 do
 	part(`{group}_PatchPlates`, plates, PATCH, group, SMALL_TEXTURE)
 
 	local rollers = warpedMesh(warp)
-	for _, y in { -0.3, 0.3 } do
-		toothedRoller(rollers, cx, y * scale, 2.15 * scale, 0.28 * scale, 1.9 * scale, 6, 7)
+	-- Better tiers pack more, finer rollers: 2 → 3 → 4, with more teeth each.
+	local rollerCount = tier + 1
+	local rollerRadius = 0.28 * scale * 2 / rollerCount * (if rollerCount > 2 then 1.15 else 1)
+	for i = 1, rollerCount do
+		local y = ((i - 1) / (rollerCount - 1) - 0.5) * 0.6 * scale
+		toothedRoller(rollers, cx, y, 2.15 * scale, rollerRadius, 1.9 * scale, 4 + tier * 2, 5 + tier * 2)
 	end
-	if tier > 1 then
+	if tier == 2 then
 		-- Belt drive in the gap between housing and motor: a small pulley on
 		-- the motor, a large one on the housing, and the belt's two runs.
 		local beltX = cx + 1.1 * scale + 0.06
@@ -398,6 +407,23 @@ for tier = 1, 3 do
 		cylinder(rollers, beltX, 0, high, 0.25, 0.08, "x")
 		box(rollers, beltX, -0.2, low, 0.05, 0.04, high - low)
 		box(rollers, beltX, 0.2, low, 0.05, 0.04, high - low)
+	elseif tier == 3 then
+		-- Geared drive: a small pinion on the motor shaft meshing with a big
+		-- gear on the roller shaft, no slipping belt.
+		local gearX = cx + 1.1 * scale + 0.08
+		toothedRoller(rollers, gearX, 0, 1.25, 0.2, 0.12, 8, 1)
+		toothedRoller(rollers, gearX, 0, 1.25 + 0.2 + 0.32, 0.36, 0.12, 14, 1)
+		-- Conveyor off the end of the chute: a belt on two end drums.
+		local beltY0, beltY1 = 2.2 * scale, 4.2 * scale
+		box(rollers, cx, (beltY0 + beltY1) / 2, 0.42, 1 * scale, beltY1 - beltY0, 0.06)
+		for _, y in { beltY0, beltY1 } do
+			cylinder(rollers, cx, y, 0.45, 0.1, 1.05 * scale, "x")
+		end
+		for _, x in { -0.5, 0.5 } do
+			for _, y in { beltY0 + 0.2, beltY1 - 0.2 } do
+				box(rollers, cx + x * scale, y, 0, 0.08, 0.08, 0.42)
+			end
+		end
 	end
 	part(`{group}_Rollers`, rollers, ROLLER, group, SMALL_TEXTURE)
 
@@ -414,14 +440,27 @@ for tier = 1, 3 do
 		-- Hand crank on the side.
 		cylinder(extras, cx + 1.25 * scale, 0, 1.6 * scale, 0.08, 0.3, "x")
 		box(extras, cx + 1.4, 0, 1.6 * scale, 0.1, 0.1, 0.6)
-	else
-		-- Motor block with cooling fins on top and an exhaust stack.
+	elseif tier == 2 then
+		-- Petrol engine with cooling fins, an exhaust stack, a heavy flywheel
+		-- on its far side and a pressure gauge on top.
 		local motorX = cx + 1.6 * scale
 		box(extras, motorX, 0, 0.6, 0.9, 1, 0.9)
 		for _, offset in { -0.35, -0.2, -0.05 } do
 			box(extras, motorX + offset, 0, 1.5, 0.04, 1, 0.1)
 		end
 		cylinder(extras, cx + 1.8 * scale, 0.3, 1.5, 0.1, 1.2, "z")
+		cylinder(extras, motorX + 0.55, 0, 1.05, 0.42, 0.12, "x")
+		cylinder(extras, motorX + 0.55, 0, 1.05, 0.08, 0.3, "x")
+		cylinder(extras, motorX + 0.2, -0.3, 1.5, 0.05, 0.25, "z")
+		cylinder(extras, motorX + 0.2, -0.3, 1.75, 0.13, 0.06, "z")
+	else
+		-- Electric motor: an upright drum wrapped in cooling rings.
+		local motorX = cx + 1.7 * scale
+		cylinder(extras, motorX, 0, 0.2, 0.45, 1.3, "z")
+		for k = 0, 4 do
+			cylinder(extras, motorX, 0, 0.35 + k * 0.22, 0.52, 0.05, "z")
+		end
+		cylinder(extras, motorX, 0, 1.5, 0.2, 0.15, "z")
 	end
 	part(`{group}_Extras`, extras, if tier == 1 then FRAME else MOTOR, group, SMALL_TEXTURE, if tier == 1 then nil else motorColor)
 
@@ -431,6 +470,18 @@ for tier = 1, 3 do
 		box(crane, cx - 1.8 * scale, 0, 0, 0.3, 0.3, 4.6)
 		box(crane, cx - 0.8 * scale, 0, 4.4, 2.8, 0.25, 0.25)
 		cylinder(crane, cx + 0.3, 0, 3.4, 0.45, 0.25, "z")
+		-- Cable from the boom down to the magnet.
+		box(crane, cx + 0.3, 0, 3.65, 0.05, 0.05, 0.8)
 		part(`{group}_Crane`, crane, MAGNET, group, SMALL_TEXTURE)
+
+		-- Control box on the housing's front with a cable run to the motor.
+		local electrics = warpedMesh(warp)
+		box(electrics, cx + 0.5 * scale, -0.9 * scale - 0.12, 1.4 * scale, 0.6, 0.24, 0.6)
+		box(electrics, cx + 0.5 * scale + 0.3, -0.9 * scale - 0.1, 1.2, 1.2 * scale, 0.06, 0.06)
+		part(`{group}_Electrics`, electrics, ELECTRICS, group, SMALL_TEXTURE)
+
+		local lamp = warpedMesh(warp)
+		cylinder(lamp, cx + 0.5 * scale, -0.9 * scale - 0.12, 1.4 * scale + 0.6, 0.09, 0.12, "z")
+		part(`{group}_StatusLamp`, lamp, LAMP, group, SMALL_TEXTURE)
 	end
 end
