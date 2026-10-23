@@ -19,7 +19,7 @@ local TREAD = { 0.18, 0.18, 0.2 }
 local VISOR = { 0.95, 0.15, 0.1 }
 
 local TREAD_HEIGHT = 0.9
-local TREAD_X, TREAD_WIDTH, TREAD_LENGTH = 1.05, 0.7, 2.6
+local TREAD_X, TREAD_WIDTH, TREAD_LENGTH = 1.5, 0.7, 2.6
 local BODY_TOP = 4.2
 local BODY_FRONT = -0.85
 local SHOULDER_Z = 3.7
@@ -596,33 +596,59 @@ local shoulderL = model.bone("ShoulderL", { at = { -1.3, 0, SHOULDER_Z }, parent
 local shoulderR = model.bone("ShoulderR", { at = { 1.3, 0, SHOULDER_Z }, parent = body })
 local visor = model.bone("Visor", { at = { 0, -0.9, 3.6 }, parent = body })
 
+-- Each track is a rubber band looped round a recessed frame, so the road
+-- wheels sit down inside it between the band's edges.
+local BAND = 0.12
+local RECESS = 0.1
+
 part("Treads", treads, TREAD, function(mesh)
 	local radius = TREAD_HEIGHT / 2
 	for _, side in { -1, 1 } do
 		local x = side * TREAD_X
-		box(mesh, x, 0, 0, TREAD_WIDTH, TREAD_LENGTH, TREAD_HEIGHT)
-		cylinder(mesh, x, -TREAD_LENGTH / 2, radius, radius, TREAD_WIDTH, "x")
-		cylinder(mesh, x, TREAD_LENGTH / 2, radius, radius, TREAD_WIDTH, "x")
-		-- Grip lugs across the top and bottom runs.
-		for i = 0, 6 do
-			local y = -1.2 + i * 0.4
-			box(mesh, x, y, TREAD_HEIGHT, TREAD_WIDTH + 0.04, 0.12, 0.06)
-			box(mesh, x, y, -0.06, TREAD_WIDTH + 0.04, 0.12, 0.06)
+		box(mesh, x, 0, 0, TREAD_WIDTH, TREAD_LENGTH, BAND)
+		box(mesh, x, 0, TREAD_HEIGHT - BAND, TREAD_WIDTH, TREAD_LENGTH, BAND)
+		for _, y in { -TREAD_LENGTH / 2, TREAD_LENGTH / 2 } do
+			ring(mesh, x, y, radius, radius - BAND, radius, TREAD_WIDTH, "x")
+		end
+		-- Grip lugs all the way round the loop.
+		for i = 0, 7 do
+			local y = -TREAD_LENGTH / 2 + (i + 0.5) * TREAD_LENGTH / 8
+			cylinder(mesh, x, y, TREAD_HEIGHT + 0.02, 0.05, TREAD_WIDTH + 0.04, "x", 6)
+			cylinder(mesh, x, y, -0.02, 0.05, TREAD_WIDTH + 0.04, "x", 6)
+		end
+		for _, end_ in { -1, 1 } do
+			for k = 1, 3 do
+				local t = k / 4 * math.pi
+				local y = end_ * (TREAD_LENGTH / 2 + math.sin(t) * (radius + 0.02))
+				cylinder(mesh, x, y, radius + math.cos(t) * (radius + 0.02), 0.05, TREAD_WIDTH + 0.04, "x", 6)
+			end
 		end
 	end
-	box(mesh, 0, 0, 0.3, 1.5, 1.6, 0.5)
+	box(mesh, 0, 0, 0.3, 2 * TREAD_X - TREAD_WIDTH, 1.6, 0.5)
 end, nil, RUBBER)
+part("TrackFrames", treads, DARK_STEEL, function(mesh)
+	local radius = TREAD_HEIGHT / 2
+	local width = TREAD_WIDTH - 2 * RECESS
+	for _, side in { -1, 1 } do
+		local x = side * TREAD_X
+		box(mesh, x, 0, BAND, width, TREAD_LENGTH, TREAD_HEIGHT - 2 * BAND)
+		for _, y in { -TREAD_LENGTH / 2, TREAD_LENGTH / 2 } do
+			cylinder(mesh, x, y, radius, radius - BAND, width, "x")
+		end
+	end
+end, nil, 0.5)
 part("RoadWheels", treads, DARK_STEEL, function(mesh)
 	local radius = TREAD_HEIGHT / 2
 	for _, side in { -1, 1 } do
-		local x = side * (TREAD_X + TREAD_WIDTH / 2 + 0.03)
-		-- Drive sprockets at the ends, small road wheels between.
+		-- Set into the recess, just inside the band's outer edge.
+		local x = side * (TREAD_X + TREAD_WIDTH / 2 - RECESS + 0.03)
+		-- Drive sprockets at the ends, road wheels between.
 		for _, y in { -TREAD_LENGTH / 2, TREAD_LENGTH / 2 } do
-			ring(mesh, x, y, radius, 0.12, radius - 0.06, 0.06, "x")
+			ring(mesh, x, y, radius, 0.12, radius - BAND - 0.02, 0.06, "x")
 			cylinder(mesh, x + side * 0.03, y, radius, 0.1, 0.1, "x", 8)
 		end
 		for _, y in { -0.65, 0, 0.65 } do
-			cylinder(mesh, x, y, radius, 0.24, 0.06, "x")
+			cylinder(mesh, x, y, radius, 0.26, 0.06, "x")
 			bolt(mesh, x + side * 0.04, y, radius, "x", 0.06)
 		end
 	end
