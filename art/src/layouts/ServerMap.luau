@@ -60,7 +60,7 @@ end
 
 local function heightAt(x: number, y: number): number
 	local radius = octagonRadius(x, y)
-	return -ARENA_DEPTH * (1 - smoothstep(ARENA_FLOOR, ROAD_INNER - 2, radius))
+	return -ARENA_DEPTH * (1 - math.clamp((radius - ARENA_FLOOR) / (ROAD_INNER - 2 - ARENA_FLOOR), 0, 1))
 end
 
 -- A floating island: a dirt top following `top`, over a rock underside that
@@ -449,45 +449,58 @@ slab("Road", function()
 	end, nil, 0.5)
 end, 0, 0)
 
--- Entry ramps: a concrete apron down the bowl rim at each spoke, through the
--- wall gap, edged with yellow curbs so players and bots see the way in.
--- Each strip follows the rim's curve from the ring road to the floor.
-local RAMP_STEPS = 12
-local function rampStrip(mesh, degrees: number, from: number, to: number, lift: number, thickness: number)
+-- Entry ramps: a concrete deck at each spoke, from the wall gap down to the
+-- fight floor, held up by retaining walls with yellow caps that carry on from
+-- the arena wall. The bowl is a straight chamfer, so the deck follows it a
+-- little above and never dips into the terrain.
+local RAMP_RADII = { ARENA_FLOOR - 1, ARENA_FLOOR, ROAD_INNER - 2, ROAD_INNER + 0.5 }
+local RAMP_FLOOR = 0.1 - ARENA_DEPTH
+local function rampTop(radius: number): number
+	return math.max(heightAt(radius, 0), RAMP_FLOOR) + 0.35
+end
+-- A solid block under the deck between `from` and `to` across it, raised
+-- `lift` above the deck, down to the arena floor or `depth` below its top.
+local function rampBlock(mesh, degrees: number, from: number, to: number, lift: number, depth: number?)
 	local angle = math.rad(degrees)
 	local c, n = math.cos(angle), math.sin(angle)
 	local rows = {}
-	for s = 0, RAMP_STEPS do
-		local radius = ARENA_FLOOR - 1 + (ROAD_INNER + 0.5 - (ARENA_FLOOR - 1)) * s / RAMP_STEPS
-		local top = math.max(heightAt(c * radius, n * radius), -ARENA_DEPTH + 0.2) + lift
+	for s, radius in RAMP_RADII do
+		local top = rampTop(radius) + lift
+		local bottom = if depth then top - depth else RAMP_FLOOR - 0.1
 		rows[s] = {}
 		for k, side in { from, to } do
 			local x, y = c * radius - n * side, n * radius + c * side
 			rows[s][k] = mesh:vertex(x, y, top)
-			rows[s][k + 2] = mesh:vertex(x, y, top - thickness)
+			rows[s][k + 2] = mesh:vertex(x, y, bottom)
 		end
 	end
-	for s = 0, RAMP_STEPS - 1 do
+	for s = 1, #RAMP_RADII - 1 do
 		local a, b = rows[s], rows[s + 1]
-		mesh:face({ a[1], a[2], b[2], b[1] })
-		mesh:face({ a[3], b[3], b[4], a[4] })
-		mesh:face({ a[1], b[1], b[3], a[3] })
-		mesh:face({ a[2], a[4], b[4], b[2] })
+		mesh:face({ b[1], b[2], a[2], a[1] })
+		mesh:face({ a[4], b[4], b[3], a[3] })
+		mesh:face({ a[3], b[3], b[1], a[1] })
+		mesh:face({ b[2], b[4], a[4], a[2] })
 	end
-	mesh:face({ rows[0][1], rows[0][3], rows[0][4], rows[0][2] })
-	local last = rows[RAMP_STEPS]
-	mesh:face({ last[1], last[2], last[4], last[3] })
+	local first, last = rows[1], rows[#RAMP_RADII]
+	mesh:face({ first[2], first[4], first[3], first[1] })
+	mesh:face({ last[3], last[4], last[2], last[1] })
 end
 slab("Ramps", function()
-	part("Apron", nil, CONCRETE, function(mesh)
+	part("Deck", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
-			rampStrip(mesh, (i - 1) * 45, -3, 3, 0.15, 0.6)
+			rampBlock(mesh, (i - 1) * 45, -3.6, 3.6, 0)
 		end
-	end, nil, 0.15)
-	part("Curb", nil, MARK, function(mesh)
+	end, nil, 0.25)
+	part("SideWall", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
-			rampStrip(mesh, (i - 1) * 45, -3.4, -2.9, 0.4, 0.8)
-			rampStrip(mesh, (i - 1) * 45, 2.9, 3.4, 0.4, 0.8)
+			rampBlock(mesh, (i - 1) * 45, -4.4, -3.6, 0.9)
+			rampBlock(mesh, (i - 1) * 45, 3.6, 4.4, 0.9)
+		end
+	end, nil, 0.4)
+	part("SideCap", nil, MARK, function(mesh)
+		for i = 1, 8 do
+			rampBlock(mesh, (i - 1) * 45, -4.5, -3.5, 1.05, 0.15)
+			rampBlock(mesh, (i - 1) * 45, 3.5, 4.5, 1.05, 0.15)
 		end
 	end, nil, 0.3)
 end, 0, 0)
@@ -657,7 +670,7 @@ for i = 1, 4 do
 	end, x, y, degrees)
 end
 for i = 1, 4 do
-	local degrees = (i - 0.5) * 90
+	local degrees = (i - 0.75) * 90
 	local x, y = polar(ROAD_INNER - 2, degrees)
 	place(`Light{i}`, buildStreetlightBroken, x, y, heightAt(x, y), degrees + 90)
 end
