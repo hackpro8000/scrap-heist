@@ -13,6 +13,7 @@ local MOTOR = { 0.7, 0.2, 0.18 }
 local MAGNET = { 0.25, 0.4, 0.75 }
 local CHUTE = { 0.6, 0.62, 0.6 }
 local BOLT = { 0.62, 0.58, 0.52 }
+local PATCH = { 0.74, 0.46, 0.28 }
 
 local TAU = 2 * math.pi
 
@@ -133,13 +134,15 @@ local function hopperColor(bottomZ, height)
 	end
 end
 
--- Chunky cartoon bolt heads, like the scrap crate's: fat 8-sided cones
--- standing out from the housing's side faces in rows along its edges.
+-- Chunky cartoon bolt heads, like the scrap crate's: fat 8-sided cones that
+-- stand out from the housing in wobbly, mismatched rows, with crooked scrap
+-- plates bolted on over the panels.
 local BOLT_SIZE = 0.1
 local BOLT_SPACING = 0.5
+local PATCH_THICKNESS = 0.04
 
 -- Bolt head on a side face at (x, y, z), pointing out along normalX/normalY.
-local function bolt(mesh, x, y, z, normalX, normalY)
+local function bolt(mesh, x, y, z, normalX, normalY, size)
 	local segments = 8
 	local base, top = {}, {}
 	for k = 0, segments - 1 do
@@ -152,8 +155,8 @@ local function bolt(mesh, x, y, z, normalX, normalY)
 				z + up * radius
 			)
 		end
-		base[k + 1] = ring(-BOLT_SIZE / 2, BOLT_SIZE)
-		top[k + 1] = ring(BOLT_SIZE / 2, BOLT_SIZE * 0.8)
+		base[k + 1] = ring(-size / 2, size)
+		top[k + 1] = ring(size / 2, size * 0.8)
 	end
 	for k = 1, segments do
 		local j = k % segments + 1
@@ -166,22 +169,70 @@ local function bolt(mesh, x, y, z, normalX, normalY)
 	mesh:face(cap)
 end
 
-local function housingBolts(mesh, cx, scale)
+local function uniform(a, b)
+	return a + (b - a) * math.random()
+end
+
+-- Crooked scrap plate on a side face: a jittered, tilted quad slab centred
+-- at (x, y, z), with a little bolt in each corner.
+local function patchPlate(plates, bolts, x, y, z, normalX, normalY)
+	local w, h, tilt = uniform(0.3, 0.45), uniform(0.2, 0.3), uniform(-0.45, 0.45)
+	local corners = { { -w, -h }, { w, -h }, { w, h }, { -w, h } }
+	local outer, inner = {}, {}
+	for i, c in corners do
+		local u, v = c[1] + uniform(-0.09, 0.09), c[2] + uniform(-0.07, 0.07)
+		u, v = u * math.cos(tilt) - v * math.sin(tilt), u * math.sin(tilt) + v * math.cos(tilt)
+		local px, py, pz = x + normalY * u, y + normalX * u, z + v
+		inner[i] = plates:vertex(px, py, pz)
+		outer[i] = plates:vertex(px + normalX * PATCH_THICKNESS, py + normalY * PATCH_THICKNESS, pz)
+		local inset = 0.75
+		local bx, by = x + normalY * u * inset, y + normalX * u * inset
+		bolt(bolts, bx + normalX * PATCH_THICKNESS, by + normalY * PATCH_THICKNESS, z + v * inset, normalX, normalY, BOLT_SIZE * 0.55)
+	end
+	-- Winding flips with the side so the faces point outward.
+	local flip = normalX + normalY < 0
+	local function quad(a, b, c, d)
+		plates:face(if flip then { d, c, b, a } else { a, b, c, d })
+	end
+	quad(outer[1], outer[2], outer[3], outer[4])
+	quad(inner[4], inner[3], inner[2], inner[1])
+	for i = 1, 4 do
+		local j = i % 4 + 1
+		quad(inner[i], inner[j], outer[j], outer[i])
+	end
+end
+
+-- Rows of bolts that wobble, vary in size and sometimes go missing, plus a
+-- couple of patch plates per tier. Seeded per tier so each one looks different.
+local function housingBolts(bolts, plates, cx, scale, seed)
+	math.randomseed(seed)
 	local halfX, halfY = 1.1 * scale, 0.9 * scale
+	local function scrappyBolt(x, y, z, normalX, normalY)
+		if math.random() < 0.12 then
+			return
+		end
+		local size = BOLT_SIZE * uniform(0.7, 1.5)
+		local slide = uniform(-0.1, 0.1)
+		bolt(bolts, x + normalY * slide, y + normalX * slide, z + uniform(-0.08, 0.08), normalX, normalY, size)
+	end
 	for _, z in { 1.35 * scale, 1.95 * scale } do
 		local countX = math.floor(2 * halfX / BOLT_SPACING)
 		for i = 0, countX do
 			local x = cx - countX * BOLT_SPACING / 2 + i * BOLT_SPACING
-			bolt(mesh, x, -halfY, z, 0, -1)
-			bolt(mesh, x, halfY, z, 0, 1)
+			scrappyBolt(x, -halfY, z, 0, -1)
+			scrappyBolt(x, halfY, z, 0, 1)
 		end
 		local countY = math.floor(2 * halfY / BOLT_SPACING)
 		for i = 0, countY do
 			local y = -countY * BOLT_SPACING / 2 + i * BOLT_SPACING
-			bolt(mesh, cx - halfX, y, z, -1, 0)
-			bolt(mesh, cx + halfX, y, z, 1, 0)
+			scrappyBolt(cx - halfX, y, z, -1, 0)
+			scrappyBolt(cx + halfX, y, z, 1, 0)
 		end
 	end
+	local mid = 1.65 * scale
+	patchPlate(plates, bolts, cx + uniform(-0.5, 0.5) * scale, -halfY, mid + uniform(-0.05, 0.05), 0, -1)
+	patchPlate(plates, bolts, cx + uniform(-0.5, 0.5) * scale, halfY, mid + uniform(-0.05, 0.05), 0, 1)
+	patchPlate(plates, bolts, cx + halfX, uniform(-0.3, 0.3) * scale, mid, 1, 0)
 end
 
 local function part(name, mesh, color, group, size, paint)
@@ -244,9 +295,10 @@ for tier = 1, 3 do
 	box(frame, cx, 0, 1.2 * scale, 2.2 * scale, 1.8 * scale, 0.9 * scale)
 	part(`{group}_Frame`, frame, FRAME, group, LARGE_TEXTURE, frameColor(cx, scale))
 
-	local bolts = Mesh.new()
-	housingBolts(bolts, cx, scale)
+	local bolts, plates = Mesh.new(), Mesh.new()
+	housingBolts(bolts, plates, cx, scale, tier * 17)
 	part(`{group}_Bolts`, bolts, BOLT, group, SMALL_TEXTURE)
+	part(`{group}_PatchPlates`, plates, PATCH, group, SMALL_TEXTURE)
 
 	local rollers = Mesh.new()
 	for _, y in { -0.3, 0.3 } do
