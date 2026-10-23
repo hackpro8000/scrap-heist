@@ -381,10 +381,14 @@ local function frameColor(cx, scale, wear)
 end
 
 -- Motor paint: red, with soot creeping down the exhaust stack from its mouth.
-local function motorColor(x, y, z)
-	local soot = math.clamp((z - 1.8) / 0.9, 0, 1) * (0.8 + math.noise(x * 6, y * 6, z * 6) * 0.3)
-	local k = 1 - math.clamp(soot, 0, 0.85)
-	return MOTOR[1] * k, MOTOR[2] * k, MOTOR[3] * k
+-- Engine paint: soot up top and scuffs, both fading on newer, cleaner kit.
+local function motorColor(wear)
+	return function(x, y, z)
+		local soot = math.clamp((z - 1.8) / 0.9, 0, 1) * (0.8 + math.noise(x * 6, y * 6, z * 6) * 0.3) * wear
+		local scuff = if math.noise(x * 9 + 3, y * 9, z * 9) > 0.4 + (1 - wear) * 0.5 then 0.25 else 0
+		local k = 1 - math.clamp(soot + scuff, 0, 0.85)
+		return MOTOR[1] * k, MOTOR[2] * k, MOTOR[3] * k
+	end
 end
 
 for tier = 1, 3 do
@@ -487,7 +491,7 @@ for tier = 1, 3 do
 		end
 		cylinder(extras, motorX, 0, 1.5, 0.2, 0.15, "z")
 	end
-	part(`{group}_Extras`, extras, if tier == 1 then FRAME else MOTOR, group, SMALL_TEXTURE, if tier == 1 then nil else motorColor)
+	part(`{group}_Extras`, extras, if tier == 1 then FRAME else MOTOR, group, SMALL_TEXTURE, if tier == 1 then nil else motorColor(wear))
 
 	if tier == 3 then
 		-- Control box on the housing's front with a cable run to the motor.
