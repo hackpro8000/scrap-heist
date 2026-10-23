@@ -30718,7 +30718,7 @@ slab("Beacon", function()
 	-- The core sits on top of the mast and is the part that glows during a storm.
 	part("Core", nil, STORM_GLOW, function(mesh)
 		cylinder(mesh, 0, 0, floor + MAST_TOP + 2.3, 1.4, 3.4, "z", 16)
-	end, nil, 0, TOWER_TEXTURE, 2)
+	end, nil, 0, TOWER_TEXTURE, 1)
 	part("CoreCage", nil, DARK_STEEL, function(mesh)
 		for k = 0, 5 do
 			local angle = math.rad(k * 60)
