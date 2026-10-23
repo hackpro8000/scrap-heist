@@ -1,7 +1,7 @@
 -- Scrap Tree (Antenna): a rooftop TV antenna mast planted in a tyre, its
 -- crossbars stacked like the tiers of a pine, narrowing toward the top.
 part("Mast", nil, DARK_STEEL, function(mesh)
-	cylinder(mesh, 0, 0, 0, 0.14, 11, "z", 8)
+	cylinder(mesh, 0, 0, 5.5, 0.14, 11, "z", 8)
 	for _, a in { 0, 2.1, 4.2 } do
 		strut(mesh, 0, 0, 6, math.cos(a) * 1.6, math.sin(a) * 1.6, 0.4, 0.06)
 	end
@@ -20,7 +20,7 @@ part("Elements", nil, STEEL, function(mesh)
 end, nil, 0.4)
 
 part("Tyre", nil, RUBBER_BLACK, function(mesh)
-	ring(mesh, 0, 0, 0, 0.6, 1.2, 0.6, "z", 14)
+	ring(mesh, 0, 0, 0.3, 0.6, 1.2, 0.6, "z", 14)
 end, nil, RUBBER)
 
 part("Cable", nil, COPPER, function(mesh)
