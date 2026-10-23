@@ -278,9 +278,12 @@ local function housingBolts(bolts, plates, cx, scale, seed)
 	patchPlate(plates, bolts, cx + halfX, uniform(-0.3, 0.3) * scale, mid, 1, 0)
 end
 
--- Cartoon wobble, like the scrap crate: each tier leans, twists as it rises
--- and has every corner nudged off true, so nothing is quite square. Builders
--- write into a warped mesh, which bends each vertex on its way in.
+-- Cartoon wobble, like the scrap crate. It moves from chaos to order up the
+-- tiers: tier 1 leans, twists, sways and has every corner nudged off true;
+-- tier 3 keeps none of that randomness and instead exaggerates its base
+-- shapes evenly, with every side pillowing out and a symmetric barrel
+-- swell, so it stays wacky but balanced. Builders write into a warped mesh,
+-- which bends each vertex on its way in.
 local LEAN = 0.06
 local TWIST = 0.06
 local JITTER = 0.03
@@ -288,19 +291,33 @@ local JITTER = 0.03
 local SWAY = 0.22
 local SWAY_WAVE = 1.1
 local BULGE = 0.1
+-- Ordered wobble: how far each side pillows out at its middle, and the
+-- barrel swell at mid-height.
+local PILLOW = 0.12
+local BARREL = 0.08
 
-local function tierWarp(cx, seed)
-	local leanX, leanY = math.sin(seed) * LEAN, math.cos(seed * 1.7) * LEAN * 0.6
-	local twist = if seed % 2 == 0 then TWIST else -TWIST
+local function tierWarp(cx, seed, scale, chaos)
+	local order = 1 - chaos
+	local leanX, leanY = math.sin(seed) * LEAN * chaos, math.cos(seed * 1.7) * LEAN * 0.6 * chaos
+	local twist = (if seed % 2 == 0 then TWIST else -TWIST) * chaos
+	local halfX, halfY, midZ, halfZ = 1.1 * scale, 0.9 * scale, 1.65 * scale, 1.65 * scale
 	return function(x, y, z)
 		local a = twist * z
 		local dx = x - cx
 		dx, y = dx * math.cos(a) - y * math.sin(a), dx * math.sin(a) + y * math.cos(a)
-		local sway = math.sin(z * SWAY_WAVE + seed) * SWAY
-		local swayY = math.sin(z * SWAY_WAVE * 0.8 + seed * 2.1) * SWAY * 0.6
-		local bulge = 1 + (0.5 + 0.5 * math.sin(z * 2.2 + seed)) * BULGE
-		dx, y = dx * bulge, y * bulge
-		local n = JITTER
+		local sway = math.sin(z * SWAY_WAVE + seed) * SWAY * chaos
+		local swayY = math.sin(z * SWAY_WAVE * 0.8 + seed * 2.1) * SWAY * 0.6 * chaos
+		local bulge = 1 + (0.5 + 0.5 * math.sin(z * 2.2 + seed)) * BULGE * chaos
+		-- Even pillowing: each side swells most at its centre, symmetric
+		-- left to right and front to back, plus a barrel swell round mid-height.
+		local u = math.clamp(math.abs(dx) / halfX, 0, 1)
+		local v = math.clamp(math.abs(y) / halfY, 0, 1)
+		local w = math.clamp(math.abs(z - midZ) / halfZ, 0, 1)
+		local barrel = BARREL * (1 - w * w)
+		local pillowX = 1 + order * (PILLOW * (1 - v * v) + barrel)
+		local pillowY = 1 + order * (PILLOW * (1 - u * u) + barrel)
+		dx, y = dx * bulge * pillowX, y * bulge * pillowY
+		local n = JITTER * chaos
 		return cx + dx + sway + leanX * z + math.noise(x * 2.3 + seed, y * 2.3, z * 2.3) * n,
 			y + swayY + leanY * z + math.noise(x * 2.3, y * 2.3 + seed, z * 2.3) * n,
 			z + math.noise(x * 2.3, y * 2.3, z * 2.3 + seed) * n
@@ -372,7 +389,7 @@ for tier = 1, 3 do
 	local group = `Tier_{tier}`
 	local cx = (tier - 2) * SPACING
 	local scale = 1 + (tier - 1) * 0.2
-	local warp = tierWarp(cx, tier)
+	local warp = tierWarp(cx, tier, scale, (3 - tier) / 2)
 
 	local frame = warpedMesh(warp)
 	-- Legs and shredder housing.
