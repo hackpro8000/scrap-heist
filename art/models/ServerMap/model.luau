@@ -12459,18 +12459,18 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[12615] = "5a273ec959e81fed-68509606c092d9cd"
-slabKeys[12725] = "5a273ec959e81fed-5e88646b4708a202"
-slabKeys[12731] = "5a273ec959e81fed-f8f4f9cdd6dd6cae"
-slabKeys[12763] = "5a273ec959e81fed-b818e7bc3229e16b"
-slabKeys[12853] = "5a273ec959e81fed-20301616b877a579"
-slabKeys[12904] = "5a273ec959e81fed-7262ef2655abf3cf"
-slabKeys[12949] = "5a273ec959e81fed-4423e3810a3e5ce4"
-slabKeys[13019] = "5a273ec959e81fed-9519d293b472b9ba"
-slabKeys[13024] = "5a273ec959e81fed-08fbe9bb8b1a6d5a"
-slabKeys[13031] = "5a273ec959e81fed-ec0277225e552e1d"
-slabKeys[13040] = "5a273ec959e81fed-b3cfbefdd31cb9f1"
-slabKeys[13107] = "5a273ec959e81fed-5f3dede5e341fed8"
+slabKeys[12617] = "019108c4d7ed57a5-c18fc7265176e11f"
+slabKeys[12770] = "019108c4d7ed57a5-96a6f98300daacb6"
+slabKeys[12776] = "019108c4d7ed57a5-f8f4f9cdd6dd6cae"
+slabKeys[12808] = "019108c4d7ed57a5-b818e7bc3229e16b"
+slabKeys[12858] = "019108c4d7ed57a5-20301616b877a579"
+slabKeys[12909] = "019108c4d7ed57a5-0422943e8ce950bb"
+slabKeys[12954] = "019108c4d7ed57a5-4423e3810a3e5ce4"
+slabKeys[13024] = "019108c4d7ed57a5-9519d293b472b9ba"
+slabKeys[13029] = "019108c4d7ed57a5-08fbe9bb8b1a6d5a"
+slabKeys[13036] = "019108c4d7ed57a5-ec0277225e552e1d"
+slabKeys[13045] = "019108c4d7ed57a5-b3cfbefdd31cb9f1"
+slabKeys[13112] = "019108c4d7ed57a5-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -12518,19 +12518,21 @@ local function smoothstep(low: number, high: number, value: number): number
 	return t * t * (3 - 2 * t)
 end
 
--- The arena is a hexagon with corners every 60 degrees from +x. hexScale is
--- how far its edge reaches at an angle, as a fraction of the corner radius.
-local function hexScale(degrees: number): number
-	return math.cos(math.rad(30)) / math.cos(math.rad(degrees % 60 - 30))
+-- The arena island is an octagon with a flat side facing each spoke, so
+-- everything built on it (floor, bowl, road, wall) shares its outline.
+-- octagonScale is how far the edge reaches at an angle, as a fraction of
+-- the radius at the middle of a side; corners sit between the spokes.
+local function octagonScale(degrees: number): number
+	return 1 / math.cos(math.rad((degrees + 22.5) % 45 - 22.5))
 end
 
--- Distance measured so every point on a hexagon of corner radius R reads R.
-local function hexRadius(x: number, y: number): number
-	return math.sqrt(x * x + y * y) / hexScale(math.deg(math.atan2(y, x)))
+-- Distance measured so every point on an octagon of side radius R reads R.
+local function octagonRadius(x: number, y: number): number
+	return math.sqrt(x * x + y * y) / octagonScale(math.deg(math.atan2(y, x)))
 end
 
 local function heightAt(x: number, y: number): number
-	local radius = hexRadius(x, y)
+	local radius = octagonRadius(x, y)
 	return -ARENA_DEPTH * (1 - smoothstep(ARENA_FLOOR, ROAD_INNER - 2, radius))
 end
 
@@ -12614,7 +12616,9 @@ end
 
 slab("ArenaIsland", function()
 	part("Island", nil, GROUND, function(mesh)
-		floatingIsland(mesh, ARENA_ISLAND, 42, 1, heightAt)
+		floatingIsland(mesh, ARENA_ISLAND, 42, 1, heightAt, function(angle)
+			return octagonScale(math.deg(angle))
+		end)
 	end, nil, islandPaint(heightAt), 2048)
 end, 0, 0)
 -- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
@@ -12631,6 +12635,47 @@ end
 local function warpedFbm(x: number, y: number, z: number): number
 	return fbm(x + 1.8 * fbm(x + 5.2, y + 1.3, z), y + 1.8 * fbm(x + 1.7, y + 9.2, z), z)
 end
+-- A solid band following a circle between two angles, used for the kerb,
+-- floor stripes and rim wall. With `octagon` it follows the arena octagon
+-- instead, with a row on every corner it passes so the corners stay sharp.
+local function arc(mesh, inner: number, outer: number, bottom: number, top: number, from: number, to: number, octagon: boolean?)
+	local angles = {}
+	local steps = math.max(1, math.ceil((to - from) / 4))
+	for s = 0, steps do
+		table.insert(angles, from + (to - from) * s / steps)
+	end
+	if octagon then
+		for corner = math.floor((from - 22.5) / 45 + 1) * 45 + 22.5, to - 0.01, 45 do
+			if math.abs((corner - from) % ((to - from) / steps)) > 0.01 then
+				table.insert(angles, corner)
+			end
+		end
+		table.sort(angles)
+	end
+	steps = #angles - 1
+	local rows = {}
+	for s = 0, steps do
+		local scale = if octagon then octagonScale(angles[s + 1]) else 1
+		local angle = math.rad(angles[s + 1])
+		local c, n = math.cos(angle) * scale, math.sin(angle) * scale
+		rows[s] = {
+			mesh:vertex(c * outer, n * outer, bottom),
+			mesh:vertex(c * outer, n * outer, top),
+			mesh:vertex(c * inner, n * inner, top),
+			mesh:vertex(c * inner, n * inner, bottom),
+		}
+	end
+	for s = 0, steps - 1 do
+		local a, b = rows[s], rows[s + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	mesh:face({ rows[0][4], rows[0][3], rows[0][2], rows[0][1] })
+	mesh:face(rows[steps])
+end
+
 -- Arena concrete: broad warped stains from oil and fights, mottled patches
 -- of differing cure, fine aggregate showing through the worn top, and
 -- scuffs: short streaks scraped by bots, running one way per patch of floor.
@@ -12724,7 +12769,7 @@ local function bridgeGirders(degrees: number, cx: number, cy: number)
 end
 slab("Arena", function()
 	part("Floor", nil, CONCRETE, function(mesh)
-		cylinder(mesh, 0, 0, -ARENA_DEPTH, ARENA_FLOOR, 0.2, "z", 6)
+		arc(mesh, 0, ARENA_FLOOR, -ARENA_DEPTH - 0.1, 0.1 - ARENA_DEPTH, 0, 360, true)
 	end, nil, arenaConcrete, 2048)
 end, 0, 0)
 -- New players start on the ring around the crusher.
@@ -12805,46 +12850,6 @@ slab("Beacon", function()
 	end, nil, 0.3, TOWER_TEXTURE)
 end, 0, 0)
 
--- A solid band following a circle between two angles, used for the kerb,
--- floor stripes and rim wall. With `hex` it follows the arena hexagon instead,
--- with a row on every corner it passes so the corners stay sharp.
-local function arc(mesh, inner: number, outer: number, bottom: number, top: number, from: number, to: number, hex: boolean?)
-	local angles = {}
-	local steps = math.max(1, math.ceil((to - from) / 4))
-	for s = 0, steps do
-		table.insert(angles, from + (to - from) * s / steps)
-	end
-	if hex then
-		for corner = math.floor(from / 60 + 1) * 60, to - 0.01, 60 do
-			if math.abs((corner - from) % ((to - from) / steps)) > 0.01 then
-				table.insert(angles, corner)
-			end
-		end
-		table.sort(angles)
-	end
-	steps = #angles - 1
-	local rows = {}
-	for s = 0, steps do
-		local scale = if hex then hexScale(angles[s + 1]) else 1
-		local angle = math.rad(angles[s + 1])
-		local c, n = math.cos(angle) * scale, math.sin(angle) * scale
-		rows[s] = {
-			mesh:vertex(c * outer, n * outer, bottom),
-			mesh:vertex(c * outer, n * outer, top),
-			mesh:vertex(c * inner, n * inner, top),
-			mesh:vertex(c * inner, n * inner, bottom),
-		}
-	end
-	for s = 0, steps - 1 do
-		local a, b = rows[s], rows[s + 1]
-		for k = 1, 4 do
-			local l = k % 4 + 1
-			mesh:face({ a[k], b[k], b[l], a[l] })
-		end
-	end
-	mesh:face({ rows[0][4], rows[0][3], rows[0][2], rows[0][1] })
-	mesh:face(rows[steps])
-end
 
 -- The arena edge stands out from the yards around it: hazard stripes ring the
 -- fight floor, and a low concrete wall with yellow caps tops the bowl,
@@ -12904,15 +12909,15 @@ end
 slab("Road", function()
 	local middle = (ROAD_INNER + ROAD_OUTER) / 2
 	part("Ring", nil, ROAD, function(mesh)
-		ring(mesh, 0, 0, 0, ROAD_INNER, ROAD_OUTER, 0.1, "z", 96)
+		arc(mesh, ROAD_INNER, ROAD_OUTER, -0.05, 0.05, 0, 360, true)
 	end, nil, function(x, y)
-		local radius = math.sqrt(x * x + y * y)
+		local radius = octagonRadius(x, y)
 		return asphalt(radius - middle, math.atan2(y, x) * middle, (ROAD_OUTER - ROAD_INNER) / 2, 61)
 	end, 2048)
 	part("Kerb", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
 			local from = (i - 1) * 45
-			arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, -0.1, 0.3, from + 4, from + 41)
+			arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, -0.1, 0.3, from + 4, from + 41, true)
 		end
 	end, nil, 0.5)
 end, 0, 0)
