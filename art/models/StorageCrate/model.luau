@@ -646,7 +646,7 @@ local trimMesh = trim()
 local hazardMesh, stripes = hazard()
 
 bodyMesh:unwrap()
-local green = Image.new(2048, 2048, color(BODY))
+local green = Image.new(1024, 1024, color(BODY))
 bodyMesh:paintShading(green, { bands = 6, occluders = { bolts, plateMesh, trimMesh, hazardMesh } })
 
 plateMesh:unwrap()
