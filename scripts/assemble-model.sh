@@ -43,7 +43,7 @@ elif [ -f "${src}/layouts/${name}.luau" ]; then
 		open && index($0, indent "end") == 1 { print start, NR; open = 0 }' "${layout}")"
 	outside="$(awk -v spans="${spans}" 'BEGIN { n = split(spans, s, /[ \n]/); for (i = 1; i < n; i += 2) for (l = s[i] + 1; l < s[i + 1]; l++) skip[l] = 1 }
 		!skip[NR]' "${layout}" | cat "${out}.head" - | sha1sum | cut -c1-16)"
-	offset=$(( $(wc -l < "${out}.head") + $(printf '%s\n' "${spans}" | grep -c .) ))
+	offset=$(( $(wc -l < "${out}.head") + $(printf '%s\n' "${spans}" | grep -c . || true) ))
 	{
 		cat "${out}.head"
 		while read -r start end; do
