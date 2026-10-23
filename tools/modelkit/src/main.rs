@@ -41,6 +41,15 @@ pub struct Part {
 	pub preview: bool,
 	pub mesh: Rc<RefCell<Mesh>>,
 	pub image: Rc<RefCell<Image>>,
+	pub bone: Option<usize>,
+}
+
+// A rig joint. Parts follow exactly one bone each (rigid skin), so moving a
+// bone in Studio moves its parts whole.
+pub struct Bone {
+	pub name: String,
+	pub parent: Option<usize>,
+	pub head: [f64; 3],
 }
 
 impl UserData for MeshHandle {
@@ -169,7 +178,7 @@ impl UserData for ImageHandle {
 	}
 }
 
-fn install_api(lua: &Lua, parts: Rc<RefCell<Vec<Part>>>, search: Vec<PathBuf>) -> mlua::Result<()> {
+fn install_api(lua: &Lua, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<RefCell<Vec<Bone>>>, search: Vec<PathBuf>) -> mlua::Result<()> {
 	let globals = lua.globals();
 
 	let mesh_api = lua.create_table()?;
@@ -190,12 +199,39 @@ fn install_api(lua: &Lua, parts: Rc<RefCell<Vec<Part>>>, search: Vec<PathBuf>) -
 	globals.set("Image", image_api)?;
 
 	let model_api = lua.create_table()?;
+	// model.bone(name, {at = {x, y, z}, parent = "Name"?}) adds a joint whose
+	// pivot sits at `at`; bones without a parent are roots.
+	let rig = bones.clone();
+	model_api.set(
+		"bone",
+		lua.create_function(move |_, (name, options): (String, Table)| {
+			let at: Vec<f64> = options.get("at")?;
+			if at.len() != 3 {
+				return Err(mlua::Error::runtime("bone at needs {x, y, z}"));
+			}
+			let mut rig = rig.borrow_mut();
+			if rig.iter().any(|b| b.name == name) {
+				return Err(mlua::Error::runtime(format!("bone {name} already exists")));
+			}
+			let parent = match options.get::<Option<String>>("parent")? {
+				None => None,
+				Some(p) => Some(rig.iter().position(|b| b.name == p).ok_or_else(|| mlua::Error::runtime(format!("no bone {p}")))?),
+			};
+			rig.push(Bone { name: name.clone(), parent, head: [at[0], at[1], at[2]] });
+			Ok(name)
+		})?,
+	)?;
 	model_api.set(
 		"part",
 		lua.create_function(move |_, (name, mesh, image, options): (String, AnyUserData, AnyUserData, Option<Table>)| {
 			let group = options.as_ref().map(|o| o.get::<Option<String>>("group")).transpose()?.flatten();
 			let preview = options.as_ref().map(|o| o.get::<Option<bool>>("preview")).transpose()?.flatten().unwrap_or(true);
+			let bone = match options.as_ref().map(|o| o.get::<Option<String>>("bone")).transpose()?.flatten() {
+				None => None,
+				Some(b) => Some(bones.borrow().iter().position(|x| x.name == b).ok_or_else(|| mlua::Error::runtime(format!("no bone {b} (add it before its parts)")))?),
+			};
 			parts.borrow_mut().push(Part {
+				bone,
 				name,
 				group,
 				preview,
@@ -244,7 +280,8 @@ fn run(dir: &Path, turntable: usize, size: usize) -> Result<(), String> {
 	let lua = Lua::new();
 	lua.enable_jit(true);
 	let parts = Rc::new(RefCell::new(Vec::new()));
-	install_api(&lua, parts.clone(), vec![dir.to_path_buf(), library]).map_err(|e| e.to_string())?;
+	let bones = Rc::new(RefCell::new(Vec::new()));
+	install_api(&lua, parts.clone(), bones.clone(), vec![dir.to_path_buf(), library]).map_err(|e| e.to_string())?;
 	lua.load(source).set_name(format!("@{}", script.display())).exec().map_err(|e| e.to_string())?;
 	let scripted = started.elapsed();
 
@@ -252,8 +289,14 @@ fn run(dir: &Path, turntable: usize, size: usize) -> Result<(), String> {
 	if parts.is_empty() {
 		return Err("model.luau added no parts (call model.part)".into());
 	}
+	let bones = bones.borrow();
+	if !bones.is_empty() {
+		if let Some(loose) = parts.iter().find(|p| p.bone.is_none()) {
+			return Err(format!("part {} has no bone; a rigged model needs one on every part", loose.name));
+		}
+	}
 	let glb = dir.join(format!("{name}.glb"));
-	std::fs::write(&glb, glb::write(&parts)).map_err(|e| e.to_string())?;
+	std::fs::write(&glb, glb::write(&parts, &bones)).map_err(|e| e.to_string())?;
 	for part in parts.iter() {
 		let png = dir.join(format!("{}.png", part.name));
 		std::fs::write(png, part.image.borrow().encode_png()).map_err(|e| e.to_string())?;
