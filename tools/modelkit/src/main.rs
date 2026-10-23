@@ -128,6 +128,7 @@ impl UserData for MeshHandle {
 				shadow: get("shadow", 0.75)?,
 				bands: get("bands", 0.0)? as usize,
 				sharp: get("sharp", 30.0)?,
+				blend: get("blend", 0.0)?.clamp(0.0, 1.0),
 			};
 			let mut occluders = Vec::new();
 			if let Some(list) = options.as_ref().map(|o| o.get::<Option<Vec<AnyUserData>>>("occluders")).transpose()?.flatten() {

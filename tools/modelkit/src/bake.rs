@@ -407,6 +407,9 @@ pub struct Shading {
 	pub bands: usize,
 	// Edges folding more than this many degrees get highlighted.
 	pub sharp: f64,
+	// 0-1: feathers highlight strokes and tints them toward a lighter base
+	// color instead of cream, so they melt into the paint. 0 keeps the classic look.
+	pub blend: f64,
 }
 
 const AO_DISTANCE: f64 = 0.8;
@@ -569,7 +572,8 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 			let s = seed as f64;
 			let width = ((noise.factor(g, frequency, s * 3.1) - 0.3) / 0.4).clamp(0.0, 1.0);
 			let gain = thin + (wide - thin) * width;
-			let painted = ((noise.factor(g, frequency * 0.8, s * 5.7 + 1.3) - 0.42) / 0.08).clamp(0.0, 1.0);
+			let feather = 0.08 + 0.22 * shading.blend;
+			let painted = ((noise.factor(g, frequency * 0.8, s * 5.7 + 1.3) - 0.42) / feather).clamp(0.0, 1.0);
 			let push = ((noise.factor(g, frequency * 0.5, s * 2.3 + 7.9) - 0.35) / 0.3).clamp(0.0, 1.0);
 			let pressure = 0.35 * strength + (strength - 0.35 * strength) * push;
 			edge = (edge + (bend * gain).min(1.0) * painted * pressure).min(1.0);
@@ -578,7 +582,11 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 		let lit = (edge * open * shading.highlight).clamp(0.0, 1.0);
 		let dark = ((1.0 - open) * 1.6 * shading.shadow).clamp(0.0, 1.0);
 		let mut color = base[texel.pixel].map(to_linear);
-		let screen = [1.0, 0.97, 0.85].map(to_linear_f64);
+		let cream = [1.0, 0.97, 0.85].map(to_linear_f64);
+		let screen: [f64; 3] = std::array::from_fn(|k| {
+			let lighter = (color[k] as f64 * 1.8 + 0.08).min(1.0);
+			cream[k] + (lighter - cream[k]) * shading.blend
+		});
 		let multiply = [0.32, 0.3, 0.5].map(to_linear_f64);
 		for k in 0..3 {
 			let screened = 1.0 - (1.0 - color[k]) * (1.0 - screen[k]);
