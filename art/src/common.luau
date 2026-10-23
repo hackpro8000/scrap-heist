@@ -562,14 +562,14 @@ local function part(name, bone, color, build, smooth, rust, texture: number?, em
 	table.insert(parts, { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive })
 end
 
--- Large surfaces (terrain, roads, floors) are split into CHUNK-stud cubes,
--- each its own part with a 1024 texture, named <name>_<cx>_<cy>_<cz>. The
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
 -- build runs once into a recorder, then each face goes to the chunk holding
 -- its centre. Cells sit on the origin across, and centred on z = 0 up and
 -- down, so ground near sea level stays in one layer.
-local CHUNK = 128
-
 local function chunkedPart(name, bone, color, build, smooth, rust)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
 	local positions, faces = {}, {}
 	local recorder = {
 		vertex = function(_, x, y, z)
