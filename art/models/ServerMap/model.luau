@@ -30488,7 +30488,7 @@ end
 -- Wedge<w><ring>_<n> props between the yards.
 local YARD_RADIUS = 90
 local ROAD_INNER, ROAD_OUTER = 50, 58
-local ARENA_RADIUS = 44
+local ARENA_FLOOR, ARENA_DEPTH = 36, 3.5
 local MAP_SIZE = 260
 
 local GROUND = { 0.3, 0.27, 0.22 }
@@ -30513,7 +30513,8 @@ end
 
 -- Ground height. The arena, ring road, spokes and plots stay flat so the
 -- slabs sit on it; everywhere else rolls in low hills that climb into a
--- ridge at the map edge.
+-- ridge at the map edge. The arena sinks into a bowl whose sloped rim
+-- meets the ring road, so the storm fight can be watched from the road.
 local function smoothstep(low: number, high: number, value: number): number
 	local t = math.clamp((value - low) / (high - low), 0, 1)
 	return t * t * (3 - 2 * t)
@@ -30533,7 +30534,8 @@ local function heightAt(x: number, y: number): number
 	local edge = math.max(math.abs(x), math.abs(y))
 	local rolling = 2.5 + 4 * math.noise(x / 23, y / 23, 0.5) + 1.5 * math.noise(x / 9, y / 9, 3.5)
 	local ridge = smoothstep(108, MAP_SIZE / 2, edge) * (12 + 6 * math.noise(x / 30, y / 30, 7.5))
-	return hilly * math.max(rolling + ridge, -0.6)
+	local bowl = -ARENA_DEPTH * (1 - smoothstep(ARENA_FLOOR, ROAD_INNER - 2, radius))
+	return bowl + hilly * math.max(rolling + ridge, -0.6)
 end
 
 local GROUND_CELLS = 80
@@ -30562,12 +30564,12 @@ slab("Road", function()
 end, 0, 0)
 slab("Arena", function()
 	part("Floor", nil, CONCRETE, function(mesh)
-		cylinder(mesh, 0, 0, 0, ARENA_RADIUS, 0.2, "z", 48)
+		cylinder(mesh, 0, 0, -ARENA_DEPTH, ARENA_FLOOR, 0.2, "z", 48)
 	end, nil, 0)
 end, 0, 0)
 slab("Spawn", function()
 	part("Pad", nil, MARK, function(mesh)
-		cylinder(mesh, 0, 0, 0.2, 6, 0.1, "z", 24)
+		cylinder(mesh, 0, 0, 0.2 - ARENA_DEPTH, 6, 0.1, "z", 24)
 	end, nil, 0)
 end, 0, 0)
 
@@ -30585,20 +30587,20 @@ for i = 1, 8 do
 			box(mesh, 0, -24, 0, 6, 17, 0.1)
 		end, nil, 0)
 	end, x, y, degrees - 90)
-	local coneX, coneY = polar(ARENA_RADIUS - 3, degrees + 6)
-	place(`Cones{i}`, buildTrafficCones, coneX, coneY, 0.2, degrees)
+	local coneX, coneY = polar(ROAD_INNER - 2, degrees + 6)
+	place(`Cones{i}`, buildTrafficCones, coneX, coneY, heightAt(coneX, coneY), degrees)
 end
 
 -- Cover for the storm fights, offset from the spokes so paths stay open.
 for i, build in { buildShippingContainer, buildCarStack, buildCrushedCar, buildBarrels, buildTyreStack, buildJunkWall, buildDumpster, buildPallets } do
 	local degrees = (i - 0.5) * 45
 	local x, y = polar(26, degrees)
-	place(`Cover{i}`, build, x, y, 0.2, degrees + 90)
+	place(`Cover{i}`, build, x, y, 0.2 - ARENA_DEPTH, degrees + 90)
 end
 for i = 1, 4 do
 	local degrees = (i - 0.5) * 90
-	local x, y = polar(ARENA_RADIUS - 2, degrees)
-	place(`Light{i}`, buildStreetlightBroken, x, y, 0.2, degrees + 90)
+	local x, y = polar(ROAD_INNER - 2, degrees)
+	place(`Light{i}`, buildStreetlightBroken, x, y, heightAt(x, y), degrees + 90)
 end
 
 -- Props between the yards. Each wedge has an inner cluster between the road
