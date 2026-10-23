@@ -1,10 +1,16 @@
--- Zapper: the ranged scrap bot, about 4.5 studs tall. A round rusty body on
--- spindly legs, a blue glowing eye and a tesla coil on top that fires bolts
--- from its tip. Faces -Y; stands with its feet on the origin.
+-- Zapper: the ranged scrap bot, about 4.5 studs tall. A smooth round rusty
+-- body banded and patched with bolted plates, a blue glowing eye in a
+-- bolted steel rim, spindly legs with visible hip, knee and ankle joints,
+-- and a tesla coil on top that fires bolts from its tip. Faces -Y; stands
+-- with its feet on the origin.
 -- Rig: Root > Body > Eye, Coil > CoilTip, LegUpperL/R > LegLowerL/R.
--- Rigged blockout.
 
+-- Mismatched scrap: rusty tank steel, a galvanised band, a brass patch off
+-- an old boiler, dark steel legs, copper windings, in sRGB.
 local RUST = { 0.55, 0.35, 0.16 }
+local GALVANISED = { 0.6, 0.63, 0.62 }
+local BRASS = { 0.7, 0.58, 0.3 }
+local STEEL = { 0.62, 0.64, 0.66 }
 local DARK_STEEL = { 0.3, 0.3, 0.32 }
 local COPPER = { 0.85, 0.5, 0.25 }
 local GLOW = { 0.3, 0.8, 1.0 }
@@ -13,6 +19,7 @@ local HIP_Z, KNEE_Z = 2.0, 1.0
 local HIP_X, FOOT_X = 0.45, 0.75
 local BODY_Z, BODY_RADIUS = 2.55, 0.85
 local COIL_BOTTOM, COIL_TOP = 3.3, 4.1
+local EYE_Z = BODY_Z + 0.1
 local TAU = 2 * math.pi
 
 -- Edge highlight and feathering, matching the salvage machine.
@@ -69,8 +76,8 @@ local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
 end
 
 -- UV sphere, squashed per axis by (rx, ry, rz).
-local function sphere(mesh, cx, cy, cz, rx, ry, rz)
-	local rings, sides = 8, 16
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
 	local grid = {}
 	for r = 0, rings do
 		local phi = r / rings * math.pi
@@ -88,6 +95,39 @@ local function sphere(mesh, cx, cy, cz, rx, ry, rz)
 			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
 		end
 	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
 end
 
 -- Square beam from one point to another, for limbs and antennae.
@@ -114,11 +154,12 @@ local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
 	end
 end
 
--- Flat-coloured blockout part following one bone.
-local function part(name, bone, color, build)
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body).
+local function part(name, bone, color, build, smooth)
 	local mesh = Mesh.new()
 	build(mesh)
-	mesh:setSmooth(SMOOTH_ANGLE)
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
 	mesh:unwrap()
 	local image = Image.new(TEXTURE, TEXTURE, color[1], color[2], color[3])
 	mesh:paintShading(image, { highlight = EDGE_HIGHLIGHT, blend = EDGE_BLEND })
@@ -132,11 +173,38 @@ local coil = model.bone("Coil", { at = { 0, 0, COIL_BOTTOM }, parent = body })
 local coilTip = model.bone("CoilTip", { at = { 0, 0, COIL_TOP + 0.2 }, parent = coil })
 
 part("Body", body, RUST, function(mesh)
-	sphere(mesh, 0, 0, BODY_Z, BODY_RADIUS, BODY_RADIUS, BODY_RADIUS * 0.9)
+	sphere(mesh, 0, 0, BODY_Z, BODY_RADIUS, BODY_RADIUS, BODY_RADIUS * 0.9, 16, 24)
+end, true)
+part("BodyBand", body, GALVANISED, function(mesh)
+	-- Strap round the equator, bolted every eighth of a turn.
+	ring(mesh, 0, 0, BODY_Z - 0.15, BODY_RADIUS - 0.08, BODY_RADIUS + 0.03, 0.14, "z", 24)
+	for i = 0, 7 do
+		local t = (i + 0.5) / 8 * TAU
+		local r = BODY_RADIUS + 0.04
+		bolt(mesh, math.cos(t) * r, math.sin(t) * r, BODY_Z - 0.15, if math.abs(math.cos(t)) > 0.5 then "x" else "y")
+	end
+	-- Collar the coil stands on.
+	cylinder(mesh, 0, 0, COIL_BOTTOM - 0.1, 0.3, 0.12, "z")
+end)
+part("BrassPatch", body, BRASS, function(mesh)
+	-- A boiler plate bolted over a hole on the back.
+	box(mesh, 0.25, BODY_RADIUS - 0.1, BODY_Z - 0.4, 0.5, 0.08, 0.4)
+	for _, x in { 0.05, 0.45 } do
+		for _, z in { -0.33, -0.07 } do
+			bolt(mesh, x, BODY_RADIUS - 0.06, BODY_Z + z, "y", 0.04)
+		end
+	end
+end)
+part("EyeRim", body, STEEL, function(mesh)
+	ring(mesh, 0, -BODY_RADIUS + 0.04, EYE_Z, 0.24, 0.34, 0.1, "y", 20)
+	for i = 0, 5 do
+		local t = i / 6 * TAU
+		bolt(mesh, math.cos(t) * 0.29, -BODY_RADIUS - 0.02, EYE_Z + math.sin(t) * 0.29, "y", 0.035)
+	end
 end)
 part("Eye", eye, GLOW, function(mesh)
-	sphere(mesh, 0, -BODY_RADIUS + 0.05, BODY_Z + 0.1, 0.25, 0.12, 0.25)
-end)
+	sphere(mesh, 0, -BODY_RADIUS + 0.05, EYE_Z, 0.25, 0.12, 0.25)
+end, true)
 part("Coil", coil, COPPER, function(mesh)
 	cylinder(mesh, 0, 0, (COIL_BOTTOM + COIL_TOP) / 2 - 0.1, 0.12, COIL_TOP - COIL_BOTTOM + 0.2, "z")
 	for i = 0, 3 do
@@ -145,16 +213,28 @@ part("Coil", coil, COPPER, function(mesh)
 end)
 part("CoilTip", coilTip, DARK_STEEL, function(mesh)
 	sphere(mesh, 0, 0, COIL_TOP + 0.2, 0.2, 0.2, 0.2)
-end)
+end, true)
 for _, side in { { "L", -1 }, { "R", 1 } } do
 	local name, s = side[1], side[2]
 	local upper = model.bone("LegUpper" .. name, { at = { s * HIP_X, 0, HIP_Z }, parent = body })
 	local lower = model.bone("LegLower" .. name, { at = { s * FOOT_X, 0, KNEE_Z }, parent = upper })
+	local ankleX = s * FOOT_X * 0.9
 	part("LegUpper" .. name, upper, DARK_STEEL, function(mesh)
 		strut(mesh, s * HIP_X, 0, HIP_Z, s * FOOT_X, 0, KNEE_Z, 0.12)
+		-- Hip: a ball joint in a bracket.
+		sphere(mesh, s * HIP_X, 0, HIP_Z, 0.13, 0.13, 0.13)
+		box(mesh, s * HIP_X, 0, HIP_Z + 0.05, 0.3, 0.1, 0.12)
+	end)
+	part("LegJoints" .. name, lower, STEEL, function(mesh)
+		-- Knee: a pin through two cheek plates. Ankle: a smaller pin.
+		cylinder(mesh, s * FOOT_X, 0, KNEE_Z, 0.11, 0.26, "y", 12)
+		cylinder(mesh, s * FOOT_X, 0, KNEE_Z, 0.04, 0.34, "y", 6)
+		cylinder(mesh, ankleX, 0, 0.18, 0.08, 0.2, "y", 12)
+		cylinder(mesh, ankleX, 0, 0.18, 0.03, 0.26, "y", 6)
 	end)
 	part("LegLower" .. name, lower, DARK_STEEL, function(mesh)
-		strut(mesh, s * FOOT_X, 0, KNEE_Z, s * FOOT_X * 0.9, 0, 0.1, 0.1)
-		box(mesh, s * FOOT_X * 0.9, -0.1, 0, 0.3, 0.45, 0.1)
+		strut(mesh, s * FOOT_X, 0, KNEE_Z, ankleX, 0, 0.18, 0.1)
+		box(mesh, ankleX, -0.1, 0, 0.3, 0.45, 0.1)
+		bolt(mesh, ankleX, -0.25, 0.1, "z", 0.04)
 	end)
 end
