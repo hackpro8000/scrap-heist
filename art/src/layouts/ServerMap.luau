@@ -209,6 +209,26 @@ local function bridgeDeck(degrees: number, cx: number, cy: number)
 		return STEEL[1] * k + rust * 0.12, STEEL[2] * k + rust * 0.02, STEEL[3] * k - rust * 0.06
 	end
 end
+-- Bridge girders: dark paint flaking off in patches to bare rust, with
+-- rivet rows along both flanges.
+local function bridgeGirders(degrees: number, cx: number, cy: number)
+	local angle = math.rad(degrees - 90)
+	local c, s = math.cos(angle), math.sin(angle)
+	return function(x: number, y: number, z: number)
+		local u = (x - cx) * c + (y - cy) * s
+		local v = (y - cy) * c - (x - cx) * s
+		local k = 1 + fbm(u + v / 2, z * 2, 51) * 0.12
+		local flake = warpedFbm(v / 2.5, z * 1.5 + u, 53)
+		local rust = math.clamp((flake - 0.1) * 4, 0, 1)
+		local flange = math.abs(z + 0.35) < 0.05 or math.abs(z + 1.25) < 0.05
+		local rivet = flange and math.abs(((v * 2) % 1) - 0.5) < 0.04
+		if rivet then k += 0.45 end
+		local r = DARK_STEEL[1] * k * (1 - rust) + 0.42 * rust * k
+		local g = DARK_STEEL[2] * k * (1 - rust) + 0.2 * rust * k
+		local b = DARK_STEEL[3] * k * (1 - rust) + 0.1 * rust * k
+		return r, g, b
+	end
+end
 slab("Arena", function()
 	part("Floor", nil, CONCRETE, function(mesh)
 		cylinder(mesh, 0, 0, -ARENA_DEPTH, ARENA_FLOOR, 0.2, "z", 48)
@@ -433,7 +453,7 @@ for i = 1, 8 do
 			for n = 0, math.floor(BRIDGE_LENGTH / 4) do
 				box(mesh, 0, BRIDGE_TO + 1 + n * 4, -0.6, 5.6, 0.3, 0.4)
 			end
-		end, nil, 0.5)
+		end, nil, bridgeGirders(degrees, x, y), 1024)
 		part("Posts", nil, STEEL, function(mesh)
 			for _, side in { -3, 3 } do
 				for n = 0, math.floor(BRIDGE_LENGTH / 3) do
