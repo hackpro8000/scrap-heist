@@ -1,20 +1,17 @@
--- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones ScrapTreeAntenna ScrapTreeExhaust ScrapTreeLamppost ScrapTreeRebar ScrapTreeSignpost ScrapPalm BushCans BushChainLink BushHubcap BushSpring BushWire RockBoulderPile RockCarCube RockConcrete RockEngine RockGearbox RockSlab GrassRebar GrassWire FlowerBulbs FlowerFan LogGirder LogPipe StumpDrum JunkMound OilPuddle CoolantPond ManholeCover HydrantLeaking TrafficLight SignBent BusStopWreck PhoneBooth ParkBench VendingMachine Mailbox ShoppingCarts BrickRuin BillboardFrame
+-- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
 -- around its bowl; eight yard islands float in a ring with their gates facing
 -- it, each joined to the road by a steel bridge. The arena is the storm fight
--- ground and, between storms, the spawn plaza new players start on. Small
--- islets between the yards carry the scrap props.
+-- ground and, between storms, the spawn plaza new players start on.
 -- Yards are only plot slabs here: the game drops the Yard Layout template
 -- onto each one, so every yard is built from the same pieces.
 -- Labels: ArenaIsland, Road, Arena, ArenaEdge, Ramps, Spawn, Beacon, Island1-Island8, Plot1-Plot8, Spoke1-Spoke8, Bridge1-Bridge8,
--- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4, Cones1-Cones8, and
--- Islet1-Islet8 with Wedge<w>_<n> props on them.
+-- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4 and Cones1-Cones8.
 local YARD_RADIUS = 110
 local ROAD_INNER, ROAD_OUTER = 50, 58
 local ARENA_FLOOR, ARENA_DEPTH = 36, 3.5
-local ARENA_ISLAND, YARD_ISLAND, ISLET = 61, 26, 11
-local ISLET_RADIUS = 104
+local ARENA_ISLAND, YARD_ISLAND = 61, 26
 
 local GROUND = { 0.3, 0.27, 0.22 }
 local ROAD = { 0.42, 0.41, 0.4 }
@@ -54,12 +51,17 @@ end
 -- then inward down the underside, so every face keeps the same winding.
 local ISLAND_SIDES = 48
 local UNDERSIDE_RINGS = 10
-local function floatingIsland(mesh, radius: number, depth: number, seed: number, top: (number, number) -> number)
+-- outline(angle) scales the radius around the edge; nil keeps it round.
+local function floatingIsland(mesh, radius: number, depth: number, seed: number, top: (number, number) -> number, outline: ((number) -> number)?)
 	local rows = {}
-	local function addRing(r: number, z: (number, number, number) -> number)
+	local function edge(angle: number): number
+		return if outline then radius * outline(angle) else radius
+	end
+	local function addRing(fraction: number, z: (number, number, number) -> number)
 		local row = {}
 		for j = 0, ISLAND_SIDES - 1 do
 			local angle = 2 * math.pi * j / ISLAND_SIDES
+			local r = math.max(0.5, edge(angle) * fraction)
 			local x, y = math.cos(angle) * r, math.sin(angle) * r
 			row[j] = { x, y, z(x, y, angle) }
 		end
@@ -67,7 +69,7 @@ local function floatingIsland(mesh, radius: number, depth: number, seed: number,
 	end
 	local topRings = math.max(4, math.ceil(radius / 3))
 	for s = 0, topRings do
-		addRing(math.max(0.5, radius * s / topRings), function(x, y) return top(x, y) end)
+		addRing(s / topRings, function(x, y) return top(x, y) end)
 	end
 	for k = 1, UNDERSIDE_RINGS do
 		local t = k / UNDERSIDE_RINGS
@@ -76,7 +78,7 @@ local function floatingIsland(mesh, radius: number, depth: number, seed: number,
 			local angle = 2 * math.pi * j / ISLAND_SIDES
 			local c, n = math.cos(angle), math.sin(angle)
 			local wobble = math.noise(c * 2, n * 2, seed + t * 3) * math.min(1, t * 3)
-			local r = math.max(radius * (1 - t) ^ 0.55 * (1 + 0.3 * wobble), radius * 0.03)
+			local r = math.max(edge(angle) * (1 - t) ^ 0.55 * (1 + 0.3 * wobble), radius * 0.03)
 			local z = -depth * t ^ 1.3 + 1.5 * t * math.noise(c * 3, n * 3, seed + 9)
 			row[j] = { c * r, n * r, z }
 		end
@@ -356,12 +358,23 @@ end, 0, 0)
 -- across the gap to the ring road.
 local BRIDGE_FROM, BRIDGE_TO = -(YARD_ISLAND - 1), -(YARD_RADIUS - ROAD_OUTER + 1)
 local BRIDGE_MID, BRIDGE_LENGTH = (BRIDGE_FROM + BRIDGE_TO) / 2, BRIDGE_FROM - BRIDGE_TO
+-- Lumpy yard outlines that never cut into the plot's corners (0.9 * 26
+-- clears its 22.6 half-diagonal) and stay full where the bridge lands.
+local function yardOutline(seed: number): (number) -> number
+	return function(angle)
+		local c, n = math.cos(angle), math.sin(angle)
+		local lump = 1.1 + 0.5 * math.noise(c * 1.4, n * 1.4, seed) + 0.12 * math.noise(c * 4, n * 4, seed + 3)
+		local fromBridge = math.abs((angle + math.pi / 2 + math.pi) % (2 * math.pi) - math.pi)
+		local landing = 1 - smoothstep(0.25, 0.7, fromBridge)
+		return math.max(0.9, lump + (1 - lump) * landing)
+	end
+end
 for i = 1, 8 do
 	local degrees = (i - 1) * 45
 	local x, y = polar(YARD_RADIUS, degrees)
 	slab(`Island{i}`, function()
 		part("Island", nil, GROUND, function(mesh)
-			floatingIsland(mesh, YARD_ISLAND, 22, 10 + i, flat)
+			floatingIsland(mesh, YARD_ISLAND, 22, 10 + i, flat, yardOutline(10 + i))
 		end, nil, islandPaint(flat), 1024)
 	end, x, y, degrees - 90)
 	slab(`Plot{i}`, function()
@@ -438,41 +451,4 @@ for i = 1, 4 do
 	local degrees = (i - 0.5) * 90
 	local x, y = polar(ROAD_INNER - 2, degrees)
 	place(`Light{i}`, buildStreetlightBroken, x, y, heightAt(x, y), degrees + 90)
-end
-
--- Props on islets floating between the yards, each at its own height. Each
--- islet carries one cluster laid out by tangent offset u and radial offset v,
--- alternating the inner and outer cluster sets so neighbours look different.
-local INNER = {
-	{ { buildScrapTreeLamppost, -6, 0 }, { buildBushCans, -2, -3 }, { buildParkBench, 3, -2 }, { buildGrassWire, 6, 2 }, { buildFlowerBulbs, 0, 4 } },
-	{ { buildHydrantLeaking, -5, -3 }, { buildRockConcrete, 2, 1 }, { buildBushSpring, 6, -2 }, { buildManholeCover, -1, -5 }, { buildGrassRebar, -6, 4 } },
-	{ { buildBusStopWreck, 0, 1 }, { buildTrafficLight, -7, -3 }, { buildBushHubcap, 7, 3 }, { buildOilPuddle, 3, -4 } },
-	{ { buildPhoneBooth, -5, 1 }, { buildMailbox, 0, -3 }, { buildVendingMachine, 5, 1 }, { buildFlowerFan, 0, 4 }, { buildBushWire, 7, -3 } },
-}
-local OUTER = {
-	{ { buildScrapTreeAntenna, -5, 0 }, { buildScrapTreeRebar, 4, 6 }, { buildRockBoulderPile, 4, -3 }, { buildLogGirder, -3, 7 }, { buildBushChainLink, 0, -6 } },
-	{ { buildScrapPalm, -4, 2 }, { buildCoolantPond, 4, 0 }, { buildRockSlab, -6, -5 }, { buildStumpDrum, 7, 7 }, { buildGrassWire, 0, 8 } },
-	{ { buildScrapTreeExhaust, 5, 4 }, { buildJunkMound, -3, 1 }, { buildRockEngine, 6, -5 }, { buildLogPipe, -6, 8 }, { buildShoppingCarts, 1, -6 } },
-	{ { buildBillboardFrame, 0, 6 }, { buildScrapTreeSignpost, -6, -2 }, { buildRockCarCube, 5, -3 }, { buildBrickRuin, -2, -5 }, { buildRockGearbox, 7, 3 }, { buildSignBent, 3, 8 } },
-}
-for w = 1, 8 do
-	local degrees = (w - 0.5) * 45
-	local angle = math.rad(degrees)
-	local radialX, radialY = math.cos(angle), math.sin(angle)
-	local lift = math.noise(w * 0.7, 0.3, 5) * 8
-	local function islet(_x: number, _y: number): number
-		return lift
-	end
-	slab(`Islet{w}`, function()
-		part("Island", nil, GROUND, function(mesh)
-			floatingIsland(mesh, ISLET, 10, 20 + w, islet)
-		end, nil, islandPaint(islet), 512)
-	end, radialX * ISLET_RADIUS, radialY * ISLET_RADIUS)
-	local cluster = if w % 2 == 1 then INNER[(w + 1) / 2] else OUTER[w / 2]
-	for n, prop in cluster do
-		local u, v = prop[2] * 0.85, prop[3] * 0.85 + ISLET_RADIUS
-		local x = radialX * v - radialY * u
-		local y = radialY * v + radialX * u
-		place(`Wedge{w}_{n}`, prop[1], x, y, lift, degrees + n * 70)
-	end
 end
