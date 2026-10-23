@@ -47,7 +47,7 @@ reference.
 - `Image.new(w, h, r?, g?, b?)`, `image:set(x, y, r, g, b)` (y = 0 is the
   bottom row).
 - `mesh:paint(image, function(x, y, z, nx, ny, nz) return r, g, b end)`.
-- `mesh:paintShading(image, {highlight, shadow, bands, sharp, occluders})`.
+- `mesh:paintShading(image, {highlight, shadow, bands, sharp, blend, occluders})`. `blend` 0-1 (default 0) feathers edge highlights and tints them from cream toward the part's own color.
 - `model.part(name, mesh, image, {group, preview})`. Parts sharing a group
   are one variant (a fill level, an upgrade tier); `preview` picks what the
   preview shows.
