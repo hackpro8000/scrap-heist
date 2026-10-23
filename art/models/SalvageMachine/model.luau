@@ -3,8 +3,7 @@
 -- in technology: a hand-cranked two-roller shredder; a three-roller shredder
 -- run by a petrol engine with a flywheel, belt and pressure gauge; and an
 -- electric four-roller shredder with a geared drive, a control box with a
--- status light, a conveyor carrying parts off the chute, and a magnet crane
--- that feeds the hopper. Sits on its pad with the base at the origin.
+-- status light and a conveyor carrying parts off the chute. Sits on its pad with the base at the origin.
 -- Sketch blockout: tiers stand side by side for review.
 
 local SPACING = 6
@@ -13,7 +12,6 @@ local FRAME = { 0.42, 0.46, 0.5 }
 local HOPPER = { 0.86, 0.55, 0.18 }
 local ROLLER = { 0.3, 0.3, 0.32 }
 local MOTOR = { 0.7, 0.2, 0.18 }
-local MAGNET = { 0.25, 0.4, 0.75 }
 local CHUTE = { 0.6, 0.62, 0.6 }
 local BOLT = { 0.62, 0.58, 0.52 }
 local PATCH = { 0.74, 0.46, 0.28 }
@@ -486,15 +484,6 @@ for tier = 1, 3 do
 	part(`{group}_Extras`, extras, if tier == 1 then FRAME else MOTOR, group, SMALL_TEXTURE, if tier == 1 then nil else motorColor)
 
 	if tier == 3 then
-		-- Magnet crane: mast, boom, hanging magnet over the hopper.
-		local crane = warpedMesh(warp)
-		box(crane, cx - 1.8 * scale, 0, 0, 0.3, 0.3, 4.6)
-		box(crane, cx - 0.8 * scale, 0, 4.4, 2.8, 0.25, 0.25)
-		cylinder(crane, cx + 0.3, 0, 3.4, 0.45, 0.25, "z")
-		-- Cable from the boom down to the magnet.
-		box(crane, cx + 0.3, 0, 3.65, 0.05, 0.05, 0.8)
-		part(`{group}_Crane`, crane, MAGNET, group, SMALL_TEXTURE)
-
 		-- Control box on the housing's front with a cable run to the motor.
 		local electrics = warpedMesh(warp)
 		box(electrics, cx + 0.5 * scale, -0.9 * scale - 0.12, 1.4 * scale, 0.6, 0.24, 0.6)
