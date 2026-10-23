@@ -16,7 +16,8 @@ pub struct View {
 	// Camera orbit around Z, in radians; 0 is the classic 3/4 view.
 	pub spin: f64,
 	// Close-up: frame a ball of this radius around this point instead of the
-	// whole model, dropping geometry between the camera and it.
+	// whole model. The camera is orthographic, so nothing is clipped; it sees
+	// everything in frame as a player would from above.
 	pub focus: Option<(Vec3, f64)>,
 }
 
@@ -40,7 +41,6 @@ pub fn render(parts: &[&Part], view: &View) -> Vec<u8> {
 			(0..3).map(|a| high[a] - low[a]).fold(0.0, f64::max).max(1e-6),
 		),
 	};
-	let near = view.focus.map_or(f64::MIN, |(_, radius)| -radius * 1.5);
 
 	let (sin, cos) = view.spin.sin_cos();
 	let toward = [cos + sin, sin - cos, 0.8];
@@ -67,9 +67,6 @@ pub fn render(parts: &[&Part], view: &View) -> Vec<u8> {
 		let image = part.image.borrow();
 		for triangle in list {
 			let s = triangle.map(|corner| to_screen(corner.position));
-			if s.iter().any(|p| p[2] < near) {
-				continue;
-			}
 			let area = (s[1][0] - s[0][0]) * (s[2][1] - s[0][1]) - (s[2][0] - s[0][0]) * (s[1][1] - s[0][1]);
 			if area.abs() < 1e-12 {
 				continue;
