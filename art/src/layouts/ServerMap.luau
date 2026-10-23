@@ -6,7 +6,7 @@
 -- ground and, between storms, the spawn plaza new players start on.
 -- Each plot slab carries the Yard Layout template, placed piece by piece the
 -- same way YardLayout.luau places it, so the map shows every yard set up.
--- Labels: ArenaIsland, Road, Arena, ArenaEdge, Ramps, Spawn, Beacon, Island1-Island8, Plot1-Plot8, Yard1_<piece>-Yard8_<piece>, Spoke1-Spoke8, Bridge1-Bridge8,
+-- Labels: ArenaIsland, Road, Arena, ArenaEdge, Ramps, RampMouths, Spawn, Beacon, Island1-Island8, Plot1-Plot8, Yard1_<piece>-Yard8_<piece>, Spoke1-Spoke8, Bridge1-Bridge8,
 -- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4 and Cones1-Cones8.
 -- Yard crates show empty, as in the Yard Layout template.
 skipPart = function(name)
@@ -527,7 +527,7 @@ local function rampBlock(mesh, degrees: number, radii: { number }, from: number,
 	mesh:face({ last[3], last[4], last[2], last[1] })
 end
 -- Hazard strips inlaid outside both lane edges, as wide as the arena's ring
--- and flush with the deck. They run from the outer end of the deck across
+-- and flush with the deck. They run from the wall line, ending yellow, across
 -- the ring, which is cut at each ramp mouth and runs from strip to strip
 -- along each octagon side, mitred at the corners. Blocks are clamped to the
 -- octagon miters, so the last ring piece on each side runs into the corner.
@@ -535,11 +535,10 @@ local STRIP_BREAKS = { ARENA_FLOOR - HAZARD_WIDTH }
 for k = 0, 6 do
 	table.insert(STRIP_BREAKS, ARENA_FLOOR + k * (WALL_INNER - ARENA_FLOOR) / 6)
 end
-table.insert(STRIP_BREAKS, ROAD_INNER + 0.5)
 slab("Ramps", function()
 	part("Deck", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
-			rampBlock(mesh, (i - 1) * 45, { ARENA_FLOOR - HAZARD_WIDTH, ARENA_FLOOR, WALL_INNER, ROAD_INNER + 0.5 }, -LANE_HALF, LANE_HALF, 0)
+			rampBlock(mesh, (i - 1) * 45, { ARENA_FLOOR - HAZARD_WIDTH, ARENA_FLOOR, WALL_INNER }, -LANE_HALF, LANE_HALF, 0)
 		end
 	end, nil, 0.25)
 	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
@@ -559,6 +558,50 @@ slab("Ramps", function()
 				end
 			end
 		end, nil, 0.2)
+	end
+end, 0, 0)
+-- Each ramp mouth: a steel drainage grate across the gap from the wall line
+-- to the road, and a concrete pier closing each wall end, its face to the
+-- gap banded yellow and black.
+local THRESHOLD = { WALL_INNER, ROAD_INNER + 0.5 }
+local PIER_WIDTH, PIER_TOP = 1, WALL_TOP + 0.5
+local PIER_RADII = { WALL_INNER - 0.3, WALL_OUTER + 0.3 }
+slab("RampMouths", function()
+	part("ThresholdPit", nil, { 0.05, 0.05, 0.05 }, function(mesh)
+		for i = 1, 8 do
+			rampBlock(mesh, (i - 1) * 45, THRESHOLD, -RAMP_HALF, RAMP_HALF, 0, 0.4)
+		end
+	end, nil, 0)
+	part("Threshold", nil, STEEL, function(mesh)
+		local bars = 6
+		local step = (THRESHOLD[2] - THRESHOLD[1] - 0.2) / bars
+		for i = 1, 8 do
+			for b = 0, bars do
+				local radius = THRESHOLD[1] + 0.1 + b * step
+				rampBlock(mesh, (i - 1) * 45, { radius - 0.07, radius + 0.07 }, -RAMP_HALF, RAMP_HALF, 0.05, 0.15)
+			end
+		end
+	end, nil, 0.4)
+	part("Pier", nil, CONCRETE, function(mesh)
+		for i = 1, 8 do
+			for _, side in { -1, 1 } do
+				local near, far = side * RAMP_HALF, side * (RAMP_HALF + PIER_WIDTH)
+				rampBlock(mesh, (i - 1) * 45, PIER_RADII, math.min(near, far), math.max(near, far), PIER_TOP - RAMP_CREST, PIER_TOP + 0.5)
+			end
+		end
+	end, nil, 0.4)
+	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
+		part(if k == 1 then "PierStripeYellow" else "PierStripeBlack", nil, color, function(mesh)
+			local band = (PIER_TOP - RAMP_CREST) / 4
+			for i = 1, 8 do
+				for _, side in { -1, 1 } do
+					local face, inset = side * RAMP_HALF, side * (RAMP_HALF - 0.04)
+					for b = k, 4, 2 do
+						rampBlock(mesh, (i - 1) * 45, PIER_RADII, math.min(face, inset), math.max(face, inset), b * band, band)
+					end
+				end
+			end
+		end, nil, 0.3)
 	end
 end, 0, 0)
 
@@ -691,7 +734,7 @@ for i = 1, 8 do
 			end
 		end, nil, 0.3)
 	end, x, y, degrees - 90)
-	local coneX, coneY = polar(ROAD_INNER - 2, degrees + 6)
+	local coneX, coneY = polar(ROAD_INNER + 1.5, degrees + 9)
 	place(`Cones{i}`, buildTrafficCones, coneX, coneY, heightAt(coneX, coneY), degrees)
 end
 
