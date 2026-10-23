@@ -25,7 +25,8 @@ local EYE_Z = BODY_Z + 0.1
 local TAU = 2 * math.pi
 
 -- Edge highlight and feathering, matching the salvage machine.
-local EDGE_HIGHLIGHT = 0.45
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.85
 local EDGE_BLEND = 0.7
 local SMOOTH_ANGLE = 30
 local TEXTURE = 256
@@ -550,6 +551,8 @@ local function imperfect(mesh, name)
 	})
 end
 
+local parts = {}
+
 local function part(name, bone, color, build, smooth, rust)
 	local mesh = Mesh.new()
 	build(if rust == 0 then mesh else imperfect(mesh, name))
@@ -562,8 +565,27 @@ local function part(name, bone, color, build, smooth, rust)
 	elseif rust > 0 then
 		mesh:paint(image, weathered(color, rust))
 	end
-	mesh:paintShading(image, { highlight = EDGE_HIGHLIGHT, blend = EDGE_BLEND })
-	model.part(name, mesh, image, { bone = bone, preview = true })
+	table.insert(parts, { name = name, bone = bone, mesh = mesh, image = image })
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		local occluders = {}
+		for _, other in parts do
+			if other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT,
+			shadow = CONTACT_SHADOW,
+			blend = EDGE_BLEND,
+			occluders = occluders,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
 end
 
 local root = model.bone("Root", { at = { 0, 0, 0 } })
@@ -737,3 +759,5 @@ part("Pipes", body, GALVANISED, function(mesh)
 		ring(mesh, s * 0.7, 0.55, BODY_Z, 0.04, 0.07, 0.04, "x")
 	end
 end, nil, 0.6)
+
+finishParts()
