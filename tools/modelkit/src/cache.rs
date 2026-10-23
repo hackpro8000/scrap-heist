@@ -86,8 +86,9 @@ pub fn load(path: &Path) -> Option<Vec<CachedPart>> {
 		}
 		let (width, height) = (r.u32()? as usize, r.u32()? as usize);
 		let mut image = Image::new(width, height, [0.0; 3]);
-		for pixel in image.pixels.iter_mut() {
-			*pixel = [r.f32()?, r.f32()?, r.f32()?];
+		let raw = r.take(width * height * 12)?;
+		for (pixel, bytes) in image.pixels.iter_mut().zip(raw.chunks_exact(12)) {
+			*pixel = std::array::from_fn(|k| f32::from_le_bytes(bytes[k * 4..k * 4 + 4].try_into().unwrap()));
 		}
 		parts.push(CachedPart { name, preview, emissive, mesh, image });
 	}
