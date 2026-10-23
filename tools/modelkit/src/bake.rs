@@ -256,34 +256,44 @@ pub fn texels(mesh: &Mesh, width: usize, height: usize) -> Vec<Texel> {
 // Spreads painted texels outward into unpainted ones so UV seams and mipmaps
 // don't pull in background.
 pub fn dilate(pixels: &mut [[f32; 3]], covered: &mut [bool], width: usize, height: usize, passes: usize) {
+	let threads = std::thread::available_parallelism().map_or(4, |n| n.get());
+	let rows = height.div_ceil(threads).max(1);
 	for _ in 0..passes {
-		let before = covered.to_vec();
-		for y in 0..height {
-			for x in 0..width {
-				if before[y * width + x] {
-					continue;
-				}
-				let mut sum = [0.0f32; 3];
-				let mut count = 0.0;
-				for (dx, dy) in [(-1i64, 0i64), (1, 0), (0, -1), (0, 1), (-1, -1), (1, 1), (-1, 1), (1, -1)] {
-					let (nx, ny) = (x as i64 + dx, y as i64 + dy);
-					if nx < 0 || ny < 0 || nx >= width as i64 || ny >= height as i64 {
-						continue;
-					}
-					let neighbour = ny as usize * width + nx as usize;
-					if before[neighbour] {
-						for k in 0..3 {
-							sum[k] += pixels[neighbour][k];
+		let (before, colors) = (covered.to_vec(), pixels.to_vec());
+		// Each thread fills its own band of rows, reading the previous pass.
+		std::thread::scope(|scope| {
+			for (band, (pixels, covered)) in pixels.chunks_mut(rows * width).zip(covered.chunks_mut(rows * width)).enumerate() {
+				let (before, colors) = (&before, &colors);
+				scope.spawn(move || {
+					for (local, (pixel, done)) in pixels.iter_mut().zip(covered.iter_mut()).enumerate() {
+						let at = band * rows * width + local;
+						if before[at] {
+							continue;
 						}
-						count += 1.0;
+						let (x, y) = ((at % width) as i64, (at / width) as i64);
+						let mut sum = [0.0f32; 3];
+						let mut count = 0.0;
+						for (dx, dy) in [(-1i64, 0i64), (1, 0), (0, -1), (0, 1), (-1, -1), (1, 1), (-1, 1), (1, -1)] {
+							let (nx, ny) = (x + dx, y + dy);
+							if nx < 0 || ny < 0 || nx >= width as i64 || ny >= height as i64 {
+								continue;
+							}
+							let neighbour = ny as usize * width + nx as usize;
+							if before[neighbour] {
+								for k in 0..3 {
+									sum[k] += colors[neighbour][k];
+								}
+								count += 1.0;
+							}
+						}
+						if count > 0.0 {
+							*pixel = sum.map(|s| s / count);
+							*done = true;
+						}
 					}
-				}
-				if count > 0.0 {
-					pixels[y * width + x] = sum.map(|s| s / count);
-					covered[y * width + x] = true;
-				}
+				});
 			}
-		}
+		});
 	}
 }
 
