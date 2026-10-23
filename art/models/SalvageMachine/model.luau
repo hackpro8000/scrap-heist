@@ -71,6 +71,96 @@ local function cylinder(mesh, cx, cy, cz, radius, length, axis)
 	mesh:face(b)
 end
 
+-- Square beam of the given thickness running from one point to another, for
+-- braces that cut across at an angle.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	-- Two sides square to the beam: one level, one roughly up.
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Build quality, rising up the tiers. Tier 1 is propped up with one crooked
+-- scrap brace per side and wire-lashed legs. Tier 2 is properly braced:
+-- crossed struts on the long sides, end rails, gussets where the legs meet
+-- the housing and angle iron down the housing corners. Tier 3 is factory
+-- built: crossed struts all round, a low perimeter rail, corner guards and
+-- trim bands on the housing, levelling feet and bearing caps on the rollers.
+local function reinforcement(mesh, cx, scale, tier, rollerYs, rollerRadius)
+	local legX, legY, top = 0.9 * scale, 0.7 * scale, 1.2 * scale
+	local halfX, halfY, housingTop = 1.1 * scale, 0.9 * scale, 2.1 * scale
+	local function crossSide(x0, y0, x1, y1, thick)
+		strut(mesh, x0, y0, 0.15, x1, y1, top - 0.05, thick)
+		strut(mesh, x0, y0, top - 0.05, x1, y1, 0.15, thick)
+	end
+	if tier == 1 then
+		for _, side in { -1, 1 } do
+			-- One bent rebar brace, not quite reaching the far leg's foot.
+			strut(mesh, cx - legX, side * legY, 0.3, cx + legX - 0.05, side * legY, top * 0.85, 0.07)
+		end
+		for _, c in { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } } do
+			-- Wire lashing wrapped round the leg.
+			for k = 0, 1 do
+				box(mesh, cx + c[1] * legX, c[2] * legY, top * 0.45 + k * 0.08, 0.26, 0.26, 0.04)
+			end
+		end
+		return
+	end
+	for _, side in { -1, 1 } do
+		crossSide(cx - legX, side * legY, cx + legX, side * legY, 0.08)
+		-- Rail across each end.
+		box(mesh, cx + side * legX, 0, top * 0.35, 0.12, 2 * legY, 0.1)
+	end
+	for _, c in { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } } do
+		local x, y = cx + c[1] * legX, c[2] * legY
+		-- Gusset strut tying each leg top into the housing underside.
+		strut(mesh, x, y, top * 0.75, x - c[1] * 0.4, y, top, 0.1)
+		-- Angle iron (tier 2) or corner guard (tier 3) down the housing corner.
+		local hx, hy = cx + c[1] * (halfX + 0.02), c[2] * (halfY + 0.02)
+		box(mesh, hx, hy, top, if tier == 2 then 0.12 else 0.18, if tier == 2 then 0.12 else 0.18, housingTop - top)
+	end
+	if tier == 2 then
+		return
+	end
+	for _, side in { -1, 1 } do
+		crossSide(cx + side * legX, -legY, cx + side * legX, legY, 0.08)
+		-- Low perimeter rail.
+		box(mesh, cx, side * legY, 0.12, 2 * legX + 0.2, 0.12, 0.1)
+		box(mesh, cx + side * legX, 0, 0.12, 0.12, 2 * legY, 0.1)
+	end
+	-- Trim bands round the housing's bottom and top edges.
+	for _, z in { top, housingTop - 0.08 } do
+		box(mesh, cx, 0, z, 2 * halfX + 0.08, 2 * halfY + 0.08, 0.08)
+	end
+	for _, c in { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } } do
+		-- Levelling foot: a round pad on a threaded stem.
+		cylinder(mesh, cx + c[1] * legX, c[2] * legY, 0, 0.24, 0.06, "z")
+	end
+	for _, y in rollerYs do
+		-- Bearing cap on each end of every roller shaft.
+		for _, side in { -1, 1 } do
+			cylinder(mesh, cx + side * (halfX + 0.06), y, 2.15 * scale, rollerRadius * 0.6, 0.12, "x")
+		end
+	end
+end
+
 -- Shredder roller along X: a stack of toothed cutter discs on a shaft. Each
 -- disc is a star-shaped prism, and neighbours are turned half a tooth so the
 -- teeth stagger along the roller.
@@ -417,6 +507,13 @@ for tier = 1, 3 do
 		box(frame, legX, legY, 0, 0.4, 0.4, 0.05)
 	end
 	box(frame, cx, 0, 1.2 * scale, 2.2 * scale, 1.8 * scale, 0.9 * scale)
+	local rollerCount = tier + 1
+	local rollerRadius = 0.28 * scale * 2 / rollerCount * (if rollerCount > 2 then 1.15 else 1)
+	local rollerYs = {}
+	for i = 1, rollerCount do
+		rollerYs[i] = ((i - 1) / (rollerCount - 1) - 0.5) * 0.6 * scale
+	end
+	reinforcement(frame, cx, scale, tier, rollerYs, rollerRadius)
 	part(`{group}_Frame`, frame, FRAME, group, LARGE_TEXTURE, frameColor(cx, scale, wear))
 
 	local bolts, plates = warpedMesh(warp), warpedMesh(warp)
@@ -426,10 +523,7 @@ for tier = 1, 3 do
 
 	local rollers = warpedMesh(warp)
 	-- Better tiers pack more, finer rollers: 2 → 3 → 4, with more teeth each.
-	local rollerCount = tier + 1
-	local rollerRadius = 0.28 * scale * 2 / rollerCount * (if rollerCount > 2 then 1.15 else 1)
-	for i = 1, rollerCount do
-		local y = ((i - 1) / (rollerCount - 1) - 0.5) * 0.6 * scale
+	for _, y in rollerYs do
 		toothedRoller(rollers, cx, y, 2.15 * scale, rollerRadius, 1.9 * scale, 4 + tier * 2, 5 + tier * 2)
 	end
 	if tier == 2 then
