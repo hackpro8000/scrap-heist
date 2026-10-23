@@ -30662,7 +30662,17 @@ local function warpedFbm(x: number, y: number, z: number): number
 	return fbm(x + 1.8 * fbm(x + 5.2, y + 1.3, z), y + 1.8 * fbm(x + 1.7, y + 9.2, z), z)
 end
 -- Arena concrete: broad warped stains from oil and fights, mottled patches
--- of differing cure, and fine aggregate showing through the worn top.
+-- of differing cure, fine aggregate showing through the worn top, and
+-- scuffs: short streaks scraped by bots, running one way per patch of floor.
+local function scuff(x: number, y: number): number
+	local angle = math.noise(x / 12, y / 12, 17) * math.pi * 2
+	local u = x * math.cos(angle) + y * math.sin(angle)
+	local v = y * math.cos(angle) - x * math.sin(angle)
+	local streak = math.noise(u / 1.6, v * 7, 19)
+	local patch = fbm(x / 6, y / 6, 23) - 0.12
+	if patch <= 0 then return 0 end
+	return math.clamp(math.abs(streak) - 0.25, 0, 1) * math.sign(streak) * math.min(1, patch * 6)
+end
 local function arenaConcrete(x: number, y: number, _z: number)
 	local stain = warpedFbm(x / 14, y / 14, 3)
 	local mottle = fbm(x / 3, y / 3, 7)
@@ -30673,6 +30683,8 @@ local function arenaConcrete(x: number, y: number, _z: number)
 	elseif grain < -0.45 then
 		k -= 0.08
 	end
+	local mark = scuff(x, y)
+	k += if mark > 0 then mark * 0.18 else mark * 0.25
 	return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * (k - math.max(0, stain) * 0.04)
 end
 slab("Arena", function()
