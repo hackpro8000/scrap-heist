@@ -2,9 +2,10 @@
 // One unit is one stud; in Studio's 3D Importer, set the file's scale unit to
 // Stud. glTF is Y up, so our Z-up positions turn (x, y, z) into (x, z, -y).
 // Parts sharing a group sit under one parent node, so the game can show one
-// group (like a fill level) at a time.
+// group (like a fill level) at a time. With bones, every part is skinned
+// rigidly to its one bone and the joints come in as Studio Bones.
 
-use crate::Part;
+use crate::{Bone, Part};
 
 fn to_y_up(p: [f64; 3]) -> [f32; 3] {
 	[p[0] as f32, p[2] as f32, -p[1] as f32]
@@ -16,7 +17,7 @@ fn pad(bytes: &mut Vec<u8>, fill: u8) {
 	}
 }
 
-pub fn write(parts: &[Part]) -> Vec<u8> {
+pub fn write(parts: &[Part], bones: &[Bone]) -> Vec<u8> {
 	let mut bin: Vec<u8> = Vec::new();
 	let mut views = Vec::new();
 	let mut accessors = Vec::new();
@@ -57,6 +58,17 @@ pub fn write(parts: &[Part]) -> Vec<u8> {
 			let uv = [corner.uv[0] as f32, 1.0 - corner.uv[1] as f32];
 			uvs.extend(uv.iter().flat_map(|x| x.to_le_bytes()));
 		}
+		let mut skinning = String::new();
+		if let Some(bone) = part.bone {
+			let joints: Vec<u8> = (0..corners.len()).flat_map(|_| [bone as u8, 0, 0, 0]).collect();
+			let weights: Vec<u8> = (0..corners.len()).flat_map(|_| [1f32, 0.0, 0.0, 0.0]).flat_map(|w| w.to_le_bytes()).collect();
+			let view = push_view(&mut bin, &joints, Some(34962));
+			accessors.push(format!("{{\"bufferView\":{view},\"componentType\":5121,\"count\":{},\"type\":\"VEC4\"}}", corners.len()));
+			let joints_at = accessors.len() - 1;
+			let view = push_view(&mut bin, &weights, Some(34962));
+			accessors.push(format!("{{\"bufferView\":{view},\"componentType\":5126,\"count\":{},\"type\":\"VEC4\"}}", corners.len()));
+			skinning = format!(",\"JOINTS_0\":{joints_at},\"WEIGHTS_0\":{}", accessors.len() - 1);
+		}
 		let index_bytes: Vec<u8> = indices.iter().flat_map(|i| i.to_le_bytes()).collect();
 		let count = corners.len();
 		let base = accessors.len();
@@ -80,14 +92,15 @@ pub fn write(parts: &[Part]) -> Vec<u8> {
 			part.name
 		));
 		meshes.push(format!(
-			"{{\"name\":\"{}\",\"primitives\":[{{\"attributes\":{{\"POSITION\":{},\"NORMAL\":{},\"TEXCOORD_0\":{}}},\"indices\":{},\"material\":{index}}}]}}",
+			"{{\"name\":\"{}\",\"primitives\":[{{\"attributes\":{{\"POSITION\":{},\"NORMAL\":{},\"TEXCOORD_0\":{}{skinning}}},\"indices\":{},\"material\":{index}}}]}}",
 			part.name,
 			base,
 			base + 1,
 			base + 2,
 			base + 3
 		));
-		nodes.push(format!("{{\"name\":\"{}\",\"mesh\":{index}}}", part.name));
+		let skin = if part.bone.is_some() { ",\"skin\":0" } else { "" };
+		nodes.push(format!("{{\"name\":\"{}\",\"mesh\":{index}{skin}}}", part.name));
 		match &part.group {
 			None => roots.push(index),
 			Some(group) => match groups.iter_mut().find(|(name, _)| name == group) {
@@ -101,10 +114,34 @@ pub fn write(parts: &[Part]) -> Vec<u8> {
 		nodes.push(format!("{{\"name\":\"{name}\",\"children\":[{}]}}", list.join(",")));
 		roots.push(nodes.len() - 1);
 	}
+	let mut skins = String::new();
+	if !bones.is_empty() {
+		let first = nodes.len();
+		let mut inverse_binds = Vec::new();
+		for (index, bone) in bones.iter().enumerate() {
+			let parent_head = bone.parent.map_or([0.0; 3], |p| bones[p].head);
+			let local = to_y_up([bone.head[0] - parent_head[0], bone.head[1] - parent_head[1], bone.head[2] - parent_head[2]]);
+			let children: Vec<String> = (0..bones.len()).filter(|&c| bones[c].parent == Some(index)).map(|c| (first + c).to_string()).collect();
+			let children = if children.is_empty() { String::new() } else { format!(",\"children\":[{}]", children.join(",")) };
+			nodes.push(format!("{{\"name\":\"{}\",\"translation\":[{},{},{}]{children}}}", bone.name, local[0], local[1], local[2]));
+			if bone.parent.is_none() {
+				roots.push(first + index);
+			}
+			// Column-major; bind pose is the bone's head with no rotation.
+			let head = to_y_up(bone.head);
+			let matrix = [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -head[0], -head[1], -head[2], 1.0f32];
+			inverse_binds.extend(matrix.iter().flat_map(|x| x.to_le_bytes()));
+		}
+		let view = push_view(&mut bin, &inverse_binds, None);
+		accessors.push(format!("{{\"bufferView\":{view},\"componentType\":5126,\"count\":{},\"type\":\"MAT4\"}}", bones.len()));
+		let joints: Vec<String> = (0..bones.len()).map(|b| (first + b).to_string()).collect();
+		let skeleton = first + bones.iter().position(|b| b.parent.is_none()).unwrap_or(0);
+		skins = format!(",\"skins\":[{{\"inverseBindMatrices\":{},\"skeleton\":{skeleton},\"joints\":[{}]}}]", accessors.len() - 1, joints.join(","));
+	}
 	let root_list: Vec<String> = roots.iter().map(|r| r.to_string()).collect();
 
 	let mut json = format!(
-		"{{\"asset\":{{\"version\":\"2.0\",\"generator\":\"modelkit\"}},\"scene\":0,\"scenes\":[{{\"nodes\":[{}]}}],\"nodes\":[{}],\"meshes\":[{}],\"materials\":[{}],\"textures\":[{}],\"images\":[{}],\"accessors\":[{}],\"bufferViews\":[{}],\"buffers\":[{{\"byteLength\":{}}}]}}",
+		"{{\"asset\":{{\"version\":\"2.0\",\"generator\":\"modelkit\"}},\"scene\":0,\"scenes\":[{{\"nodes\":[{}]}}],\"nodes\":[{}],\"meshes\":[{}],\"materials\":[{}],\"textures\":[{}],\"images\":[{}],\"accessors\":[{}],\"bufferViews\":[{}],\"buffers\":[{{\"byteLength\":{}}}]{skins}}}",
 		root_list.join(","),
 		nodes.join(","),
 		meshes.join(","),
