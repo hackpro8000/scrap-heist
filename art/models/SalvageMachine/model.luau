@@ -102,14 +102,29 @@ end
 
 -- Open-topped hopper flaring out from the shredder throat.
 local function hopper(mesh, cx, z, bottom, top, height)
-	local low, high = {}, {}
-	for i, corner in { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } } do
-		low[i] = mesh:vertex(cx + corner[1] * bottom / 2, corner[2] * bottom / 2, z)
-		high[i] = mesh:vertex(cx + corner[1] * top / 2, corner[2] * top / 2, z + height)
+	-- Walls are a grid so the cartoon wobble can bend them into curves.
+	local around, rows = 16, 5
+	local rings = {}
+	for row = 0, rows do
+		local t = row / rows
+		local half = (bottom + (top - bottom) * t) / 2
+		local ring = {}
+		for i = 0, around - 1 do
+			-- Walk the square's perimeter, four steps per side.
+			local side, step = i // 4, (i % 4) / 4
+			local corners = { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } }
+			local a, b = corners[side + 1], corners[(side + 1) % 4 + 1]
+			local u, v = a[1] + (b[1] - a[1]) * step, a[2] + (b[2] - a[2]) * step
+			ring[i + 1] = mesh:vertex(cx + u * half, v * half, z + height * t)
+		end
+		rings[row + 1] = ring
 	end
-	for i = 1, 4 do
-		local j = i % 4 + 1
-		mesh:face({ low[i], low[j], high[j], high[i] })
+	for row = 1, rows do
+		local low, high = rings[row], rings[row + 1]
+		for i = 1, around do
+			local j = i % around + 1
+			mesh:face({ low[i], low[j], high[j], high[i] })
+		end
 	end
 	mesh:solidify(-0.08)
 	-- Reinforced rim: a flat lip band around the top edge.
@@ -235,7 +250,53 @@ local function housingBolts(bolts, plates, cx, scale, seed)
 	patchPlate(plates, bolts, cx + halfX, uniform(-0.3, 0.3) * scale, mid, 1, 0)
 end
 
-local function part(name, mesh, color, group, size, paint)
+-- Cartoon wobble, like the scrap crate: each tier leans, twists as it rises
+-- and has every corner nudged off true, so nothing is quite square. Builders
+-- write into a warped mesh, which bends each vertex on its way in.
+local LEAN = 0.06
+local TWIST = 0.06
+local JITTER = 0.03
+-- Curvy wobble: a sideways S-sway rising up the tier, and sides that bulge.
+local SWAY = 0.22
+local SWAY_WAVE = 1.1
+local BULGE = 0.1
+
+local function tierWarp(cx, seed)
+	local leanX, leanY = math.sin(seed) * LEAN, math.cos(seed * 1.7) * LEAN * 0.6
+	local twist = if seed % 2 == 0 then TWIST else -TWIST
+	return function(x, y, z)
+		local a = twist * z
+		local dx = x - cx
+		dx, y = dx * math.cos(a) - y * math.sin(a), dx * math.sin(a) + y * math.cos(a)
+		local sway = math.sin(z * SWAY_WAVE + seed) * SWAY
+		local swayY = math.sin(z * SWAY_WAVE * 0.8 + seed * 2.1) * SWAY * 0.6
+		local bulge = 1 + math.sin(z * 2.2 + seed) * BULGE
+		dx, y = dx * bulge, y * bulge
+		local n = JITTER
+		return cx + dx + sway + leanX * z + math.noise(x * 2.3 + seed, y * 2.3, z * 2.3) * n,
+			y + swayY + leanY * z + math.noise(x * 2.3, y * 2.3 + seed, z * 2.3) * n,
+			z + math.noise(x * 2.3, y * 2.3, z * 2.3 + seed) * n
+	end
+end
+
+local function warpedMesh(warp)
+	local mesh = Mesh.new()
+	return {
+		mesh = mesh,
+		vertex = function(_self, x, y, z)
+			return mesh:vertex(warp(x, y, z))
+		end,
+		face = function(_self, verts)
+			return mesh:face(verts)
+		end,
+		solidify = function(_self, ...)
+			return mesh:solidify(...)
+		end,
+	}
+end
+
+local function part(name, warped, color, group, size, paint)
+	local mesh = warped.mesh
 	mesh:setSmooth(SMOOTH_ANGLE)
 	mesh:unwrap()
 	local image = Image.new(size, size, color[1], color[2], color[3])
@@ -283,8 +344,9 @@ for tier = 1, 3 do
 	local group = `Tier_{tier}`
 	local cx = (tier - 2) * SPACING
 	local scale = 1 + (tier - 1) * 0.2
+	local warp = tierWarp(cx, tier)
 
-	local frame = Mesh.new()
+	local frame = warpedMesh(warp)
 	-- Legs and shredder housing.
 	for _, corner in { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } } do
 		local legX, legY = cx + corner[1] * 0.9 * scale, corner[2] * 0.7 * scale
@@ -295,12 +357,12 @@ for tier = 1, 3 do
 	box(frame, cx, 0, 1.2 * scale, 2.2 * scale, 1.8 * scale, 0.9 * scale)
 	part(`{group}_Frame`, frame, FRAME, group, LARGE_TEXTURE, frameColor(cx, scale))
 
-	local bolts, plates = Mesh.new(), Mesh.new()
+	local bolts, plates = warpedMesh(warp), warpedMesh(warp)
 	housingBolts(bolts, plates, cx, scale, tier * 17)
 	part(`{group}_Bolts`, bolts, BOLT, group, SMALL_TEXTURE)
 	part(`{group}_PatchPlates`, plates, PATCH, group, SMALL_TEXTURE)
 
-	local rollers = Mesh.new()
+	local rollers = warpedMesh(warp)
 	for _, y in { -0.3, 0.3 } do
 		toothedRoller(rollers, cx, y * scale, 2.15 * scale, 0.28 * scale, 1.9 * scale, 6, 7)
 	end
@@ -316,15 +378,15 @@ for tier = 1, 3 do
 	end
 	part(`{group}_Rollers`, rollers, ROLLER, group, SMALL_TEXTURE)
 
-	local bin = Mesh.new()
+	local bin = warpedMesh(warp)
 	hopper(bin, cx, 2.1 * scale, 1.9 * scale, 3 * scale, 1.1 * scale)
 	part(`{group}_Hopper`, bin, HOPPER, group, LARGE_TEXTURE, hopperColor(2.1 * scale, 1.1 * scale))
 
-	local chute = Mesh.new()
+	local chute = warpedMesh(warp)
 	box(chute, cx, 1.3 * scale, 0.3, 1 * scale, 1.4 * scale, 0.15)
 	part(`{group}_Chute`, chute, CHUTE, group, SMALL_TEXTURE)
 
-	local extras = Mesh.new()
+	local extras = warpedMesh(warp)
 	if tier == 1 then
 		-- Hand crank on the side.
 		cylinder(extras, cx + 1.25 * scale, 0, 1.6 * scale, 0.08, 0.3, "x")
@@ -342,7 +404,7 @@ for tier = 1, 3 do
 
 	if tier == 3 then
 		-- Magnet crane: mast, boom, hanging magnet over the hopper.
-		local crane = Mesh.new()
+		local crane = warpedMesh(warp)
 		box(crane, cx - 1.8 * scale, 0, 0, 0.3, 0.3, 4.6)
 		box(crane, cx - 0.8 * scale, 0, 4.4, 2.8, 0.25, 0.25)
 		cylinder(crane, cx + 0.3, 0, 3.4, 0.45, 0.25, "z")
