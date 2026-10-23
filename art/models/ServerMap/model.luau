@@ -12527,7 +12527,7 @@ slabKeys[12850] = "2774ac16b94efc7d-f8f4f9cdd6dd6cae"
 slabKeys[12882] = "2774ac16b94efc7d-b818e7bc3229e16b"
 slabKeys[12961] = "2774ac16b94efc7d-45f1773a0c3d4692"
 slabKeys[13006] = "2774ac16b94efc7d-ba14974c752a9757"
-slabKeys[13071] = "2774ac16b94efc7d-f7a0aeecb505f143"
+slabKeys[13071] = "2774ac16b94efc7d-24be87ae801def2b"
 slabKeys[13153] = "2774ac16b94efc7d-9519d293b472b9ba"
 slabKeys[13158] = "2774ac16b94efc7d-08fbe9bb8b1a6d5a"
 slabKeys[13165] = "2774ac16b94efc7d-ec0277225e552e1d"
@@ -13073,7 +13073,7 @@ slab("Ramps", function()
 		for i = 1, 8 do
 			rampBlock(mesh, (i - 1) * 45, { ARENA_FLOOR - HAZARD_WIDTH, ARENA_FLOOR, WALL_INNER, ROAD_INNER + 0.5 }, -LANE_HALF, LANE_HALF, 0)
 		end
-	end, nil, 0.25)
+	end, nil, 0.25, 1024)
 	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
 		part(if k == 1 then "RampStripeYellow" else "RampStripeBlack", nil, color, function(mesh)
 			for i = 1, 8 do
