@@ -12459,18 +12459,18 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[12604] = "1de3d6d9ecc1c136-68509606c092d9cd"
-slabKeys[12714] = "1de3d6d9ecc1c136-8a7474a6a51d8715"
-slabKeys[12720] = "1de3d6d9ecc1c136-f8f4f9cdd6dd6cae"
-slabKeys[12752] = "1de3d6d9ecc1c136-b818e7bc3229e16b"
-slabKeys[12827] = "1de3d6d9ecc1c136-461b16629f9b8605"
-slabKeys[12878] = "1de3d6d9ecc1c136-7262ef2655abf3cf"
-slabKeys[12923] = "1de3d6d9ecc1c136-4423e3810a3e5ce4"
-slabKeys[12993] = "1de3d6d9ecc1c136-9519d293b472b9ba"
-slabKeys[12998] = "1de3d6d9ecc1c136-08fbe9bb8b1a6d5a"
-slabKeys[13005] = "1de3d6d9ecc1c136-ec0277225e552e1d"
-slabKeys[13014] = "1de3d6d9ecc1c136-b3cfbefdd31cb9f1"
-slabKeys[13081] = "1de3d6d9ecc1c136-5f3dede5e341fed8"
+slabKeys[12615] = "5a273ec959e81fed-68509606c092d9cd"
+slabKeys[12725] = "5a273ec959e81fed-5e88646b4708a202"
+slabKeys[12731] = "5a273ec959e81fed-f8f4f9cdd6dd6cae"
+slabKeys[12763] = "5a273ec959e81fed-b818e7bc3229e16b"
+slabKeys[12853] = "5a273ec959e81fed-20301616b877a579"
+slabKeys[12904] = "5a273ec959e81fed-7262ef2655abf3cf"
+slabKeys[12949] = "5a273ec959e81fed-4423e3810a3e5ce4"
+slabKeys[13019] = "5a273ec959e81fed-9519d293b472b9ba"
+slabKeys[13024] = "5a273ec959e81fed-08fbe9bb8b1a6d5a"
+slabKeys[13031] = "5a273ec959e81fed-ec0277225e552e1d"
+slabKeys[13040] = "5a273ec959e81fed-b3cfbefdd31cb9f1"
+slabKeys[13107] = "5a273ec959e81fed-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -12518,8 +12518,19 @@ local function smoothstep(low: number, high: number, value: number): number
 	return t * t * (3 - 2 * t)
 end
 
+-- The arena is a hexagon with corners every 60 degrees from +x. hexScale is
+-- how far its edge reaches at an angle, as a fraction of the corner radius.
+local function hexScale(degrees: number): number
+	return math.cos(math.rad(30)) / math.cos(math.rad(degrees % 60 - 30))
+end
+
+-- Distance measured so every point on a hexagon of corner radius R reads R.
+local function hexRadius(x: number, y: number): number
+	return math.sqrt(x * x + y * y) / hexScale(math.deg(math.atan2(y, x)))
+end
+
 local function heightAt(x: number, y: number): number
-	local radius = math.sqrt(x * x + y * y)
+	local radius = hexRadius(x, y)
 	return -ARENA_DEPTH * (1 - smoothstep(ARENA_FLOOR, ROAD_INNER - 2, radius))
 end
 
@@ -12713,7 +12724,7 @@ local function bridgeGirders(degrees: number, cx: number, cy: number)
 end
 slab("Arena", function()
 	part("Floor", nil, CONCRETE, function(mesh)
-		cylinder(mesh, 0, 0, -ARENA_DEPTH, ARENA_FLOOR, 0.2, "z", 48)
+		cylinder(mesh, 0, 0, -ARENA_DEPTH, ARENA_FLOOR, 0.2, "z", 6)
 	end, nil, arenaConcrete, 2048)
 end, 0, 0)
 -- New players start on the ring around the crusher.
@@ -12794,14 +12805,29 @@ slab("Beacon", function()
 	end, nil, 0.3, TOWER_TEXTURE)
 end, 0, 0)
 
--- A solid band following the arena circle between two angles, used for the
--- floor stripes and the rim wall.
-local function arc(mesh, inner: number, outer: number, bottom: number, top: number, from: number, to: number)
+-- A solid band following a circle between two angles, used for the kerb,
+-- floor stripes and rim wall. With `hex` it follows the arena hexagon instead,
+-- with a row on every corner it passes so the corners stay sharp.
+local function arc(mesh, inner: number, outer: number, bottom: number, top: number, from: number, to: number, hex: boolean?)
+	local angles = {}
 	local steps = math.max(1, math.ceil((to - from) / 4))
+	for s = 0, steps do
+		table.insert(angles, from + (to - from) * s / steps)
+	end
+	if hex then
+		for corner = math.floor(from / 60 + 1) * 60, to - 0.01, 60 do
+			if math.abs((corner - from) % ((to - from) / steps)) > 0.01 then
+				table.insert(angles, corner)
+			end
+		end
+		table.sort(angles)
+	end
+	steps = #angles - 1
 	local rows = {}
 	for s = 0, steps do
-		local angle = math.rad(from + (to - from) * s / steps)
-		local c, n = math.cos(angle), math.sin(angle)
+		local scale = if hex then hexScale(angles[s + 1]) else 1
+		local angle = math.rad(angles[s + 1])
+		local c, n = math.cos(angle) * scale, math.sin(angle) * scale
 		rows[s] = {
 			mesh:vertex(c * outer, n * outer, bottom),
 			mesh:vertex(c * outer, n * outer, top),
@@ -12829,20 +12855,20 @@ slab("ArenaEdge", function()
 	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
 		part(if k == 1 then "StripeYellow" else "StripeBlack", nil, color, function(mesh)
 			for s = k - 1, STRIPES - 1, 2 do
-				arc(mesh, ARENA_FLOOR - 2, ARENA_FLOOR - 0.2, floor, floor + 0.12, s * 360 / STRIPES, (s + 1) * 360 / STRIPES)
+				arc(mesh, ARENA_FLOOR - 2, ARENA_FLOOR - 0.2, floor, floor + 0.12, s * 360 / STRIPES, (s + 1) * 360 / STRIPES, true)
 			end
 		end, nil, 0.2)
 	end
 	part("Wall", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
 			local from = (i - 1) * 45
-			arc(mesh, ROAD_INNER - 1.2, ROAD_INNER - 0.4, -0.5, 0.9, from + 5, from + 40)
+			arc(mesh, ROAD_INNER - 1.2, ROAD_INNER - 0.4, -0.5, 0.9, from + 5, from + 40, true)
 		end
 	end, nil, 0.4)
 	part("WallCap", nil, MARK, function(mesh)
 		for i = 1, 8 do
 			local from = (i - 1) * 45
-			arc(mesh, ROAD_INNER - 1.3, ROAD_INNER - 0.3, 0.9, 1.05, from + 5, from + 40)
+			arc(mesh, ROAD_INNER - 1.3, ROAD_INNER - 0.3, 0.9, 1.05, from + 5, from + 40, true)
 		end
 	end, nil, 0.3)
 end, 0, 0)
