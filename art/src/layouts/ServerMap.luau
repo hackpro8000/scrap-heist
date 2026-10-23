@@ -85,10 +85,38 @@ slab("Road", function()
 		ring(mesh, 0, 0, 0, ROAD_INNER, ROAD_OUTER, 0.1, "z", 48)
 	end, nil, 0)
 end, 0, 0)
+-- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
+local function fbm(x: number, y: number, z: number): number
+	local total, amplitude = 0, 0.5
+	for _ = 1, 4 do
+		total += math.noise(x, y, z) * amplitude
+		x, y, z, amplitude = x * 2, y * 2, z * 2, amplitude / 2
+	end
+	return total
+end
+-- fBm sampled through another fBm, so the wear twists into blotches and
+-- streaks instead of even waves.
+local function warpedFbm(x: number, y: number, z: number): number
+	return fbm(x + 1.8 * fbm(x + 5.2, y + 1.3, z), y + 1.8 * fbm(x + 1.7, y + 9.2, z), z)
+end
+-- Arena concrete: broad warped stains from oil and fights, mottled patches
+-- of differing cure, and fine aggregate showing through the worn top.
+local function arenaConcrete(x: number, y: number, _z: number)
+	local stain = warpedFbm(x / 14, y / 14, 3)
+	local mottle = fbm(x / 3, y / 3, 7)
+	local grain = math.noise(x * 6, y * 6, 11) * 0.5 + math.noise(x * 19, y * 19, 13) * 0.5
+	local k = 1 + mottle * 0.12 + grain * 0.05 - math.max(0, stain) * 0.35
+	if grain > 0.42 then
+		k += 0.1
+	elseif grain < -0.45 then
+		k -= 0.08
+	end
+	return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * (k - math.max(0, stain) * 0.04)
+end
 slab("Arena", function()
 	part("Floor", nil, CONCRETE, function(mesh)
 		cylinder(mesh, 0, 0, -ARENA_DEPTH, ARENA_FLOOR, 0.2, "z", 48)
-	end, nil, 0)
+	end, nil, arenaConcrete, 2048)
 end, 0, 0)
 -- New players start on the ring around the crusher.
 slab("Spawn", function()
@@ -106,20 +134,6 @@ local TYRE = { 0.51, 0.5, 0.465 }
 local LUGS = { 0.48, 0.47, 0.44 }
 local SMEAR = { 0.53, 0.52, 0.485 }
 local TREAD_GAP, TREAD_WIDTH, BLOCK_LENGTH = 0.8, 0.42, 0.25
--- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
-local function fbm(x: number, y: number, z: number): number
-	local total, amplitude = 0, 0.5
-	for _ = 1, 4 do
-		total += math.noise(x, y, z) * amplitude
-		x, y, z, amplitude = x * 2, y * 2, z * 2, amplitude / 2
-	end
-	return total
-end
--- fBm sampled through another fBm, so the wear twists into blotches and
--- streaks instead of even waves.
-local function warpedFbm(x: number, y: number, z: number): number
-	return fbm(x + 1.8 * fbm(x + 5.2, y + 1.3, z), y + 1.8 * fbm(x + 1.7, y + 9.2, z), z)
-end
 local function tyreTrack(mesh, path: (number) -> (number, number), length: number, seed: number, layer: string)
 	local z = 0.115 - ARENA_DEPTH + if layer == "Lugs" then 0.005 elseif layer == "Smear" then -0.003 else 0
 	local steps = math.floor(length / BLOCK_LENGTH)

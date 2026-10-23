@@ -530,6 +530,7 @@ end
 
 local parts = {}
 
+-- `rust` can also be a paint fn for surfaces with their own look.
 -- `texture` overrides the texture size for parts that need more detail.
 -- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
 -- glowing parts skip painted shading.
@@ -541,7 +542,9 @@ local function part(name, bone, color, build, smooth, rust, texture: number?, em
 	local size = texture or TEXTURE
 	local image = Image.new(size, size, color[1], color[2], color[3])
 	rust = rust or 0.4
-	if rust == RUBBER then
+	if type(rust) == "function" then
+		mesh:paint(image, rust)
+	elseif rust == RUBBER then
 		mesh:paint(image, scuffed(color))
 	elseif rust > 0 then
 		mesh:paint(image, weathered(color, rust))
