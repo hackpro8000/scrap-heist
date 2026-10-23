@@ -28,6 +28,9 @@ pub fn write(parts: &[Part], bones: &[Bone]) -> Vec<u8> {
 	let mut nodes: Vec<String> = Vec::new();
 	let mut roots: Vec<usize> = Vec::new();
 	let mut groups: Vec<(String, Vec<usize>)> = Vec::new();
+	// Placed copies of a model bake identical textures, so each distinct PNG
+	// is stored once and every part using it points at that one texture.
+	let mut stored: std::collections::HashMap<Vec<u8>, usize> = std::collections::HashMap::new();
 
 	let mut push_view = |bin: &mut Vec<u8>, data: &[u8], target: Option<u32>| -> usize {
 		let offset = bin.len();
@@ -84,14 +87,22 @@ pub fn write(parts: &[Part], bones: &[Bone]) -> Vec<u8> {
 		let view = push_view(&mut bin, &index_bytes, Some(34963));
 		accessors.push(format!("{{\"bufferView\":{view},\"componentType\":5125,\"count\":{},\"type\":\"SCALAR\"}}", indices.len()));
 
-		let view = push_view(&mut bin, &part.image.borrow().encode_png(), None);
-		images.push(format!("{{\"bufferView\":{view},\"mimeType\":\"image/png\"}}"));
-		textures.push(format!("{{\"source\":{index}}}"));
+		let png = part.image.borrow().encode_png();
+		let texture = match stored.get(&png) {
+			Some(&texture) => texture,
+			None => {
+				let view = push_view(&mut bin, &png, None);
+				images.push(format!("{{\"bufferView\":{view},\"mimeType\":\"image/png\"}}"));
+				textures.push(format!("{{\"source\":{}}}", images.len() - 1));
+				stored.insert(png, textures.len() - 1);
+				textures.len() - 1
+			}
+		};
 		let glow = if part.emissive > 0.0 {
-			format!(",\"emissiveTexture\":{{\"index\":{index}}},\"emissiveFactor\":[1,1,1],\"extensions\":{{\"KHR_materials_emissive_strength\":{{\"emissiveStrength\":{}}}}}", part.emissive)
+			format!(",\"emissiveTexture\":{{\"index\":{texture}}},\"emissiveFactor\":[1,1,1],\"extensions\":{{\"KHR_materials_emissive_strength\":{{\"emissiveStrength\":{}}}}}", part.emissive)
 		} else { String::new() };
 		materials.push(format!(
-			"{{\"name\":\"{}\",\"pbrMetallicRoughness\":{{\"baseColorTexture\":{{\"index\":{index}}},\"metallicFactor\":0,\"roughnessFactor\":1}}{glow}}}",
+			"{{\"name\":\"{}\",\"pbrMetallicRoughness\":{{\"baseColorTexture\":{{\"index\":{texture}}},\"metallicFactor\":0,\"roughnessFactor\":1}}{glow}}}",
 			part.name
 		));
 		meshes.push(format!(

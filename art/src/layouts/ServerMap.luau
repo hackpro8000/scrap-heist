@@ -1,13 +1,18 @@
--- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones
+-- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
 -- around its bowl; eight yard islands float in a ring with their gates facing
 -- it, each joined to the road by a steel bridge. The arena is the storm fight
 -- ground and, between storms, the spawn plaza new players start on.
--- Yards are only plot slabs here: the game drops the Yard Layout template
--- onto each one, so every yard is built from the same pieces.
--- Labels: ArenaIsland, Road, Arena, ArenaEdge, Ramps, Spawn, Beacon, Island1-Island8, Plot1-Plot8, Spoke1-Spoke8, Bridge1-Bridge8,
+-- Each plot slab carries the Yard Layout template, placed piece by piece the
+-- same way YardLayout.luau places it, so the map shows every yard set up.
+-- Labels: ArenaIsland, Road, Arena, ArenaEdge, Ramps, Spawn, Beacon, Island1-Island8, Plot1-Plot8, Yard1_<piece>-Yard8_<piece>, Spoke1-Spoke8, Bridge1-Bridge8,
 -- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4 and Cones1-Cones8.
+-- Yard crates show empty, as in the Yard Layout template.
+skipPart = function(name)
+	return name:match("^Fill_") ~= nil
+end
+
 local YARD_RADIUS = 110
 local ROAD_INNER, ROAD_OUTER = 50, 58
 local ARENA_FLOOR, ARENA_DEPTH = 36, 3.5
@@ -424,6 +429,43 @@ local function yardOutline(seed: number): (number) -> number
 		return math.max(0.9, lump + (1 - lump) * landing)
 	end
 end
+-- Builds one yard from the Yard Layout pieces, laid out as in
+-- YardLayout.luau but turned and moved onto the plot at (x, y). The crate
+-- shows empty, as in the template.
+local function yardTemplate(index: number, x: number, y: number, turn: number)
+	local c, s = math.cos(math.rad(turn)), math.sin(math.rad(turn))
+	local function piece(name: string, build: () -> (), px: number, py: number, pz: number?, pturn: number?)
+		place(`Yard{index}_{name}`, build, x + px * c - py * s, y + px * s + py * c, pz, turn + (pturn or 0))
+	end
+	for i, tx in { -12, -4, 4, 12 } do
+		for j, ty in { -12, -4, 4, 12 } do
+			piece(`Tile{(i - 1) * 4 + j}`, buildGroundTile, tx, ty, 0, ((tx + ty * 3) // 8 % 4) * 90)
+		end
+	end
+	for i, pad in { { -9, 2 }, { -9, 10 }, { 9, 2 }, { 9, 10 } } do
+		piece(`Pad{i}`, buildMachinePad, pad[1], pad[2])
+	end
+	piece("Crate", buildStorageCrate, 0, 12)
+	for i, py in { -12, -4, 4 } do
+		piece(`Path{i}`, buildYardPath, 0, py, 0.01)
+	end
+	for i, py in { 2, 10 } do
+		piece(`Branch{i * 2 - 1}`, buildYardPathStub, -4, py, 0.01, 90)
+		piece(`Branch{i * 2}`, buildYardPathStub, 4, py, 0.01, 90)
+	end
+	for i, f in { -12, -4, 4, 12 } do
+		piece(`FenceBack{i}`, buildYardFence, f, 16)
+		piece(`FenceLeft{i}`, buildYardFence, -16, f, 0, 90)
+		piece(`FenceRight{i}`, buildYardFence, 16, f, 0, 90)
+	end
+	for i, side in { -1, 1 } do
+		piece(`FenceFront{i}`, buildYardFence, side * 8, -16)
+		piece(`FenceFrontHalf{i}`, buildYardFenceHalf, side * 14, -16)
+	end
+	piece("Gate", buildYardGate, 0, -16)
+	piece("PlotMarker", buildPlotMarker, 6, -17.5)
+end
+
 for i = 1, 8 do
 	local degrees = (i - 1) * 45
 	local x, y = polar(YARD_RADIUS, degrees)
@@ -437,6 +479,7 @@ for i = 1, 8 do
 			box(mesh, 0, 0, 0, 32, 32, 0.05)
 		end, nil, 0)
 	end, x, y, degrees - 90)
+	yardTemplate(i, x, y, degrees - 90)
 	slab(`Spoke{i}`, function()
 		part("Road", nil, ROAD, function(mesh)
 			box(mesh, 0, -20.5, 0, 6, 11, 0.1)
