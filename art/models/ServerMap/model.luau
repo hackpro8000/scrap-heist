@@ -30561,26 +30561,29 @@ finishParts()
 end
 buildKeys[buildBillboardFrame] = "BillboardFrame-abecca84f87cae2e"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones ScrapTreeAntenna ScrapTreeExhaust ScrapTreeLamppost ScrapTreeRebar ScrapTreeSignpost ScrapPalm BushCans BushChainLink BushHubcap BushSpring BushWire RockBoulderPile RockCarCube RockConcrete RockEngine RockGearbox RockSlab GrassRebar GrassWire FlowerBulbs FlowerFan LogGirder LogPipe StumpDrum JunkMound OilPuddle CoolantPond ManholeCover HydrantLeaking TrafficLight SignBent BusStopWreck PhoneBooth ParkBench VendingMachine Mailbox ShoppingCarts BrickRuin BillboardFrame
--- Server Map: one server's whole map, centered on the origin. Eight yard
--- plots stand in a ring with their gates facing a central arena, joined to
--- it by a ring road and a spoke from each gate. The arena is the storm fight
--- ground and, between storms, the spawn plaza new players start on. Scrap props
--- fill the gaps between the yards.
+-- Server Map: one server's whole map, centered on the origin, built as
+-- floating islands. The arena island sits in the middle with a ring road
+-- around its bowl; eight yard islands float in a ring with their gates facing
+-- it, each joined to the road by a steel bridge. The arena is the storm fight
+-- ground and, between storms, the spawn plaza new players start on. Small
+-- islets between the yards carry the scrap props.
 -- Yards are only plot slabs here: the game drops the Yard Layout template
 -- onto each one, so every yard is built from the same pieces.
--- Labels: Ground, Road, Arena, ArenaEdge, Ramps, Spawn, Beacon, Plot1-Plot8, Spoke1-Spoke8,
+-- Labels: ArenaIsland, Road, Arena, ArenaEdge, Ramps, Spawn, Beacon, Island1-Island8, Plot1-Plot8, Spoke1-Spoke8, Bridge1-Bridge8,
 -- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4, Cones1-Cones8, and
--- Wedge<w><ring>_<n> props between the yards.
-local YARD_RADIUS = 90
+-- Islet1-Islet8 with Wedge<w>_<n> props on them.
+local YARD_RADIUS = 110
 local ROAD_INNER, ROAD_OUTER = 50, 58
 local ARENA_FLOOR, ARENA_DEPTH = 36, 3.5
-local MAP_SIZE = 260
+local ARENA_ISLAND, YARD_ISLAND, ISLET = 61, 26, 11
+local ISLET_RADIUS = 104
 
 local GROUND = { 0.3, 0.27, 0.22 }
 local ROAD = { 0.42, 0.41, 0.4 }
 local CONCRETE = { 0.55, 0.54, 0.5 }
 local MARK = { 0.85, 0.65, 0.15 }
 local PLOT = { 0.36, 0.33, 0.28 }
+local ROCK = { 0.42, 0.37, 0.31 }
 
 -- Places one flat piece built here rather than from a model.
 local function slab(label: string, build: () -> (), x: number, y: number, turn: number?)
@@ -30596,10 +30599,8 @@ local function polar(radius: number, degrees: number): (number, number)
 	return math.cos(angle) * radius, math.sin(angle) * radius
 end
 
--- Ground height. The arena, ring road, spokes and plots stay flat so the
--- slabs sit on it; everywhere else rolls in low hills that climb into a
--- ridge at the map edge. The arena sinks into a bowl whose sloped rim
--- meets the ring road, so the storm fight can be watched from the road.
+-- Arena island height: flat, except the arena sinks into a bowl whose
+-- sloped rim meets the ring road, so the storm fight can be watched from it.
 local function smoothstep(low: number, high: number, value: number): number
 	local t = math.clamp((value - low) / (high - low), 0, 1)
 	return t * t * (3 - 2 * t)
@@ -30607,40 +30608,86 @@ end
 
 local function heightAt(x: number, y: number): number
 	local radius = math.sqrt(x * x + y * y)
-	local hilly = smoothstep(ROAD_OUTER + 2, ROAD_OUTER + 9, radius)
-	for i = 1, 8 do
-		local plotX, plotY = polar(YARD_RADIUS, (i - 1) * 45)
-		local along = (x * plotX + y * plotY) / YARD_RADIUS
-		local across = math.abs(x * plotY - y * plotX) / YARD_RADIUS
-		local spoke = if along > 0 and along < YARD_RADIUS then smoothstep(5, 10, across) else 1
-		local plot = smoothstep(19, 27, math.max(math.abs(along - YARD_RADIUS), across))
-		hilly = math.min(hilly, spoke, plot)
-	end
-	local edge = math.max(math.abs(x), math.abs(y))
-	local rolling = 2.5 + 4 * math.noise(x / 23, y / 23, 0.5) + 1.5 * math.noise(x / 9, y / 9, 3.5)
-	local ridge = smoothstep(108, MAP_SIZE / 2, edge) * (12 + 6 * math.noise(x / 30, y / 30, 7.5))
-	local bowl = -ARENA_DEPTH * (1 - smoothstep(ARENA_FLOOR, ROAD_INNER - 2, radius))
-	return bowl + hilly * math.max(rolling + ridge, -0.6)
+	return -ARENA_DEPTH * (1 - smoothstep(ARENA_FLOOR, ROAD_INNER - 2, radius))
 end
 
-local GROUND_CELLS = 80
-slab("Ground", function()
-	part("Surface", nil, GROUND, function(mesh)
-		local rows = {}
-		for j = 0, GROUND_CELLS do
-			local y = -MAP_SIZE / 2 + MAP_SIZE * j / GROUND_CELLS
-			rows[j] = {}
-			for i = 0, GROUND_CELLS do
-				local x = -MAP_SIZE / 2 + MAP_SIZE * i / GROUND_CELLS
-				rows[j][i] = mesh:vertex(x, y, heightAt(x, y))
-			end
+-- A floating island: a dirt top following `top`, over a rock underside that
+-- tapers to a ragged point `depth` below. Rings run outward across the top,
+-- then inward down the underside, so every face keeps the same winding.
+local ISLAND_SIDES = 48
+local UNDERSIDE_RINGS = 10
+local function floatingIsland(mesh, radius: number, depth: number, seed: number, top: (number, number) -> number)
+	local rows = {}
+	local function addRing(r: number, z: (number, number, number) -> number)
+		local row = {}
+		for j = 0, ISLAND_SIDES - 1 do
+			local angle = 2 * math.pi * j / ISLAND_SIDES
+			local x, y = math.cos(angle) * r, math.sin(angle) * r
+			row[j] = { x, y, z(x, y, angle) }
 		end
-		for j = 0, GROUND_CELLS - 1 do
-			for i = 0, GROUND_CELLS - 1 do
-				mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
-			end
+		table.insert(rows, row)
+	end
+	local topRings = math.max(4, math.ceil(radius / 3))
+	for s = 0, topRings do
+		addRing(math.max(0.5, radius * s / topRings), function(x, y) return top(x, y) end)
+	end
+	for k = 1, UNDERSIDE_RINGS do
+		local t = k / UNDERSIDE_RINGS
+		local row = {}
+		for j = 0, ISLAND_SIDES - 1 do
+			local angle = 2 * math.pi * j / ISLAND_SIDES
+			local c, n = math.cos(angle), math.sin(angle)
+			local wobble = math.noise(c * 2, n * 2, seed + t * 3) * math.min(1, t * 3)
+			local r = math.max(radius * (1 - t) ^ 0.55 * (1 + 0.3 * wobble), radius * 0.03)
+			local z = -depth * t ^ 1.3 + 1.5 * t * math.noise(c * 3, n * 3, seed + 9)
+			row[j] = { c * r, n * r, z }
 		end
-	end, true, 0)
+		table.insert(rows, row)
+	end
+	local verts = {}
+	for i, row in rows do
+		verts[i] = {}
+		for j = 0, ISLAND_SIDES - 1 do
+			verts[i][j] = mesh:vertex(row[j][1], row[j][2], row[j][3])
+		end
+	end
+	for i = 1, #verts - 1 do
+		for j = 0, ISLAND_SIDES - 1 do
+			local l = (j + 1) % ISLAND_SIDES
+			mesh:face({ verts[i][j], verts[i + 1][j], verts[i + 1][l], verts[i][l] })
+		end
+	end
+	local topCap, bottomCap = {}, {}
+	for j = 0, ISLAND_SIDES - 1 do
+		table.insert(topCap, verts[1][j])
+		table.insert(bottomCap, 1, verts[#verts][j])
+	end
+	mesh:face(topCap)
+	mesh:face(bottomCap)
+end
+
+-- Dirt on top; underneath, rock in uneven strata with darker seams.
+local function islandPaint(top: (number, number) -> number)
+	return function(x: number, y: number, z: number)
+		if z > top(x, y) - 0.3 then
+			local k = 1 + 0.12 * math.noise(x / 4, y / 4, 31) + 0.05 * math.noise(x * 3, y * 3, 37)
+			return GROUND[1] * k, GROUND[2] * k, GROUND[3] * k
+		end
+		local band = math.noise(x / 9, y / 9, z / 2) * 0.6 + z * 0.9
+		local k = 1 + 0.12 * math.sin(band * 2.4) + 0.06 * math.noise(x * 2, y * 2, z * 2)
+		if math.sin(band * 2.4) > 0.93 then k -= 0.25 end
+		return ROCK[1] * k, ROCK[2] * k, ROCK[3] * k
+	end
+end
+
+local function flat(_x: number, _y: number): number
+	return 0
+end
+
+slab("ArenaIsland", function()
+	part("Island", nil, GROUND, function(mesh)
+		floatingIsland(mesh, ARENA_ISLAND, 42, 1, heightAt)
+	end, nil, islandPaint(heightAt), 2048)
 end, 0, 0)
 slab("Road", function()
 	part("Ring", nil, ROAD, function(mesh)
@@ -30866,10 +30913,19 @@ slab("Ramps", function()
 	end, nil, 0.3)
 end, 0, 0)
 
--- Each plot is turned so its gate (local -y) faces the arena.
+-- Each yard island is turned so its gate (local -y) faces the arena. A short
+-- road runs from the gate to the island edge, and a steel bridge carries it
+-- across the gap to the ring road.
+local BRIDGE_FROM, BRIDGE_TO = -(YARD_ISLAND - 1), -(YARD_RADIUS - ROAD_OUTER + 1)
+local BRIDGE_MID, BRIDGE_LENGTH = (BRIDGE_FROM + BRIDGE_TO) / 2, BRIDGE_FROM - BRIDGE_TO
 for i = 1, 8 do
 	local degrees = (i - 1) * 45
 	local x, y = polar(YARD_RADIUS, degrees)
+	slab(`Island{i}`, function()
+		part("Island", nil, GROUND, function(mesh)
+			floatingIsland(mesh, YARD_ISLAND, 22, 10 + i, flat)
+		end, nil, islandPaint(flat), 1024)
+	end, x, y, degrees - 90)
 	slab(`Plot{i}`, function()
 		part("Slab", nil, PLOT, function(mesh)
 			box(mesh, 0, 0, 0, 32, 32, 0.05)
@@ -30877,8 +30933,33 @@ for i = 1, 8 do
 	end, x, y, degrees - 90)
 	slab(`Spoke{i}`, function()
 		part("Road", nil, ROAD, function(mesh)
-			box(mesh, 0, -24, 0, 6, 17, 0.1)
+			box(mesh, 0, -20.5, 0, 6, 11, 0.1)
 		end, nil, 0)
+	end, x, y, degrees - 90)
+	slab(`Bridge{i}`, function()
+		part("Deck", nil, ROAD, function(mesh)
+			box(mesh, 0, BRIDGE_MID, -0.2, 6, BRIDGE_LENGTH, 0.3)
+		end, nil, 0.1)
+		part("Girders", nil, DARK_STEEL, function(mesh)
+			for _, side in { -2.6, 2.6 } do
+				box(mesh, side, BRIDGE_MID, -1.4, 0.4, BRIDGE_LENGTH, 1.2)
+			end
+			for n = 0, math.floor(BRIDGE_LENGTH / 4) do
+				box(mesh, 0, BRIDGE_TO + 1 + n * 4, -0.6, 5.6, 0.3, 0.4)
+			end
+		end, nil, 0.5)
+		part("Posts", nil, STEEL, function(mesh)
+			for _, side in { -3, 3 } do
+				for n = 0, math.floor(BRIDGE_LENGTH / 3) do
+					box(mesh, side, BRIDGE_TO + 0.5 + n * 3, 0.1, 0.15, 0.15, 1.1)
+				end
+			end
+		end, nil, 0.4)
+		part("Rail", nil, MARK, function(mesh)
+			for _, side in { -3, 3 } do
+				box(mesh, side, BRIDGE_MID, 1.1, 0.14, BRIDGE_LENGTH, 0.14)
+			end
+		end, nil, 0.3)
 	end, x, y, degrees - 90)
 	local coneX, coneY = polar(ROAD_INNER - 2, degrees + 6)
 	place(`Cones{i}`, buildTrafficCones, coneX, coneY, heightAt(coneX, coneY), degrees)
@@ -30921,10 +31002,9 @@ for i = 1, 4 do
 	place(`Light{i}`, buildStreetlightBroken, x, y, heightAt(x, y), degrees + 90)
 end
 
--- Props between the yards. Each wedge has an inner cluster between the road
--- and the yards and an outer one out past the yard corners, laid out by
--- tangent offset u and radial offset v. Wedges rotate through the cluster
--- sets so neighbouring gaps look different.
+-- Props on islets floating between the yards, each at its own height. Each
+-- islet carries one cluster laid out by tangent offset u and radial offset v,
+-- alternating the inner and outer cluster sets so neighbours look different.
 local INNER = {
 	{ { buildScrapTreeLamppost, -6, 0 }, { buildBushCans, -2, -3 }, { buildParkBench, 3, -2 }, { buildGrassWire, 6, 2 }, { buildFlowerBulbs, 0, 4 } },
 	{ { buildHydrantLeaking, -5, -3 }, { buildRockConcrete, 2, 1 }, { buildBushSpring, 6, -2 }, { buildManholeCover, -1, -5 }, { buildGrassRebar, -6, 4 } },
@@ -30941,12 +31021,20 @@ for w = 1, 8 do
 	local degrees = (w - 0.5) * 45
 	local angle = math.rad(degrees)
 	local radialX, radialY = math.cos(angle), math.sin(angle)
-	for r, cluster in { { INNER[(w - 1) % 4 + 1], 66 }, { OUTER[(w + 1) % 4 + 1], 84 } } do
-		for n, prop in cluster[1] do
-			local u, v = prop[2], prop[3] + cluster[2]
-			local x = radialX * v - radialY * u
-			local y = radialY * v + radialX * u
-			place(`Wedge{w}{if r == 1 then "Inner" else "Outer"}_{n}`, prop[1], x, y, heightAt(x, y), degrees + n * 70)
-		end
+	local lift = math.noise(w * 0.7, 0.3, 5) * 8
+	local function islet(_x: number, _y: number): number
+		return lift
+	end
+	slab(`Islet{w}`, function()
+		part("Island", nil, GROUND, function(mesh)
+			floatingIsland(mesh, ISLET, 10, 20 + w, islet)
+		end, nil, islandPaint(islet), 512)
+	end, radialX * ISLET_RADIUS, radialY * ISLET_RADIUS)
+	local cluster = if w % 2 == 1 then INNER[(w + 1) / 2] else OUTER[w / 2]
+	for n, prop in cluster do
+		local u, v = prop[2] * 0.85, prop[3] * 0.85 + ISLET_RADIUS
+		local x = radialX * v - radialY * u
+		local y = radialY * v + radialX * u
+		place(`Wedge{w}_{n}`, prop[1], x, y, lift, degrees + n * 70)
 	end
 end
