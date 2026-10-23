@@ -28,8 +28,11 @@ part("WarningSigns", nil, HAZARD, function(mesh)
 		local a = i * 1.05 + 0.4
 		local z = 6.4 + (i % 3) * 0.9
 		local x, y = math.cos(a) * 1.3, math.sin(a) * 1.3
-		-- A diamond is a square turned on its corner.
-		strut(mesh, x - 0.5, y, z, x + 0.5, y, z, 0.7)
+		if i % 2 == 0 then
+			box(mesh, x, y, z, 0.9, 0.06, 0.9)
+		else
+			box(mesh, x, y, z, 0.06, 0.9, 0.9)
+		end
 	end
 	box(mesh, 0, 0, 9, 1.2, 1.2, 0.08)
 end, nil, 0.35)
