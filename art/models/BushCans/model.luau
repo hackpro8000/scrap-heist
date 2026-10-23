@@ -581,18 +581,19 @@ local CAN_RED = { 0.62, 0.16, 0.12 }
 local CAN_BLUE = { 0.18, 0.3, 0.55 }
 local CAN_YELLOW = { 0.9, 0.72, 0.1 }
 
--- Deterministic scatter so the heap doesn't change between builds.
-local function cans(seed, count, colorIndex)
+-- Deterministic dome scatter so the heap doesn't change between builds;
+-- colors are dealt round-robin so they mix through the whole clump.
+local function cans(colorIndex)
 	local list = {}
-	for i = 1, count do
-		local k = seed + i * 7
-		local a = k * 2.399
-		local ring = (k % 5) / 5
-		local r = 0.3 + ring * 1.1
-		local z = 0.15 + (1 - ring) * 1.1 + ((k * 13) % 7) * 0.03
-		if (k + colorIndex) % 3 == 0 then
-			table.insert(list, { math.cos(a) * r, math.sin(a) * r, z, k })
+	for i = 1, 54 do
+		if (i * 5) % 3 + 1 ~= colorIndex then
+			continue
 		end
+		local a = i * 2.399
+		local ring = math.sqrt(i / 54)
+		local r = ring * 1.4
+		local z = 0.15 + math.sqrt(1 - ring * ring * 0.9) * 1.1
+		table.insert(list, { math.cos(a) * r, math.sin(a) * r, z, i })
 	end
 	return list
 end
@@ -605,7 +606,7 @@ end
 
 for index, color in { CAN_RED, CAN_BLUE, STEEL } do
 	part("Cans" .. index, nil, color, function(mesh)
-		for _, can in cans(index * 3, 60, index) do
+		for _, can in cans(index) do
 			crushedCan(mesh, can[1], can[2], can[3], can[4])
 		end
 	end, nil, 0.5)
