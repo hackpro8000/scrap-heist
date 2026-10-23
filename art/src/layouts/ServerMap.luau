@@ -517,12 +517,67 @@ local function rampBlock(mesh, degrees: number, from: number, to: number, lift: 
 	mesh:face({ first[2], first[4], first[3], first[1] })
 	mesh:face({ last[3], last[4], last[2], last[1] })
 end
+-- Where a ramp meets the arena floor it flares into a worn concrete apron
+-- that slopes from the deck down to the floor, edged with a hazard stripe.
+local APRON_OUTER, APRON_INNER = RAMP_RADII[1], RAMP_RADII[1] - 4
+local APRON_NEAR, APRON_FAR = 4.4, 6.6
+-- A slab over a footprint of {radius, side} points (counter-clockwise from
+-- above) on spoke `degrees`, its top at `top(radius)` and bottom at the floor.
+local function apronBlock(mesh, degrees: number, footprint, top: (number) -> number)
+	local angle = math.rad(degrees)
+	local c, n = math.cos(angle), math.sin(angle)
+	local low, high = {}, {}
+	for k, point in footprint do
+		local radius, side = point[1], point[2]
+		local x, y = c * radius - n * side, n * radius + c * side
+		low[k] = mesh:vertex(x, y, RAMP_FLOOR - 0.1)
+		high[k] = mesh:vertex(x, y, top(radius))
+	end
+	mesh:face({ high[1], high[2], high[3], high[4] })
+	mesh:face({ low[4], low[3], low[2], low[1] })
+	for k = 1, 4 do
+		local l = k % 4 + 1
+		mesh:face({ low[k], low[l], high[l], high[k] })
+	end
+end
+local function apronTop(radius: number): number
+	return RAMP_FLOOR + 0.05 + 0.3 * (radius - APRON_INNER) / (APRON_OUTER - APRON_INNER)
+end
+local APRON_STRIPES = 9
 slab("Ramps", function()
 	part("Deck", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
 			rampBlock(mesh, (i - 1) * 45, -3.6, 3.6, 0)
 		end
 	end, nil, 0.25)
+	part("Apron", nil, CONCRETE, function(mesh)
+		for i = 1, 8 do
+			apronBlock(mesh, (i - 1) * 45, {
+				{ APRON_OUTER, -APRON_NEAR },
+				{ APRON_OUTER, APRON_NEAR },
+				{ APRON_INNER, APRON_FAR },
+				{ APRON_INNER, -APRON_FAR },
+			}, apronTop)
+		end
+	end, nil, 0.6)
+	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
+		part(if k == 1 then "ApronStripeYellow" else "ApronStripeBlack", nil, color, function(mesh)
+			local width = 2 * APRON_FAR / APRON_STRIPES
+			for i = 1, 8 do
+				for s = k - 1, APRON_STRIPES - 1, 2 do
+					local from, to = -APRON_FAR + s * width, -APRON_FAR + (s + 1) * width
+					apronBlock(mesh, (i - 1) * 45, {
+						{ APRON_INNER, from },
+						{ APRON_INNER, to },
+						{ APRON_INNER - 0.7, to },
+						{ APRON_INNER - 0.7, from },
+					}, function()
+						return RAMP_FLOOR + 0.12
+					end)
+				end
+			end
+		end, nil, 0.2)
+	end
 	part("SideWall", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
 			rampBlock(mesh, (i - 1) * 45, -4.4, -RAMP_WALL_SIDE, 0.9, nil, WALL_INNER)
