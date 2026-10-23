@@ -49,7 +49,7 @@ local function skipPart(_name: string): boolean
 end
 
 -- The assembler fills this with a hash of each used model's source, so
--- place() can cache that model's parts per placement.
+-- place() can build each model once and reuse it at every placement.
 local buildKeys = {}
 local builtParts = nil
 
@@ -78,14 +78,19 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 		build()
 		return
 	end
-	key = `{key} {placeX} {placeY} {placeZ} {placeTurn} {placeStretch} {placeAxis}`
+	-- Built once at the origin per model and stretch, then moved into place,
+	-- so moving a prop never rebuilds it.
+	key = `{key} {placeStretch} {placeAxis}`
+	local x0, y0, z0, turn0 = placeX, placeY, placeZ, placeTurn
 	for _, part in model.cached(key, function()
+		placeX, placeY, placeZ, placeTurn = 0, 0, 0, 0
 		builtParts = {}
 		build()
 		local built = builtParts
 		builtParts = nil
 		return built
 	end) do
-		addPart(part.name, part.mesh, part.image, part.preview, part.emissive)
+		addPart(part.name, part.mesh:moved(turn0, x0, y0, z0), part.image, part.preview, part.emissive)
 	end
+	placeX, placeY, placeZ, placeTurn = x0, y0, z0, turn0
 end
