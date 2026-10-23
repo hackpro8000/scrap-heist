@@ -20,3 +20,8 @@ __pycache__/
 
 # modelkit build cache
 .cache/
+
+# modelkit outputs (.glb, textures, previews, screenshots) are rebuilt from model.luau
+art/models/*/*
+!art/models/*/model.luau
+!art/models/*/sketch.png
