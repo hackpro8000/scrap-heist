@@ -30657,34 +30657,54 @@ slab("Spawn", function()
 end, 0, 0)
 
 -- Tyre marks left by earlier fights: drift rings around the crusher and
--- looser drifts out between the cover. Each mark is a pair of treads
--- following a path, drawn as staggered tread blocks that wear away where the
--- rubber thinned, only a shade darker than the concrete.
-local TYRE = { 0.44, 0.43, 0.4 }
-local TREAD_GAP, TREAD_WIDTH, BLOCK_LENGTH = 0.8, 0.32, 0.22
-local function tyreTrack(mesh, path: (number) -> (number, number), length: number, seed: number)
-	local z = 0.115 - ARENA_DEPTH
+-- looser drifts out between the cover. Each mark is a pair of solid treads
+-- following a path with chevron lugs pressed into them and a pale smear where
+-- the tyre slid sideways, heaviest at the apex and wearing away toward the
+-- ends. All stay only a shade darker than the concrete.
+local TYRE = { 0.51, 0.5, 0.465 }
+local LUGS = { 0.48, 0.47, 0.44 }
+local SMEAR = { 0.53, 0.52, 0.485 }
+local TREAD_GAP, TREAD_WIDTH, BLOCK_LENGTH = 0.8, 0.42, 0.25
+local function tyreTrack(mesh, path: (number) -> (number, number), length: number, seed: number, layer: string)
+	local z = 0.115 - ARENA_DEPTH + if layer == "Lugs" then 0.005 elseif layer == "Smear" then -0.003 else 0
 	local steps = math.floor(length / BLOCK_LENGTH)
-	for s = 0, steps - 1 do
-		local x0, y0 = path(s / steps)
-		local x1, y1 = path((s + 0.7) / steps)
+	-- A point on the path, pushed sideways by offset.
+	local function at(step: number, offset: number): (number, number)
+		local x0, y0 = path(step / steps)
+		local x1, y1 = path((step + 0.1) / steps)
 		local span = math.sqrt((x1 - x0) ^ 2 + (y1 - y0) ^ 2)
-		local nx, ny = -(y1 - y0) / span, (x1 - x0) / span
-		-- Two rows of blocks per tread, offset half a block, like a tread pattern.
-		for side = -1, 1, 2 do
-			for row = 0, 1 do
-				local wear = math.noise(s / 9, side + row * 0.3, seed) + 0.35 * math.noise(s / 2, side, seed + 0.5)
-				if (s + row) % 2 == 0 or wear > 0.15 then
-					continue
+		return x0 - (y1 - y0) / span * offset, y0 + (x1 - x0) / span * offset
+	end
+	local function quad(a: number, b: number, c: number, d: number, inner: number, outer: number)
+		local ax, ay = at(a, inner)
+		local bx, by = at(b, inner)
+		local cx, cy = at(c, outer)
+		local dx, dy = at(d, outer)
+		mesh:face({ mesh:vertex(dx, dy, z), mesh:vertex(cx, cy, z), mesh:vertex(bx, by, z), mesh:vertex(ax, ay, z) })
+	end
+	for side = -1, 1, 2 do
+		local mid = side * TREAD_GAP
+		local inner, outer = mid - TREAD_WIDTH / 2, mid + TREAD_WIDTH / 2
+		for s = 0, steps - 1 do
+			-- Heaviest at the apex of the drift, wearing away toward both ends.
+			local press = math.sin(math.pi * (s + 0.5) / steps)
+			if math.noise(s / 14, side * 0.2, seed) > press * 0.7 - 0.25 then
+				continue
+			end
+			if layer == "Lugs" then
+				-- Chevron lugs either side of a bare centre rib.
+				quad(s + 0.6, s + 0.2, s + 0.4, s + 0.8, inner + 0.03, mid - 0.04)
+				quad(s + 0.8, s + 0.4, s + 0.2, s + 0.6, mid + 0.04, outer - 0.03)
+			elseif layer == "Smear" then
+				-- The tyre sliding sideways smears rubber out past its outer edge.
+				local spread = TREAD_WIDTH * 1.4 * press
+				if side > 0 then
+					quad(s + 1, s, s, s + 1, outer, outer + spread)
+				else
+					quad(s + 1, s, s, s + 1, inner - spread, inner)
 				end
-				local inner = side * TREAD_GAP + (row - 1) * TREAD_WIDTH / 2
-				local outer = inner + TREAD_WIDTH / 2 - 0.03
-				mesh:face({
-					mesh:vertex(x0 + nx * inner, y0 + ny * inner, z),
-					mesh:vertex(x1 + nx * inner, y1 + ny * inner, z),
-					mesh:vertex(x1 + nx * outer, y1 + ny * outer, z),
-					mesh:vertex(x0 + nx * outer, y0 + ny * outer, z),
-				})
+			else
+				quad(s + 1, s, s, s + 1, inner, outer)
 			end
 		end
 	end
@@ -30701,16 +30721,18 @@ local DRIFTS = {
 	{ 23, 315, 6.5, 30, 170 },
 }
 slab("TyreMarks", function()
-	part("Rubber", nil, TYRE, function(mesh)
-		for k, drift in DRIFTS do
-			local cx, cy = polar(drift[1], drift[2])
-			local radius, from, to = drift[3], drift[4], drift[5]
-			tyreTrack(mesh, function(t)
-				local x, y = polar(radius + 0.6 * math.sin(t * 5), from + (to - from) * t)
-				return cx + x, cy + y
-			end, math.rad(to - from) * radius, k)
-		end
-	end, nil, 0)
+	for _, layer in { { "Smear", SMEAR }, { "Rubber", TYRE }, { "Lugs", LUGS } } do
+		part(layer[1], nil, layer[2], function(mesh)
+			for k, drift in DRIFTS do
+				local cx, cy = polar(drift[1], drift[2])
+				local radius, from, to = drift[3], drift[4], drift[5]
+				tyreTrack(mesh, function(t)
+					local x, y = polar(radius + 0.6 * math.sin(t * 5), from + (to - from) * t)
+					return cx + x, cy + y
+				end, math.rad(to - from) * radius, k, layer[1])
+			end
+		end, nil, 0)
+	end
 end, 0, 0)
 
 -- The crusher, the arena's centrepiece: a hydraulic press over a sunken
