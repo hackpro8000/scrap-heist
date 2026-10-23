@@ -315,7 +315,7 @@ local front = -BODY_DEPTH / 2
 
 part("Wheel", wheel, TYRE, function(mesh)
 	cylinder(mesh, 0, AXLE_Y, WHEEL_RADIUS, WHEEL_RADIUS, 0.3, "x", 20)
-end)
+end, nil, 0)
 part("WheelHub", wheel, STEEL, function(mesh)
 	-- Hub rims on both faces, with lug bolts round each.
 	for _, side in { -1, 1 } do
