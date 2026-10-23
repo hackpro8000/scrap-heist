@@ -49,24 +49,30 @@ local function skipPart(_name: string): boolean
 end
 
 -- The assembler fills this with a hash of each used model's source, so
--- place() can cache that model's parts per placement.
+-- place() can build each model once and reuse it at every placement.
 local buildKeys = {}
+-- And a hash of each slab body with the code around it, by the line its
+-- function starts on, so placeSlab() can reuse an unchanged slab.
+local slabKeys = {}
 local builtParts = nil
 
-local function addPart(name, mesh, image, preview)
+local function addPart(name, mesh, image, preview, emissive)
 	if skipPart(name) then
 		return
 	end
-	realPart(placeLabel .. "_" .. name, mesh, image, { preview = preview })
+	realPart(placeLabel .. "_" .. name, mesh, image, { preview = preview, emissive = emissive })
 end
 
 model.part = function(name, mesh, image, options)
 	local preview = if options and options.preview ~= nil then options.preview else true
 	if builtParts then
-		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview })
+		if skipPart(name) then
+			return
+		end
+		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview, emissive = options and options.emissive })
 		return
 	end
-	addPart(name, unwrapMesh(mesh), image, preview)
+	addPart(name, unwrapMesh(mesh), image, preview, options and options.emissive)
 end
 
 local function place(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, stretch: number?, axis: string?)
@@ -78,15 +84,45 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 		build()
 		return
 	end
-	key = `{key} {placeX} {placeY} {placeZ} {placeTurn} {placeStretch} {placeAxis}`
+	-- Built once at the origin per model and stretch, then moved into place,
+	-- so moving a prop never rebuilds it.
+	key = `{key} {placeStretch} {placeAxis}`
+	local x0, y0, z0, turn0 = placeX, placeY, placeZ, placeTurn
 	for _, part in model.cached(key, function()
+		placeX, placeY, placeZ, placeTurn = 0, 0, 0, 0
 		builtParts = {}
 		build()
 		local built = builtParts
 		builtParts = nil
 		return built
 	end) do
-		addPart(part.name, part.mesh, part.image, part.preview)
+		addPart(part.name, part.mesh:moved(turn0, x0, y0, z0), part.image, part.preview, part.emissive)
+	end
+	placeX, placeY, placeZ, placeTurn = x0, y0, z0, turn0
+end
+
+-- Places a piece built where it stands. Its paint can depend on where it
+-- stands, so it is cached in place, keyed on its source and placement.
+-- finish(), if given, runs after build() inside the cached build.
+local function placeSlab(label: string, build: () -> (), x: number, y: number, turn: number?, finish: (() -> ())?)
+	local key = slabKeys[debug.info(build, "l")]
+	if not key then
+		error(`slab {label} has no cache key; start its body on a line ending in "function()"`)
+	end
+	placeLabel = label
+	placeX, placeY, placeZ, placeTurn = x, y, 0, math.rad(turn or 0)
+	placeStretch, placeAxis = 1, "x"
+	for _, part in model.cached(`{key} {label} {x} {y} {turn or 0}`, function()
+		builtParts = {}
+		build()
+		if finish then
+			finish()
+		end
+		local built = builtParts
+		builtParts = nil
+		return built
+	end) do
+		addPart(part.name, part.mesh, part.image, part.preview, part.emissive)
 	end
 end
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -630,25 +666,36 @@ end
 
 local parts = {}
 
-local function part(name, bone, color, build, smooth, rust)
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 then mesh else imperfect(mesh, name))
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
 	mesh:unwrap()
-	local image = Image.new(TEXTURE, TEXTURE, color[1], color[2], color[3])
+	local size = texture or TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
 	rust = rust or 0.4
-	if rust == RUBBER then
+	if type(rust) == "function" then
+		mesh:paint(image, rust)
+	elseif rust == RUBBER then
 		mesh:paint(image, scuffed(color))
 	elseif rust > 0 then
 		mesh:paint(image, weathered(color, rust))
 	end
-	table.insert(parts, { name = name, bone = bone, mesh = mesh, image = image })
+	table.insert(parts, { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive })
 end
 
 -- Shades every part with all the others as occluders, so parts darken where
 -- they touch or tuck under each other, then adds them to the model.
 local function finishParts()
 	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
 		local occluders = {}
 		for _, other in parts do
 			if other ~= entry then
@@ -1265,7 +1312,7 @@ part("Scrap", nil, DARK_STEEL, function(mesh)
 end, nil, 0.7)
 finishParts()
 end
-buildKeys[buildGroundTile] = "GroundTile-c6b7a9eade11d5df"
+buildKeys[buildGroundTile] = "GroundTile-819b19d4e4649a0d"
 local function buildMachinePad()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -1881,7 +1928,7 @@ part("Hardware", nil, STEEL, function(mesh)
 end, nil, 0.45)
 finishParts()
 end
-buildKeys[buildMachinePad] = "MachinePad-93ca915902bc2e4d"
+buildKeys[buildMachinePad] = "MachinePad-355033c0fb0f6d36"
 local function buildYardFence()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -2498,7 +2545,7 @@ part("Fittings", nil, DARK_STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildYardFence] = "YardFence-4f41a90151d08e72"
+buildKeys[buildYardFence] = "YardFence-716b1282dc4bd746"
 local function buildYardFenceHalf()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -3115,7 +3162,7 @@ part("Fittings", nil, DARK_STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildYardFenceHalf] = "YardFenceHalf-cadad6565f53aab8"
+buildKeys[buildYardFenceHalf] = "YardFenceHalf-92cd6932f51eb217"
 local function buildYardGate()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -3745,7 +3792,7 @@ part("Hardware", nil, DARK_STEEL, function(mesh)
 end, nil, 0.55)
 finishParts()
 end
-buildKeys[buildYardGate] = "YardGate-15863f5a686522e0"
+buildKeys[buildYardGate] = "YardGate-cd6a3dba530da6f7"
 local function buildPlotMarker()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -4369,7 +4416,7 @@ part("Fittings", nil, STEEL, function(mesh)
 end, nil, 0.5)
 finishParts()
 end
-buildKeys[buildPlotMarker] = "PlotMarker-5af0aecc65260978"
+buildKeys[buildPlotMarker] = "PlotMarker-749328c3302befeb"
 local function buildStorageCrate()
 -- Storage crate: a lopsided green scrap bin that flares toward its wobbly rim,
 -- leaning and twisting as it rises. Bolted patch plates cover its sides, a
@@ -5019,7 +5066,7 @@ local trimMesh = trim()
 local hazardMesh, stripes = hazard()
 
 bodyMesh:unwrap()
-local green = Image.new(2048, 2048, color(BODY))
+local green = Image.new(1024, 1024, color(BODY))
 bodyMesh:paintShading(green, { bands = 6, occluders = { bolts, plateMesh, trimMesh, hazardMesh } })
 
 plateMesh:unwrap()
@@ -5090,7 +5137,7 @@ for number, level in FILL_LEVELS do
 	end
 end
 end
-buildKeys[buildStorageCrate] = "StorageCrate-d5440a56e990aa23"
+buildKeys[buildStorageCrate] = "StorageCrate-59186935d74efa17"
 local function buildYardPath()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -5711,7 +5758,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildYardPath] = "YardPath-cc091661e3a82988"
+buildKeys[buildYardPath] = "YardPath-ad9f59fce436f384"
 local function buildYardPathStub()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -6324,7 +6371,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildYardPathStub] = "YardPathStub-e81d8695f2a60a37"
+buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
 -- uses: GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Yard Layout: the template every player's 32x32 stud yard is built from,
 -- centered on the origin with the gate at the front (-y). The gate is
