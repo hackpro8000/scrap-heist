@@ -544,14 +544,24 @@ local EDGE_HIGHLIGHT = 0.45
 -- Feathered, base-tinted highlight strokes instead of crisp cream ones.
 local EDGE_BLEND = 0.7
 
+-- Height gradient over every part: darkest at the floor, full colour from
+-- GRADIENT_TOP up, so the machines look grounded and grimy underneath.
+local GRADIENT_FLOOR = 0.5
+local GRADIENT_TOP = 2
+
 local function part(name, warped, color, group, size, paint)
 	local mesh = warped.mesh
 	mesh:setSmooth(SMOOTH_ANGLE)
 	mesh:unwrap()
 	local image = Image.new(size, size, color[1], color[2], color[3])
-	if paint then
-		mesh:paint(image, paint)
-	end
+	mesh:paint(image, function(x, y, z)
+		local r, g, b = color[1], color[2], color[3]
+		if paint then
+			r, g, b = paint(x, y, z)
+		end
+		local k = GRADIENT_FLOOR + (1 - GRADIENT_FLOOR) * math.clamp(z / GRADIENT_TOP, 0, 1)
+		return r * k, g * k, b * k
+	end)
 	mesh:paintShading(image, { highlight = EDGE_HIGHLIGHT, blend = EDGE_BLEND })
 	model.part(name, mesh, image, { group = group, preview = true })
 end
