@@ -174,29 +174,27 @@ end
 -- bent props on opposite corners; tier 2 props every corner; tier 3 adds a
 -- prop under the middle of each side.
 local function hopperSupports(mesh, cx, scale, tier)
-	local halfX, halfY, housingTop = 1.1 * scale, 0.9 * scale, 2.1 * scale
-	-- Where the props meet the hopper wall, part way up its flare.
-	-- Tier 3's pillowed walls bulge out, so its props stop further out.
-	local t = 0.4
-	local wallHalf = (1.9 + 1.1 * t) * scale / 2 + if tier == 3 then 0.2 else 0.05
-	local wallZ = housingTop + 1.1 * scale * t
+	local bottomHalf, topHalf = 0.95 * scale, 1.5 * scale
+	local bottomZ, height = 2.1 * scale, 1.1 * scale
+	-- Tier 3's pillowed walls bulge out, so its frame sits further off the wall.
+	local gap = if tier == 3 then 0.32 else 0.14
 	local thick = if tier == 1 then 0.07 elseif tier == 2 then 0.1 else 0.12
-	local corners = if tier == 1 then { { -1, -1 }, { 1, 1 } } else { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } }
-	for _, c in corners do
-		local x0, y0 = cx + c[1] * (halfX + 0.03), c[2] * (halfY + 0.03)
-		strut(mesh, x0, y0, housingTop - 0.45, cx + c[1] * wallHalf, c[2] * wallHalf, wallZ, thick)
-		if tier > 1 then
-			-- Foot plate bolting the prop to the housing.
-			box(mesh, x0, y0, housingTop - 0.5, thick + 0.1, thick + 0.1, 0.06)
+	local function wallHalf(t)
+		return bottomHalf + (topHalf - bottomHalf) * t + gap
+	end
+	-- Corner ribs running up each edge of the funnel.
+	for _, c in { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } } do
+		local h0, h1 = wallHalf(0), wallHalf(0.95)
+		strut(mesh, cx + c[1] * h0, c[2] * h0, bottomZ, cx + c[1] * h1, c[2] * h1, bottomZ + height * 0.95, thick)
+	end
+	-- Hoop bands clamped around the funnel.
+	local bands = if tier == 1 then { 0.5 } elseif tier == 2 then { 0.3, 0.75 } else { 0.2, 0.5, 0.8 }
+	for _, t in bands do
+		local h, z = wallHalf(t), bottomZ + height * t
+		for _, side in { -1, 1 } do
+			strut(mesh, cx - h, side * h, z, cx + h, side * h, z, thick)
+			strut(mesh, cx + side * h, -h, z, cx + side * h, h, z, thick)
 		end
-	end
-	if tier < 3 then
-		return
-	end
-	for _, side in { -1, 1 } do
-		strut(mesh, cx, side * (halfY + 0.03), housingTop - 0.45, cx, side * wallHalf, wallZ, thick)
-		strut(mesh, cx + side * (halfX + 0.03), 0.5 * scale, housingTop - 0.45, cx + side * wallHalf, 0.5 * scale, wallZ, thick)
-		strut(mesh, cx + side * (halfX + 0.03), -0.5 * scale, housingTop - 0.45, cx + side * wallHalf, -0.5 * scale, wallZ, thick)
 	end
 end
 
