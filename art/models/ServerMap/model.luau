@@ -49,7 +49,7 @@ local function skipPart(_name: string): boolean
 end
 
 -- The assembler fills this with a hash of each used model's source, so
--- place() can cache that model's parts per placement.
+-- place() can build each model once and reuse it at every placement.
 local buildKeys = {}
 local builtParts = nil
 
@@ -78,16 +78,21 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 		build()
 		return
 	end
-	key = `{key} {placeX} {placeY} {placeZ} {placeTurn} {placeStretch} {placeAxis}`
+	-- Built once at the origin per model and stretch, then moved into place,
+	-- so moving a prop never rebuilds it.
+	key = `{key} {placeStretch} {placeAxis}`
+	local x0, y0, z0, turn0 = placeX, placeY, placeZ, placeTurn
 	for _, part in model.cached(key, function()
+		placeX, placeY, placeZ, placeTurn = 0, 0, 0, 0
 		builtParts = {}
 		build()
 		local built = builtParts
 		builtParts = nil
 		return built
 	end) do
-		addPart(part.name, part.mesh, part.image, part.preview, part.emissive)
+		addPart(part.name, part.mesh:moved(turn0, x0, y0, z0), part.image, part.preview, part.emissive)
 	end
+	placeX, placeY, placeZ, placeTurn = x0, y0, z0, turn0
 end
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -1286,7 +1291,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildShippingContainer] = "ShippingContainer-e72621b5a68ca68b"
+buildKeys[buildShippingContainer] = "ShippingContainer-6be95bd060b5713f"
 local function buildCarStack()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -1896,7 +1901,7 @@ end, nil, 0.3)
 
 finishParts()
 end
-buildKeys[buildCarStack] = "CarStack-05ddc08d74180e54"
+buildKeys[buildCarStack] = "CarStack-7fa0e56d49777967"
 local function buildCrushedCar()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -2506,7 +2511,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildCrushedCar] = "CrushedCar-6967aa4d7fec8567"
+buildKeys[buildCrushedCar] = "CrushedCar-420218d74315078a"
 local function buildBarrels()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -3116,7 +3121,7 @@ end, nil, 0)
 
 finishParts()
 end
-buildKeys[buildBarrels] = "Barrels-12cb841cfed992d7"
+buildKeys[buildBarrels] = "Barrels-301ea1c4a6778c00"
 local function buildTyreStack()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -3711,7 +3716,7 @@ end, nil, 0.8)
 
 finishParts()
 end
-buildKeys[buildTyreStack] = "TyreStack-783ba8d5f6a07009"
+buildKeys[buildTyreStack] = "TyreStack-19cbf5de90bc070b"
 local function buildJunkWall()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -4319,7 +4324,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildJunkWall] = "JunkWall-5f959a14b08769fe"
+buildKeys[buildJunkWall] = "JunkWall-8decfcccfd28fd76"
 local function buildDumpster()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -4941,7 +4946,7 @@ end, nil, RUBBER)
 
 finishParts()
 end
-buildKeys[buildDumpster] = "Dumpster-6218c8f06a8e8d14"
+buildKeys[buildDumpster] = "Dumpster-deccb80340d79101"
 local function buildPallets()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -5549,7 +5554,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildPallets] = "Pallets-bfd79e3fa7df0ff8"
+buildKeys[buildPallets] = "Pallets-b2d793cac3fcbf01"
 local function buildStreetlightBroken()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -6151,7 +6156,7 @@ end, nil, 0.3)
 
 finishParts()
 end
-buildKeys[buildStreetlightBroken] = "StreetlightBroken-7e5074073bbc0a5c"
+buildKeys[buildStreetlightBroken] = "StreetlightBroken-3c0e9c82ea453fe2"
 local function buildTrafficCones()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -6762,7 +6767,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildTrafficCones] = "TrafficCones-22b50a07f2c6ee9c"
+buildKeys[buildTrafficCones] = "TrafficCones-aed8396b07a44713"
 local function buildScrapTreeAntenna()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -7371,7 +7376,7 @@ end, nil, 0.2)
 
 finishParts()
 end
-buildKeys[buildScrapTreeAntenna] = "ScrapTreeAntenna-613aa725f2eccae4"
+buildKeys[buildScrapTreeAntenna] = "ScrapTreeAntenna-2af3285779f40d0c"
 local function buildScrapTreeExhaust()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -7978,7 +7983,7 @@ end, nil, 0.3)
 
 finishParts()
 end
-buildKeys[buildScrapTreeExhaust] = "ScrapTreeExhaust-3501eb8e43e68e54"
+buildKeys[buildScrapTreeExhaust] = "ScrapTreeExhaust-6af9951b840aa468"
 local function buildScrapTreeLamppost()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -8595,7 +8600,7 @@ end, nil, 0.2)
 
 finishParts()
 end
-buildKeys[buildScrapTreeLamppost] = "ScrapTreeLamppost-4cce3b05e244ad35"
+buildKeys[buildScrapTreeLamppost] = "ScrapTreeLamppost-d27d5b7b5a526e30"
 local function buildScrapTreeRebar()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -9210,7 +9215,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildScrapTreeRebar] = "ScrapTreeRebar-169047a29f1f0412"
+buildKeys[buildScrapTreeRebar] = "ScrapTreeRebar-1d64563c81648ce1"
 local function buildScrapTreeSignpost()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -9835,7 +9840,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildScrapTreeSignpost] = "ScrapTreeSignpost-d3ed18851bd67c8a"
+buildKeys[buildScrapTreeSignpost] = "ScrapTreeSignpost-ba64ac84c926ce9c"
 local function buildScrapPalm()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -10460,7 +10465,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildScrapPalm] = "ScrapPalm-1065411ef782d6bf"
+buildKeys[buildScrapPalm] = "ScrapPalm-9fac18299e324f11"
 local function buildBushCans()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -11090,7 +11095,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildBushCans] = "BushCans-ac42734cdc3643a0"
+buildKeys[buildBushCans] = "BushCans-e43653755b40dc0e"
 local function buildBushChainLink()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -11724,7 +11729,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildBushChainLink] = "BushChainLink-d6f21548a1269fcc"
+buildKeys[buildBushChainLink] = "BushChainLink-879fb49f4bcbac8c"
 local function buildBushHubcap()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -12328,7 +12333,7 @@ end, nil, 0.8)
 
 finishParts()
 end
-buildKeys[buildBushHubcap] = "BushHubcap-e17f89586c3871fe"
+buildKeys[buildBushHubcap] = "BushHubcap-d2149c3667f0e72a"
 local function buildBushSpring()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -12933,7 +12938,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildBushSpring] = "BushSpring-6c1b998ec18cd171"
+buildKeys[buildBushSpring] = "BushSpring-6c298970bc378b0b"
 local function buildBushWire()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -13545,7 +13550,7 @@ end, nil, 0.5)
 
 finishParts()
 end
-buildKeys[buildBushWire] = "BushWire-8e76fdc63a21bc5f"
+buildKeys[buildBushWire] = "BushWire-456b27050c196ab4"
 local function buildRockBoulderPile()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -14149,7 +14154,7 @@ end, nil, 0.5)
 
 finishParts()
 end
-buildKeys[buildRockBoulderPile] = "RockBoulderPile-8557980699e76ec5"
+buildKeys[buildRockBoulderPile] = "RockBoulderPile-fca24ac08d1261a2"
 local function buildRockCarCube()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -14765,7 +14770,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildRockCarCube] = "RockCarCube-5be360d5b6292c7a"
+buildKeys[buildRockCarCube] = "RockCarCube-0b68898e2016b237"
 local function buildRockConcrete()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -15368,7 +15373,7 @@ end, nil, 0.9)
 
 finishParts()
 end
-buildKeys[buildRockConcrete] = "RockConcrete-e3089e5be7b14c5c"
+buildKeys[buildRockConcrete] = "RockConcrete-ccd33ab1078061ea"
 local function buildRockEngine()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -15994,7 +15999,7 @@ end, nil, 0.9)
 
 finishParts()
 end
-buildKeys[buildRockEngine] = "RockEngine-6e8c2334be19dcde"
+buildKeys[buildRockEngine] = "RockEngine-9b4ac00fa0c9e1fc"
 local function buildRockGearbox()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -16596,7 +16601,7 @@ end, nil, 0.45)
 
 finishParts()
 end
-buildKeys[buildRockGearbox] = "RockGearbox-7238943351aa700c"
+buildKeys[buildRockGearbox] = "RockGearbox-71abfd7281bf537e"
 local function buildRockSlab()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -17199,7 +17204,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildRockSlab] = "RockSlab-e515886756b4ee1d"
+buildKeys[buildRockSlab] = "RockSlab-16d9ccc065f38217"
 local function buildGrassRebar()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -17798,7 +17803,7 @@ end, nil, 0.85)
 
 finishParts()
 end
-buildKeys[buildGrassRebar] = "GrassRebar-5294534d05b90f39"
+buildKeys[buildGrassRebar] = "GrassRebar-714457d169724c36"
 local function buildGrassWire()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -18404,7 +18409,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildGrassWire] = "GrassWire-b038f7e6bc4a4f50"
+buildKeys[buildGrassWire] = "GrassWire-2554c91bd492714e"
 local function buildFlowerBulbs()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -19012,7 +19017,7 @@ end, true, 0)
 
 finishParts()
 end
-buildKeys[buildFlowerBulbs] = "FlowerBulbs-be48b580b65b4308"
+buildKeys[buildFlowerBulbs] = "FlowerBulbs-1b42d2f1e29f2658"
 local function buildFlowerFan()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -19614,7 +19619,7 @@ end
 
 finishParts()
 end
-buildKeys[buildFlowerFan] = "FlowerFan-dd641a3120b5c8b5"
+buildKeys[buildFlowerFan] = "FlowerFan-4c7a6ca5d46c457a"
 local function buildLogGirder()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -20221,7 +20226,7 @@ end, nil, 0.8)
 
 finishParts()
 end
-buildKeys[buildLogGirder] = "LogGirder-26413c4f82cd9f2d"
+buildKeys[buildLogGirder] = "LogGirder-39f760de5ce1a827"
 local function buildLogPipe()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -20821,7 +20826,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildLogPipe] = "LogPipe-a259b27dbe27c634"
+buildKeys[buildLogPipe] = "LogPipe-6ba6a0207d7e6b2f"
 local function buildStumpDrum()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -21428,7 +21433,7 @@ end, nil, RUBBER)
 
 finishParts()
 end
-buildKeys[buildStumpDrum] = "StumpDrum-e0bbe85b977da7f8"
+buildKeys[buildStumpDrum] = "StumpDrum-36d30606c9104377"
 local function buildJunkMound()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -22034,7 +22039,7 @@ end, nil, RUBBER)
 
 finishParts()
 end
-buildKeys[buildJunkMound] = "JunkMound-89156618586fb049"
+buildKeys[buildJunkMound] = "JunkMound-b93c43a39e273e70"
 local function buildOilPuddle()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -22634,7 +22639,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildOilPuddle] = "OilPuddle-f9f8457bf216bdc3"
+buildKeys[buildOilPuddle] = "OilPuddle-718eb849ebdabc6e"
 local function buildCoolantPond()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -23239,7 +23244,7 @@ end, nil, 0.85)
 
 finishParts()
 end
-buildKeys[buildCoolantPond] = "CoolantPond-c183cf31b8834443"
+buildKeys[buildCoolantPond] = "CoolantPond-601f13e324b67be3"
 local function buildManholeCover()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -23838,7 +23843,7 @@ end, nil, 0.85)
 
 finishParts()
 end
-buildKeys[buildManholeCover] = "ManholeCover-76ed4c851530e7ed"
+buildKeys[buildManholeCover] = "ManholeCover-020efaec7e709a22"
 local function buildHydrantLeaking()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -24442,7 +24447,7 @@ end, true, 0)
 
 finishParts()
 end
-buildKeys[buildHydrantLeaking] = "HydrantLeaking-8728ae3b5f8f1398"
+buildKeys[buildHydrantLeaking] = "HydrantLeaking-76a0dab4ec2f55a9"
 local function buildTrafficLight()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -25050,7 +25055,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildTrafficLight] = "TrafficLight-d8fd2ec4a46b23b7"
+buildKeys[buildTrafficLight] = "TrafficLight-95f16d3af3f64a1c"
 local function buildSignBent()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -25647,7 +25652,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildSignBent] = "SignBent-9ba800f7d659cc72"
+buildKeys[buildSignBent] = "SignBent-fb872288c8ea3094"
 local function buildBusStopWreck()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -26258,7 +26263,7 @@ end, nil, 0.5)
 
 finishParts()
 end
-buildKeys[buildBusStopWreck] = "BusStopWreck-1e74f8784a571fce"
+buildKeys[buildBusStopWreck] = "BusStopWreck-640234589585b401"
 local function buildPhoneBooth()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -26868,7 +26873,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildPhoneBooth] = "PhoneBooth-9395096eef99a790"
+buildKeys[buildPhoneBooth] = "PhoneBooth-db6b1013e35e576a"
 local function buildParkBench()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -27473,7 +27478,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildParkBench] = "ParkBench-286fb7b42ec934c1"
+buildKeys[buildParkBench] = "ParkBench-2c3deca6fa8cf498"
 local function buildVendingMachine()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -28083,7 +28088,7 @@ end, true, 0)
 
 finishParts()
 end
-buildKeys[buildVendingMachine] = "VendingMachine-a03fb420f8349306"
+buildKeys[buildVendingMachine] = "VendingMachine-81b1d5438f3d1ad4"
 local function buildMailbox()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -28689,7 +28694,7 @@ end, nil, 0)
 
 finishParts()
 end
-buildKeys[buildMailbox] = "Mailbox-747fc6ba611e769d"
+buildKeys[buildMailbox] = "Mailbox-75809d7c203489f2"
 local function buildShoppingCarts()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -29325,7 +29330,7 @@ end, nil, RUBBER)
 
 finishParts()
 end
-buildKeys[buildShoppingCarts] = "ShoppingCarts-3c4c32e8763fb589"
+buildKeys[buildShoppingCarts] = "ShoppingCarts-06b06aac0433caff"
 local function buildBrickRuin()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -29940,7 +29945,7 @@ end, nil, 0.9)
 
 finishParts()
 end
-buildKeys[buildBrickRuin] = "BrickRuin-a3635b2318c735e6"
+buildKeys[buildBrickRuin] = "BrickRuin-b6c527ad18c2bd7a"
 local function buildBillboardFrame()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -30559,28 +30564,31 @@ end, nil, 0.1)
 
 finishParts()
 end
-buildKeys[buildBillboardFrame] = "BillboardFrame-abecca84f87cae2e"
+buildKeys[buildBillboardFrame] = "BillboardFrame-bcf23eaf48365897"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones ScrapTreeAntenna ScrapTreeExhaust ScrapTreeLamppost ScrapTreeRebar ScrapTreeSignpost ScrapPalm BushCans BushChainLink BushHubcap BushSpring BushWire RockBoulderPile RockCarCube RockConcrete RockEngine RockGearbox RockSlab GrassRebar GrassWire FlowerBulbs FlowerFan LogGirder LogPipe StumpDrum JunkMound OilPuddle CoolantPond ManholeCover HydrantLeaking TrafficLight SignBent BusStopWreck PhoneBooth ParkBench VendingMachine Mailbox ShoppingCarts BrickRuin BillboardFrame
--- Server Map: one server's whole map, centered on the origin. Eight yard
--- plots stand in a ring with their gates facing a central arena, joined to
--- it by a ring road and a spoke from each gate. The arena is the storm fight
--- ground and, between storms, the spawn plaza new players start on. Scrap props
--- fill the gaps between the yards.
+-- Server Map: one server's whole map, centered on the origin, built as
+-- floating islands. The arena island sits in the middle with a ring road
+-- around its bowl; eight yard islands float in a ring with their gates facing
+-- it, each joined to the road by a steel bridge. The arena is the storm fight
+-- ground and, between storms, the spawn plaza new players start on. Small
+-- islets between the yards carry the scrap props.
 -- Yards are only plot slabs here: the game drops the Yard Layout template
 -- onto each one, so every yard is built from the same pieces.
--- Labels: Ground, Road, Arena, ArenaEdge, Ramps, Spawn, Beacon, Plot1-Plot8, Spoke1-Spoke8,
+-- Labels: ArenaIsland, Road, Arena, ArenaEdge, Ramps, Spawn, Beacon, Island1-Island8, Plot1-Plot8, Spoke1-Spoke8, Bridge1-Bridge8,
 -- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4, Cones1-Cones8, and
--- Wedge<w><ring>_<n> props between the yards.
-local YARD_RADIUS = 90
+-- Islet1-Islet8 with Wedge<w>_<n> props on them.
+local YARD_RADIUS = 110
 local ROAD_INNER, ROAD_OUTER = 50, 58
 local ARENA_FLOOR, ARENA_DEPTH = 36, 3.5
-local MAP_SIZE = 260
+local ARENA_ISLAND, YARD_ISLAND, ISLET = 61, 26, 11
+local ISLET_RADIUS = 104
 
 local GROUND = { 0.3, 0.27, 0.22 }
 local ROAD = { 0.42, 0.41, 0.4 }
 local CONCRETE = { 0.55, 0.54, 0.5 }
 local MARK = { 0.85, 0.65, 0.15 }
 local PLOT = { 0.36, 0.33, 0.28 }
+local ROCK = { 0.42, 0.37, 0.31 }
 
 -- Places one flat piece built here rather than from a model.
 local function slab(label: string, build: () -> (), x: number, y: number, turn: number?)
@@ -30596,10 +30604,8 @@ local function polar(radius: number, degrees: number): (number, number)
 	return math.cos(angle) * radius, math.sin(angle) * radius
 end
 
--- Ground height. The arena, ring road, spokes and plots stay flat so the
--- slabs sit on it; everywhere else rolls in low hills that climb into a
--- ridge at the map edge. The arena sinks into a bowl whose sloped rim
--- meets the ring road, so the storm fight can be watched from the road.
+-- Arena island height: flat, except the arena sinks into a bowl whose
+-- sloped rim meets the ring road, so the storm fight can be watched from it.
 local function smoothstep(low: number, high: number, value: number): number
 	local t = math.clamp((value - low) / (high - low), 0, 1)
 	return t * t * (3 - 2 * t)
@@ -30607,40 +30613,86 @@ end
 
 local function heightAt(x: number, y: number): number
 	local radius = math.sqrt(x * x + y * y)
-	local hilly = smoothstep(ROAD_OUTER + 2, ROAD_OUTER + 9, radius)
-	for i = 1, 8 do
-		local plotX, plotY = polar(YARD_RADIUS, (i - 1) * 45)
-		local along = (x * plotX + y * plotY) / YARD_RADIUS
-		local across = math.abs(x * plotY - y * plotX) / YARD_RADIUS
-		local spoke = if along > 0 and along < YARD_RADIUS then smoothstep(5, 10, across) else 1
-		local plot = smoothstep(19, 27, math.max(math.abs(along - YARD_RADIUS), across))
-		hilly = math.min(hilly, spoke, plot)
-	end
-	local edge = math.max(math.abs(x), math.abs(y))
-	local rolling = 2.5 + 4 * math.noise(x / 23, y / 23, 0.5) + 1.5 * math.noise(x / 9, y / 9, 3.5)
-	local ridge = smoothstep(108, MAP_SIZE / 2, edge) * (12 + 6 * math.noise(x / 30, y / 30, 7.5))
-	local bowl = -ARENA_DEPTH * (1 - smoothstep(ARENA_FLOOR, ROAD_INNER - 2, radius))
-	return bowl + hilly * math.max(rolling + ridge, -0.6)
+	return -ARENA_DEPTH * (1 - smoothstep(ARENA_FLOOR, ROAD_INNER - 2, radius))
 end
 
-local GROUND_CELLS = 80
-slab("Ground", function()
-	part("Surface", nil, GROUND, function(mesh)
-		local rows = {}
-		for j = 0, GROUND_CELLS do
-			local y = -MAP_SIZE / 2 + MAP_SIZE * j / GROUND_CELLS
-			rows[j] = {}
-			for i = 0, GROUND_CELLS do
-				local x = -MAP_SIZE / 2 + MAP_SIZE * i / GROUND_CELLS
-				rows[j][i] = mesh:vertex(x, y, heightAt(x, y))
-			end
+-- A floating island: a dirt top following `top`, over a rock underside that
+-- tapers to a ragged point `depth` below. Rings run outward across the top,
+-- then inward down the underside, so every face keeps the same winding.
+local ISLAND_SIDES = 48
+local UNDERSIDE_RINGS = 10
+local function floatingIsland(mesh, radius: number, depth: number, seed: number, top: (number, number) -> number)
+	local rows = {}
+	local function addRing(r: number, z: (number, number, number) -> number)
+		local row = {}
+		for j = 0, ISLAND_SIDES - 1 do
+			local angle = 2 * math.pi * j / ISLAND_SIDES
+			local x, y = math.cos(angle) * r, math.sin(angle) * r
+			row[j] = { x, y, z(x, y, angle) }
 		end
-		for j = 0, GROUND_CELLS - 1 do
-			for i = 0, GROUND_CELLS - 1 do
-				mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
-			end
+		table.insert(rows, row)
+	end
+	local topRings = math.max(4, math.ceil(radius / 3))
+	for s = 0, topRings do
+		addRing(math.max(0.5, radius * s / topRings), function(x, y) return top(x, y) end)
+	end
+	for k = 1, UNDERSIDE_RINGS do
+		local t = k / UNDERSIDE_RINGS
+		local row = {}
+		for j = 0, ISLAND_SIDES - 1 do
+			local angle = 2 * math.pi * j / ISLAND_SIDES
+			local c, n = math.cos(angle), math.sin(angle)
+			local wobble = math.noise(c * 2, n * 2, seed + t * 3) * math.min(1, t * 3)
+			local r = math.max(radius * (1 - t) ^ 0.55 * (1 + 0.3 * wobble), radius * 0.03)
+			local z = -depth * t ^ 1.3 + 1.5 * t * math.noise(c * 3, n * 3, seed + 9)
+			row[j] = { c * r, n * r, z }
 		end
-	end, true, 0)
+		table.insert(rows, row)
+	end
+	local verts = {}
+	for i, row in rows do
+		verts[i] = {}
+		for j = 0, ISLAND_SIDES - 1 do
+			verts[i][j] = mesh:vertex(row[j][1], row[j][2], row[j][3])
+		end
+	end
+	for i = 1, #verts - 1 do
+		for j = 0, ISLAND_SIDES - 1 do
+			local l = (j + 1) % ISLAND_SIDES
+			mesh:face({ verts[i][j], verts[i + 1][j], verts[i + 1][l], verts[i][l] })
+		end
+	end
+	local topCap, bottomCap = {}, {}
+	for j = 0, ISLAND_SIDES - 1 do
+		table.insert(topCap, verts[1][j])
+		table.insert(bottomCap, 1, verts[#verts][j])
+	end
+	mesh:face(topCap)
+	mesh:face(bottomCap)
+end
+
+-- Dirt on top; underneath, rock in uneven strata with darker seams.
+local function islandPaint(top: (number, number) -> number)
+	return function(x: number, y: number, z: number)
+		if z > top(x, y) - 0.3 then
+			local k = 1 + 0.12 * math.noise(x / 4, y / 4, 31) + 0.05 * math.noise(x * 3, y * 3, 37)
+			return GROUND[1] * k, GROUND[2] * k, GROUND[3] * k
+		end
+		local band = math.noise(x / 9, y / 9, z / 2) * 0.6 + z * 0.9
+		local k = 1 + 0.12 * math.sin(band * 2.4) + 0.06 * math.noise(x * 2, y * 2, z * 2)
+		if math.sin(band * 2.4) > 0.93 then k -= 0.25 end
+		return ROCK[1] * k, ROCK[2] * k, ROCK[3] * k
+	end
+end
+
+local function flat(_x: number, _y: number): number
+	return 0
+end
+
+slab("ArenaIsland", function()
+	part("Island", nil, GROUND, function(mesh)
+		floatingIsland(mesh, ARENA_ISLAND, 42, 1, heightAt)
+	end, nil, islandPaint(heightAt), 2048)
 end, 0, 0)
 slab("Road", function()
 	part("Ring", nil, ROAD, function(mesh)
@@ -30866,10 +30918,19 @@ slab("Ramps", function()
 	end, nil, 0.3)
 end, 0, 0)
 
--- Each plot is turned so its gate (local -y) faces the arena.
+-- Each yard island is turned so its gate (local -y) faces the arena. A short
+-- road runs from the gate to the island edge, and a steel bridge carries it
+-- across the gap to the ring road.
+local BRIDGE_FROM, BRIDGE_TO = -(YARD_ISLAND - 1), -(YARD_RADIUS - ROAD_OUTER + 1)
+local BRIDGE_MID, BRIDGE_LENGTH = (BRIDGE_FROM + BRIDGE_TO) / 2, BRIDGE_FROM - BRIDGE_TO
 for i = 1, 8 do
 	local degrees = (i - 1) * 45
 	local x, y = polar(YARD_RADIUS, degrees)
+	slab(`Island{i}`, function()
+		part("Island", nil, GROUND, function(mesh)
+			floatingIsland(mesh, YARD_ISLAND, 22, 10 + i, flat)
+		end, nil, islandPaint(flat), 1024)
+	end, x, y, degrees - 90)
 	slab(`Plot{i}`, function()
 		part("Slab", nil, PLOT, function(mesh)
 			box(mesh, 0, 0, 0, 32, 32, 0.05)
@@ -30877,8 +30938,33 @@ for i = 1, 8 do
 	end, x, y, degrees - 90)
 	slab(`Spoke{i}`, function()
 		part("Road", nil, ROAD, function(mesh)
-			box(mesh, 0, -24, 0, 6, 17, 0.1)
+			box(mesh, 0, -20.5, 0, 6, 11, 0.1)
 		end, nil, 0)
+	end, x, y, degrees - 90)
+	slab(`Bridge{i}`, function()
+		part("Deck", nil, ROAD, function(mesh)
+			box(mesh, 0, BRIDGE_MID, -0.2, 6, BRIDGE_LENGTH, 0.3)
+		end, nil, 0.1)
+		part("Girders", nil, DARK_STEEL, function(mesh)
+			for _, side in { -2.6, 2.6 } do
+				box(mesh, side, BRIDGE_MID, -1.4, 0.4, BRIDGE_LENGTH, 1.2)
+			end
+			for n = 0, math.floor(BRIDGE_LENGTH / 4) do
+				box(mesh, 0, BRIDGE_TO + 1 + n * 4, -0.6, 5.6, 0.3, 0.4)
+			end
+		end, nil, 0.5)
+		part("Posts", nil, STEEL, function(mesh)
+			for _, side in { -3, 3 } do
+				for n = 0, math.floor(BRIDGE_LENGTH / 3) do
+					box(mesh, side, BRIDGE_TO + 0.5 + n * 3, 0.1, 0.15, 0.15, 1.1)
+				end
+			end
+		end, nil, 0.4)
+		part("Rail", nil, MARK, function(mesh)
+			for _, side in { -3, 3 } do
+				box(mesh, side, BRIDGE_MID, 1.1, 0.14, BRIDGE_LENGTH, 0.14)
+			end
+		end, nil, 0.3)
 	end, x, y, degrees - 90)
 	local coneX, coneY = polar(ROAD_INNER - 2, degrees + 6)
 	place(`Cones{i}`, buildTrafficCones, coneX, coneY, heightAt(coneX, coneY), degrees)
@@ -30921,10 +31007,9 @@ for i = 1, 4 do
 	place(`Light{i}`, buildStreetlightBroken, x, y, heightAt(x, y), degrees + 90)
 end
 
--- Props between the yards. Each wedge has an inner cluster between the road
--- and the yards and an outer one out past the yard corners, laid out by
--- tangent offset u and radial offset v. Wedges rotate through the cluster
--- sets so neighbouring gaps look different.
+-- Props on islets floating between the yards, each at its own height. Each
+-- islet carries one cluster laid out by tangent offset u and radial offset v,
+-- alternating the inner and outer cluster sets so neighbours look different.
 local INNER = {
 	{ { buildScrapTreeLamppost, -6, 0 }, { buildBushCans, -2, -3 }, { buildParkBench, 3, -2 }, { buildGrassWire, 6, 2 }, { buildFlowerBulbs, 0, 4 } },
 	{ { buildHydrantLeaking, -5, -3 }, { buildRockConcrete, 2, 1 }, { buildBushSpring, 6, -2 }, { buildManholeCover, -1, -5 }, { buildGrassRebar, -6, 4 } },
@@ -30941,12 +31026,20 @@ for w = 1, 8 do
 	local degrees = (w - 0.5) * 45
 	local angle = math.rad(degrees)
 	local radialX, radialY = math.cos(angle), math.sin(angle)
-	for r, cluster in { { INNER[(w - 1) % 4 + 1], 66 }, { OUTER[(w + 1) % 4 + 1], 84 } } do
-		for n, prop in cluster[1] do
-			local u, v = prop[2], prop[3] + cluster[2]
-			local x = radialX * v - radialY * u
-			local y = radialY * v + radialX * u
-			place(`Wedge{w}{if r == 1 then "Inner" else "Outer"}_{n}`, prop[1], x, y, heightAt(x, y), degrees + n * 70)
-		end
+	local lift = math.noise(w * 0.7, 0.3, 5) * 8
+	local function islet(_x: number, _y: number): number
+		return lift
+	end
+	slab(`Islet{w}`, function()
+		part("Island", nil, GROUND, function(mesh)
+			floatingIsland(mesh, ISLET, 10, 20 + w, islet)
+		end, nil, islandPaint(islet), 512)
+	end, radialX * ISLET_RADIUS, radialY * ISLET_RADIUS)
+	local cluster = if w % 2 == 1 then INNER[(w + 1) / 2] else OUTER[w / 2]
+	for n, prop in cluster do
+		local u, v = prop[2] * 0.85, prop[3] * 0.85 + ISLET_RADIUS
+		local x = radialX * v - radialY * u
+		local y = radialY * v + radialX * u
+		place(`Wedge{w}_{n}`, prop[1], x, y, lift, degrees + n * 70)
 	end
 end
