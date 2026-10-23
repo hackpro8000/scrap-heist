@@ -112,8 +112,7 @@ impl UserData for MeshHandle {
 		methods.add_method("vertexCount", |_, this, ()| Ok(this.0.borrow().positions.len()));
 		// Lays every face out in UV space, packed with a margin between charts.
 		methods.add_method("unwrap", |_, this, margin: Option<f64>| {
-			bake::unwrap(&mut this.0.borrow_mut(), margin.unwrap_or(0.01));
-			Ok(())
+			Ok(bake::unwrap(&mut this.0.borrow_mut(), margin.unwrap_or(0.01)))
 		});
 		// Paints each texel the color fn(x, y, z, nx, ny, nz) returns for the
 		// surface point behind it.

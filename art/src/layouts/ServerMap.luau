@@ -13,6 +13,10 @@ skipPart = function(name)
 	return name:match("^Fill_") ~= nil
 end
 
+-- Every map part is textured at one density so nothing reads sharper or
+-- blurrier than its neighbours. Props keep their own texture sizes.
+useTexelDensity(8)
+
 local YARD_RADIUS = 110
 local ROAD_INNER, ROAD_OUTER = 50, 58
 local ARENA_FLOOR, ARENA_DEPTH = 36, 3.5
@@ -342,17 +346,16 @@ end
 -- The storm beacon: a mast with a glowing core that lights up when a storm
 -- round starts, visible from every yard.
 local MAST_TOP = 24
-local TOWER_TEXTURE = 1024
 local STORM_GLOW = { 0.35, 0.85, 1 }
 slab("Beacon", function()
 	local floor = 0.1 - ARENA_DEPTH
 	part("Plinth", nil, CONCRETE, function(mesh)
 		cylinder(mesh, 0, 0, floor + 0.6, 4.5, 1.2, "z", 8)
 		cylinder(mesh, 0, 0, floor + 1.5, 3.4, 0.6, "z", 8)
-	end, nil, 0.5, TOWER_TEXTURE)
+	end, nil, 0.5)
 	part("PlinthStripe", nil, MARK, function(mesh)
 		ring(mesh, 0, 0, floor + 1.15, 4.4, 4.55, 0.25, "z", 8)
-	end, nil, 0.3, TOWER_TEXTURE)
+	end, nil, 0.3)
 	-- Four straight legs leaning in towards the top, tied together with braces.
 	part("Mast", nil, DARK_STEEL, function(mesh)
 		local bottom, top = floor + 1.8, floor + MAST_TOP
@@ -371,22 +374,22 @@ slab("Beacon", function()
 			box(mesh, half, 0, z, 0.25, half * 2, 0.25)
 			box(mesh, -half, 0, z, 0.25, half * 2, 0.25)
 		end
-	end, nil, 0.6, TOWER_TEXTURE)
+	end, nil, 0.6)
 	part("CoreMount", nil, STEEL, function(mesh)
 		cylinder(mesh, 0, 0, floor + MAST_TOP + 0.3, 1.9, 0.6, "z", 16)
 		cylinder(mesh, 0, 0, floor + MAST_TOP + 4.25, 1.9, 0.5, "z", 16)
 		cylinder(mesh, 0, 0, floor + MAST_TOP + 6.5, 0.15, 4, "z", 8)
-	end, nil, 0.2, TOWER_TEXTURE)
+	end, nil, 0.2)
 	-- The core sits on top of the mast and is the part that glows during a storm.
 	part("Core", nil, STORM_GLOW, function(mesh)
 		cylinder(mesh, 0, 0, floor + MAST_TOP + 2.3, 1.4, 3.4, "z", 16)
-	end, nil, 0, TOWER_TEXTURE, 1)
+	end, nil, 0, nil, 1)
 	part("CoreCage", nil, DARK_STEEL, function(mesh)
 		for k = 0, 5 do
 			local angle = math.rad(k * 60)
 			box(mesh, math.cos(angle) * 1.65, math.sin(angle) * 1.65, floor + MAST_TOP + 0.6, 0.2, 0.2, 3.4)
 		end
-	end, nil, 0.3, TOWER_TEXTURE)
+	end, nil, 0.3)
 end, 0, 0)
 
 
@@ -538,7 +541,7 @@ slab("Ramps", function()
 		for i = 1, 8 do
 			rampBlock(mesh, (i - 1) * 45, { ARENA_FLOOR - HAZARD_WIDTH, ARENA_FLOOR, WALL_INNER, ROAD_INNER + 0.5 }, -LANE_HALF, LANE_HALF, 0)
 		end
-	end, nil, 0.25, 1024)
+	end, nil, 0.25)
 	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
 		part(if k == 1 then "RampStripeYellow" else "RampStripeBlack", nil, color, function(mesh)
 			for i = 1, 8 do
@@ -618,7 +621,7 @@ for i = 1, 8 do
 	slab(`Island{i}`, function()
 		part("Island", nil, GROUND, function(mesh)
 			floatingIsland(mesh, YARD_ISLAND, 22, 10 + i, flat, yardOutline(10 + i))
-		end, nil, islandPaint(flat), 1024)
+		end, nil, islandPaint(flat))
 	end, x, y, degrees - 90)
 	slab(`Plot{i}`, function()
 		part("Slab", nil, PLOT, function(mesh)
@@ -634,12 +637,12 @@ for i = 1, 8 do
 			local u = (px - x) * c + (py - y) * s
 			local v = (py - y) * c - (px - x) * s
 			return asphalt(u, v, 3, 70 + i)
-		end, 512)
+		end)
 	end, x, y, degrees - 90)
 	slab(`Bridge{i}`, function()
 		part("Deck", nil, STEEL, function(mesh)
 			box(mesh, 0, BRIDGE_MID, -0.2, 6, BRIDGE_LENGTH, 0.3)
-		end, nil, bridgeDeck(degrees, x, y), 1024)
+		end, nil, bridgeDeck(degrees, x, y))
 		part("Girders", nil, DARK_STEEL, function(mesh)
 			-- I-beams: a web between two flanges, ribbed on the outside, with
 			-- bolted splice plates where the beam sections join.
@@ -664,7 +667,7 @@ for i = 1, 8 do
 			for n = 0, math.floor(BRIDGE_LENGTH / 4) do
 				box(mesh, 0, BRIDGE_TO + 1 + n * 4, -0.6, 5.6, 0.3, 0.4)
 			end
-		end, nil, bridgeGirders(degrees, x, y), 1024)
+		end, nil, bridgeGirders(degrees, x, y))
 		-- Railing posts spaced evenly so both ends get one, each bolted down
 		-- on a base plate and capped.
 		local postCount = math.ceil((BRIDGE_LENGTH - 0.3) / 2.5)
