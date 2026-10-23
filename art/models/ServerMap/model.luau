@@ -12521,18 +12521,18 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[12679] = "5f00b0196c93cb1e-65776c19eafd5f76"
-slabKeys[12832] = "5f00b0196c93cb1e-54edea0a7e608184"
-slabKeys[12838] = "5f00b0196c93cb1e-f8f4f9cdd6dd6cae"
-slabKeys[12870] = "5f00b0196c93cb1e-b818e7bc3229e16b"
-slabKeys[12948] = "5f00b0196c93cb1e-117136b35c0888e5"
-slabKeys[13001] = "5f00b0196c93cb1e-ba14974c752a9757"
-slabKeys[13082] = "5f00b0196c93cb1e-691e6c5b113c73ac"
-slabKeys[13186] = "5f00b0196c93cb1e-9519d293b472b9ba"
-slabKeys[13191] = "5f00b0196c93cb1e-08fbe9bb8b1a6d5a"
-slabKeys[13198] = "5f00b0196c93cb1e-ec0277225e552e1d"
-slabKeys[13207] = "5f00b0196c93cb1e-b3cfbefdd31cb9f1"
-slabKeys[13274] = "5f00b0196c93cb1e-5f3dede5e341fed8"
+slabKeys[12679] = "a707f64abeb76fa1-65776c19eafd5f76"
+slabKeys[12832] = "a707f64abeb76fa1-54edea0a7e608184"
+slabKeys[12838] = "a707f64abeb76fa1-f8f4f9cdd6dd6cae"
+slabKeys[12870] = "a707f64abeb76fa1-b818e7bc3229e16b"
+slabKeys[12948] = "a707f64abeb76fa1-00c39dd15bb76bc8"
+slabKeys[13001] = "a707f64abeb76fa1-ba14974c752a9757"
+slabKeys[13064] = "a707f64abeb76fa1-647efeec86636004"
+slabKeys[13139] = "a707f64abeb76fa1-9519d293b472b9ba"
+slabKeys[13144] = "a707f64abeb76fa1-08fbe9bb8b1a6d5a"
+slabKeys[13151] = "a707f64abeb76fa1-ec0277225e552e1d"
+slabKeys[13160] = "a707f64abeb76fa1-b3cfbefdd31cb9f1"
+slabKeys[13227] = "a707f64abeb76fa1-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -12918,10 +12918,10 @@ end, 0, 0)
 -- broken where each spoke comes in.
 -- The arena wall runs along each octagon side in two halves, one each side
 -- of the spoke. A half starts square at `near` across the spoke, where it
--- meets the ramp wall, and ends mitred at the octagon corner.
+-- meets the ramp edge, and ends mitred at the octagon corner.
 local WALL_INNER, WALL_OUTER = ROAD_INNER - 1.2, ROAD_INNER - 0.4
 local WALL_TOP = 1.25
-local RAMP_WALL_SIDE = 3.6
+local RAMP_HALF = 3.6
 local function wallRun(mesh, degrees: number, side: number, inner: number, outer: number, near: number, bottom: number, top: number)
 	local angle = math.rad(degrees)
 	local c, n = math.cos(angle), math.sin(angle)
@@ -12957,14 +12957,14 @@ slab("ArenaEdge", function()
 	part("Wall", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
 			for _, side in { -1, 1 } do
-				wallRun(mesh, (i - 1) * 45, side, WALL_INNER, WALL_OUTER, RAMP_WALL_SIDE, -0.5, WALL_TOP)
+				wallRun(mesh, (i - 1) * 45, side, WALL_INNER, WALL_OUTER, RAMP_HALF, -0.5, WALL_TOP)
 			end
 		end
 	end, nil, 0.4)
 	part("WallCap", nil, MARK, function(mesh)
 		for i = 1, 8 do
 			for _, side in { -1, 1 } do
-				wallRun(mesh, (i - 1) * 45, side, WALL_INNER - 0.1, WALL_OUTER + 0.1, RAMP_WALL_SIDE - 0.1, WALL_TOP, WALL_TOP + 0.15)
+				wallRun(mesh, (i - 1) * 45, side, WALL_INNER - 0.1, WALL_OUTER + 0.1, RAMP_HALF - 0.1, WALL_TOP, WALL_TOP + 0.15)
 			end
 		end
 	end, nil, 0.3)
@@ -13015,19 +13015,19 @@ slab("Road", function()
 end, 0, 0)
 
 -- Entry ramps: a concrete deck at each spoke, from the wall gap down to the
--- fight floor, held up by retaining walls with yellow caps that carry on from
--- the arena wall. The bowl is a straight chamfer, so the deck follows it a
--- little above and never dips into the terrain.
-local RAMP_RADII = { ARENA_FLOOR - 1, ARENA_FLOOR, ROAD_INNER - 2, ROAD_INNER + 0.5 }
+-- fight floor. The bowl is a straight chamfer, so the deck follows it a
+-- little above and never dips into the terrain, then eases down to sit flush
+-- with the floor where it meets the arena's hazard ring.
+local RAMP_RADII = { ARENA_FLOOR, ARENA_FLOOR + 2, ROAD_INNER - 2, ROAD_INNER + 0.5 }
 local RAMP_FLOOR = 0.1 - ARENA_DEPTH
 local function rampTop(radius: number): number
-	return math.max(heightAt(radius, 0), RAMP_FLOOR) + 0.35
+	local rise = 0.35 * math.clamp((radius - ARENA_FLOOR) / 2, 0, 1)
+	return math.max(heightAt(radius, 0), RAMP_FLOOR) + rise
 end
--- A solid block under the deck between `from` and `to` across it, raised
--- `lift` above the deck, down to the arena floor or `depth` below its top.
-local function rampBlock(mesh, degrees: number, from: number, to: number, lift: number, depth: number?, outer: number?)
-	local radii = table.clone(RAMP_RADII)
-	radii[#radii] = outer or radii[#radii]
+-- A block on spoke `degrees` between `from` and `to` across it and over
+-- `radii` along it, its top `lift` above the deck and its bottom at the
+-- arena floor or `depth` below its top.
+local function rampBlock(mesh, degrees: number, radii: { number }, from: number, to: number, lift: number, depth: number?)
 	local angle = math.rad(degrees)
 	local c, n = math.cos(angle), math.sin(angle)
 	local rows = {}
@@ -13052,79 +13052,32 @@ local function rampBlock(mesh, degrees: number, from: number, to: number, lift: 
 	mesh:face({ first[2], first[4], first[3], first[1] })
 	mesh:face({ last[3], last[4], last[2], last[1] })
 end
--- Where a ramp meets the arena floor it flares into a worn concrete apron
--- that slopes from the deck down to the floor, edged with a hazard stripe.
-local APRON_OUTER, APRON_INNER = RAMP_RADII[1], RAMP_RADII[1] - 4
-local APRON_NEAR, APRON_FAR = 4.4, 6.6
--- A slab over a footprint of {radius, side} points (counter-clockwise from
--- above) on spoke `degrees`, its top at `top(radius)` and bottom at the floor.
-local function apronBlock(mesh, degrees: number, footprint, top: (number) -> number)
-	local angle = math.rad(degrees)
-	local c, n = math.cos(angle), math.sin(angle)
-	local low, high = {}, {}
-	for k, point in footprint do
-		local radius, side = point[1], point[2]
-		local x, y = c * radius - n * side, n * radius + c * side
-		low[k] = mesh:vertex(x, y, RAMP_FLOOR - 0.1)
-		high[k] = mesh:vertex(x, y, top(radius))
-	end
-	mesh:face({ high[1], high[2], high[3], high[4] })
-	mesh:face({ low[4], low[3], low[2], low[1] })
-	for k = 1, 4 do
-		local l = k % 4 + 1
-		mesh:face({ low[k], low[l], high[l], high[k] })
-	end
+-- Hazard strips along both deck edges, as thick as the arena's hazard ring.
+-- They start where the ring ends and run up to the wall, in blocks that
+-- break at every bend in the deck so they lie flat on it.
+local STRIP_WIDTH, STRIP_THICKNESS = 0.9, 0.12
+local STRIP_BREAKS = { ARENA_FLOOR - 0.2, ARENA_FLOOR + 2 }
+for k = 1, 6 do
+	table.insert(STRIP_BREAKS, ARENA_FLOOR + 2 + k * (ROAD_INNER - 4 - ARENA_FLOOR) / 6)
 end
-local function apronTop(radius: number): number
-	return RAMP_FLOOR + 0.05 + 0.3 * (radius - APRON_INNER) / (APRON_OUTER - APRON_INNER)
-end
-local APRON_STRIPES = 9
+table.insert(STRIP_BREAKS, WALL_INNER)
 slab("Ramps", function()
 	part("Deck", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
-			rampBlock(mesh, (i - 1) * 45, -3.6, 3.6, 0)
+			rampBlock(mesh, (i - 1) * 45, RAMP_RADII, -RAMP_HALF, RAMP_HALF, 0)
 		end
 	end, nil, 0.25)
-	part("Apron", nil, CONCRETE, function(mesh)
-		for i = 1, 8 do
-			apronBlock(mesh, (i - 1) * 45, {
-				{ APRON_OUTER, -APRON_NEAR },
-				{ APRON_OUTER, APRON_NEAR },
-				{ APRON_INNER, APRON_FAR },
-				{ APRON_INNER, -APRON_FAR },
-			}, apronTop)
-		end
-	end, nil, 0.6)
 	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
-		part(if k == 1 then "ApronStripeYellow" else "ApronStripeBlack", nil, color, function(mesh)
-			local width = 2 * APRON_FAR / APRON_STRIPES
+		part(if k == 1 then "RampStripeYellow" else "RampStripeBlack", nil, color, function(mesh)
 			for i = 1, 8 do
-				for s = k - 1, APRON_STRIPES - 1, 2 do
-					local from, to = -APRON_FAR + s * width, -APRON_FAR + (s + 1) * width
-					apronBlock(mesh, (i - 1) * 45, {
-						{ APRON_INNER, from },
-						{ APRON_INNER, to },
-						{ APRON_INNER - 0.7, to },
-						{ APRON_INNER - 0.7, from },
-					}, function()
-						return RAMP_FLOOR + 0.12
-					end)
+				for s = k, #STRIP_BREAKS - 1, 2 do
+					local radii = { STRIP_BREAKS[s], STRIP_BREAKS[s + 1] }
+					rampBlock(mesh, (i - 1) * 45, radii, -RAMP_HALF, STRIP_WIDTH - RAMP_HALF, STRIP_THICKNESS, 0.2)
+					rampBlock(mesh, (i - 1) * 45, radii, RAMP_HALF - STRIP_WIDTH, RAMP_HALF, STRIP_THICKNESS, 0.2)
 				end
 			end
 		end, nil, 0.2)
 	end
-	part("SideWall", nil, CONCRETE, function(mesh)
-		for i = 1, 8 do
-			rampBlock(mesh, (i - 1) * 45, -4.4, -RAMP_WALL_SIDE, 0.9, nil, WALL_INNER)
-			rampBlock(mesh, (i - 1) * 45, RAMP_WALL_SIDE, 4.4, 0.9, nil, WALL_INNER)
-		end
-	end, nil, 0.4)
-	part("SideCap", nil, MARK, function(mesh)
-		for i = 1, 8 do
-			rampBlock(mesh, (i - 1) * 45, -4.5, -3.5, 1.05, 0.15, WALL_INNER - 0.1)
-			rampBlock(mesh, (i - 1) * 45, 3.5, 4.5, 1.05, 0.15, WALL_INNER - 0.1)
-		end
-	end, nil, 0.3)
 end, 0, 0)
 
 -- Each yard island is turned so its gate (local -y) faces the arena. A short
