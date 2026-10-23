@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Checkpoints a model after every change: rebuilds it (saving the .glb,
 # textures and preview), copies the preview to screenshot.png, then commits
-# and pushes the models branch. Send the printed screenshot to the user.
+# and pushes the model source on the models branch (outputs are gitignored). Send the printed screenshot to the user.
 #
 #   scripts/checkpoint-model.sh StarterWeapon "phase 1: StarterWeapon - shape the grip"
 
@@ -23,7 +23,7 @@ fi
 cp "${dir}/preview.png" "${shot}"
 
 git -C "${root}" add "${dir}"
-git -C "${root}" commit -q -m "${message}"
+git -C "${root}" diff --cached --quiet || git -C "${root}" commit -q -m "${message}"
 for delay in 0 2 4 8 16; do
 	sleep "${delay}"
 	git -C "${root}" push -q -u origin models && break
