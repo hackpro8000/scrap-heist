@@ -270,7 +270,7 @@ local function tierWarp(cx, seed)
 		dx, y = dx * math.cos(a) - y * math.sin(a), dx * math.sin(a) + y * math.cos(a)
 		local sway = math.sin(z * SWAY_WAVE + seed) * SWAY
 		local swayY = math.sin(z * SWAY_WAVE * 0.8 + seed * 2.1) * SWAY * 0.6
-		local bulge = 1 + math.sin(z * 2.2 + seed) * BULGE
+		local bulge = 1 + (0.5 + 0.5 * math.sin(z * 2.2 + seed)) * BULGE
 		dx, y = dx * bulge, y * bulge
 		local n = JITTER
 		return cx + dx + sway + leanX * z + math.noise(x * 2.3 + seed, y * 2.3, z * 2.3) * n,
