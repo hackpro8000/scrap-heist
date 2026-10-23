@@ -142,11 +142,11 @@ local function flat(_x: number, _y: number): number
 end
 
 slab("ArenaIsland", function()
-	part("Island", nil, GROUND, function(mesh)
+	chunkedPart("Island", nil, GROUND, function(mesh)
 		floatingIsland(mesh, ARENA_ISLAND, 42, 1, heightAt, function(angle)
 			return octagonScale(math.deg(angle))
 		end)
-	end, nil, islandPaint(heightAt), 2048)
+	end, nil, islandPaint(heightAt))
 end, 0, 0)
 -- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
 local function fbm(x: number, y: number, z: number): number
@@ -295,9 +295,9 @@ local function bridgeGirders(degrees: number, cx: number, cy: number)
 	end
 end
 slab("Arena", function()
-	part("Floor", nil, CONCRETE, function(mesh)
+	chunkedPart("Floor", nil, CONCRETE, function(mesh)
 		arc(mesh, 0, ARENA_FLOOR, -ARENA_DEPTH - 0.1, 0.1 - ARENA_DEPTH, 0, 360, true)
-	end, nil, arenaConcrete, 2048)
+	end, nil, arenaConcrete)
 end, 0, 0)
 -- New players start on the ring around the crusher.
 slab("Spawn", function()
@@ -435,12 +435,12 @@ end
 -- spoke road joins it. The inner edge stays open onto the arena rim.
 slab("Road", function()
 	local middle = (ROAD_INNER + ROAD_OUTER) / 2
-	part("Ring", nil, ROAD, function(mesh)
+	chunkedPart("Ring", nil, ROAD, function(mesh)
 		arc(mesh, ROAD_INNER, ROAD_OUTER, -0.05, 0.05, 0, 360, true)
 	end, nil, function(x, y)
 		local radius = octagonRadius(x, y)
 		return asphalt(radius - middle, math.atan2(y, x) * middle, (ROAD_OUTER - ROAD_INNER) / 2, 61)
-	end, 2048)
+	end)
 	part("Kerb", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
 			local from = (i - 1) * 45
