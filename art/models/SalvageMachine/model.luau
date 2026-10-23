@@ -104,7 +104,7 @@ local function toothedRoller(mesh, cx, cy, cz, radius, length, teeth, discs)
 end
 
 -- Open-topped hopper flaring out from the shredder throat.
-local function hopper(mesh, cx, z, bottom, top, height)
+local function hopper(mesh, cx, z, bottom, top, height, chaos)
 	-- Walls are a grid so the cartoon wobble can bend them into curves.
 	local around, rows = 16, 5
 	local rings = {}
@@ -143,8 +143,10 @@ local function hopper(mesh, cx, z, bottom, top, height)
 		local a, b = corners[side + 1], corners[(side + 1) % 4 + 1]
 		local u, v = a[1] + (b[1] - a[1]) * along, a[2] + (b[2] - a[2]) * along
 		local angle = t * TAU
-		local rise = math.sin(angle * 3 + cx) * 0.05
-		local thick = lip * (1 + math.sin(angle * 5 + cx * 2) * 0.3)
+		-- Rim wobble: random on old tiers, an even four-lobed swell on new ones.
+		local order = 1 - chaos
+		local rise = (math.sin(angle * 3 + cx) * chaos + math.cos(angle * 4) * order) * 0.05
+		local thick = lip * (1 + (math.sin(angle * 5 + cx * 2) * chaos + math.cos(angle * 8) * order * 0.5) * 0.3)
 		local ring = {}
 		for k, p in profile do
 			local reach = top / 2 + p[1] * thick / 2
@@ -389,7 +391,8 @@ for tier = 1, 3 do
 	local group = `Tier_{tier}`
 	local cx = (tier - 2) * SPACING
 	local scale = 1 + (tier - 1) * 0.2
-	local warp = tierWarp(cx, tier, scale, (3 - tier) / 2)
+	local chaos = (3 - tier) / 2
+	local warp = tierWarp(cx, tier, scale, chaos)
 	-- Higher tiers are newer kit: less rust, chipping and grime.
 	local wear = ({ 1, 0.5, 0.15 })[tier]
 
@@ -433,7 +436,7 @@ for tier = 1, 3 do
 		toothedRoller(rollers, gearX, 0, 1.25, 0.2, 0.12, 8, 1)
 		toothedRoller(rollers, gearX, 0, 1.25 + 0.2 + 0.32, 0.36, 0.12, 14, 1)
 		-- Conveyor off the end of the chute: a belt on two end drums.
-		local beltY0, beltY1 = 2.2 * scale, 4.2 * scale
+		local beltY0, beltY1 = 2 * scale, 4.2 * scale
 		box(rollers, cx, (beltY0 + beltY1) / 2, 0.42, 1 * scale, beltY1 - beltY0, 0.06)
 		for _, y in { beltY0, beltY1 } do
 			cylinder(rollers, cx, y, 0.45, 0.1, 1.05 * scale, "x")
@@ -447,7 +450,7 @@ for tier = 1, 3 do
 	part(`{group}_Rollers`, rollers, ROLLER, group, SMALL_TEXTURE)
 
 	local bin = warpedMesh(warp)
-	hopper(bin, cx, 2.1 * scale, 1.9 * scale, 3 * scale, 1.1 * scale)
+	hopper(bin, cx, 2.1 * scale, 1.9 * scale, 3 * scale, 1.1 * scale, chaos)
 	part(`{group}_Hopper`, bin, HOPPER, group, LARGE_TEXTURE, hopperColor(2.1 * scale, 1.1 * scale, wear))
 
 	local chute = warpedMesh(warp)
@@ -475,6 +478,9 @@ for tier = 1, 3 do
 	else
 		-- Electric motor: an upright drum wrapped in cooling rings.
 		local motorX = cx + 1.7 * scale
+		-- Bolted down on a base plate with a bracket arm back to the frame.
+		box(extras, motorX, 0, 0, 1.1, 1.1, 0.2)
+		box(extras, (cx + 1.1 * scale + motorX) / 2, 0, 0.9, motorX - cx - 1.1 * scale + 0.2, 0.5, 0.15)
 		cylinder(extras, motorX, 0, 0.2, 0.45, 1.3, "z")
 		for k = 0, 4 do
 			cylinder(extras, motorX, 0, 0.35 + k * 0.22, 0.52, 0.05, "z")
