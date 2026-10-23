@@ -11,11 +11,12 @@ use crate::image::Image;
 use crate::mesh::{Face, Mesh};
 
 // Bump when the file layout or anything baked into it changes.
-const VERSION: u32 = 1;
+const VERSION: u32 = 2;
 
 pub struct CachedPart {
 	pub name: String,
 	pub preview: bool,
+	pub emissive: f32,
 	pub mesh: Mesh,
 	pub image: Image,
 }
@@ -26,14 +27,15 @@ pub fn path(dir: &Path, key: &str) -> PathBuf {
 	dir.join(".cache").join(format!("{:016x}.bin", hasher.finish()))
 }
 
-pub fn save(path: &Path, parts: &[(String, bool, &Mesh, &Image)]) -> std::io::Result<()> {
+pub fn save(path: &Path, parts: &[(String, bool, f32, &Mesh, &Image)]) -> std::io::Result<()> {
 	let mut out = Vec::new();
 	put_u32(&mut out, VERSION);
 	put_u32(&mut out, parts.len() as u32);
-	for (name, preview, mesh, image) in parts {
+	for (name, preview, emissive, mesh, image) in parts {
 		put_u32(&mut out, name.len() as u32);
 		out.extend(name.as_bytes());
 		out.push(*preview as u8);
+		out.extend(emissive.to_le_bytes());
 		put_f64(&mut out, mesh.smooth_angle);
 		put_u32(&mut out, mesh.positions.len() as u32);
 		for p in &mesh.positions {
@@ -70,6 +72,7 @@ pub fn load(path: &Path) -> Option<Vec<CachedPart>> {
 		let length = r.u32()? as usize;
 		let name = String::from_utf8(r.take(length)?.to_vec()).ok()?;
 		let preview = r.take(1)?[0] != 0;
+		let emissive = r.f32()?;
 		let mut mesh = Mesh::new();
 		mesh.smooth_angle = r.f64()?;
 		for _ in 0..r.u32()? {
@@ -86,7 +89,7 @@ pub fn load(path: &Path) -> Option<Vec<CachedPart>> {
 		for pixel in image.pixels.iter_mut() {
 			*pixel = [r.f32()?, r.f32()?, r.f32()?];
 		}
-		parts.push(CachedPart { name, preview, mesh, image });
+		parts.push(CachedPart { name, preview, emissive, mesh, image });
 	}
 	(r.at == bytes.len()).then_some(parts)
 }

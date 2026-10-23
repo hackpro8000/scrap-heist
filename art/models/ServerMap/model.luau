@@ -53,20 +53,20 @@ end
 local buildKeys = {}
 local builtParts = nil
 
-local function addPart(name, mesh, image, preview)
+local function addPart(name, mesh, image, preview, emissive)
 	if skipPart(name) then
 		return
 	end
-	realPart(placeLabel .. "_" .. name, mesh, image, { preview = preview })
+	realPart(placeLabel .. "_" .. name, mesh, image, { preview = preview, emissive = emissive })
 end
 
 model.part = function(name, mesh, image, options)
 	local preview = if options and options.preview ~= nil then options.preview else true
 	if builtParts then
-		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview })
+		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview, emissive = options and options.emissive })
 		return
 	end
-	addPart(name, unwrapMesh(mesh), image, preview)
+	addPart(name, unwrapMesh(mesh), image, preview, options and options.emissive)
 end
 
 local function place(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, stretch: number?, axis: string?)
@@ -86,7 +86,7 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 		builtParts = nil
 		return built
 	end) do
-		addPart(part.name, part.mesh, part.image, part.preview)
+		addPart(part.name, part.mesh, part.image, part.preview, part.emissive)
 	end
 end
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -631,8 +631,9 @@ end
 local parts = {}
 
 -- `texture` overrides the texture size for parts that need more detail.
--- `emissive` parts give off their own light and skip shading.
-local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: boolean?)
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 then mesh else imperfect(mesh, name))
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
@@ -653,7 +654,7 @@ end
 local function finishParts()
 	for _, entry in parts do
 		if entry.emissive then
-			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = true })
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
 		local occluders = {}
@@ -1282,7 +1283,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildShippingContainer] = "ShippingContainer-15aae02409f5dee1"
+buildKeys[buildShippingContainer] = "ShippingContainer-e72621b5a68ca68b"
 local function buildCarStack()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -1892,7 +1893,7 @@ end, nil, 0.3)
 
 finishParts()
 end
-buildKeys[buildCarStack] = "CarStack-e355ea5d767d4b85"
+buildKeys[buildCarStack] = "CarStack-05ddc08d74180e54"
 local function buildCrushedCar()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -2502,7 +2503,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildCrushedCar] = "CrushedCar-75541f8f504d2387"
+buildKeys[buildCrushedCar] = "CrushedCar-6967aa4d7fec8567"
 local function buildBarrels()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -3112,7 +3113,7 @@ end, nil, 0)
 
 finishParts()
 end
-buildKeys[buildBarrels] = "Barrels-3e47cee6e86b8e72"
+buildKeys[buildBarrels] = "Barrels-12cb841cfed992d7"
 local function buildTyreStack()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -3707,7 +3708,7 @@ end, nil, 0.8)
 
 finishParts()
 end
-buildKeys[buildTyreStack] = "TyreStack-f8c075cf782c42cb"
+buildKeys[buildTyreStack] = "TyreStack-783ba8d5f6a07009"
 local function buildJunkWall()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -4315,7 +4316,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildJunkWall] = "JunkWall-a065036a89639e03"
+buildKeys[buildJunkWall] = "JunkWall-5f959a14b08769fe"
 local function buildDumpster()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -4937,7 +4938,7 @@ end, nil, RUBBER)
 
 finishParts()
 end
-buildKeys[buildDumpster] = "Dumpster-10fd5681dfbce8b5"
+buildKeys[buildDumpster] = "Dumpster-6218c8f06a8e8d14"
 local function buildPallets()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -5545,7 +5546,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildPallets] = "Pallets-7bbcc7d2f451759b"
+buildKeys[buildPallets] = "Pallets-bfd79e3fa7df0ff8"
 local function buildStreetlightBroken()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -6147,7 +6148,7 @@ end, nil, 0.3)
 
 finishParts()
 end
-buildKeys[buildStreetlightBroken] = "StreetlightBroken-204557afb0ad5050"
+buildKeys[buildStreetlightBroken] = "StreetlightBroken-7e5074073bbc0a5c"
 local function buildTrafficCones()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -6758,7 +6759,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildTrafficCones] = "TrafficCones-d1025d7dcac27c58"
+buildKeys[buildTrafficCones] = "TrafficCones-22b50a07f2c6ee9c"
 local function buildScrapTreeAntenna()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -7367,7 +7368,7 @@ end, nil, 0.2)
 
 finishParts()
 end
-buildKeys[buildScrapTreeAntenna] = "ScrapTreeAntenna-9e11b2f2cd5f3be8"
+buildKeys[buildScrapTreeAntenna] = "ScrapTreeAntenna-613aa725f2eccae4"
 local function buildScrapTreeExhaust()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -7974,7 +7975,7 @@ end, nil, 0.3)
 
 finishParts()
 end
-buildKeys[buildScrapTreeExhaust] = "ScrapTreeExhaust-a0cd2a88a3a47728"
+buildKeys[buildScrapTreeExhaust] = "ScrapTreeExhaust-3501eb8e43e68e54"
 local function buildScrapTreeLamppost()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -8591,7 +8592,7 @@ end, nil, 0.2)
 
 finishParts()
 end
-buildKeys[buildScrapTreeLamppost] = "ScrapTreeLamppost-2c0d190c35b08706"
+buildKeys[buildScrapTreeLamppost] = "ScrapTreeLamppost-4cce3b05e244ad35"
 local function buildScrapTreeRebar()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -9206,7 +9207,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildScrapTreeRebar] = "ScrapTreeRebar-f013f5c07e09cab0"
+buildKeys[buildScrapTreeRebar] = "ScrapTreeRebar-169047a29f1f0412"
 local function buildScrapTreeSignpost()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -9831,7 +9832,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildScrapTreeSignpost] = "ScrapTreeSignpost-cc42574ccb2d9604"
+buildKeys[buildScrapTreeSignpost] = "ScrapTreeSignpost-d3ed18851bd67c8a"
 local function buildScrapPalm()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -10456,7 +10457,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildScrapPalm] = "ScrapPalm-bdf6a6305998fc03"
+buildKeys[buildScrapPalm] = "ScrapPalm-1065411ef782d6bf"
 local function buildBushCans()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -11086,7 +11087,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildBushCans] = "BushCans-0cd320fb074a8056"
+buildKeys[buildBushCans] = "BushCans-ac42734cdc3643a0"
 local function buildBushChainLink()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -11720,7 +11721,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildBushChainLink] = "BushChainLink-5d2eee42e839446c"
+buildKeys[buildBushChainLink] = "BushChainLink-d6f21548a1269fcc"
 local function buildBushHubcap()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -12324,7 +12325,7 @@ end, nil, 0.8)
 
 finishParts()
 end
-buildKeys[buildBushHubcap] = "BushHubcap-9813423dcfdc948a"
+buildKeys[buildBushHubcap] = "BushHubcap-e17f89586c3871fe"
 local function buildBushSpring()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -12929,7 +12930,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildBushSpring] = "BushSpring-434b3217add11035"
+buildKeys[buildBushSpring] = "BushSpring-6c1b998ec18cd171"
 local function buildBushWire()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -13541,7 +13542,7 @@ end, nil, 0.5)
 
 finishParts()
 end
-buildKeys[buildBushWire] = "BushWire-feda35f6935df7a8"
+buildKeys[buildBushWire] = "BushWire-8e76fdc63a21bc5f"
 local function buildRockBoulderPile()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -14145,7 +14146,7 @@ end, nil, 0.5)
 
 finishParts()
 end
-buildKeys[buildRockBoulderPile] = "RockBoulderPile-c0ac831e256f749f"
+buildKeys[buildRockBoulderPile] = "RockBoulderPile-8557980699e76ec5"
 local function buildRockCarCube()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -14761,7 +14762,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildRockCarCube] = "RockCarCube-5a5f8367af832f50"
+buildKeys[buildRockCarCube] = "RockCarCube-5be360d5b6292c7a"
 local function buildRockConcrete()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -15364,7 +15365,7 @@ end, nil, 0.9)
 
 finishParts()
 end
-buildKeys[buildRockConcrete] = "RockConcrete-100dfd63b6d15a2e"
+buildKeys[buildRockConcrete] = "RockConcrete-e3089e5be7b14c5c"
 local function buildRockEngine()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -15990,7 +15991,7 @@ end, nil, 0.9)
 
 finishParts()
 end
-buildKeys[buildRockEngine] = "RockEngine-cc56d93410f6374b"
+buildKeys[buildRockEngine] = "RockEngine-6e8c2334be19dcde"
 local function buildRockGearbox()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -16592,7 +16593,7 @@ end, nil, 0.45)
 
 finishParts()
 end
-buildKeys[buildRockGearbox] = "RockGearbox-1fe8e0bd39a32a2b"
+buildKeys[buildRockGearbox] = "RockGearbox-7238943351aa700c"
 local function buildRockSlab()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -17195,7 +17196,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildRockSlab] = "RockSlab-9252910073129c5c"
+buildKeys[buildRockSlab] = "RockSlab-e515886756b4ee1d"
 local function buildGrassRebar()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -17794,7 +17795,7 @@ end, nil, 0.85)
 
 finishParts()
 end
-buildKeys[buildGrassRebar] = "GrassRebar-6ea870e7d8bd12d6"
+buildKeys[buildGrassRebar] = "GrassRebar-5294534d05b90f39"
 local function buildGrassWire()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -18400,7 +18401,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildGrassWire] = "GrassWire-e40dd576976faa0c"
+buildKeys[buildGrassWire] = "GrassWire-b038f7e6bc4a4f50"
 local function buildFlowerBulbs()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -19008,7 +19009,7 @@ end, true, 0)
 
 finishParts()
 end
-buildKeys[buildFlowerBulbs] = "FlowerBulbs-72752ed7d70b88fb"
+buildKeys[buildFlowerBulbs] = "FlowerBulbs-be48b580b65b4308"
 local function buildFlowerFan()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -19610,7 +19611,7 @@ end
 
 finishParts()
 end
-buildKeys[buildFlowerFan] = "FlowerFan-f677f18d69aa67d1"
+buildKeys[buildFlowerFan] = "FlowerFan-dd641a3120b5c8b5"
 local function buildLogGirder()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -20217,7 +20218,7 @@ end, nil, 0.8)
 
 finishParts()
 end
-buildKeys[buildLogGirder] = "LogGirder-b5ddf0ef768e536a"
+buildKeys[buildLogGirder] = "LogGirder-26413c4f82cd9f2d"
 local function buildLogPipe()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -20817,7 +20818,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildLogPipe] = "LogPipe-0b49bc9b2f8b5dc3"
+buildKeys[buildLogPipe] = "LogPipe-a259b27dbe27c634"
 local function buildStumpDrum()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -21424,7 +21425,7 @@ end, nil, RUBBER)
 
 finishParts()
 end
-buildKeys[buildStumpDrum] = "StumpDrum-ad08b4d87fabb32c"
+buildKeys[buildStumpDrum] = "StumpDrum-e0bbe85b977da7f8"
 local function buildJunkMound()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -22030,7 +22031,7 @@ end, nil, RUBBER)
 
 finishParts()
 end
-buildKeys[buildJunkMound] = "JunkMound-1a043ca905e30dbc"
+buildKeys[buildJunkMound] = "JunkMound-89156618586fb049"
 local function buildOilPuddle()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -22630,7 +22631,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildOilPuddle] = "OilPuddle-92b8b35ea2ce42fd"
+buildKeys[buildOilPuddle] = "OilPuddle-f9f8457bf216bdc3"
 local function buildCoolantPond()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -23235,7 +23236,7 @@ end, nil, 0.85)
 
 finishParts()
 end
-buildKeys[buildCoolantPond] = "CoolantPond-fde86152a7536274"
+buildKeys[buildCoolantPond] = "CoolantPond-c183cf31b8834443"
 local function buildManholeCover()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -23834,7 +23835,7 @@ end, nil, 0.85)
 
 finishParts()
 end
-buildKeys[buildManholeCover] = "ManholeCover-a007e36f991c1d13"
+buildKeys[buildManholeCover] = "ManholeCover-76ed4c851530e7ed"
 local function buildHydrantLeaking()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -24438,7 +24439,7 @@ end, true, 0)
 
 finishParts()
 end
-buildKeys[buildHydrantLeaking] = "HydrantLeaking-1f818bed0cec9d4f"
+buildKeys[buildHydrantLeaking] = "HydrantLeaking-8728ae3b5f8f1398"
 local function buildTrafficLight()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -25046,7 +25047,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildTrafficLight] = "TrafficLight-45ac38bdfc1b90b9"
+buildKeys[buildTrafficLight] = "TrafficLight-d8fd2ec4a46b23b7"
 local function buildSignBent()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -25643,7 +25644,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildSignBent] = "SignBent-ddb769e70877c33d"
+buildKeys[buildSignBent] = "SignBent-9ba800f7d659cc72"
 local function buildBusStopWreck()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -26254,7 +26255,7 @@ end, nil, 0.5)
 
 finishParts()
 end
-buildKeys[buildBusStopWreck] = "BusStopWreck-a4279a874a856564"
+buildKeys[buildBusStopWreck] = "BusStopWreck-1e74f8784a571fce"
 local function buildPhoneBooth()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -26864,7 +26865,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildPhoneBooth] = "PhoneBooth-d73ca89d30304808"
+buildKeys[buildPhoneBooth] = "PhoneBooth-9395096eef99a790"
 local function buildParkBench()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -27469,7 +27470,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildParkBench] = "ParkBench-e37bc5f42305cb11"
+buildKeys[buildParkBench] = "ParkBench-286fb7b42ec934c1"
 local function buildVendingMachine()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -28079,7 +28080,7 @@ end, true, 0)
 
 finishParts()
 end
-buildKeys[buildVendingMachine] = "VendingMachine-5e7a58f744fe86a9"
+buildKeys[buildVendingMachine] = "VendingMachine-a03fb420f8349306"
 local function buildMailbox()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -28685,7 +28686,7 @@ end, nil, 0)
 
 finishParts()
 end
-buildKeys[buildMailbox] = "Mailbox-13ee8a2b33ccb087"
+buildKeys[buildMailbox] = "Mailbox-747fc6ba611e769d"
 local function buildShoppingCarts()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -29321,7 +29322,7 @@ end, nil, RUBBER)
 
 finishParts()
 end
-buildKeys[buildShoppingCarts] = "ShoppingCarts-341b25316a5ac5e0"
+buildKeys[buildShoppingCarts] = "ShoppingCarts-3c4c32e8763fb589"
 local function buildBrickRuin()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -29936,7 +29937,7 @@ end, nil, 0.9)
 
 finishParts()
 end
-buildKeys[buildBrickRuin] = "BrickRuin-6bd4deaa4c76969e"
+buildKeys[buildBrickRuin] = "BrickRuin-a3635b2318c735e6"
 local function buildBillboardFrame()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -30555,7 +30556,7 @@ end, nil, 0.1)
 
 finishParts()
 end
-buildKeys[buildBillboardFrame] = "BillboardFrame-9f1f4165b0daad00"
+buildKeys[buildBillboardFrame] = "BillboardFrame-abecca84f87cae2e"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones ScrapTreeAntenna ScrapTreeExhaust ScrapTreeLamppost ScrapTreeRebar ScrapTreeSignpost ScrapPalm BushCans BushChainLink BushHubcap BushSpring BushWire RockBoulderPile RockCarCube RockConcrete RockEngine RockGearbox RockSlab GrassRebar GrassWire FlowerBulbs FlowerFan LogGirder LogPipe StumpDrum JunkMound OilPuddle CoolantPond ManholeCover HydrantLeaking TrafficLight SignBent BusStopWreck PhoneBooth ParkBench VendingMachine Mailbox ShoppingCarts BrickRuin BillboardFrame
 -- Server Map: one server's whole map, centered on the origin. Eight yard
 -- plots stand in a ring with their gates facing a central arena, joined to
@@ -30717,7 +30718,7 @@ slab("Beacon", function()
 	-- The core sits on top of the mast and is the part that glows during a storm.
 	part("Core", nil, STORM_GLOW, function(mesh)
 		cylinder(mesh, 0, 0, floor + MAST_TOP + 2.3, 1.4, 3.4, "z", 16)
-	end, nil, 0, TOWER_TEXTURE, true)
+	end, nil, 0, TOWER_TEXTURE, 2)
 	part("CoreCage", nil, DARK_STEEL, function(mesh)
 		for k = 0, 5 do
 			local angle = math.rad(k * 60)

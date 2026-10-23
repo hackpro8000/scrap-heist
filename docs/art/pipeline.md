@@ -12,6 +12,7 @@ art/models/<Name>/
 ├── <Name>.glb        # generated, import this into Roblox Studio
 ├── <Part>.png        # generated color texture per part
 ├── <Part>_Metalness.png, <Part>_Roughness.png   # flat: zero metal, fully rough
+├── <Part>_Emissive.png  # glowing parts only: EmissiveMaskContent (set EmissiveStrength to match)
 └── preview.png       # generated 3/4 render for review
 tools/modelkit/             # the engine (Rust, mlua + Luau)
 tools/modelkit/bin/         # prebuilt engine, so sessions need no Rust
