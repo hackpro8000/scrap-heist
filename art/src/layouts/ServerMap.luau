@@ -27,11 +27,10 @@ local ROCK = { 0.42, 0.37, 0.31 }
 
 -- Places one flat piece built here rather than from a model.
 local function slab(label: string, build: () -> (), x: number, y: number, turn: number?)
-	place(label, function()
-		build()
+	placeSlab(label, build, x, y, turn, function()
 		finishParts()
 		table.clear(parts)
-	end, x, y, 0, turn)
+	end)
 end
 
 local function polar(radius: number, degrees: number): (number, number)
