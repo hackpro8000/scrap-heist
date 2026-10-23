@@ -1,17 +1,24 @@
--- Bruiser: the slow tank scrap bot, about 5 studs tall. A hulking body
--- plated with dumpster lids, a red visor slit, grey shoulder plates and two
--- tank treads. Faces -Y; stands with the treads on the origin.
+-- Bruiser: the slow tank scrap bot, about 5 studs tall. A hulking rusty body
+-- plated with dumpster lids (ribbed, hinged, with grab handles), a red visor
+-- slit in a steel frame, bolted shoulder plates and two lugged tank treads.
+-- Faces -Y; stands with the treads on the origin.
 -- Rig: Root > Treads, Body > ShoulderL, ShoulderR, Visor.
--- Rigged blockout.
 
+-- Mismatched scrap: rusty body steel, green dumpster lids, a galvanised
+-- patch, a cream panel off an old fridge, dark steel running gear, in sRGB.
 local RUST = { 0.55, 0.35, 0.16 }
 local DUMPSTER = { 0.25, 0.4, 0.28 }
+local GALVANISED = { 0.6, 0.63, 0.62 }
+local FRIDGE = { 0.82, 0.78, 0.66 }
 local GREY = { 0.55, 0.57, 0.6 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
 local TREAD = { 0.18, 0.18, 0.2 }
 local VISOR = { 0.95, 0.15, 0.1 }
 
 local TREAD_HEIGHT = 0.9
+local TREAD_X, TREAD_WIDTH, TREAD_LENGTH = 1.05, 0.7, 2.6
 local BODY_TOP = 4.2
+local BODY_FRONT = -0.85
 local SHOULDER_Z = 3.7
 local TAU = 2 * math.pi
 
@@ -69,8 +76,8 @@ local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
 end
 
 -- UV sphere, squashed per axis by (rx, ry, rz).
-local function sphere(mesh, cx, cy, cz, rx, ry, rz)
-	local rings, sides = 8, 16
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
 	local grid = {}
 	for r = 0, rings do
 		local phi = r / rings * math.pi
@@ -88,6 +95,39 @@ local function sphere(mesh, cx, cy, cz, rx, ry, rz)
 			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
 		end
 	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
 end
 
 -- Square beam from one point to another, for limbs and antennae.
@@ -114,11 +154,12 @@ local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
 	end
 end
 
--- Flat-coloured blockout part following one bone.
-local function part(name, bone, color, build)
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body).
+local function part(name, bone, color, build, smooth)
 	local mesh = Mesh.new()
 	build(mesh)
-	mesh:setSmooth(SMOOTH_ANGLE)
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
 	mesh:unwrap()
 	local image = Image.new(TEXTURE, TEXTURE, color[1], color[2], color[3])
 	mesh:paintShading(image, { highlight = EDGE_HIGHLIGHT, blend = EDGE_BLEND })
@@ -133,28 +174,125 @@ local shoulderR = model.bone("ShoulderR", { at = { 1.3, 0, SHOULDER_Z }, parent 
 local visor = model.bone("Visor", { at = { 0, -0.9, 3.6 }, parent = body })
 
 part("Treads", treads, TREAD, function(mesh)
+	local radius = TREAD_HEIGHT / 2
 	for _, side in { -1, 1 } do
-		box(mesh, side * 1.05, 0, 0, 0.7, 2.6, TREAD_HEIGHT)
-		cylinder(mesh, side * 1.05, -1.3, TREAD_HEIGHT / 2, TREAD_HEIGHT / 2, 0.7, "x")
-		cylinder(mesh, side * 1.05, 1.3, TREAD_HEIGHT / 2, TREAD_HEIGHT / 2, 0.7, "x")
+		local x = side * TREAD_X
+		box(mesh, x, 0, 0, TREAD_WIDTH, TREAD_LENGTH, TREAD_HEIGHT)
+		cylinder(mesh, x, -TREAD_LENGTH / 2, radius, radius, TREAD_WIDTH, "x")
+		cylinder(mesh, x, TREAD_LENGTH / 2, radius, radius, TREAD_WIDTH, "x")
+		-- Grip lugs across the top and bottom runs.
+		for i = 0, 6 do
+			local y = -1.2 + i * 0.4
+			box(mesh, x, y, TREAD_HEIGHT, TREAD_WIDTH + 0.04, 0.12, 0.06)
+			box(mesh, x, y, -0.06, TREAD_WIDTH + 0.04, 0.12, 0.06)
+		end
 	end
 	box(mesh, 0, 0, 0.3, 1.5, 1.6, 0.5)
 end)
+part("RoadWheels", treads, DARK_STEEL, function(mesh)
+	local radius = TREAD_HEIGHT / 2
+	for _, side in { -1, 1 } do
+		local x = side * (TREAD_X + TREAD_WIDTH / 2 + 0.03)
+		-- Drive sprockets at the ends, small road wheels between.
+		for _, y in { -TREAD_LENGTH / 2, TREAD_LENGTH / 2 } do
+			ring(mesh, x, y, radius, 0.12, radius - 0.06, 0.06, "x")
+			cylinder(mesh, x + side * 0.03, y, radius, 0.1, 0.1, "x", 8)
+		end
+		for _, y in { -0.65, 0, 0.65 } do
+			cylinder(mesh, x, y, radius, 0.24, 0.06, "x")
+			bolt(mesh, x + side * 0.04, y, radius, "x", 0.06)
+		end
+	end
+end)
 part("Body", body, RUST, function(mesh)
 	box(mesh, 0, 0, TREAD_HEIGHT - 0.1, 2.2, 1.7, BODY_TOP - TREAD_HEIGHT + 0.1)
+	-- Welded seam strips around the waist.
+	box(mesh, 0, 0, 2.0, 2.26, 1.76, 0.08)
+end)
+part("ScrapPatches", body, GALVANISED, function(mesh)
+	-- Galvanised sheet riveted over the left side, and a back plate.
+	box(mesh, -1.12, 0.1, 1.6, 0.05, 1.1, 1.3)
+	for _, y in { -0.38, 0.58 } do
+		for _, z in { 1.7, 2.8 } do
+			bolt(mesh, -1.15, y, z, "x")
+		end
+	end
+	box(mesh, 0.3, 0.87, 2.3, 1.2, 0.05, 1.0)
+	for _, x in { -0.22, 0.82 } do
+		for _, z in { 2.4, 3.2 } do
+			bolt(mesh, x, 0.9, z, "y")
+		end
+	end
+end)
+part("FridgePanel", body, FRIDGE, function(mesh)
+	-- A dented fridge door bolted on the right side, handle and all.
+	box(mesh, 1.12, -0.05, 1.3, 0.05, 1.2, 1.5)
+	box(mesh, 1.16, -0.55, 1.9, 0.04, 0.08, 0.5)
+	for _, y in { -0.55, 0.45 } do
+		for _, z in { 1.4, 2.7 } do
+			bolt(mesh, 1.15, y, z, "x")
+		end
+	end
 end)
 part("LidPlates", body, DUMPSTER, function(mesh)
-	-- Front lid bolted over the chest, and a lid slung over the top like a cap.
-	box(mesh, 0, -0.9, 1.4, 1.9, 0.1, 1.7)
+	-- Front lid bolted over the chest, ribbed like the real thing.
+	box(mesh, 0, BODY_FRONT - 0.05, 1.4, 1.9, 0.1, 1.7)
+	for i = 0, 3 do
+		box(mesh, 0, BODY_FRONT - 0.13, 1.6 + i * 0.4, 1.8, 0.06, 0.08)
+	end
+	-- Top lid slung over like a cap, with a raised hump and ribs.
 	box(mesh, 0, -0.1, BODY_TOP, 2.4, 2.0, 0.15)
 	box(mesh, 0, 0.3, BODY_TOP + 0.15, 2.3, 1.2, 0.5)
+	for _, x in { -0.7, 0, 0.7 } do
+		box(mesh, x, 0.3, BODY_TOP + 0.65, 0.1, 1.1, 0.05)
+	end
+end)
+part("LidHardware", body, DARK_STEEL, function(mesh)
+	-- Hinges along the top lid's back edge and the front lid's top edge.
+	for _, x in { -0.8, 0.8 } do
+		cylinder(mesh, x, 0.9, BODY_TOP + 0.1, 0.07, 0.4, "x", 8)
+		box(mesh, x, 0.75, BODY_TOP + 0.15, 0.36, 0.3, 0.04)
+		box(mesh, x, 0.94, BODY_TOP - 0.35, 0.36, 0.04, 0.4)
+		cylinder(mesh, x, BODY_FRONT - 0.12, 3.12, 0.06, 0.35, "x", 8)
+	end
+	-- Grab handles: on the front lid, and along the top lid's front lip.
+	strut(mesh, -0.4, BODY_FRONT - 0.12, 1.75, -0.4, BODY_FRONT - 0.3, 1.75, 0.06)
+	strut(mesh, 0.4, BODY_FRONT - 0.12, 1.75, 0.4, BODY_FRONT - 0.3, 1.75, 0.06)
+	strut(mesh, -0.43, BODY_FRONT - 0.3, 1.75, 0.43, BODY_FRONT - 0.3, 1.75, 0.06)
+	strut(mesh, -0.5, -1.1, BODY_TOP + 0.07, -0.5, -1.25, BODY_TOP - 0.05, 0.05)
+	strut(mesh, 0.5, -1.1, BODY_TOP + 0.07, 0.5, -1.25, BODY_TOP - 0.05, 0.05)
+	strut(mesh, -0.53, -1.25, BODY_TOP - 0.05, 0.53, -1.25, BODY_TOP - 0.05, 0.05)
+	-- Corner bolts holding the front lid on.
+	for _, x in { -0.85, 0.85 } do
+		for _, z in { 1.5, 3.0 } do
+			bolt(mesh, x, BODY_FRONT - 0.12, z, "y", 0.06)
+		end
+	end
+end)
+part("VisorFrame", body, GREY, function(mesh)
+	local y = BODY_FRONT - 0.08
+	box(mesh, 0, y, 3.4, 1.7, 0.14, 0.08)
+	box(mesh, 0, y, 3.72, 1.7, 0.14, 0.08)
+	box(mesh, -0.81, y, 3.4, 0.08, 0.14, 0.4)
+	box(mesh, 0.81, y, 3.4, 0.08, 0.14, 0.4)
+	for _, x in { -0.75, 0.75 } do
+		bolt(mesh, x, y - 0.08, 3.44, "y", 0.035)
+		bolt(mesh, x, y - 0.08, 3.76, "y", 0.035)
+	end
 end)
 part("Visor", visor, VISOR, function(mesh)
-	box(mesh, 0, -0.9, 3.55, 1.4, 0.12, 0.18)
-end)
-part("ShoulderL", shoulderL, GREY, function(mesh)
-	box(mesh, -1.45, 0, SHOULDER_Z - 0.4, 0.7, 1.4, 0.9)
-end)
-part("ShoulderR", shoulderR, GREY, function(mesh)
-	box(mesh, 1.45, 0, SHOULDER_Z - 0.4, 0.7, 1.4, 0.9)
-end)
+	box(mesh, 0, BODY_FRONT - 0.05, 3.48, 1.54, 0.1, 0.24)
+end, true)
+for _, side in { { "L", shoulderL, -1 }, { "R", shoulderR, 1 } } do
+	local name, bone, s = side[1], side[2], side[3]
+	part("Shoulder" .. name, bone, GREY, function(mesh)
+		local x = s * 1.45
+		box(mesh, x, 0, SHOULDER_Z - 0.4, 0.7, 1.4, 0.9)
+		-- A thinner armour plate overlapping the top, bolted down.
+		box(mesh, x + s * 0.05, 0, SHOULDER_Z + 0.5, 0.75, 1.45, 0.08)
+		for _, y in { -0.55, 0, 0.55 } do
+			bolt(mesh, x + s * 0.25, y, SHOULDER_Z + 0.6, "z")
+			bolt(mesh, x + s * 0.36, y, SHOULDER_Z, "x")
+		end
+	end)
+end
