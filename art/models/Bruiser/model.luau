@@ -10,6 +10,8 @@ local RUST = { 0.55, 0.35, 0.16 }
 local DUMPSTER = { 0.25, 0.4, 0.28 }
 local GALVANISED = { 0.6, 0.63, 0.62 }
 local FRIDGE = { 0.82, 0.78, 0.66 }
+local OLIVE = { 0.42, 0.45, 0.36 }
+local BLUE_GREY = { 0.4, 0.47, 0.52 }
 local GREY = { 0.55, 0.57, 0.6 }
 local DARK_STEEL = { 0.3, 0.3, 0.32 }
 local TREAD = { 0.18, 0.18, 0.2 }
@@ -154,6 +156,141 @@ local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
 	end
 end
 
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
 -- Weathering, in sRGB: rust patches (dark pitted core, orange rust, pale
 -- flaky rim) with drips running down out of them, bright scratches, and
 -- grime that darkens toward the ground.
@@ -227,6 +364,9 @@ end
 
 local RUBBER = -1
 local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local ROPE = { 0.62, 0.5, 0.32 }
 
 -- Paint fn for rubber: dust settled low and in patches, and pale scuffs where
 -- it has rubbed. Rubber doesn't rust.
@@ -304,33 +444,66 @@ part("RoadWheels", treads, DARK_STEEL, function(mesh)
 		end
 	end
 end)
-part("Body", body, RUST, function(mesh)
+part("Body", body, DARK_STEEL, function(mesh)
 	box(mesh, 0, 0, TREAD_HEIGHT - 0.1, 2.2, 1.7, BODY_TOP - TREAD_HEIGHT + 0.1)
 	-- Welded seam strips around the waist.
-	box(mesh, 0, 0, 2.0, 2.26, 1.76, 0.08)
-end)
-part("ScrapPatches", body, GALVANISED, function(mesh)
-	-- Galvanised sheet riveted over the left side, and a back plate.
-	box(mesh, -1.12, 0.1, 1.6, 0.05, 1.1, 1.3)
-	for _, y in { -0.38, 0.58 } do
-		for _, z in { 1.7, 2.8 } do
-			bolt(mesh, -1.15, y, z, "x")
+	box(mesh, 0, 0, 2.0, 2.34, 1.84, 0.08)
+end, nil, 0.5)
+-- Skin panels off different wrecks, each rusted to its own degree.
+local function panel(name, color, rust, ...)
+	local args = { ... }
+	part(name, body, color, function(mesh)
+		sheet(mesh, args[1], args[2], args[3], args[4], args[5], args[6], args[7], 0.04, 0.05)
+	end, nil, rust)
+end
+panel("LeftLowerPanel", RUST, 0.85, "x", -1.1, -1, -0.8, 0.8, 0.85, 1.96)
+panel("LeftUpperFrontPanel", BLUE_GREY, 0.35, "x", -1.1, -1, -0.8, -0.02, 2.06, 3.35)
+panel("LeftUpperBackPanel", RUST, 0.6, "x", -1.1, -1, 0.02, 0.8, 2.06, 3.35)
+panel("RightLowerPanel", OLIVE, 0.55, "x", 1.1, 1, -0.8, 0.8, 0.85, 1.96)
+panel("RightUpperPanel", RUST, 0.4, "x", 1.1, 1, -0.8, 0.8, 2.06, 3.35)
+panel("BackLowerPanel", RUST, 0.7, "y", 0.85, 1, -1.05, 1.05, 0.85, 1.96)
+panel("BackUpperPanel", OLIVE, 0.25, "y", 0.85, 1, -1.05, 1.05, 2.06, 4.12)
+panel("FrontUpperPanel", RUST, 0.55, "y", BODY_FRONT, -1, -1.05, 1.05, 3.15, 4.12)
+part("Lashing", body, ROPE, function(mesh)
+	-- Rope cinched round the waist, knotted at the front corner.
+	lashing(mesh, 1.25, -1.05, 1.0, 2.55, 0.045)
+	sphere(mesh, 1.1, -1.08, 2.55, 0.1, 0.08, 0.1)
+end, nil, RUBBER)
+part("SeamTape", body, TAPE, function(mesh)
+	-- Tape across the seam between the two upper left panels.
+	for _, z in { 2.98, 3.22 } do
+		box(mesh, -1.1 - 0.045, 0, z, 0.01, 0.3, 0.09)
+	end
+end, nil, RUBBER)
+part("Brackets", body, DARK_STEEL, function(mesh)
+	for _, sx in { -1, 1 } do
+		for _, z in { 1.0, 3.0 } do
+			cornerBracket(mesh, sx * 1.14, 0.89, sx, 1, z, 0.5, 0.25)
 		end
 	end
-	box(mesh, 0.3, 0.87, 2.3, 1.2, 0.05, 1.0)
+end, nil, 0.6)
+part("ScrapPatches", body, GALVANISED, function(mesh)
+	-- Galvanised sheet riveted over the left side, and a back plate.
+	box(mesh, -1.17, 0.1, 1.6, 0.05, 1.1, 1.3)
+	for _, y in { -0.38, 0.58 } do
+		for _, z in { 1.7, 2.8 } do
+			bolt(mesh, -1.2, y, z, "x")
+		end
+	end
+	box(mesh, 0.3, 0.915, 2.3, 1.2, 0.05, 1.0)
 	for _, x in { -0.22, 0.82 } do
 		for _, z in { 2.4, 3.2 } do
-			bolt(mesh, x, 0.9, z, "y")
+			bolt(mesh, x, 0.945, z, "y")
 		end
 	end
 end)
 part("FridgePanel", body, FRIDGE, function(mesh)
 	-- A dented fridge door bolted on the right side, handle and all.
-	box(mesh, 1.12, -0.05, 1.3, 0.05, 1.2, 1.5)
-	box(mesh, 1.16, -0.55, 1.9, 0.04, 0.08, 0.5)
+	box(mesh, 1.17, -0.05, 1.3, 0.05, 1.2, 1.5)
+	box(mesh, 1.21, -0.55, 1.9, 0.04, 0.08, 0.5)
 	for _, y in { -0.55, 0.45 } do
 		for _, z in { 1.4, 2.7 } do
-			bolt(mesh, 1.15, y, z, "x")
+			bolt(mesh, 1.2, y, z, "x")
 		end
 	end
 end)
@@ -370,7 +543,7 @@ part("LidHardware", body, DARK_STEEL, function(mesh)
 	end
 end)
 part("VisorFrame", body, GREY, function(mesh)
-	local y = BODY_FRONT - 0.08
+	local y = BODY_FRONT - 0.12
 	box(mesh, 0, y, 3.4, 1.7, 0.14, 0.08)
 	box(mesh, 0, y, 3.72, 1.7, 0.14, 0.08)
 	box(mesh, -0.81, y, 3.4, 0.08, 0.14, 0.4)
@@ -381,7 +554,7 @@ part("VisorFrame", body, GREY, function(mesh)
 	end
 end)
 part("Visor", visor, VISOR, function(mesh)
-	box(mesh, 0, BODY_FRONT - 0.05, 3.48, 1.54, 0.1, 0.24)
+	box(mesh, 0, BODY_FRONT - 0.09, 3.48, 1.54, 0.1, 0.24)
 end, true, 0)
 for _, side in { { "L", shoulderL, -1 }, { "R", shoulderR, 1 } } do
 	local name, bone, s = side[1], side[2], side[3]
