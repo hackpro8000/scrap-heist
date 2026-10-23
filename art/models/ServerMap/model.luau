@@ -30683,6 +30683,39 @@ slab("Crusher", function()
 	part("HeadStripe", nil, MARK, function(mesh)
 		box(mesh, 0, 0, floor + 4.9, 6.7, 6.7, 0.1)
 	end, nil, 0.3)
+	part("Feet", nil, DARK_STEEL, function(mesh)
+		for _, sx in { -1, 1 } do
+			for _, sy in { -1, 1 } do
+				box(mesh, sx * 3.9, sy * 3.9, floor, 1.8, 1.8, 0.8)
+			end
+		end
+	end, nil, 0.6)
+	-- Guide rails the head slides along, on the inner face of each pillar.
+	part("Rails", nil, STEEL, function(mesh)
+		for _, sx in { -1, 1 } do
+			for _, sy in { -1, 1 } do
+				box(mesh, sx * 3.3, sy * 3.3, floor + 0.7, 0.25, 0.25, PRESS_TOP - 0.7)
+			end
+		end
+	end, nil, 0.2)
+	part("Hoses", nil, { 0.1, 0.1, 0.1 }, function(mesh)
+		-- Two hydraulic lines run down the outside of one pillar to the bed.
+		for _, y in { 3.6, 4.2 } do
+			cylinder(mesh, 4.6, y, floor + (PRESS_TOP + 2.2) / 2, 0.15, PRESS_TOP + 2.2, "z", 8)
+			box(mesh, 2.7, y, floor + PRESS_TOP + 2, 3.8, 0.3, 0.3)
+		end
+	end, nil, 0.9)
+	part("ControlPanel", nil, MARK, function(mesh)
+		box(mesh, 6.5, -3, floor, 1, 1.4, 2.2)
+	end, nil, 0.5)
+	part("Lever", nil, { 0.7, 0.1, 0.1 }, function(mesh)
+		box(mesh, 6.5, -3, floor + 2.2, 0.15, 0.15, 0.9)
+		box(mesh, 6.5, -3, floor + 3.1, 0.35, 0.35, 0.35)
+	end, nil, 0.4)
+	part("Stains", nil, { 0.05, 0.05, 0.04 }, function(mesh)
+		cylinder(mesh, 3, 5.5, floor + 0.01, 1.4, 0.02, "z", 12)
+		cylinder(mesh, -5.6, 1.5, floor + 0.01, 0.9, 0.02, "z", 12)
+	end, nil, 1)
 end, 0, 0)
 place("CrusherCar", buildCrushedCar, 0, 0, 0.8 - ARENA_DEPTH, 30)
 
