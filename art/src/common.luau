@@ -552,6 +552,68 @@ local function part(name, bone, color, build, smooth, rust, texture: number?, em
 	table.insert(parts, { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive })
 end
 
+-- Large surfaces (terrain, roads, floors) are split into CHUNK-stud cubes,
+-- each its own part with a 1024 texture, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer.
+local CHUNK = 128
+
+local function chunkedPart(name, bone, color, build, smooth, rust)
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 then recorder else imperfect(recorder, name))
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	for _, key in order do
+		part(`{name}_{key}`, bone, color, function(mesh)
+			local remap = {}
+			for _, f in chunks[key] do
+				local verts = {}
+				for i, v in f.verts do
+					if not remap[v] then
+						local p = positions[v]
+						remap[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = remap[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+		end, smooth, 0, 1024)
+		-- Rust was applied while recording; paint the look on the chunk.
+		local entry = parts[#parts]
+		rust = rust or 0.4
+		if type(rust) == "function" then
+			entry.mesh:paint(entry.image, rust)
+		elseif rust > 0 then
+			entry.mesh:paint(entry.image, weathered(color, rust))
+		end
+	end
+end
+
 -- Shades every part with all the others as occluders, so parts darken where
 -- they touch or tuck under each other, then adds them to the model.
 local function finishParts()

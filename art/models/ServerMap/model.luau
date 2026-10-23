@@ -688,6 +688,68 @@ local function part(name, bone, color, build, smooth, rust, texture: number?, em
 	table.insert(parts, { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive })
 end
 
+-- Large surfaces (terrain, roads, floors) are split into CHUNK-stud cubes,
+-- each its own part with a 1024 texture, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer.
+local CHUNK = 128
+
+local function chunkedPart(name, bone, color, build, smooth, rust)
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 then recorder else imperfect(recorder, name))
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	for _, key in order do
+		part(`{name}_{key}`, bone, color, function(mesh)
+			local remap = {}
+			for _, f in chunks[key] do
+				local verts = {}
+				for i, v in f.verts do
+					if not remap[v] then
+						local p = positions[v]
+						remap[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = remap[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+		end, smooth, 0, 1024)
+		-- Rust was applied while recording; paint the look on the chunk.
+		local entry = parts[#parts]
+		rust = rust or 0.4
+		if type(rust) == "function" then
+			entry.mesh:paint(entry.image, rust)
+		elseif rust > 0 then
+			entry.mesh:paint(entry.image, weathered(color, rust))
+		end
+	end
+end
+
 -- Shades every part with all the others as occluders, so parts darken where
 -- they touch or tuck under each other, then adds them to the model.
 local function finishParts()
@@ -12459,18 +12521,18 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[12617] = "d7243e6a365d1431-c18fc7265176e11f"
-slabKeys[12770] = "d7243e6a365d1431-96a6f98300daacb6"
-slabKeys[12776] = "d7243e6a365d1431-f8f4f9cdd6dd6cae"
-slabKeys[12808] = "d7243e6a365d1431-b818e7bc3229e16b"
-slabKeys[12858] = "d7243e6a365d1431-20301616b877a579"
-slabKeys[12909] = "d7243e6a365d1431-0422943e8ce950bb"
-slabKeys[12961] = "d7243e6a365d1431-2c2f0fb7b03a3a0d"
-slabKeys[13037] = "d7243e6a365d1431-9519d293b472b9ba"
-slabKeys[13042] = "d7243e6a365d1431-08fbe9bb8b1a6d5a"
-slabKeys[13049] = "d7243e6a365d1431-ec0277225e552e1d"
-slabKeys[13058] = "d7243e6a365d1431-b3cfbefdd31cb9f1"
-slabKeys[13125] = "d7243e6a365d1431-5f3dede5e341fed8"
+slabKeys[12679] = "19988606c6c8a6ba-65776c19eafd5f76"
+slabKeys[12832] = "19988606c6c8a6ba-54edea0a7e608184"
+slabKeys[12838] = "19988606c6c8a6ba-f8f4f9cdd6dd6cae"
+slabKeys[12870] = "19988606c6c8a6ba-b818e7bc3229e16b"
+slabKeys[12920] = "19988606c6c8a6ba-20301616b877a579"
+slabKeys[12971] = "19988606c6c8a6ba-ba14974c752a9757"
+slabKeys[13023] = "19988606c6c8a6ba-2c2f0fb7b03a3a0d"
+slabKeys[13099] = "19988606c6c8a6ba-9519d293b472b9ba"
+slabKeys[13104] = "19988606c6c8a6ba-08fbe9bb8b1a6d5a"
+slabKeys[13111] = "19988606c6c8a6ba-ec0277225e552e1d"
+slabKeys[13120] = "19988606c6c8a6ba-b3cfbefdd31cb9f1"
+slabKeys[13187] = "19988606c6c8a6ba-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -12615,11 +12677,11 @@ local function flat(_x: number, _y: number): number
 end
 
 slab("ArenaIsland", function()
-	part("Island", nil, GROUND, function(mesh)
+	chunkedPart("Island", nil, GROUND, function(mesh)
 		floatingIsland(mesh, ARENA_ISLAND, 42, 1, heightAt, function(angle)
 			return octagonScale(math.deg(angle))
 		end)
-	end, nil, islandPaint(heightAt), 2048)
+	end, nil, islandPaint(heightAt))
 end, 0, 0)
 -- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
 local function fbm(x: number, y: number, z: number): number
@@ -12768,9 +12830,9 @@ local function bridgeGirders(degrees: number, cx: number, cy: number)
 	end
 end
 slab("Arena", function()
-	part("Floor", nil, CONCRETE, function(mesh)
+	chunkedPart("Floor", nil, CONCRETE, function(mesh)
 		arc(mesh, 0, ARENA_FLOOR, -ARENA_DEPTH - 0.1, 0.1 - ARENA_DEPTH, 0, 360, true)
-	end, nil, arenaConcrete, 2048)
+	end, nil, arenaConcrete)
 end, 0, 0)
 -- New players start on the ring around the crusher.
 slab("Spawn", function()
@@ -12908,12 +12970,12 @@ end
 -- spoke road joins it. The inner edge stays open onto the arena rim.
 slab("Road", function()
 	local middle = (ROAD_INNER + ROAD_OUTER) / 2
-	part("Ring", nil, ROAD, function(mesh)
+	chunkedPart("Ring", nil, ROAD, function(mesh)
 		arc(mesh, ROAD_INNER, ROAD_OUTER, -0.05, 0.05, 0, 360, true)
 	end, nil, function(x, y)
 		local radius = octagonRadius(x, y)
 		return asphalt(radius - middle, math.atan2(y, x) * middle, (ROAD_OUTER - ROAD_INNER) / 2, 61)
-	end, 2048)
+	end)
 	part("Kerb", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
 			local from = (i - 1) * 45
