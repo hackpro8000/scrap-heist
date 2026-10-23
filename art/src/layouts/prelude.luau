@@ -53,20 +53,20 @@ end
 local buildKeys = {}
 local builtParts = nil
 
-local function addPart(name, mesh, image, preview)
+local function addPart(name, mesh, image, preview, emissive)
 	if skipPart(name) then
 		return
 	end
-	realPart(placeLabel .. "_" .. name, mesh, image, { preview = preview })
+	realPart(placeLabel .. "_" .. name, mesh, image, { preview = preview, emissive = emissive })
 end
 
 model.part = function(name, mesh, image, options)
 	local preview = if options and options.preview ~= nil then options.preview else true
 	if builtParts then
-		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview })
+		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview, emissive = options and options.emissive })
 		return
 	end
-	addPart(name, unwrapMesh(mesh), image, preview)
+	addPart(name, unwrapMesh(mesh), image, preview, options and options.emissive)
 end
 
 local function place(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, stretch: number?, axis: string?)
@@ -86,6 +86,6 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 		builtParts = nil
 		return built
 	end) do
-		addPart(part.name, part.mesh, part.image, part.preview)
+		addPart(part.name, part.mesh, part.image, part.preview, part.emissive)
 	end
 end

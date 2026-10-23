@@ -531,8 +531,9 @@ end
 local parts = {}
 
 -- `texture` overrides the texture size for parts that need more detail.
--- `emissive` parts give off their own light and skip shading.
-local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: boolean?)
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 then mesh else imperfect(mesh, name))
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
@@ -553,7 +554,7 @@ end
 local function finishParts()
 	for _, entry in parts do
 		if entry.emissive then
-			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = true })
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
 		local occluders = {}

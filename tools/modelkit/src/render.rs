@@ -8,6 +8,8 @@ use crate::Part;
 
 const BACKGROUND: [f32; 3] = [0.36, 0.38, 0.42];
 const SUPERSAMPLE: usize = 2;
+// How much of an emissive surface's glow spills around it in previews.
+const BLOOM: f32 = 2.5;
 
 pub struct View {
 	pub size: usize,
@@ -42,6 +44,7 @@ pub fn render(parts: &[&Part], view: &View) -> Vec<u8> {
 	let size = view.size * SUPERSAMPLE;
 	let mut color = vec![BACKGROUND; size * size];
 	let mut depth = vec![f64::MAX; size * size];
+	let mut glow = vec![[0.0f32; 3]; size * size];
 	let to_screen = |p: Vec3| -> [f64; 3] {
 		let d = sub(p, center);
 		[
@@ -87,12 +90,18 @@ pub fn render(parts: &[&Part], view: &View) -> Vec<u8> {
 					if dot(normal, forward) > 0.0 {
 						normal = scale(normal, -1.0);
 					}
-					let shade = if part.emissive { 1.0 } else { (0.72 + 0.38 * dot(normal, light).max(0.0)) as f32 };
-					color[at] = image.sample(u, v).map(|c| c * shade);
+					let shade = (0.72 + 0.38 * dot(normal, light).max(0.0)) as f32;
+					// Emission adds to the lighting before the albedo, as
+					// SurfaceAppearance does, and spills into a bloom.
+					let albedo = image.sample(u, v);
+					color[at] = albedo.map(|c| c * (shade + part.emissive));
+					glow[at] = albedo.map(|c| c * part.emissive);
 				}
 			}
 		}
 	}
+
+	let bloom = blur(&glow, size, size / 150);
 
 	let mut data = Vec::with_capacity(view.size * view.size * 3);
 	for y in 0..view.size {
@@ -100,9 +109,9 @@ pub fn render(parts: &[&Part], view: &View) -> Vec<u8> {
 			let mut sum = [0.0f32; 3];
 			for dy in 0..SUPERSAMPLE {
 				for dx in 0..SUPERSAMPLE {
-					let c = color[(y * SUPERSAMPLE + dy) * size + x * SUPERSAMPLE + dx];
+					let at = (y * SUPERSAMPLE + dy) * size + x * SUPERSAMPLE + dx;
 					for a in 0..3 {
-						sum[a] += c[a];
+						sum[a] += color[at][a] + bloom[at][a] * BLOOM;
 					}
 				}
 			}
@@ -111,4 +120,43 @@ pub fn render(parts: &[&Part], view: &View) -> Vec<u8> {
 		}
 	}
 	data
+}
+
+// Box blur run three times each way, which is close to a gaussian.
+fn blur(pixels: &[[f32; 3]], size: usize, radius: usize) -> Vec<[f32; 3]> {
+	let mut out = pixels.to_vec();
+	if radius == 0 || out.iter().all(|p| *p == [0.0; 3]) {
+		return out;
+	}
+	let mut line = vec![[0.0f32; 3]; size];
+	for _ in 0..3 {
+		for (step, stride) in [(1, size), (size, 1)] {
+			for row in 0..size {
+				let at = |i: usize| row * stride + i * step;
+				let mut sum = [0.0f32; 3];
+				for i in 0..=radius.min(size - 1) {
+					for a in 0..3 {
+						sum[a] += out[at(i)][a];
+					}
+				}
+				for i in 0..size {
+					line[i] = sum.map(|c| c / (2 * radius + 1) as f32);
+					if i + radius + 1 < size {
+						for a in 0..3 {
+							sum[a] += out[at(i + radius + 1)][a];
+						}
+					}
+					if i >= radius {
+						for a in 0..3 {
+							sum[a] -= out[at(i - radius)][a];
+						}
+					}
+				}
+				for i in 0..size {
+					out[at(i)] = line[i];
+				}
+			}
+		}
+	}
+	out
 }

@@ -40,8 +40,8 @@ pub struct Part {
 	pub name: String,
 	pub group: Option<String>,
 	pub preview: bool,
-	// Glows with its own color: full bright in previews, emissive in the glb.
-	pub emissive: bool,
+	// Glow strength, like SurfaceAppearance.EmissiveStrength; 0 doesn't glow.
+	pub emissive: f32,
 	pub mesh: Rc<RefCell<Mesh>>,
 	pub image: Rc<RefCell<Image>>,
 	pub bone: Option<usize>,
@@ -230,7 +230,7 @@ fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<R
 		lua.create_function(move |_, (name, mesh, image, options): (String, AnyUserData, AnyUserData, Option<Table>)| {
 			let group = options.as_ref().map(|o| o.get::<Option<String>>("group")).transpose()?.flatten();
 			let preview = options.as_ref().map(|o| o.get::<Option<bool>>("preview")).transpose()?.flatten().unwrap_or(true);
-			let emissive = options.as_ref().map(|o| o.get::<Option<bool>>("emissive")).transpose()?.flatten().unwrap_or(false);
+			let emissive = options.as_ref().map(|o| o.get::<Option<f32>>("emissive")).transpose()?.flatten().unwrap_or(0.0);
 			let bone = match options.as_ref().map(|o| o.get::<Option<String>>("bone")).transpose()?.flatten() {
 				None => None,
 				Some(b) => Some(bones.borrow().iter().position(|x| x.name == b).ok_or_else(|| mlua::Error::runtime(format!("no bone {b} (add it before its parts)")))?),
@@ -248,7 +248,7 @@ fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<R
 		})?,
 	)?;
 	// model.cached(key, build) returns the parts build() returns, as a list of
-	// {name, mesh, image, preview}, loading them from the cache when this key
+	// {name, mesh, image, preview, emissive}, loading them from the cache when this key
 	// was built before. The key must change whenever the result would.
 	let folder = dir.to_path_buf();
 	model_api.set(
@@ -264,6 +264,7 @@ fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<R
 					entry.set("mesh", MeshHandle(Rc::new(RefCell::new(part.mesh))))?;
 					entry.set("image", ImageHandle(Rc::new(RefCell::new(part.image))))?;
 					entry.set("preview", part.preview)?;
+					entry.set("emissive", part.emissive)?;
 					list.push(entry)?;
 				}
 				return Ok(list);
@@ -274,10 +275,10 @@ fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<R
 				let entry = entry?;
 				let mesh = entry.get::<AnyUserData>("mesh")?.borrow::<MeshHandle>()?.0.clone();
 				let image = entry.get::<AnyUserData>("image")?.borrow::<ImageHandle>()?.0.clone();
-				built.push((entry.get::<String>("name")?, entry.get::<Option<bool>>("preview")?.unwrap_or(true), mesh, image));
+				built.push((entry.get::<String>("name")?, entry.get::<Option<bool>>("preview")?.unwrap_or(true), entry.get::<Option<f32>>("emissive")?.unwrap_or(0.0), mesh, image));
 			}
-			let borrowed: Vec<_> = built.iter().map(|(n, p, m, i)| (n.clone(), *p, m.borrow(), i.borrow())).collect();
-			let refs: Vec<_> = borrowed.iter().map(|(n, p, m, i)| (n.clone(), *p, &**m, &**i)).collect();
+			let borrowed: Vec<_> = built.iter().map(|(n, p, e, m, i)| (n.clone(), *p, *e, m.borrow(), i.borrow())).collect();
+			let refs: Vec<_> = borrowed.iter().map(|(n, p, e, m, i)| (n.clone(), *p, *e, &**m, &**i)).collect();
 			cache::save(&path, &refs).map_err(mlua::Error::external)?;
 			Ok(list)
 		})?,
@@ -348,6 +349,12 @@ fn run(dir: &Path, turntable: usize, size: usize) -> Result<(), String> {
 		for (map, value) in [("Metalness", 0.0), ("Roughness", 1.0)] {
 			let flat = Image::new(4, 4, [value; 3]).encode_png();
 			std::fs::write(dir.join(format!("{}_{map}.png", part.name)), flat).map_err(|e| e.to_string())?;
+		}
+		// Glowing parts glow all over: a white EmissiveMaskContent, with the
+		// strength set on the SurfaceAppearance's EmissiveStrength.
+		if part.emissive > 0.0 {
+			let mask = Image::new(4, 4, [1.0; 3]).encode_png();
+			std::fs::write(dir.join(format!("{}_Emissive.png", part.name)), mask).map_err(|e| e.to_string())?;
 		}
 	}
 	let shown: Vec<&Part> = parts.iter().filter(|p| p.preview).collect();
