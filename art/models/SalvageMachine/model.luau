@@ -17,6 +17,8 @@ local BOLT = { 0.62, 0.58, 0.52 }
 local PATCH = { 0.74, 0.46, 0.28 }
 local ELECTRICS = { 0.9, 0.78, 0.2 }
 local LAMP = { 0.3, 0.95, 0.4 }
+-- Guards over the drive: plain frame steel on tier 2, glossy enamel on tier 3.
+local GUARD = { { 0.5, 0.54, 0.58 }, { 0.2, 0.42, 0.5 } }
 
 local TAU = 2 * math.pi
 
@@ -554,6 +556,34 @@ for tier = 1, 3 do
 		end
 	end
 	part(`{group}_Rollers`, rollers, ROLLER, group, SMALL_TEXTURE)
+
+	if tier > 1 then
+		-- Guards hiding the drive, shaped like stamped covers: flat sides
+		-- with rounded ends that follow the pulleys or gears inside.
+		local guards = warpedMesh(warp)
+		local guardX = cx + 1.1 * scale + if tier == 2 then 0.06 else 0.1
+		local lowZ, lowR, highZ, highR
+		if tier == 2 then
+			lowZ, lowR, highZ, highR = 1.2, 0.24, 1.65 * scale, 0.34
+		else
+			lowZ, lowR, highZ, highR = 1.25, 0.3, 1.25 + 0.52, 0.46
+		end
+		local width = 0.22
+		cylinder(guards, guardX, 0, lowZ, lowR, width, "x")
+		cylinder(guards, guardX, 0, highZ, highR, width, "x")
+		box(guards, guardX, 0, lowZ, width, lowR * 2, highZ - lowZ)
+		if tier == 3 then
+			-- Vent louvres pressed into the cover's face, and side skirts
+			-- boxing in the conveyor belt.
+			for k = 0, 2 do
+				box(guards, guardX + width / 2, 0, highZ - 0.15 + k * 0.12, 0.04, highR * 1.2, 0.04)
+			end
+			for _, side in { -1, 1 } do
+				box(guards, cx + side * 0.55 * scale, 3.1 * scale, 0.32, 0.05, 2.2 * scale, 0.22)
+			end
+		end
+		part(`{group}_Guards`, guards, GUARD[tier - 1], group, SMALL_TEXTURE)
+	end
 
 	local bin = warpedMesh(warp)
 	hopper(bin, cx, 2.1 * scale, 1.9 * scale, 3 * scale, 1.1 * scale, chaos)
