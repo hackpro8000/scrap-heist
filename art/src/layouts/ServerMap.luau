@@ -106,6 +106,15 @@ local TYRE = { 0.51, 0.5, 0.465 }
 local LUGS = { 0.48, 0.47, 0.44 }
 local SMEAR = { 0.53, 0.52, 0.485 }
 local TREAD_GAP, TREAD_WIDTH, BLOCK_LENGTH = 0.8, 0.42, 0.25
+-- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
+local function fbm(x: number, y: number, z: number): number
+	local total, amplitude = 0, 0.5
+	for _ = 1, 4 do
+		total += math.noise(x, y, z) * amplitude
+		x, y, z, amplitude = x * 2, y * 2, z * 2, amplitude / 2
+	end
+	return total
+end
 local function tyreTrack(mesh, path: (number) -> (number, number), length: number, seed: number, layer: string)
 	local z = 0.115 - ARENA_DEPTH + if layer == "Lugs" then 0.005 elseif layer == "Smear" then -0.003 else 0
 	local steps = math.floor(length / BLOCK_LENGTH)
@@ -129,7 +138,7 @@ local function tyreTrack(mesh, path: (number) -> (number, number), length: numbe
 		for s = 0, steps - 1 do
 			-- Heaviest at the apex of the drift, wearing away toward both ends.
 			local press = math.sin(math.pi * (s + 0.5) / steps)
-			if math.noise(s / 14, side * 0.2, seed) > press * 0.7 - 0.25 then
+			if fbm(s / 14, side * 0.2, seed) > press * 0.6 - 0.2 then
 				continue
 			end
 			if layer == "Lugs" then
