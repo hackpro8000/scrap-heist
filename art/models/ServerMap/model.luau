@@ -12521,18 +12521,18 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[12691] = "6f8d6bbfb2dca9ce-5be81bc1ab283092"
-slabKeys[12844] = "6f8d6bbfb2dca9ce-8f291df974f34236"
-slabKeys[12850] = "6f8d6bbfb2dca9ce-f8f4f9cdd6dd6cae"
-slabKeys[12882] = "6f8d6bbfb2dca9ce-b818e7bc3229e16b"
-slabKeys[12960] = "6f8d6bbfb2dca9ce-39c8e04c9f47fe13"
-slabKeys[13013] = "6f8d6bbfb2dca9ce-ba14974c752a9757"
-slabKeys[13076] = "6f8d6bbfb2dca9ce-3850a02e06c1f62e"
-slabKeys[13151] = "6f8d6bbfb2dca9ce-9519d293b472b9ba"
-slabKeys[13156] = "6f8d6bbfb2dca9ce-08fbe9bb8b1a6d5a"
-slabKeys[13163] = "6f8d6bbfb2dca9ce-ec0277225e552e1d"
-slabKeys[13172] = "6f8d6bbfb2dca9ce-b3cfbefdd31cb9f1"
-slabKeys[13239] = "6f8d6bbfb2dca9ce-5f3dede5e341fed8"
+slabKeys[12691] = "2774ac16b94efc7d-5be81bc1ab283092"
+slabKeys[12844] = "2774ac16b94efc7d-8f291df974f34236"
+slabKeys[12850] = "2774ac16b94efc7d-f8f4f9cdd6dd6cae"
+slabKeys[12882] = "2774ac16b94efc7d-b818e7bc3229e16b"
+slabKeys[12961] = "2774ac16b94efc7d-45f1773a0c3d4692"
+slabKeys[13006] = "2774ac16b94efc7d-ba14974c752a9757"
+slabKeys[13071] = "2774ac16b94efc7d-f7a0aeecb505f143"
+slabKeys[13153] = "2774ac16b94efc7d-9519d293b472b9ba"
+slabKeys[13158] = "2774ac16b94efc7d-08fbe9bb8b1a6d5a"
+slabKeys[13165] = "2774ac16b94efc7d-ec0277225e552e1d"
+slabKeys[13174] = "2774ac16b94efc7d-b3cfbefdd31cb9f1"
+slabKeys[13241] = "2774ac16b94efc7d-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -12933,7 +12933,9 @@ end, 0, 0)
 -- meets the ramp edge, and ends mitred at the octagon corner.
 local WALL_INNER, WALL_OUTER = ROAD_INNER - 1.2, ROAD_INNER - 0.4
 local WALL_TOP = 1.25
-local RAMP_HALF = 4.4
+-- The ramp lane, with a hazard strip outside it on each side.
+local LANE_HALF = 3.6
+local RAMP_HALF = LANE_HALF + HAZARD_WIDTH
 local function wallRun(mesh, degrees: number, side: number, inner: number, outer: number, near: number, bottom: number, top: number)
 	local angle = math.rad(degrees)
 	local c, n = math.cos(angle), math.sin(angle)
@@ -12956,16 +12958,7 @@ local function wallRun(mesh, degrees: number, side: number, inner: number, outer
 		mesh:face({ low[k], low[l], high[l], high[k] })
 	end
 end
-local STRIPES = 72
 slab("ArenaEdge", function()
-	local floor = 0.1 - ARENA_DEPTH
-	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
-		part(if k == 1 then "StripeYellow" else "StripeBlack", nil, color, function(mesh)
-			for s = k - 1, STRIPES - 1, 2 do
-				arc(mesh, ARENA_FLOOR - HAZARD_WIDTH, ARENA_FLOOR, floor - 0.2, floor, s * 360 / STRIPES, (s + 1) * 360 / STRIPES, true)
-			end
-		end, nil, 0.2)
-	end
 	part("Wall", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
 			for _, side in { -1, 1 } do
@@ -13046,7 +13039,9 @@ local function rampBlock(mesh, degrees: number, radii: { number }, from: number,
 		local top = rampTop(radius) + lift
 		local bottom = if depth then top - depth else RAMP_FLOOR - 0.1
 		rows[s] = {}
+		local miter = radius * math.tan(math.rad(22.5))
 		for k, side in { from, to } do
+			side = math.clamp(side, -miter, miter)
 			local x, y = c * radius - n * side, n * radius + c * side
 			rows[s][k] = mesh:vertex(x, y, top)
 			rows[s][k + 2] = mesh:vertex(x, y, bottom)
@@ -13063,12 +13058,12 @@ local function rampBlock(mesh, degrees: number, radii: { number }, from: number,
 	mesh:face({ first[2], first[4], first[3], first[1] })
 	mesh:face({ last[3], last[4], last[2], last[1] })
 end
--- Hazard strips inlaid along both deck edges, as wide as the arena's ring
--- and flush with the deck. They run from the outer end of the deck down to
--- where the ring ends, so the ring runs across the ramp mouth and the strips
--- branch off it. They break at every bend in the deck so they lie flat on it.
-local LANE_HALF = RAMP_HALF - HAZARD_WIDTH
-local STRIP_BREAKS = {}
+-- Hazard strips inlaid outside both lane edges, as wide as the arena's ring
+-- and flush with the deck. They run from the outer end of the deck across
+-- the ring, which is cut at each ramp mouth and runs from strip to strip
+-- along each octagon side, mitred at the corners. Blocks are clamped to the
+-- octagon miters, so the last ring piece on each side runs into the corner.
+local STRIP_BREAKS = { ARENA_FLOOR - HAZARD_WIDTH }
 for k = 0, 6 do
 	table.insert(STRIP_BREAKS, ARENA_FLOOR + k * (WALL_INNER - ARENA_FLOOR) / 6)
 end
@@ -13076,7 +13071,7 @@ table.insert(STRIP_BREAKS, ROAD_INNER + 0.5)
 slab("Ramps", function()
 	part("Deck", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
-			rampBlock(mesh, (i - 1) * 45, { ARENA_FLOOR, WALL_INNER, ROAD_INNER + 0.5 }, -LANE_HALF, LANE_HALF, 0)
+			rampBlock(mesh, (i - 1) * 45, { ARENA_FLOOR - HAZARD_WIDTH, ARENA_FLOOR, WALL_INNER, ROAD_INNER + 0.5 }, -LANE_HALF, LANE_HALF, 0)
 		end
 	end, nil, 0.25)
 	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
@@ -13086,6 +13081,13 @@ slab("Ramps", function()
 					local radii = { STRIP_BREAKS[s], STRIP_BREAKS[s + 1] }
 					rampBlock(mesh, (i - 1) * 45, radii, -RAMP_HALF, -LANE_HALF, 0)
 					rampBlock(mesh, (i - 1) * 45, radii, LANE_HALF, RAMP_HALF, 0)
+				end
+				-- Ring pieces, black-yellow-black from the mouth to the corner.
+				local ring = { ARENA_FLOOR - HAZARD_WIDTH, ARENA_FLOOR }
+				local cuts = { RAMP_HALF, RAMP_HALF + 3.2, RAMP_HALF + 6.4, 99 }
+				for s = 3 - k, 3, 2 do
+					rampBlock(mesh, (i - 1) * 45, ring, cuts[s], cuts[s + 1], 0)
+					rampBlock(mesh, (i - 1) * 45, ring, -cuts[s + 1], -cuts[s], 0)
 				end
 			end
 		end, nil, 0.2)
