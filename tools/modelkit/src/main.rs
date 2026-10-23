@@ -11,6 +11,7 @@
 // rendering) so scripts change without a recompile.
 
 mod bake;
+mod cache;
 mod glb;
 mod image;
 mod mesh;
@@ -179,7 +180,7 @@ impl UserData for ImageHandle {
 	}
 }
 
-fn install_api(lua: &Lua, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<RefCell<Vec<Bone>>>, search: Vec<PathBuf>) -> mlua::Result<()> {
+fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<RefCell<Vec<Bone>>>, used: Rc<RefCell<Vec<PathBuf>>>, search: Vec<PathBuf>) -> mlua::Result<()> {
 	let globals = lua.globals();
 
 	let mesh_api = lua.create_table()?;
@@ -242,6 +243,41 @@ fn install_api(lua: &Lua, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<RefCell<Vec<B
 			Ok(())
 		})?,
 	)?;
+	// model.cached(key, build) returns the parts build() returns, as a list of
+	// {name, mesh, image, preview}, loading them from the cache when this key
+	// was built before. The key must change whenever the result would.
+	let folder = dir.to_path_buf();
+	model_api.set(
+		"cached",
+		lua.create_function(move |lua, (key, build): (String, mlua::Function)| {
+			let path = cache::path(&folder, &key);
+			used.borrow_mut().push(path.clone());
+			if let Some(saved) = cache::load(&path) {
+				let list = lua.create_table()?;
+				for part in saved {
+					let entry = lua.create_table()?;
+					entry.set("name", part.name)?;
+					entry.set("mesh", MeshHandle(Rc::new(RefCell::new(part.mesh))))?;
+					entry.set("image", ImageHandle(Rc::new(RefCell::new(part.image))))?;
+					entry.set("preview", part.preview)?;
+					list.push(entry)?;
+				}
+				return Ok(list);
+			}
+			let list: Table = build.call(())?;
+			let mut built = Vec::new();
+			for entry in list.sequence_values::<Table>() {
+				let entry = entry?;
+				let mesh = entry.get::<AnyUserData>("mesh")?.borrow::<MeshHandle>()?.0.clone();
+				let image = entry.get::<AnyUserData>("image")?.borrow::<ImageHandle>()?.0.clone();
+				built.push((entry.get::<String>("name")?, entry.get::<Option<bool>>("preview")?.unwrap_or(true), mesh, image));
+			}
+			let borrowed: Vec<_> = built.iter().map(|(n, p, m, i)| (n.clone(), *p, m.borrow(), i.borrow())).collect();
+			let refs: Vec<_> = borrowed.iter().map(|(n, p, m, i)| (n.clone(), *p, &**m, &**i)).collect();
+			cache::save(&path, &refs).map_err(mlua::Error::external)?;
+			Ok(list)
+		})?,
+	)?;
 	globals.set("model", model_api)?;
 
 	// require("Name") loads Name.luau from the model's folder, then the shared
@@ -282,8 +318,10 @@ fn run(dir: &Path, turntable: usize, size: usize) -> Result<(), String> {
 	lua.enable_jit(true);
 	let parts = Rc::new(RefCell::new(Vec::new()));
 	let bones = Rc::new(RefCell::new(Vec::new()));
-	install_api(&lua, parts.clone(), bones.clone(), vec![dir.to_path_buf(), library]).map_err(|e| e.to_string())?;
+	let used = Rc::new(RefCell::new(Vec::new()));
+	install_api(&lua, dir, parts.clone(), bones.clone(), used.clone(), vec![dir.to_path_buf(), library]).map_err(|e| e.to_string())?;
 	lua.load(source).set_name(format!("@{}", script.display())).exec().map_err(|e| e.to_string())?;
+	cache::prune(dir, &used.borrow());
 	let scripted = started.elapsed();
 
 	let parts = parts.borrow();
