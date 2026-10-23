@@ -299,14 +299,32 @@ end
 -- Hopper paint: orange that darkens with grime toward the throat, and a dark
 -- band on the rim. bottomZ and height bound the funnel; wear 0-1 scales the
 -- grime, so newer tiers look cleaner.
-local function hopperColor(bottomZ, height, wear)
+local SCUFF = { 0.62, 0.6, 0.56 }
+local HAZARD_BLACK = { 0.1, 0.1, 0.1 }
+
+-- Tier contrast: tier 1's walls are scuffed through to bare metal, tier 2
+-- keeps a few scrapes, and tier 3 wears a hazard-striped band below the rim.
+local function hopperColor(bottomZ, height, wear, tier)
 	return function(x, y, z)
 		local t = math.clamp((z - bottomZ) / height, 0, 1)
+		if tier == 3 and t > 0.72 and t < 0.86 then
+			local stripe = ((x + y + z) * 2.5) % 1
+			if stripe < 0.5 then
+				return HAZARD_BLACK[1], HAZARD_BLACK[2], HAZARD_BLACK[3]
+			end
+			return HOPPER[1], HOPPER[2] * 1.1, HOPPER[3] * 0.4
+		end
 		local grime = ((1 - t) * 0.45 + math.noise(x * 3, y * 3, z * 3) * 0.12) * wear
 		if t > 0.97 then
 			grime = 0.35
 		end
 		local k = 1 - math.clamp(grime, 0, 0.6)
+		-- Scuffs: long horizontal scrape streaks where scrap hit the wall.
+		local scuffAmount = if tier == 1 then 0.32 elseif tier == 2 then 0.12 else 0
+		local scrape = math.noise(x * 1.5, y * 1.5, z * 14)
+		if scrape > 0.5 - scuffAmount and t < 0.95 then
+			return SCUFF[1] * k, SCUFF[2] * k, SCUFF[3] * k
+		end
 		return HOPPER[1] * k, HOPPER[2] * k, HOPPER[3] * k
 	end
 end
@@ -635,7 +653,7 @@ for tier = 1, 3 do
 
 	local bin = warpedMesh(warp)
 	hopper(bin, cx, 2.1 * scale, 1.9 * scale, 3 * scale, 1.1 * scale, chaos)
-	part(`{group}_Hopper`, bin, HOPPER, group, LARGE_TEXTURE, hopperColor(2.1 * scale, 1.1 * scale, wear))
+	part(`{group}_Hopper`, bin, HOPPER, group, LARGE_TEXTURE, hopperColor(2.1 * scale, 1.1 * scale, wear, tier))
 
 	local chute = warpedMesh(warp)
 	box(chute, cx, 1.3 * scale, 0.3, 1 * scale, 1.4 * scale, 0.15)
