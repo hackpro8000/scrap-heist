@@ -121,16 +121,17 @@ end
 -- The storm beacon: a mast with a glowing core that lights up when a storm
 -- round starts, visible from every yard.
 local MAST_TOP = 24
+local TOWER_TEXTURE = 1024
 local STORM_GLOW = { 0.35, 0.85, 1 }
 slab("Beacon", function()
 	local floor = 0.1 - ARENA_DEPTH
 	part("Plinth", nil, CONCRETE, function(mesh)
 		cylinder(mesh, 0, 0, floor + 0.6, 4.5, 1.2, "z", 8)
 		cylinder(mesh, 0, 0, floor + 1.5, 3.4, 0.6, "z", 8)
-	end, nil, 0.5)
+	end, nil, 0.5, TOWER_TEXTURE)
 	part("PlinthStripe", nil, MARK, function(mesh)
 		ring(mesh, 0, 0, floor + 1.15, 4.4, 4.55, 0.25, "z", 8)
-	end, nil, 0.3)
+	end, nil, 0.3, TOWER_TEXTURE)
 	-- Four straight legs leaning in towards the top, tied together with braces.
 	part("Mast", nil, DARK_STEEL, function(mesh)
 		local bottom, top = floor + 1.8, floor + MAST_TOP
@@ -149,22 +150,22 @@ slab("Beacon", function()
 			box(mesh, half, 0, z, 0.25, half * 2, 0.25)
 			box(mesh, -half, 0, z, 0.25, half * 2, 0.25)
 		end
-	end, nil, 0.6)
+	end, nil, 0.6, TOWER_TEXTURE)
 	part("CoreMount", nil, STEEL, function(mesh)
 		cylinder(mesh, 0, 0, floor + MAST_TOP + 0.3, 1.9, 0.6, "z", 16)
 		cylinder(mesh, 0, 0, floor + MAST_TOP + 4.25, 1.9, 0.5, "z", 16)
 		cylinder(mesh, 0, 0, floor + MAST_TOP + 6.5, 0.15, 4, "z", 8)
-	end, nil, 0.2)
+	end, nil, 0.2, TOWER_TEXTURE)
 	-- The core sits on top of the mast and is the part that glows during a storm.
 	part("Core", nil, STORM_GLOW, function(mesh)
 		cylinder(mesh, 0, 0, floor + MAST_TOP + 2.3, 1.4, 3.4, "z", 16)
-	end, nil, 0)
+	end, nil, 0, TOWER_TEXTURE)
 	part("CoreCage", nil, DARK_STEEL, function(mesh)
 		for k = 0, 5 do
 			local angle = math.rad(k * 60)
 			box(mesh, math.cos(angle) * 1.65, math.sin(angle) * 1.65, floor + MAST_TOP + 0.6, 0.2, 0.2, 3.4)
 		end
-	end, nil, 0.3)
+	end, nil, 0.3, TOWER_TEXTURE)
 end, 0, 0)
 
 -- A solid band following the arena circle between two angles, used for the

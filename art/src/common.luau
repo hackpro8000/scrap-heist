@@ -530,12 +530,14 @@ end
 
 local parts = {}
 
-local function part(name, bone, color, build, smooth, rust)
+-- `texture` overrides the texture size for parts that need more detail.
+local function part(name, bone, color, build, smooth, rust, texture: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 then mesh else imperfect(mesh, name))
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
 	mesh:unwrap()
-	local image = Image.new(TEXTURE, TEXTURE, color[1], color[2], color[3])
+	local size = texture or TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
 	rust = rust or 0.4
 	if rust == RUBBER then
 		mesh:paint(image, scuffed(color))
