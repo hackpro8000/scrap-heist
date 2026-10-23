@@ -127,12 +127,35 @@ local function hopper(mesh, cx, z, bottom, top, height)
 		end
 	end
 	mesh:solidify(-0.08)
-	-- Reinforced rim: a flat lip band around the top edge.
+	-- Reinforced rim: one lip band around the top edge that wobbles up and
+	-- down and in and out as it goes round, like a hand-bent strip.
 	local lip = 0.12
-	box(mesh, cx, -top / 2, z + height, top + lip, lip, lip)
-	box(mesh, cx, top / 2, z + height, top + lip, lip, lip)
-	box(mesh, cx - top / 2, 0, z + height, lip, top, lip)
-	box(mesh, cx + top / 2, 0, z + height, lip, top, lip)
+	local steps = 48
+	local profile = { { -1, 0 }, { 1, 0 }, { 1, 1 }, { -1, 1 } } -- {in/out, up}
+	local rimRings = {}
+	for i = 0, steps - 1 do
+		local t = i / steps
+		local side, along = math.floor(t * 4), (t * 4) % 1
+		local corners = { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } }
+		local a, b = corners[side + 1], corners[(side + 1) % 4 + 1]
+		local u, v = a[1] + (b[1] - a[1]) * along, a[2] + (b[2] - a[2]) * along
+		local angle = t * TAU
+		local rise = math.sin(angle * 3 + cx) * 0.05
+		local thick = lip * (1 + math.sin(angle * 5 + cx * 2) * 0.3)
+		local ring = {}
+		for k, p in profile do
+			local reach = top / 2 + p[1] * thick / 2
+			ring[k] = mesh:vertex(cx + u * reach, v * reach, z + height + rise + p[2] * thick)
+		end
+		rimRings[i + 1] = ring
+	end
+	for i = 1, steps do
+		local low, high = rimRings[i], rimRings[i % steps + 1]
+		for k = 1, 4 do
+			local m = k % 4 + 1
+			mesh:face({ low[k], high[k], high[m], low[m] })
+		end
+	end
 end
 
 -- Hopper paint: orange that darkens with grime toward the throat, and a dark
