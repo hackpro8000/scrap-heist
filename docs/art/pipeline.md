@@ -100,10 +100,10 @@ Every model change, however small, ends with a checkpoint so no progress is lost
 scripts/checkpoint-model.sh <Name> "phase N: <Name> - <change>"
 ```
 
-It rebuilds the model, copies `preview.png` to `screenshot.png`, and commits and pushes the `models` branch. Send that screenshot to the user after each change.
+It rebuilds the model, copies `preview.png` to `screenshot.png`, and commits and pushes the `model.luau` source on the `models` branch. Send that screenshot to the user after each change.
 
 ### Branches
-Generated files (`.glb`, textures, `preview.png`) live only on the `models` branch, so the code branch stays free of binary noise. The code branch keeps the tooling (`modelkit`, build scripts, `model.luau` sources) and these docs. Merge the code branch into `models` to pick up tooling changes.
+Generated files (`.glb`, textures, `preview.png`, `screenshot.png`) are gitignored on every branch; rebuild them with `scripts/build-model.sh <Name>`. Only `model.luau` (and a `sketch.png`, if any) is committed. The code branch keeps the tooling (`modelkit`, build scripts, `model.luau` sources) and these docs. Merge the code branch into `models` to pick up tooling changes.
 
 ## Lessons from past models
 
