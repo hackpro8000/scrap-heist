@@ -164,11 +164,12 @@ local function hopper(mesh, cx, z, bottom, top, height)
 end
 
 -- Hopper paint: orange that darkens with grime toward the throat, and a dark
--- band on the rim. bottomZ and height bound the funnel.
-local function hopperColor(bottomZ, height)
+-- band on the rim. bottomZ and height bound the funnel; wear 0-1 scales the
+-- grime, so newer tiers look cleaner.
+local function hopperColor(bottomZ, height, wear)
 	return function(x, y, z)
 		local t = math.clamp((z - bottomZ) / height, 0, 1)
-		local grime = (1 - t) * 0.45 + math.noise(x * 3, y * 3, z * 3) * 0.12
+		local grime = ((1 - t) * 0.45 + math.noise(x * 3, y * 3, z * 3) * 0.12) * wear
 		if t > 0.97 then
 			grime = 0.35
 		end
@@ -358,22 +359,23 @@ local BARE_METAL = { 0.68, 0.7, 0.72 }
 local RUST = { 0.45, 0.24, 0.12 }
 
 -- Frame paint for one tier's frame, whose housing is centred on cx at scale.
--- A seam splits each long side of the housing into two panels.
-local function frameColor(cx, scale)
+-- A seam splits each long side of the housing into two panels. wear 0-1
+-- scales the rust, chips and grime.
+local function frameColor(cx, scale, wear)
 	local bottom = 1.2 * scale
 	return function(x, y, z)
 		local r, g, b = FRAME[1], FRAME[2], FRAME[3]
 		-- Rust streaks: noise stretched tall so it runs in vertical drips.
-		local streak = math.clamp(math.noise(x * 7, y * 7, z * 0.8) * 2.5 - 0.3, 0, 0.7)
+		local streak = math.clamp(math.noise(x * 7, y * 7, z * 0.8) * 2.5 - 0.3, 0, 0.7) * wear
 		r, g, b = r + (RUST[1] - r) * streak, g + (RUST[2] - g) * streak, b + (RUST[3] - b) * streak
-		if math.noise(x * 5 + 5, y * 5, z * 5) > 0.4 then
+		if math.noise(x * 5 + 5, y * 5, z * 5) > 0.4 + (1 - wear) * 0.5 then
 			r, g, b = BARE_METAL[1], BARE_METAL[2], BARE_METAL[3]
 		end
 		if z > bottom - 0.01 and math.abs(x - cx) < 0.03 then
 			-- Seam splitting each long side into two panels.
 			return r * 0.45, g * 0.45, b * 0.45
 		end
-		local grime = 1 - math.clamp(0.5 - z * 0.4, 0, 0.5)
+		local grime = 1 - math.clamp(0.5 - z * 0.4, 0, 0.5) * wear
 		return r * grime, g * grime, b * grime
 	end
 end
@@ -390,6 +392,8 @@ for tier = 1, 3 do
 	local cx = (tier - 2) * SPACING
 	local scale = 1 + (tier - 1) * 0.2
 	local warp = tierWarp(cx, tier, scale, (3 - tier) / 2)
+	-- Higher tiers are newer kit: less rust, chipping and grime.
+	local wear = ({ 1, 0.5, 0.15 })[tier]
 
 	local frame = warpedMesh(warp)
 	-- Legs and shredder housing.
@@ -400,7 +404,7 @@ for tier = 1, 3 do
 		box(frame, legX, legY, 0, 0.4, 0.4, 0.05)
 	end
 	box(frame, cx, 0, 1.2 * scale, 2.2 * scale, 1.8 * scale, 0.9 * scale)
-	part(`{group}_Frame`, frame, FRAME, group, LARGE_TEXTURE, frameColor(cx, scale))
+	part(`{group}_Frame`, frame, FRAME, group, LARGE_TEXTURE, frameColor(cx, scale, wear))
 
 	local bolts, plates = warpedMesh(warp), warpedMesh(warp)
 	housingBolts(bolts, plates, cx, scale, tier * 17)
@@ -446,7 +450,7 @@ for tier = 1, 3 do
 
 	local bin = warpedMesh(warp)
 	hopper(bin, cx, 2.1 * scale, 1.9 * scale, 3 * scale, 1.1 * scale)
-	part(`{group}_Hopper`, bin, HOPPER, group, LARGE_TEXTURE, hopperColor(2.1 * scale, 1.1 * scale))
+	part(`{group}_Hopper`, bin, HOPPER, group, LARGE_TEXTURE, hopperColor(2.1 * scale, 1.1 * scale, wear))
 
 	local chute = warpedMesh(warp)
 	box(chute, cx, 1.3 * scale, 0.3, 1 * scale, 1.4 * scale, 0.15)
