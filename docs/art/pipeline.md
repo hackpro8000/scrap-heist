@@ -54,6 +54,10 @@ Rules that keep rebuilds fast:
 - Prop textures are at most 1024×1024. A prop's cache file is a few MB; one
   over 20MB means a texture is oversized or the prop builds parts no layout
   shows. Check with `ls -laS art/models/<Layout>/.cache`.
+- Large meshes (terrain, roads, floors) are built with `chunkedPart`, which
+  splits them into 128-stud cubic chunks, each a part with a 1024×1024
+  texture named `<Part>_<cx>_<cy>_<cz>`. No single part spans more than one
+  chunk or uses a texture over 1024.
 - After a layout change, a second build with nothing changed should finish
   in seconds (ServerMap: about 15s against 100s cold). If it doesn't, find
   what isn't cached before going on.
