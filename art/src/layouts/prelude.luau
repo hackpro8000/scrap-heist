@@ -51,6 +51,9 @@ end
 -- The assembler fills this with a hash of each used model's source, so
 -- place() can build each model once and reuse it at every placement.
 local buildKeys = {}
+-- And a hash of each slab body with the code around it, by the line its
+-- function starts on, so placeSlab() can reuse an unchanged slab.
+local slabKeys = {}
 local builtParts = nil
 
 local function addPart(name, mesh, image, preview, emissive)
@@ -63,6 +66,9 @@ end
 model.part = function(name, mesh, image, options)
 	local preview = if options and options.preview ~= nil then options.preview else true
 	if builtParts then
+		if skipPart(name) then
+			return
+		end
 		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview, emissive = options and options.emissive })
 		return
 	end
@@ -93,4 +99,29 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 		addPart(part.name, part.mesh:moved(turn0, x0, y0, z0), part.image, part.preview, part.emissive)
 	end
 	placeX, placeY, placeZ, placeTurn = x0, y0, z0, turn0
+end
+
+-- Places a piece built where it stands. Its paint can depend on where it
+-- stands, so it is cached in place, keyed on its source and placement.
+-- finish(), if given, runs after build() inside the cached build.
+local function placeSlab(label: string, build: () -> (), x: number, y: number, turn: number?, finish: (() -> ())?)
+	local key = slabKeys[debug.info(build, "l")]
+	if not key then
+		error(`slab {label} has no cache key; start its body on a line ending in "function()"`)
+	end
+	placeLabel = label
+	placeX, placeY, placeZ, placeTurn = x, y, 0, math.rad(turn or 0)
+	placeStretch, placeAxis = 1, "x"
+	for _, part in model.cached(`{key} {label} {x} {y} {turn or 0}`, function()
+		builtParts = {}
+		build()
+		if finish then
+			finish()
+		end
+		local built = builtParts
+		builtParts = nil
+		return built
+	end) do
+		addPart(part.name, part.mesh, part.image, part.preview, part.emissive)
+	end
 end

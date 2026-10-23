@@ -21,17 +21,39 @@ if [ -d "${src}/bots/${name}" ]; then
 elif [ -f "${src}/items/${name}.luau" ]; then
 	cat "${src}/rarity.luau" "${src}/common.luau" "${src}/items/${name}.luau" > "${out}"
 elif [ -f "${src}/layouts/${name}.luau" ]; then
+	# Skipped parts never reach the cache, so the skip rule is part of each key.
+	skip="$(awk '/^skipPart = function/ { open = 1 } open { print } open && /^end/ { open = 0 }' "${src}/layouts/${name}.luau")"
 	{
 		cat "${src}/layouts/prelude.luau" "${src}/rarity.luau" "${src}/common.luau"
 		for used in $(head -n 1 "${src}/layouts/${name}.luau" | sed 's/^-- uses://'); do
 			echo "local function build${used}()"
 			cat "${root}/art/models/${used}/model.luau"
 			echo "end"
-			key="$(cat "${src}/layouts/prelude.luau" "${root}/art/models/${used}/model.luau" | sha1sum | cut -c1-16)"
+			key="$({ cat "${src}/layouts/prelude.luau" "${root}/art/models/${used}/model.luau"; echo "${skip}"; } | sha1sum | cut -c1-16)"
 			echo "buildKeys[build${used}] = \"${used}-${key}\""
 		done
-		cat "${src}/layouts/${name}.luau"
+	} > "${out}.head"
+	layout="${src}/layouts/${name}.luau"
+	# Each slab body runs from a line ending `slab(..., function()` to the
+	# `end` at its indent. Its key hashes the body plus everything around
+	# the bodies (prelude, helpers, used models, the layout outside slabs),
+	# so editing one slab rebuilds only that slab, and editing shared code
+	# rebuilds them all.
+	spans="$(awk '!open && /slab\(.*function\(\)[ \t]*$/ { match($0, /^\t*/); indent = substr($0, 1, RLENGTH); start = NR; open = 1; next }
+		open && index($0, indent "end") == 1 { print start, NR; open = 0 }' "${layout}")"
+	outside="$(awk -v spans="${spans}" 'BEGIN { n = split(spans, s, /[ \n]/); for (i = 1; i < n; i += 2) for (l = s[i] + 1; l < s[i + 1]; l++) skip[l] = 1 }
+		!skip[NR]' "${layout}" | cat "${out}.head" - | sha1sum | cut -c1-16)"
+	offset=$(( $(wc -l < "${out}.head") + $(printf '%s\n' "${spans}" | grep -c .) ))
+	{
+		cat "${out}.head"
+		while read -r start end; do
+			[ -n "${start}" ] || continue
+			body="$(sed -n "$((start + 1)),$((end - 1))p" "${layout}" | sha1sum | cut -c1-16)"
+			echo "slabKeys[$((offset + start))] = \"${outside}-${body}\""
+		done <<< "${spans}"
+		cat "${layout}"
 	} > "${out}"
+	rm "${out}.head"
 else
 	echo "no source for ${name} in art/src" >&2
 	exit 1
