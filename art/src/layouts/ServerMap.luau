@@ -104,33 +104,33 @@ local PRESS_TOP = 11
 slab("Crusher", function()
 	local floor = 0.1 - ARENA_DEPTH
 	part("Bed", nil, DARK_STEEL, function(mesh)
-		box(mesh, 0, 0, floor + 0.3, 9, 9, 0.6)
+		box(mesh, 0, 0, floor, 9, 9, 0.6)
 	end, nil, 0.6)
 	part("BedPlate", nil, STEEL, function(mesh)
-		box(mesh, 0, 0, floor + 0.65, 7, 7, 0.1)
+		box(mesh, 0, 0, floor + 0.6, 7, 7, 0.1)
 	end, nil, 0.3)
 	part("Pillars", nil, MARK, function(mesh)
 		for _, sx in { -1, 1 } do
 			for _, sy in { -1, 1 } do
-				box(mesh, sx * 3.9, sy * 3.9, floor + PRESS_TOP / 2, 1, 1, PRESS_TOP)
+				box(mesh, sx * 3.9, sy * 3.9, floor, 1, 1, PRESS_TOP)
 			end
 		end
 	end, nil, 0.5)
 	part("Crossbeam", nil, DARK_STEEL, function(mesh)
-		box(mesh, 0, 0, floor + PRESS_TOP + 0.6, 9, 9, 1.2)
+		box(mesh, 0, 0, floor + PRESS_TOP, 9, 9, 1.2)
 		for _, sx in { -3.9, 3.9 } do
-			box(mesh, sx, 0, floor + PRESS_TOP + 1.4, 1.2, 9, 0.4)
+			box(mesh, sx, 0, floor + PRESS_TOP + 1.2, 1.2, 9, 0.4)
 		end
 	end, nil, 0.7)
 	part("Piston", nil, STEEL, function(mesh)
-		cylinder(mesh, 0, 0, floor + PRESS_TOP - 1.5, 0.9, 3, "z", 16)
+		cylinder(mesh, 0, 0, floor + 8.5, 0.9, 5, "z", 16)
 		cylinder(mesh, 0, 0, floor + PRESS_TOP + 2.2, 1.6, 2, "z", 16)
 	end, nil, 0.2)
 	part("Head", nil, DARK_STEEL, function(mesh)
-		box(mesh, 0, 0, floor + PRESS_TOP - 3.5, 6.6, 6.6, 1)
+		box(mesh, 0, 0, floor + 5, 6.6, 6.6, 1)
 	end, nil, 0.6)
 	part("HeadStripe", nil, MARK, function(mesh)
-		box(mesh, 0, 0, floor + PRESS_TOP - 4.05, 6.7, 6.7, 0.1)
+		box(mesh, 0, 0, floor + 4.9, 6.7, 6.7, 0.1)
 	end, nil, 0.3)
 end, 0, 0)
 place("CrusherCar", buildCrushedCar, 0, 0, 0.8 - ARENA_DEPTH, 30)
