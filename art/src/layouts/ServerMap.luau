@@ -7,7 +7,7 @@
 -- Yards are only plot slabs here: the game drops the Yard Layout template
 -- onto each one, so every yard is built from the same pieces.
 -- Labels: Ground, Road, Arena, Spawn, Plot1-Plot8, Spoke1-Spoke8,
--- Cover1-Cover8, Light1-Light4, Cones1-Cones8, and
+-- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4, Cones1-Cones8, and
 -- Wedge<w><ring>_<n> props between the yards.
 local YARD_RADIUS = 90
 local ROAD_INNER, ROAD_OUTER = 50, 58
@@ -119,6 +119,31 @@ for i, build in { buildShippingContainer, buildCarStack, buildCrushedCar, buildB
 	local degrees = (i - 0.5) * 45
 	local x, y = polar(26, degrees)
 	place(`Cover{i}`, build, x, y, 0.2 - ARENA_DEPTH, degrees + 90)
+end
+-- Bot spawn hatches in the arena floor by the bowl wall, between the spokes.
+-- Storm bots climb out of these; the hazard rim marks where they emerge.
+for i = 1, 4 do
+	local degrees = (i - 0.75) * 90
+	local x, y = polar(ARENA_FLOOR - 3, degrees)
+	slab(`Hatch{i}`, function()
+		local floor = 0.1 - ARENA_DEPTH
+		part("Rim", nil, MARK, function(mesh)
+			ring(mesh, 0, 0, floor, 2.6, 3.1, 0.12, "z", 24)
+		end, nil, 0.3)
+		part("Frame", nil, DARK_STEEL, function(mesh)
+			ring(mesh, 0, 0, floor, 2.1, 2.6, 0.2, "z", 24)
+		end, nil, 0.5)
+		part("Pit", nil, { 0.05, 0.05, 0.05 }, function(mesh)
+			cylinder(mesh, 0, 0, floor - 0.05, 2.1, 0.1, "z", 24)
+		end, nil, 0)
+		part("Grate", nil, STEEL, function(mesh)
+			for n = -3, 3 do
+				local half = math.sqrt(2.1 * 2.1 - (n * 0.55) ^ 2)
+				box(mesh, n * 0.55, 0, floor + 0.08, 0.14, half * 2, 0.1)
+			end
+			box(mesh, 0, 0, floor + 0.1, 4.2, 0.2, 0.12)
+		end, nil, 0.4)
+	end, x, y, degrees)
 end
 for i = 1, 4 do
 	local degrees = (i - 0.5) * 90
