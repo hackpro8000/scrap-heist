@@ -170,6 +170,36 @@ end
 -- Shredder roller along X: a stack of toothed cutter discs on a shaft. Each
 -- disc is a star-shaped prism, and neighbours are turned half a tooth so the
 -- teeth stagger along the roller.
+-- Supports holding the heavy hopper up off the housing. Tier 1 has two
+-- bent props on opposite corners; tier 2 props every corner; tier 3 adds a
+-- prop under the middle of each side.
+local function hopperSupports(mesh, cx, scale, tier)
+	local halfX, halfY, housingTop = 1.1 * scale, 0.9 * scale, 2.1 * scale
+	-- Where the props meet the hopper wall, part way up its flare.
+	-- Tier 3's pillowed walls bulge out, so its props stop further out.
+	local t = 0.4
+	local wallHalf = (1.9 + 1.1 * t) * scale / 2 + if tier == 3 then 0.2 else 0.05
+	local wallZ = housingTop + 1.1 * scale * t
+	local thick = if tier == 1 then 0.07 elseif tier == 2 then 0.1 else 0.12
+	local corners = if tier == 1 then { { -1, -1 }, { 1, 1 } } else { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } }
+	for _, c in corners do
+		local x0, y0 = cx + c[1] * (halfX + 0.03), c[2] * (halfY + 0.03)
+		strut(mesh, x0, y0, housingTop - 0.45, cx + c[1] * wallHalf, c[2] * wallHalf, wallZ, thick)
+		if tier > 1 then
+			-- Foot plate bolting the prop to the housing.
+			box(mesh, x0, y0, housingTop - 0.5, thick + 0.1, thick + 0.1, 0.06)
+		end
+	end
+	if tier < 3 then
+		return
+	end
+	for _, side in { -1, 1 } do
+		strut(mesh, cx, side * (halfY + 0.03), housingTop - 0.45, cx, side * wallHalf, wallZ, thick)
+		strut(mesh, cx + side * (halfX + 0.03), 0.5 * scale, housingTop - 0.45, cx + side * wallHalf, 0.5 * scale, wallZ, thick)
+		strut(mesh, cx + side * (halfX + 0.03), -0.5 * scale, housingTop - 0.45, cx + side * wallHalf, -0.5 * scale, wallZ, thick)
+	end
+end
+
 local function toothedRoller(mesh, cx, cy, cz, radius, length, teeth, discs)
 	local points = teeth * 2
 	local width = length / discs
@@ -526,6 +556,7 @@ for tier = 1, 3 do
 		rollerYs[i] = ((i - 0.5) / rollerCount - 0.5) * throatWidth
 	end
 	reinforcement(frame, cx, scale, tier, rollerYs, rollerRadius)
+	hopperSupports(frame, cx, scale, tier)
 	part(`{group}_Frame`, frame, FRAME, group, LARGE_TEXTURE, frameColor(cx, scale, wear))
 
 	local bolts, plates = warpedMesh(warp), warpedMesh(warp)
