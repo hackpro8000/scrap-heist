@@ -34,6 +34,7 @@ local TAU = 2 * math.pi
 -- Edge highlight and feathering, matching the salvage machine.
 local EDGE_HIGHLIGHT = 0.6
 local CONTACT_SHADOW = 0.85
+local GRADIENT = 0.5
 local EDGE_BLEND = 0.7
 local SMOOTH_ANGLE = 30
 local TEXTURE = 256
@@ -588,6 +589,7 @@ local function finishParts()
 		entry.mesh:paintShading(entry.image, {
 			highlight = EDGE_HIGHLIGHT,
 			shadow = CONTACT_SHADOW,
+			gradient = GRADIENT,
 			blend = EDGE_BLEND,
 			occluders = occluders,
 		})
