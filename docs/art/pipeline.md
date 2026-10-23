@@ -58,6 +58,9 @@ Rules that keep rebuilds fast:
   splits them into 128-stud cubic chunks, each a part with a 1024×1024
   texture named `<Part>_<cx>_<cy>_<cz>`. No single part spans more than one
   chunk or uses a texture over 1024.
+- A layout can call `useTexelDensity(pixelsPerStud)` so each of its own parts
+  sizes its texture from its UV scale (16 to 1024 px) instead of the fixed
+  256 or a per-part override. Props in the layout keep their own sizes.
 - After a layout change, a second build with nothing changed should finish
   in seconds (ServerMap: about 15s against 100s cold). If it doesn't, find
   what isn't cached before going on.

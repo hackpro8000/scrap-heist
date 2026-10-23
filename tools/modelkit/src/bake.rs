@@ -95,7 +95,9 @@ fn edge_faces(mesh: &Mesh) -> HashMap<(usize, usize), Vec<usize>> {
 // Box-projection unwrap: faces are grouped by the axis they face most, each
 // connected group is projected flat onto that axis' plane, and the groups are
 // packed into the unit square with `margin` between them.
-pub fn unwrap(mesh: &mut Mesh, margin: f64) {
+// Returns the scale from studs to UV units, so callers can size textures
+// for a texel density.
+pub fn unwrap(mesh: &mut Mesh, margin: f64) -> f64 {
 	let normals: Vec<Vec3> = mesh.faces.iter().map(|face| mesh.face_normal(face)).collect();
 	let side: Vec<usize> = normals
 		.iter()
@@ -203,6 +205,7 @@ pub fn unwrap(mesh: &mut Mesh, margin: f64) {
 			.collect();
 		face.uvs = Some(uvs);
 	}
+	fit
 }
 
 // --- Rasterize --------------------------------------------------------------
