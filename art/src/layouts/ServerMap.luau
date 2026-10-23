@@ -16,6 +16,8 @@ end
 local YARD_RADIUS = 110
 local ROAD_INNER, ROAD_OUTER = 50, 58
 local ARENA_FLOOR, ARENA_DEPTH = 36, 3.5
+-- Width of the hazard stripes inlaid round the floor edge and up each ramp.
+local HAZARD_WIDTH = 1.8
 local ARENA_ISLAND, YARD_ISLAND = 61, 26
 
 local GROUND = { 0.3, 0.27, 0.22 }
@@ -296,7 +298,7 @@ local function bridgeGirders(degrees: number, cx: number, cy: number)
 end
 slab("Arena", function()
 	chunkedPart("Floor", nil, CONCRETE, function(mesh)
-		arc(mesh, 0, ARENA_FLOOR, -ARENA_DEPTH - 0.1, 0.1 - ARENA_DEPTH, 0, 360, true)
+		arc(mesh, 0, ARENA_FLOOR - HAZARD_WIDTH, -ARENA_DEPTH - 0.1, 0.1 - ARENA_DEPTH, 0, 360, true)
 	end, nil, arenaConcrete)
 end, 0, 0)
 -- New players start on the ring around the crusher.
@@ -386,7 +388,7 @@ end, 0, 0)
 -- meets the ramp edge, and ends mitred at the octagon corner.
 local WALL_INNER, WALL_OUTER = ROAD_INNER - 1.2, ROAD_INNER - 0.4
 local WALL_TOP = 1.25
-local RAMP_HALF = 3.6
+local RAMP_HALF = 4.4
 local function wallRun(mesh, degrees: number, side: number, inner: number, outer: number, near: number, bottom: number, top: number)
 	local angle = math.rad(degrees)
 	local c, n = math.cos(angle), math.sin(angle)
@@ -415,7 +417,7 @@ slab("ArenaEdge", function()
 	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
 		part(if k == 1 then "StripeYellow" else "StripeBlack", nil, color, function(mesh)
 			for s = k - 1, STRIPES - 1, 2 do
-				arc(mesh, ARENA_FLOOR - 2, ARENA_FLOOR - 0.2, floor, floor + 0.12, s * 360 / STRIPES, (s + 1) * 360 / STRIPES, true)
+				arc(mesh, ARENA_FLOOR - HAZARD_WIDTH, ARENA_FLOOR, floor - 0.2, floor, s * 360 / STRIPES, (s + 1) * 360 / STRIPES, true)
 			end
 		end, nil, 0.2)
 	end
@@ -483,7 +485,6 @@ end, 0, 0)
 -- fight floor. The bowl is a straight chamfer, so the deck follows it a
 -- little above and never dips into the terrain, then eases down to sit flush
 -- with the floor where it meets the arena's hazard ring.
-local RAMP_RADII = { ARENA_FLOOR, ARENA_FLOOR + 2, ROAD_INNER - 2, ROAD_INNER + 0.5 }
 local RAMP_FLOOR = 0.1 - ARENA_DEPTH
 local function rampTop(radius: number): number
 	local rise = 0.35 * math.clamp((radius - ARENA_FLOOR) / 2, 0, 1)
@@ -517,19 +518,21 @@ local function rampBlock(mesh, degrees: number, radii: { number }, from: number,
 	mesh:face({ first[2], first[4], first[3], first[1] })
 	mesh:face({ last[3], last[4], last[2], last[1] })
 end
--- Hazard strips along both deck edges, as thick as the arena's hazard ring.
--- They start where the ring ends and run up to the wall, in blocks that
--- break at every bend in the deck so they lie flat on it.
-local STRIP_WIDTH, STRIP_THICKNESS = 0.9, 0.12
-local STRIP_BREAKS = { ARENA_FLOOR - 0.2, ARENA_FLOOR + 2 }
-for k = 1, 6 do
-	table.insert(STRIP_BREAKS, ARENA_FLOOR + 2 + k * (ROAD_INNER - 4 - ARENA_FLOOR) / 6)
+-- Hazard strips inlaid along both deck edges, as wide as the arena's ring
+-- and flush with the deck. They start where the ring ends, so the ring runs
+-- across the ramp mouth and the strips branch off it, and they break at
+-- every bend in the deck so they lie flat on it.
+local LANE_HALF = RAMP_HALF - HAZARD_WIDTH
+local STRIP_BREAKS = { ARENA_FLOOR, ARENA_FLOOR + 2 }
+for k = 1, 5 do
+	table.insert(STRIP_BREAKS, ARENA_FLOOR + 2 + k * (ROAD_INNER - 2 - ARENA_FLOOR - 2) / 5)
 end
 table.insert(STRIP_BREAKS, WALL_INNER)
 slab("Ramps", function()
 	part("Deck", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
-			rampBlock(mesh, (i - 1) * 45, RAMP_RADII, -RAMP_HALF, RAMP_HALF, 0)
+			rampBlock(mesh, (i - 1) * 45, { ARENA_FLOOR, ARENA_FLOOR + 2, ROAD_INNER - 2, WALL_INNER }, -LANE_HALF, LANE_HALF, 0)
+			rampBlock(mesh, (i - 1) * 45, { WALL_INNER, ROAD_INNER + 0.5 }, -RAMP_HALF, RAMP_HALF, 0)
 		end
 	end, nil, 0.25)
 	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
@@ -537,8 +540,8 @@ slab("Ramps", function()
 			for i = 1, 8 do
 				for s = k, #STRIP_BREAKS - 1, 2 do
 					local radii = { STRIP_BREAKS[s], STRIP_BREAKS[s + 1] }
-					rampBlock(mesh, (i - 1) * 45, radii, -RAMP_HALF, STRIP_WIDTH - RAMP_HALF, STRIP_THICKNESS, 0.2)
-					rampBlock(mesh, (i - 1) * 45, radii, RAMP_HALF - STRIP_WIDTH, RAMP_HALF, STRIP_THICKNESS, 0.2)
+					rampBlock(mesh, (i - 1) * 45, radii, -RAMP_HALF, -LANE_HALF, 0)
+					rampBlock(mesh, (i - 1) * 45, radii, LANE_HALF, RAMP_HALF, 0)
 				end
 			end
 		end, nil, 0.2)
