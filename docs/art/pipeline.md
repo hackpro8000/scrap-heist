@@ -26,6 +26,13 @@ scripts/build-model.sh                 # every model
 tools/modelkit/bin/modelkit-linux-x64 art/models/<Name> --turntable 60   # MP4 frames
 ```
 
+Layouts cache each placed model in `art/models/<Name>/.cache` (ignored by
+git), keyed on that model's source and its placement, so a rebuild only
+re-runs the props that changed. A script can cache its own work with
+`model.cached(key, build)`, where `build` returns a list of
+`{name, mesh, image, preview}` and `key` changes whenever the result would.
+Delete `.cache` to force a full rebuild.
+
 ## Changing the engine
 
 The cloud setup doesn't install Rust. To change `tools/modelkit/src`, install

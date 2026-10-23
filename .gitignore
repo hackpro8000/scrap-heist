@@ -17,3 +17,6 @@ sourcemap.json
 
 # Python bytecode
 __pycache__/
+
+# modelkit build cache
+.cache/

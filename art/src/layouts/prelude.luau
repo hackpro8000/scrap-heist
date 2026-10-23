@@ -48,19 +48,44 @@ local function skipPart(_name: string): boolean
 	return false
 end
 
-model.part = function(name, mesh, image, options)
+-- The assembler fills this with a hash of each used model's source, so
+-- place() can cache that model's parts per placement.
+local buildKeys = {}
+local builtParts = nil
+
+local function addPart(name, mesh, image, preview)
 	if skipPart(name) then
 		return
 	end
-	options = options or {}
-	options.group = nil
-	options.bone = nil
-	realPart(placeLabel .. "_" .. name, unwrapMesh(mesh), image, options)
+	realPart(placeLabel .. "_" .. name, mesh, image, { preview = preview })
+end
+
+model.part = function(name, mesh, image, options)
+	local preview = if options and options.preview ~= nil then options.preview else true
+	if builtParts then
+		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview })
+		return
+	end
+	addPart(name, unwrapMesh(mesh), image, preview)
 end
 
 local function place(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, stretch: number?, axis: string?)
 	placeLabel = label
 	placeX, placeY, placeZ, placeTurn = x, y, z or 0, math.rad(turn or 0)
 	placeStretch, placeAxis = stretch or 1, axis or "x"
-	build()
+	local key = buildKeys[build]
+	if not key then
+		build()
+		return
+	end
+	key = `{key} {placeX} {placeY} {placeZ} {placeTurn} {placeStretch} {placeAxis}`
+	for _, part in model.cached(key, function()
+		builtParts = {}
+		build()
+		local built = builtParts
+		builtParts = nil
+		return built
+	end) do
+		addPart(part.name, part.mesh, part.image, part.preview)
+	end
 end

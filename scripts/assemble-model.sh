@@ -3,7 +3,8 @@
 # a bot is its head, the shared helpers, then its body; an item is the
 # rarity colors, the shared helpers, then its own file; a layout is the
 # placement prelude, the shared helpers, each model named on its "-- uses:" first line wrapped
-# as build<Name>(), then the layout itself.
+# as build<Name>() and keyed by a hash of its source for modelkit's cache,
+# then the layout itself.
 #
 #   scripts/assemble-model.sh Zapper
 
@@ -26,6 +27,8 @@ elif [ -f "${src}/layouts/${name}.luau" ]; then
 			echo "local function build${used}()"
 			cat "${root}/art/models/${used}/model.luau"
 			echo "end"
+			key="$(cat "${src}/layouts/prelude.luau" "${root}/art/models/${used}/model.luau" | sha1sum | cut -c1-16)"
+			echo "buildKeys[build${used}] = \"${used}-${key}\""
 		done
 		cat "${src}/layouts/${name}.luau"
 	} > "${out}"
