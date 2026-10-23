@@ -134,11 +134,6 @@ slab("ArenaIsland", function()
 		floatingIsland(mesh, ARENA_ISLAND, 42, 1, heightAt)
 	end, nil, islandPaint(heightAt), 2048)
 end, 0, 0)
-slab("Road", function()
-	part("Ring", nil, ROAD, function(mesh)
-		ring(mesh, 0, 0, 0, ROAD_INNER, ROAD_OUTER, 0.1, "z", 48)
-	end, nil, 0)
-end, 0, 0)
 -- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
 local function fbm(x: number, y: number, z: number): number
 	local total, amplitude = 0, 0.5
@@ -369,6 +364,53 @@ slab("ArenaEdge", function()
 		end
 	end, nil, 0.3)
 end, 0, 0)
+-- Asphalt at u studs across and v along a road: fine aggregate, darker
+-- repair patches, polished tyre lanes, oil drips between them, a web of
+-- cracks, and worn paint: white edge lines and a dashed yellow centre line.
+local function asphalt(u: number, v: number, half: number, seed: number): (number, number, number)
+	local k = 1 + fbm(u * 3, v * 3, seed) * 0.12
+	k += (math.noise(u * 9.1, v * 9.1, seed + 1) > 0.35 and 0.1 or 0)
+	local patch = warpedFbm(u / 6, v / 6, seed + 2)
+	if patch > 0.22 then
+		k -= 0.16
+	end
+	local lane = math.exp(-((math.abs(u) - half / 2) / 0.6) ^ 2)
+	k += lane * (0.07 + fbm(u, v / 5, seed + 3) * 0.05)
+	local oil = math.max(0, fbm(u / 1.5, v / 3, seed + 4) - 0.15) * (1 - lane)
+	k -= oil * 0.9
+	local crack = math.abs(warpedFbm(u / 3, v / 3, seed + 5))
+	if crack < 0.012 then
+		k -= 0.35
+	end
+	local r, g, b = ROAD[1] * k, ROAD[2] * k, ROAD[3] * k * 1.02
+	local fade = math.clamp(0.75 + fbm(u * 2, v / 2, seed + 6) * 1.2 - lane * 0.3, 0, 1)
+	local edgeLine = math.abs(math.abs(u) - (half - 0.5)) < 0.1
+	local centreLine = math.abs(u) < 0.08 and (v % 4) < 2.2
+	if edgeLine then
+		return r + (0.82 - r) * fade, g + (0.8 - g) * fade, b + (0.74 - b) * fade
+	elseif centreLine then
+		return r + (MARK[1] - r) * fade, g + (MARK[2] - g) * fade, b + (MARK[3] - b) * fade
+	end
+	return r, g, b
+end
+
+-- The ring road, with a concrete kerb along its outer edge broken where each
+-- spoke road joins it. The inner edge stays open onto the arena rim.
+slab("Road", function()
+	local middle = (ROAD_INNER + ROAD_OUTER) / 2
+	part("Ring", nil, ROAD, function(mesh)
+		ring(mesh, 0, 0, 0, ROAD_INNER, ROAD_OUTER, 0.1, "z", 96)
+	end, nil, function(x, y)
+		local radius = math.sqrt(x * x + y * y)
+		return asphalt(radius - middle, math.atan2(y, x) * middle, (ROAD_OUTER - ROAD_INNER) / 2, 61)
+	end, 2048)
+	part("Kerb", nil, CONCRETE, function(mesh)
+		for i = 1, 8 do
+			local from = (i - 1) * 45
+			arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, -0.1, 0.3, from + 4, from + 41)
+		end
+	end, nil, 0.5)
+end, 0, 0)
 
 -- Entry ramps: a concrete apron down the bowl rim at each spoke, through the
 -- wall gap, edged with yellow curbs so players and bots see the way in.
@@ -480,10 +522,15 @@ for i = 1, 8 do
 		end, nil, 0)
 	end, x, y, degrees - 90)
 	yardTemplate(i, x, y, degrees - 90)
+	local c, s = math.cos(math.rad(degrees - 90)), math.sin(math.rad(degrees - 90))
 	slab(`Spoke{i}`, function()
 		part("Road", nil, ROAD, function(mesh)
 			box(mesh, 0, -20.5, 0, 6, 11, 0.1)
-		end, nil, 0)
+		end, nil, function(px, py)
+			local u = (px - x) * c + (py - y) * s
+			local v = (py - y) * c - (px - x) * s
+			return asphalt(u, v, 3, 70 + i)
+		end, 512)
 	end, x, y, degrees - 90)
 	slab(`Bridge{i}`, function()
 		part("Deck", nil, STEEL, function(mesh)
