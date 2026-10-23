@@ -286,12 +286,41 @@ part("BodyBand", body, GALVANISED, function(mesh)
 	-- Collar the coil stands on.
 	cylinder(mesh, 0, 0, COIL_BOTTOM - 0.1, 0.3, 0.12, "z")
 end)
+-- Point on the body's surface, pushed `lift` out along it, at azimuth `t` and
+-- elevation `e` (radians above the equator).
+local function onBody(t, e, lift)
+	local r, rz = BODY_RADIUS + lift, BODY_RADIUS * 0.9 + lift
+	return math.cos(e) * math.cos(t) * r, math.cos(e) * math.sin(t) * r, BODY_Z + math.sin(e) * rz
+end
+
 part("BrassPatch", body, BRASS, function(mesh)
-	-- A boiler plate bolted over a hole on the back.
-	box(mesh, 0.25, BODY_RADIUS - 0.1, BODY_Z - 0.4, 0.5, 0.08, 0.4)
-	for _, x in { 0.05, 0.45 } do
-		for _, z in { -0.33, -0.07 } do
-			bolt(mesh, x, BODY_RADIUS - 0.06, BODY_Z + z, "y", 0.04)
+	-- A boiler plate bolted over a hole on the back, beaten to the body's curve.
+	local T0, T1, E0, E1, STEPS = 1.25, 1.9, 0.02, 0.5, 6
+	local outer, inner = {}, {}
+	for i = 0, STEPS do
+		outer[i], inner[i] = {}, {}
+		for j = 0, STEPS do
+			local t, e = T0 + (T1 - T0) * i / STEPS, E0 + (E1 - E0) * j / STEPS
+			outer[i][j] = mesh:vertex(onBody(t, e, 0.04))
+			inner[i][j] = mesh:vertex(onBody(t, e, -0.01))
+		end
+	end
+	for i = 0, STEPS - 1 do
+		for j = 0, STEPS - 1 do
+			mesh:face({ outer[i][j], outer[i + 1][j], outer[i + 1][j + 1], outer[i][j + 1] })
+			mesh:face({ inner[i][j], inner[i][j + 1], inner[i + 1][j + 1], inner[i + 1][j] })
+		end
+	end
+	for k = 0, STEPS - 1 do
+		mesh:face({ outer[k][0], inner[k][0], inner[k + 1][0], outer[k + 1][0] })
+		mesh:face({ outer[k + 1][STEPS], inner[k + 1][STEPS], inner[k][STEPS], outer[k][STEPS] })
+		mesh:face({ outer[0][k + 1], inner[0][k + 1], inner[0][k], outer[0][k] })
+		mesh:face({ outer[STEPS][k], inner[STEPS][k], inner[STEPS][k + 1], outer[STEPS][k + 1] })
+	end
+	for _, t in { T0 + 0.08, T1 - 0.08 } do
+		for _, e in { E0 + 0.07, E1 - 0.07 } do
+			local x, y, z = onBody(t, e, 0.05)
+			bolt(mesh, x, y, z, "y", 0.04)
 		end
 	end
 end)
