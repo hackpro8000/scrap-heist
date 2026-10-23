@@ -47,7 +47,7 @@ reference.
 - `Image.new(w, h, r?, g?, b?)`, `image:set(x, y, r, g, b)` (y = 0 is the
   bottom row).
 - `mesh:paint(image, function(x, y, z, nx, ny, nz) return r, g, b end)`.
-- `mesh:paintShading(image, {highlight, shadow, bands, sharp, blend, occluders})`. `blend` 0-1 (default 0) feathers edge highlights and tints them from cream toward the part's own color.
+- `mesh:paintShading(image, {highlight, shadow, bands, sharp, blend, occluders, gradient})`. `blend` 0-1 (default 0) feathers edge highlights and tints them from cream toward the part's own color. `gradient` 0-1 darkens toward the base for a top-lit falloff.
 - `model.part(name, mesh, image, {group, preview})`. Parts sharing a group
   are one variant (a fill level, an upgrade tier); `preview` picks what the
   preview shows. `bone` names the bone the part follows.
@@ -87,3 +87,19 @@ Generated files (`.glb`, textures, `preview.png`) live only on the `models` bran
 - Give each part its own image; `paintShading` writes into the image it is given.
 - Pass nearby meshes as `occluders` to `paintShading` so they cast contact shadows. Use this to ground parts on a surface.
 - Check that every variant reads from the game camera. A low fill level can hide behind the crate wall.
+
+## Session workflow
+Sources live in `art/src`, and `art/models/<Name>/model.luau` is generated from them; never edit it by hand.
+- Bots: `art/src/bots/<Name>/{head,body}.luau`, assembled as head + `common.luau` + body.
+- Items: `art/src/items/<Name>.luau`, assembled as `rarity.luau` + `common.luau` + item.
+
+Loop for each change:
+1. Get the user to approve a sketch before modeling anything new.
+2. Edit `art/src`, then `scripts/assemble-model.sh <Name>`.
+3. `scripts/view-model.sh <Name> <out.png>` (4 turntable angles). Shrink the render before viewing it to save context.
+4. `scripts/checkpoint-model.sh <n> "<msg>"` on `models`, bring the changed paths onto the code branch with `git checkout origin/models -- <paths>`, commit, push, and send the user the screenshot.
+
+Rules:
+- Batch small models into one pass.
+- Shading layers: warp, weathering, edge highlights, contact shadows, gradient (`EDGE_HIGHLIGHT` 0.6, `CONTACT_SHADOW` 0.85, `GRADIENT` 0.5, `EDGE_BLEND` 0.7, `WARP` 0.0385). A part with `rust` 0 gets no warp or weathering; use it for glow cores.
+- Items carry the rarity accent color from `rarity.luau`. The legendary glow is painted only, with no light objects.

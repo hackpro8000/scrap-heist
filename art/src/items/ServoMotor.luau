@@ -1,0 +1,17 @@
+-- Servo Motor: rare loot, about 0.9 studs long. A boxy housing with a blue
+-- band, an output gear and horn on top, and a trailing wire.
+part("Housing", nil, DARK_STEEL, function(mesh)
+	box(mesh, 0, 0, 0, 0.8, 0.42, 0.5)
+	box(mesh, 0, 0, 0.3, 1.0, 0.42, 0.06)
+end, nil, 0.5)
+part("Band", nil, RARE, function(mesh)
+	box(mesh, 0, 0, 0.12, 0.82, 0.44, 0.12)
+end, nil, 0.2)
+part("Horn", nil, STEEL, function(mesh)
+	gear(mesh, 0.2, 0, 0.55, 0.13, 0.06, 10, "z")
+	box(mesh, 0.2, 0, 0.6, 0.5, 0.08, 0.04)
+end, nil, 0.4)
+part("Wire", nil, RUBBER_BLACK, function(mesh)
+	tube(mesh, { { -0.4, 0, 0.2 }, { -0.6, 0.05, 0.12 }, { -0.7, 0.25, 0.03 } }, 0.035, 6)
+end, nil, RUBBER)
+finishParts()
