@@ -6,7 +6,7 @@
 -- fill the gaps between the yards.
 -- Yards are only plot slabs here: the game drops the Yard Layout template
 -- onto each one, so every yard is built from the same pieces.
--- Labels: Ground, Road, Arena, Spawn, Plot1-Plot8, Spoke1-Spoke8,
+-- Labels: Ground, Road, Arena, ArenaEdge, Spawn, Plot1-Plot8, Spoke1-Spoke8,
 -- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4, Cones1-Cones8, and
 -- Wedge<w><ring>_<n> props between the yards.
 local YARD_RADIUS = 90
@@ -94,6 +94,59 @@ slab("Spawn", function()
 	part("Pad", nil, MARK, function(mesh)
 		cylinder(mesh, 0, 0, 0.2 - ARENA_DEPTH, 6, 0.1, "z", 24)
 	end, nil, 0)
+end, 0, 0)
+
+-- A solid band following the arena circle between two angles, used for the
+-- floor stripes and the rim wall.
+local function arc(mesh, inner: number, outer: number, bottom: number, top: number, from: number, to: number)
+	local steps = math.max(1, math.ceil((to - from) / 4))
+	local rows = {}
+	for s = 0, steps do
+		local angle = math.rad(from + (to - from) * s / steps)
+		local c, n = math.cos(angle), math.sin(angle)
+		rows[s] = {
+			mesh:vertex(c * outer, n * outer, bottom),
+			mesh:vertex(c * outer, n * outer, top),
+			mesh:vertex(c * inner, n * inner, top),
+			mesh:vertex(c * inner, n * inner, bottom),
+		}
+	end
+	for s = 0, steps - 1 do
+		local a, b = rows[s], rows[s + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	mesh:face({ rows[0][4], rows[0][3], rows[0][2], rows[0][1] })
+	mesh:face(rows[steps])
+end
+
+-- The arena edge stands out from the yards around it: hazard stripes ring the
+-- fight floor, and a low concrete wall with yellow caps tops the bowl,
+-- broken where each spoke comes in.
+local STRIPES = 72
+slab("ArenaEdge", function()
+	local floor = 0.1 - ARENA_DEPTH
+	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
+		part(if k == 1 then "StripeYellow" else "StripeBlack", nil, color, function(mesh)
+			for s = k - 1, STRIPES - 1, 2 do
+				arc(mesh, ARENA_FLOOR - 2, ARENA_FLOOR - 0.2, floor, floor + 0.12, s * 360 / STRIPES, (s + 1) * 360 / STRIPES)
+			end
+		end, nil, 0.2)
+	end
+	part("Wall", nil, CONCRETE, function(mesh)
+		for i = 1, 8 do
+			local from = (i - 1) * 45
+			arc(mesh, ROAD_INNER - 1.2, ROAD_INNER - 0.4, -0.5, 0.9, from + 5, from + 40)
+		end
+	end, nil, 0.4)
+	part("WallCap", nil, MARK, function(mesh)
+		for i = 1, 8 do
+			local from = (i - 1) * 45
+			arc(mesh, ROAD_INNER - 1.3, ROAD_INNER - 0.3, 0.9, 1.05, from + 5, from + 40)
+		end
+	end, nil, 0.3)
 end, 0, 0)
 
 -- Each plot is turned so its gate (local -y) faces the arena.
