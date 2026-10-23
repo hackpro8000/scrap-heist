@@ -186,6 +186,9 @@ local function hopperSupports(mesh, cx, scale, tier)
 	for _, c in { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } } do
 		local h0, h1 = wallHalf(0), wallHalf(0.95)
 		strut(mesh, cx + c[1] * h0, c[2] * h0, bottomZ, cx + c[1] * h1, c[2] * h1, bottomZ + height * 0.95, thick)
+		-- Gusset at the rib's foot, welding it to the funnel's base corner.
+		local w0 = h0 - gap + 0.03
+		strut(mesh, cx + c[1] * w0, c[2] * w0, bottomZ + 0.05, cx + c[1] * h0, c[2] * h0, bottomZ + 0.05, thick * 1.3)
 	end
 	-- Hoop bands clamped around the funnel.
 	local bands = if tier == 1 then { 0.5 } elseif tier == 2 then { 0.3, 0.75 } else { 0.2, 0.5, 0.8 }
@@ -194,6 +197,12 @@ local function hopperSupports(mesh, cx, scale, tier)
 		for _, side in { -1, 1 } do
 			strut(mesh, cx - h, side * h, z, cx + h, side * h, z, thick)
 			strut(mesh, cx + side * h, -h, z, cx + side * h, h, z, thick)
+			-- Weld clips tying the band back to the wall so it doesn't float.
+			local wall = h - gap + 0.03
+			for _, along in { -0.5, 0.5 } do
+				strut(mesh, cx + along * h, side * wall, z, cx + along * h, side * h, z, thick * 1.3)
+				strut(mesh, cx + side * wall, along * h, z, cx + side * h, along * h, z, thick * 1.3)
+			end
 		end
 	end
 end
