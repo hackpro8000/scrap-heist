@@ -6,7 +6,7 @@
 -- fill the gaps between the yards.
 -- Yards are only plot slabs here: the game drops the Yard Layout template
 -- onto each one, so every yard is built from the same pieces.
--- Labels: Ground, Road, Arena, ArenaEdge, Spawn, Plot1-Plot8, Spoke1-Spoke8,
+-- Labels: Ground, Road, Arena, ArenaEdge, Spawn, Crusher, CrusherCar, Plot1-Plot8, Spoke1-Spoke8,
 -- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4, Cones1-Cones8, and
 -- Wedge<w><ring>_<n> props between the yards.
 local YARD_RADIUS = 90
@@ -90,11 +90,50 @@ slab("Arena", function()
 		cylinder(mesh, 0, 0, -ARENA_DEPTH, ARENA_FLOOR, 0.2, "z", 48)
 	end, nil, 0)
 end, 0, 0)
+-- New players start on the ring around the crusher.
 slab("Spawn", function()
 	part("Pad", nil, MARK, function(mesh)
-		cylinder(mesh, 0, 0, 0.2 - ARENA_DEPTH, 6, 0.1, "z", 24)
+		ring(mesh, 0, 0, 0.2 - ARENA_DEPTH, 6.5, 8.5, 0.1, "z", 32)
 	end, nil, 0)
 end, 0, 0)
+
+-- The crusher, the arena's centrepiece: a hydraulic press over a sunken
+-- bed, four pillars carrying a crossbeam, and a press head held up over a
+-- half-flattened car.
+local PRESS_TOP = 11
+slab("Crusher", function()
+	local floor = 0.1 - ARENA_DEPTH
+	part("Bed", nil, DARK_STEEL, function(mesh)
+		box(mesh, 0, 0, floor + 0.3, 9, 9, 0.6)
+	end, nil, 0.6)
+	part("BedPlate", nil, STEEL, function(mesh)
+		box(mesh, 0, 0, floor + 0.65, 7, 7, 0.1)
+	end, nil, 0.3)
+	part("Pillars", nil, MARK, function(mesh)
+		for _, sx in { -1, 1 } do
+			for _, sy in { -1, 1 } do
+				box(mesh, sx * 3.9, sy * 3.9, floor + PRESS_TOP / 2, 1, 1, PRESS_TOP)
+			end
+		end
+	end, nil, 0.5)
+	part("Crossbeam", nil, DARK_STEEL, function(mesh)
+		box(mesh, 0, 0, floor + PRESS_TOP + 0.6, 9, 9, 1.2)
+		for _, sx in { -3.9, 3.9 } do
+			box(mesh, sx, 0, floor + PRESS_TOP + 1.4, 1.2, 9, 0.4)
+		end
+	end, nil, 0.7)
+	part("Piston", nil, STEEL, function(mesh)
+		cylinder(mesh, 0, 0, floor + PRESS_TOP - 1.5, 0.9, 3, "z", 16)
+		cylinder(mesh, 0, 0, floor + PRESS_TOP + 2.2, 1.6, 2, "z", 16)
+	end, nil, 0.2)
+	part("Head", nil, DARK_STEEL, function(mesh)
+		box(mesh, 0, 0, floor + PRESS_TOP - 3.5, 6.6, 6.6, 1)
+	end, nil, 0.6)
+	part("HeadStripe", nil, MARK, function(mesh)
+		box(mesh, 0, 0, floor + PRESS_TOP - 4.05, 6.7, 6.7, 0.1)
+	end, nil, 0.3)
+end, 0, 0)
+place("CrusherCar", buildCrushedCar, 0, 0, 0.8 - ARENA_DEPTH, 30)
 
 -- A solid band following the arena circle between two angles, used for the
 -- floor stripes and the rim wall.
