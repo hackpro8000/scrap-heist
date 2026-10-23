@@ -87,7 +87,9 @@ pub fn write(parts: &[Part], bones: &[Bone]) -> Vec<u8> {
 		let view = push_view(&mut bin, &part.image.borrow().encode_png(), None);
 		images.push(format!("{{\"bufferView\":{view},\"mimeType\":\"image/png\"}}"));
 		textures.push(format!("{{\"source\":{index}}}"));
-		let glow = if part.emissive { format!(",\"emissiveTexture\":{{\"index\":{index}}},\"emissiveFactor\":[1,1,1]") } else { String::new() };
+		let glow = if part.emissive > 0.0 {
+			format!(",\"emissiveTexture\":{{\"index\":{index}}},\"emissiveFactor\":[1,1,1],\"extensions\":{{\"KHR_materials_emissive_strength\":{{\"emissiveStrength\":{}}}}}", part.emissive)
+		} else { String::new() };
 		materials.push(format!(
 			"{{\"name\":\"{}\",\"pbrMetallicRoughness\":{{\"baseColorTexture\":{{\"index\":{index}}},\"metallicFactor\":0,\"roughnessFactor\":1}}{glow}}}",
 			part.name
@@ -139,10 +141,11 @@ pub fn write(parts: &[Part], bones: &[Bone]) -> Vec<u8> {
 		let skeleton = first + bones.iter().position(|b| b.parent.is_none()).unwrap_or(0);
 		skins = format!(",\"skins\":[{{\"inverseBindMatrices\":{},\"skeleton\":{skeleton},\"joints\":[{}]}}]", accessors.len() - 1, joints.join(","));
 	}
+	let extensions = if parts.iter().any(|p| p.emissive > 0.0) { ",\"extensionsUsed\":[\"KHR_materials_emissive_strength\"]" } else { "" };
 	let root_list: Vec<String> = roots.iter().map(|r| r.to_string()).collect();
 
 	let mut json = format!(
-		"{{\"asset\":{{\"version\":\"2.0\",\"generator\":\"modelkit\"}},\"scene\":0,\"scenes\":[{{\"nodes\":[{}]}}],\"nodes\":[{}],\"meshes\":[{}],\"materials\":[{}],\"textures\":[{}],\"images\":[{}],\"accessors\":[{}],\"bufferViews\":[{}],\"buffers\":[{{\"byteLength\":{}}}]{skins}}}",
+		"{{\"asset\":{{\"version\":\"2.0\",\"generator\":\"modelkit\"}},\"scene\":0,\"scenes\":[{{\"nodes\":[{}]}}],\"nodes\":[{}],\"meshes\":[{}],\"materials\":[{}],\"textures\":[{}],\"images\":[{}],\"accessors\":[{}],\"bufferViews\":[{}],\"buffers\":[{{\"byteLength\":{}}}]{skins}{extensions}}}",
 		root_list.join(","),
 		nodes.join(","),
 		meshes.join(","),
