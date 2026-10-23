@@ -6,7 +6,7 @@
 -- fill the gaps between the yards.
 -- Yards are only plot slabs here: the game drops the Yard Layout template
 -- onto each one, so every yard is built from the same pieces.
--- Labels: Ground, Road, Arena, ArenaEdge, Spawn, Crusher, CrusherCar, Plot1-Plot8, Spoke1-Spoke8,
+-- Labels: Ground, Road, Arena, ArenaEdge, Spawn, Beacon, Plot1-Plot8, Spoke1-Spoke8,
 -- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4, Cones1-Cones8, and
 -- Wedge<w><ring>_<n> props between the yards.
 local YARD_RADIUS = 90
@@ -100,73 +100,59 @@ end, 0, 0)
 -- The crusher, the arena's centrepiece: a hydraulic press over a sunken
 -- bed, four pillars carrying a crossbeam, and a press head held up over a
 -- half-flattened car.
-local PRESS_TOP = 11
-slab("Crusher", function()
+-- The storm beacon: a mast with a glowing core that lights up when a storm
+-- round starts, visible from every yard.
+local MAST_TOP = 24
+local CORE_Z = 15
+local STORM_GLOW = { 0.35, 0.85, 1 }
+slab("Beacon", function()
 	local floor = 0.1 - ARENA_DEPTH
-	part("Bed", nil, DARK_STEEL, function(mesh)
-		box(mesh, 0, 0, floor, 9, 9, 0.6)
-	end, nil, 0.6)
-	part("BedPlate", nil, STEEL, function(mesh)
-		box(mesh, 0, 0, floor + 0.6, 7, 7, 0.1)
-	end, nil, 0.3)
-	part("Pillars", nil, MARK, function(mesh)
-		for _, sx in { -1, 1 } do
-			for _, sy in { -1, 1 } do
-				box(mesh, sx * 3.9, sy * 3.9, floor, 1, 1, PRESS_TOP)
-			end
-		end
+	part("Plinth", nil, CONCRETE, function(mesh)
+		cylinder(mesh, 0, 0, floor + 0.6, 4.5, 1.2, "z", 8)
+		cylinder(mesh, 0, 0, floor + 1.5, 3.4, 0.6, "z", 8)
 	end, nil, 0.5)
-	part("Crossbeam", nil, DARK_STEEL, function(mesh)
-		box(mesh, 0, 0, floor + PRESS_TOP, 9, 9, 1.2)
-		for _, sx in { -3.9, 3.9 } do
-			box(mesh, sx, 0, floor + PRESS_TOP + 1.2, 1.2, 9, 0.4)
-		end
-	end, nil, 0.7)
-	part("Piston", nil, STEEL, function(mesh)
-		cylinder(mesh, 0, 0, floor + 8.5, 0.9, 5, "z", 16)
-		cylinder(mesh, 0, 0, floor + PRESS_TOP + 2.2, 1.6, 2, "z", 16)
-	end, nil, 0.2)
-	part("Head", nil, DARK_STEEL, function(mesh)
-		box(mesh, 0, 0, floor + 5, 6.6, 6.6, 1)
-	end, nil, 0.6)
-	part("HeadStripe", nil, MARK, function(mesh)
-		box(mesh, 0, 0, floor + 4.9, 6.7, 6.7, 0.1)
+	part("PlinthStripe", nil, MARK, function(mesh)
+		ring(mesh, 0, 0, floor + 1.15, 4.4, 4.55, 0.25, "z", 8)
 	end, nil, 0.3)
-	part("Feet", nil, DARK_STEEL, function(mesh)
-		for _, sx in { -1, 1 } do
-			for _, sy in { -1, 1 } do
-				box(mesh, sx * 3.9, sy * 3.9, floor, 1.8, 1.8, 0.8)
+	-- Four legs leaning in towards the top, tied together with braces.
+	part("Mast", nil, DARK_STEEL, function(mesh)
+		local legs = 12
+		for i = 0, legs - 1 do
+			local t = i / legs
+			local z = floor + 1.8 + t * (MAST_TOP - 1.8)
+			local half = 2.2 - t * 1.4
+			for _, sx in { -1, 1 } do
+				for _, sy in { -1, 1 } do
+					box(mesh, sx * half, sy * half, z, 0.45, 0.45, (MAST_TOP - 1.8) / legs + 0.05)
+				end
+			end
+			if i % 2 == 0 and math.abs(z - floor - CORE_Z) > 2.5 then
+				box(mesh, 0, half, z, half * 2, 0.25, 0.25)
+				box(mesh, 0, -half, z, half * 2, 0.25, 0.25)
+				box(mesh, half, 0, z, 0.25, half * 2, 0.25)
+				box(mesh, -half, 0, z, 0.25, half * 2, 0.25)
 			end
 		end
 	end, nil, 0.6)
-	-- Guide rails the head slides along, on the inner face of each pillar.
-	part("Rails", nil, STEEL, function(mesh)
-		for _, sx in { -1, 1 } do
-			for _, sy in { -1, 1 } do
-				box(mesh, sx * 3.3, sy * 3.3, floor + 0.7, 0.25, 0.25, PRESS_TOP - 0.7)
-			end
+	part("Core", nil, STORM_GLOW, function(mesh)
+		cylinder(mesh, 0, 0, floor + CORE_Z, 1.1, 3, "z", 16)
+	end, nil, 0)
+	part("CoreCage", nil, STEEL, function(mesh)
+		ring(mesh, 0, 0, floor + CORE_Z - 1.6, 1.3, 1.6, 0.3, "z", 16)
+		ring(mesh, 0, 0, floor + CORE_Z + 1.6, 1.3, 1.6, 0.3, "z", 16)
+		for k = 0, 5 do
+			local angle = math.rad(k * 60)
+			box(mesh, math.cos(angle) * 1.45, math.sin(angle) * 1.45, floor + CORE_Z - 1.6, 0.18, 0.18, 3.2)
 		end
+	end, nil, 0.3)
+	part("Rod", nil, STEEL, function(mesh)
+		cylinder(mesh, 0, 0, floor + MAST_TOP + 2.5, 0.15, 5, "z", 8)
+		cylinder(mesh, 0, 0, floor + MAST_TOP + 0.3, 1.2, 0.6, "z", 12)
 	end, nil, 0.2)
-	part("Hoses", nil, { 0.1, 0.1, 0.1 }, function(mesh)
-		-- Two hydraulic lines run down the outside of one pillar to the bed.
-		for _, y in { 3.6, 4.2 } do
-			cylinder(mesh, 4.6, y, floor + (PRESS_TOP + 2.2) / 2, 0.15, PRESS_TOP + 2.2, "z", 8)
-			box(mesh, 2.7, y, floor + PRESS_TOP + 2, 3.8, 0.3, 0.3)
-		end
-	end, nil, 0.9)
-	part("ControlPanel", nil, MARK, function(mesh)
-		box(mesh, 6.5, -3, floor, 1, 1.4, 2.2)
-	end, nil, 0.5)
-	part("Lever", nil, { 0.7, 0.1, 0.1 }, function(mesh)
-		box(mesh, 6.5, -3, floor + 2.2, 0.15, 0.15, 0.9)
-		box(mesh, 6.5, -3, floor + 3.1, 0.35, 0.35, 0.35)
-	end, nil, 0.4)
-	part("Stains", nil, { 0.05, 0.05, 0.04 }, function(mesh)
-		cylinder(mesh, 3, 5.5, floor + 0.01, 1.4, 0.02, "z", 12)
-		cylinder(mesh, -5.6, 1.5, floor + 0.01, 0.9, 0.02, "z", 12)
-	end, nil, 1)
+	part("RodTip", nil, STORM_GLOW, function(mesh)
+		cylinder(mesh, 0, 0, floor + MAST_TOP + 5.2, 0.35, 0.5, "z", 8)
+	end, nil, 0)
 end, 0, 0)
-place("CrusherCar", buildCrushedCar, 0, 0, 0.8 - ARENA_DEPTH, 30)
 
 -- A solid band following the arena circle between two angles, used for the
 -- floor stripes and the rim wall.
