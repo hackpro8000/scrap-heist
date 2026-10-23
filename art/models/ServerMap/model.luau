@@ -51,6 +51,9 @@ end
 -- The assembler fills this with a hash of each used model's source, so
 -- place() can build each model once and reuse it at every placement.
 local buildKeys = {}
+-- And a hash of each slab body with the code around it, by the line its
+-- function starts on, so placeSlab() can reuse an unchanged slab.
+local slabKeys = {}
 local builtParts = nil
 
 local function addPart(name, mesh, image, preview, emissive)
@@ -63,6 +66,9 @@ end
 model.part = function(name, mesh, image, options)
 	local preview = if options and options.preview ~= nil then options.preview else true
 	if builtParts then
+		if skipPart(name) then
+			return
+		end
 		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview, emissive = options and options.emissive })
 		return
 	end
@@ -93,6 +99,31 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 		addPart(part.name, part.mesh:moved(turn0, x0, y0, z0), part.image, part.preview, part.emissive)
 	end
 	placeX, placeY, placeZ, placeTurn = x0, y0, z0, turn0
+end
+
+-- Places a piece built where it stands. Its paint can depend on where it
+-- stands, so it is cached in place, keyed on its source and placement.
+-- finish(), if given, runs after build() inside the cached build.
+local function placeSlab(label: string, build: () -> (), x: number, y: number, turn: number?, finish: (() -> ())?)
+	local key = slabKeys[debug.info(build, "l")]
+	if not key then
+		error(`slab {label} has no cache key; start its body on a line ending in "function()"`)
+	end
+	placeLabel = label
+	placeX, placeY, placeZ, placeTurn = x, y, 0, math.rad(turn or 0)
+	placeStretch, placeAxis = 1, "x"
+	for _, part in model.cached(`{key} {label} {x} {y} {turn or 0}`, function()
+		builtParts = {}
+		build()
+		if finish then
+			finish()
+		end
+		local built = builtParts
+		builtParts = nil
+		return built
+	end) do
+		addPart(part.name, part.mesh, part.image, part.preview, part.emissive)
+	end
 end
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -1291,7 +1322,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildShippingContainer] = "ShippingContainer-6be95bd060b5713f"
+buildKeys[buildShippingContainer] = "ShippingContainer-64b3313e1f18aa5e"
 local function buildCarStack()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -1901,7 +1932,7 @@ end, nil, 0.3)
 
 finishParts()
 end
-buildKeys[buildCarStack] = "CarStack-7fa0e56d49777967"
+buildKeys[buildCarStack] = "CarStack-b8c1af92c654bb0f"
 local function buildCrushedCar()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -2511,7 +2542,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildCrushedCar] = "CrushedCar-420218d74315078a"
+buildKeys[buildCrushedCar] = "CrushedCar-69106d1e92114aeb"
 local function buildBarrels()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -3121,7 +3152,7 @@ end, nil, 0)
 
 finishParts()
 end
-buildKeys[buildBarrels] = "Barrels-301ea1c4a6778c00"
+buildKeys[buildBarrels] = "Barrels-bdcf735e6a0bf42e"
 local function buildTyreStack()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -3716,7 +3747,7 @@ end, nil, 0.8)
 
 finishParts()
 end
-buildKeys[buildTyreStack] = "TyreStack-19cbf5de90bc070b"
+buildKeys[buildTyreStack] = "TyreStack-e5e5e8033c227f6a"
 local function buildJunkWall()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -4324,7 +4355,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildJunkWall] = "JunkWall-8decfcccfd28fd76"
+buildKeys[buildJunkWall] = "JunkWall-3c28df78fcca3e2f"
 local function buildDumpster()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -4946,7 +4977,7 @@ end, nil, RUBBER)
 
 finishParts()
 end
-buildKeys[buildDumpster] = "Dumpster-deccb80340d79101"
+buildKeys[buildDumpster] = "Dumpster-df32c1a564eba7ab"
 local function buildPallets()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -5554,7 +5585,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildPallets] = "Pallets-b2d793cac3fcbf01"
+buildKeys[buildPallets] = "Pallets-01c3fc379b26189b"
 local function buildStreetlightBroken()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -6156,7 +6187,7 @@ end, nil, 0.3)
 
 finishParts()
 end
-buildKeys[buildStreetlightBroken] = "StreetlightBroken-3c0e9c82ea453fe2"
+buildKeys[buildStreetlightBroken] = "StreetlightBroken-a94f4e451e31565a"
 local function buildTrafficCones()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -6767,7 +6798,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildTrafficCones] = "TrafficCones-aed8396b07a44713"
+buildKeys[buildTrafficCones] = "TrafficCones-f0035c05780362af"
 local function buildGroundTile()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -7368,7 +7399,7 @@ part("Scrap", nil, DARK_STEEL, function(mesh)
 end, nil, 0.7)
 finishParts()
 end
-buildKeys[buildGroundTile] = "GroundTile-a51fb3ae52500f4d"
+buildKeys[buildGroundTile] = "GroundTile-819b19d4e4649a0d"
 local function buildMachinePad()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -7984,7 +8015,7 @@ part("Hardware", nil, STEEL, function(mesh)
 end, nil, 0.45)
 finishParts()
 end
-buildKeys[buildMachinePad] = "MachinePad-06b7cac05ca7f0a2"
+buildKeys[buildMachinePad] = "MachinePad-355033c0fb0f6d36"
 local function buildYardFence()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -8601,7 +8632,7 @@ part("Fittings", nil, DARK_STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildYardFence] = "YardFence-37c6d57d3f4fc91e"
+buildKeys[buildYardFence] = "YardFence-716b1282dc4bd746"
 local function buildYardFenceHalf()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -9218,7 +9249,7 @@ part("Fittings", nil, DARK_STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildYardFenceHalf] = "YardFenceHalf-668c811454045ba3"
+buildKeys[buildYardFenceHalf] = "YardFenceHalf-92cd6932f51eb217"
 local function buildYardGate()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -9848,7 +9879,7 @@ part("Hardware", nil, DARK_STEEL, function(mesh)
 end, nil, 0.55)
 finishParts()
 end
-buildKeys[buildYardGate] = "YardGate-aba433d40a7bedd9"
+buildKeys[buildYardGate] = "YardGate-cd6a3dba530da6f7"
 local function buildPlotMarker()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -10472,7 +10503,7 @@ part("Fittings", nil, STEEL, function(mesh)
 end, nil, 0.5)
 finishParts()
 end
-buildKeys[buildPlotMarker] = "PlotMarker-af1a0a3bc61d4c2b"
+buildKeys[buildPlotMarker] = "PlotMarker-749328c3302befeb"
 local function buildStorageCrate()
 -- Storage crate: a lopsided green scrap bin that flares toward its wobbly rim,
 -- leaning and twisting as it rises. Bolted patch plates cover its sides, a
@@ -11122,7 +11153,7 @@ local trimMesh = trim()
 local hazardMesh, stripes = hazard()
 
 bodyMesh:unwrap()
-local green = Image.new(2048, 2048, color(BODY))
+local green = Image.new(1024, 1024, color(BODY))
 bodyMesh:paintShading(green, { bands = 6, occluders = { bolts, plateMesh, trimMesh, hazardMesh } })
 
 plateMesh:unwrap()
@@ -11193,7 +11224,7 @@ for number, level in FILL_LEVELS do
 	end
 end
 end
-buildKeys[buildStorageCrate] = "StorageCrate-c394703910d8b0e2"
+buildKeys[buildStorageCrate] = "StorageCrate-59186935d74efa17"
 local function buildYardPath()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -11814,7 +11845,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildYardPath] = "YardPath-bb05fa1b63c89b3f"
+buildKeys[buildYardPath] = "YardPath-ad9f59fce436f384"
 local function buildYardPathStub()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -12427,7 +12458,19 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildYardPathStub] = "YardPathStub-38eef3d642937902"
+buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
+slabKeys[12615] = "5a273ec959e81fed-68509606c092d9cd"
+slabKeys[12725] = "5a273ec959e81fed-5e88646b4708a202"
+slabKeys[12731] = "5a273ec959e81fed-f8f4f9cdd6dd6cae"
+slabKeys[12763] = "5a273ec959e81fed-b818e7bc3229e16b"
+slabKeys[12853] = "5a273ec959e81fed-20301616b877a579"
+slabKeys[12904] = "5a273ec959e81fed-7262ef2655abf3cf"
+slabKeys[12949] = "5a273ec959e81fed-4423e3810a3e5ce4"
+slabKeys[13019] = "5a273ec959e81fed-9519d293b472b9ba"
+slabKeys[13024] = "5a273ec959e81fed-08fbe9bb8b1a6d5a"
+slabKeys[13031] = "5a273ec959e81fed-ec0277225e552e1d"
+slabKeys[13040] = "5a273ec959e81fed-b3cfbefdd31cb9f1"
+slabKeys[13107] = "5a273ec959e81fed-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -12457,11 +12500,10 @@ local ROCK = { 0.42, 0.37, 0.31 }
 
 -- Places one flat piece built here rather than from a model.
 local function slab(label: string, build: () -> (), x: number, y: number, turn: number?)
-	place(label, function()
-		build()
+	placeSlab(label, build, x, y, turn, function()
 		finishParts()
 		table.clear(parts)
-	end, x, y, 0, turn)
+	end)
 end
 
 local function polar(radius: number, degrees: number): (number, number)
@@ -12476,8 +12518,19 @@ local function smoothstep(low: number, high: number, value: number): number
 	return t * t * (3 - 2 * t)
 end
 
+-- The arena is a hexagon with corners every 60 degrees from +x. hexScale is
+-- how far its edge reaches at an angle, as a fraction of the corner radius.
+local function hexScale(degrees: number): number
+	return math.cos(math.rad(30)) / math.cos(math.rad(degrees % 60 - 30))
+end
+
+-- Distance measured so every point on a hexagon of corner radius R reads R.
+local function hexRadius(x: number, y: number): number
+	return math.sqrt(x * x + y * y) / hexScale(math.deg(math.atan2(y, x)))
+end
+
 local function heightAt(x: number, y: number): number
-	local radius = math.sqrt(x * x + y * y)
+	local radius = hexRadius(x, y)
 	return -ARENA_DEPTH * (1 - smoothstep(ARENA_FLOOR, ROAD_INNER - 2, radius))
 end
 
@@ -12671,7 +12724,7 @@ local function bridgeGirders(degrees: number, cx: number, cy: number)
 end
 slab("Arena", function()
 	part("Floor", nil, CONCRETE, function(mesh)
-		cylinder(mesh, 0, 0, -ARENA_DEPTH, ARENA_FLOOR, 0.2, "z", 48)
+		cylinder(mesh, 0, 0, -ARENA_DEPTH, ARENA_FLOOR, 0.2, "z", 6)
 	end, nil, arenaConcrete, 2048)
 end, 0, 0)
 -- New players start on the ring around the crusher.
@@ -12752,14 +12805,29 @@ slab("Beacon", function()
 	end, nil, 0.3, TOWER_TEXTURE)
 end, 0, 0)
 
--- A solid band following the arena circle between two angles, used for the
--- floor stripes and the rim wall.
-local function arc(mesh, inner: number, outer: number, bottom: number, top: number, from: number, to: number)
+-- A solid band following a circle between two angles, used for the kerb,
+-- floor stripes and rim wall. With `hex` it follows the arena hexagon instead,
+-- with a row on every corner it passes so the corners stay sharp.
+local function arc(mesh, inner: number, outer: number, bottom: number, top: number, from: number, to: number, hex: boolean?)
+	local angles = {}
 	local steps = math.max(1, math.ceil((to - from) / 4))
+	for s = 0, steps do
+		table.insert(angles, from + (to - from) * s / steps)
+	end
+	if hex then
+		for corner = math.floor(from / 60 + 1) * 60, to - 0.01, 60 do
+			if math.abs((corner - from) % ((to - from) / steps)) > 0.01 then
+				table.insert(angles, corner)
+			end
+		end
+		table.sort(angles)
+	end
+	steps = #angles - 1
 	local rows = {}
 	for s = 0, steps do
-		local angle = math.rad(from + (to - from) * s / steps)
-		local c, n = math.cos(angle), math.sin(angle)
+		local scale = if hex then hexScale(angles[s + 1]) else 1
+		local angle = math.rad(angles[s + 1])
+		local c, n = math.cos(angle) * scale, math.sin(angle) * scale
 		rows[s] = {
 			mesh:vertex(c * outer, n * outer, bottom),
 			mesh:vertex(c * outer, n * outer, top),
@@ -12787,20 +12855,20 @@ slab("ArenaEdge", function()
 	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
 		part(if k == 1 then "StripeYellow" else "StripeBlack", nil, color, function(mesh)
 			for s = k - 1, STRIPES - 1, 2 do
-				arc(mesh, ARENA_FLOOR - 2, ARENA_FLOOR - 0.2, floor, floor + 0.12, s * 360 / STRIPES, (s + 1) * 360 / STRIPES)
+				arc(mesh, ARENA_FLOOR - 2, ARENA_FLOOR - 0.2, floor, floor + 0.12, s * 360 / STRIPES, (s + 1) * 360 / STRIPES, true)
 			end
 		end, nil, 0.2)
 	end
 	part("Wall", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
 			local from = (i - 1) * 45
-			arc(mesh, ROAD_INNER - 1.2, ROAD_INNER - 0.4, -0.5, 0.9, from + 5, from + 40)
+			arc(mesh, ROAD_INNER - 1.2, ROAD_INNER - 0.4, -0.5, 0.9, from + 5, from + 40, true)
 		end
 	end, nil, 0.4)
 	part("WallCap", nil, MARK, function(mesh)
 		for i = 1, 8 do
 			local from = (i - 1) * 45
-			arc(mesh, ROAD_INNER - 1.3, ROAD_INNER - 0.3, 0.9, 1.05, from + 5, from + 40)
+			arc(mesh, ROAD_INNER - 1.3, ROAD_INNER - 0.3, 0.9, 1.05, from + 5, from + 40, true)
 		end
 	end, nil, 0.3)
 end, 0, 0)
