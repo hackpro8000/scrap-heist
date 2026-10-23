@@ -517,10 +517,13 @@ for tier = 1, 3 do
 	end
 	box(frame, cx, 0, 1.2 * scale, 2.2 * scale, 1.8 * scale, 0.9 * scale)
 	local rollerCount = tier + 1
-	local rollerRadius = 0.28 * scale * 2 / rollerCount * (if rollerCount > 2 then 1.15 else 1)
+	-- Rollers share the hopper's whole floor, teeth just meshing, so scrap
+	-- has nowhere to land but between them.
+	local throatWidth = 1.9 * scale
+	local rollerRadius = throatWidth / rollerCount / 2 * 1.05
 	local rollerYs = {}
 	for i = 1, rollerCount do
-		rollerYs[i] = ((i - 1) / (rollerCount - 1) - 0.5) * 0.6 * scale
+		rollerYs[i] = ((i - 0.5) / rollerCount - 0.5) * throatWidth
 	end
 	reinforcement(frame, cx, scale, tier, rollerYs, rollerRadius)
 	part(`{group}_Frame`, frame, FRAME, group, LARGE_TEXTURE, frameColor(cx, scale, wear))
@@ -563,18 +566,6 @@ for tier = 1, 3 do
 		end
 	end
 	part(`{group}_Rollers`, rollers, ROLLER, group, SMALL_TEXTURE)
-
-	-- Throat deck filling the hopper's floor either side of the rollers, up
-	-- to the roller shafts, so nothing falls past them into the housing.
-	local throat = warpedMesh(warp)
-	local throatHalf = 0.95 * scale
-	local rollerEdge = rollerYs[#rollerYs] + rollerRadius * 0.85
-	local deckZ = 2.1 * scale - 0.05
-	for _, side in { -1, 1 } do
-		local width = throatHalf - rollerEdge
-		box(throat, cx, side * (rollerEdge + width / 2), deckZ, 2 * throatHalf, width, 2.15 * scale - deckZ + rollerRadius * 0.3)
-	end
-	part(`{group}_Throat`, throat, FRAME, group, SMALL_TEXTURE)
 
 	if tier > 1 then
 		-- Guards hiding the drive, shaped like stamped covers: flat sides
