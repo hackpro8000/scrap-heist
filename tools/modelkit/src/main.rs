@@ -115,25 +115,30 @@ impl UserData for MeshHandle {
 			Ok(bake::unwrap(&mut this.0.borrow_mut(), margin.unwrap_or(0.01)))
 		});
 		// Paints each texel the color fn(x, y, z, nx, ny, nz) returns for the
-		// surface point behind it.
+		// surface point behind it, averaged over a 2×2 grid of points per texel
+		// so stripes and edges come out anti-aliased.
 		methods.add_method("paint", |_, this, (image, color): (AnyUserData, mlua::Function)| {
 			let image = image.borrow::<ImageHandle>()?.0.clone();
 			let (width, height) = {
 				let image = image.borrow();
 				(image.width, image.height)
 			};
-			let texels = bake::texels(&this.0.borrow(), width, height);
-			let mut colors = Vec::with_capacity(texels.len());
-			for t in &texels {
+			let samples = bake::samples(&this.0.borrow(), width, height, 2);
+			let mut sums = vec![[0.0f32; 4]; width * height];
+			for t in &samples {
 				let [x, y, z] = t.position;
 				let [nx, ny, nz] = t.normal;
-				colors.push(color.call::<(f32, f32, f32)>((x, y, z, nx, ny, nz))?);
+				let (r, g, b) = color.call::<(f32, f32, f32)>((x, y, z, nx, ny, nz))?;
+				let sum = &mut sums[t.pixel];
+				*sum = [sum[0] + r, sum[1] + g, sum[2] + b, sum[3] + 1.0];
 			}
 			let mut image = image.borrow_mut();
 			let mut covered = vec![false; width * height];
-			for (t, (r, g, b)) in texels.iter().zip(colors) {
-				image.pixels[t.pixel] = [r, g, b];
-				covered[t.pixel] = true;
+			for (pixel, [r, g, b, n]) in sums.into_iter().enumerate() {
+				if n > 0.0 {
+					image.pixels[pixel] = [r / n, g / n, b / n];
+					covered[pixel] = true;
+				}
 			}
 			bake::dilate(&mut image.pixels, &mut covered, width, height, 8);
 			Ok(())

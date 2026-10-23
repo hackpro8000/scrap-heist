@@ -15,7 +15,7 @@ end
 
 -- Every map part is textured at one density so nothing reads sharper or
 -- blurrier than its neighbours. Props keep their own texture sizes.
-useTexelDensity(8)
+useTexelDensity(16)
 
 local YARD_RADIUS = 110
 local ROAD_INNER, ROAD_OUTER = 50, 58
