@@ -385,11 +385,8 @@ local function asphalt(u: number, v: number, half: number, seed: number): (numbe
 	local r, g, b = ROAD[1] * k, ROAD[2] * k, ROAD[3] * k * 1.02
 	local fade = math.clamp(0.75 + fbm(u * 2, v / 2, seed + 6) * 1.2 - lane * 0.3, 0, 1)
 	local edgeLine = math.abs(math.abs(u) - (half - 0.5)) < 0.1
-	local centreLine = math.abs(u) < 0.08 and (v % 4) < 2.2
 	if edgeLine then
 		return r + (0.82 - r) * fade, g + (0.8 - g) * fade, b + (0.74 - b) * fade
-	elseif centreLine then
-		return r + (MARK[1] - r) * fade, g + (MARK[2] - g) * fade, b + (MARK[3] - b) * fade
 	end
 	return r, g, b
 end
