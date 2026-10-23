@@ -87,8 +87,9 @@ pub fn write(parts: &[Part], bones: &[Bone]) -> Vec<u8> {
 		let view = push_view(&mut bin, &part.image.borrow().encode_png(), None);
 		images.push(format!("{{\"bufferView\":{view},\"mimeType\":\"image/png\"}}"));
 		textures.push(format!("{{\"source\":{index}}}"));
+		let glow = if part.emissive { format!(",\"emissiveTexture\":{{\"index\":{index}}},\"emissiveFactor\":[1,1,1]") } else { String::new() };
 		materials.push(format!(
-			"{{\"name\":\"{}\",\"pbrMetallicRoughness\":{{\"baseColorTexture\":{{\"index\":{index}}},\"metallicFactor\":0,\"roughnessFactor\":1}}}}",
+			"{{\"name\":\"{}\",\"pbrMetallicRoughness\":{{\"baseColorTexture\":{{\"index\":{index}}},\"metallicFactor\":0,\"roughnessFactor\":1}}{glow}}}",
 			part.name
 		));
 		meshes.push(format!(
