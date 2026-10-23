@@ -698,14 +698,14 @@ local function part(name, bone, color, build, smooth, rust, texture: number?, em
 	table.insert(parts, { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive })
 end
 
--- Large surfaces (terrain, roads, floors) are split into CHUNK-stud cubes,
--- each its own part with a 1024 texture, named <name>_<cx>_<cy>_<cz>. The
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
 -- build runs once into a recorder, then each face goes to the chunk holding
 -- its centre. Cells sit on the origin across, and centred on z = 0 up and
 -- down, so ground near sea level stays in one layer.
-local CHUNK = 128
-
 local function chunkedPart(name, bone, color, build, smooth, rust)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
 	local positions, faces = {}, {}
 	local recorder = {
 		vertex = function(_, x, y, z)
@@ -12531,19 +12531,19 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[12706] = "40134a42092b8bfa-5be81bc1ab283092"
-slabKeys[12859] = "40134a42092b8bfa-8f291df974f34236"
-slabKeys[12865] = "40134a42092b8bfa-f8f4f9cdd6dd6cae"
-slabKeys[12896] = "40134a42092b8bfa-cfb837b03ab263ad"
-slabKeys[12975] = "40134a42092b8bfa-45f1773a0c3d4692"
-slabKeys[13020] = "40134a42092b8bfa-ba14974c752a9757"
-slabKeys[13084] = "40134a42092b8bfa-38a291d6cf6e421e"
-slabKeys[13115] = "40134a42092b8bfa-dc02515c57e16914"
-slabKeys[13210] = "40134a42092b8bfa-f3271f231573d1f1"
-slabKeys[13215] = "40134a42092b8bfa-08fbe9bb8b1a6d5a"
-slabKeys[13222] = "40134a42092b8bfa-f278656b57891167"
-slabKeys[13231] = "40134a42092b8bfa-5d5d5a3a3e817dcb"
-slabKeys[13298] = "40134a42092b8bfa-5f3dede5e341fed8"
+slabKeys[12706] = "77246769d2aa3155-5be81bc1ab283092"
+slabKeys[12859] = "77246769d2aa3155-8f291df974f34236"
+slabKeys[12865] = "77246769d2aa3155-f8f4f9cdd6dd6cae"
+slabKeys[12896] = "77246769d2aa3155-cfb837b03ab263ad"
+slabKeys[12975] = "77246769d2aa3155-45f1773a0c3d4692"
+slabKeys[13020] = "77246769d2aa3155-ba14974c752a9757"
+slabKeys[13084] = "77246769d2aa3155-38a291d6cf6e421e"
+slabKeys[13115] = "77246769d2aa3155-dc02515c57e16914"
+slabKeys[13210] = "77246769d2aa3155-f3271f231573d1f1"
+slabKeys[13215] = "77246769d2aa3155-08fbe9bb8b1a6d5a"
+slabKeys[13222] = "77246769d2aa3155-f278656b57891167"
+slabKeys[13231] = "77246769d2aa3155-5d5d5a3a3e817dcb"
+slabKeys[13298] = "77246769d2aa3155-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -12561,7 +12561,7 @@ end
 
 -- Every map part is textured at one density so nothing reads sharper or
 -- blurrier than its neighbours. Props keep their own texture sizes.
-useTexelDensity(8)
+useTexelDensity(16)
 
 local YARD_RADIUS = 110
 local ROAD_INNER, ROAD_OUTER = 50, 58

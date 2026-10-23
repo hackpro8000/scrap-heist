@@ -221,6 +221,12 @@ pub struct Texel {
 }
 
 pub fn texels(mesh: &Mesh, width: usize, height: usize) -> Vec<Texel> {
+	samples(mesh, width, height, 1)
+}
+
+// Like texels, but tests a grid × grid pattern of points inside each pixel, so
+// a pixel can come back several times, once per covered sample.
+pub fn samples(mesh: &Mesh, width: usize, height: usize, grid: usize) -> Vec<Texel> {
 	let mut found = Vec::new();
 	for corners in mesh.triangles() {
 		let face_normal = normalize(cross(sub(corners[1].position, corners[0].position), sub(corners[2].position, corners[0].position)));
@@ -235,7 +241,11 @@ pub fn texels(mesh: &Mesh, width: usize, height: usize) -> Vec<Texel> {
 		let y1 = (p.iter().map(|q| q[1]).fold(f64::MIN, f64::max).ceil() as usize).min(height - 1);
 		for y in y0..=y1 {
 			for x in x0..=x1 {
-				let (fx, fy) = (x as f64, y as f64);
+			for sample in 0..grid * grid {
+				let (fx, fy) = (
+					x as f64 + ((sample % grid) as f64 + 0.5) / grid as f64 - 0.5,
+					y as f64 + ((sample / grid) as f64 + 0.5) / grid as f64 - 0.5,
+				);
 				let w0 = ((p[1][0] - fx) * (p[2][1] - fy) - (p[2][0] - fx) * (p[1][1] - fy)) / area;
 				let w1 = ((p[2][0] - fx) * (p[0][1] - fy) - (p[0][0] - fx) * (p[2][1] - fy)) / area;
 				let w2 = 1.0 - w0 - w1;
@@ -250,6 +260,7 @@ pub fn texels(mesh: &Mesh, width: usize, height: usize) -> Vec<Texel> {
 					normal: normalize(blend(&|k| corners[k].normal)),
 					face_normal,
 				});
+			}
 			}
 		}
 	}

@@ -55,9 +55,12 @@ Rules that keep rebuilds fast:
   over 20MB means a texture is oversized or the prop builds parts no layout
   shows. Check with `ls -laS art/models/<Layout>/.cache`.
 - Large meshes (terrain, roads, floors) are built with `chunkedPart`, which
-  splits them into 128-stud cubic chunks, each a part with a 1024×1024
-  texture named `<Part>_<cx>_<cy>_<cz>`. No single part spans more than one
-  chunk or uses a texture over 1024.
+  splits them into cubic chunks, each a part with a texture up to 1024×1024
+  named `<Part>_<cx>_<cy>_<cz>`. Chunks are 128 studs, or 1024 texels at the
+  layout's texel density when that is smaller (64 studs at 16 px/stud). No
+  single part spans more than one chunk or uses a texture over 1024.
+- `paint` averages a 2×2 grid of samples per texel, so painted stripes and
+  edges come out anti-aliased.
 - A layout can call `useTexelDensity(pixelsPerStud)` so each of its own parts
   sizes its texture from its UV scale (16 to 1024 px) instead of the fixed
   256 or a per-part override. Props in the layout keep their own sizes.
