@@ -264,7 +264,7 @@ part("Treads", treads, TREAD, function(mesh)
 		end
 	end
 	box(mesh, 0, 0, 0.3, 1.5, 1.6, 0.5)
-end)
+end, nil, 0)
 part("RoadWheels", treads, DARK_STEEL, function(mesh)
 	local radius = TREAD_HEIGHT / 2
 	for _, side in { -1, 1 } do
