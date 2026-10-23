@@ -6944,6 +6944,41 @@ local function arenaConcrete(x: number, y: number, _z: number)
 	k += if mark > 0 then mark * 0.4 else mark * 0.5
 	return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * (k - math.max(0, stain) * 0.04)
 end
+-- Bridge deck: riveted steel tread plates laid across the span, with dark
+-- seams, raised diamond treads worn smooth down the two wheel paths, and
+-- grime and rust bleeding in from the edges. Painted in the bridge's own
+-- frame so every bridge wears the same way along its length.
+local function bridgeDeck(degrees: number, cx: number, cy: number)
+	local angle = math.rad(degrees - 90)
+	local c, s = math.cos(angle), math.sin(angle)
+	return function(x: number, y: number, _z: number)
+		local u = (x - cx) * c + (y - cy) * s
+		local v = (y - cy) * c - (x - cx) * s
+		local edge = 3 - math.abs(u)
+		local wheel = math.exp(-((math.abs(u) - 1.4) / 0.5) ^ 2)
+		local k = 0.72 + fbm(u / 2, v / 2, 31) * 0.1
+		-- Diamond treads alternate direction, flattened where tyres run.
+		local du, dv = (u * 5) % 1 - 0.5, (v * 2.5) % 1 - 0.5
+		local flip = if math.floor(u * 5) % 2 == math.floor(v * 2.5) % 2 then 1 else -1
+		local tread = math.abs(du * 2 + flip * dv * 1.2) < 0.18 and math.abs(du) < 0.38
+		if tread then
+			k += 0.14 * (1 - wheel * 0.8)
+		end
+		k += wheel * (0.08 + fbm(u * 3, v / 4, 37) * 0.08)
+		-- Plate seams every 2 studs, with a bolt pair near each edge.
+		local seam = math.abs((v % 2) - 1)
+		if seam > 0.96 then
+			k -= 0.35
+		elseif seam > 0.86 and math.abs(edge - 0.35) < 0.1 then
+			k += 0.25
+		end
+		-- Edge grime and rust runs.
+		local grime = math.clamp(1 - edge / 0.9, 0, 1) * (0.6 + fbm(v / 1.5, u, 41) * 0.8)
+		k -= grime * 0.3 + math.max(0, warpedFbm(u / 3, v / 3, 43)) * 0.25
+		local rust = math.clamp(grime + math.max(0, fbm(u, v / 1.2, 47)) - 0.35, 0, 1)
+		return STEEL[1] * k + rust * 0.12, STEEL[2] * k + rust * 0.02, STEEL[3] * k - rust * 0.06
+	end
+end
 slab("Arena", function()
 	part("Floor", nil, CONCRETE, function(mesh)
 		cylinder(mesh, 0, 0, -ARENA_DEPTH, ARENA_FLOOR, 0.2, "z", 48)
@@ -7158,9 +7193,9 @@ for i = 1, 8 do
 		end, nil, 0)
 	end, x, y, degrees - 90)
 	slab(`Bridge{i}`, function()
-		part("Deck", nil, ROAD, function(mesh)
+		part("Deck", nil, STEEL, function(mesh)
 			box(mesh, 0, BRIDGE_MID, -0.2, 6, BRIDGE_LENGTH, 0.3)
-		end, nil, 0.1)
+		end, nil, bridgeDeck(degrees, x, y), 1024)
 		part("Girders", nil, DARK_STEEL, function(mesh)
 			for _, side in { -2.6, 2.6 } do
 				box(mesh, side, BRIDGE_MID, -1.4, 0.4, BRIDGE_LENGTH, 1.2)
