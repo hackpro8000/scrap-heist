@@ -30651,6 +30651,24 @@ end, 0, 0)
 -- The crusher, the arena's centrepiece: a hydraulic press over a sunken
 -- bed, four pillars carrying a crossbeam, and a press head held up over a
 -- half-flattened car.
+-- A square beam with flat ends running from one point up to another, for
+-- legs that lean.
+local function leg(mesh, x0: number, y0: number, z0: number, x1: number, y1: number, z1: number, width: number)
+	local h = width / 2
+	local corners = { { -h, -h }, { h, -h }, { h, h }, { -h, h } }
+	local base, cap = {}, {}
+	for k, c in corners do
+		base[k] = mesh:vertex(x0 + c[1], y0 + c[2], z0)
+		cap[k] = mesh:vertex(x1 + c[1], y1 + c[2], z1)
+	end
+	for k = 1, 4 do
+		local l = k % 4 + 1
+		mesh:face({ base[k], base[l], cap[l], cap[k] })
+	end
+	mesh:face(cap)
+	mesh:face({ base[4], base[3], base[2], base[1] })
+end
+
 -- The storm beacon: a mast with a glowing core that lights up when a storm
 -- round starts, visible from every yard.
 local MAST_TOP = 24
@@ -30664,24 +30682,23 @@ slab("Beacon", function()
 	part("PlinthStripe", nil, MARK, function(mesh)
 		ring(mesh, 0, 0, floor + 1.15, 4.4, 4.55, 0.25, "z", 8)
 	end, nil, 0.3)
-	-- Four legs leaning in towards the top, tied together with braces.
+	-- Four straight legs leaning in towards the top, tied together with braces.
 	part("Mast", nil, DARK_STEEL, function(mesh)
-		local legs = 12
-		for i = 0, legs - 1 do
-			local t = i / legs
-			local z = floor + 1.8 + t * (MAST_TOP - 1.8)
+		local bottom, top = floor + 1.8, floor + MAST_TOP
+		for _, sx in { -1, 1 } do
+			for _, sy in { -1, 1 } do
+				leg(mesh, sx * 2.2, sy * 2.2, bottom, sx * 0.8, sy * 0.8, top, 0.45)
+			end
+		end
+		local braces = 6
+		for i = 1, braces do
+			local t = i / braces
+			local z = bottom + t * (top - bottom) - 0.25
 			local half = 2.2 - t * 1.4
-			for _, sx in { -1, 1 } do
-				for _, sy in { -1, 1 } do
-					box(mesh, sx * half, sy * half, z, 0.45, 0.45, (MAST_TOP - 1.8) / legs + 0.05)
-				end
-			end
-			if i % 2 == 0 then
-				box(mesh, 0, half, z, half * 2, 0.25, 0.25)
-				box(mesh, 0, -half, z, half * 2, 0.25, 0.25)
-				box(mesh, half, 0, z, 0.25, half * 2, 0.25)
-				box(mesh, -half, 0, z, 0.25, half * 2, 0.25)
-			end
+			box(mesh, 0, half, z, half * 2, 0.25, 0.25)
+			box(mesh, 0, -half, z, half * 2, 0.25, 0.25)
+			box(mesh, half, 0, z, 0.25, half * 2, 0.25)
+			box(mesh, -half, 0, z, 0.25, half * 2, 0.25)
 		end
 	end, nil, 0.6)
 	part("CoreMount", nil, STEEL, function(mesh)
