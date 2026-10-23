@@ -120,11 +120,11 @@ for i, build in { buildShippingContainer, buildCarStack, buildCrushedCar, buildB
 	local x, y = polar(26, degrees)
 	place(`Cover{i}`, build, x, y, 0.2 - ARENA_DEPTH, degrees + 90)
 end
--- Bot spawn hatches in the arena floor by the bowl wall, between the spokes.
+-- Bot spawn hatches in the arena floor, inside the cover ring between the spokes.
 -- Storm bots climb out of these; the hazard rim marks where they emerge.
 for i = 1, 4 do
 	local degrees = (i - 0.75) * 90
-	local x, y = polar(ARENA_FLOOR - 3, degrees)
+	local x, y = polar(17, degrees)
 	slab(`Hatch{i}`, function()
 		local floor = 0.1 - ARENA_DEPTH
 		part("Rim", nil, MARK, function(mesh)
