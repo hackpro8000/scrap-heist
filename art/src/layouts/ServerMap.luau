@@ -1,19 +1,18 @@
--- uses: JunkMountain ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones ScrapTreeAntenna ScrapTreeExhaust ScrapTreeLamppost ScrapTreeRebar ScrapTreeSignpost ScrapPalm BushCans BushChainLink BushHubcap BushSpring BushWire RockBoulderPile RockCarCube RockConcrete RockEngine RockGearbox RockSlab GrassRebar GrassWire FlowerBulbs FlowerFan LogGirder LogPipe StumpDrum JunkMound OilPuddle CoolantPond ManholeCover HydrantLeaking TrafficLight SignBent BusStopWreck PhoneBooth ParkBench VendingMachine Mailbox ShoppingCarts BrickRuin BillboardFrame
+-- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones ScrapTreeAntenna ScrapTreeExhaust ScrapTreeLamppost ScrapTreeRebar ScrapTreeSignpost ScrapPalm BushCans BushChainLink BushHubcap BushSpring BushWire RockBoulderPile RockCarCube RockConcrete RockEngine RockGearbox RockSlab GrassRebar GrassWire FlowerBulbs FlowerFan LogGirder LogPipe StumpDrum JunkMound OilPuddle CoolantPond ManholeCover HydrantLeaking TrafficLight SignBent BusStopWreck PhoneBooth ParkBench VendingMachine Mailbox ShoppingCarts BrickRuin BillboardFrame
 -- Server Map: one server's whole map, centered on the origin. Eight yard
 -- plots stand in a ring with their gates facing a central arena, joined to
 -- it by a ring road and a spoke from each gate. The arena is the storm fight
--- ground and, between storms, the spawn plaza new players start on. A wall
--- of junk mountains closes the map in, and scrap props fill the gaps.
+-- ground and, between storms, the spawn plaza new players start on. Scrap props
+-- fill the gaps between the yards.
 -- Yards are only plot slabs here: the game drops the Yard Layout template
 -- onto each one, so every yard is built from the same pieces.
 -- Labels: Ground, Road, Arena, Spawn, Plot1-Plot8, Spoke1-Spoke8,
--- Cover1-Cover8, Light1-Light4, Cones1-Cones8, Mountain1-Mountain44, and
+-- Cover1-Cover8, Light1-Light4, Cones1-Cones8, and
 -- Wedge<w><ring>_<n> props between the yards.
 local YARD_RADIUS = 90
 local ROAD_INNER, ROAD_OUTER = 50, 58
 local ARENA_RADIUS = 44
 local MAP_SIZE = 260
-local WALL_DISTANCE = 118
 
 local GROUND = { 0.3, 0.27, 0.22 }
 local ROAD = { 0.42, 0.41, 0.4 }
@@ -84,33 +83,6 @@ for i = 1, 4 do
 	local degrees = (i - 0.5) * 90
 	local x, y = polar(ARENA_RADIUS - 2, degrees)
 	place(`Light{i}`, buildStreetlightBroken, x, y, 0.2, degrees + 90)
-end
-
--- Junk mountains wall the map in, each section's back edge facing out.
--- Sections overlap and each gets its own height, depth and slight turn from
--- a fixed seed, so the ridge rises and dips unevenly instead of repeating.
-local seed = 11
-local function random(low: number, high: number): number
-	seed = (seed * 16807) % 2147483647
-	return low + (high - low) * seed / 2147483647
-end
-local SIDES = { { 0, 1, 0 }, { 0, -1, 180 }, { 1, 0, -90 }, { -1, 0, 90 } }
-local mountain = 0
-for _, side in SIDES do
-	for k = 0, 9 do
-		local along = -117 + k * 26 + random(-3, 3)
-		local distance = WALL_DISTANCE + random(-5, 6)
-		local x = if side[1] ~= 0 then side[1] * distance else along
-		local y = if side[2] ~= 0 then side[2] * distance else along
-		mountain += 1
-		place(`Mountain{mountain}`, buildJunkMountain, x, y, 0, side[3] + random(-10, 10), random(0.6, 1.7), "z")
-	end
-end
--- Corner peaks close the gaps where two sides meet.
-for _, corner in { { 1, 1 }, { -1, 1 }, { -1, -1 }, { 1, -1 } } do
-	mountain += 1
-	local degrees = math.deg(math.atan2(corner[2], corner[1])) - 90
-	place(`Mountain{mountain}`, buildJunkMountain, corner[1] * 122, corner[2] * 122, 0, degrees, random(1.3, 1.9), "z")
 end
 
 -- Props between the yards. Each wedge has an inner cluster between the road
