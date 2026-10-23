@@ -344,6 +344,8 @@ end
 -- Edge highlight strength, about 36% under modelkit's 0.7 default so the
 -- rims blend into the paint instead of reading as pale outlines.
 local EDGE_HIGHLIGHT = 0.45
+-- Feathered, base-tinted highlight strokes instead of crisp cream ones.
+local EDGE_BLEND = 0.7
 
 local function part(name, warped, color, group, size, paint)
 	local mesh = warped.mesh
@@ -353,7 +355,7 @@ local function part(name, warped, color, group, size, paint)
 	if paint then
 		mesh:paint(image, paint)
 	end
-	mesh:paintShading(image, { highlight = EDGE_HIGHLIGHT })
+	mesh:paintShading(image, { highlight = EDGE_HIGHLIGHT, blend = EDGE_BLEND })
 	model.part(name, mesh, image, { group = group, preview = true })
 end
 
