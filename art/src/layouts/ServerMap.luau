@@ -6,7 +6,7 @@
 -- fill the gaps between the yards.
 -- Yards are only plot slabs here: the game drops the Yard Layout template
 -- onto each one, so every yard is built from the same pieces.
--- Labels: Ground, Road, Arena, ArenaEdge, Ramps, Spawn, Beacon, Plot1-Plot8, Spoke1-Spoke8,
+-- Labels: Ground, Road, Arena, ArenaEdge, Ramps, Spawn, TyreMarks, Beacon, Plot1-Plot8, Spoke1-Spoke8,
 -- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4, Cones1-Cones8, and
 -- Wedge<w><ring>_<n> props between the yards.
 local YARD_RADIUS = 90
@@ -94,6 +94,63 @@ end, 0, 0)
 slab("Spawn", function()
 	part("Pad", nil, MARK, function(mesh)
 		ring(mesh, 0, 0, 0.2 - ARENA_DEPTH, 6.5, 8.5, 0.1, "z", 32)
+	end, nil, 0)
+end, 0, 0)
+
+-- Tyre marks left by earlier fights: drift rings around the crusher and
+-- looser drifts out between the cover. Each mark is a pair of treads
+-- following a path, drawn as staggered tread blocks that wear away where the
+-- rubber thinned, only a shade darker than the concrete.
+local TYRE = { 0.44, 0.43, 0.4 }
+local TREAD_GAP, TREAD_WIDTH, BLOCK_LENGTH = 0.8, 0.32, 0.22
+local function tyreTrack(mesh, path: (number) -> (number, number), length: number, seed: number)
+	local z = 0.115 - ARENA_DEPTH
+	local steps = math.floor(length / BLOCK_LENGTH)
+	for s = 0, steps - 1 do
+		local x0, y0 = path(s / steps)
+		local x1, y1 = path((s + 0.7) / steps)
+		local span = math.sqrt((x1 - x0) ^ 2 + (y1 - y0) ^ 2)
+		local nx, ny = -(y1 - y0) / span, (x1 - x0) / span
+		-- Two rows of blocks per tread, offset half a block, like a tread pattern.
+		for side = -1, 1, 2 do
+			for row = 0, 1 do
+				local wear = math.noise(s / 9, side + row * 0.3, seed) + 0.35 * math.noise(s / 2, side, seed + 0.5)
+				if (s + row) % 2 == 0 or wear > 0.15 then
+					continue
+				end
+				local inner = side * TREAD_GAP + (row - 1) * TREAD_WIDTH / 2
+				local outer = inner + TREAD_WIDTH / 2 - 0.03
+				mesh:face({
+					mesh:vertex(x0 + nx * inner, y0 + ny * inner, z),
+					mesh:vertex(x1 + nx * inner, y1 + ny * inner, z),
+					mesh:vertex(x1 + nx * outer, y1 + ny * outer, z),
+					mesh:vertex(x0 + nx * outer, y0 + ny * outer, z),
+				})
+			end
+		end
+	end
+end
+-- Each drift: centre radius and angle, turning radius, start and end angle.
+local DRIFTS = {
+	{ 0, 0, 11, 20, 190 },
+	{ 0, 0, 12.5, 150, 330 },
+	{ 0, 0, 11.8, 250, 400 },
+	{ 0, 0, 14, 60, 140 },
+	{ 24, 0, 6, 100, 260 },
+	{ 22, 135, 7, -40, 110 },
+	{ 25, 225, 5.5, 200, 330 },
+	{ 23, 315, 6.5, 30, 170 },
+}
+slab("TyreMarks", function()
+	part("Rubber", nil, TYRE, function(mesh)
+		for k, drift in DRIFTS do
+			local cx, cy = polar(drift[1], drift[2])
+			local radius, from, to = drift[3], drift[4], drift[5]
+			tyreTrack(mesh, function(t)
+				local x, y = polar(radius + 0.6 * math.sin(t * 5), from + (to - from) * t)
+				return cx + x, cy + y
+			end, math.rad(to - from) * radius, k)
+		end
 	end, nil, 0)
 end, 0, 0)
 
