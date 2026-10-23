@@ -115,6 +115,11 @@ local function fbm(x: number, y: number, z: number): number
 	end
 	return total
 end
+-- fBm sampled through another fBm, so the wear twists into blotches and
+-- streaks instead of even waves.
+local function warpedFbm(x: number, y: number, z: number): number
+	return fbm(x + 1.8 * fbm(x + 5.2, y + 1.3, z), y + 1.8 * fbm(x + 1.7, y + 9.2, z), z)
+end
 local function tyreTrack(mesh, path: (number) -> (number, number), length: number, seed: number, layer: string)
 	local z = 0.115 - ARENA_DEPTH + if layer == "Lugs" then 0.005 elseif layer == "Smear" then -0.003 else 0
 	local steps = math.floor(length / BLOCK_LENGTH)
@@ -138,23 +143,38 @@ local function tyreTrack(mesh, path: (number) -> (number, number), length: numbe
 		for s = 0, steps - 1 do
 			-- Heaviest at the apex of the drift, wearing away toward both ends.
 			local press = math.sin(math.pi * (s + 0.5) / steps)
-			if fbm(s / 14, side * 0.2, seed) > press * 0.6 - 0.2 then
+			if warpedFbm(s / 16, side * 0.15, seed) > press * 0.6 - 0.2 then
 				continue
 			end
+			-- Ragged edges where the rubber caught unevenly on the concrete.
+			local ragIn = 0.07 * fbm(s / 3, side, seed + 0.5)
+			local ragOut = 0.07 * fbm(s / 3, side + 4, seed + 0.5)
 			if layer == "Lugs" then
-				-- Chevron lugs either side of a bare centre rib.
-				quad(s + 0.6, s + 0.2, s + 0.4, s + 0.8, inner + 0.03, mid - 0.04)
-				quad(s + 0.8, s + 0.4, s + 0.2, s + 0.6, mid + 0.04, outer - 0.03)
+				-- Chevron lugs either side of a bare centre rib, some chipped
+				-- away and others printed short where the tyre lifted.
+				for half = -1, 1, 2 do
+					local grip = fbm(s / 1.5, half * 3 + side, seed + 0.25)
+					if grip > 0.15 then
+						continue
+					end
+					local reach = 0.03 + math.max(0, grip + 0.1) * 0.5
+					if half < 0 then
+						quad(s + 0.6, s + 0.2, s + 0.4, s + 0.8, inner + reach, mid - 0.04)
+					else
+						quad(s + 0.8, s + 0.4, s + 0.2, s + 0.6, mid + 0.04, outer - reach)
+					end
+				end
 			elseif layer == "Smear" then
-				-- The tyre sliding sideways smears rubber out past its outer edge.
-				local spread = TREAD_WIDTH * 1.4 * press
+				-- The tyre sliding sideways smears rubber out past its outer
+				-- edge in streaks.
+				local spread = TREAD_WIDTH * press * (0.8 + 1.4 * math.max(0, fbm(s / 5, side, seed + 0.75)))
 				if side > 0 then
-					quad(s + 1, s, s, s + 1, outer, outer + spread)
+					quad(s + 1, s, s, s + 1, outer + ragOut, outer + ragOut + spread)
 				else
-					quad(s + 1, s, s, s + 1, inner - spread, inner)
+					quad(s + 1, s, s, s + 1, inner + ragIn - spread, inner + ragIn)
 				end
 			else
-				quad(s + 1, s, s, s + 1, inner, outer)
+				quad(s + 1, s, s, s + 1, inner + ragIn, outer + ragOut)
 			end
 		end
 	end
