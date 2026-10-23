@@ -50,7 +50,11 @@ reference.
 - `mesh:paintShading(image, {highlight, shadow, bands, sharp, blend, occluders})`. `blend` 0-1 (default 0) feathers edge highlights and tints them from cream toward the part's own color.
 - `model.part(name, mesh, image, {group, preview})`. Parts sharing a group
   are one variant (a fill level, an upgrade tier); `preview` picks what the
-  preview shows.
+  preview shows. `bone` names the bone the part follows.
+- `model.bone(name, {at = {x, y, z}, parent = "Name"?})` adds a rig joint
+  pivoting at `at`. Add bones before the parts that use them. Once a model
+  has bones, every part needs one: each part follows its bone rigidly, and
+  Studio imports the joints as Bones for the Animation Editor.
 
 ## Importing into Studio
 
