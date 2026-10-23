@@ -100,6 +100,15 @@ impl UserData for MeshHandle {
 			this.0.borrow_mut().solidify(thickness);
 			Ok(())
 		});
+		// Returns a copy turned about z by `turn` radians, then moved by (x, y, z),
+		// so a cached build can be placed anywhere without rebuilding it.
+		methods.add_method("moved", |_, this, (turn, x, y, z): (f64, f64, f64, f64)| {
+			let mesh = this.0.borrow();
+			let (c, s) = (turn.cos(), turn.sin());
+			let positions = mesh.positions.iter().map(|p| [p[0] * c - p[1] * s + x, p[0] * s + p[1] * c + y, p[2] + z]).collect();
+			let moved = Mesh { positions, faces: mesh.faces.clone(), smooth_angle: mesh.smooth_angle };
+			Ok(MeshHandle(Rc::new(RefCell::new(moved))))
+		});
 		methods.add_method("vertexCount", |_, this, ()| Ok(this.0.borrow().positions.len()));
 		// Lays every face out in UV space, packed with a margin between charts.
 		methods.add_method("unwrap", |_, this, margin: Option<f64>| {
