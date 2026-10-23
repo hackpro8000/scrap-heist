@@ -301,6 +301,7 @@ end
 -- grime, so newer tiers look cleaner.
 local SCUFF = { 0.62, 0.6, 0.56 }
 local HAZARD_BLACK = { 0.1, 0.1, 0.1 }
+local HOPPER_RUST = { 0.5, 0.25, 0.11 }
 
 -- Tier contrast: tier 1's walls are scuffed through to bare metal, tier 2
 -- keeps a few scrapes, and tier 3 wears a hazard-striped band below the rim.
@@ -319,6 +320,14 @@ local function hopperColor(bottomZ, height, wear, tier)
 			grime = 0.35
 		end
 		local k = 1 - math.clamp(grime, 0, 0.6)
+		-- Rust: blotches pooling toward the throat plus streaks running down
+		-- the walls. Tier 1 is eaten through, tier 2 is spotty, tier 3 clean.
+		local rustAmount = if tier == 1 then 0.75 elseif tier == 2 then 0.35 else 0.08
+		local blotch = math.noise(x * 2.2 + 7, y * 2.2, z * 2.2) + (1 - t) * 0.35
+		local streak = math.noise(x * 11, y * 11, z * 1.2 + 3) * 0.6 + (1 - t) * 0.2
+		if math.max(blotch, streak) > 0.95 - rustAmount * 0.6 then
+			return HOPPER_RUST[1] * k, HOPPER_RUST[2] * k, HOPPER_RUST[3] * k
+		end
 		-- Scuffs: long horizontal scrape streaks where scrap hit the wall.
 		local scuffAmount = if tier == 1 then 0.32 elseif tier == 2 then 0.12 else 0
 		local scrape = math.noise(x * 1.5, y * 1.5, z * 14)
