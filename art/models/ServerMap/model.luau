@@ -12521,18 +12521,18 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[12679] = "44aba6e9e2c35ad5-65776c19eafd5f76"
-slabKeys[12832] = "44aba6e9e2c35ad5-54edea0a7e608184"
-slabKeys[12838] = "44aba6e9e2c35ad5-f8f4f9cdd6dd6cae"
-slabKeys[12870] = "44aba6e9e2c35ad5-b818e7bc3229e16b"
-slabKeys[12948] = "44aba6e9e2c35ad5-117136b35c0888e5"
-slabKeys[13001] = "44aba6e9e2c35ad5-ba14974c752a9757"
-slabKeys[13055] = "44aba6e9e2c35ad5-b0306edbfc4fa05e"
-slabKeys[13131] = "44aba6e9e2c35ad5-9519d293b472b9ba"
-slabKeys[13136] = "44aba6e9e2c35ad5-08fbe9bb8b1a6d5a"
-slabKeys[13143] = "44aba6e9e2c35ad5-ec0277225e552e1d"
-slabKeys[13152] = "44aba6e9e2c35ad5-b3cfbefdd31cb9f1"
-slabKeys[13219] = "44aba6e9e2c35ad5-5f3dede5e341fed8"
+slabKeys[12679] = "5f00b0196c93cb1e-65776c19eafd5f76"
+slabKeys[12832] = "5f00b0196c93cb1e-54edea0a7e608184"
+slabKeys[12838] = "5f00b0196c93cb1e-f8f4f9cdd6dd6cae"
+slabKeys[12870] = "5f00b0196c93cb1e-b818e7bc3229e16b"
+slabKeys[12948] = "5f00b0196c93cb1e-117136b35c0888e5"
+slabKeys[13001] = "5f00b0196c93cb1e-ba14974c752a9757"
+slabKeys[13082] = "5f00b0196c93cb1e-691e6c5b113c73ac"
+slabKeys[13186] = "5f00b0196c93cb1e-9519d293b472b9ba"
+slabKeys[13191] = "5f00b0196c93cb1e-08fbe9bb8b1a6d5a"
+slabKeys[13198] = "5f00b0196c93cb1e-ec0277225e552e1d"
+slabKeys[13207] = "5f00b0196c93cb1e-b3cfbefdd31cb9f1"
+slabKeys[13274] = "5f00b0196c93cb1e-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -13052,12 +13052,67 @@ local function rampBlock(mesh, degrees: number, from: number, to: number, lift: 
 	mesh:face({ first[2], first[4], first[3], first[1] })
 	mesh:face({ last[3], last[4], last[2], last[1] })
 end
+-- Where a ramp meets the arena floor it flares into a worn concrete apron
+-- that slopes from the deck down to the floor, edged with a hazard stripe.
+local APRON_OUTER, APRON_INNER = RAMP_RADII[1], RAMP_RADII[1] - 4
+local APRON_NEAR, APRON_FAR = 4.4, 6.6
+-- A slab over a footprint of {radius, side} points (counter-clockwise from
+-- above) on spoke `degrees`, its top at `top(radius)` and bottom at the floor.
+local function apronBlock(mesh, degrees: number, footprint, top: (number) -> number)
+	local angle = math.rad(degrees)
+	local c, n = math.cos(angle), math.sin(angle)
+	local low, high = {}, {}
+	for k, point in footprint do
+		local radius, side = point[1], point[2]
+		local x, y = c * radius - n * side, n * radius + c * side
+		low[k] = mesh:vertex(x, y, RAMP_FLOOR - 0.1)
+		high[k] = mesh:vertex(x, y, top(radius))
+	end
+	mesh:face({ high[1], high[2], high[3], high[4] })
+	mesh:face({ low[4], low[3], low[2], low[1] })
+	for k = 1, 4 do
+		local l = k % 4 + 1
+		mesh:face({ low[k], low[l], high[l], high[k] })
+	end
+end
+local function apronTop(radius: number): number
+	return RAMP_FLOOR + 0.05 + 0.3 * (radius - APRON_INNER) / (APRON_OUTER - APRON_INNER)
+end
+local APRON_STRIPES = 9
 slab("Ramps", function()
 	part("Deck", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
 			rampBlock(mesh, (i - 1) * 45, -3.6, 3.6, 0)
 		end
 	end, nil, 0.25)
+	part("Apron", nil, CONCRETE, function(mesh)
+		for i = 1, 8 do
+			apronBlock(mesh, (i - 1) * 45, {
+				{ APRON_OUTER, -APRON_NEAR },
+				{ APRON_OUTER, APRON_NEAR },
+				{ APRON_INNER, APRON_FAR },
+				{ APRON_INNER, -APRON_FAR },
+			}, apronTop)
+		end
+	end, nil, 0.6)
+	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
+		part(if k == 1 then "ApronStripeYellow" else "ApronStripeBlack", nil, color, function(mesh)
+			local width = 2 * APRON_FAR / APRON_STRIPES
+			for i = 1, 8 do
+				for s = k - 1, APRON_STRIPES - 1, 2 do
+					local from, to = -APRON_FAR + s * width, -APRON_FAR + (s + 1) * width
+					apronBlock(mesh, (i - 1) * 45, {
+						{ APRON_INNER, from },
+						{ APRON_INNER, to },
+						{ APRON_INNER - 0.7, to },
+						{ APRON_INNER - 0.7, from },
+					}, function()
+						return RAMP_FLOOR + 0.12
+					end)
+				end
+			end
+		end, nil, 0.2)
+	end
 	part("SideWall", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
 			rampBlock(mesh, (i - 1) * 45, -4.4, -RAMP_WALL_SIDE, 0.9, nil, WALL_INNER)
