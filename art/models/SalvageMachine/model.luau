@@ -564,6 +564,18 @@ for tier = 1, 3 do
 	end
 	part(`{group}_Rollers`, rollers, ROLLER, group, SMALL_TEXTURE)
 
+	-- Throat deck filling the hopper's floor either side of the rollers, up
+	-- to the roller shafts, so nothing falls past them into the housing.
+	local throat = warpedMesh(warp)
+	local throatHalf = 0.95 * scale
+	local rollerEdge = rollerYs[#rollerYs] + rollerRadius * 0.85
+	local deckZ = 2.1 * scale - 0.05
+	for _, side in { -1, 1 } do
+		local width = throatHalf - rollerEdge
+		box(throat, cx, side * (rollerEdge + width / 2), deckZ, 2 * throatHalf, width, 2.15 * scale - deckZ + rollerRadius * 0.3)
+	end
+	part(`{group}_Throat`, throat, FRAME, group, SMALL_TEXTURE)
+
 	if tier > 1 then
 		-- Guards hiding the drive, shaped like stamped covers: flat sides
 		-- with rounded ends that follow the pulleys or gears inside.
