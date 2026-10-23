@@ -71,7 +71,7 @@ end
 local ISLAND_SIDES = 48
 local UNDERSIDE_RINGS = 10
 -- outline(angle) scales the radius around the edge; nil keeps it round.
-local function floatingIsland(mesh, radius: number, depth: number, seed: number, top: (number, number) -> number, outline: ((number) -> number)?)
+local function floatingIsland(mesh, radius: number, depth: number, seed: number, top: (number, number) -> number, outline: ((number) -> number)?, creases: { number }?)
 	local rows = {}
 	local function edge(angle: number): number
 		return if outline then radius * outline(angle) else radius
@@ -86,9 +86,19 @@ local function floatingIsland(mesh, radius: number, depth: number, seed: number,
 		end
 		table.insert(rows, row)
 	end
+	-- Extra rings on every crease of `top`, so the surface bends there
+	-- instead of cutting across the bend.
 	local topRings = math.max(4, math.ceil(radius / 3))
+	local fractions = {}
 	for s = 0, topRings do
-		addRing(s / topRings, function(x, y) return top(x, y) end)
+		table.insert(fractions, s / topRings)
+	end
+	for _, crease in creases or {} do
+		table.insert(fractions, crease / radius)
+	end
+	table.sort(fractions)
+	for _, fraction in fractions do
+		addRing(fraction, function(x, y) return top(x, y) end)
 	end
 	for k = 1, UNDERSIDE_RINGS do
 		local t = k / UNDERSIDE_RINGS
@@ -147,7 +157,7 @@ slab("ArenaIsland", function()
 	chunkedPart("Island", nil, GROUND, function(mesh)
 		floatingIsland(mesh, ARENA_ISLAND, 42, 1, heightAt, function(angle)
 			return octagonScale(math.deg(angle))
-		end)
+		end, { ARENA_FLOOR, ROAD_INNER - 2 })
 	end, nil, islandPaint(heightAt))
 end, 0, 0)
 -- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
@@ -482,13 +492,13 @@ slab("Road", function()
 end, 0, 0)
 
 -- Entry ramps: a concrete deck at each spoke, from the wall gap down to the
--- fight floor. The bowl is a straight chamfer, so the deck follows it a
--- little above and never dips into the terrain, then eases down to sit flush
--- with the floor where it meets the arena's hazard ring.
+-- fight floor. The deck is one straight slope, flush with the floor where it
+-- meets the arena's hazard ring and level across the wall gap. It is a touch
+-- steeper than the bowl, so it never dips into the terrain.
 local RAMP_FLOOR = 0.1 - ARENA_DEPTH
+local RAMP_CREST = 0.35
 local function rampTop(radius: number): number
-	local rise = 0.35 * math.clamp((radius - ARENA_FLOOR) / 2, 0, 1)
-	return math.max(heightAt(radius, 0), RAMP_FLOOR) + rise
+	return RAMP_FLOOR + (RAMP_CREST - RAMP_FLOOR) * math.clamp((radius - ARENA_FLOOR) / (WALL_INNER - ARENA_FLOOR), 0, 1)
 end
 -- A block on spoke `degrees` between `from` and `to` across it and over
 -- `radii` along it, its top `lift` above the deck and its bottom at the
@@ -519,20 +529,19 @@ local function rampBlock(mesh, degrees: number, radii: { number }, from: number,
 	mesh:face({ last[3], last[4], last[2], last[1] })
 end
 -- Hazard strips inlaid along both deck edges, as wide as the arena's ring
--- and flush with the deck. They start where the ring ends, so the ring runs
--- across the ramp mouth and the strips branch off it, and they break at
--- every bend in the deck so they lie flat on it.
+-- and flush with the deck. They run from the outer end of the deck down to
+-- where the ring ends, so the ring runs across the ramp mouth and the strips
+-- branch off it. They break at every bend in the deck so they lie flat on it.
 local LANE_HALF = RAMP_HALF - HAZARD_WIDTH
-local STRIP_BREAKS = { ARENA_FLOOR, ARENA_FLOOR + 2 }
-for k = 1, 5 do
-	table.insert(STRIP_BREAKS, ARENA_FLOOR + 2 + k * (ROAD_INNER - 2 - ARENA_FLOOR - 2) / 5)
+local STRIP_BREAKS = {}
+for k = 0, 6 do
+	table.insert(STRIP_BREAKS, ARENA_FLOOR + k * (WALL_INNER - ARENA_FLOOR) / 6)
 end
-table.insert(STRIP_BREAKS, WALL_INNER)
+table.insert(STRIP_BREAKS, ROAD_INNER + 0.5)
 slab("Ramps", function()
 	part("Deck", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
-			rampBlock(mesh, (i - 1) * 45, { ARENA_FLOOR, ARENA_FLOOR + 2, ROAD_INNER - 2, WALL_INNER }, -LANE_HALF, LANE_HALF, 0)
-			rampBlock(mesh, (i - 1) * 45, { WALL_INNER, ROAD_INNER + 0.5 }, -RAMP_HALF, RAMP_HALF, 0)
+			rampBlock(mesh, (i - 1) * 45, { ARENA_FLOOR, WALL_INNER, ROAD_INNER + 0.5 }, -LANE_HALF, LANE_HALF, 0)
 		end
 	end, nil, 0.25)
 	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
