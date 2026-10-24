@@ -812,7 +812,7 @@ end
 -- One closed outer shell: rows of wall points stepping down from the top to
 -- the tip, a flat top in concentric rings and a point at the bottom.
 local ANGLES, STEP, TIP, LIP, TOP_RINGS = 240, 0.3, -25, 0.35, 8
-local RIM_JAGGED, RIM_POKE = 1.66, 0.6
+local RIM_JAGGED, RIM_POKE = 0.166, 0.06
 part("Island", nil, GROUND, function(mesh)
 	local rim = {}
 	for j = 0, ANGLES - 1 do
