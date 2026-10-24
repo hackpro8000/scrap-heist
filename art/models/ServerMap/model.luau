@@ -12541,9 +12541,9 @@ slabKeys[13097] = "17d166d2ec0121f4-38a291d6cf6e421e"
 slabKeys[13128] = "17d166d2ec0121f4-dc02515c57e16914"
 slabKeys[13223] = "17d166d2ec0121f4-f3271f231573d1f1"
 slabKeys[13228] = "17d166d2ec0121f4-08fbe9bb8b1a6d5a"
-slabKeys[13235] = "17d166d2ec0121f4-f278656b57891167"
-slabKeys[13244] = "17d166d2ec0121f4-ca986f069194f0c9"
-slabKeys[13322] = "17d166d2ec0121f4-5f3dede5e341fed8"
+slabKeys[13235] = "17d166d2ec0121f4-2cd0ff58e29cdaf2"
+slabKeys[13244] = "17d166d2ec0121f4-b40a3d73f3bc93c9"
+slabKeys[13336] = "17d166d2ec0121f4-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -13234,7 +13234,7 @@ for i = 1, 8 do
 	local c, s = math.cos(math.rad(degrees - 90)), math.sin(math.rad(degrees - 90))
 	slab(`Spoke{i}`, function()
 		part("Road", nil, ROAD, function(mesh)
-			box(mesh, 0, -20.5, 0, 6, 11, 0.1)
+			box(mesh, 0, -18, 0, 6, 6, 0.1)
 		end, nil, function(px, py)
 			local u = (px - x) * c + (py - y) * s
 			local v = (py - y) * c - (px - x) * s
@@ -13303,6 +13303,20 @@ for i = 1, 8 do
 				end
 			end
 		end, nil, 0.5)
+		-- The yard end lands on a concrete apron, with a steel plate over the
+		-- joint and a gate frame standing on the wing walls.
+		part("Apron", nil, CONCRETE, function(mesh)
+			box(mesh, 0, BRIDGE_FROM + 2.5, 0, 7.3, 5, 0.12)
+		end, nil, 0.5)
+		part("JointPlate", nil, STEEL, function(mesh)
+			box(mesh, 0, BRIDGE_FROM, 0.1, 6, 0.8, 0.04)
+		end, nil, 0.3)
+		part("GateFrame", nil, DARK_STEEL, function(mesh)
+			for _, side in { -3.4, 3.4 } do
+				box(mesh, side, BRIDGE_FROM - 0.5, 0.45, 0.4, 0.4, 4)
+			end
+			box(mesh, 0, BRIDGE_FROM - 0.5, 4.15, 7.2, 0.3, 0.3)
+		end, nil, 0.3)
 	end, x, y, degrees - 90)
 	local coneX, coneY = polar(ROAD_INNER + 1.5, degrees + 9)
 	place(`Cones{i}`, buildTrafficCones, coneX, coneY, heightAt(coneX, coneY), degrees)
