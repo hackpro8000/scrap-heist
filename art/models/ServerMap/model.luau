@@ -12544,7 +12544,7 @@ slabKeys[13511] = "b9ff4053bf5e0dab-7c27880a9a355c4d"
 slabKeys[13520] = "b9ff4053bf5e0dab-22233dc81161c674"
 slabKeys[13527] = "b9ff4053bf5e0dab-92736dc11ff1f899"
 slabKeys[13555] = "b9ff4053bf5e0dab-5f3dede5e341fed8"
-slabKeys[13586] = "b9ff4053bf5e0dab-2017fdb5b6e0c3e9"
+slabKeys[13586] = "b9ff4053bf5e0dab-3dd268cc30b616da"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -13757,7 +13757,10 @@ slab("Plumbing", function()
 		part(`WasteMouth{name}`, nil, { 0.04, 0.05, 0.03 }, onIsland(function(mesh)
 			prism(mesh, mouth, axis, side, up, circle(bore, 14), -boreDepth, -boreDepth + 0.03)
 		end), nil, 0)
-		part(`Goo{name}`, nil, GOO, onIsland(function(mesh)
+		-- The goo darkens by a third towards its top, measured over the heights
+		-- its own vertices reach.
+		local gooLow, gooHigh = math.huge, -math.huge
+		local buildGoo = onIsland(function(mesh)
 			-- A skin over the lower lip, following its section out round the
 			-- front and down the outside, thickest at the bottom where it ran.
 			sweep(mesh, 115, 245, 16, function(degrees: number)
@@ -13799,7 +13802,21 @@ slab("Plumbing", function()
 				ring[2] *= scale
 			end
 			lathe(mesh, { lip[1], lip[2], lip[3] + 0.15 }, drop)
-		end), nil, 0, nil, 0.8)
+		end)
+		part(`Goo{name}`, nil, GOO, function(mesh)
+			buildGoo({
+				vertex = function(_, vx, vy, vz)
+					gooLow, gooHigh = math.min(gooLow, vz), math.max(gooHigh, vz)
+					return mesh:vertex(vx, vy, vz)
+				end,
+				face = function(_, corners)
+					return mesh:face(corners)
+				end,
+			})
+		end, nil, function(_x, _y, z)
+			local shade = 1 - 0.33 * math.clamp((z - gooLow) / (gooHigh - gooLow), 0, 1)
+			return GOO[1] * shade, GOO[2] * shade, GOO[3] * shade
+		end, nil, 0.8)
 	end
 	layPlumbing("Arena", 0, 0, 0, ARENA_ISLAND, floatingIsland(traced, ARENA_ISLAND, 42, 1, flat, octagon), 1)
 	for k, padX in PAD_XS do
