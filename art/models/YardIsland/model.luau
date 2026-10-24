@@ -662,6 +662,7 @@ end
 -- rim, with two smaller rings stepping inward below that and one clump at
 -- the tip. Each tier is its own part so the tiers shadow each other, and the
 -- shading pushes edge highlights and contact shadows hard. Top at z = 0.
+useTexelDensity(16)
 local RADIUS = 20
 local GROUND = { 0.3, 0.27, 0.22 }
 local STRATA = { { 0.5, 0.4, 0.27 }, { 0.36, 0.35, 0.34 }, { 0.48, 0.3, 0.22 } }
