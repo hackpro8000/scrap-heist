@@ -12544,7 +12544,7 @@ slabKeys[13511] = "b9ff4053bf5e0dab-7c27880a9a355c4d"
 slabKeys[13520] = "b9ff4053bf5e0dab-22233dc81161c674"
 slabKeys[13527] = "b9ff4053bf5e0dab-92736dc11ff1f899"
 slabKeys[13555] = "b9ff4053bf5e0dab-5f3dede5e341fed8"
-slabKeys[13586] = "b9ff4053bf5e0dab-eba77731fd21ca6f"
+slabKeys[13586] = "b9ff4053bf5e0dab-739d1b085a657391"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -13647,6 +13647,93 @@ slab("Plumbing", function()
 			end
 		end, nil, scrapPaint)
 	end
+	-- Waste outfalls: a short pipe out of the wall, tipped down, its open
+	-- mouth long dry but for green goo still clinging round the lower lip and
+	-- one last drop hanging off it.
+	local GOO = { 0.38, 0.95, 0.16 }
+	-- A solid of revolution hanging straight down from `top`, from rings of
+	-- { depth, radius }.
+	local function lathe(mesh, top, rings: { { number } })
+		local sides = 10
+		local loops = {}
+		for i, ring in rings do
+			loops[i] = {}
+			for k = 0, sides - 1 do
+				local a = 2 * math.pi * k / sides
+				loops[i][k + 1] = mesh:vertex(top[1] + math.cos(a) * ring[2], top[2] + math.sin(a) * ring[2], top[3] - ring[1])
+			end
+		end
+		local first, last = mesh:vertex(top[1], top[2], top[3] - rings[1][1]), mesh:vertex(top[1], top[2], top[3] - rings[#rings][1])
+		for k = 1, sides do
+			local l = k % sides + 1
+			for i = 1, #rings - 1 do
+				mesh:face({ loops[i][k], loops[i][l], loops[i + 1][l], loops[i + 1][k] })
+			end
+			mesh:face({ first, loops[1][l], loops[1][k] })
+			mesh:face({ last, loops[#rings][k], loops[#rings][l] })
+		end
+	end
+	local function layWastePipe(name: string, x: number, y: number, turn: number, radius: number, wall: (number, number) -> (number, number, number), angle: number)
+		local c, s = math.cos(math.rad(turn)), math.sin(math.rad(turn))
+		local pipeRadius = math.clamp(radius / 22, 1, 1.8)
+		local root, normal = wallPoint(wall, angle, 0.3)
+		local flatOut = unit({ normal[1], normal[2], 0 })
+		local axis = unit({ flatOut[1], flatOut[2], -0.3 })
+		local side = unit(cross(axis, { 0, 0, 1 }))
+		local up = cross(side, axis)
+		local length = pipeRadius * 3.5
+		local mouth = { root[1] + axis[1] * length, root[2] + axis[2] * length, root[3] + axis[3] * length }
+		local function onIsland(build: (any) -> ())
+			return function(island)
+				build({
+					vertex = function(_, vx, vy, vz)
+						return island:vertex(x + vx * c - vy * s, y + vx * s + vy * c, vz)
+					end,
+					face = function(_, corners)
+						return island:face(corners)
+					end,
+				})
+			end
+		end
+		-- A point on the mouth's rim, `degrees` round from the top.
+		local function rim(degrees: number, reach: number, inset: number)
+			local a = math.rad(degrees)
+			return {
+				mouth[1] + (up[1] * math.cos(a) + side[1] * math.sin(a)) * reach - axis[1] * inset,
+				mouth[2] + (up[2] * math.cos(a) + side[2] * math.sin(a)) * reach - axis[2] * inset,
+				mouth[3] + (up[3] * math.cos(a) + side[3] * math.sin(a)) * reach - axis[3] * inset,
+			}
+		end
+		part(`Waste{name}`, nil, RUST, onIsland(function(mesh)
+			prism(mesh, root, axis, side, up, circle(pipeRadius, 14), -pipeRadius * 3, length)
+			prism(mesh, mouth, axis, side, up, circle(pipeRadius * 1.3, 14), -0.5, 0)
+			prism(mesh, root, axis, side, up, circle(pipeRadius * 1.3, 14), 0, 0.4)
+		end), nil, scrapPaint)
+		part(`WasteMouth{name}`, nil, { 0.04, 0.05, 0.03 }, onIsland(function(mesh)
+			prism(mesh, mouth, axis, side, up, circle(pipeRadius * 0.85, 14), 0, 0.03)
+		end), nil, 0)
+		local scale = pipeRadius / 1.5
+		part(`Goo{name}`, nil, GOO, onIsland(function(mesh)
+			-- Beads of dried film round the lower lip, fattest at the bottom.
+			for degrees = 120, 240, 15 do
+				local weight = 1 - math.abs(degrees - 180) / 70
+				local bead = 0.12 + 0.22 * weight
+				local at = rim(degrees, pipeRadius * 1.3, 0.25 - 0.1 * weight)
+				lathe(mesh, { at[1], at[2], at[3] + bead }, { { 0, 0.02 }, { bead * 0.5, bead * 1.4 }, { bead * 1.4, bead * 1.2 }, { bead * 2 + weight * 0.3, 0.03 } })
+			end
+			-- The last drop: a sag under the lip, a thin neck, then the bead.
+			local lip = rim(180, pipeRadius * 1.3, 0.2)
+			local drop = {
+				{ 0, 0.3 }, { 0.25, 0.42 }, { 0.6, 0.32 }, { 0.95, 0.14 }, { 1.3, 0.09 },
+				{ 1.6, 0.16 }, { 1.85, 0.27 }, { 2.1, 0.3 }, { 2.35, 0.24 }, { 2.55, 0.03 },
+			}
+			for _, ring in drop do
+				ring[1] *= scale
+				ring[2] *= scale
+			end
+			lathe(mesh, { lip[1], lip[2], lip[3] + 0.15 }, drop)
+		end), nil, 0, nil, 0.8)
+	end
 	layPlumbing("Arena", 0, 0, 0, ARENA_ISLAND, floatingIsland(traced, ARENA_ISLAND, 42, 1, flat, octagon), 1)
 	for k, padX in PAD_XS do
 		layPlumbing(`Pad{k}`, padX, 0, 0, PAD_ISLAND, floatingIsland(traced, PAD_ISLAND, 20, 40 + k, flat, octagon), 40 + k)
@@ -13656,5 +13743,13 @@ slab("Plumbing", function()
 		local side = if i % 2 == 1 then 1 else -1
 		local wall = floatingIsland(traced, YARD_ISLAND, 22, 10 + i, yardLevel, yardOutline(10 + i))
 		layPlumbing(`Yard{i}`, PAD_XS[(i + 1) // 2], side * YARD_OFFSET, 90 - side * 90, YARD_ISLAND, wall, 10 + i)
+		layWastePipe(`Yard{i}`, PAD_XS[(i + 1) // 2], side * YARD_OFFSET, 90 - side * 90, YARD_ISLAND, wall, (10 + i) * 2.3 - 0.4)
 	end
+	local arenaWall = floatingIsland(traced, ARENA_ISLAND, 42, 1, flat, octagon)
+	layWastePipe("Arena1", 0, 0, 0, ARENA_ISLAND, arenaWall, 2.3 - 0.4)
+	layWastePipe("Arena2", 0, 0, 0, ARENA_ISLAND, arenaWall, 2.3 + math.pi - 0.4)
+	for k, padX in PAD_XS do
+		layWastePipe(`Pad{k}`, padX, 0, 0, PAD_ISLAND, floatingIsland(traced, PAD_ISLAND, 20, 40 + k, flat, octagon), (40 + k) * 2.3 - 0.4)
+	end
+	layWastePipe("Market", MARKET_X, 0, 0, MARKET_ISLAND, floatingIsland(traced, MARKET_ISLAND, 30, 60, flat, octagon), 60 * 2.3 - 0.4)
 end, 0, 0)
