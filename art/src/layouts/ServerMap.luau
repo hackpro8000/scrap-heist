@@ -43,7 +43,6 @@ local ROAD = { 0.42, 0.41, 0.4 }
 local CONCRETE = { 0.55, 0.54, 0.5 }
 local MARK = { 0.85, 0.65, 0.15 }
 local PLOT = { 0.36, 0.33, 0.28 }
-local ROCK = { 0.42, 0.37, 0.31 }
 
 -- Places one flat piece built here rather than from a model.
 local function slab(label: string, build: () -> (), x: number, y: number, turn: number?)
@@ -187,16 +186,27 @@ local function floatingIsland(mesh, radius: number, depth: number, seed: number,
 end
 
 -- Dirt on top; underneath, rock in uneven strata with darker seams.
+-- Rock strata alternate between ochre, slate and rust, darkening with depth
+-- as less light reaches the underside. A band of topsoil fades into them
+-- under the rim.
+local STRATA = { { 0.5, 0.4, 0.27 }, { 0.36, 0.35, 0.34 }, { 0.48, 0.3, 0.22 } }
+local TOPSOIL = { 0.24, 0.19, 0.14 }
 local function islandPaint(top: (number, number) -> number)
 	return function(x: number, y: number, z: number)
-		if z > top(x, y) - 0.3 then
+		local below = top(x, y) - z
+		if below < 0.3 then
 			local k = 1 + 0.12 * math.noise(x / 4, y / 4, 31) + 0.05 * math.noise(x * 3, y * 3, 37)
 			return GROUND[1] * k, GROUND[2] * k, GROUND[3] * k
 		end
 		local band = math.noise(x / 9, y / 9, z / 2) * 0.6 + z * 0.9
-		local k = 1 + 0.12 * math.sin(band * 2.4) + 0.06 * math.noise(x * 2, y * 2, z * 2)
-		if math.sin(band * 2.4) > 0.93 then k -= 0.25 end
-		return ROCK[1] * k, ROCK[2] * k, ROCK[3] * k
+		local wave = math.sin(band * 2.4)
+		local layer = STRATA[math.floor(band * 2.4 / (2 * math.pi)) % 3 + 1]
+		local k = 1 + 0.1 * wave + 0.06 * math.noise(x * 2, y * 2, z * 2)
+		if wave > 0.93 then k -= 0.25 end
+		k *= 1 - 0.6 * math.clamp((below - 3) / 20, 0, 1)
+		local soil = 1 - math.clamp((below - 1) / 1.5 + 0.3 * math.noise(x / 2, y / 2, 41), 0, 1)
+		local r, g, b = layer[1] * k, layer[2] * k, layer[3] * k
+		return r + (TOPSOIL[1] - r) * soil, g + (TOPSOIL[2] - g) * soil, b + (TOPSOIL[3] - b) * soil
 	end
 end
 

@@ -12531,19 +12531,19 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[12767] = "bc6e162177cef819-9843c551643cacac"
-slabKeys[12920] = "bc6e162177cef819-8f291df974f34236"
-slabKeys[12926] = "bc6e162177cef819-f8f4f9cdd6dd6cae"
-slabKeys[12957] = "bc6e162177cef819-cfb837b03ab263ad"
-slabKeys[13038] = "bc6e162177cef819-09c93ef6a83e1b73"
-slabKeys[13060] = "bc6e162177cef819-47a5907d078f6e1c"
-slabKeys[13130] = "bc6e162177cef819-dbb544d9b50020dd"
-slabKeys[13178] = "bc6e162177cef819-b9a67e4cdf97308c"
-slabKeys[13333] = "bc6e162177cef819-f7451107beca1bf1"
-slabKeys[13361] = "bc6e162177cef819-20ae5a70219057e8"
-slabKeys[13366] = "bc6e162177cef819-22233dc81161c674"
-slabKeys[13373] = "bc6e162177cef819-92736dc11ff1f899"
-slabKeys[13401] = "bc6e162177cef819-5f3dede5e341fed8"
+slabKeys[12777] = "a8153fb88086a5e1-9843c551643cacac"
+slabKeys[12930] = "a8153fb88086a5e1-8f291df974f34236"
+slabKeys[12936] = "a8153fb88086a5e1-f8f4f9cdd6dd6cae"
+slabKeys[12967] = "a8153fb88086a5e1-cfb837b03ab263ad"
+slabKeys[13048] = "a8153fb88086a5e1-09c93ef6a83e1b73"
+slabKeys[13070] = "a8153fb88086a5e1-47a5907d078f6e1c"
+slabKeys[13140] = "a8153fb88086a5e1-dbb544d9b50020dd"
+slabKeys[13188] = "a8153fb88086a5e1-b9a67e4cdf97308c"
+slabKeys[13343] = "a8153fb88086a5e1-f7451107beca1bf1"
+slabKeys[13371] = "a8153fb88086a5e1-20ae5a70219057e8"
+slabKeys[13376] = "a8153fb88086a5e1-22233dc81161c674"
+slabKeys[13383] = "a8153fb88086a5e1-92736dc11ff1f899"
+slabKeys[13411] = "a8153fb88086a5e1-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -12589,7 +12589,6 @@ local ROAD = { 0.42, 0.41, 0.4 }
 local CONCRETE = { 0.55, 0.54, 0.5 }
 local MARK = { 0.85, 0.65, 0.15 }
 local PLOT = { 0.36, 0.33, 0.28 }
-local ROCK = { 0.42, 0.37, 0.31 }
 
 -- Places one flat piece built here rather than from a model.
 local function slab(label: string, build: () -> (), x: number, y: number, turn: number?)
@@ -12733,16 +12732,27 @@ local function floatingIsland(mesh, radius: number, depth: number, seed: number,
 end
 
 -- Dirt on top; underneath, rock in uneven strata with darker seams.
+-- Rock strata alternate between ochre, slate and rust, darkening with depth
+-- as less light reaches the underside. A band of topsoil fades into them
+-- under the rim.
+local STRATA = { { 0.5, 0.4, 0.27 }, { 0.36, 0.35, 0.34 }, { 0.48, 0.3, 0.22 } }
+local TOPSOIL = { 0.24, 0.19, 0.14 }
 local function islandPaint(top: (number, number) -> number)
 	return function(x: number, y: number, z: number)
-		if z > top(x, y) - 0.3 then
+		local below = top(x, y) - z
+		if below < 0.3 then
 			local k = 1 + 0.12 * math.noise(x / 4, y / 4, 31) + 0.05 * math.noise(x * 3, y * 3, 37)
 			return GROUND[1] * k, GROUND[2] * k, GROUND[3] * k
 		end
 		local band = math.noise(x / 9, y / 9, z / 2) * 0.6 + z * 0.9
-		local k = 1 + 0.12 * math.sin(band * 2.4) + 0.06 * math.noise(x * 2, y * 2, z * 2)
-		if math.sin(band * 2.4) > 0.93 then k -= 0.25 end
-		return ROCK[1] * k, ROCK[2] * k, ROCK[3] * k
+		local wave = math.sin(band * 2.4)
+		local layer = STRATA[math.floor(band * 2.4 / (2 * math.pi)) % 3 + 1]
+		local k = 1 + 0.1 * wave + 0.06 * math.noise(x * 2, y * 2, z * 2)
+		if wave > 0.93 then k -= 0.25 end
+		k *= 1 - 0.6 * math.clamp((below - 3) / 20, 0, 1)
+		local soil = 1 - math.clamp((below - 1) / 1.5 + 0.3 * math.noise(x / 2, y / 2, 41), 0, 1)
+		local r, g, b = layer[1] * k, layer[2] * k, layer[3] * k
+		return r + (TOPSOIL[1] - r) * soil, g + (TOPSOIL[2] - g) * soil, b + (TOPSOIL[3] - b) * soil
 	end
 end
 
