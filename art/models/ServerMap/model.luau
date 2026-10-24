@@ -12531,20 +12531,20 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[13073] = "0a01b6c940c38092-935f76826323c7d4"
-slabKeys[13230] = "0a01b6c940c38092-8f291df974f34236"
-slabKeys[13236] = "0a01b6c940c38092-f8f4f9cdd6dd6cae"
-slabKeys[13267] = "0a01b6c940c38092-cfb837b03ab263ad"
-slabKeys[13348] = "0a01b6c940c38092-09c93ef6a83e1b73"
-slabKeys[13370] = "0a01b6c940c38092-816e21abcfe67713"
-slabKeys[13446] = "0a01b6c940c38092-dbb544d9b50020dd"
-slabKeys[13494] = "0a01b6c940c38092-b9a67e4cdf97308c"
-slabKeys[13649] = "0a01b6c940c38092-f7451107beca1bf1"
-slabKeys[13677] = "0a01b6c940c38092-7c27880a9a355c4d"
-slabKeys[13686] = "0a01b6c940c38092-22233dc81161c674"
-slabKeys[13693] = "0a01b6c940c38092-92736dc11ff1f899"
-slabKeys[13721] = "0a01b6c940c38092-5f3dede5e341fed8"
-slabKeys[13752] = "0a01b6c940c38092-74a18327d4dc7da2"
+slabKeys[13086] = "bab9c30a3a89aeb0-935f76826323c7d4"
+slabKeys[13243] = "bab9c30a3a89aeb0-8f291df974f34236"
+slabKeys[13249] = "bab9c30a3a89aeb0-f8f4f9cdd6dd6cae"
+slabKeys[13280] = "bab9c30a3a89aeb0-cfb837b03ab263ad"
+slabKeys[13361] = "bab9c30a3a89aeb0-09c93ef6a83e1b73"
+slabKeys[13383] = "bab9c30a3a89aeb0-816e21abcfe67713"
+slabKeys[13459] = "bab9c30a3a89aeb0-dbb544d9b50020dd"
+slabKeys[13507] = "bab9c30a3a89aeb0-b9a67e4cdf97308c"
+slabKeys[13662] = "bab9c30a3a89aeb0-f7451107beca1bf1"
+slabKeys[13690] = "bab9c30a3a89aeb0-7c27880a9a355c4d"
+slabKeys[13699] = "bab9c30a3a89aeb0-22233dc81161c674"
+slabKeys[13706] = "bab9c30a3a89aeb0-92736dc11ff1f899"
+slabKeys[13734] = "bab9c30a3a89aeb0-5f3dede5e341fed8"
+slabKeys[13765] = "bab9c30a3a89aeb0-74a18327d4dc7da2"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -12653,7 +12653,7 @@ local function clumpOutline(clump: Clump, z: number): { { number } }
 	end
 	return points
 end
-local function addClumps(mesh, radius: number, depth: number, seed: number, rimZ: number, edge: (number) -> number, clumps: { Clump })
+local function addClumps(mesh, radius: number, depth: number, seed: number, rimZ: number, wallRadius: (number, number) -> number, clumps: { Clump })
 	local width = math.clamp(radius * 0.12, 3, 6)
 	for tierIndex, tier in CLUMP_TIERS do
 		local count = math.max(5, math.floor(2 * math.pi * radius * tier.reach / (width * 1.7)))
@@ -12668,10 +12668,9 @@ local function addClumps(mesh, radius: number, depth: number, seed: number, rimZ
 			if tierIndex == #CLUMP_TIERS then
 				bottom -= depth * 0.15 * (math.noise(seed, key, 13) + 0.5)
 			end
-			-- Centred just inside the core wall at the clump's middle height, so
-			-- most of it stands proud of the wall.
-			local wallAt = math.clamp(-(top + bottom) / 2 / depth, 0, 1)
-			local reach = edge(angle) * (1 - wallAt) ^ 1.1 - size * 0.3
+			-- Centred on the core wall at the clump's middle height, so about
+			-- half of it stands proud of the wall.
+			local reach = math.max(wallRadius(angle, (top + bottom) / 2) - size * 0.1, size)
 			local corners = {}
 			local sides = 5 + (seed + key) % 3
 			local turn = math.noise(seed, key, 17) * math.pi
@@ -12792,7 +12791,21 @@ local function floatingIsland(mesh, radius: number, depth: number, seed: number,
 	mesh:face(topCap)
 	mesh:face(bottomCap)
 	if clumps then
-		addClumps(mesh, radius, depth, seed, rows[#fractions][0][3], edge, clumps)
+		-- The wall's distance from the middle at `angle` and height `z`, read
+		-- off the rim and underside rows.
+		local function wallRadius(angle: number, z: number): number
+			local j = math.round(angle / (2 * math.pi) * ISLAND_SIDES) % ISLAND_SIDES
+			for i = #fractions, #rows - 1 do
+				local upper, lower = rows[i][j], rows[i + 1][j]
+				if z >= lower[3] then
+					local blend = math.clamp((upper[3] - z) / math.max(upper[3] - lower[3], 0.01), 0, 1)
+					local above, below = math.sqrt(upper[1] ^ 2 + upper[2] ^ 2), math.sqrt(lower[1] ^ 2 + lower[2] ^ 2)
+					return above + (below - above) * blend
+				end
+			end
+			return radius * 0.03
+		end
+		addClumps(mesh, radius, depth, seed, rows[#fractions][0][3], wallRadius, clumps)
 	end
 	-- Rock spikes hang from the underside, rooted inside it.
 	local SPIKE_SIDES = 6
