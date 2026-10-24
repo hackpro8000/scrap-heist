@@ -812,10 +812,15 @@ end
 -- One closed outer shell: rows of wall points stepping down from the top to
 -- the tip, a flat top in concentric rings and a point at the bottom.
 local ANGLES, STEP, TIP, LIP, TOP_RINGS = 240, 0.3, -25, 0.35, 8
+local RIM_JAGGED = 1.66
 part("Island", nil, GROUND, function(mesh)
 	local rim = {}
 	for j = 0, ANGLES - 1 do
-		rim[j] = wall(2 * math.pi * j / ANGLES, CAP_TOP)
+		-- The rim's jaggedness, its departure from the smooth outline,
+		-- exaggerated by RIM_JAGGED.
+		local angle = 2 * math.pi * j / ANGLES
+		local smooth = TIERS[1][1] * outlineScale(angle)
+		rim[j] = smooth + (wall(angle, CAP_TOP) - smooth) * RIM_JAGGED
 	end
 	local rows = {}
 	local z = CAP_TOP
