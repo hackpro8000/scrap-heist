@@ -224,7 +224,7 @@ for _, entry in parts do
 		highlight = 1,
 		shadow = 1,
 		gradient = GRADIENT,
-		blend = 0.56,
+		blend = 0.78,
 		occluders = occluders,
 	})
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
