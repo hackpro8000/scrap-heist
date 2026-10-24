@@ -757,13 +757,21 @@ for i = 1, 8 do
 				end
 			end
 		end, nil, 0.5)
-		-- The yard end lands on a concrete apron, with a steel plate over the
-		-- joint and a gate frame standing on the wing walls.
+		-- The yard end lands on a concrete apron under a gate frame standing on
+		-- the wing walls. A steel plate covers the joint at both ends.
 		part("Apron", nil, CONCRETE, function(mesh)
 			box(mesh, 0, BRIDGE_FROM + 2.5, 0, 7.3, 5, 0.12)
 		end, nil, 0.5)
-		part("JointPlate", nil, STEEL, function(mesh)
-			box(mesh, 0, BRIDGE_FROM, 0.1, 6, 0.8, 0.04)
+		part("JointPlates", nil, STEEL, function(mesh)
+			for _, edge in { BRIDGE_TO, BRIDGE_FROM } do
+				box(mesh, 0, edge, 0.1, 6, 0.8, 0.04)
+			end
+		end, nil, 0.3)
+		-- The road end gets a hazard bollard on each wing wall.
+		part("Bollards", nil, MARK, function(mesh)
+			for _, side in { -3.4, 3.4 } do
+				box(mesh, side, BRIDGE_TO + 0.5, 0.45, 0.4, 0.4, 1.2)
+			end
 		end, nil, 0.3)
 		part("GateFrame", nil, DARK_STEEL, function(mesh)
 			for _, side in { -3.4, 3.4 } do
