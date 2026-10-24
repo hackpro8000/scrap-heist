@@ -1,18 +1,40 @@
 -- Yard Island: a floating yard island built from stacked rock columns, in
 -- the style of a hand-sculpted stylised island. Three tiers of rounded
--- sandstone pillars ring the island, each tier tucked further in and ending
--- lower than the last, with deep clefts between pillars and a grassy lip
+-- rock pillars ring the island, each tier tucked further in and ending
+-- lower than the last, with deep clefts between pillars and a soil lip
 -- draped over the rim. The model is one closed outer shell over the
 -- columns, with nothing inside. Top at z = 0.7.
 useTexelDensity(16)
 local RADIUS = 20
 local GROUND = { 0.3, 0.27, 0.22 }
-local GRASS = { 0.36, 0.52, 0.15 }
-local SANDSTONE = { 0.66, 0.45, 0.25 }
+local STRATA = { { 0.5, 0.4, 0.27 }, { 0.36, 0.35, 0.34 }, { 0.48, 0.3, 0.22 } }
+local TOPSOIL = { 0.24, 0.19, 0.14 }
 
 local function random(k: number): number
 	local s = math.sin(k * 12.9898 + 4.1414) * 43758.5453
 	return s - math.floor(s)
+end
+
+-- The map's island texture: speckled ground on top, then topsoil fading
+-- into wavy rock strata that darken with depth. A clump's `seed` shifts its
+-- strata, tint and grain so neighbouring clumps don't match.
+local function islandPaint(x: number, y: number, z: number, seed: number?)
+	local below = -z
+	if below < 0.3 then
+		local k = 1 + 0.12 * math.noise(x / 4, y / 4, 31) + 0.05 * math.noise(x * 3, y * 3, 37)
+		return GROUND[1] * k, GROUND[2] * k, GROUND[3] * k
+	end
+	local s = seed or 0
+	local band = math.noise(x / 9 + s, y / 9, z / 2) * 0.6 + z * (0.8 + 0.2 * random(s + 1)) + random(s + 2) * 3
+	local tint = if seed then 0.85 + 0.3 * random(s + 3) else 1
+	local wave = math.sin(band * 2.4)
+	local layer = STRATA[math.floor(band * 2.4 / (2 * math.pi)) % 3 + 1]
+	local k = tint * (1 + 0.1 * wave + 0.06 * math.noise(x * 2 + s, y * 2, z * 2))
+	if wave > 0.93 then k -= 0.25 end
+	k *= 1 - 0.6 * math.clamp((below - 3) / 20, 0, 1)
+	local soil = 1 - math.clamp((below - 0.5) / 4 + 0.3 * math.noise(x / 2, y / 2, 41), 0, 1)
+	local r, g, b = layer[1] * k, layer[2] * k, layer[3] * k
+	return r + (TOPSOIL[1] - r) * soil, g + (TOPSOIL[2] - g) * soil, b + (TOPSOIL[3] - b) * soil
 end
 
 -- The island's wobbly outline, as a radius scale per angle.
@@ -112,7 +134,7 @@ local function wall(angle: number, z: number)
 	return best, owner, across
 end
 
--- The grass lip: how far it drapes down the rim at `angle`, in clumps.
+-- The soil lip: how far it drapes down the rim at `angle`, in clumps.
 local function drape(angle: number): number
 	local n = math.noise(angle * 7, 3.7) + 0.5 * math.noise(angle * 23, 9.1)
 	return 0.35 + 1.1 * math.clamp(n + 0.4, 0, 1)
@@ -175,30 +197,10 @@ part("Island", nil, GROUND, function(mesh)
 		mesh:face({ tip, rows[#rows][(j + 1) % ANGLES], rows[#rows][j] })
 	end
 end, false, function(x, y, z)
-	local angle = math.atan2(y, x)
-	local away = math.sqrt(x * x + y * y)
-	-- Top: dirt in the middle, grass in a band round the edge.
-	if z > CAP_TOP - 0.02 then
-		local edge = wall(angle, CAP_TOP) + LIP - away
-		local k = 1 + 0.12 * math.noise(x / 4, y / 4, 31) + 0.05 * math.noise(x * 3, y * 3, 37)
-		local grassy = math.clamp((2.2 + 0.8 * math.noise(x / 3, y / 3, 5) - edge) / 0.6, 0, 1)
-		local r = GROUND[1] + (GRASS[1] - GROUND[1]) * grassy
-		local g = GROUND[2] + (GRASS[2] - GROUND[2]) * grassy
-		local b = GROUND[3] + (GRASS[3] - GROUND[3]) * grassy
-		return r * k, g * k, b * k
-	end
-	if CAP_TOP - z < drape(angle) then
-		local k = 1 + 0.15 * math.noise(x * 1.5, y * 1.5, z * 2)
-		return GRASS[1] * k, GRASS[2] * k, GRASS[3] * k
-	end
-	-- Rock: one sandstone per pillar, a little warmer or paler pillar to
-	-- pillar, darkening into the clefts either side.
-	local _, pillar, across = wall(angle, z)
-	local s = if pillar then pillar.seed else 0
-	local k = (0.88 + 0.24 * random(s + 3)) * (1 + 0.06 * math.noise(x * 0.8, y * 0.8, z * 0.8))
-	k *= 1 - 0.35 * math.clamp((math.abs(across) - 0.75) / 0.25, 0, 1)
-	local warm = 0.06 * (random(s + 5) - 0.5)
-	return SANDSTONE[1] * k + warm, SANDSTONE[2] * k, SANDSTONE[3] * k - warm
+	-- The original island colouring: speckled ground on top, then topsoil
+	-- fading into wavy strata, shifted per pillar so neighbours don't match.
+	local _, pillar = wall(math.atan2(y, x), z)
+	return islandPaint(x, y, z - CAP_TOP, if pillar then pillar.seed else nil)
 end)
 
 -- Aggressive shading: half-strength edge highlights, ramping 30% stronger
