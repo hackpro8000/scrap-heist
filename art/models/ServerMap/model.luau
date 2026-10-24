@@ -12536,14 +12536,14 @@ slabKeys[12870] = "b2520bd718947075-8f291df974f34236"
 slabKeys[12876] = "b2520bd718947075-f8f4f9cdd6dd6cae"
 slabKeys[12907] = "b2520bd718947075-cfb837b03ab263ad"
 slabKeys[12986] = "b2520bd718947075-45f1773a0c3d4692"
-slabKeys[13031] = "b2520bd718947075-ba14974c752a9757"
-slabKeys[13095] = "b2520bd718947075-38a291d6cf6e421e"
-slabKeys[13126] = "b2520bd718947075-dc02515c57e16914"
-slabKeys[13221] = "b2520bd718947075-f3271f231573d1f1"
-slabKeys[13226] = "b2520bd718947075-08fbe9bb8b1a6d5a"
-slabKeys[13233] = "b2520bd718947075-f278656b57891167"
-slabKeys[13242] = "b2520bd718947075-5d5d5a3a3e817dcb"
-slabKeys[13309] = "b2520bd718947075-5f3dede5e341fed8"
+slabKeys[13031] = "b2520bd718947075-065745b70ae87722"
+slabKeys[13097] = "b2520bd718947075-38a291d6cf6e421e"
+slabKeys[13128] = "b2520bd718947075-dc02515c57e16914"
+slabKeys[13223] = "b2520bd718947075-f3271f231573d1f1"
+slabKeys[13228] = "b2520bd718947075-08fbe9bb8b1a6d5a"
+slabKeys[13235] = "b2520bd718947075-f278656b57891167"
+slabKeys[13244] = "b2520bd718947075-5d5d5a3a3e817dcb"
+slabKeys[13311] = "b2520bd718947075-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -13036,10 +13036,12 @@ slab("Road", function()
 		local radius = octagonRadius(x, y)
 		return asphalt(radius - middle, math.atan2(y, x) * middle, (ROAD_OUTER - ROAD_INNER) / 2, 61)
 	end)
+	-- Each kerb run stops against the bridge railings, just past the kick plates.
+	local bridgeGap = math.deg(math.asin(3.15 / ROAD_OUTER))
 	part("Kerb", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
 			local from = (i - 1) * 45
-			arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, -0.1, 0.3, from + 4, from + 41, true)
+			arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, -0.1, 0.3, from + bridgeGap, from + 45 - bridgeGap, true)
 		end
 	end, nil, 0.5)
 end, 0, 0)
