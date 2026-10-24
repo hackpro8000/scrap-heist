@@ -436,6 +436,9 @@ pub struct Shading {
 	pub blend: f64,
 	// 0-1: smooth top-to-bottom darkening across each part, cool in the low end.
 	pub gradient: f64,
+	// Extra highlight strength reached at the bottom of each part, ramping
+	// smoothly from none at the top (0.3 = 30% stronger at the bottom).
+	pub highlight_ramp: f64,
 }
 
 const AO_DISTANCE: f64 = 0.8;
@@ -605,7 +608,9 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 			edge = (edge + (bend * gain).min(1.0) * painted * pressure).min(1.0);
 		}
 		let open = sample_ao(texel.uv);
-		let lit = (edge * open * shading.highlight).clamp(0.0, 1.0);
+		let low = 1.0 - g[2];
+		let ramp = 1.0 + shading.highlight_ramp * low * low * (3.0 - 2.0 * low);
+		let lit = (edge * open * shading.highlight * ramp).clamp(0.0, 1.0);
 		let dark = ((1.0 - open) * 1.6 * shading.shadow).clamp(0.0, 1.0);
 		let mut color = base[texel.pixel].map(to_linear);
 		let cream = [1.0, 0.97, 0.85].map(to_linear_f64);
