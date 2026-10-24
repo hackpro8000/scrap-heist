@@ -6,7 +6,7 @@
 -- ground, banking up to the road with no steps, and new players spawn round its crusher.
 -- Each plot slab carries the Yard Layout template, placed piece by piece the
 -- same way YardLayout.luau places it, so the map shows every yard set up.
--- Labels: ArenaIsland, Road, Arena, Ramps, Spawn, Beacon, Island1-Island8, Plot1-Plot8, Yard1_<piece>-Yard8_<piece>, Spoke1-Spoke8, Bridge1-Bridge8,
+-- Labels: ArenaIsland, Road, Market1-Market2, Arena, Ramps, Spawn, Beacon, Island1-Island8, Plot1-Plot8, Yard1_<piece>-Yard8_<piece>, Spoke1-Spoke8, Bridge1-Bridge8,
 -- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4 and Cones1-Cones8.
 -- Yard crates show empty, as in the Yard Layout template.
 skipPart = function(name)
@@ -27,6 +27,9 @@ local ARENA_ISLAND, YARD_ISLAND = 61, 26
 -- the floor inside it and the bridges sloping up to the yards outside it.
 local DECK = 2
 local YARD_TIER = 6
+-- Market platforms open off the road's two east corners.
+local MARKET_CORNERS = { 22.5, 337.5 }
+local MARKET_HALF = 6
 
 local GROUND = { 0.3, 0.27, 0.22 }
 local ROAD = { 0.42, 0.41, 0.4 }
@@ -454,15 +457,71 @@ slab("Road", function()
 		local radius = octagonRadius(x, y)
 		return asphalt(radius - middle, math.atan2(y, x) * middle, (ROAD_OUTER - ROAD_INNER) / 2, 61)
 	end)
-	-- Each kerb run stops against the outer face of a bridge abutment's wing wall.
+	-- Each kerb run stops against the outer face of a bridge abutment's wing
+	-- wall, and breaks at the corners where a market platform opens off it.
 	local bridgeGap = math.deg(math.asin(3.65 / ROAD_OUTER))
+	local marketGap = math.deg(math.asin(MARKET_HALF / ROAD_OUTER))
 	part("Kerb", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
-			local from = (i - 1) * 45
-			arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, DECK - 0.6, DECK + 0.3, from + bridgeGap, from + 45 - bridgeGap, true)
+			local from, to = (i - 1) * 45 + bridgeGap, i * 45 - bridgeGap
+			local corner = (i - 0.5) * 45
+			if table.find(MARKET_CORNERS, corner) then
+				arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, DECK - 0.6, DECK + 0.3, from, corner - marketGap, true)
+				from = corner + marketGap
+			end
+			arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, DECK - 0.6, DECK + 0.3, from, to, true)
 		end
 	end, nil, 0.5)
 end, 0, 0)
+
+-- The market: at each east corner of the ring road a steel platform juts out
+-- over the island's edge, level with the road and braced back into the rock
+-- underneath, with a stall on it. Local +y points out from the arena.
+local MARKET_INNER, MARKET_OUTER = 60, 74
+for i, corner in MARKET_CORNERS do
+	local x, y = polar(MARKET_INNER, corner)
+	local length = MARKET_OUTER - MARKET_INNER
+	slab(`Market{i}`, function()
+		part("Deck", nil, STEEL, function(mesh)
+			box(mesh, 0, length / 2, DECK - 0.62, MARKET_HALF * 2, length, 0.6)
+		end, nil, 0.4)
+		part("Supports", nil, DARK_STEEL, function(mesh)
+			for _, side in { -1, 1 } do
+				local sx = side * (MARKET_HALF - 0.6)
+				box(mesh, sx, length / 2, DECK - 1.4, 0.6, length, 0.8)
+				leg(mesh, sx, length - 0.5, DECK - 1.2, sx, 0, DECK - 6, 0.6)
+				leg(mesh, sx, length / 2, DECK - 1.2, sx, -1, DECK - 5, 0.5)
+			end
+			box(mesh, 0, length - 0.5, DECK - 1.4, MARKET_HALF * 2, 0.6, 0.8)
+		end, nil, 0.6)
+		part("Railing", nil, MARK, function(mesh)
+			for _, side in { -1, 1 } do
+				box(mesh, side * (MARKET_HALF - 0.1), length / 2 + 1, DECK + 1, 0.15, length - 2, 0.15)
+				for py = 2, length, 4 do
+					box(mesh, side * (MARKET_HALF - 0.1), py, DECK, 0.15, 0.15, 1)
+				end
+			end
+		end, nil, 0.3)
+		-- The stall: a counter facing the road under a striped awning, with a
+		-- back wall and a post at each front corner.
+		part("StallFrame", nil, CONCRETE, function(mesh)
+			box(mesh, 0, length - 1.5, DECK, 8, 0.4, 3.4)
+			box(mesh, -3.8, length - 5, DECK, 0.3, 0.3, 3.4)
+			box(mesh, 3.8, length - 5, DECK, 0.3, 0.3, 3.4)
+			box(mesh, 0, length - 5, DECK, 7, 1, 1.1)
+		end, nil, 0.4)
+		part("Awning", nil, { 0.7, 0.18, 0.12 }, function(mesh)
+			for k = 0, 3 do
+				box(mesh, -3.5 + k * 2 + 0.5, length - 3.5, DECK + 3.4, 1, 5, 0.12)
+			end
+		end, nil, 0.3)
+		part("AwningStripes", nil, { 0.9, 0.86, 0.78 }, function(mesh)
+			for k = 0, 3 do
+				box(mesh, -3.5 + k * 2 + 1.5, length - 3.5, DECK + 3.4, 1, 5, 0.12)
+			end
+		end, nil, 0.3)
+	end, x, y, corner - 90)
+end
 
 -- Entry ramps: a concrete deck at each spoke, from the ring road down the
 -- bank to the fight floor, one straight slope a touch above the bank so it
