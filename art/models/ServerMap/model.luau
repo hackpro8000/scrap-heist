@@ -12544,7 +12544,7 @@ slabKeys[13511] = "b9ff4053bf5e0dab-7c27880a9a355c4d"
 slabKeys[13520] = "b9ff4053bf5e0dab-22233dc81161c674"
 slabKeys[13527] = "b9ff4053bf5e0dab-92736dc11ff1f899"
 slabKeys[13555] = "b9ff4053bf5e0dab-5f3dede5e341fed8"
-slabKeys[13586] = "b9ff4053bf5e0dab-20ab9c4a737bbc70"
+slabKeys[13586] = "b9ff4053bf5e0dab-74a18327d4dc7da2"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -13765,7 +13765,7 @@ slab("Plumbing", function()
 			-- front and down the outside, thickest at the bottom where it ran.
 			sweep(mesh, 115, 245, 16, function(degrees: number)
 				local weight = math.max(0, 1 - math.abs(degrees - 180) / 65)
-				local skin = 0.015 + 0.13 * weight ^ 0.7 * (1 + 0.25 * math.sin(degrees * 0.3))
+				local skin = 0.015 + 0.13 * weight ^ 0.7 * (1 + 0.6 * math.sin(degrees * 0.17 + 1) * math.cos(degrees * 0.43))
 				local down = -0.15 - 0.45 * weight
 				return {
 					{ lipOut, down }, { lipOut + skin, down - skin }, { lipOut + skin, 0.1 },
