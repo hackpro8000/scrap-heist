@@ -135,10 +135,10 @@ part("Cap", nil, GROUND, function(mesh)
 			points[j] = { math.cos(angle) * reach, math.sin(angle) * reach }
 		end
 		return points
-	end, 0, -4, 0.5, 0.8)
+	end, 0, -4, 0.5, 0.62)
 end, false, islandPaint)
 
-tier("Tier1", RADIUS * 0.82, 4.5, -1.6, -8.5, 11)
+tier("Tier1", RADIUS * 0.86, 4.5, -0.8, -8.5, 11)
 tier("Tier2", RADIUS * 0.52, 4, -6, -14, 23)
 tier("Tier3", RADIUS * 0.3, 3.5, -11.5, -19.5, 37)
 part("Tip", nil, GROUND, function(mesh)
