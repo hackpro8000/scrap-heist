@@ -746,6 +746,22 @@ for i = 1, 8 do
 				box(mesh, side + math.sign(side) * 0.1, BRIDGE_MID, -0.05, 0.04, BRIDGE_LENGTH - 0.3, 0.22)
 			end
 		end, nil, 0.3)
+		-- Where the deck meets the road at each end: a ribbed steel threshold
+		-- plate lapping onto the ground over a dark expansion joint.
+		part("Thresholds", nil, STEEL, function(mesh)
+			for _, ends in { { BRIDGE_TO, -1 }, { BRIDGE_FROM, 1 } } do
+				local at, out = ends[1], ends[2]
+				box(mesh, 0, at + out * 0.35, 0.03, 5.6, 1.1, 0.05)
+				for n = 0, 4 do
+					box(mesh, 0, at + out * (-0.1 + n * 0.2), 0.08, 5.4, 0.06, 0.03)
+				end
+			end
+		end, nil, 0.5)
+		part("Joints", nil, DARK_STEEL, function(mesh)
+			for _, at in { BRIDGE_TO, BRIDGE_FROM } do
+				box(mesh, 0, at, 0.03, 6, 0.14, 0.08)
+			end
+		end, nil, 0.3)
 	end, x, y, degrees - 90)
 	local coneX, coneY = polar(ROAD_INNER + 1.5, degrees + 9)
 	place(`Cones{i}`, buildTrafficCones, coneX, coneY, heightAt(coneX, coneY), degrees)
