@@ -41,20 +41,28 @@ local function capScale(angle: number): number
 	return 1 + 0.07 * math.sin(3 * angle + 0.6) + 0.05 * math.sin(5 * angle + 2.1) + 0.03 * math.sin(9 * angle)
 end
 
--- A faceted prism as data: four rings of corners (under the top chamfer,
--- full width, over the bottom, tapered bottom), each { z, points }.
+-- A faceted prism as data: rings of corners from the top down, each
+-- { z, points }. `levels` lists each ring's { z, scale };
 -- `outline(scale, ring)` returns the corners counter-clockwise from above.
-local function prism(outline: (number, number) -> { { number } }, top: number, bottom: number, bevel: number, taper: number)
+local function prism(outline: (number, number) -> { { number } }, levels: { { number } })
 	local rings = {}
-	for r, level in { { top, 1 - bevel / 3 }, { top - bevel, 1 }, { bottom + bevel, taper }, { bottom, taper - bevel / 4 } } do
+	for r, level in levels do
 		rings[r] = { z = level[1], points = outline(level[2], r) }
 	end
 	return rings
 end
 
+-- The usual four levels: under the top chamfer, full width, over the
+-- bottom, tapered bottom.
+local function prismLevels(top: number, bottom: number, bevel: number, taper: number): { { number } }
+	return { { top, 1 - bevel / 3 }, { top - bevel, 1 }, { bottom + bevel, taper }, { bottom, taper - bevel / 4 } }
+end
+
 -- One rock clump with its own seed driving everything: an irregular 5-7
 -- sided outline round (cx, cy), its own taper, a lower half that leans in
--- toward the middle, and every corner of every ring nudged.
+-- toward the middle, and every corner of every ring nudged. Each side is
+-- split with a chip knocked in or a lump pushed out, and the column steps in
+-- at a few ledges, so every clump reads as its own broken formation.
 local function clump(cx: number, cy: number, size: number, top: number, bottom: number, seed: number)
 	local sides = 5 + math.floor(random(seed) * 3)
 	local corners = {}
@@ -66,20 +74,44 @@ local function clump(cx: number, cy: number, size: number, top: number, bottom: 
 	local away = math.sqrt(cx * cx + cy * cy)
 	local lean = if away > 0 then size * (0.1 + 0.25 * random(seed + 62)) / away else 0
 	local tiltX, tiltY = -cx * lean, -cy * lean
+	local bevel = math.min(0.6, (top - bottom) / 4)
+	local base = prismLevels(top, bottom, bevel, taper)
+	-- Ledges: at each, the column above sits on a slightly wider shelf.
+	local levels = { base[1], base[2] }
+	local ledges = 1 + math.floor(random(seed + 70) * 3)
+	local span = base[2][1] - base[3][1]
+	for n = 1, ledges do
+		local z = base[2][1] - span * (n - 0.5 + (random(seed + 71 + n) - 0.5) * 0.6) / ledges
+		local scale = 1 + (taper - 1) * (base[2][1] - z) / span
+		local step = 0.06 + 0.12 * random(seed + 75 + n)
+		table.insert(levels, { z + 0.15, scale * (1 - step) })
+		table.insert(levels, { z, scale })
+	end
+	table.insert(levels, base[3])
+	table.insert(levels, base[4])
 	local rings = prism(function(scale, ring)
-		local shift = if ring <= 2 then 0 else 1
+		local shift = math.clamp((base[2][1] - levels[ring][1]) / span, 0, 1)
 		local points = {}
+		local function add(angle: number, reach: number)
+			table.insert(points, {
+				cx + math.cos(angle) * reach + tiltX * shift,
+				cy + math.sin(angle) * reach + tiltY * shift,
+			})
+		end
 		for j, corner in corners do
 			local k = seed + j * 13 + ring * 101
 			local reach = corner[2] * scale * (0.9 + 0.2 * random(k))
 			local twist = (random(k + 7) - 0.5) * 0.15
-			points[j] = {
-				cx + math.cos(corner[1] + twist) * reach + tiltX * shift,
-				cy + math.sin(corner[1] + twist) * reach + tiltY * shift,
-			}
+			add(corner[1] + twist, reach)
+			-- Halfway to the next corner: a chip bitten in or a lump standing
+			-- out, its depth drifting a little from ring to ring.
+			local nextCorner = corners[j % sides + 1]
+			local nextAngle = nextCorner[1] + (if j == sides then 2 * math.pi else 0)
+			local defect = random(seed + j * 17) - 0.45 + (random(k + 11) - 0.5) * 0.15
+			add((corner[1] + nextAngle) / 2 + (random(seed + j * 19) - 0.5) * 0.3, (corner[2] + nextCorner[2]) / 2 * scale * (0.85 + 0.35 * defect))
 		end
 		return points
-	end, top, bottom, math.min(0.6, (top - bottom) / 4), taper)
+	end, levels)
 	return { rings = rings, x = cx, y = cy, z = (top + bottom) / 2, seed = seed }
 end
 
@@ -109,7 +141,7 @@ table.insert(solids, {
 			points[j] = { math.cos(angle) * reach, math.sin(angle) * reach }
 		end
 		return points
-	end, CAP_TOP, -4, 0.5, 0.62),
+	end, prismLevels(CAP_TOP, -4, 0.5, 0.62)),
 	x = 0, y = 0, z = -1.5,
 })
 tier(RADIUS * 0.86, 4.5, 0.3, -8.5, 11)
@@ -123,10 +155,10 @@ local function wallReach(dx: number, dy: number, z: number): number
 	local best = 0
 	for _, solid in solids do
 		local rings = solid.rings
-		if z > rings[1].z or z < rings[4].z then continue end
+		if z > rings[1].z or z < rings[#rings].z then continue end
 		local r = 1
-		while r < 4 and z < rings[r + 1].z do r += 1 end
-		local upper, lower = rings[r], rings[math.min(r + 1, 4)]
+		while r < #rings and z < rings[r + 1].z do r += 1 end
+		local upper, lower = rings[r], rings[math.min(r + 1, #rings)]
 		local blend = if upper.z > lower.z then (upper.z - z) / (upper.z - lower.z) else 0
 		local n = #upper.points
 		local function corner(j: number): (number, number)
@@ -204,7 +236,7 @@ for _, entry in parts do
 		highlight = 1,
 		shadow = 1,
 		gradient = GRADIENT,
-		blend = 0.3,
+		blend = 0.56,
 		occluders = occluders,
 	})
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
