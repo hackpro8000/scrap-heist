@@ -211,18 +211,17 @@ end, false, function(x, y, z)
 	return islandPaint(x, y, z, nearest)
 end)
 
--- Aggressive shading: full edge highlights and contact shadows, with every
--- other part as an occluder.
+-- Aggressive shading: full edge highlights and extremely strong contact
+-- shadows, with every part (the shell included) as an occluder so each
+-- clump darkens the crevices and overhangs round it.
 for _, entry in parts do
 	local occluders = {}
 	for _, other in parts do
-		if other ~= entry then
-			table.insert(occluders, other.mesh)
-		end
+		table.insert(occluders, other.mesh)
 	end
 	entry.mesh:paintShading(entry.image, {
 		highlight = 1,
-		shadow = 1,
+		shadow = 3,
 		gradient = GRADIENT,
 		blend = 0.78,
 		occluders = occluders,
