@@ -833,7 +833,7 @@ local ANGLES, STEP, TIP, RIM, TOP_RINGS = 192, 0.3, -25, 1, 8
 part("Island", nil, GROUND, function(mesh)
 	-- The rim stays upright for its top stud, at the widest reach in that
 	-- band, so no notches under the cap's bevel trap black shadow pits.
-	local rim = {}
+	local rim, chip = {}, {}
 	for j = 0, ANGLES - 1 do
 		local angle = 2 * math.pi * j / ANGLES
 		local dx, dy = math.cos(angle), math.sin(angle)
@@ -842,6 +842,10 @@ part("Island", nil, GROUND, function(mesh)
 			r = math.max(r, wallReach(dx, dy, z))
 		end
 		rim[j] = r
+		-- Chips knocked out of the topsoil's rim: deepest at the top edge and
+		-- running out partway down the upright band.
+		local n = math.noise(j / ANGLES * 45, 7.3) + 0.4 * math.noise(j / ANGLES * 140, 2.9)
+		chip[j] = math.clamp((n - 0.05) * 3, 0, 1.2)
 	end
 	local rows = {}
 	local z = CAP_TOP
@@ -850,7 +854,7 @@ part("Island", nil, GROUND, function(mesh)
 		for j = 0, ANGLES - 1 do
 			local angle = 2 * math.pi * j / ANGLES
 			local dx, dy = math.cos(angle), math.sin(angle)
-			local r = if z > CAP_TOP - RIM then rim[j] else math.max(wallReach(dx, dy, z), 0.05)
+			local r = if z > CAP_TOP - RIM then rim[j] - chip[j] * math.max(1 - (CAP_TOP - z) / (RIM * 0.7), 0) else math.max(wallReach(dx, dy, z), 0.05)
 			row[j] = mesh:vertex(dx * r, dy * r, z)
 		end
 		table.insert(rows, row)
@@ -870,7 +874,7 @@ part("Island", nil, GROUND, function(mesh)
 		local row = {}
 		for j = 0, ANGLES - 1 do
 			local angle = 2 * math.pi * j / ANGLES
-			row[j] = mesh:vertex(math.cos(angle) * rim[j] * k, math.sin(angle) * rim[j] * k, CAP_TOP)
+			row[j] = mesh:vertex(math.cos(angle) * (rim[j] - chip[j]) * k, math.sin(angle) * (rim[j] - chip[j]) * k, CAP_TOP)
 		end
 		for j = 0, ANGLES - 1 do
 			local l = (j + 1) % ANGLES
