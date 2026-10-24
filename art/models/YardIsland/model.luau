@@ -918,9 +918,7 @@ return entries
 end)
 -- cached above
 
--- Plumbing: rusty pipe runs clamped round the first tier on standoffs, each
--- coming out of the rock, running round with a flange and a bracket at every
--- joint, then bending back into the rock.
+-- Plumbing helpers: rust paint and vector maths for the pipe network below.
 local RUST = { 0.45, 0.25, 0.14 }
 local function scrapPaint(x: number, y: number, z: number): (number, number, number)
 	local k = 1 + 0.2 * math.noise(x * 1.5, y * 1.5, z * 1.5)
@@ -942,72 +940,173 @@ local function circle(radius: number, sides: number)
 	end
 	return profile
 end
--- A capped prism of `profile` from point a to point b.
-local function tube(mesh, a, b, profile: { { number } })
-	local axis = unit({ b[1] - a[1], b[2] - a[2], b[3] - a[3] })
-	local side = unit(cross(axis, if math.abs(axis[3]) < 0.9 then { 0, 0, 1 } else { 1, 0, 0 }))
-	local up = cross(side, axis)
-	local function ring(o)
-		local list = {}
-		for k, point in profile do
-			list[k] = mesh:vertex(o[1] + side[1] * point[1] + up[1] * point[2], o[2] + side[2] * point[1] + up[2] * point[2], o[3] + side[3] * point[1] + up[3] * point[2])
+-- A tube of `profile` swept along `points`, its rings kept from twisting by
+-- carrying each ring's side vector on to the next.
+local function sweep(mesh, points, profile: { { number } })
+	local rings, side = {}, nil
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local axis = unit({ b[1] - a[1], b[2] - a[2], b[3] - a[3] })
+		if not side then
+			side = cross(axis, if math.abs(axis[3]) < 0.9 then { 0, 0, 1 } else { 1, 0, 0 })
 		end
-		return list
+		local along = side[1] * axis[1] + side[2] * axis[2] + side[3] * axis[3]
+		side = unit({ side[1] - axis[1] * along, side[2] - axis[2] * along, side[3] - axis[3] * along })
+		local up = cross(side, axis)
+		local ring = {}
+		for k, point in profile do
+			ring[k] = mesh:vertex(p[1] + side[1] * point[1] + up[1] * point[2], p[2] + side[2] * point[1] + up[2] * point[2], p[3] + side[3] * point[1] + up[3] * point[2])
+		end
+		rings[i] = ring
 	end
-	local near, far = ring(a), ring(b)
-	local nearMiddle, farMiddle = mesh:vertex(a[1], a[2], a[3]), mesh:vertex(b[1], b[2], b[3])
-	for k = 1, #profile do
-		local l = k % #profile + 1
-		mesh:face({ near[k], near[l], far[l], far[k] })
-		mesh:face({ nearMiddle, near[l], near[k] })
-		mesh:face({ farMiddle, far[k], far[l] })
+	for i = 1, #points - 1 do
+		for k = 1, #profile do
+			local l = k % #profile + 1
+			mesh:face({ rings[i][k], rings[i][l], rings[i + 1][l], rings[i + 1][k] })
+		end
+	end
+end
+-- A ball fitting where pipes meet.
+local function ball(mesh, c, radius: number)
+	local rows = {}
+	for i = 0, 6 do
+		local lat = math.pi * (i / 6 - 0.5)
+		rows[i] = {}
+		for k = 0, 9 do
+			local lon = 2 * math.pi * k / 10
+			rows[i][k] = mesh:vertex(c[1] + math.cos(lat) * math.cos(lon) * radius, c[2] + math.cos(lat) * math.sin(lon) * radius, c[3] + math.sin(lat) * radius)
+		end
+	end
+	for i = 0, 5 do
+		for k = 0, 9 do
+			local l = (k + 1) % 10
+			mesh:face({ rows[i][k], rows[i][l], rows[i + 1][l], rows[i + 1][k] })
+		end
 	end
 end
 
-local PIPE, FLANGE, JOINT = 0.45, 0.65, 4
-local PIPE_RUNS = {
-	-- { start angle, span in radians, height }
-	{ 0.3, 1.9, -2.2 },
-	{ 2.9, 1.4, -4.6 },
-	{ 4.6, 1.5, -1.8 },
-}
+-- The pipe network: a lattice of junctions over the lower terrain, columns
+-- round the island and levels down the tiers, joined by a seeded pick of the
+-- lattice's edges plus whatever keeps every junction connected. Pipes hug
+-- the rock's hull, so they climb out over each ledge and round its edge in
+-- a smooth bend instead of a sharp corner.
+local PIPE, COLUMNS, SMOOTHING = 0.42, 14, 3
+local LEVELS = { -2.6, -7.5, -12.5, -17, -21 }
+local function hull(angle: number, z: number): number
+	local best = 0
+	for da = -2, 2 do
+		for dz = 0, 2 do
+			best = math.max(best, (wall(angle + da * 0.05, z + dz * 0.8)))
+		end
+	end
+	return best + PIPE + 0.12
+end
+local function onRock(angle: number, z: number)
+	local r = hull(angle, z)
+	return { math.cos(angle) * r, math.sin(angle) * r, z }
+end
+local columnAngle = {}
+for c = 1, COLUMNS do
+	columnAngle[c] = (c - 1 + 0.6 * (random(300 + c) - 0.5)) / COLUMNS * 2 * math.pi
+end
+-- A junction per lattice slot, with edges round each level and down each
+-- column. Lower levels have shorter rings, so they keep fewer columns.
+local junctions, edges = {}, {}
+local function key(c: number, l: number): number
+	return l * 100 + c
+end
+for l, z in LEVELS do
+	for c = 1, COLUMNS do
+		if l >= 4 and c % 2 == 0 then continue end
+		junctions[key(c, l)] = { c = c, l = l, z = z }
+	end
+end
+for l = 1, #LEVELS do
+	local row = {}
+	for c = 1, COLUMNS do
+		if junctions[key(c, l)] then table.insert(row, c) end
+	end
+	for n, c in row do
+		table.insert(edges, { key(c, l), key(row[n % #row + 1], l), random(400 + l * 31 + c) })
+	end
+	if l == 1 then continue end
+	for _, c in row do
+		local above = if junctions[key(c, l - 1)] then c else c - 1
+		table.insert(edges, { key(above, l - 1), key(c, l), random(500 + l * 37 + c) })
+	end
+end
+-- Keep edges whose roll passes; then add any still needed to connect
+-- every junction, and drop junctions nothing reached.
+local group = {}
+local function find(k)
+	while group[k] and group[k] ~= k do
+		k = group[k]
+	end
+	return k
+end
+for k in junctions do
+	group[k] = k
+end
+local kept = {}
+for pass = 1, 2 do
+	for _, edge in edges do
+		local a, b = find(edge[1]), find(edge[2])
+		if (pass == 1 and edge[3] < 0.5) or (pass == 2 and a ~= b) then
+			if pass == 2 or not kept[edge] then
+				kept[edge] = true
+				group[a] = b
+			end
+		end
+	end
+end
+local used = {}
+local function route(edge)
+	local from, to = junctions[edge[1]], junctions[edge[2]]
+	local a0, a1 = columnAngle[from.c], columnAngle[to.c]
+	if from.l == to.l and a1 <= a0 then a1 += 2 * math.pi end
+	local samples = {}
+	local count = if from.l == to.l then math.ceil((a1 - a0) * TIERS[1][1] / 1.2) else math.ceil((from.z - to.z) / 0.5)
+	for n = 0, count do
+		local t = n / count
+		samples[n + 1] = { a0 + (a1 - a0) * t, from.z + (to.z - from.z) * t, 0 }
+	end
+	for _, s in samples do
+		s[3] = hull(s[1], s[2])
+	end
+	-- Ease the radius along the run so the pipe bends round ledges.
+	for _ = 1, SMOOTHING do
+		local before = table.clone(samples)
+		for n = 2, #samples - 1 do
+			samples[n][3] = math.max((before[n - 1][3] + 2 * before[n][3] + before[n + 1][3]) / 4, before[n][3] - 0.05)
+		end
+	end
+	local points = {}
+	for n, s in samples do
+		points[n] = { math.cos(s[1]) * s[3], math.sin(s[1]) * s[3], s[2] }
+	end
+	used[edge[1]], used[edge[2]] = true, true
+	return points
+end
 part("Plumbing", nil, RUST, function(mesh)
-	local pipe, flange = circle(PIPE, 10), circle(FLANGE, 10)
-	for _, run in PIPE_RUNS do
-		local from, span, z = run[1], run[2], run[3]
-		-- Stand the run off the furthest-reaching rock along it, so it
-		-- clears every pillar face.
-		local reach = 0
-		for n = 0, 40 do
-			reach = math.max(reach, (wall(from + span * n / 40, z)))
+	local pipe = circle(PIPE, 10)
+	for _, edge in edges do
+		if not kept[edge] then continue end
+		local points = route(edge)
+		sweep(mesh, points, pipe)
+		-- A clamp ring every few studs along the run.
+		for n = 4, #points - 3, 5 do
+			local a, b = points[n], points[n + 1]
+			local d = unit({ b[1] - a[1], b[2] - a[2], b[3] - a[3] })
+			sweep(mesh, { { a[1] - d[1] * 0.1, a[2] - d[2] * 0.1, a[3] - d[3] * 0.1 }, { a[1] + d[1] * 0.1, a[2] + d[2] * 0.1, a[3] + d[3] * 0.1 } }, circle(PIPE * 1.3, 10))
 		end
-		local r = reach + PIPE + 0.3
-		local steps = math.max(2, math.ceil(span * r / JOINT))
-		local points = {}
-		for n = 0, steps do
-			local a = from + span * n / steps
-			points[n] = { math.cos(a) * r, math.sin(a) * r, z }
-		end
-		for n = 0, steps - 1 do
-			tube(mesh, points[n], points[n + 1], pipe)
-		end
-		for n = 0, steps do
-			local p, a = points[n], from + span * n / steps
-			local c, s = math.cos(a), math.sin(a)
-			local tangent = { -s, c, 0 }
-			tube(mesh, { p[1] - tangent[1] * 0.12, p[2] - tangent[2] * 0.12, z }, { p[1] + tangent[1] * 0.12, p[2] + tangent[2] * 0.12, z }, flange)
-			-- A bracket from the flange back into the rock.
-			local inner = (wall(a, z)) - 0.6
-			tube(mesh, { c * inner, s * inner, z - FLANGE }, { p[1], p[2], z - FLANGE }, { { -0.15, -0.08 }, { 0.15, -0.08 }, { 0.15, 0.08 }, { -0.15, 0.08 } })
-		end
-		-- Each end turns straight in and buries itself in the rock.
-		for _, n in { 0, steps } do
-			local a = from + span * n / steps
-			local inner = (wall(a, z)) - 1
-			tube(mesh, points[n], { math.cos(a) * inner, math.sin(a) * inner, z }, pipe)
+	end
+	for k, junction in junctions do
+		if used[k] then
+			ball(mesh, onRock(columnAngle[junction.c], junction.z), PIPE * 1.6)
 		end
 	end
 end, false, scrapPaint)
+
 
 -- The plumbing shades against the shell and itself; the shell keeps its
 -- cached shading.
