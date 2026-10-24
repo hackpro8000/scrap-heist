@@ -1,8 +1,8 @@
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
--- around its bowl; eight yard islands float in a ring with their gates facing
--- it, each joined to the road by a steel bridge. The arena is the storm fight
+-- around its bowl; eight yard islands float a tier higher in a ring with their gates
+-- facing it, each joined to the road by a steel bridge climbing to it. The arena is the storm fight
 -- ground. The ring road is a deck raised on pillars over the bowl's rim, and
 -- on the east side a market terrace sits under it, where new players spawn.
 -- Each plot slab carries the Yard Layout template, placed piece by piece the
@@ -26,6 +26,8 @@ local HAZARD_WIDTH = 1.8
 local ARENA_ISLAND, YARD_ISLAND = 61, 26
 -- The ring road runs on a raised deck; the market sits under it on the east.
 local DECK, MARKET = 12, 4
+-- The yards float a tier above the deck.
+local YARD_TIER = 18
 local MARKET_FROM, MARKET_TO = -60, 60
 
 local GROUND = { 0.3, 0.27, 0.22 }
@@ -162,6 +164,9 @@ end
 
 local function flat(_x: number, _y: number): number
 	return 0
+end
+local function yardLevel(_x: number, _y: number): number
+	return YARD_TIER
 end
 
 -- Under the ring road the dirt dips out of sight, since the road is thinner
@@ -657,6 +662,24 @@ end, 0, 0)
 -- across the gap to the ring road.
 local BRIDGE_FROM, BRIDGE_TO = -YARD_ISLAND, -(YARD_RADIUS - ROAD_OUTER)
 local BRIDGE_MID, BRIDGE_LENGTH = (BRIDGE_FROM + BRIDGE_TO) / 2, BRIDGE_FROM - BRIDGE_TO
+-- Bridges climb from the deck to the yard tier. Every bridge part is built
+-- flat and then sheared up along its length, so posts stay upright and the
+-- end pieces sit level at their own tier.
+local function bridgeLift(y: number): number
+	return DECK + (YARD_TIER - DECK) * math.clamp((y - BRIDGE_TO) / BRIDGE_LENGTH, 0, 1)
+end
+local function bridgePart(name: string, color, build: (any) -> (), paint)
+	part(name, nil, color, function(mesh)
+		build({
+			vertex = function(_, x, y, z)
+				return mesh:vertex(x, y, z + bridgeLift(y))
+			end,
+			face = function(_, corners)
+				return mesh:face(corners)
+			end,
+		})
+	end, nil, paint)
+end
 -- Lumpy yard outlines that never cut into the plot's corners (0.9 * 26
 -- clears its 22.6 half-diagonal) and stay full where the bridge lands.
 local function yardOutline(seed: number): (number) -> number
@@ -674,7 +697,7 @@ end
 local function yardTemplate(index: number, x: number, y: number, turn: number)
 	local c, s = math.cos(math.rad(turn)), math.sin(math.rad(turn))
 	local function piece(name: string, build: () -> (), px: number, py: number, pz: number?, pturn: number?)
-		place(`Yard{index}_{name}`, build, x + px * c - py * s, y + px * s + py * c, pz, turn + (pturn or 0))
+		place(`Yard{index}_{name}`, build, x + px * c - py * s, y + px * s + py * c, (pz or 0) + YARD_TIER, turn + (pturn or 0))
 	end
 	for i, tx in { -12, -4, 4, 12 } do
 		for j, ty in { -12, -4, 4, 12 } do
@@ -710,19 +733,19 @@ for i = 1, 8 do
 	local x, y = polar(YARD_RADIUS, degrees)
 	slab(`Island{i}`, function()
 		part("Island", nil, GROUND, function(mesh)
-			floatingIsland(mesh, YARD_ISLAND, 22, 10 + i, flat, yardOutline(10 + i))
-		end, nil, islandPaint(flat))
+			floatingIsland(mesh, YARD_ISLAND, 22, 10 + i, yardLevel, yardOutline(10 + i))
+		end, nil, islandPaint(yardLevel))
 	end, x, y, degrees - 90)
 	slab(`Plot{i}`, function()
 		part("Slab", nil, PLOT, function(mesh)
-			box(mesh, 0, 0, 0, 32, 32, 0.05)
+			box(mesh, 0, 0, YARD_TIER, 32, 32, 0.05)
 		end, nil, 0)
 	end, x, y, degrees - 90)
 	yardTemplate(i, x, y, degrees - 90)
 	local c, s = math.cos(math.rad(degrees - 90)), math.sin(math.rad(degrees - 90))
 	slab(`Spoke{i}`, function()
 		part("Road", nil, ROAD, function(mesh)
-			box(mesh, 0, -18, 0, 6, 6, 0.1)
+			box(mesh, 0, -18, YARD_TIER, 6, 6, 0.1)
 		end, nil, function(px, py)
 			local u = (px - x) * c + (py - y) * s
 			local v = (py - y) * c - (px - x) * s
@@ -730,10 +753,10 @@ for i = 1, 8 do
 		end)
 	end, x, y, degrees - 90)
 	slab(`Bridge{i}`, function()
-		part("Deck", nil, STEEL, function(mesh)
+		bridgePart("Deck", STEEL, function(mesh)
 			box(mesh, 0, BRIDGE_MID, -0.2, 6, BRIDGE_LENGTH, 0.3)
-		end, nil, bridgeDeck(degrees, x, y))
-		part("Girders", nil, DARK_STEEL, function(mesh)
+		end, bridgeDeck(degrees, x, y))
+		bridgePart("Girders", DARK_STEEL, function(mesh)
 			-- I-beams: a web between two flanges, ribbed on the outside, with
 			-- bolted splice plates where the beam sections join.
 			for _, side in { -2.6, 2.6 } do
@@ -757,12 +780,12 @@ for i = 1, 8 do
 			for n = 0, math.floor(BRIDGE_LENGTH / 4) do
 				box(mesh, 0, BRIDGE_TO + 1 + n * 4, -0.6, 5.6, 0.3, 0.4)
 			end
-		end, nil, bridgeGirders(degrees, x, y))
+		end, bridgeGirders(degrees, x, y))
 		-- Railing posts spaced evenly so both ends get one, each bolted down
 		-- on a base plate and capped.
 		local postCount = math.ceil((BRIDGE_LENGTH - 0.3) / 2.5)
 		local postGap = (BRIDGE_LENGTH - 0.3) / postCount
-		part("Posts", nil, STEEL, function(mesh)
+		bridgePart("Posts", STEEL, function(mesh)
 			for _, side in { -2.9, 2.9 } do
 				for n = 0, postCount do
 					local at = BRIDGE_TO + 0.15 + n * postGap
@@ -771,18 +794,18 @@ for i = 1, 8 do
 					box(mesh, side, at, 1.28, 0.2, 0.2, 0.06)
 				end
 			end
-		end, nil, 0.4)
+		end, 0.4)
 		-- Handrail on top, a thinner mid rail and a kick plate at the deck.
-		part("Rail", nil, MARK, function(mesh)
+		bridgePart("Rail", MARK, function(mesh)
 			for _, side in { -2.9, 2.9 } do
 				box(mesh, side, BRIDGE_MID, 1.16, 0.16, BRIDGE_LENGTH - 0.2, 0.12)
 				box(mesh, side, BRIDGE_MID, 0.62, 0.08, BRIDGE_LENGTH - 0.3, 0.08)
 				box(mesh, side + math.sign(side) * 0.1, BRIDGE_MID, -0.05, 0.04, BRIDGE_LENGTH - 0.3, 0.22)
 			end
-		end, nil, 0.3)
+		end, 0.3)
 		-- Each end rests on a concrete seat set into the island edge, with a
 		-- low wing wall either side for the kerb or yard edge to end against.
-		part("Abutments", nil, CONCRETE, function(mesh)
+		bridgePart("Abutments", CONCRETE, function(mesh)
 			for _, ends in { { BRIDGE_TO, -1 }, { BRIDGE_FROM, 1 } } do
 				local edge, land = ends[1], ends[2]
 				box(mesh, 0, edge + land * 0.75, -3, 7.3, 3.5, 2.8)
@@ -790,29 +813,29 @@ for i = 1, 8 do
 					box(mesh, side, edge - land * 0.5, -3, 0.5, 1, 3.45)
 				end
 			end
-		end, nil, 0.5)
+		end, 0.5)
 		-- The yard end lands on a concrete apron under a gate frame standing on
 		-- the wing walls. A steel plate covers the joint at both ends.
-		part("Apron", nil, CONCRETE, function(mesh)
+		bridgePart("Apron", CONCRETE, function(mesh)
 			box(mesh, 0, BRIDGE_FROM + 2.5, 0, 7.3, 5, 0.12)
-		end, nil, 0.5)
-		part("JointPlates", nil, STEEL, function(mesh)
+		end, 0.5)
+		bridgePart("JointPlates", STEEL, function(mesh)
 			for _, edge in { BRIDGE_TO, BRIDGE_FROM } do
 				box(mesh, 0, edge, 0.1, 6, 0.8, 0.04)
 			end
-		end, nil, 0.3)
+		end, 0.3)
 		-- The road end gets a hazard bollard on each wing wall.
-		part("Bollards", nil, MARK, function(mesh)
+		bridgePart("Bollards", MARK, function(mesh)
 			for _, side in { -3.4, 3.4 } do
 				box(mesh, side, BRIDGE_TO + 0.5, 0.45, 0.4, 0.4, 1.2)
 			end
-		end, nil, 0.3)
-		part("GateFrame", nil, DARK_STEEL, function(mesh)
+		end, 0.3)
+		bridgePart("GateFrame", DARK_STEEL, function(mesh)
 			for _, side in { -3.4, 3.4 } do
 				box(mesh, side, BRIDGE_FROM - 0.5, 0.45, 0.4, 0.4, 4)
 			end
 			box(mesh, 0, BRIDGE_FROM - 0.5, 4.15, 7.2, 0.3, 0.3)
-		end, nil, 0.3)
+		end, 0.3)
 	end, x, y, degrees - 90)
 	local coneX, coneY = polar(ROAD_INNER + 1.5, degrees + 9)
 	place(`Cones{i}`, buildTrafficCones, coneX, coneY, heightAt(coneX, coneY), degrees)
