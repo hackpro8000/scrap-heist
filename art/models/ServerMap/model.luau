@@ -12531,20 +12531,20 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[12909] = "b9ff4053bf5e0dab-935f76826323c7d4"
-slabKeys[13066] = "b9ff4053bf5e0dab-8f291df974f34236"
-slabKeys[13072] = "b9ff4053bf5e0dab-f8f4f9cdd6dd6cae"
-slabKeys[13103] = "b9ff4053bf5e0dab-cfb837b03ab263ad"
-slabKeys[13184] = "b9ff4053bf5e0dab-09c93ef6a83e1b73"
-slabKeys[13206] = "b9ff4053bf5e0dab-2cf96e0e641c97c4"
-slabKeys[13280] = "b9ff4053bf5e0dab-dbb544d9b50020dd"
-slabKeys[13328] = "b9ff4053bf5e0dab-b9a67e4cdf97308c"
-slabKeys[13483] = "b9ff4053bf5e0dab-f7451107beca1bf1"
-slabKeys[13511] = "b9ff4053bf5e0dab-7c27880a9a355c4d"
-slabKeys[13520] = "b9ff4053bf5e0dab-22233dc81161c674"
-slabKeys[13527] = "b9ff4053bf5e0dab-92736dc11ff1f899"
-slabKeys[13555] = "b9ff4053bf5e0dab-5f3dede5e341fed8"
-slabKeys[13586] = "b9ff4053bf5e0dab-74a18327d4dc7da2"
+slabKeys[13070] = "06869d1037ae003d-935f76826323c7d4"
+slabKeys[13227] = "06869d1037ae003d-8f291df974f34236"
+slabKeys[13233] = "06869d1037ae003d-f8f4f9cdd6dd6cae"
+slabKeys[13264] = "06869d1037ae003d-cfb837b03ab263ad"
+slabKeys[13345] = "06869d1037ae003d-09c93ef6a83e1b73"
+slabKeys[13367] = "06869d1037ae003d-816e21abcfe67713"
+slabKeys[13443] = "06869d1037ae003d-dbb544d9b50020dd"
+slabKeys[13491] = "06869d1037ae003d-b9a67e4cdf97308c"
+slabKeys[13646] = "06869d1037ae003d-f7451107beca1bf1"
+slabKeys[13674] = "06869d1037ae003d-7c27880a9a355c4d"
+slabKeys[13683] = "06869d1037ae003d-22233dc81161c674"
+slabKeys[13690] = "06869d1037ae003d-92736dc11ff1f899"
+slabKeys[13718] = "06869d1037ae003d-5f3dede5e341fed8"
+slabKeys[13749] = "06869d1037ae003d-74a18327d4dc7da2"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -12629,13 +12629,96 @@ local function heightAt(x: number, y: number): number
 	return -ARENA_DEPTH + (DECK + ARENA_DEPTH) * (math.clamp((radius - ARENA_FLOOR) / (ROAD_INNER - ARENA_FLOOR), 0, 1))
 end
 
+-- Rock clumps: faceted columns stacked round an island's sides in tiers
+-- that step inward, so the sides read as chunky masses split by deep
+-- cracks. The top tier sits back under the rim, so the dirt cap overhangs
+-- it. Each clump is recorded so islandPaint can light its edges and shade
+-- the cracks between clumps.
+export type Clump = { x: number, y: number, top: number, bottom: number, taper: number, corners: { { number } } }
+local CLUMP_TIERS = { { reach = 0.9, from = 0.02, to = 0.42 }, { reach = 0.68, from = 0.3, to = 0.7 }, { reach = 0.42, from = 0.6, to = 1 } }
+local CLUMP_BEVEL = 0.35
+-- A clump's outline `down` of the way from its top to its bottom: it
+-- tapers towards the bottom and pulls in at both bevels.
+local function clumpOutline(clump: Clump, z: number): { { number } }
+	local height = clump.top - clump.bottom
+	local down = math.clamp((clump.top - z) / height, 0, 1)
+	local scale = 1 + (clump.taper - 1) * down
+	local fromEnd = math.min(clump.top - z, z - clump.bottom)
+	if fromEnd < CLUMP_BEVEL then
+		scale *= 1 - 0.3 * (1 - math.max(0, fromEnd) / CLUMP_BEVEL) * CLUMP_BEVEL / 1.2
+	end
+	local points = {}
+	for k, corner in clump.corners do
+		points[k] = { clump.x + corner[1] * scale, clump.y + corner[2] * scale }
+	end
+	return points
+end
+local function addClumps(mesh, radius: number, depth: number, seed: number, rimZ: number, edge: (number) -> number, clumps: { Clump })
+	local width = math.clamp(radius * 0.09, 2.5, 6)
+	for tierIndex, tier in CLUMP_TIERS do
+		local count = math.max(5, math.floor(2 * math.pi * radius * tier.reach / (width * 1.7)))
+		for k = 1, count do
+			local key = tierIndex * 97 + k
+			local angle = 2 * math.pi * (k + 0.35 * math.noise(seed, key, 3)) / count
+			local size = width * (0.8 + 0.5 * (math.noise(seed, key, 5) + 0.5))
+			local reach = edge(angle) * tier.reach - size * 0.8
+			local top = if tierIndex == 1
+				then rimZ - 0.6 - 2.2 * math.clamp(math.noise(seed, key, 7) + 0.5, 0, 1)
+				else -depth * (tier.from + 0.12 * math.noise(seed, key, 7))
+			local bottom = -depth * (tier.to + 0.15 * math.noise(seed, key, 11))
+			if tierIndex == #CLUMP_TIERS then
+				bottom -= depth * 0.15 * (math.noise(seed, key, 13) + 0.5)
+			end
+			local corners = {}
+			local sides = 5 + (seed + key) % 3
+			local turn = math.noise(seed, key, 17) * math.pi
+			for j = 1, sides do
+				local a = turn + 2 * math.pi * (j + 0.25 * math.noise(seed, key * 7 + j, 19)) / sides
+				local r = size * (0.85 + 0.3 * (math.noise(seed, key * 7 + j, 23) + 0.5))
+				corners[j] = { math.cos(a) * r, math.sin(a) * r }
+			end
+			local clump = {
+				x = math.cos(angle) * reach,
+				y = math.sin(angle) * reach,
+				top = top,
+				bottom = bottom,
+				taper = 0.55 + 0.25 * (math.noise(seed, key, 29) + 0.5),
+				corners = corners,
+			}
+			table.insert(clumps, clump)
+			-- Rings at the top, under the top bevel, over the bottom bevel and
+			-- at the bottom, joined into a faceted column and capped.
+			local rings = {}
+			for r, z in { clump.top, clump.top - CLUMP_BEVEL, clump.bottom + CLUMP_BEVEL, clump.bottom } do
+				rings[r] = {}
+				for j, point in clumpOutline(clump, z) do
+					rings[r][j] = mesh:vertex(point[1], point[2], z)
+				end
+			end
+			for r = 1, 3 do
+				for j = 1, sides do
+					local l = j % sides + 1
+					mesh:face({ rings[r][j], rings[r + 1][j], rings[r + 1][l], rings[r][l] })
+				end
+			end
+			local topCap, bottomCap = {}, {}
+			for j = 1, sides do
+				table.insert(topCap, 1, rings[1][j])
+				table.insert(bottomCap, rings[4][j])
+			end
+			mesh:face(topCap)
+			mesh:face(bottomCap)
+		end
+	end
+end
+
 -- A floating island: a dirt top following `top`, over a rock underside that
 -- tapers to a ragged point `depth` below. Rings run outward across the top,
 -- then inward down the underside, so every face keeps the same winding.
 local ISLAND_SIDES = 48
 local UNDERSIDE_RINGS = 16
 -- outline(angle) scales the radius around the edge; nil keeps it round.
-local function floatingIsland(mesh, radius: number, depth: number, seed: number, top: (number, number) -> number, outline: ((number) -> number)?, creases: { number }?)
+local function floatingIsland(mesh, radius: number, depth: number, seed: number, top: (number, number) -> number, outline: ((number) -> number)?, creases: { number }?, clumps: { Clump }?)
 	local rows = {}
 	local function edge(angle: number): number
 		return if outline then radius * outline(angle) else radius
@@ -12705,6 +12788,9 @@ local function floatingIsland(mesh, radius: number, depth: number, seed: number,
 	end
 	mesh:face(topCap)
 	mesh:face(bottomCap)
+	if clumps then
+		addClumps(mesh, radius, depth, seed, rows[#fractions][0][3], edge, clumps)
+	end
 	-- Rock spikes hang from the underside, rooted inside it.
 	local SPIKE_SIDES = 6
 	for spike = 1, 2 + math.floor(radius / 20) do
@@ -12869,12 +12955,85 @@ end
 -- under the rim.
 local STRATA = { { 0.5, 0.4, 0.27 }, { 0.36, 0.35, 0.34 }, { 0.48, 0.3, 0.22 } }
 local TOPSOIL = { 0.24, 0.19, 0.14 }
-local function islandPaint(top: (number, number) -> number)
-	return function(x: number, y: number, z: number)
+-- How far (x, y) sits from a clump's outline at height z, and from its
+-- nearest vertical edge.
+local function clumpDistances(clump: Clump, x: number, y: number, z: number): (number, number)
+	local points = clumpOutline(clump, z)
+	local side, corner = math.huge, math.huge
+	for k, a in points do
+		local b = points[k % #points + 1]
+		local dx, dy = b[1] - a[1], b[2] - a[2]
+		local t = math.clamp(((x - a[1]) * dx + (y - a[2]) * dy) / (dx * dx + dy * dy), 0, 1)
+		side = math.min(side, math.sqrt((x - a[1] - dx * t) ^ 2 + (y - a[2] - dy * t) ^ 2))
+		corner = math.min(corner, math.sqrt((x - a[1]) ^ 2 + (y - a[2]) ^ 2))
+	end
+	return side, corner
+end
+
+-- Clumps get hard lit edges along their corners and top bevels, a shadow
+-- under the bevel and dark contact shadows where they crowd a neighbour.
+-- The core between them reads as deep crack. Clumps are in island space;
+-- (originX, originY) is where the island sits in the paint's space. The
+-- clump list fills while the island builds, so it is indexed on first use.
+local CLUMP_CELL = 8
+local EDGE_LIGHT = { 0.95, 0.82, 0.62 }
+local function islandPaint(top: (number, number) -> number, clumps: { Clump }?, originX: number?, originY: number?)
+	local cells
+	local ox, oy = originX or 0, originY or 0
+	local function indexClumps()
+		cells = {}
+		for _, clump in clumps or {} do
+			local reach = 0
+			for _, corner in clump.corners do
+				reach = math.max(reach, math.abs(corner[1]), math.abs(corner[2]))
+			end
+			for cx = math.floor((clump.x - reach) / CLUMP_CELL), math.floor((clump.x + reach) / CLUMP_CELL) do
+				for cy = math.floor((clump.y - reach) / CLUMP_CELL), math.floor((clump.y + reach) / CLUMP_CELL) do
+					local key = cx * 4096 + cy
+					cells[key] = cells[key] or {}
+					table.insert(cells[key], clump)
+				end
+			end
+		end
+	end
+	return function(x: number, y: number, z: number, _nx: number?, _ny: number?, nz: number?)
 		local below = top(x, y) - z
 		if below < 0.3 then
 			local k = 1 + 0.12 * math.noise(x / 4, y / 4, 31) + 0.05 * math.noise(x * 3, y * 3, 37)
 			return GROUND[1] * k, GROUND[2] * k, GROUND[3] * k
+		end
+		local shade, light = 1, 0
+		if clumps then
+			if not cells then indexClumps() end
+			local lx, ly = x - ox, y - oy
+			local nearest, nearSide, nearCorner, otherSide = nil, math.huge, math.huge, math.huge
+			for _, clump in cells[math.floor(lx / CLUMP_CELL) * 4096 + math.floor(ly / CLUMP_CELL)] or {} do
+				if z <= clump.top + 0.1 and z >= clump.bottom - 0.1 then
+					local side, corner = clumpDistances(clump, lx, ly, z)
+					if side < nearSide then
+						otherSide = nearSide
+						nearest, nearSide, nearCorner = clump, side, corner
+					elseif side < otherSide then
+						otherSide = side
+					end
+				end
+			end
+			if nearest and nearSide < 0.4 then
+				local fromTop = nearest.top - z
+				if fromTop < CLUMP_BEVEL + 0.15 or (nz or 0) > 0.5 then
+					light = 0.75
+				elseif nearCorner < 0.45 then
+					light = 0.6 * (1 - nearCorner / 0.45)
+				end
+				if fromTop > CLUMP_BEVEL + 0.15 then
+					shade *= 0.45 + 0.55 * math.clamp((fromTop - CLUMP_BEVEL - 0.15) / 1.2, 0, 1)
+				end
+				shade *= 0.35 + 0.65 * math.clamp((otherSide - 0.2) / 1.5, 0, 1)
+				shade *= 0.55 + 0.45 * math.clamp((z - nearest.bottom) / 1.5, 0, 1)
+				if (nz or 0) < -0.5 then shade *= 0.5 end
+			elseif below > 1.2 then
+				shade = 0.18
+			end
 		end
 		local band = math.noise(x / 9, y / 9, z / 2) * 0.6 + z * 0.9
 		local wave = math.sin(band * 2.4)
@@ -12884,7 +13043,9 @@ local function islandPaint(top: (number, number) -> number)
 		k *= 1 - 0.6 * math.clamp((below - 3) / 20, 0, 1)
 		local soil = 1 - math.clamp((below - 1) / 1.5 + 0.3 * math.noise(x / 2, y / 2, 41), 0, 1)
 		local r, g, b = layer[1] * k, layer[2] * k, layer[3] * k
-		return r + (TOPSOIL[1] - r) * soil, g + (TOPSOIL[2] - g) * soil, b + (TOPSOIL[3] - b) * soil
+		r, g, b = r + (TOPSOIL[1] - r) * soil, g + (TOPSOIL[2] - g) * soil, b + (TOPSOIL[3] - b) * soil
+		r, g, b = r + (EDGE_LIGHT[1] - r) * light, g + (EDGE_LIGHT[2] - g) * light, b + (EDGE_LIGHT[3] - b) * light
+		return r * shade, g * shade, b * shade
 	end
 end
 
@@ -13205,13 +13366,15 @@ local function plazaIsland(label: string, x: number, y: number, radius: number, 
 	end
 	slab(label, function()
 		local wall
+		-- Rock clumps are on trial on the first pad.
+		local clumps = if label == "Pad1" then {} else nil
 		part("Island", nil, GROUND, function(mesh)
 			wall = floatingIsland(mesh, radius, depth, seed, top, function(angle)
 				return octagonScale(math.deg(angle))
-			end, { plaza, plaza + 0.5 })
+			end, { plaza, plaza + 0.5 }, clumps)
 		end, nil, islandPaint(function()
 			return DECK - ROAD_SINK
-		end))
+		end, clumps, x, y))
 		part("Scrap", nil, RUST, function(mesh)
 			buryScrap(mesh, wall, radius, seed)
 		end, nil, scrapPaint)
