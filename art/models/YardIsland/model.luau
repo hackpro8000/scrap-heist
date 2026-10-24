@@ -720,8 +720,8 @@ end
 -- One rock clump with its own seed driving everything: an irregular 5-7
 -- sided outline round (cx, cy), its own taper, a lower half that leans in
 -- toward the middle, and every corner of every ring nudged. Each side is
--- split with a chip knocked in or a lump pushed out, and the column steps in
--- at a few ledges, so every clump reads as its own broken formation.
+-- split with a chip knocked in or a lump pushed out, so every clump reads as
+-- its own broken formation.
 local function clump(cx: number, cy: number, size: number, top: number, bottom: number, seed: number)
 	local sides = 5 + math.floor(random(seed) * 3)
 	local corners = {}
@@ -734,22 +734,10 @@ local function clump(cx: number, cy: number, size: number, top: number, bottom: 
 	local lean = if away > 0 then size * (0.1 + 0.25 * random(seed + 62)) / away else 0
 	local tiltX, tiltY = -cx * lean, -cy * lean
 	local bevel = math.min(0.6, (top - bottom) / 4)
-	local base = prismLevels(top, bottom, bevel, taper)
-	-- Ledges: at each, the column above sits on a slightly wider shelf.
-	local levels = { base[1], base[2] }
-	local ledges = 1 + math.floor(random(seed + 70) * 3)
-	local span = base[2][1] - base[3][1]
-	for n = 1, ledges do
-		local z = base[2][1] - span * (n - 0.5 + (random(seed + 71 + n) - 0.5) * 0.6) / ledges
-		local scale = 1 + (taper - 1) * (base[2][1] - z) / span
-		local step = 0.06 + 0.12 * random(seed + 75 + n)
-		table.insert(levels, { z + 0.15, scale * (1 - step) })
-		table.insert(levels, { z, scale })
-	end
-	table.insert(levels, base[3])
-	table.insert(levels, base[4])
+	local levels = prismLevels(top, bottom, bevel, taper)
+	local span = levels[2][1] - levels[3][1]
 	local rings = prism(function(scale, ring)
-		local shift = math.clamp((base[2][1] - levels[ring][1]) / span, 0, 1)
+		local shift = math.clamp((levels[2][1] - levels[ring][1]) / span, 0, 1)
 		local points = {}
 		local function add(angle: number, reach: number)
 			table.insert(points, {
