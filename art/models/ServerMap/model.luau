@@ -12531,19 +12531,19 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[12717] = "b2520bd718947075-5f54f228757879fb"
-slabKeys[12870] = "b2520bd718947075-8f291df974f34236"
-slabKeys[12876] = "b2520bd718947075-f8f4f9cdd6dd6cae"
-slabKeys[12907] = "b2520bd718947075-cfb837b03ab263ad"
-slabKeys[12986] = "b2520bd718947075-45f1773a0c3d4692"
-slabKeys[13031] = "b2520bd718947075-0d0f637acb506465"
-slabKeys[13097] = "b2520bd718947075-38a291d6cf6e421e"
-slabKeys[13128] = "b2520bd718947075-dc02515c57e16914"
-slabKeys[13223] = "b2520bd718947075-f3271f231573d1f1"
-slabKeys[13228] = "b2520bd718947075-08fbe9bb8b1a6d5a"
-slabKeys[13235] = "b2520bd718947075-f278656b57891167"
-slabKeys[13244] = "b2520bd718947075-2080bf6a22b29b25"
-slabKeys[13322] = "b2520bd718947075-5f3dede5e341fed8"
+slabKeys[12717] = "17d166d2ec0121f4-5f54f228757879fb"
+slabKeys[12870] = "17d166d2ec0121f4-8f291df974f34236"
+slabKeys[12876] = "17d166d2ec0121f4-f8f4f9cdd6dd6cae"
+slabKeys[12907] = "17d166d2ec0121f4-cfb837b03ab263ad"
+slabKeys[12986] = "17d166d2ec0121f4-45f1773a0c3d4692"
+slabKeys[13031] = "17d166d2ec0121f4-0d0f637acb506465"
+slabKeys[13097] = "17d166d2ec0121f4-38a291d6cf6e421e"
+slabKeys[13128] = "17d166d2ec0121f4-dc02515c57e16914"
+slabKeys[13223] = "17d166d2ec0121f4-f3271f231573d1f1"
+slabKeys[13228] = "17d166d2ec0121f4-08fbe9bb8b1a6d5a"
+slabKeys[13235] = "17d166d2ec0121f4-f278656b57891167"
+slabKeys[13244] = "17d166d2ec0121f4-ca986f069194f0c9"
+slabKeys[13322] = "17d166d2ec0121f4-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -13167,7 +13167,7 @@ end, 0, 0)
 -- Each yard island is turned so its gate (local -y) faces the arena. A short
 -- road runs from the gate to the island edge, and a steel bridge carries it
 -- across the gap to the ring road.
-local BRIDGE_FROM, BRIDGE_TO = -(YARD_ISLAND - 1), -(YARD_RADIUS - ROAD_OUTER + 1)
+local BRIDGE_FROM, BRIDGE_TO = -YARD_ISLAND, -(YARD_RADIUS - ROAD_OUTER)
 local BRIDGE_MID, BRIDGE_LENGTH = (BRIDGE_FROM + BRIDGE_TO) / 2, BRIDGE_FROM - BRIDGE_TO
 -- Lumpy yard outlines that never cut into the plot's corners (0.9 * 26
 -- clears its 22.6 half-diagonal) and stay full where the bridge lands.
@@ -13295,7 +13295,7 @@ for i = 1, 8 do
 		-- Each end rests on a concrete seat set into the island edge, with a
 		-- low wing wall either side for the kerb or yard edge to end against.
 		part("Abutments", nil, CONCRETE, function(mesh)
-			for _, ends in { { BRIDGE_TO + 1, -1 }, { BRIDGE_FROM - 1, 1 } } do
+			for _, ends in { { BRIDGE_TO, -1 }, { BRIDGE_FROM, 1 } } do
 				local edge, land = ends[1], ends[2]
 				box(mesh, 0, edge + land * 0.75, -3, 7.3, 3.5, 2.8)
 				for _, side in { -3.4, 3.4 } do

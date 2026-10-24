@@ -621,7 +621,7 @@ end, 0, 0)
 -- Each yard island is turned so its gate (local -y) faces the arena. A short
 -- road runs from the gate to the island edge, and a steel bridge carries it
 -- across the gap to the ring road.
-local BRIDGE_FROM, BRIDGE_TO = -(YARD_ISLAND - 1), -(YARD_RADIUS - ROAD_OUTER + 1)
+local BRIDGE_FROM, BRIDGE_TO = -YARD_ISLAND, -(YARD_RADIUS - ROAD_OUTER)
 local BRIDGE_MID, BRIDGE_LENGTH = (BRIDGE_FROM + BRIDGE_TO) / 2, BRIDGE_FROM - BRIDGE_TO
 -- Lumpy yard outlines that never cut into the plot's corners (0.9 * 26
 -- clears its 22.6 half-diagonal) and stay full where the bridge lands.
@@ -749,7 +749,7 @@ for i = 1, 8 do
 		-- Each end rests on a concrete seat set into the island edge, with a
 		-- low wing wall either side for the kerb or yard edge to end against.
 		part("Abutments", nil, CONCRETE, function(mesh)
-			for _, ends in { { BRIDGE_TO + 1, -1 }, { BRIDGE_FROM - 1, 1 } } do
+			for _, ends in { { BRIDGE_TO, -1 }, { BRIDGE_FROM, 1 } } do
 				local edge, land = ends[1], ends[2]
 				box(mesh, 0, edge + land * 0.75, -3, 7.3, 3.5, 2.8)
 				for _, side in { -3.4, 3.4 } do
