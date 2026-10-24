@@ -87,7 +87,7 @@ end
 -- tapers to a ragged point `depth` below. Rings run outward across the top,
 -- then inward down the underside, so every face keeps the same winding.
 local ISLAND_SIDES = 48
-local UNDERSIDE_RINGS = 10
+local UNDERSIDE_RINGS = 16
 -- outline(angle) scales the radius around the edge; nil keeps it round.
 local function floatingIsland(mesh, radius: number, depth: number, seed: number, top: (number, number) -> number, outline: ((number) -> number)?, creases: { number }?)
 	local rows = {}
@@ -118,16 +118,24 @@ local function floatingIsland(mesh, radius: number, depth: number, seed: number,
 	for _, fraction in fractions do
 		addRing(fraction, function(x, y) return top(x, y) end)
 	end
+	-- The underside leans a little off centre, steps in at rough ledges, sags
+	-- deeper under some lobes than others and splits into a jagged point.
+	local leanAngle = math.noise(seed * 0.37, 1.7, 5) * 2 * math.pi
+	local leanX, leanY = math.cos(leanAngle) * radius * 0.22, math.sin(leanAngle) * radius * 0.22
+	local function undersideZ(c: number, n: number, t: number): number
+		local sag = 1 + 0.35 * math.noise(c * 1.6, n * 1.6, seed + 17)
+		return -depth * t ^ 1.3 * sag + 1.5 * t * math.noise(c * 3, n * 3, seed + 9)
+	end
 	for k = 1, UNDERSIDE_RINGS do
 		local t = k / UNDERSIDE_RINGS
 		local row = {}
+		local ledge = 0.07 * ((t * 4 + 0.3 * math.noise(seed, t, 3)) % 1)
 		for j = 0, ISLAND_SIDES - 1 do
 			local angle = 2 * math.pi * j / ISLAND_SIDES
 			local c, n = math.cos(angle), math.sin(angle)
-			local wobble = math.noise(c * 2, n * 2, seed + t * 3) * math.min(1, t * 3)
-			local r = math.max(edge(angle) * (1 - t) ^ 1.1 * (1 + 0.3 * wobble), radius * 0.03)
-			local z = -depth * t ^ 1.3 + 1.5 * t * math.noise(c * 3, n * 3, seed + 9)
-			row[j] = { c * r, n * r, z }
+			local wobble = (math.noise(c * 2, n * 2, seed + t * 3) + 0.4 * math.noise(c * 6, n * 6, seed + t * 5)) * math.min(1, t * 3)
+			local r = math.max(edge(angle) * ((1 - t) ^ 1.1 - ledge * (1 - t)) * (1 + 0.35 * wobble), radius * 0.03)
+			row[j] = { c * r + leanX * t * t, n * r + leanY * t * t, undersideZ(c, n, t) }
 		end
 		table.insert(rows, row)
 	end
@@ -151,6 +159,28 @@ local function floatingIsland(mesh, radius: number, depth: number, seed: number,
 	end
 	mesh:face(topCap)
 	mesh:face(bottomCap)
+	-- Rock spikes hang from the underside, rooted inside it.
+	local SPIKE_SIDES = 6
+	for spike = 1, 2 + math.floor(radius / 20) do
+		local angle = (seed * 2.3 + spike * 2.1 + math.noise(seed, spike, 11)) % (2 * math.pi)
+		local c, n = math.cos(angle), math.sin(angle)
+		local reach = edge(angle) * (0.35 + 0.2 * (math.noise(seed, spike, 13) + 0.5))
+		local t = 1 - (reach / edge(angle)) ^ (1 / 1.1)
+		local rootZ = undersideZ(c, n, t) + 1
+		local length = depth * (0.25 + 0.3 * (math.noise(seed, spike, 19) + 0.5))
+		local width = math.max(1, radius * 0.08)
+		local x, y = c * reach + leanX * t * t, n * reach + leanY * t * t
+		local ring = {}
+		for j = 0, SPIKE_SIDES - 1 do
+			local a = 2 * math.pi * j / SPIKE_SIDES
+			local w = width * (1 + 0.3 * math.noise(spike, j, seed))
+			ring[j] = mesh:vertex(x + math.cos(a) * w, y + math.sin(a) * w, rootZ)
+		end
+		local tip = mesh:vertex(x + c * width * 0.6, y + n * width * 0.6, rootZ - length)
+		for j = 0, SPIKE_SIDES - 1 do
+			mesh:face({ ring[j], tip, ring[(j + 1) % SPIKE_SIDES] })
+		end
+	end
 end
 
 -- Dirt on top; underneath, rock in uneven strata with darker seams.
@@ -738,7 +768,7 @@ end
 -- a yard off either side, joined to the ring road, to each other and to the
 -- market at the far end by flat bridges.
 for k, padX in PAD_XS do
-	plazaIsland(`Pad{k}`, padX, 0, PAD_ISLAND, PAD_PLAZA, 16, 40 + k, { 0, 90, 180, 270 })
+	plazaIsland(`Pad{k}`, padX, 0, PAD_ISLAND, PAD_PLAZA, 20, 40 + k, { 0, 90, 180, 270 })
 	local from = if k == 1 then ROAD_OUTER else PAD_XS[k - 1] + PAD_PLAZA
 	bridge(`Avenue{k}`, from, 0, 0, padX - PAD_PLAZA - from, 0, DECK, false)
 end
@@ -781,7 +811,7 @@ for i = 1, 2 * #PAD_XS do
 	local x, y = PAD_XS[(i + 1) // 2], side * YARD_OFFSET
 	slab(`Island{i}`, function()
 		part("Island", nil, GROUND, function(mesh)
-			floatingIsland(mesh, YARD_ISLAND, 13, 10 + i, yardLevel, yardOutline(10 + i))
+			floatingIsland(mesh, YARD_ISLAND, 22, 10 + i, yardLevel, yardOutline(10 + i))
 		end, nil, islandPaint(yardLevel))
 	end, x, y, degrees - 90)
 	slab(`Plot{i}`, function()
