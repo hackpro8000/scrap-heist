@@ -12544,7 +12544,7 @@ slabKeys[13511] = "b9ff4053bf5e0dab-7c27880a9a355c4d"
 slabKeys[13520] = "b9ff4053bf5e0dab-22233dc81161c674"
 slabKeys[13527] = "b9ff4053bf5e0dab-92736dc11ff1f899"
 slabKeys[13555] = "b9ff4053bf5e0dab-5f3dede5e341fed8"
-slabKeys[13586] = "b9ff4053bf5e0dab-3dd268cc30b616da"
+slabKeys[13586] = "b9ff4053bf5e0dab-20ab9c4a737bbc70"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -13813,9 +13813,17 @@ slab("Plumbing", function()
 					return mesh:face(corners)
 				end,
 			})
-		end, nil, function(_x, _y, z)
+		end, nil, function(x, y, z, _nx, _ny, nz)
+			-- Streaks stretched down the way it ran, a glossy highlight where the
+			-- surface turns up to catch the light, and bright glowing spots,
+			-- mostly along those highlights.
 			local shade = 1 - 0.33 * math.clamp((z - gooLow) / (gooHigh - gooLow), 0, 1)
-			return GOO[1] * shade, GOO[2] * shade, GOO[3] * shade
+			shade *= 1 + 0.18 * math.noise(x * 18, y * 18, z * 1.2 + 4)
+			local r, g, b = GOO[1] * shade, GOO[2] * shade, GOO[3] * shade
+			local highlight = math.clamp((nz - 0.45) / 0.35, 0, 1)
+			local spot = math.noise(x * 14 + 3, y * 14, z * 14) + highlight * 0.35
+			local glow = math.max(highlight * 0.7, math.clamp((spot - 0.3) / 0.15, 0, 1))
+			return r + (0.82 - r) * glow, g + (1 - g) * glow, b + (0.62 - b) * glow
 		end, nil, 0.8)
 	end
 	layPlumbing("Arena", 0, 0, 0, ARENA_ISLAND, floatingIsland(traced, ARENA_ISLAND, 42, 1, flat, octagon), 1)
