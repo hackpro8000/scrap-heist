@@ -12531,19 +12531,19 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[12706] = "77246769d2aa3155-5be81bc1ab283092"
-slabKeys[12859] = "77246769d2aa3155-8f291df974f34236"
-slabKeys[12865] = "77246769d2aa3155-f8f4f9cdd6dd6cae"
-slabKeys[12896] = "77246769d2aa3155-cfb837b03ab263ad"
-slabKeys[12975] = "77246769d2aa3155-45f1773a0c3d4692"
-slabKeys[13020] = "77246769d2aa3155-ba14974c752a9757"
-slabKeys[13084] = "77246769d2aa3155-38a291d6cf6e421e"
-slabKeys[13115] = "77246769d2aa3155-dc02515c57e16914"
-slabKeys[13210] = "77246769d2aa3155-f3271f231573d1f1"
-slabKeys[13215] = "77246769d2aa3155-08fbe9bb8b1a6d5a"
-slabKeys[13222] = "77246769d2aa3155-f278656b57891167"
-slabKeys[13231] = "77246769d2aa3155-5d5d5a3a3e817dcb"
-slabKeys[13298] = "77246769d2aa3155-5f3dede5e341fed8"
+slabKeys[12717] = "b2520bd718947075-5f54f228757879fb"
+slabKeys[12870] = "b2520bd718947075-8f291df974f34236"
+slabKeys[12876] = "b2520bd718947075-f8f4f9cdd6dd6cae"
+slabKeys[12907] = "b2520bd718947075-cfb837b03ab263ad"
+slabKeys[12986] = "b2520bd718947075-45f1773a0c3d4692"
+slabKeys[13031] = "b2520bd718947075-ba14974c752a9757"
+slabKeys[13095] = "b2520bd718947075-38a291d6cf6e421e"
+slabKeys[13126] = "b2520bd718947075-dc02515c57e16914"
+slabKeys[13221] = "b2520bd718947075-f3271f231573d1f1"
+slabKeys[13226] = "b2520bd718947075-08fbe9bb8b1a6d5a"
+slabKeys[13233] = "b2520bd718947075-f278656b57891167"
+slabKeys[13242] = "b2520bd718947075-5d5d5a3a3e817dcb"
+slabKeys[13309] = "b2520bd718947075-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -12703,12 +12703,23 @@ local function flat(_x: number, _y: number): number
 	return 0
 end
 
+-- Under the ring road the dirt dips out of sight, since the road is thinner
+-- than the surface wobble and the dirt would otherwise poke through it. It
+-- comes back up under the kerb.
+local ROAD_SINK = 0.15
+local function islandTop(x: number, y: number): number
+	local radius = octagonRadius(x, y)
+	local into = math.clamp((radius - ROAD_INNER) / 0.5, 0, 1)
+	local out = math.clamp((radius - ROAD_OUTER) / 0.4, 0, 1)
+	return heightAt(x, y) - ROAD_SINK * (into - out)
+end
+
 slab("ArenaIsland", function()
 	chunkedPart("Island", nil, GROUND, function(mesh)
-		floatingIsland(mesh, ARENA_ISLAND, 42, 1, heightAt, function(angle)
+		floatingIsland(mesh, ARENA_ISLAND, 42, 1, islandTop, function(angle)
 			return octagonScale(math.deg(angle))
-		end, { ARENA_FLOOR, ROAD_INNER - 2 })
-	end, nil, islandPaint(heightAt))
+		end, { ARENA_FLOOR, ROAD_INNER - 2, ROAD_INNER, ROAD_INNER + 0.5, ROAD_OUTER, ROAD_OUTER + 0.4 })
+	end, nil, islandPaint(islandTop))
 end, 0, 0)
 -- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
 local function fbm(x: number, y: number, z: number): number
