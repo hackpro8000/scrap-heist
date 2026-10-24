@@ -151,6 +151,15 @@ part("Island", nil, GROUND, function(mesh)
 	local rows = {}
 	local z = CAP_TOP
 	while z > TIP + STEP / 2 do
+		-- Stop once every pillar has ended, so no needle trails below.
+		local any = false
+		for j = 0, ANGLES - 1, 8 do
+			if wall(2 * math.pi * j / ANGLES, z) > 0.3 then
+				any = true
+				break
+			end
+		end
+		if not any then break end
 		local row = {}
 		for j = 0, ANGLES - 1 do
 			local angle = 2 * math.pi * j / ANGLES
@@ -192,7 +201,7 @@ part("Island", nil, GROUND, function(mesh)
 	for j = 0, ANGLES - 1 do
 		mesh:face({ middle, inner[j], inner[(j + 1) % ANGLES] })
 	end
-	local tip = mesh:vertex(0.3, -0.2, TIP)
+	local tip = mesh:vertex(0, 0, z + STEP - 0.4)
 	for j = 0, ANGLES - 1 do
 		mesh:face({ tip, rows[#rows][(j + 1) % ANGLES], rows[#rows][j] })
 	end
