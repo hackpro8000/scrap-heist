@@ -12542,7 +12542,7 @@ slabKeys[13128] = "b2520bd718947075-dc02515c57e16914"
 slabKeys[13223] = "b2520bd718947075-f3271f231573d1f1"
 slabKeys[13228] = "b2520bd718947075-08fbe9bb8b1a6d5a"
 slabKeys[13235] = "b2520bd718947075-f278656b57891167"
-slabKeys[13244] = "b2520bd718947075-b2cd3040ac99d70a"
+slabKeys[13244] = "b2520bd718947075-2080bf6a22b29b25"
 slabKeys[13322] = "b2520bd718947075-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
@@ -13299,7 +13299,7 @@ for i = 1, 8 do
 				local edge, land = ends[1], ends[2]
 				box(mesh, 0, edge + land * 0.75, -3, 7.3, 3.5, 2.8)
 				for _, side in { -3.4, 3.4 } do
-					box(mesh, side, edge, -3, 0.5, 2, 3.45)
+					box(mesh, side, edge - land * 0.5, -3, 0.5, 1, 3.45)
 				end
 			end
 		end, nil, 0.5)

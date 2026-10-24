@@ -753,7 +753,7 @@ for i = 1, 8 do
 				local edge, land = ends[1], ends[2]
 				box(mesh, 0, edge + land * 0.75, -3, 7.3, 3.5, 2.8)
 				for _, side in { -3.4, 3.4 } do
-					box(mesh, side, edge, -3, 0.5, 2, 3.45)
+					box(mesh, side, edge - land * 0.5, -3, 0.5, 1, 3.45)
 				end
 			end
 		end, nil, 0.5)
