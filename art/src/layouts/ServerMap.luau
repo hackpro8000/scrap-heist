@@ -490,10 +490,12 @@ slab("Road", function()
 		local radius = octagonRadius(x, y)
 		return asphalt(radius - middle, math.atan2(y, x) * middle, (ROAD_OUTER - ROAD_INNER) / 2, 61)
 	end)
+	-- Each kerb run stops against the bridge railings, just past the kick plates.
+	local bridgeGap = math.deg(math.asin(3.15 / ROAD_OUTER))
 	part("Kerb", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
 			local from = (i - 1) * 45
-			arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, -0.1, 0.3, from + 4, from + 41, true)
+			arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, -0.1, 0.3, from + bridgeGap, from + 45 - bridgeGap, true)
 		end
 	end, nil, 0.5)
 end, 0, 0)
