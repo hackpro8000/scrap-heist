@@ -2,12 +2,11 @@
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
 -- around its bowl; eight yard islands float a tier higher in a ring with their gates
--- facing it, each joined to the road by a steel bridge climbing to it. The arena is the storm fight
--- ground. The ring road is a deck raised on pillars over the bowl's rim, and
--- on the east side a market terrace sits under it, where new players spawn.
+-- facing it, each joined to the road by a steel bridge sloping up to it. The arena is the storm fight
+-- ground, banking up to the road with no steps, and new players spawn round its crusher.
 -- Each plot slab carries the Yard Layout template, placed piece by piece the
 -- same way YardLayout.luau places it, so the map shows every yard set up.
--- Labels: ArenaIsland, Road, Market, Arena, ArenaEdge, Ramps, RampMouths, Spawn, Beacon, Island1-Island8, Plot1-Plot8, Yard1_<piece>-Yard8_<piece>, Spoke1-Spoke8, Bridge1-Bridge8,
+-- Labels: ArenaIsland, Road, Arena, Ramps, Spawn, Beacon, Island1-Island8, Plot1-Plot8, Yard1_<piece>-Yard8_<piece>, Spoke1-Spoke8, Bridge1-Bridge8,
 -- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4 and Cones1-Cones8.
 -- Yard crates show empty, as in the Yard Layout template.
 skipPart = function(name)
@@ -24,11 +23,10 @@ local ARENA_FLOOR, ARENA_DEPTH = 36, 3.5
 -- Width of the hazard stripes inlaid round the floor edge and up each ramp.
 local HAZARD_WIDTH = 1.8
 local ARENA_ISLAND, YARD_ISLAND = 61, 26
--- The ring road runs on a raised deck; the market sits under it on the east.
-local DECK, MARKET = 12, 4
--- The yards float a tier above the deck.
-local YARD_TIER = 18
-local MARKET_FROM, MARKET_TO = -60, 60
+-- The ring road runs a little above the ground, the arena banking down to
+-- the floor inside it and the bridges sloping up to the yards outside it.
+local DECK = 2
+local YARD_TIER = 6
 
 local GROUND = { 0.3, 0.27, 0.22 }
 local ROAD = { 0.42, 0.41, 0.4 }
@@ -44,9 +42,6 @@ local function slab(label: string, build: () -> (), x: number, y: number, turn: 
 		table.clear(parts)
 	end)
 end
-
--- Half width of the gap a ramp lane leaves through the market terrace.
-local RAMP_HALF_MARKET = 5.4
 
 local function polar(radius: number, degrees: number): (number, number)
 	local angle = math.rad(degrees)
@@ -75,7 +70,7 @@ end
 
 local function heightAt(x: number, y: number): number
 	local radius = octagonRadius(x, y)
-	return -ARENA_DEPTH * (1 - math.clamp((radius - ARENA_FLOOR) / (ROAD_INNER - 2 - ARENA_FLOOR), 0, 1))
+	return -ARENA_DEPTH + (DECK + ARENA_DEPTH) * (math.clamp((radius - ARENA_FLOOR) / (ROAD_INNER - ARENA_FLOOR), 0, 1))
 end
 
 -- A floating island: a dirt top following `top`, over a rock underside that
@@ -120,7 +115,7 @@ local function floatingIsland(mesh, radius: number, depth: number, seed: number,
 			local angle = 2 * math.pi * j / ISLAND_SIDES
 			local c, n = math.cos(angle), math.sin(angle)
 			local wobble = math.noise(c * 2, n * 2, seed + t * 3) * math.min(1, t * 3)
-			local r = math.max(edge(angle) * (1 - t) ^ 0.55 * (1 + 0.3 * wobble), radius * 0.03)
+			local r = math.max(edge(angle) * (1 - t) ^ 1.1 * (1 + 0.3 * wobble), radius * 0.03)
 			local z = -depth * t ^ 1.3 + 1.5 * t * math.noise(c * 3, n * 3, seed + 9)
 			row[j] = { c * r, n * r, z }
 		end
@@ -184,7 +179,7 @@ slab("ArenaIsland", function()
 	chunkedPart("Island", nil, GROUND, function(mesh)
 		floatingIsland(mesh, ARENA_ISLAND, 42, 1, islandTop, function(angle)
 			return octagonScale(math.deg(angle))
-		end, { ARENA_FLOOR, ROAD_INNER - 2, ROAD_INNER, ROAD_INNER + 0.5, ROAD_OUTER, ROAD_OUTER + 0.4 })
+		end, { ARENA_FLOOR, ROAD_INNER, ROAD_INNER + 0.5, ROAD_OUTER, ROAD_OUTER + 0.4 })
 	end, nil, islandPaint(islandTop))
 end, 0, 0)
 -- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
@@ -338,24 +333,10 @@ slab("Arena", function()
 		arc(mesh, 0, ARENA_FLOOR - HAZARD_WIDTH, -ARENA_DEPTH - 0.1, 0.1 - ARENA_DEPTH, 0, 360, true)
 	end, nil, arenaConcrete)
 end, 0, 0)
--- The market terrace under the east side of the deck, broken where each
--- ramp lane runs out under the deck.
-slab("Market", function()
-	local lane = math.deg(math.asin(RAMP_HALF_MARKET / (ROAD_INNER - 2)))
-	chunkedPart("Floor", nil, CONCRETE, function(mesh)
-		local from = MARKET_FROM
-		for spoke = -45, 45, 45 do
-			arc(mesh, ROAD_INNER - 2, ROAD_OUTER, -0.2, MARKET, from, spoke - lane, true)
-			from = spoke + lane
-		end
-		arc(mesh, ROAD_INNER - 2, ROAD_OUTER, -0.2, MARKET, from, MARKET_TO, true)
-	end, nil, arenaConcrete)
-end, 0, 0)
--- New players start on a pad on the market terrace.
+-- New players start on a ring round the crusher.
 slab("Spawn", function()
-	local x, y = polar((ROAD_INNER + ROAD_OUTER) / 2 * octagonScale(22.5), 22.5)
 	part("Pad", nil, MARK, function(mesh)
-		ring(mesh, x, y, MARKET, 2.5, 3.5, 0.1, "z", 32)
+		ring(mesh, 0, 0, 0.2 - ARENA_DEPTH, 6.5, 8.5, 0.1, "z", 32)
 	end, nil, 0)
 end, 0, 0)
 
@@ -433,52 +414,9 @@ end, 0, 0)
 -- The arena edge stands out from the yards around it: hazard stripes ring the
 -- fight floor, and a low concrete wall with yellow caps tops the bowl,
 -- broken where each spoke comes in.
--- The arena wall runs along each octagon side in two halves, one each side
--- of the spoke. A half starts square at `near` across the spoke, where it
--- meets the ramp edge, and ends mitred at the octagon corner.
-local WALL_INNER, WALL_OUTER = ROAD_INNER - 1.2, ROAD_INNER - 0.4
-local WALL_TOP = 1.25
 -- The ramp lane, with a hazard strip outside it on each side.
 local LANE_HALF = 3.6
 local RAMP_HALF = LANE_HALF + HAZARD_WIDTH
-local function wallRun(mesh, degrees: number, side: number, inner: number, outer: number, near: number, bottom: number, top: number)
-	local angle = math.rad(degrees)
-	local c, n = math.cos(angle), math.sin(angle)
-	local corner = math.tan(math.rad(22.5))
-	-- Footprint counter-clockwise seen from above.
-	local footprint = { { inner, near }, { outer, near }, { outer, outer * corner }, { inner, inner * corner } }
-	if side < 0 then
-		footprint = { { inner, -inner * corner }, { outer, -outer * corner }, { outer, -near }, { inner, -near } }
-	end
-	local low, high = {}, {}
-	for k, p in footprint do
-		local x, y = c * p[1] - n * p[2], n * p[1] + c * p[2]
-		low[k] = mesh:vertex(x, y, bottom)
-		high[k] = mesh:vertex(x, y, top)
-	end
-	mesh:face({ high[1], high[2], high[3], high[4] })
-	mesh:face({ low[4], low[3], low[2], low[1] })
-	for k = 1, 4 do
-		local l = k % 4 + 1
-		mesh:face({ low[k], low[l], high[l], high[k] })
-	end
-end
-slab("ArenaEdge", function()
-	part("Wall", nil, CONCRETE, function(mesh)
-		for i = 1, 8 do
-			for _, side in { -1, 1 } do
-				wallRun(mesh, (i - 1) * 45, side, WALL_INNER, WALL_OUTER, RAMP_HALF, -0.5, WALL_TOP)
-			end
-		end
-	end, nil, 0.4)
-	part("WallCap", nil, MARK, function(mesh)
-		for i = 1, 8 do
-			for _, side in { -1, 1 } do
-				wallRun(mesh, (i - 1) * 45, side, WALL_INNER - 0.1, WALL_OUTER + 0.1, RAMP_HALF - 0.1, WALL_TOP, WALL_TOP + 0.15)
-			end
-		end
-	end, nil, 0.3)
-end, 0, 0)
 -- Asphalt at u studs across and v along a road: fine aggregate, darker
 -- repair patches, polished tyre lanes, oil drips between them, a web of
 -- cracks, and worn paint: white edge lines and a dashed yellow centre line.
@@ -524,29 +462,15 @@ slab("Road", function()
 			arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, DECK - 0.6, DECK + 0.3, from + bridgeGap, from + 45 - bridgeGap, true)
 		end
 	end, nil, 0.5)
-	-- Square pillars under both deck edges, standing on the market terrace
-	-- where it runs under them.
-	part("Pillars", nil, CONCRETE, function(mesh)
-		for n = 0, 31 do
-			local degrees = n * 11.25 + 5.625
-			local inMarket = degrees > 360 + MARKET_FROM or degrees < MARKET_TO
-			local foot = if inMarket then MARKET else 0
-			for _, radius in { ROAD_INNER + 0.8, ROAD_OUTER - 0.8 } do
-				local x, y = polar(radius * octagonScale(degrees), degrees)
-				box(mesh, x, y, foot - 0.2, 1, 1, DECK - 0.6 - foot + 0.2)
-			end
-		end
-	end, nil, 0.5)
 end, 0, 0)
 
--- Entry ramps: a concrete deck at each spoke, from the wall gap down to the
--- fight floor. The deck is one straight slope, flush with the floor where it
--- meets the arena's hazard ring and level across the wall gap. It is a touch
--- steeper than the bowl, so it never dips into the terrain.
+-- Entry ramps: a concrete deck at each spoke, from the ring road down the
+-- bank to the fight floor, one straight slope a touch above the bank so it
+-- never dips into the terrain.
 local RAMP_FLOOR = 0.1 - ARENA_DEPTH
-local RAMP_CREST = 0.35
+local RAMP_CREST = DECK + 0.1
 local function rampTop(radius: number): number
-	return RAMP_FLOOR + (RAMP_CREST - RAMP_FLOOR) * math.clamp((radius - ARENA_FLOOR) / (WALL_INNER - ARENA_FLOOR), 0, 1)
+	return RAMP_FLOOR + (RAMP_CREST - RAMP_FLOOR) * math.clamp((radius - ARENA_FLOOR) / (ROAD_INNER - ARENA_FLOOR), 0, 1)
 end
 -- A block on spoke `degrees` between `from` and `to` across it and over
 -- `radii` along it, its top `lift` above the deck and its bottom at the
@@ -579,18 +503,18 @@ local function rampBlock(mesh, degrees: number, radii: { number }, from: number,
 	mesh:face({ last[3], last[4], last[2], last[1] })
 end
 -- Hazard strips inlaid outside both lane edges, as wide as the arena's ring
--- and flush with the deck. They run from the wall line, ending yellow, across
+-- and flush with the deck. They run from the road, ending yellow, across
 -- the ring, which is cut at each ramp mouth and runs from strip to strip
 -- along each octagon side, mitred at the corners. Blocks are clamped to the
 -- octagon miters, so the last ring piece on each side runs into the corner.
 local STRIP_BREAKS = { ARENA_FLOOR - HAZARD_WIDTH }
 for k = 0, 6 do
-	table.insert(STRIP_BREAKS, ARENA_FLOOR + k * (WALL_INNER - ARENA_FLOOR) / 6)
+	table.insert(STRIP_BREAKS, ARENA_FLOOR + k * (ROAD_INNER - ARENA_FLOOR) / 6)
 end
 slab("Ramps", function()
 	part("Deck", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
-			rampBlock(mesh, (i - 1) * 45, { ARENA_FLOOR - HAZARD_WIDTH, ARENA_FLOOR, WALL_INNER }, -LANE_HALF, LANE_HALF, 0)
+			rampBlock(mesh, (i - 1) * 45, { ARENA_FLOOR - HAZARD_WIDTH, ARENA_FLOOR, ROAD_INNER }, -LANE_HALF, LANE_HALF, 0)
 		end
 	end, nil, 0.25)
 	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
@@ -612,51 +536,6 @@ slab("Ramps", function()
 		end, nil, 0.2)
 	end
 end, 0, 0)
--- Each ramp mouth: a steel drainage grate across the gap from the wall line
--- to the road, and a concrete pier closing each wall end, its face to the
--- gap banded yellow and black.
-local THRESHOLD = { WALL_INNER, ROAD_INNER + 0.5 }
-local PIER_WIDTH, PIER_TOP = 1, WALL_TOP + 0.5
-local PIER_RADII = { WALL_INNER - 0.3, WALL_OUTER + 0.3 }
-slab("RampMouths", function()
-	part("ThresholdPit", nil, { 0.05, 0.05, 0.05 }, function(mesh)
-		for i = 1, 8 do
-			rampBlock(mesh, (i - 1) * 45, THRESHOLD, -RAMP_HALF, RAMP_HALF, 0, 0.4)
-		end
-	end, nil, 0)
-	part("Threshold", nil, STEEL, function(mesh)
-		local bars = 6
-		local step = (THRESHOLD[2] - THRESHOLD[1] - 0.2) / bars
-		for i = 1, 8 do
-			for b = 0, bars do
-				local radius = THRESHOLD[1] + 0.1 + b * step
-				rampBlock(mesh, (i - 1) * 45, { radius - 0.07, radius + 0.07 }, -RAMP_HALF, RAMP_HALF, 0.05, 0.15)
-			end
-		end
-	end, nil, 0.4)
-	part("Pier", nil, CONCRETE, function(mesh)
-		for i = 1, 8 do
-			for _, side in { -1, 1 } do
-				local near, far = side * RAMP_HALF, side * (RAMP_HALF + PIER_WIDTH)
-				rampBlock(mesh, (i - 1) * 45, PIER_RADII, math.min(near, far), math.max(near, far), PIER_TOP - RAMP_CREST, PIER_TOP + 0.5)
-			end
-		end
-	end, nil, 0.4)
-	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
-		part(if k == 1 then "PierStripeYellow" else "PierStripeBlack", nil, color, function(mesh)
-			local band = (PIER_TOP - RAMP_CREST) / 4
-			for i = 1, 8 do
-				for _, side in { -1, 1 } do
-					local face, inset = side * RAMP_HALF, side * (RAMP_HALF - 0.04)
-					for b = k, 4, 2 do
-						rampBlock(mesh, (i - 1) * 45, PIER_RADII, math.min(face, inset), math.max(face, inset), b * band, band)
-					end
-				end
-			end
-		end, nil, 0.3)
-	end
-end, 0, 0)
-
 -- Each yard island is turned so its gate (local -y) faces the arena. A short
 -- road runs from the gate to the island edge, and a steel bridge carries it
 -- across the gap to the ring road.
@@ -733,7 +612,7 @@ for i = 1, 8 do
 	local x, y = polar(YARD_RADIUS, degrees)
 	slab(`Island{i}`, function()
 		part("Island", nil, GROUND, function(mesh)
-			floatingIsland(mesh, YARD_ISLAND, 22, 10 + i, yardLevel, yardOutline(10 + i))
+			floatingIsland(mesh, YARD_ISLAND, 13, 10 + i, yardLevel, yardOutline(10 + i))
 		end, nil, islandPaint(yardLevel))
 	end, x, y, degrees - 90)
 	slab(`Plot{i}`, function()
