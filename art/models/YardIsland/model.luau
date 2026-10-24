@@ -830,11 +830,10 @@ part("Island", nil, GROUND, function(mesh)
 			mesh:face({ rows[i + 1][j], rows[i + 1][l], rows[i][l], rows[i][j] })
 		end
 	end
-	local topCap = {}
+	local middle = mesh:vertex(0, 0, CAP_TOP)
 	for j = 0, ANGLES - 1 do
-		table.insert(topCap, rows[1][j])
+		mesh:face({ middle, rows[1][j], rows[1][(j + 1) % ANGLES] })
 	end
-	mesh:face(topCap)
 	local tip = mesh:vertex(0.5, -0.4, TIP)
 	for j = 0, ANGLES - 1 do
 		mesh:face({ tip, rows[#rows][(j + 1) % ANGLES], rows[#rows][j] })
