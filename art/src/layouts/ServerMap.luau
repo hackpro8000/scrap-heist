@@ -157,12 +157,23 @@ local function flat(_x: number, _y: number): number
 	return 0
 end
 
+-- Under the ring road the dirt dips out of sight, since the road is thinner
+-- than the surface wobble and the dirt would otherwise poke through it. It
+-- comes back up under the kerb.
+local ROAD_SINK = 0.15
+local function islandTop(x: number, y: number): number
+	local radius = octagonRadius(x, y)
+	local into = math.clamp((radius - ROAD_INNER) / 0.5, 0, 1)
+	local out = math.clamp((radius - ROAD_OUTER) / 0.4, 0, 1)
+	return heightAt(x, y) - ROAD_SINK * (into - out)
+end
+
 slab("ArenaIsland", function()
 	chunkedPart("Island", nil, GROUND, function(mesh)
-		floatingIsland(mesh, ARENA_ISLAND, 42, 1, heightAt, function(angle)
+		floatingIsland(mesh, ARENA_ISLAND, 42, 1, islandTop, function(angle)
 			return octagonScale(math.deg(angle))
-		end, { ARENA_FLOOR, ROAD_INNER - 2 })
-	end, nil, islandPaint(heightAt))
+		end, { ARENA_FLOOR, ROAD_INNER - 2, ROAD_INNER, ROAD_INNER + 0.5, ROAD_OUTER, ROAD_OUTER + 0.4 })
+	end, nil, islandPaint(islandTop))
 end, 0, 0)
 -- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
 local function fbm(x: number, y: number, z: number): number
