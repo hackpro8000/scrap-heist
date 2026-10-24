@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Assembles art/models/<Name>/model.luau from the split sources in art/src:
 # a bot is its head, the shared helpers, then its body; an item is the
-# rarity colors, the shared helpers, then its own file; a layout is the
+# rarity colors, the shared helpers, then its own file (after a CACHE_KEY); a layout is the
 # placement prelude, the shared helpers, each model named on its "-- uses:" first line wrapped
 # as build<Name>() and keyed by a hash of its source for modelkit's cache,
 # then the layout itself.
@@ -19,7 +19,10 @@ mkdir -p "$(dirname "${out}")"
 if [ -d "${src}/bots/${name}" ]; then
 	cat "${src}/bots/${name}/head.luau" "${src}/common.luau" "${src}/bots/${name}/body.luau" > "${out}"
 elif [ -f "${src}/items/${name}.luau" ]; then
-	cat "${src}/rarity.luau" "${src}/common.luau" "${src}/items/${name}.luau" > "${out}"
+	# CACHE_KEY hashes the shared code and the item down to "-- cached
+	# above", for a model.cached build of the part above that line.
+	key="$({ cat "${src}/rarity.luau" "${src}/common.luau"; sed '/^-- cached above$/q' "${src}/items/${name}.luau"; } | sha1sum | cut -c1-16)"
+	{ echo "local CACHE_KEY = \"${name}-${key}\""; cat "${src}/rarity.luau" "${src}/common.luau" "${src}/items/${name}.luau"; } > "${out}"
 elif [ -f "${src}/layouts/${name}.luau" ]; then
 	# Skipped parts never reach the cache, so the skip rule is part of each key.
 	skip="$(awk '/^skipPart = function/ { open = 1 } open { print } open && /^end/ { open = 0 }' "${src}/layouts/${name}.luau")"
