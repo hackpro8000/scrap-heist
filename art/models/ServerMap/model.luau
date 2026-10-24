@@ -12542,8 +12542,8 @@ slabKeys[13128] = "17d166d2ec0121f4-dc02515c57e16914"
 slabKeys[13223] = "17d166d2ec0121f4-f3271f231573d1f1"
 slabKeys[13228] = "17d166d2ec0121f4-08fbe9bb8b1a6d5a"
 slabKeys[13235] = "17d166d2ec0121f4-2cd0ff58e29cdaf2"
-slabKeys[13244] = "17d166d2ec0121f4-b40a3d73f3bc93c9"
-slabKeys[13336] = "17d166d2ec0121f4-5f3dede5e341fed8"
+slabKeys[13244] = "17d166d2ec0121f4-4b57dfe8c1448161"
+slabKeys[13344] = "17d166d2ec0121f4-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -13303,13 +13303,21 @@ for i = 1, 8 do
 				end
 			end
 		end, nil, 0.5)
-		-- The yard end lands on a concrete apron, with a steel plate over the
-		-- joint and a gate frame standing on the wing walls.
+		-- The yard end lands on a concrete apron under a gate frame standing on
+		-- the wing walls. A steel plate covers the joint at both ends.
 		part("Apron", nil, CONCRETE, function(mesh)
 			box(mesh, 0, BRIDGE_FROM + 2.5, 0, 7.3, 5, 0.12)
 		end, nil, 0.5)
-		part("JointPlate", nil, STEEL, function(mesh)
-			box(mesh, 0, BRIDGE_FROM, 0.1, 6, 0.8, 0.04)
+		part("JointPlates", nil, STEEL, function(mesh)
+			for _, edge in { BRIDGE_TO, BRIDGE_FROM } do
+				box(mesh, 0, edge, 0.1, 6, 0.8, 0.04)
+			end
+		end, nil, 0.3)
+		-- The road end gets a hazard bollard on each wing wall.
+		part("Bollards", nil, MARK, function(mesh)
+			for _, side in { -3.4, 3.4 } do
+				box(mesh, side, BRIDGE_TO + 0.5, 0.45, 0.4, 0.4, 1.2)
+			end
 		end, nil, 0.3)
 		part("GateFrame", nil, DARK_STEEL, function(mesh)
 			for _, side in { -3.4, 3.4 } do
