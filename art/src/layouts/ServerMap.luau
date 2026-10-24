@@ -3,10 +3,11 @@
 -- floating islands. The arena island sits in the middle with a ring road
 -- around its bowl; eight yard islands float in a ring with their gates facing
 -- it, each joined to the road by a steel bridge. The arena is the storm fight
--- ground and, between storms, the spawn plaza new players start on.
+-- ground. The ring road is a deck raised on pillars over the bowl's rim, and
+-- on the east side a market terrace sits under it, where new players spawn.
 -- Each plot slab carries the Yard Layout template, placed piece by piece the
 -- same way YardLayout.luau places it, so the map shows every yard set up.
--- Labels: ArenaIsland, Road, Arena, ArenaEdge, Ramps, RampMouths, Spawn, Beacon, Island1-Island8, Plot1-Plot8, Yard1_<piece>-Yard8_<piece>, Spoke1-Spoke8, Bridge1-Bridge8,
+-- Labels: ArenaIsland, Road, Market, Arena, ArenaEdge, Ramps, RampMouths, Spawn, Beacon, Island1-Island8, Plot1-Plot8, Yard1_<piece>-Yard8_<piece>, Spoke1-Spoke8, Bridge1-Bridge8,
 -- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4 and Cones1-Cones8.
 -- Yard crates show empty, as in the Yard Layout template.
 skipPart = function(name)
@@ -23,6 +24,9 @@ local ARENA_FLOOR, ARENA_DEPTH = 36, 3.5
 -- Width of the hazard stripes inlaid round the floor edge and up each ramp.
 local HAZARD_WIDTH = 1.8
 local ARENA_ISLAND, YARD_ISLAND = 61, 26
+-- The ring road runs on a raised deck; the market sits under it on the east.
+local DECK, MARKET = 12, 4
+local MARKET_FROM, MARKET_TO = -60, 60
 
 local GROUND = { 0.3, 0.27, 0.22 }
 local ROAD = { 0.42, 0.41, 0.4 }
@@ -38,6 +42,9 @@ local function slab(label: string, build: () -> (), x: number, y: number, turn: 
 		table.clear(parts)
 	end)
 end
+
+-- Half width of the gap a ramp lane leaves through the market terrace.
+local RAMP_HALF_MARKET = 5.4
 
 local function polar(radius: number, degrees: number): (number, number)
 	local angle = math.rad(degrees)
@@ -326,10 +333,24 @@ slab("Arena", function()
 		arc(mesh, 0, ARENA_FLOOR - HAZARD_WIDTH, -ARENA_DEPTH - 0.1, 0.1 - ARENA_DEPTH, 0, 360, true)
 	end, nil, arenaConcrete)
 end, 0, 0)
--- New players start on the ring around the crusher.
+-- The market terrace under the east side of the deck, broken where each
+-- ramp lane runs out under the deck.
+slab("Market", function()
+	local lane = math.deg(math.asin(RAMP_HALF_MARKET / (ROAD_INNER - 2)))
+	chunkedPart("Floor", nil, CONCRETE, function(mesh)
+		local from = MARKET_FROM
+		for spoke = -45, 45, 45 do
+			arc(mesh, ROAD_INNER - 2, ROAD_OUTER, -0.2, MARKET, from, spoke - lane, true)
+			from = spoke + lane
+		end
+		arc(mesh, ROAD_INNER - 2, ROAD_OUTER, -0.2, MARKET, from, MARKET_TO, true)
+	end, nil, arenaConcrete)
+end, 0, 0)
+-- New players start on a pad on the market terrace.
 slab("Spawn", function()
+	local x, y = polar((ROAD_INNER + ROAD_OUTER) / 2 * octagonScale(22.5), 22.5)
 	part("Pad", nil, MARK, function(mesh)
-		ring(mesh, 0, 0, 0.2 - ARENA_DEPTH, 6.5, 8.5, 0.1, "z", 32)
+		ring(mesh, x, y, MARKET, 2.5, 3.5, 0.1, "z", 32)
 	end, nil, 0)
 end, 0, 0)
 
@@ -485,7 +506,7 @@ end
 slab("Road", function()
 	local middle = (ROAD_INNER + ROAD_OUTER) / 2
 	chunkedPart("Ring", nil, ROAD, function(mesh)
-		arc(mesh, ROAD_INNER, ROAD_OUTER, -0.05, 0.05, 0, 360, true)
+		arc(mesh, ROAD_INNER, ROAD_OUTER, DECK - 0.6, DECK, 0, 360, true)
 	end, nil, function(x, y)
 		local radius = octagonRadius(x, y)
 		return asphalt(radius - middle, math.atan2(y, x) * middle, (ROAD_OUTER - ROAD_INNER) / 2, 61)
@@ -495,7 +516,20 @@ slab("Road", function()
 	part("Kerb", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
 			local from = (i - 1) * 45
-			arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, -0.1, 0.3, from + bridgeGap, from + 45 - bridgeGap, true)
+			arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, DECK - 0.6, DECK + 0.3, from + bridgeGap, from + 45 - bridgeGap, true)
+		end
+	end, nil, 0.5)
+	-- Square pillars under both deck edges, standing on the market terrace
+	-- where it runs under them.
+	part("Pillars", nil, CONCRETE, function(mesh)
+		for n = 0, 31 do
+			local degrees = n * 11.25 + 5.625
+			local inMarket = degrees > 360 + MARKET_FROM or degrees < MARKET_TO
+			local foot = if inMarket then MARKET else 0
+			for _, radius in { ROAD_INNER + 0.8, ROAD_OUTER - 0.8 } do
+				local x, y = polar(radius * octagonScale(degrees), degrees)
+				box(mesh, x, y, foot - 0.2, 1, 1, DECK - 0.6 - foot + 0.2)
+			end
 		end
 	end, nil, 0.5)
 end, 0, 0)
