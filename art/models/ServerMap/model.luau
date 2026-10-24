@@ -12531,20 +12531,20 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[13070] = "06869d1037ae003d-935f76826323c7d4"
-slabKeys[13227] = "06869d1037ae003d-8f291df974f34236"
-slabKeys[13233] = "06869d1037ae003d-f8f4f9cdd6dd6cae"
-slabKeys[13264] = "06869d1037ae003d-cfb837b03ab263ad"
-slabKeys[13345] = "06869d1037ae003d-09c93ef6a83e1b73"
-slabKeys[13367] = "06869d1037ae003d-816e21abcfe67713"
-slabKeys[13443] = "06869d1037ae003d-dbb544d9b50020dd"
-slabKeys[13491] = "06869d1037ae003d-b9a67e4cdf97308c"
-slabKeys[13646] = "06869d1037ae003d-f7451107beca1bf1"
-slabKeys[13674] = "06869d1037ae003d-7c27880a9a355c4d"
-slabKeys[13683] = "06869d1037ae003d-22233dc81161c674"
-slabKeys[13690] = "06869d1037ae003d-92736dc11ff1f899"
-slabKeys[13718] = "06869d1037ae003d-5f3dede5e341fed8"
-slabKeys[13749] = "06869d1037ae003d-74a18327d4dc7da2"
+slabKeys[13073] = "0a01b6c940c38092-935f76826323c7d4"
+slabKeys[13230] = "0a01b6c940c38092-8f291df974f34236"
+slabKeys[13236] = "0a01b6c940c38092-f8f4f9cdd6dd6cae"
+slabKeys[13267] = "0a01b6c940c38092-cfb837b03ab263ad"
+slabKeys[13348] = "0a01b6c940c38092-09c93ef6a83e1b73"
+slabKeys[13370] = "0a01b6c940c38092-816e21abcfe67713"
+slabKeys[13446] = "0a01b6c940c38092-dbb544d9b50020dd"
+slabKeys[13494] = "0a01b6c940c38092-b9a67e4cdf97308c"
+slabKeys[13649] = "0a01b6c940c38092-f7451107beca1bf1"
+slabKeys[13677] = "0a01b6c940c38092-7c27880a9a355c4d"
+slabKeys[13686] = "0a01b6c940c38092-22233dc81161c674"
+slabKeys[13693] = "0a01b6c940c38092-92736dc11ff1f899"
+slabKeys[13721] = "0a01b6c940c38092-5f3dede5e341fed8"
+slabKeys[13752] = "0a01b6c940c38092-74a18327d4dc7da2"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -12654,14 +12654,13 @@ local function clumpOutline(clump: Clump, z: number): { { number } }
 	return points
 end
 local function addClumps(mesh, radius: number, depth: number, seed: number, rimZ: number, edge: (number) -> number, clumps: { Clump })
-	local width = math.clamp(radius * 0.09, 2.5, 6)
+	local width = math.clamp(radius * 0.12, 3, 6)
 	for tierIndex, tier in CLUMP_TIERS do
 		local count = math.max(5, math.floor(2 * math.pi * radius * tier.reach / (width * 1.7)))
 		for k = 1, count do
 			local key = tierIndex * 97 + k
 			local angle = 2 * math.pi * (k + 0.35 * math.noise(seed, key, 3)) / count
 			local size = width * (0.8 + 0.5 * (math.noise(seed, key, 5) + 0.5))
-			local reach = edge(angle) * tier.reach - size * 0.8
 			local top = if tierIndex == 1
 				then rimZ - 0.6 - 2.2 * math.clamp(math.noise(seed, key, 7) + 0.5, 0, 1)
 				else -depth * (tier.from + 0.12 * math.noise(seed, key, 7))
@@ -12669,6 +12668,10 @@ local function addClumps(mesh, radius: number, depth: number, seed: number, rimZ
 			if tierIndex == #CLUMP_TIERS then
 				bottom -= depth * 0.15 * (math.noise(seed, key, 13) + 0.5)
 			end
+			-- Centred just inside the core wall at the clump's middle height, so
+			-- most of it stands proud of the wall.
+			local wallAt = math.clamp(-(top + bottom) / 2 / depth, 0, 1)
+			local reach = edge(angle) * (1 - wallAt) ^ 1.1 - size * 0.3
 			local corners = {}
 			local sides = 5 + (seed + key) % 3
 			local turn = math.noise(seed, key, 17) * math.pi
