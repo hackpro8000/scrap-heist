@@ -12536,14 +12536,14 @@ slabKeys[12870] = "b2520bd718947075-8f291df974f34236"
 slabKeys[12876] = "b2520bd718947075-f8f4f9cdd6dd6cae"
 slabKeys[12907] = "b2520bd718947075-cfb837b03ab263ad"
 slabKeys[12986] = "b2520bd718947075-45f1773a0c3d4692"
-slabKeys[13031] = "b2520bd718947075-065745b70ae87722"
+slabKeys[13031] = "b2520bd718947075-0d0f637acb506465"
 slabKeys[13097] = "b2520bd718947075-38a291d6cf6e421e"
 slabKeys[13128] = "b2520bd718947075-dc02515c57e16914"
 slabKeys[13223] = "b2520bd718947075-f3271f231573d1f1"
 slabKeys[13228] = "b2520bd718947075-08fbe9bb8b1a6d5a"
 slabKeys[13235] = "b2520bd718947075-f278656b57891167"
-slabKeys[13244] = "b2520bd718947075-ac2721bf502ba149"
-slabKeys[13327] = "b2520bd718947075-5f3dede5e341fed8"
+slabKeys[13244] = "b2520bd718947075-b2cd3040ac99d70a"
+slabKeys[13322] = "b2520bd718947075-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -13036,8 +13036,8 @@ slab("Road", function()
 		local radius = octagonRadius(x, y)
 		return asphalt(radius - middle, math.atan2(y, x) * middle, (ROAD_OUTER - ROAD_INNER) / 2, 61)
 	end)
-	-- Each kerb run stops against the bridge railings, just past the kick plates.
-	local bridgeGap = math.deg(math.asin(3.15 / ROAD_OUTER))
+	-- Each kerb run stops against the outer face of a bridge abutment's wing wall.
+	local bridgeGap = math.deg(math.asin(3.65 / ROAD_OUTER))
 	part("Kerb", nil, CONCRETE, function(mesh)
 		for i = 1, 8 do
 			local from = (i - 1) * 45
@@ -13292,22 +13292,17 @@ for i = 1, 8 do
 				box(mesh, side + math.sign(side) * 0.1, BRIDGE_MID, -0.05, 0.04, BRIDGE_LENGTH - 0.3, 0.22)
 			end
 		end, nil, 0.3)
-		-- Where the deck meets the road at each end: a ribbed steel threshold
-		-- plate lapping onto the ground over a dark expansion joint.
-		part("Thresholds", nil, STEEL, function(mesh)
-			for _, ends in { { BRIDGE_TO, -1 }, { BRIDGE_FROM, 1 } } do
-				local at, out = ends[1], ends[2]
-				box(mesh, 0, at + out * 0.35, 0.03, 5.6, 1.1, 0.05)
-				for n = 0, 4 do
-					box(mesh, 0, at + out * (-0.1 + n * 0.2), 0.08, 5.4, 0.06, 0.03)
+		-- Each end rests on a concrete seat set into the island edge, with a
+		-- low wing wall either side for the kerb or yard edge to end against.
+		part("Abutments", nil, CONCRETE, function(mesh)
+			for _, ends in { { BRIDGE_TO + 1, -1 }, { BRIDGE_FROM - 1, 1 } } do
+				local edge, land = ends[1], ends[2]
+				box(mesh, 0, edge + land * 0.75, -3, 7.3, 3.5, 2.8)
+				for _, side in { -3.4, 3.4 } do
+					box(mesh, side, edge, -3, 0.5, 2, 3.45)
 				end
 			end
 		end, nil, 0.5)
-		part("Joints", nil, DARK_STEEL, function(mesh)
-			for _, at in { BRIDGE_TO, BRIDGE_FROM } do
-				box(mesh, 0, at, 0.03, 6, 0.14, 0.08)
-			end
-		end, nil, 0.3)
 	end, x, y, degrees - 90)
 	local coneX, coneY = polar(ROAD_INNER + 1.5, degrees + 9)
 	place(`Cones{i}`, buildTrafficCones, coneX, coneY, heightAt(coneX, coneY), degrees)
