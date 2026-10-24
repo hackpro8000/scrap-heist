@@ -710,7 +710,7 @@ local TIERS = {
 	{ RADIUS * 0.34, 7, -19.5, 37 },
 	{ RADIUS * 0.15, 4, -24, 51 },
 }
-local CLEFT, ROUNDING = 1.6, 2
+local CLEFT, ROUNDING = 2, 1.2
 
 -- Pillar layout per tier: each pillar's start angle, reach and bottom.
 local pillars = {}
@@ -767,7 +767,17 @@ local function wall(angle: number, z: number)
 	for t = 1, #TIERS do
 		local pillar, u = pillarAt(t, angle)
 		if z < pillar.bottom then continue end
-		local r = pillar.reach * outlineScale(angle) - CLEFT * (1 - math.sqrt(math.max(1 - u * u, 0)))
+		-- Faceted across the face: the round profile sampled at a few
+		-- jittered corners with flat faces between, like the old clumps.
+		local facets = 3 + pillar.seed % 2
+		local f = math.clamp(math.floor((u + 1) / 2 * facets), 0, facets - 1)
+		local function corner(n: number): (number, number)
+			local cu = if n == 0 or n == facets then n / facets * 2 - 1 else n / facets * 2 - 1 + (random(pillar.seed + n * 29) - 0.5) * 0.3
+			return cu, CLEFT * (1 - math.sqrt(math.max(1 - cu * cu, 0))) + (if n == 0 or n == facets then 0 else 0.35 * (random(pillar.seed + n * 31) - 0.5))
+		end
+		local u0, d0 = corner(f)
+		local u1, d1 = corner(f + 1)
+		local r = pillar.reach * outlineScale(angle) - (d0 + (d1 - d0) * math.clamp((u - u0) / (u1 - u0), 0, 1))
 		local size = pillar.reach * pillar.span / 2
 		local shift = math.clamp((pillar.top - z) / (pillar.top - pillar.bottom), 0, 1)
 		r -= pillar.reach * pillar.taper * shift + size * pillar.lean * shift
@@ -775,12 +785,12 @@ local function wall(angle: number, z: number)
 		-- Every ring of the face nudged a little, stepping down the pillar.
 		local at = (pillar.top - z) / 1.5
 		local ring = math.floor(at)
-		local blend = (at - ring) ^ 2 * (3 - 2 * (at - ring))
+		local blend = math.clamp((at - ring - 0.7) / 0.3, 0, 1)
 		local function ringNudge(n: number): number
 			return random(pillar.seed + n * 101)
 		end
 		local nudge = ringNudge(ring) + (ringNudge(ring + 1) - ringNudge(ring)) * blend
-		r += 0.25 * math.noise(angle * 6, z / 3, pillar.seed % 97) + 0.3 * (nudge - 0.5)
+		r += 0.25 * math.noise(angle * 6, z / 3, pillar.seed % 97) + 0.7 * (nudge - 0.5)
 		local lift = z - pillar.bottom
 		if lift < ROUNDING then
 			local inner = if t < #TIERS then pillarAt(t + 1, angle).reach * outlineScale(angle) * 0.9 else 0
