@@ -12544,7 +12544,7 @@ slabKeys[13511] = "b9ff4053bf5e0dab-7c27880a9a355c4d"
 slabKeys[13520] = "b9ff4053bf5e0dab-22233dc81161c674"
 slabKeys[13527] = "b9ff4053bf5e0dab-92736dc11ff1f899"
 slabKeys[13555] = "b9ff4053bf5e0dab-5f3dede5e341fed8"
-slabKeys[13586] = "b9ff4053bf5e0dab-739d1b085a657391"
+slabKeys[13586] = "b9ff4053bf5e0dab-75fc30ceb2d831c8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -13721,6 +13721,22 @@ slab("Plumbing", function()
 				local at = rim(degrees, pipeRadius * 1.3, 0.25 - 0.1 * weight)
 				lathe(mesh, { at[1], at[2], at[3] + bead }, { { 0, 0.02 }, { bead * 0.5, bead * 1.4 }, { bead * 1.4, bead * 1.2 }, { bead * 2 + weight * 0.3, 0.03 } })
 			end
+			-- A puddle left lying in the bottom of the bore, its surface a
+			-- little rippled, set just inside the mouth.
+			local inner = pipeRadius * 0.85
+			local surface = -inner * 0.25
+			local middle = (surface - inner) / 2
+			local puddle = {}
+			for k = 0, 12 do
+				local a = math.rad(200 + 140 * k / 12)
+				table.insert(puddle, { math.cos(a) * inner * 0.98, math.sin(a) * inner * 0.98 - middle })
+			end
+			for k = 1, 5 do
+				local a = 1 - k / 6 * 2
+				table.insert(puddle, { a * inner * 0.92, surface + 0.04 * math.sin(k * 2.1) - middle })
+			end
+			local pool = { mouth[1] + up[1] * middle, mouth[2] + up[2] * middle, mouth[3] + up[3] * middle }
+			prism(mesh, pool, axis, side, up, puddle, -pipeRadius * 1.2, 0.05)
 			-- The last drop: a sag under the lip, a thin neck, then the bead.
 			local lip = rim(180, pipeRadius * 1.3, 0.2)
 			local drop = {
