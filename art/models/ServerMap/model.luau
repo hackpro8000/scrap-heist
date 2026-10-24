@@ -12531,19 +12531,19 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[12764] = "707931922dbcc20a-9843c551643cacac"
-slabKeys[12917] = "707931922dbcc20a-8f291df974f34236"
-slabKeys[12923] = "707931922dbcc20a-f8f4f9cdd6dd6cae"
-slabKeys[12954] = "707931922dbcc20a-cfb837b03ab263ad"
-slabKeys[13035] = "707931922dbcc20a-09c93ef6a83e1b73"
-slabKeys[13057] = "707931922dbcc20a-47a5907d078f6e1c"
-slabKeys[13127] = "707931922dbcc20a-dbb544d9b50020dd"
-slabKeys[13175] = "707931922dbcc20a-b9a67e4cdf97308c"
-slabKeys[13330] = "707931922dbcc20a-f7451107beca1bf1"
-slabKeys[13358] = "707931922dbcc20a-20ae5a70219057e8"
-slabKeys[13363] = "707931922dbcc20a-22233dc81161c674"
-slabKeys[13370] = "707931922dbcc20a-92736dc11ff1f899"
-slabKeys[13398] = "707931922dbcc20a-5f3dede5e341fed8"
+slabKeys[12767] = "bc6e162177cef819-9843c551643cacac"
+slabKeys[12920] = "bc6e162177cef819-8f291df974f34236"
+slabKeys[12926] = "bc6e162177cef819-f8f4f9cdd6dd6cae"
+slabKeys[12957] = "bc6e162177cef819-cfb837b03ab263ad"
+slabKeys[13038] = "bc6e162177cef819-09c93ef6a83e1b73"
+slabKeys[13060] = "bc6e162177cef819-47a5907d078f6e1c"
+slabKeys[13130] = "bc6e162177cef819-dbb544d9b50020dd"
+slabKeys[13178] = "bc6e162177cef819-b9a67e4cdf97308c"
+slabKeys[13333] = "bc6e162177cef819-f7451107beca1bf1"
+slabKeys[13361] = "bc6e162177cef819-20ae5a70219057e8"
+slabKeys[13366] = "bc6e162177cef819-22233dc81161c674"
+slabKeys[13373] = "bc6e162177cef819-92736dc11ff1f899"
+slabKeys[13401] = "bc6e162177cef819-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -12712,9 +12712,12 @@ local function floatingIsland(mesh, radius: number, depth: number, seed: number,
 		local c, n = math.cos(angle), math.sin(angle)
 		local reach = edge(angle) * (0.35 + 0.2 * (math.noise(seed, spike, 13) + 0.5))
 		local t = 1 - (reach / edge(angle)) ^ (1 / 1.1)
-		local rootZ = undersideZ(c, n, t) + 1
-		local length = depth * (0.25 + 0.3 * (math.noise(seed, spike, 19) + 0.5))
 		local width = math.max(1, radius * 0.08)
+		-- Root at the highest underside point across the base so no side of
+		-- it hangs below the rock where the underside slopes.
+		local outerT = 1 - (math.min(reach + width * 1.5, edge(angle)) / edge(angle)) ^ (1 / 1.1)
+		local rootZ = math.max(undersideZ(c, n, t), undersideZ(c, n, outerT)) + 1.5
+		local length = depth * (0.25 + 0.3 * (math.noise(seed, spike, 19) + 0.5)) + rootZ - undersideZ(c, n, t)
 		local x, y = c * reach + leanX * t * t, n * reach + leanY * t * t
 		local ring = {}
 		for j = 0, SPIKE_SIDES - 1 do
