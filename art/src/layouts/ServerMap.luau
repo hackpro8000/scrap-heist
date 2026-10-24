@@ -166,9 +166,12 @@ local function floatingIsland(mesh, radius: number, depth: number, seed: number,
 		local c, n = math.cos(angle), math.sin(angle)
 		local reach = edge(angle) * (0.35 + 0.2 * (math.noise(seed, spike, 13) + 0.5))
 		local t = 1 - (reach / edge(angle)) ^ (1 / 1.1)
-		local rootZ = undersideZ(c, n, t) + 1
-		local length = depth * (0.25 + 0.3 * (math.noise(seed, spike, 19) + 0.5))
 		local width = math.max(1, radius * 0.08)
+		-- Root at the highest underside point across the base so no side of
+		-- it hangs below the rock where the underside slopes.
+		local outerT = 1 - (math.min(reach + width * 1.5, edge(angle)) / edge(angle)) ^ (1 / 1.1)
+		local rootZ = math.max(undersideZ(c, n, t), undersideZ(c, n, outerT)) + 1.5
+		local length = depth * (0.25 + 0.3 * (math.noise(seed, spike, 19) + 0.5)) + rootZ - undersideZ(c, n, t)
 		local x, y = c * reach + leanX * t * t, n * reach + leanY * t * t
 		local ring = {}
 		for j = 0, SPIKE_SIDES - 1 do
