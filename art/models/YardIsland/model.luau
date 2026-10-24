@@ -829,8 +829,20 @@ end
 -- One closed outer shell over the union of every solid: rows of wall
 -- points stepping down from the cap to the tip, a flat top and a point at
 -- the bottom. Nothing inside is modelled, so there are no gaps or buried faces.
-local ANGLES, STEP, TIP = 192, 0.3, -25
+local ANGLES, STEP, TIP, RIM, TOP_RINGS = 192, 0.3, -25, 1, 8
 part("Island", nil, GROUND, function(mesh)
+	-- The rim stays upright for its top stud, at the widest reach in that
+	-- band, so no notches under the cap's bevel trap black shadow pits.
+	local rim = {}
+	for j = 0, ANGLES - 1 do
+		local angle = 2 * math.pi * j / ANGLES
+		local dx, dy = math.cos(angle), math.sin(angle)
+		local r = 0.05
+		for z = CAP_TOP, CAP_TOP - RIM, -STEP / 2 do
+			r = math.max(r, wallReach(dx, dy, z))
+		end
+		rim[j] = r
+	end
 	local rows = {}
 	local z = CAP_TOP
 	while z > TIP + STEP / 2 do
@@ -838,7 +850,7 @@ part("Island", nil, GROUND, function(mesh)
 		for j = 0, ANGLES - 1 do
 			local angle = 2 * math.pi * j / ANGLES
 			local dx, dy = math.cos(angle), math.sin(angle)
-			local r = math.max(wallReach(dx, dy, z), 0.05)
+			local r = if z > CAP_TOP - RIM then rim[j] else math.max(wallReach(dx, dy, z), 0.05)
 			row[j] = mesh:vertex(dx * r, dy * r, z)
 		end
 		table.insert(rows, row)
@@ -850,9 +862,25 @@ part("Island", nil, GROUND, function(mesh)
 			mesh:face({ rows[i + 1][j], rows[i + 1][l], rows[i][l], rows[i][j] })
 		end
 	end
+	-- The top in concentric rings out to the rim, so no long thin fan
+	-- triangles streak its shading.
+	local inner = rows[1]
+	for ring = TOP_RINGS - 1, 1, -1 do
+		local k = ring / TOP_RINGS
+		local row = {}
+		for j = 0, ANGLES - 1 do
+			local angle = 2 * math.pi * j / ANGLES
+			row[j] = mesh:vertex(math.cos(angle) * rim[j] * k, math.sin(angle) * rim[j] * k, CAP_TOP)
+		end
+		for j = 0, ANGLES - 1 do
+			local l = (j + 1) % ANGLES
+			mesh:face({ row[j], inner[j], inner[l], row[l] })
+		end
+		inner = row
+	end
 	local middle = mesh:vertex(0, 0, CAP_TOP)
 	for j = 0, ANGLES - 1 do
-		mesh:face({ middle, rows[1][j], rows[1][(j + 1) % ANGLES] })
+		mesh:face({ middle, inner[j], inner[(j + 1) % ANGLES] })
 	end
 	local tip = mesh:vertex(0.5, -0.4, TIP)
 	for j = 0, ANGLES - 1 do
