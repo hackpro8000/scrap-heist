@@ -12531,19 +12531,19 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[12777] = "a8153fb88086a5e1-9843c551643cacac"
-slabKeys[12930] = "a8153fb88086a5e1-8f291df974f34236"
-slabKeys[12936] = "a8153fb88086a5e1-f8f4f9cdd6dd6cae"
-slabKeys[12967] = "a8153fb88086a5e1-cfb837b03ab263ad"
-slabKeys[13048] = "a8153fb88086a5e1-09c93ef6a83e1b73"
-slabKeys[13070] = "a8153fb88086a5e1-47a5907d078f6e1c"
-slabKeys[13140] = "a8153fb88086a5e1-dbb544d9b50020dd"
-slabKeys[13188] = "a8153fb88086a5e1-b9a67e4cdf97308c"
-slabKeys[13343] = "a8153fb88086a5e1-f7451107beca1bf1"
-slabKeys[13371] = "a8153fb88086a5e1-20ae5a70219057e8"
-slabKeys[13376] = "a8153fb88086a5e1-22233dc81161c674"
-slabKeys[13383] = "a8153fb88086a5e1-92736dc11ff1f899"
-slabKeys[13411] = "a8153fb88086a5e1-5f3dede5e341fed8"
+slabKeys[12905] = "ffca4b1d2e71e036-935f76826323c7d4"
+slabKeys[13062] = "ffca4b1d2e71e036-8f291df974f34236"
+slabKeys[13068] = "ffca4b1d2e71e036-f8f4f9cdd6dd6cae"
+slabKeys[13099] = "ffca4b1d2e71e036-cfb837b03ab263ad"
+slabKeys[13180] = "ffca4b1d2e71e036-09c93ef6a83e1b73"
+slabKeys[13202] = "ffca4b1d2e71e036-2cf96e0e641c97c4"
+slabKeys[13276] = "ffca4b1d2e71e036-dbb544d9b50020dd"
+slabKeys[13324] = "ffca4b1d2e71e036-b9a67e4cdf97308c"
+slabKeys[13479] = "ffca4b1d2e71e036-f7451107beca1bf1"
+slabKeys[13507] = "ffca4b1d2e71e036-7c27880a9a355c4d"
+slabKeys[13516] = "ffca4b1d2e71e036-22233dc81161c674"
+slabKeys[13523] = "ffca4b1d2e71e036-92736dc11ff1f899"
+slabKeys[13551] = "ffca4b1d2e71e036-5f3dede5e341fed8"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -12729,6 +12729,134 @@ local function floatingIsland(mesh, radius: number, depth: number, seed: number,
 			mesh:face({ ring[j], tip, ring[(j + 1) % SPIKE_SIDES] })
 		end
 	end
+	-- The underside wall at `angle`, `t` of the way down, for things set into it.
+	return function(angle: number, t: number): (number, number, number)
+		local c, n = math.cos(angle), math.sin(angle)
+		local ledge = 0.07 * ((t * 4 + 0.3 * math.noise(seed, t, 3)) % 1)
+		local wobble = (math.noise(c * 2, n * 2, seed + t * 3) + 0.4 * math.noise(c * 6, n * 6, seed + t * 5)) * math.min(1, t * 3)
+		local r = math.max(edge(angle) * ((1 - t) ^ 1.1 - ledge * (1 - t)) * (1 + 0.35 * wobble), radius * 0.03)
+		return c * r + leanX * t * t, n * r + leanY * t * t, undersideZ(c, n, t)
+	end
+end
+
+-- Mechanical scrap half buried in an island's wall: cogs set edge-on, pipe
+-- stubs and I-beam ends jutting out. Each piece is centred on the wall or
+-- behind it, so a good part of it is always inside the rock.
+local RUST = { 0.45, 0.25, 0.14 }
+local function scrapPaint(x: number, y: number, z: number): (number, number, number)
+	local k = 1 + 0.2 * math.noise(x * 1.5, y * 1.5, z * 1.5)
+	local bare = math.clamp(math.noise(x / 2, y / 2, z / 2 + 7) * 3, 0, 1)
+	return (RUST[1] + (0.38 - RUST[1]) * bare) * k, (RUST[2] + (0.37 - RUST[2]) * bare) * k, (RUST[3] + (0.36 - RUST[3]) * bare) * k
+end
+local function buryScrap(mesh, wall: (number, number) -> (number, number, number), radius: number, seed: number)
+	-- A prism along `axis`: `profile` swept from `from` to `to`, capped by
+	-- fans from the axis so star-shaped profiles like cogs close properly.
+	local function prism(origin, axis, side, up, profile: { { number } }, from: number, to: number)
+		local function at(a: number, b: number, s: number)
+			return mesh:vertex(
+				origin[1] + axis[1] * s + side[1] * a + up[1] * b,
+				origin[2] + axis[2] * s + side[2] * a + up[2] * b,
+				origin[3] + axis[3] * s + side[3] * a + up[3] * b
+			)
+		end
+		local near, far = {}, {}
+		for k, point in profile do
+			near[k], far[k] = at(point[1], point[2], from), at(point[1], point[2], to)
+		end
+		local nearMiddle, farMiddle = at(0, 0, from), at(0, 0, to)
+		for k = 1, #profile do
+			local l = k % #profile + 1
+			mesh:face({ near[k], near[l], far[l], far[k] })
+			mesh:face({ nearMiddle, near[l], near[k] })
+			mesh:face({ farMiddle, far[k], far[l] })
+		end
+	end
+	local function unit(v)
+		local length = math.sqrt(v[1] ^ 2 + v[2] ^ 2 + v[3] ^ 2)
+		return { v[1] / length, v[2] / length, v[3] / length }
+	end
+	local function cross(a, b)
+		return { a[2] * b[3] - a[3] * b[2], a[3] * b[1] - a[1] * b[3], a[1] * b[2] - a[2] * b[1] }
+	end
+	local function rectangle(halfA: number, halfB: number, offsetB: number)
+		return { { -halfA, offsetB - halfB }, { halfA, offsetB - halfB }, { halfA, offsetB + halfB }, { -halfA, offsetB + halfB } }
+	end
+	local size = math.clamp(radius / 12, 1.5, 3)
+	for piece = 1, 3 + math.floor(radius / 20) do
+		local angle = (seed * 1.7 + piece * 2 * math.pi / (3 + math.floor(radius / 20)) + 0.8 * math.noise(seed, piece, 23)) % (2 * math.pi)
+		local t = 0.3 + 0.35 * (math.noise(seed, piece, 29) + 0.5)
+		local scale = size * (0.6 + 0.8 * math.clamp(math.noise(seed, piece, 31) + 0.5, 0, 1))
+		-- The wall's outward normal, from its slope round and down.
+		local e = 0.01
+		local x, y, z = wall(angle, t)
+		local ax, ay, az = wall(angle + e, t)
+		local dx, dy, dz = wall(angle, t + e)
+		local around, down = { ax - x, ay - y, az - z }, { dx - x, dy - y, dz - z }
+		local out = unit(cross(down, around))
+		if out[1] * math.cos(angle) + out[2] * math.sin(angle) < 0 then
+			out = { -out[1], -out[2], -out[3] }
+		end
+		local tangent = unit(cross({ 0, 0, 1 }, out))
+		local tangentUp = cross(out, tangent)
+		local twist = math.noise(seed, piece, 37) * math.pi
+		local kind = (seed + piece) % 3
+		if kind == 0 then
+			-- A cog set edge-on, its axle along the wall at a random tilt and
+			-- its hub sunk behind the surface so only a toothed arc shows.
+			local axle = unit({
+				tangent[1] * math.cos(twist) + tangentUp[1] * math.sin(twist),
+				tangent[2] * math.cos(twist) + tangentUp[2] * math.sin(twist),
+				tangent[3] * math.cos(twist) + tangentUp[3] * math.sin(twist),
+			})
+			local across = cross(axle, out)
+			local cogRadius = 1.6 * scale
+			local teeth = 8 + 2 * math.floor(scale * 2)
+			local profile = {}
+			for k = 0, teeth * 4 - 1 do
+				local a = 2 * math.pi * k / (teeth * 4)
+				local r = if k % 4 < 2 then cogRadius * 1.22 else cogRadius
+				table.insert(profile, { math.cos(a) * r, math.sin(a) * r })
+			end
+			local sink = cogRadius * 0.35
+			local centre = { x - out[1] * sink, y - out[2] * sink, z - out[3] * sink }
+			prism(centre, axle, out, across, profile, -0.25 * scale, 0.25 * scale)
+			local hub = {}
+			for k = 0, 7 do
+				local a = 2 * math.pi * k / 8
+				table.insert(hub, { math.cos(a) * cogRadius * 0.3, math.sin(a) * cogRadius * 0.3 })
+			end
+			prism(centre, axle, out, across, hub, -0.45 * scale, 0.45 * scale)
+		else
+			-- A pipe or an I-beam jutting out of the rock, tilted off the
+			-- normal, with as much buried behind the wall as shows in front.
+			local tilt = 0.5 * math.noise(seed, piece, 41)
+			local axis = unit({
+				out[1] + tangent[1] * tilt + tangentUp[1] * twist * 0.25,
+				out[2] + tangent[2] * tilt + tangentUp[2] * twist * 0.25,
+				out[3] + tangent[3] * tilt + tangentUp[3] * twist * 0.25,
+			})
+			local side = unit(cross(axis, tangentUp))
+			local up = cross(side, axis)
+			local length = (if kind == 1 then 2.5 else 3.5) * scale
+			local origin = { x, y, z }
+			if kind == 1 then
+				local outer, inner = {}, {}
+				for k = 0, 9 do
+					local a = 2 * math.pi * k / 10
+					table.insert(outer, { math.cos(a) * 0.55 * scale, math.sin(a) * 0.55 * scale })
+					table.insert(inner, { math.cos(a) * 0.7 * scale, math.sin(a) * 0.7 * scale })
+				end
+				prism(origin, axis, side, up, outer, -length, length)
+				-- A flange round the open end.
+				prism(origin, axis, side, up, inner, length - 0.25 * scale, length)
+			else
+				local h, w = 0.6 * scale, 0.5 * scale
+				prism(origin, axis, side, up, rectangle(0.08 * scale, h, 0), -length, length)
+				prism(origin, axis, side, up, rectangle(w, 0.08 * scale, h), -length, length)
+				prism(origin, axis, side, up, rectangle(w, 0.08 * scale, -h), -length, length)
+			end
+		end
+	end
 end
 
 -- Dirt on top; underneath, rock in uneven strata with darker seams.
@@ -12775,11 +12903,15 @@ local function islandTop(x: number, y: number): number
 end
 
 slab("ArenaIsland", function()
+	local arenaWall
 	chunkedPart("Island", nil, GROUND, function(mesh)
-		floatingIsland(mesh, ARENA_ISLAND, 42, 1, islandTop, function(angle)
+		arenaWall = floatingIsland(mesh, ARENA_ISLAND, 42, 1, islandTop, function(angle)
 			return octagonScale(math.deg(angle))
 		end, { ARENA_FLOOR, ROAD_INNER, ROAD_INNER + 0.5, ROAD_OUTER, ROAD_OUTER + 0.4 })
 	end, nil, islandPaint(islandTop))
+	part("Scrap", nil, RUST, function(mesh)
+		buryScrap(mesh, arenaWall, ARENA_ISLAND, 1)
+	end, nil, scrapPaint)
 end, 0, 0)
 -- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
 local function fbm(x: number, y: number, z: number): number
@@ -13068,13 +13200,17 @@ local function plazaIsland(label: string, x: number, y: number, radius: number, 
 		return DECK - ROAD_SINK * (1 - math.clamp((octagonRadius(px, py) - plaza) / 0.5, 0, 1))
 	end
 	slab(label, function()
+		local wall
 		part("Island", nil, GROUND, function(mesh)
-			floatingIsland(mesh, radius, depth, seed, top, function(angle)
+			wall = floatingIsland(mesh, radius, depth, seed, top, function(angle)
 				return octagonScale(math.deg(angle))
 			end, { plaza, plaza + 0.5 })
 		end, nil, islandPaint(function()
 			return DECK - ROAD_SINK
 		end))
+		part("Scrap", nil, RUST, function(mesh)
+			buryScrap(mesh, wall, radius, seed)
+		end, nil, scrapPaint)
 		part("Plaza", nil, ROAD, function(mesh)
 			arc(mesh, 0, plaza, DECK - 0.6, DECK, 0, 360, true)
 		end, nil, function(px, py)
@@ -13369,9 +13505,13 @@ for i = 1, 2 * #PAD_XS do
 	local degrees = 180 - side * 90
 	local x, y = PAD_XS[(i + 1) // 2], side * YARD_OFFSET
 	slab(`Island{i}`, function()
+		local wall
 		part("Island", nil, GROUND, function(mesh)
-			floatingIsland(mesh, YARD_ISLAND, 22, 10 + i, yardLevel, yardOutline(10 + i))
+			wall = floatingIsland(mesh, YARD_ISLAND, 22, 10 + i, yardLevel, yardOutline(10 + i))
 		end, nil, islandPaint(yardLevel))
+		part("Scrap", nil, RUST, function(mesh)
+			buryScrap(mesh, wall, YARD_ISLAND, 10 + i)
+		end, nil, scrapPaint)
 	end, x, y, degrees - 90)
 	slab(`Plot{i}`, function()
 		part("Slab", nil, PLOT, function(mesh)
