@@ -12531,19 +12531,20 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
-slabKeys[12962] = "0c82a03b1d52c7ff-08fb86e8ac50e7f2"
-slabKeys[13122] = "0c82a03b1d52c7ff-8f291df974f34236"
-slabKeys[13128] = "0c82a03b1d52c7ff-f8f4f9cdd6dd6cae"
-slabKeys[13159] = "0c82a03b1d52c7ff-cfb837b03ab263ad"
-slabKeys[13240] = "0c82a03b1d52c7ff-09c93ef6a83e1b73"
-slabKeys[13262] = "0c82a03b1d52c7ff-b7bb0d84fe5a2f33"
-slabKeys[13339] = "0c82a03b1d52c7ff-dbb544d9b50020dd"
-slabKeys[13387] = "0c82a03b1d52c7ff-b9a67e4cdf97308c"
-slabKeys[13542] = "0c82a03b1d52c7ff-f7451107beca1bf1"
-slabKeys[13570] = "0c82a03b1d52c7ff-85d085602e163ea8"
-slabKeys[13582] = "0c82a03b1d52c7ff-22233dc81161c674"
-slabKeys[13589] = "0c82a03b1d52c7ff-92736dc11ff1f899"
-slabKeys[13617] = "0c82a03b1d52c7ff-5f3dede5e341fed8"
+slabKeys[12909] = "b9ff4053bf5e0dab-935f76826323c7d4"
+slabKeys[13066] = "b9ff4053bf5e0dab-8f291df974f34236"
+slabKeys[13072] = "b9ff4053bf5e0dab-f8f4f9cdd6dd6cae"
+slabKeys[13103] = "b9ff4053bf5e0dab-cfb837b03ab263ad"
+slabKeys[13184] = "b9ff4053bf5e0dab-09c93ef6a83e1b73"
+slabKeys[13206] = "b9ff4053bf5e0dab-2cf96e0e641c97c4"
+slabKeys[13280] = "b9ff4053bf5e0dab-dbb544d9b50020dd"
+slabKeys[13328] = "b9ff4053bf5e0dab-b9a67e4cdf97308c"
+slabKeys[13483] = "b9ff4053bf5e0dab-f7451107beca1bf1"
+slabKeys[13511] = "b9ff4053bf5e0dab-7c27880a9a355c4d"
+slabKeys[13520] = "b9ff4053bf5e0dab-22233dc81161c674"
+slabKeys[13527] = "b9ff4053bf5e0dab-92736dc11ff1f899"
+slabKeys[13555] = "b9ff4053bf5e0dab-5f3dede5e341fed8"
+slabKeys[13586] = "b9ff4053bf5e0dab-eba77731fd21ca6f"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -12862,60 +12863,6 @@ local function buryScrap(mesh, wall: (number, number) -> (number, number, number
 	end
 end
 
--- Plumbing: a large pipe hugging the wall round part of the island, banded
--- with a flange at each joint and strapped back into the rock there. It comes out of
--- the rock at one end and at the other bends down the wall to an open outlet.
-local function layPlumbing(mesh, wall: (number, number) -> (number, number, number), radius: number, seed: number)
-	local pipeRadius = math.clamp(radius / 16, 1.2, 2.6)
-	local pipe, flange = circle(pipeRadius, 12), circle(pipeRadius * 1.25, 12)
-	local function centre(angle: number, t: number)
-		local point, out = wallPoint(wall, angle, t)
-		local lift = pipeRadius * 0.9
-		return { point[1] + out[1] * lift, point[2] + out[2] * lift, point[3] + out[3] * lift }, out
-	end
-	local function run(from, to, out, buryStart: boolean)
-		local axis = { to[1] - from[1], to[2] - from[2], to[3] - from[3] }
-		local length = math.sqrt(axis[1] ^ 2 + axis[2] ^ 2 + axis[3] ^ 2)
-		axis = unit(axis)
-		local side = unit(cross(axis, out))
-		local up = cross(side, axis)
-		local start = if buryStart then -pipeRadius * 2 else -pipeRadius * 0.3
-		prism(mesh, from, axis, side, up, pipe, start, length + pipeRadius * 0.3)
-		prism(mesh, from, axis, side, up, flange, -0.25, 0.25)
-		-- A strap from the flange back into the rock behind it.
-		local strapSide = unit(cross(out, axis))
-		prism(mesh, from, { -out[1], -out[2], -out[3] }, axis, strapSide, { { -0.2, -pipeRadius * 0.5 }, { 0.2, -pipeRadius * 0.5 }, { 0.2, pipeRadius * 0.5 }, { -0.2, pipeRadius * 0.5 } }, 0, pipeRadius * 2.5)
-	end
-	local runs = 1 + math.floor(radius / 40)
-	for n = 1, runs do
-		local first = (seed * 2.3 + n * 2 * math.pi / runs) % (2 * math.pi)
-		local span = 0.6 + 0.3 * (math.noise(seed, n, 53) + 0.5)
-		local level = 0.42 + 0.06 * math.noise(seed, n, 59)
-		-- Round the wall in steps of about four studs.
-		local steps = math.max(3, math.floor(span * radius / 4))
-		local previous = centre(first, level)
-		for k = 1, steps do
-			local here, out = centre(first + span * k / steps, level)
-			run(previous, here, out, k == 1)
-			previous = here
-		end
-		-- Down the wall to the outlet, which gets a wider flared mouth.
-		local last = first + span
-		local outletT = level + 0.25
-		local downSteps = 3
-		for k = 1, downSteps do
-			local here, out = centre(last, level + (outletT - level) * k / downSteps)
-			run(previous, here, out, false)
-			previous = here
-		end
-		local _, out = centre(last, outletT)
-		local below, _ = centre(last, outletT + 0.02)
-		local axis = unit({ below[1] - previous[1], below[2] - previous[2], below[3] - previous[3] })
-		local side = unit(cross(axis, out))
-		prism(mesh, previous, axis, side, cross(side, axis), flange, -0.3, 0.6)
-	end
-end
-
 -- Dirt on top; underneath, rock in uneven strata with darker seams.
 -- Rock strata alternate between ochre, slate and rust, darkening with depth
 -- as less light reaches the underside. A band of topsoil fades into them
@@ -12968,9 +12915,6 @@ slab("ArenaIsland", function()
 	end, nil, islandPaint(islandTop))
 	part("Scrap", nil, RUST, function(mesh)
 		buryScrap(mesh, arenaWall, ARENA_ISLAND, 1)
-	end, nil, scrapPaint)
-	part("Plumbing", nil, RUST, function(mesh)
-		layPlumbing(mesh, arenaWall, ARENA_ISLAND, 1)
 	end, nil, scrapPaint)
 end, 0, 0)
 -- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
@@ -13270,9 +13214,6 @@ local function plazaIsland(label: string, x: number, y: number, radius: number, 
 		end))
 		part("Scrap", nil, RUST, function(mesh)
 			buryScrap(mesh, wall, radius, seed)
-		end, nil, scrapPaint)
-		part("Plumbing", nil, RUST, function(mesh)
-			layPlumbing(mesh, wall, radius, seed)
 		end, nil, scrapPaint)
 		part("Plaza", nil, ROAD, function(mesh)
 			arc(mesh, 0, plaza, DECK - 0.6, DECK, 0, 360, true)
@@ -13575,9 +13516,6 @@ for i = 1, 2 * #PAD_XS do
 		part("Scrap", nil, RUST, function(mesh)
 			buryScrap(mesh, wall, YARD_ISLAND, 10 + i)
 		end, nil, scrapPaint)
-		part("Plumbing", nil, RUST, function(mesh)
-			layPlumbing(mesh, wall, YARD_ISLAND, 10 + i)
-		end, nil, scrapPaint)
 	end, x, y, degrees - 90)
 	slab(`Plot{i}`, function()
 		part("Slab", nil, PLOT, function(mesh)
@@ -13639,3 +13577,84 @@ for i = 1, 4 do
 	local x, y = polar(ROAD_INNER - 2, degrees)
 	place(`Light{i}`, buildStreetlightBroken, x, y, heightAt(x, y), degrees + 90)
 end
+
+-- Plumbing: a large pipe hugging each island's wall round part of the island,
+-- banded with a flange at each joint and strapped back into the rock there.
+-- It comes out of the rock at one end and at the other bends down and back
+-- into it. All of it lives in this one slab, so reworking the pipes rebuilds
+-- only the pipes; each island's wall is traced again from its own numbers.
+slab("Plumbing", function()
+	local traced = { vertex = function() return 0 end, face = function() end }
+	local function octagon(angle: number): number
+		return octagonScale(math.deg(angle))
+	end
+	local function layPlumbing(name: string, x: number, y: number, turn: number, radius: number, wall: (number, number) -> (number, number, number), seed: number)
+		local c, s = math.cos(math.rad(turn)), math.sin(math.rad(turn))
+		local pipeRadius = math.clamp(radius / 16, 1.2, 2.6)
+		local pipe, flange = circle(pipeRadius, 12), circle(pipeRadius * 1.25, 12)
+		local function centre(angle: number, t: number, lift: number)
+			local point, out = wallPoint(wall, angle, t)
+			return { point[1] + out[1] * lift, point[2] + out[2] * lift, point[3] + out[3] * lift }, out
+		end
+		part(name, nil, RUST, function(island)
+			-- Built in the island's own frame, then turned and moved onto it.
+			local mesh = {
+				vertex = function(_, vx, vy, vz)
+					return island:vertex(x + vx * c - vy * s, y + vx * s + vy * c, vz)
+				end,
+				face = function(_, corners)
+					return island:face(corners)
+				end,
+			}
+			local function run(from, to, out, buryStart: boolean, buryEnd: boolean)
+				local axis = { to[1] - from[1], to[2] - from[2], to[3] - from[3] }
+				local length = math.sqrt(axis[1] ^ 2 + axis[2] ^ 2 + axis[3] ^ 2)
+				axis = unit(axis)
+				local side = unit(cross(axis, out))
+				local up = cross(side, axis)
+				local start = if buryStart then -pipeRadius * 2 else -pipeRadius * 0.3
+				prism(mesh, from, axis, side, up, pipe, start, length + pipeRadius * 0.3)
+				prism(mesh, from, axis, side, up, flange, -0.25, 0.25)
+				if buryEnd then return end
+				-- A strap from the flange back into the rock behind it.
+				local strapSide = unit(cross(out, axis))
+				prism(mesh, from, { -out[1], -out[2], -out[3] }, axis, strapSide, { { -0.2, -pipeRadius * 0.5 }, { 0.2, -pipeRadius * 0.5 }, { 0.2, pipeRadius * 0.5 }, { -0.2, pipeRadius * 0.5 } }, 0, pipeRadius * 2.5)
+			end
+			local runs = 1 + math.floor(radius / 40)
+			for n = 1, runs do
+				local first = (seed * 2.3 + n * 2 * math.pi / runs) % (2 * math.pi)
+				local span = 0.6 + 0.3 * (math.noise(seed, n, 53) + 0.5)
+				local level = 0.42 + 0.06 * math.noise(seed, n, 59)
+				local lift = pipeRadius * 0.9
+				-- Round the wall in steps of about four studs.
+				local steps = math.max(3, math.floor(span * radius / 4))
+				local previous = centre(first, level, lift)
+				for k = 1, steps do
+					local here, out = centre(first + span * k / steps, level, lift)
+					run(previous, here, out, k == 1, false)
+					previous = here
+				end
+				-- Down the wall a little, then back into the rock.
+				local last = first + span
+				local downT = level + 0.12
+				for k = 1, 2 do
+					local here, out = centre(last, level + (downT - level) * k / 2, lift)
+					run(previous, here, out, false, false)
+					previous = here
+				end
+				local inside, out = centre(last + 0.04, downT + 0.04, -pipeRadius * 2.5)
+				run(previous, inside, out, false, true)
+			end
+		end, nil, scrapPaint)
+	end
+	layPlumbing("Arena", 0, 0, 0, ARENA_ISLAND, floatingIsland(traced, ARENA_ISLAND, 42, 1, flat, octagon), 1)
+	for k, padX in PAD_XS do
+		layPlumbing(`Pad{k}`, padX, 0, 0, PAD_ISLAND, floatingIsland(traced, PAD_ISLAND, 20, 40 + k, flat, octagon), 40 + k)
+	end
+	layPlumbing("Market", MARKET_X, 0, 0, MARKET_ISLAND, floatingIsland(traced, MARKET_ISLAND, 30, 60, flat, octagon), 60)
+	for i = 1, 2 * #PAD_XS do
+		local side = if i % 2 == 1 then 1 else -1
+		local wall = floatingIsland(traced, YARD_ISLAND, 22, 10 + i, yardLevel, yardOutline(10 + i))
+		layPlumbing(`Yard{i}`, PAD_XS[(i + 1) // 2], side * YARD_OFFSET, 90 - side * 90, YARD_ISLAND, wall, 10 + i)
+	end
+end, 0, 0)
