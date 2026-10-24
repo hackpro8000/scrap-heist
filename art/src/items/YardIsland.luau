@@ -4,9 +4,28 @@
 -- the tip. Each tier is its own part so the tiers shadow each other, and the
 -- shading pushes edge highlights and contact shadows hard. Top at z = 0.
 local RADIUS = 20
-local DIRT = { 0.47, 0.36, 0.24 }
-local ROCK = { 0.42, 0.38, 0.35 }
-local ROCK_LIGHT = { 0.56, 0.5, 0.44 }
+local GROUND = { 0.3, 0.27, 0.22 }
+local STRATA = { { 0.5, 0.4, 0.27 }, { 0.36, 0.35, 0.34 }, { 0.48, 0.3, 0.22 } }
+local TOPSOIL = { 0.24, 0.19, 0.14 }
+
+-- The map's island texture: speckled ground on top, then topsoil fading
+-- into wavy rock strata that darken with depth.
+local function islandPaint(x: number, y: number, z: number)
+	local below = -z
+	if below < 0.3 then
+		local k = 1 + 0.12 * math.noise(x / 4, y / 4, 31) + 0.05 * math.noise(x * 3, y * 3, 37)
+		return GROUND[1] * k, GROUND[2] * k, GROUND[3] * k
+	end
+	local band = math.noise(x / 9, y / 9, z / 2) * 0.6 + z * 0.9
+	local wave = math.sin(band * 2.4)
+	local layer = STRATA[math.floor(band * 2.4 / (2 * math.pi)) % 3 + 1]
+	local k = 1 + 0.1 * wave + 0.06 * math.noise(x * 2, y * 2, z * 2)
+	if wave > 0.93 then k -= 0.25 end
+	k *= 1 - 0.6 * math.clamp((below - 3) / 20, 0, 1)
+	local soil = 1 - math.clamp((below - 1) / 1.5 + 0.3 * math.noise(x / 2, y / 2, 41), 0, 1)
+	local r, g, b = layer[1] * k, layer[2] * k, layer[3] * k
+	return r + (TOPSOIL[1] - r) * soil, g + (TOPSOIL[2] - g) * soil, b + (TOPSOIL[3] - b) * soil
+end
 
 local function random(k: number): number
 	local s = math.sin(k * 12.9898 + 4.1414) * 43758.5453
@@ -64,8 +83,8 @@ end
 -- A tier: clumps spaced round a ring under the tier above, plus a core
 -- filling the middle so no gaps show through.
 local function tier(name: string, reach: number, size: number, top: number, bottom: number, seed: number)
-	part(name, nil, ROCK, function(mesh)
-		local count = math.floor(2 * math.pi * reach / (size * 1.25))
+	part(name, nil, GROUND, function(mesh)
+		local count = math.floor(2 * math.pi * reach / (size * 0.8))
 		for i = 1, count do
 			local angle = (i + (random(seed + i) - 0.5) * 0.4) / count * 2 * math.pi
 			local edge = reach * capScale(angle)
@@ -73,20 +92,11 @@ local function tier(name: string, reach: number, size: number, top: number, bott
 			local s = size * (0.8 + 0.4 * random(seed + i + 200))
 			clump(mesh, math.cos(angle) * edge, math.sin(angle) * edge, s, top - drop * 0.3, bottom + drop, seed * 31 + i * 7)
 		end
-		clump(mesh, 0, 0, reach * 0.95, top - 0.3, bottom + (top - bottom) * 0.25, seed + 999)
-	end, false, function(_x, _y, z, _nx, _ny, nz)
-		-- Upward faces catch light, and rock darkens toward the bottom.
-		local fall = math.clamp((z + 24) / 24, 0, 1)
-		local up = math.clamp(nz, 0, 1)
-		local r = ROCK[1] + (ROCK_LIGHT[1] - ROCK[1]) * up
-		local g = ROCK[2] + (ROCK_LIGHT[2] - ROCK[2]) * up
-		local b = ROCK[3] + (ROCK_LIGHT[3] - ROCK[3]) * up
-		local shade = 0.55 + 0.45 * fall
-		return r * shade, g * shade, b * shade
-	end)
+		clump(mesh, 0, 0, reach * 1.08, top - 0.1, bottom + (top - bottom) * 0.15, seed + 999)
+	end, false, islandPaint)
 end
 
-part("Cap", nil, DIRT, function(mesh)
+part("Cap", nil, GROUND, function(mesh)
 	prism(mesh, function(scale)
 		local points = {}
 		for j = 1, 28 do
@@ -96,22 +106,14 @@ part("Cap", nil, DIRT, function(mesh)
 		end
 		return points
 	end, 0, -2.2, 0.5, 0.94)
-end, false, function(x, y, _z, _nx, _ny, nz)
-	if nz < 0.7 then
-		return ROCK_LIGHT[1], ROCK_LIGHT[2], ROCK_LIGHT[3]
-	end
-	local speck = 0.94 + 0.06 * math.sin(x * 0.7 + math.sin(y * 0.5) * 2) * math.sin(y * 0.6 - x * 0.3)
-	return DIRT[1] * speck, DIRT[2] * speck, DIRT[3] * speck
-end)
+end, false, islandPaint)
 
-tier("Tier1", RADIUS * 0.74, 4.5, -2.2, -8, 11)
-tier("Tier2", RADIUS * 0.52, 4, -7, -14, 23)
-tier("Tier3", RADIUS * 0.3, 3.5, -12.5, -19, 37)
-part("Tip", nil, ROCK, function(mesh)
-	clump(mesh, 0.5, -0.4, 3.2, -18, -25, 51)
-end, false, function()
-	return ROCK[1] * 0.6, ROCK[2] * 0.6, ROCK[3] * 0.6
-end)
+tier("Tier1", RADIUS * 0.74, 4.5, -1.9, -8.5, 11)
+tier("Tier2", RADIUS * 0.52, 4, -6, -14, 23)
+tier("Tier3", RADIUS * 0.3, 3.5, -11.5, -19.5, 37)
+part("Tip", nil, GROUND, function(mesh)
+	clump(mesh, 0.5, -0.4, 3.6, -17, -25, 51)
+end, false, islandPaint)
 
 -- Aggressive shading: full edge highlights and contact shadows, with every
 -- other part as an occluder.
