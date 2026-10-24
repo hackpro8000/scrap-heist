@@ -51,6 +51,14 @@ for t, tier in TIERS do
 			reach = reach * (0.94 + 0.12 * random(seed + i + 40)),
 			bottom = bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.25 * (random(seed + i + 80) - 0.5),
 			seed = seed * 31 + i * 7,
+			top = if t == 1 then CAP_TOP else TIERS[t - 1][3] + 0.5,
+			-- Like the old clumps: each pillar tapers and leans in toward
+			-- its foot by its own amount, and has a chip bitten in or a lump
+			-- standing out partway across its face.
+			taper = 0.08 + 0.12 * random(seed + i + 120),
+			lean = 0.1 + 0.25 * random(seed + i + 140),
+			defect = random(seed + i + 160) - 0.45,
+			defectAt = (random(seed + i + 180) - 0.5) * 1.2,
 		}
 		angle += span
 	end
@@ -79,7 +87,19 @@ local function wall(angle: number, z: number)
 		local pillar, u = pillarAt(t, angle)
 		if z < pillar.bottom then continue end
 		local r = pillar.reach * outlineScale(angle) - CLEFT * (1 - math.sqrt(math.max(1 - u * u, 0)))
-		r += 0.25 * math.noise(angle * 6, z / 3, pillar.seed % 97)
+		local size = pillar.reach * pillar.span / 2
+		local shift = math.clamp((pillar.top - z) / (pillar.top - pillar.bottom), 0, 1)
+		r -= pillar.reach * pillar.taper * shift + size * pillar.lean * shift
+		r += size * 0.35 * pillar.defect * math.max(1 - math.abs(u - pillar.defectAt) / 0.5, 0)
+		-- Every ring of the face nudged a little, stepping down the pillar.
+		local at = (pillar.top - z) / 1.5
+		local ring = math.floor(at)
+		local blend = (at - ring) ^ 2 * (3 - 2 * (at - ring))
+		local function ringNudge(n: number): number
+			return random(pillar.seed + n * 101)
+		end
+		local nudge = ringNudge(ring) + (ringNudge(ring + 1) - ringNudge(ring)) * blend
+		r += 0.25 * math.noise(angle * 6, z / 3, pillar.seed % 97) + 0.3 * (nudge - 0.5)
 		local lift = z - pillar.bottom
 		if lift < ROUNDING then
 			local inner = if t < #TIERS then pillarAt(t + 1, angle).reach * outlineScale(angle) * 0.9 else 0
