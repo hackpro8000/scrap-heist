@@ -1,3 +1,4 @@
+local CACHE_KEY = "YardIsland-913316bd0a5607fd"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -814,6 +815,21 @@ end
 local ANGLES, STEP, TIP, LIP, TOP_RINGS = 240, 0.3, -25, 0.35, 8
 local RIM_JAGGED, RIM_POKE = 0.166, 0.06
 local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
+-- The shell and its shading are cached under a key hashing every line above
+-- "-- cached above", so changes below it (the plumbing) skip the rebuild.
+local function shade(entries, occluders)
+	for _, entry in entries do
+		entry.mesh:paintShading(entry.image, {
+			highlight = 0.5,
+			highlightRamp = 0.3,
+			shadow = 1.5,
+			gradient = GRADIENT,
+			blend = 0.78,
+			occluders = occluders,
+		})
+	end
+end
+local shell = model.cached(CACHE_KEY, function()
 part("Island", nil, GROUND, function(mesh)
 	local rim = {}
 	for j = 0, ANGLES - 1 do
@@ -893,21 +909,112 @@ end, false, function(x, y, z)
 end)
 
 -- Aggressive shading: half-strength edge highlights, ramping 30% stronger
--- toward the bottom, and strong contact shadows, with every part (the shell
--- included) as an occluder so each clump darkens the crevices and overhangs
--- round it.
-for _, entry in parts do
-	local occluders = {}
-	for _, other in parts do
-		table.insert(occluders, other.mesh)
+-- toward the bottom, and strong contact shadows, with the shell as its own
+-- occluder so the crevices and overhangs darken.
+local entries = table.clone(parts)
+shade(entries, { entries[1].mesh })
+table.clear(parts)
+return entries
+end)
+-- cached above
+
+-- Plumbing: rusty pipe runs clamped round the first tier on standoffs, each
+-- coming out of the rock, running round with a flange and a bracket at every
+-- joint, then bending back into the rock.
+local RUST = { 0.45, 0.25, 0.14 }
+local function scrapPaint(x: number, y: number, z: number): (number, number, number)
+	local k = 1 + 0.2 * math.noise(x * 1.5, y * 1.5, z * 1.5)
+	local bare = math.clamp(math.noise(x / 2, y / 2, z / 2 + 7) * 3, 0, 1)
+	return (RUST[1] + (0.38 - RUST[1]) * bare) * k, (RUST[2] + (0.37 - RUST[2]) * bare) * k, (RUST[3] + (0.36 - RUST[3]) * bare) * k
+end
+local function unit(v)
+	local length = math.sqrt(v[1] ^ 2 + v[2] ^ 2 + v[3] ^ 2)
+	return { v[1] / length, v[2] / length, v[3] / length }
+end
+local function cross(a, b)
+	return { a[2] * b[3] - a[3] * b[2], a[3] * b[1] - a[1] * b[3], a[1] * b[2] - a[2] * b[1] }
+end
+local function circle(radius: number, sides: number)
+	local profile = {}
+	for k = 0, sides - 1 do
+		local a = 2 * math.pi * k / sides
+		table.insert(profile, { math.cos(a) * radius, math.sin(a) * radius })
 	end
-	entry.mesh:paintShading(entry.image, {
-		highlight = 0.5,
-		highlightRamp = 0.3,
-		shadow = 1.5,
-		gradient = GRADIENT,
-		blend = 0.78,
-		occluders = occluders,
-	})
+	return profile
+end
+-- A capped prism of `profile` from point a to point b.
+local function tube(mesh, a, b, profile: { { number } })
+	local axis = unit({ b[1] - a[1], b[2] - a[2], b[3] - a[3] })
+	local side = unit(cross(axis, if math.abs(axis[3]) < 0.9 then { 0, 0, 1 } else { 1, 0, 0 }))
+	local up = cross(side, axis)
+	local function ring(o)
+		local list = {}
+		for k, point in profile do
+			list[k] = mesh:vertex(o[1] + side[1] * point[1] + up[1] * point[2], o[2] + side[2] * point[1] + up[2] * point[2], o[3] + side[3] * point[1] + up[3] * point[2])
+		end
+		return list
+	end
+	local near, far = ring(a), ring(b)
+	local nearMiddle, farMiddle = mesh:vertex(a[1], a[2], a[3]), mesh:vertex(b[1], b[2], b[3])
+	for k = 1, #profile do
+		local l = k % #profile + 1
+		mesh:face({ near[k], near[l], far[l], far[k] })
+		mesh:face({ nearMiddle, near[l], near[k] })
+		mesh:face({ farMiddle, far[k], far[l] })
+	end
+end
+
+local PIPE, FLANGE, JOINT = 0.45, 0.65, 4
+local PIPE_RUNS = {
+	-- { start angle, span in radians, height }
+	{ 0.3, 1.9, -2.2 },
+	{ 2.9, 1.4, -4.6 },
+	{ 4.6, 1.5, -1.8 },
+}
+part("Plumbing", nil, RUST, function(mesh)
+	local pipe, flange = circle(PIPE, 10), circle(FLANGE, 10)
+	for _, run in PIPE_RUNS do
+		local from, span, z = run[1], run[2], run[3]
+		-- Stand the run off the furthest-reaching rock along it, so it
+		-- clears every pillar face.
+		local reach = 0
+		for n = 0, 40 do
+			reach = math.max(reach, (wall(from + span * n / 40, z)))
+		end
+		local r = reach + PIPE + 0.3
+		local steps = math.max(2, math.ceil(span * r / JOINT))
+		local points = {}
+		for n = 0, steps do
+			local a = from + span * n / steps
+			points[n] = { math.cos(a) * r, math.sin(a) * r, z }
+		end
+		for n = 0, steps - 1 do
+			tube(mesh, points[n], points[n + 1], pipe)
+		end
+		for n = 0, steps do
+			local p, a = points[n], from + span * n / steps
+			local c, s = math.cos(a), math.sin(a)
+			local tangent = { -s, c, 0 }
+			tube(mesh, { p[1] - tangent[1] * 0.12, p[2] - tangent[2] * 0.12, z }, { p[1] + tangent[1] * 0.12, p[2] + tangent[2] * 0.12, z }, flange)
+			-- A bracket from the flange back into the rock.
+			local inner = (wall(a, z)) - 0.6
+			tube(mesh, { c * inner, s * inner, z - FLANGE }, { p[1], p[2], z - FLANGE }, { { -0.15, -0.08 }, { 0.15, -0.08 }, { 0.15, 0.08 }, { -0.15, 0.08 } })
+		end
+		-- Each end turns straight in and buries itself in the rock.
+		for _, n in { 0, steps } do
+			local a = from + span * n / steps
+			local inner = (wall(a, z)) - 1
+			tube(mesh, points[n], { math.cos(a) * inner, math.sin(a) * inner, z }, pipe)
+		end
+	end
+end, false, scrapPaint)
+
+-- The plumbing shades against the shell and itself; the shell keeps its
+-- cached shading.
+shade(parts, { shell[1].mesh, parts[1].mesh })
+for _, entry in shell do
+	model.part(entry.name, entry.mesh, entry.image, { preview = true })
+end
+for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
