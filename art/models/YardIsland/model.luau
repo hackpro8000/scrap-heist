@@ -813,6 +813,7 @@ end
 -- the tip, a flat top in concentric rings and a point at the bottom.
 local ANGLES, STEP, TIP, LIP, TOP_RINGS = 240, 0.3, -25, 0.35, 8
 local RIM_JAGGED, RIM_POKE = 0.166, 0.06
+local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
 part("Island", nil, GROUND, function(mesh)
 	local rim = {}
 	for j = 0, ANGLES - 1 do
@@ -838,7 +839,11 @@ part("Island", nil, GROUND, function(mesh)
 		local row = {}
 		for j = 0, ANGLES - 1 do
 			local angle = 2 * math.pi * j / ANGLES
-			local r = wall(angle, z)
+			-- The calm rim eases into the jagged pillar faces over the top half
+			-- of the first tier.
+			local t = math.clamp((CAP_TOP - z) / RIM_BLEND, 0, 1)
+			t = t * t * (3 - 2 * t)
+			local r = rim[j] + (wall(angle, z) - rim[j]) * t
 			-- The grass lip stands proud of the rock, easing back in over
 			-- its last fifth so it overhangs the stone below.
 			local depth = (CAP_TOP - z) / drape(angle)
