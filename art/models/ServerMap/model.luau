@@ -12544,7 +12544,7 @@ slabKeys[13511] = "b9ff4053bf5e0dab-7c27880a9a355c4d"
 slabKeys[13520] = "b9ff4053bf5e0dab-22233dc81161c674"
 slabKeys[13527] = "b9ff4053bf5e0dab-92736dc11ff1f899"
 slabKeys[13555] = "b9ff4053bf5e0dab-5f3dede5e341fed8"
-slabKeys[13586] = "b9ff4053bf5e0dab-75fc30ceb2d831c8"
+slabKeys[13586] = "b9ff4053bf5e0dab-2017fdb5b6e0c3e9"
 -- uses: ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -13695,50 +13695,101 @@ slab("Plumbing", function()
 				})
 			end
 		end
-		-- A point on the mouth's rim, `degrees` round from the top.
-		local function rim(degrees: number, reach: number, inset: number)
+		-- Points round the mouth: `degrees` round from the top, `reach` out
+		-- from the axis, `along` past the pipe's end.
+		local function rim(degrees: number, reach: number, along: number)
 			local a = math.rad(degrees)
 			return {
-				mouth[1] + (up[1] * math.cos(a) + side[1] * math.sin(a)) * reach - axis[1] * inset,
-				mouth[2] + (up[2] * math.cos(a) + side[2] * math.sin(a)) * reach - axis[2] * inset,
-				mouth[3] + (up[3] * math.cos(a) + side[3] * math.sin(a)) * reach - axis[3] * inset,
+				mouth[1] + (up[1] * math.cos(a) + side[1] * math.sin(a)) * reach + axis[1] * along,
+				mouth[2] + (up[2] * math.cos(a) + side[2] * math.sin(a)) * reach + axis[2] * along,
+				mouth[3] + (up[3] * math.cos(a) + side[3] * math.sin(a)) * reach + axis[3] * along,
+			}
+		end
+		-- Sweeps a closed { reach, along } section round the mouth from one
+		-- angle to another, capping the ends unless it goes all the way round.
+		local function sweep(mesh, from: number, to: number, steps: number, section: (number) -> { { number } })
+			local loops = {}
+			for j = 0, steps do
+				local degrees = from + (to - from) * j / steps
+				loops[j] = {}
+				for i, point in section(degrees) do
+					local at = rim(degrees, point[1], point[2])
+					loops[j][i] = mesh:vertex(at[1], at[2], at[3])
+				end
+			end
+			for j = 0, steps - 1 do
+				local n = #loops[j]
+				for i = 1, n do
+					local k = i % n + 1
+					mesh:face({ loops[j][i], loops[j][k], loops[j + 1][k], loops[j + 1][i] })
+				end
+			end
+			if to - from >= 360 then return end
+			for _, ends in { { 0, false }, { steps, true } } do
+				local loop = loops[ends[1]]
+				for i = 2, #loop - 1 do
+					if ends[2] then
+						mesh:face({ loop[1], loop[i], loop[i + 1] })
+					else
+						mesh:face({ loop[1], loop[i + 1], loop[i] })
+					end
+				end
+			end
+		end
+		local bore, wallOut, lipOut = pipeRadius * 0.8, pipeRadius, pipeRadius * 1.35
+		local boreDepth = pipeRadius * 1.6
+		-- The rolled lip: a ring round the open end, standing proud of the
+		-- pipe wall and past its end, rounded at the front.
+		local function lipSection(): { { number } }
+			return {
+				{ bore, -0.5 }, { lipOut, -0.5 }, { lipOut, 0.1 }, { lipOut - 0.08, 0.2 },
+				{ bore + 0.08, 0.2 }, { bore, 0.1 },
 			}
 		end
 		part(`Waste{name}`, nil, RUST, onIsland(function(mesh)
-			prism(mesh, root, axis, side, up, circle(pipeRadius, 14), -pipeRadius * 3, length)
-			prism(mesh, mouth, axis, side, up, circle(pipeRadius * 1.3, 14), -0.5, 0)
+			prism(mesh, root, axis, side, up, circle(pipeRadius, 14), -pipeRadius * 3, length - boreDepth)
+			sweep(mesh, 0, 360, 16, function()
+				return { { bore, -boreDepth }, { wallOut, -boreDepth }, { wallOut, 0 }, { bore, 0 } }
+			end)
+			sweep(mesh, 0, 360, 16, lipSection)
 			prism(mesh, root, axis, side, up, circle(pipeRadius * 1.3, 14), 0, 0.4)
 		end), nil, scrapPaint)
 		part(`WasteMouth{name}`, nil, { 0.04, 0.05, 0.03 }, onIsland(function(mesh)
-			prism(mesh, mouth, axis, side, up, circle(pipeRadius * 0.85, 14), 0, 0.03)
+			prism(mesh, mouth, axis, side, up, circle(bore, 14), -boreDepth, -boreDepth + 0.03)
 		end), nil, 0)
-		local scale = pipeRadius / 1.5
 		part(`Goo{name}`, nil, GOO, onIsland(function(mesh)
-			-- Beads of dried film round the lower lip, fattest at the bottom.
-			for degrees = 120, 240, 15 do
-				local weight = 1 - math.abs(degrees - 180) / 70
-				local bead = 0.12 + 0.22 * weight
-				local at = rim(degrees, pipeRadius * 1.3, 0.25 - 0.1 * weight)
-				lathe(mesh, { at[1], at[2], at[3] + bead }, { { 0, 0.02 }, { bead * 0.5, bead * 1.4 }, { bead * 1.4, bead * 1.2 }, { bead * 2 + weight * 0.3, 0.03 } })
-			end
-			-- A puddle left lying in the bottom of the bore, its surface a
-			-- little rippled, set just inside the mouth.
-			local inner = pipeRadius * 0.85
-			local surface = -inner * 0.25
-			local middle = (surface - inner) / 2
+			-- A skin over the lower lip, following its section out round the
+			-- front and down the outside, thickest at the bottom where it ran.
+			sweep(mesh, 115, 245, 16, function(degrees: number)
+				local weight = math.max(0, 1 - math.abs(degrees - 180) / 65)
+				local skin = 0.015 + 0.13 * weight ^ 0.7 * (1 + 0.25 * math.sin(degrees * 0.3))
+				local down = -0.15 - 0.45 * weight
+				return {
+					{ lipOut, down }, { lipOut + skin, down - skin }, { lipOut + skin, 0.1 },
+					{ lipOut - 0.08 + skin * 0.7, 0.2 + skin }, { bore + 0.08 - skin * 0.7, 0.2 + skin },
+					{ bore - skin, 0.1 }, { bore - skin, -0.4 }, { bore, -0.4 }, { bore, 0.1 },
+					{ bore + 0.08, 0.2 }, { lipOut - 0.08, 0.2 }, { lipOut, 0.1 },
+				}
+			end)
+			-- A puddle left in the bottom of the bore, its surface a little
+			-- rippled, running out to the lip.
+			local surface = -bore * 0.3
+			local middle = (surface - bore) / 2
 			local puddle = {}
 			for k = 0, 12 do
 				local a = math.rad(200 + 140 * k / 12)
-				table.insert(puddle, { math.cos(a) * inner * 0.98, math.sin(a) * inner * 0.98 - middle })
+				table.insert(puddle, { math.cos(a) * bore * 0.99, math.sin(a) * bore * 0.99 - middle })
 			end
 			for k = 1, 5 do
 				local a = 1 - k / 6 * 2
-				table.insert(puddle, { a * inner * 0.92, surface + 0.04 * math.sin(k * 2.1) - middle })
+				table.insert(puddle, { a * bore * 0.9, surface + 0.04 * math.sin(k * 2.1) - middle })
 			end
 			local pool = { mouth[1] + up[1] * middle, mouth[2] + up[2] * middle, mouth[3] + up[3] * middle }
-			prism(mesh, pool, axis, side, up, puddle, -pipeRadius * 1.2, 0.05)
-			-- The last drop: a sag under the lip, a thin neck, then the bead.
-			local lip = rim(180, pipeRadius * 1.3, 0.2)
+			prism(mesh, pool, axis, side, up, puddle, -boreDepth, 0.12)
+			-- The last drop, hanging from the skin under the lip: a sag, a thin
+			-- neck, then the bead.
+			local scale = pipeRadius / 1.5
+			local lip = rim(180, lipOut + 0.1, -0.2)
 			local drop = {
 				{ 0, 0.3 }, { 0.25, 0.42 }, { 0.6, 0.32 }, { 0.95, 0.14 }, { 1.3, 0.09 },
 				{ 1.6, 0.16 }, { 1.85, 0.27 }, { 2.1, 0.3 }, { 2.35, 0.24 }, { 2.55, 0.03 },
