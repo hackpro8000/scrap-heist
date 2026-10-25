@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-88875309947d03b3"
+local CACHE_KEY = "YardIsland-fe18e6365ef00feb"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -727,11 +727,15 @@ for t, tier in TIERS do
 	local angle = offset
 	for i = 1, count do
 		local span = weights[i] / total * 2 * math.pi
+		local foot = bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.5 * (random(seed + i + 80) - 0.5)
+		-- The bottom tier's pillars only end higher, never lower, so none
+		-- hangs alone below the rest.
+		if t == #TIERS then foot = math.max(foot, bottom) end
 		list[i] = {
 			from = angle,
 			span = span,
 			reach = reach * (0.94 + 0.12 * random(seed + i + 40)),
-			bottom = bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.5 * (random(seed + i + 80) - 0.5),
+			bottom = foot,
 			seed = seed * 31 + i * 7,
 			top = if t == 1 then CAP_TOP else TIERS[t - 1][3] + 0.5,
 			-- Like the old clumps: each pillar tapers and leans in toward
