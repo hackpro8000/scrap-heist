@@ -2,7 +2,7 @@
 -- the style of a hand-sculpted stylised island. Three tiers of chunky
 -- rock pillars ring the island, each tier tucked further in and
 -- ending lower than the last. Each pillar is a polygonal prism standing on
--- the shell's profile, a stack of blocks, with clefts between pillars and a soil lip draped over the rim. The model is one closed outer shell over the
+-- the shell's profile, a stack of blocks, with clefts between pillars. The model is one closed outer shell over the
 -- columns, with nothing inside. Top at z = 0.7.
 useTexelDensity(16)
 local RADIUS = 20
@@ -211,15 +211,9 @@ local function wall(angle: number, z: number)
 	return best, owner
 end
 
--- The soil lip: how far it drapes down the rim at `angle`, in clumps.
-local function drape(angle: number): number
-	local n = math.noise(angle * 7, 3.7) + 0.5 * math.noise(angle * 23, 9.1)
-	return 0.35 + 1.1 * math.clamp(n + 0.4, 0, 1)
-end
-
 -- One closed outer shell: rows of wall points stepping down from the top to
 -- the last column's foot, a flat top in concentric rings and a small cap at the bottom.
-local ANGLES, STEP, FLOOR, LIP, TOP_RINGS = 240, 0.3, -25, 0.35, 8
+local ANGLES, STEP, FLOOR, TOP_RINGS = 240, 0.3, -25, 8
 -- The shell and its shading are cached under a key hashing every line above
 -- "-- cached above", so changes below it skip the rebuild.
 local function shade(entries, occluders, gradient: number?)
@@ -257,12 +251,6 @@ part("Island", nil, GROUND, function(mesh)
 		for j = 0, ANGLES - 1 do
 			local angle = 2 * math.pi * j / ANGLES
 			local r = wall(angle, z)
-			-- The grass lip stands proud of the rock, easing back in over
-			-- its last fifth so it overhangs the stone below.
-			local depth = (CAP_TOP - z) / drape(angle)
-			if depth < 1 then
-				r = math.max(r, rim[j]) + LIP * math.clamp((1 - depth) / 0.2, 0, 1)
-			end
 			row[j] = mesh:vertex(math.cos(angle) * r, math.sin(angle) * r, z)
 		end
 		table.insert(rows, row)
@@ -282,7 +270,7 @@ part("Island", nil, GROUND, function(mesh)
 		local row = {}
 		for j = 0, ANGLES - 1 do
 			local angle = 2 * math.pi * j / ANGLES
-			row[j] = mesh:vertex(math.cos(angle) * (rim[j] + LIP) * k, math.sin(angle) * (rim[j] + LIP) * k, CAP_TOP)
+			row[j] = mesh:vertex(math.cos(angle) * rim[j] * k, math.sin(angle) * rim[j] * k, CAP_TOP)
 		end
 		for j = 0, ANGLES - 1 do
 			local l = (j + 1) % ANGLES
