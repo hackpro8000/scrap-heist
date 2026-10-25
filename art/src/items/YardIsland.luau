@@ -58,7 +58,7 @@ local TIERS = {
 -- outer face is broken into a few flat facets.
 local CREVICE_DEPTH, CREVICE_WIDTH = 1.1, 0.7
 local CRACK_DEPTH, CRACK_HEIGHT = 0.5, 0.35
-local CHIP = 0.6
+local CHIP = 0.45
 local pillars = {}
 for t, tier in TIERS do
 	local reach, count, bottom, seed = tier[1], tier[2], tier[3], tier[4]
@@ -150,7 +150,7 @@ local function pillarReach(pillar, t: number, angle: number, z: number): number
 	-- at 45 degrees by a depth that wanders along the edge, so they read
 	-- as knocked-off chips rather than a clean chamfer.
 	local along = (angle - pillar.from) * r
-	local chip = CHIP * (0.3 + 1.4 * math.clamp(math.noise(along / 1.3, z / 1.3, pillar.seed % 97) + 0.5, 0, 1))
+	local chip = CHIP * (0.3 + 1.4 * math.clamp(math.noise(along / 0.6, z / 0.6, pillar.seed % 97) + 0.5, 0, 1))
 	local edge = math.min(gap, z - math.max(block.floor, pillar.bottom), if ceiling < pillar.top then ceiling - z else math.huge)
 	if edge < chip then r -= chip - edge end
 	return r
@@ -181,7 +181,7 @@ end
 
 -- One closed outer shell: rows of wall points stepping down from the top to
 -- the last column's foot, a flat top in concentric rings and a small cap at the bottom.
-local ANGLES, STEP, FLOOR, LIP, TOP_RINGS = 240, 0.3, -25, 0.35, 8
+local ANGLES, STEP, FLOOR, LIP, TOP_RINGS = 480, 0.15, -25, 0.35, 8
 local RIM_JAGGED, RIM_POKE = 0.166, 0.06
 local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
 -- The shell and its shading are cached under a key hashing every line above
@@ -214,7 +214,7 @@ part("Island", nil, GROUND, function(mesh)
 	while z > FLOOR + STEP / 2 do
 		-- Stop once every pillar has ended, so no needle trails below.
 		local any = false
-		for j = 0, ANGLES - 1, 8 do
+		for j = 0, ANGLES - 1, 16 do
 			if wall(2 * math.pi * j / ANGLES, z) > 0.3 then
 				any = true
 				break
