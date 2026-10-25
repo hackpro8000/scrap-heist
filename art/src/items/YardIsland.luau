@@ -156,7 +156,14 @@ local function pillarReach(pillar, t: number, angle: number, z: number): number
 	local along = (angle - pillar.from) * r
 	local peak = math.clamp((math.noise(along / 2.5, z / 2.5, pillar.seed % 97) - 0.1) * 3, 0, 1)
 	local chip = CHIP * (0.2 + 2 * peak)
-	local edge = math.min(gap, z - math.max(block.floor, pillar.bottom), if ceiling < pillar.top then ceiling - z else math.huge)
+	-- Vertical edges: the shared sides and every facet fold on the face.
+	local side = gap
+	for k = 2, #corners - 1 do
+		side = math.min(side, math.abs(angle - corners[k][1]) * r)
+	end
+	local level = math.min(z - math.max(block.floor, pillar.bottom), if ceiling < pillar.top then ceiling - z else math.huge)
+	-- Corners, where a vertical edge meets a block edge, chip deeper.
+	local edge = math.min(side, level, (side + level) * 0.6)
 	if edge < chip then r -= chip - edge end
 	return r
 end
