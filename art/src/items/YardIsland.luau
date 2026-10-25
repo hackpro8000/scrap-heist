@@ -59,7 +59,6 @@ local TIERS = {
 local CREVICE_DEPTH, CREVICE_WIDTH = 1.1, 0.7
 local CRACK_DEPTH, CRACK_HEIGHT = 0.5, 0.35
 local CHIP = 0.45
-local BULGE = 0.09
 local TOP_LIP, TOP_LIP_HEIGHT = 1.8, 3.5
 local pillars = {}
 for t, tier in TIERS do
@@ -150,15 +149,6 @@ local function pillarReach(pillar, t: number, angle: number, z: number): number
 		r += TOP_LIP * math.clamp((z - (tierTop - TOP_LIP_HEIGHT)) / 1.2, 0, 1)
 	end
 	local block, ceiling = blockAt(pillar, z)
-	-- Below the top layer, every block bulges out on its own like a
-	-- rounded stone: 9% of the column's width at its middle, easing back
-	-- to nothing at its sides, top and bottom.
-	if t > 1 then
-		local across = (angle - pillar.from) / (pillar.to - pillar.from)
-		local floor = math.max(block.floor, pillar.bottom)
-		local up = math.clamp((z - floor) / (ceiling - floor), 0, 1)
-		r += BULGE * (pillar.to - pillar.from) * r * math.sin(math.pi * across) * math.sin(math.pi * up)
-	end
 	local gap = math.min(angle - pillar.from, pillar.to - angle) * r
 	r -= CREVICE_DEPTH * math.max(0, 1 - gap / CREVICE_WIDTH)
 	r += block.jut * math.min(1, gap / CREVICE_WIDTH)
