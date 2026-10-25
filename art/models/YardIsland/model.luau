@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-6c18059e57834398"
+local CACHE_KEY = "YardIsland-1b7e30f111ccff41"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -720,7 +720,7 @@ local TIERS = {
 local CREVICE_DEPTH, CREVICE_WIDTH = 1.1, 0.7
 local CRACK_DEPTH, CRACK_HEIGHT = 0.5, 0.35
 local CHIP = 0.45
-local BULGE = 0.3
+local BULGE = 0.09
 local TOP_LIP, TOP_LIP_HEIGHT = 1.8, 3.5
 local pillars = {}
 for t, tier in TIERS do
@@ -812,7 +812,7 @@ local function pillarReach(pillar, t: number, angle: number, z: number): number
 	end
 	local block, ceiling = blockAt(pillar, z)
 	-- Below the top layer, every block bulges out on its own like a
-	-- rounded stone: 30% of the column's width at its middle, easing back
+	-- rounded stone: 9% of the column's width at its middle, easing back
 	-- to nothing at its sides, top and bottom.
 	if t > 1 then
 		local across = (angle - pillar.from) / (pillar.to - pillar.from)
