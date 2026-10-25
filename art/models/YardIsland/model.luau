@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-913316bd0a5607fd"
+local CACHE_KEY = "YardIsland-100c6a931762f637"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -24,6 +24,7 @@ local GRID = 0.4
 
 -- When set, every part sizes its texture to this many pixels per stud
 -- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
 local texelDensity: number? = nil
 
 local function useTexelDensity(pixelsPerStud: number)
@@ -557,9 +558,9 @@ local function part(name, bone, color, build, smooth, rust, texture: number?, em
 	build(if rust == 0 then mesh else imperfect(mesh, name))
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
 	local fit = mesh:unwrap()
-	local size = if texelDensity
-		then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
-		else texture or TEXTURE
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
 	local image = Image.new(size, size, color[1], color[2], color[3])
 	rust = rust or 0.4
 	if type(rust) == "function" then
@@ -817,13 +818,13 @@ local RIM_JAGGED, RIM_POKE = 0.166, 0.06
 local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
 -- The shell and its shading are cached under a key hashing every line above
 -- "-- cached above", so changes below it (the plumbing) skip the rebuild.
-local function shade(entries, occluders)
+local function shade(entries, occluders, gradient: number?, shadow: number?)
 	for _, entry in entries do
 		entry.mesh:paintShading(entry.image, {
 			highlight = 0.5,
 			highlightRamp = 0.3,
-			shadow = 1.5,
-			gradient = GRADIENT,
+			shadow = shadow or 1.5,
+			gradient = gradient or GRADIENT,
 			blend = 0.78,
 			occluders = occluders,
 		})
@@ -1129,7 +1130,7 @@ end, 50, function(x, y, z)
 	local k = 1 + 0.05 * math.noise(x * 0.8, y * 0.8, z * 0.8)
 	local brass = 0.3 * math.clamp(math.noise(x / 6, y / 6, z / 6 + 5) + 0.5, 0, 1)
 	return (COPPER[1] + (0.78 - COPPER[1]) * brass) * k, (COPPER[2] + (0.6 - COPPER[2]) * brass) * k, (COPPER[3] + (0.28 - COPPER[3]) * brass) * k
-end)
+end, 1024)
 
 part("Drain", nil, IRON, function(mesh)
 	-- A thick lipped ring round the mouth and a grate of bars across it.
@@ -1176,7 +1177,7 @@ part("Drain", nil, IRON, function(mesh)
 			sweep(mesh, { lerp(p, { p[1] + tangent[1], p[2] + tangent[2], p[3] }, -0.32), lerp(p, { p[1] + tangent[1], p[2] + tangent[2], p[3] }, 0.32) }, circle(0.11, 6), true)
 		end
 	end
-end, 40, 0.5)
+end, 40, 0.5, 1024)
 
 -- The goo: a pool sagging out of the mouth's lower lip, a strand stretching
 -- down from it and a drop hanging off the end.
@@ -1207,17 +1208,15 @@ part("Goo", nil, GOO, function(mesh)
 	end
 	sweep(mesh, strand, circle(0.22, 10))
 	sweep(mesh, { polarPoint(FRONT - 0.07, DRAIN_R - 0.2, DRAIN_Z - mouth + 0.2), polarPoint(FRONT + 0.07, DRAIN_R - 0.2, DRAIN_Z - mouth + 0.2) }, circle(0.45, 10), true)
-end, 60, 0, nil, 1.5)
+end, 60, 0, 1024, 1.5)
 
-local occluders = { shell[1].mesh }
-for _, entry in parts do
-	table.insert(occluders, entry.mesh)
-end
+-- Plumbing is shaded without occluders or the height gradient, and with a
+-- light shadow: its overlapping, rock-buried pieces blacked the drain out.
 for _, entry in parts do
 	if entry.emissive then
 		model.part(entry.name, entry.mesh, entry.image, { preview = true, emissive = entry.emissive })
 		continue
 	end
-	shade({ entry }, occluders)
+	shade({ entry }, {}, 0, 0.3)
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
