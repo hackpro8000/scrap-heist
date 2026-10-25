@@ -121,16 +121,19 @@ for t, tier in TIERS do
 			taper = 0.08 + 0.12 * random(seed + i + 120),
 			lean = 0.1 + 0.25 * random(seed + i + 140),
 		}
-		-- Each pillar is a stack of 2-3 rock blocks split by cracks, each
-		-- block sitting a little in or out from the one above.
+		-- Each pillar is a stack of 3-5 uneven brick-like blocks split by
+		-- cracks, each block a different size and pushed in, out and to the
+		-- side of the one above.
 		local pillar = list[i]
 		pillar.blocks = {}
-		local joints = 1 + math.floor(random(seed + i + 200) * 2)
+		local joints = 2 + math.floor(random(seed + i + 200) * 3)
 		local height = pillar.top - pillar.bottom
 		for n = 1, joints + 1 do
 			table.insert(pillar.blocks, {
 				floor = if n > joints then -math.huge else pillar.top - height * (n + (random(seed + i + n * 13 + 210) - 0.5) * 0.5) / (joints + 1),
-				offset = if n == 1 then 0 else (random(seed + i + n * 13 + 220) - 0.4) * 1.2,
+				offset = if n == 1 then 0 else (random(seed + i + n * 13 + 220) - 0.45) * 2,
+				side = if n == 1 then 0 else (random(seed + i + n * 13 + 240) - 0.5) * half * 0.3,
+				size = 0.9 + 0.2 * random(seed + i + n * 13 + 250),
 				tint = 0.88 + 0.24 * random(seed + i + n * 13 + 230),
 			})
 		end
@@ -153,10 +156,11 @@ end
 -- the pillar's cross-section at height z reaches, or nil if it misses.
 local function pillarReach(pillar, dx: number, dy: number, z: number): number?
 	local shift = math.clamp((pillar.top - z) / (pillar.top - pillar.bottom), 0, 1)
-	local scale = 1 - pillar.taper * shift
 	local block = blockAt(pillar, z)
+	local scale = (1 - pillar.taper * shift) * block.size
 	local inward = pillar.bound * pillar.lean * shift - block.offset
-	local cx, cy = pillar.x - pillar.nx * inward, pillar.y - pillar.ny * inward
+	local cx = pillar.x - pillar.nx * inward + pillar.tx * block.side
+	local cy = pillar.y - pillar.ny * inward + pillar.ty * block.side
 	-- Skip pillars well off to the side of the ray.
 	if math.abs(cx * dy - cy * dx) > pillar.bound then return nil end
 	local far = nil
