@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-5ee985fe53ee15a7"
+local CACHE_KEY = "YardIsland-81246f3ff0299ed8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -662,7 +662,7 @@ end
 -- Yard Island: a floating yard island built from stacked rock columns, in
 -- the style of a hand-sculpted stylised island. Three tiers of rounded
 -- rock pillars ring the island, each tier tucked further in and ending
--- lower than the last, with deep clefts between pillars and a soil lip
+-- lower than the last, sliced flat across the bottom, with deep clefts between pillars and a soil lip
 -- draped over the rim. The model is one closed outer shell over the
 -- columns, with nothing inside. Top at z = 0.7.
 useTexelDensity(16)
@@ -710,7 +710,6 @@ local TIERS = {
 	{ RADIUS * 0.84, 15, -8, 11 },
 	{ RADIUS * 0.58, 11, -14, 23 },
 	{ RADIUS * 0.34, 7, -19.5, 37 },
-	{ RADIUS * 0.24, 1, -25, 51 },
 }
 local CLEFT, ROUNDING = 2, 1.2
 
@@ -732,7 +731,7 @@ for t, tier in TIERS do
 			from = angle,
 			span = span,
 			reach = reach * (0.94 + 0.12 * random(seed + i + 40)),
-			bottom = if count == 1 then bottom else bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.25 * (random(seed + i + 80) - 0.5),
+			bottom = bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.25 * (random(seed + i + 80) - 0.5),
 			seed = seed * 31 + i * 7,
 			top = if t == 1 then CAP_TOP else TIERS[t - 1][3] + 0.5,
 			-- Like the old clumps: each pillar tapers and leans in toward
@@ -769,16 +768,6 @@ local function wall(angle: number, z: number)
 	for t = 1, #TIERS do
 		local pillar, u = pillarAt(t, angle)
 		if z < pillar.bottom then continue end
-		-- The tip is one smooth chunk, tapering hard to a point.
-		if t == #TIERS then
-			if z > pillar.top then continue end
-			local s = (z - pillar.bottom) / (pillar.top - pillar.bottom)
-			local r = pillar.reach * outlineScale(angle) * s ^ 1.5 + 0.15 * math.noise(angle * 3, z / 2, 7) * s
-			if r > best then
-				best, owner, across = r, pillar, u
-			end
-			continue
-		end
 		-- Faceted across the face: the round profile sampled at a few
 		-- jittered corners with flat faces between, like the old clumps.
 		local facets = 3 + pillar.seed % 2
@@ -804,8 +793,9 @@ local function wall(angle: number, z: number)
 		local nudge = ringNudge(ring) + (ringNudge(ring + 1) - ringNudge(ring)) * blend
 		r += 0.25 * math.noise(angle * 6, z / 3, pillar.seed % 97) + 0.7 * (nudge - 0.5)
 		local lift = z - pillar.bottom
-		if lift < ROUNDING then
-			local inner = if t < #TIERS then pillarAt(t + 1, angle).reach * outlineScale(angle) * 0.9 else 0
+		-- The last tier is sliced flat, so only the tiers above it round in.
+		if lift < ROUNDING and t < #TIERS then
+			local inner = pillarAt(t + 1, angle).reach * outlineScale(angle) * 0.9
 			r = inner + (r - inner) * math.sqrt(1 - (1 - lift / ROUNDING) ^ 2)
 		end
 		if r > best then
@@ -822,8 +812,8 @@ local function drape(angle: number): number
 end
 
 -- One closed outer shell: rows of wall points stepping down from the top to
--- the tip, a flat top in concentric rings and a point at the bottom.
-local ANGLES, STEP, TIP, LIP, TOP_RINGS = 240, 0.3, -25, 0.35, 8
+-- the slice, a flat top in concentric rings and a flat cut at the bottom.
+local ANGLES, STEP, SLICE, LIP, TOP_RINGS = 240, 0.3, -18.5, 0.35, 8
 local RIM_JAGGED, RIM_POKE = 0.166, 0.06
 local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
 -- The shell and its shading are cached under a key hashing every line above
@@ -853,7 +843,7 @@ part("Island", nil, GROUND, function(mesh)
 	end
 	local rows = {}
 	local z = CAP_TOP
-	while z > TIP + STEP / 2 do
+	while z > SLICE - STEP / 2 do
 		-- Stop once every pillar has ended, so no needle trails below.
 		local any = false
 		for j = 0, ANGLES - 1, 8 do
@@ -908,9 +898,9 @@ part("Island", nil, GROUND, function(mesh)
 	for j = 0, ANGLES - 1 do
 		mesh:face({ middle, inner[j], inner[(j + 1) % ANGLES] })
 	end
-	local tip = mesh:vertex(0, 0, z + STEP - 0.4)
+	local bottom = mesh:vertex(0, 0, z + STEP)
 	for j = 0, ANGLES - 1 do
-		mesh:face({ tip, rows[#rows][(j + 1) % ANGLES], rows[#rows][j] })
+		mesh:face({ bottom, rows[#rows][(j + 1) % ANGLES], rows[#rows][j] })
 	end
 end, false, function(x, y, z)
 	-- The original island colouring: speckled ground on top, then topsoil
