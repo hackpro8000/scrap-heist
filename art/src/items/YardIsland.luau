@@ -50,7 +50,7 @@ local TIERS = {
 	{ RADIUS * 0.58, 8, -14, 23 },
 	{ RADIUS * 0.34, 6, -19.5, 37 },
 }
-local CLEFT, ROUNDING, BEVEL, CORNER = 3, 2, 0.6, 1.5
+local CLEFT, BEVEL, CORNER = 3, 0.6, 1.5
 
 -- Pillar layout per tier: each pillar's start angle, reach and bottom.
 local pillars = {}
@@ -123,8 +123,8 @@ end
 
 -- How far the island's wall reaches at `angle` and height z, and the
 -- pillar there with its across position, for painting. Each pillar is
--- rounded across its face so clefts open between pillars, and rounded
--- under its foot down onto the tier below.
+-- rounded across its face so clefts open between pillars, and cut flat
+-- under its foot with the bottom edge rounded off by CORNER.
 local function wall(angle: number, z: number)
 	local best, owner, across = 0.05, nil, 0
 	for t = 1, #TIERS do
@@ -171,9 +171,8 @@ local function wall(angle: number, z: number)
 			r -= BEVEL * (1 - math.sqrt(1 - (1 - edge / BEVEL) ^ 2))
 		end
 		local lift = z - pillar.bottom
-		if lift < ROUNDING then
-			local inner = if t < #TIERS then pillarAt(t + 1, angle).reach * outlineScale(angle) * 0.9 else 0
-			r = inner + (r - inner) * math.sqrt(1 - (1 - lift / ROUNDING) ^ 2)
+		if lift < CORNER then
+			r -= CORNER * (1 - math.sqrt(1 - (1 - lift / CORNER) ^ 2))
 		end
 		if r > best then
 			best, owner, across = r, pillar, u
