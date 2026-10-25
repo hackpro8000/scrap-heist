@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-c8d2e92138a485b3"
+local CACHE_KEY = "YardIsland-5bec5c96f1b93f72"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -711,7 +711,7 @@ local TIERS = {
 	{ RADIUS * 0.58, 8, -14, 23 },
 	{ RADIUS * 0.34, 6, -19.5, 37 },
 }
-local CLEFT, ROUNDING, BEVEL, CORNER = 3, 2, 0.6, 1.5
+local CLEFT, BEVEL, CORNER = 3, 0.6, 1.5
 
 -- Pillar layout per tier: each pillar's start angle, reach and bottom.
 local pillars = {}
@@ -832,9 +832,8 @@ local function wall(angle: number, z: number)
 			r -= BEVEL * (1 - math.sqrt(1 - (1 - edge / BEVEL) ^ 2))
 		end
 		local lift = z - pillar.bottom
-		if lift < ROUNDING then
-			local inner = if t < #TIERS then pillarAt(t + 1, angle).reach * outlineScale(angle) * 0.9 else 0
-			r = inner + (r - inner) * math.sqrt(1 - (1 - lift / ROUNDING) ^ 2)
+		if lift < CORNER then
+			r -= CORNER * (1 - math.sqrt(1 - (1 - lift / CORNER) ^ 2))
 		end
 		if r > best then
 			best, owner, across = r, pillar, u
