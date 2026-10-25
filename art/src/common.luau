@@ -14,6 +14,7 @@ local GRID = 0.4
 
 -- When set, every part sizes its texture to this many pixels per stud
 -- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
 local texelDensity: number? = nil
 
 local function useTexelDensity(pixelsPerStud: number)
@@ -547,9 +548,9 @@ local function part(name, bone, color, build, smooth, rust, texture: number?, em
 	build(if rust == 0 then mesh else imperfect(mesh, name))
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
 	local fit = mesh:unwrap()
-	local size = if texelDensity
-		then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
-		else texture or TEXTURE
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
 	local image = Image.new(size, size, color[1], color[2], color[3])
 	rust = rust or 0.4
 	if type(rust) == "function" then
