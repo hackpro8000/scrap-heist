@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-5aa38d532c76306e"
+local CACHE_KEY = "YardIsland-46cc8e058c5f71e3"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -712,6 +712,9 @@ local TIERS = {
 	{ RADIUS * 0.34, 6, -19.5, 37 },
 }
 local CLEFT, BEVEL, CORNER = 3, 0.6, 1.5
+-- Corner, block-edge and foot rounding plus surface noise, held off for
+-- now to judge the plain polygonal geometry.
+local ROUNDED = false
 
 -- Pillar layout per tier: each pillar's start angle, reach and bottom.
 local pillars = {}
@@ -819,9 +822,13 @@ local function wall(angle: number, z: number)
 			end
 			return d0 + (d1 - d0) * math.clamp((v - u0) / (u1 - u0), 0, 1)
 		end
-		local spread, depth = CORNER / size, 0
-		for k = -2, 2 do
-			depth += polygon(u + spread * k / 2) / 5
+		local depth = polygon(u)
+		if ROUNDED then
+			local spread = CORNER / size
+			depth = 0
+			for k = -2, 2 do
+				depth += polygon(u + spread * k / 2) / 5
+			end
 		end
 		local r = pillar.reach * outlineScale(angle) - depth
 		local shift = math.clamp((pillar.top - z) / (pillar.top - pillar.bottom), 0, 1)
@@ -830,13 +837,16 @@ local function wall(angle: number, z: number)
 		-- The block at this height, with its edges rounded into the cracks
 		-- above and below it.
 		local block, ceiling = blockAt(pillar, z)
-		r += block.offset + 0.2 * math.noise(angle * 4, z / 4, pillar.seed % 97)
+		r += block.offset
+		if ROUNDED then
+			r += 0.2 * math.noise(angle * 4, z / 4, pillar.seed % 97)
+		end
 		local edge = math.min(if ceiling < pillar.top then ceiling - z else math.huge, z - block.floor)
-		if edge < BEVEL then
+		if ROUNDED and edge < BEVEL then
 			r -= BEVEL * (1 - math.sqrt(1 - (1 - edge / BEVEL) ^ 2))
 		end
 		local lift = z - pillar.bottom
-		if lift < CORNER then
+		if ROUNDED and lift < CORNER then
 			r -= CORNER * (1 - math.sqrt(1 - (1 - lift / CORNER) ^ 2))
 		end
 		if r > best then
