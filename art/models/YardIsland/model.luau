@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-46cc8e058c5f71e3"
+local CACHE_KEY = "YardIsland-c142f5adf667e0f5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -662,8 +662,8 @@ end
 -- Yard Island: a floating yard island built from stacked rock columns, in
 -- the style of a hand-sculpted stylised island. Three tiers of chunky
 -- rock pillars ring the island, each tier tucked further in and
--- ending lower than the last. Each pillar is a stack of bevelled blocks,
--- with deep clefts between pillars and a soil lip draped over the rim. The model is one closed outer shell over the
+-- ending lower than the last. Each pillar is a polygonal prism standing on
+-- the shell's profile, a stack of blocks, with clefts between pillars and a soil lip draped over the rim. The model is one closed outer shell over the
 -- columns, with nothing inside. Top at z = 0.7.
 useTexelDensity(16)
 local RADIUS = 20
@@ -711,12 +711,22 @@ local TIERS = {
 	{ RADIUS * 0.58, 8, -14, 23 },
 	{ RADIUS * 0.34, 6, -19.5, 37 },
 }
-local CLEFT, BEVEL, CORNER = 3, 0.6, 1.5
--- Corner, block-edge and foot rounding plus surface noise, held off for
--- now to judge the plain polygonal geometry.
+local BEVEL, CORNER = 0.6, 1.5
+-- Block-edge and foot rounding plus surface noise, held off for now to
+-- judge the plain polygonal geometry.
 local ROUNDED = false
 
--- Pillar layout per tier: each pillar's start angle, reach and bottom.
+-- A point on the island's outline at `angle`, scaled to `reach`.
+local function outlinePoint(reach: number, angle: number): (number, number)
+	local r = reach * outlineScale(angle)
+	return math.cos(angle) * r, math.sin(angle) * r
+end
+
+-- Pillar layout per tier. Each pillar is a prism standing on the shell
+-- profile: an irregular polygon in its own frame, with its tangent along
+-- the outline and its normal facing out of it, set in so its outer faces
+-- lie on the shell. Neighbours overlap a little, so the clefts between
+-- them follow the shell, not the island's centre.
 local pillars = {}
 for t, tier in TIERS do
 	local reach, count, bottom, seed = tier[1], tier[2], tier[3], tier[4]
@@ -730,24 +740,47 @@ for t, tier in TIERS do
 	local angle = offset
 	for i = 1, count do
 		local span = weights[i] / total * 2 * math.pi
+		local at = angle + span / 2
+		local ownReach = reach * (0.94 + 0.12 * random(seed + i + 40))
+		local x0, y0 = outlinePoint(ownReach, at - 0.01)
+		local x1, y1 = outlinePoint(ownReach, at + 0.01)
+		local tx, ty = x1 - x0, y1 - y0
+		local length = math.sqrt(tx * tx + ty * ty)
+		tx, ty = tx / length, ty / length
+		local nx, ny = ty, -tx
+		local half = ownReach * outlineScale(at) * span / 2 * 1.15
+		local depth = half * 1.3
+		local pillarSeed = seed * 31 + i * 7
+		-- The cross-section: 5-7 corners round the centre, jittered in
+		-- angle and distance so the faces come out uneven.
+		local shape = {}
+		local corners = 5 + pillarSeed % 3
+		for k = 0, corners - 1 do
+			local phi = (k + (random(pillarSeed + k * 29) - 0.5) * 0.5) / corners * 2 * math.pi
+			local stretch = 0.85 + 0.3 * random(pillarSeed + k * 31)
+			table.insert(shape, { math.cos(phi) * half * stretch, math.sin(phi) * depth * stretch })
+		end
+		local px, py = outlinePoint(ownReach, at)
 		local foot = bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.5 * (random(seed + i + 80) - 0.5)
 		-- The bottom tier's pillars all end level, so none hangs alone
 		-- below the rest.
 		if t == #TIERS then foot = bottom end
 		list[i] = {
-			from = angle,
-			span = span,
-			reach = reach * (0.94 + 0.12 * random(seed + i + 40)),
+			x = px - nx * depth,
+			y = py - ny * depth,
+			tx = tx,
+			ty = ty,
+			nx = nx,
+			ny = ny,
+			shape = shape,
+			bound = depth * 1.3,
 			bottom = foot,
-			seed = seed * 31 + i * 7,
+			seed = pillarSeed,
 			top = if t == 1 then CAP_TOP else TIERS[t - 1][3] + 0.5,
-			-- Like the old clumps: each pillar tapers and leans in toward
-			-- its foot by its own amount, and has a chip bitten in or a lump
-			-- standing out partway across its face.
+			-- Each pillar tapers and leans in toward its foot by its own
+			-- amount.
 			taper = 0.08 + 0.12 * random(seed + i + 120),
 			lean = 0.1 + 0.25 * random(seed + i + 140),
-			defect = random(seed + i + 160) - 0.45,
-			defectAt = (random(seed + i + 180) - 0.5) * 1.2,
 		}
 		-- Each pillar is a stack of 2-3 rock blocks split by cracks, each
 		-- block sitting a little in or out from the one above.
@@ -777,83 +810,66 @@ local function blockAt(pillar, z: number)
 	return pillar.blocks[#pillar.blocks], ceiling
 end
 
--- The pillar of `tier` covering `angle`, and where across it the angle
--- falls, from -1 at one cleft to 1 at the next.
-local function pillarAt(tier: number, angle: number)
-	for _, pillar in pillars[tier] do
-		local a = (angle - pillar.from) % (2 * math.pi)
-		if a < pillar.span then
-			return pillar, a / pillar.span * 2 - 1
+-- How far out along the ray from the island's centre at `angle` the
+-- pillar's cross-section at height z reaches, or nil if the ray misses it.
+local function pillarReach(pillar, dx: number, dy: number, z: number): number?
+	local shift = math.clamp((pillar.top - z) / (pillar.top - pillar.bottom), 0, 1)
+	local scale = 1 - pillar.taper * shift
+	local block = blockAt(pillar, z)
+	local inward = pillar.bound * pillar.lean * shift - block.offset
+	local cx, cy = pillar.x - pillar.nx * inward, pillar.y - pillar.ny * inward
+	-- Skip pillars well off to the side of the ray.
+	if math.abs(cx * dy - cy * dx) > pillar.bound then return nil end
+	local far = nil
+	local shape = pillar.shape
+	for k = 1, #shape do
+		local a, b = shape[k], shape[k % #shape + 1]
+		local ax = cx + (pillar.tx * a[1] + pillar.nx * a[2]) * scale
+		local ay = cy + (pillar.ty * a[1] + pillar.ny * a[2]) * scale
+		local ex = (pillar.tx * (b[1] - a[1]) + pillar.nx * (b[2] - a[2])) * scale
+		local ey = (pillar.ty * (b[1] - a[1]) + pillar.ny * (b[2] - a[2])) * scale
+		-- Solve s * d = a + u * e for the edge from a to b.
+		local denominator = dx * ey - dy * ex
+		if math.abs(denominator) > 1e-9 then
+			local s = (ax * ey - ay * ex) / denominator
+			local u = (ax * dy - ay * dx) / denominator
+			if u >= 0 and u <= 1 and s > 0 and (far == nil or s > far) then far = s end
 		end
 	end
-	return pillars[tier][1], 0
+	return far
 end
 
 -- How far the island's wall reaches at `angle` and height z, and the
--- pillar there with its across position, for painting. Each pillar is
--- rounded across its face so clefts open between pillars, and cut flat
--- under its foot with the bottom edge rounded off by CORNER.
+-- pillar there, for painting: the furthest reach of any pillar standing
+-- at that height, cut flat under its foot.
 local function wall(angle: number, z: number)
-	local best, owner, across = 0.05, nil, 0
+	local dx, dy = math.cos(angle), math.sin(angle)
+	local best, owner = 0.05, nil
 	for t = 1, #TIERS do
-		local pillar, u = pillarAt(t, angle)
-		if z < pillar.bottom then continue end
-		-- An irregular polygon across the face: the round profile sampled
-		-- at jittered corners with flat faces between, then averaged over
-		-- CORNER studs so each corner rounds off with a small radius.
-		local size = pillar.reach * pillar.span / 2
-		local facets = 4 + pillar.seed % 3
-		local function corner(n: number): (number, number)
-			if n <= 0 or n >= facets then return n / facets * 2 - 1, CLEFT end
-			local cu = n / facets * 2 - 1 + (random(pillar.seed + n * 29) - 0.5) * 0.35
-			return cu, CLEFT * (1 - math.sqrt(math.max(1 - cu * cu, 0))) + 0.8 * (random(pillar.seed + n * 31) - 0.5)
-		end
-		local function polygon(v: number): number
-			v = math.clamp(v, -1, 1)
-			local f = math.clamp(math.floor((v + 1) / 2 * facets), 0, facets - 1)
-			local u0, d0 = corner(f)
-			local u1, d1 = corner(f + 1)
-			if v < u0 then
-				u1, d1 = u0, d0
-				u0, d0 = corner(f - 1)
-			elseif v > u1 then
-				u0, d0 = u1, d1
-				u1, d1 = corner(f + 2)
+		for _, pillar in pillars[t] do
+			if z < pillar.bottom or z > pillar.top then continue end
+			local r = pillarReach(pillar, dx, dy, z)
+			if r == nil then continue end
+			if ROUNDED then
+				-- Round each block's edges into the cracks above and below
+				-- it, and the pillar's foot, and roughen the faces.
+				local block, ceiling = blockAt(pillar, z)
+				r += 0.2 * math.noise(angle * 4, z / 4, pillar.seed % 97)
+				local edge = math.min(if ceiling < pillar.top then ceiling - z else math.huge, z - block.floor)
+				if edge < BEVEL then
+					r -= BEVEL * (1 - math.sqrt(1 - (1 - edge / BEVEL) ^ 2))
+				end
+				local lift = z - pillar.bottom
+				if lift < CORNER then
+					r -= CORNER * (1 - math.sqrt(1 - (1 - lift / CORNER) ^ 2))
+				end
 			end
-			return d0 + (d1 - d0) * math.clamp((v - u0) / (u1 - u0), 0, 1)
-		end
-		local depth = polygon(u)
-		if ROUNDED then
-			local spread = CORNER / size
-			depth = 0
-			for k = -2, 2 do
-				depth += polygon(u + spread * k / 2) / 5
+			if r > best then
+				best, owner = r, pillar
 			end
-		end
-		local r = pillar.reach * outlineScale(angle) - depth
-		local shift = math.clamp((pillar.top - z) / (pillar.top - pillar.bottom), 0, 1)
-		r -= pillar.reach * pillar.taper * shift + size * pillar.lean * shift
-		r += size * 0.35 * pillar.defect * math.max(1 - math.abs(u - pillar.defectAt) / 0.5, 0)
-		-- The block at this height, with its edges rounded into the cracks
-		-- above and below it.
-		local block, ceiling = blockAt(pillar, z)
-		r += block.offset
-		if ROUNDED then
-			r += 0.2 * math.noise(angle * 4, z / 4, pillar.seed % 97)
-		end
-		local edge = math.min(if ceiling < pillar.top then ceiling - z else math.huge, z - block.floor)
-		if ROUNDED and edge < BEVEL then
-			r -= BEVEL * (1 - math.sqrt(1 - (1 - edge / BEVEL) ^ 2))
-		end
-		local lift = z - pillar.bottom
-		if ROUNDED and lift < CORNER then
-			r -= CORNER * (1 - math.sqrt(1 - (1 - lift / CORNER) ^ 2))
-		end
-		if r > best then
-			best, owner, across = r, pillar, u
 		end
 	end
-	return best, owner, across
+	return best, owner
 end
 
 -- The soil lip: how far it drapes down the rim at `angle`, in clumps.
