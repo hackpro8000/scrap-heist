@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-31c70e42bd73d475"
+local CACHE_KEY = "YardIsland-5ee985fe53ee15a7"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -771,6 +771,7 @@ local function wall(angle: number, z: number)
 		if z < pillar.bottom then continue end
 		-- The tip is one smooth chunk, tapering hard to a point.
 		if t == #TIERS then
+			if z > pillar.top then continue end
 			local s = (z - pillar.bottom) / (pillar.top - pillar.bottom)
 			local r = pillar.reach * outlineScale(angle) * s ^ 1.5 + 0.15 * math.noise(angle * 3, z / 2, 7) * s
 			if r > best then
