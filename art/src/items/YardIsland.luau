@@ -4,11 +4,10 @@
 -- ending lower than the last. The pillars of a tier fit edge to edge like
 -- basalt columns, with a crevice down each shared edge, and each is a
 -- stack of blocks. The model is one closed outer shell over the columns,
--- with a soil lip draped over the rim and nothing inside. Top at z = 0.7.
+-- with a soil lip draped over the rim, meshed as a solid volume. Top at z = 0.7.
 useTexelDensity(16)
 local RADIUS = 20
 local GROUND = { 0.3, 0.27, 0.22 }
-local STRATA_DIP = 0.65
 local STRATA = { { 0.5, 0.4, 0.27 }, { 0.36, 0.35, 0.34 }, { 0.48, 0.3, 0.22 } }
 local TOPSOIL = { 0.24, 0.19, 0.14 }
 
@@ -28,12 +27,7 @@ local function islandPaint(x: number, y: number, z: number, seed: number?, tint:
 		return GROUND[1] * k, GROUND[2] * k, GROUND[3] * k
 	end
 	local s = seed or 0
-	-- The strata dip at an angle that varies per pillar, so the bands wrap
-	-- across the blocks instead of lining up with their edges.
-	local dipAngle = random(s + 3) * 2 * math.pi
-	local dip = STRATA_DIP * (0.6 + 0.8 * random(s + 4))
-	local tilted = z + dip * (x * math.cos(dipAngle) + y * math.sin(dipAngle))
-	local band = math.noise(x / 9 + s, y / 9, z / 2) * 0.6 + tilted * (0.8 + 0.2 * random(s + 1)) + random(s + 2) * 3
+	local band = math.noise(x / 9 + s, y / 9, z / 2) * 0.6 + z * (0.8 + 0.2 * random(s + 1)) + random(s + 2) * 3
 	local wave = math.sin(band * 2.4)
 	local layer = STRATA[math.floor(band * 2.4 / (2 * math.pi)) % 3 + 1]
 	local k = (tint or 1) * (1 + 0.1 * wave + 0.06 * math.noise(x * 2 + s, y * 2, z * 2))
@@ -203,11 +197,14 @@ local function drape(angle: number): number
 	return 0.35 + 1.1 * math.clamp(n + 0.4, 0, 1)
 end
 
--- One closed outer shell: rows of wall points stepping down from the top to
--- the last column's foot, a flat top in concentric rings and a small cap at the bottom.
-local ANGLES, STEP, FLOOR, LIP, TOP_RINGS = 480, 0.15, -25, 0.35, 8
+-- The island is a solid volume, meshed by surface nets. The column layout
+-- above gives the wall's reach per angle and height, sampled once into a
+-- table; the volume is everything inside that reach and under the top,
+-- bent by a slow 3D warp so ledges tilt and curl under each other.
+local ANGLES, STEP, FLOOR, LIP = 480, 0.15, -25, 0.35
 local RIM_JAGGED, RIM_POKE = 0.166, 0.06
 local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
+local CELL, WARP = 0.3, 0.7
 -- The shell and its shading are cached under a key hashing every line above
 -- "-- cached above", so changes below it skip the rebuild.
 local function shade(entries, occluders, gradient: number?)
@@ -222,10 +219,11 @@ local function shade(entries, occluders, gradient: number?)
 		})
 	end
 end
-local shell = model.cached(CACHE_KEY, function()
-part("Island", nil, GROUND, function(mesh)
-	-- Smooth across the sampled rock, but keep the rim and deep folds creased.
-	mesh:setSmooth(60)
+
+-- The wall's reach per row (stepping down from the top) and angle, with the
+-- calm rim easing into the jagged pillar faces and the soil lip standing
+-- proud of the rock. Rows below every pillar's foot are empty.
+local function reachTable()
 	local rim = {}
 	for j = 0, ANGLES - 1 do
 		-- The rim's jaggedness, its departure from the smooth outline,
@@ -237,64 +235,145 @@ part("Island", nil, GROUND, function(mesh)
 	end
 	local rows = {}
 	local z = CAP_TOP
-	while z > FLOOR + STEP / 2 do
-		-- Stop once every pillar has ended, so no needle trails below.
-		local any = false
-		for j = 0, ANGLES - 1, 16 do
-			if wall(2 * math.pi * j / ANGLES, z) > 0.3 then
-				any = true
-				break
-			end
-		end
-		if not any then break end
-		local row = {}
+	while z > FLOOR do
+		local row, any = {}, false
 		for j = 0, ANGLES - 1 do
 			local angle = 2 * math.pi * j / ANGLES
-			-- The calm rim eases into the jagged pillar faces over the top half
-			-- of the first tier.
+			local reach = wall(angle, z)
+			if reach > 0.3 then any = true end
 			local t = math.clamp((CAP_TOP - z) / RIM_BLEND, 0, 1)
 			t = t * t * (3 - 2 * t)
-			local r = rim[j] + (wall(angle, z) - rim[j]) * t
-			-- The grass lip stands proud of the rock, easing back in over
-			-- its last fifth so it overhangs the stone below.
+			local r = if reach > 0.3 then rim[j] + (reach - rim[j]) * t else -1
 			local depth = (CAP_TOP - z) / drape(angle)
 			if depth < 1 then
 				r = math.max(r, rim[j]) + LIP * math.clamp((1 - depth) / 0.2, 0, 1)
 			end
-			row[j] = mesh:vertex(math.cos(angle) * r, math.sin(angle) * r, z)
+			row[j] = r
 		end
+		if not any then break end
 		table.insert(rows, row)
 		z -= STEP
 	end
-	for i = 1, #rows - 1 do
+	return rows
+end
+
+-- Signed distance-ish field: negative inside the island.
+local function islandField(rows)
+	return function(x: number, y: number, z: number): number
+		local flat = math.sqrt(x * x + y * y)
+		-- The warp shifts which height and angle a point reads, so block
+		-- ledges wander and undercut instead of running dead level.
+		local wz = z + WARP * math.noise(x / 7, y / 7, z / 9 + 5)
+		local wa = math.atan2(y, x) + 0.02 * math.noise(x / 5, y / 5, z / 5 + 17)
+		local u = (CAP_TOP - wz) / STEP + 1
+		local v = (wa % (2 * math.pi)) / (2 * math.pi) * ANGLES
+		local i = math.clamp(math.floor(u), 1, #rows)
+		local i2 = math.min(i + 1, #rows)
+		local fu = math.clamp(u - i, 0, 1)
+		local j = math.floor(v) % ANGLES
+		local fv = v - math.floor(v)
+		local l = (j + 1) % ANGLES
+		local r0 = rows[i][j] + (rows[i][l] - rows[i][j]) * fv
+		local r1 = rows[i2][j] + (rows[i2][l] - rows[i2][j]) * fv
+		local reach = if u < 1 or u > #rows + 1 then -1 else r0 + (r1 - r0) * fu
+		return math.max(flat - reach, z - CAP_TOP)
+	end
+end
+
+local shell = model.cached(CACHE_KEY, function()
+part("Island", nil, GROUND, function(mesh)
+	-- Smooth across the rock, but keep the rim and deep folds creased.
+	mesh:setSmooth(60)
+	local rows = reachTable()
+	local field = islandField(rows)
+	local extent = 0
+	for _, row in rows do
 		for j = 0, ANGLES - 1 do
-			local l = (j + 1) % ANGLES
-			mesh:face({ rows[i + 1][j], rows[i + 1][l], rows[i][l], rows[i][j] })
+			extent = math.max(extent, row[j])
 		end
 	end
-	-- The top in concentric rings out to the rim, so no long thin fan
-	-- triangles streak its shading.
-	local inner = rows[1]
-	for ring = TOP_RINGS - 1, 1, -1 do
-		local k = ring / TOP_RINGS
-		local row = {}
-		for j = 0, ANGLES - 1 do
-			local angle = 2 * math.pi * j / ANGLES
-			row[j] = mesh:vertex(math.cos(angle) * (rim[j] + LIP) * k, math.sin(angle) * (rim[j] + LIP) * k, CAP_TOP)
+	extent += WARP + 2 * CELL
+	local bottom = CAP_TOP - (#rows + 1) * STEP - WARP - 2 * CELL
+	local nx = math.ceil(2 * extent / CELL) + 1
+	local nz = math.ceil((CAP_TOP + 2 * CELL - bottom) / CELL) + 1
+	local function at(i, j, k) return -extent + i * CELL, -extent + j * CELL, bottom + k * CELL end
+	local function index(i, j, k) return (k * nx + j) * nx + i end
+	-- Sample the field on the grid.
+	local values = {}
+	for k = 0, nz - 1 do
+		for j = 0, nx - 1 do
+			for i = 0, nx - 1 do
+				values[index(i, j, k)] = field(at(i, j, k))
+			end
 		end
-		for j = 0, ANGLES - 1 do
-			local l = (j + 1) % ANGLES
-			mesh:face({ row[j], inner[j], inner[l], row[l] })
+	end
+	-- One vertex per cell the surface crosses: the average of its edge
+	-- crossings, then pulled onto the surface along the field's gradient so
+	-- no grid staircase shows.
+	local CORNERS = { { 0, 0, 0 }, { 1, 0, 0 }, { 0, 1, 0 }, { 1, 1, 0 }, { 0, 0, 1 }, { 1, 0, 1 }, { 0, 1, 1 }, { 1, 1, 1 } }
+	local EDGES = { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 }, { 1, 3 }, { 2, 4 }, { 5, 7 }, { 6, 8 }, { 1, 5 }, { 2, 6 }, { 3, 7 }, { 4, 8 } }
+	local cells = {}
+	for k = 0, nz - 2 do
+		for j = 0, nx - 2 do
+			for i = 0, nx - 2 do
+				local d = {}
+				local inside, outside = false, false
+				for c, o in CORNERS do
+					d[c] = values[index(i + o[1], j + o[2], k + o[3])]
+					if d[c] < 0 then inside = true else outside = true end
+				end
+				if not (inside and outside) then continue end
+				local sx, sy, sz, n = 0, 0, 0, 0
+				for _, e in EDGES do
+					local da, db = d[e[1]], d[e[2]]
+					if (da < 0) == (db < 0) then continue end
+					local f = da / (da - db)
+					local oa, ob = CORNERS[e[1]], CORNERS[e[2]]
+					sx += oa[1] + (ob[1] - oa[1]) * f
+					sy += oa[2] + (ob[2] - oa[2]) * f
+					sz += oa[3] + (ob[3] - oa[3]) * f
+					n += 1
+				end
+				local x, y, z = at(i + sx / n, j + sy / n, k + sz / n)
+				for _ = 1, 2 do
+					local h = CELL * 0.25
+					local f = field(x, y, z)
+					local gx = (field(x + h, y, z) - field(x - h, y, z)) / (2 * h)
+					local gy = (field(x, y + h, z) - field(x, y - h, z)) / (2 * h)
+					local gz = (field(x, y, z + h) - field(x, y, z - h)) / (2 * h)
+					local g2 = gx * gx + gy * gy + gz * gz
+					if g2 < 1e-6 then break end
+					-- Never leave the cell, so faces can't fold over.
+					local cx, cy, cz = at(i, j, k)
+					x = math.clamp(x - f * gx / g2, cx, cx + CELL)
+					y = math.clamp(y - f * gy / g2, cy, cy + CELL)
+					z = math.clamp(z - f * gz / g2, cz, cz + CELL)
+				end
+				cells[index(i, j, k)] = mesh:vertex(x, y, z)
+			end
 		end
-		inner = row
 	end
-	local middle = mesh:vertex(0, 0, CAP_TOP)
-	for j = 0, ANGLES - 1 do
-		mesh:face({ middle, inner[j], inner[(j + 1) % ANGLES] })
+	-- One quad per grid edge the surface crosses, joining the four cells
+	-- around it, facing from inside to outside.
+	local function quad(a, b, c, d, flip)
+		if not (a and b and c and d) then return end
+		mesh:face(if flip then { d, c, b, a } else { a, b, c, d })
 	end
-	local bottom = mesh:vertex(0, 0, z + STEP)
-	for j = 0, ANGLES - 1 do
-		mesh:face({ bottom, rows[#rows][(j + 1) % ANGLES], rows[#rows][j] })
+	for k = 1, nz - 2 do
+		for j = 1, nx - 2 do
+			for i = 1, nx - 2 do
+				local here = values[index(i, j, k)] < 0
+				if here ~= (values[index(i + 1, j, k)] < 0) then
+					quad(cells[index(i, j - 1, k - 1)], cells[index(i, j, k - 1)], cells[index(i, j, k)], cells[index(i, j - 1, k)], not here)
+				end
+				if here ~= (values[index(i, j + 1, k)] < 0) then
+					quad(cells[index(i - 1, j, k - 1)], cells[index(i - 1, j, k)], cells[index(i, j, k)], cells[index(i, j, k - 1)], not here)
+				end
+				if here ~= (values[index(i, j, k + 1)] < 0) then
+					quad(cells[index(i - 1, j - 1, k)], cells[index(i, j - 1, k)], cells[index(i, j, k)], cells[index(i - 1, j, k)], not here)
+				end
+			end
+		end
 	end
 end, false, function(x, y, z)
 	local _, pillar = wall(math.atan2(y, x), z)
