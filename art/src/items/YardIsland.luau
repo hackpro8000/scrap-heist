@@ -61,6 +61,17 @@ local CRACK_DEPTH, CRACK_HEIGHT = 0.5, 0.35
 local CHIP = 0.45
 local TOP_LIP, TOP_LIP_HEIGHT = 1.8, 3.5
 local pillars = {}
+-- A lower pillar rises to just above the highest foot of the pillars it sits
+-- under, so no gap opens between tiers where an upper pillar ends short.
+local function tuckedTop(above, from: number, to: number): number
+	local top = -math.huge
+	for _, upper in above do
+		local start = from + (upper.from - from) % (2 * math.pi)
+		local overlaps = start < to or start + (upper.to - upper.from) > from + 2 * math.pi
+		if overlaps then top = math.max(top, upper.bottom) end
+	end
+	return top + 0.5
+end
 for t, tier in TIERS do
 	local reach, count, bottom, seed = tier[1], tier[2], tier[3], tier[4]
 	local list = {}
@@ -96,7 +107,7 @@ for t, tier in TIERS do
 			to = toAngle,
 			corners = corners,
 			bottom = foot,
-			top = if t == 1 then CAP_TOP else TIERS[t - 1][3] + 0.5,
+			top = if t == 1 then CAP_TOP else tuckedTop(pillars[t - 1], from.angle, toAngle),
 			seed = seed * 31 + i * 7,
 			blocks = {},
 		}
@@ -395,6 +406,30 @@ chunkedPart("Island", nil, GROUND, function(mesh)
 	}
 	local cells = {}
 	local surface = {}
+	-- The fine cell at (i, j, k), built on first use; false if the surface
+	-- misses it. Quads also build missing neighbours here, so a stretch the
+	-- coarse band test skipped is still closed.
+	local function cellAt(i, j, k)
+		local key = index(i, j, k)
+		local node = cells[key]
+		if node ~= nil then return node end
+		local q
+		for _, e in EDGES do
+			local c = crossing(i + e[1], j + e[2], k + e[3], e[4])
+			if not c then continue end
+			q = q or newQef()
+			addPlane(q, c)
+		end
+		node = false
+		if q then
+			local lo, hi = box(i, j, k, 1)
+			local x, y, z = solve(q, lo, hi)
+			node = { qef = q, x = x, y = y, z = z, ok = true }
+			table.insert(surface, { i, j, k, node })
+		end
+		cells[key] = node
+		return node
+	end
 	local band = 1.5 * CELL
 	for ck = 0, nz - 1 - ratio, ratio do
 		for cj = 0, nx - 1 - ratio, ratio do
@@ -410,19 +445,7 @@ chunkedPart("Island", nil, GROUND, function(mesh)
 				for k = ck, ck + ratio - 1 do
 					for j = cj, cj + ratio - 1 do
 						for i = ci, ci + ratio - 1 do
-							local q
-							for _, e in EDGES do
-								local c = crossing(i + e[1], j + e[2], k + e[3], e[4])
-								if not c then continue end
-								q = q or newQef()
-								addPlane(q, c)
-							end
-							if not q then continue end
-							local lo, hi = box(i, j, k, 1)
-							local x, y, z = solve(q, lo, hi)
-							local node = { qef = q, x = x, y = y, z = z, ok = true }
-							cells[index(i, j, k)] = node
-							table.insert(surface, { i, j, k, node })
+							cellAt(i, j, k)
 						end
 					end
 				end
@@ -472,38 +495,57 @@ chunkedPart("Island", nil, GROUND, function(mesh)
 	end
 
 	-- One quad per fine edge the surface crosses, joining the cells around
-	-- it; where merged cells meet, the quad shrinks to a triangle.
-	local function quad(a, b, c, d, flip)
+	-- it; where merged cells meet, the quad shrinks to a triangle. Merged
+	-- vertices can fold a quad over, so each face is turned to face out
+	-- along the field rather than trusting the edge's winding.
+	local function quad(a, b, c, d)
 		a, b, c, d = vertexOf(a), vertexOf(b), vertexOf(c), vertexOf(d)
 		if not (a and b and c and d) then return end
-		local ring = if flip then { d, c, b, a } else { a, b, c, d }
+		local ring = { a, b, c, d }
 		local kept = {}
 		for n = 1, 4 do
-			if ring[n] ~= ring[n % 4 + 1] then table.insert(kept, ring[n].vertex) end
+			if ring[n] ~= ring[n % 4 + 1] then table.insert(kept, ring[n]) end
 		end
-		if #kept == 4 then
-			mesh:face(kept)
-		elseif #kept == 3 and kept[1] ~= kept[3] then
-			mesh:face(kept)
+		if #kept < 3 or (#kept == 3 and kept[1] == kept[3]) then return end
+		local nx, ny, nz, cx, cy, cz = 0, 0, 0, 0, 0, 0
+		for n, p in kept do
+			local q = kept[n % #kept + 1]
+			nx += (p.y - q.y) * (p.z + q.z)
+			ny += (p.z - q.z) * (p.x + q.x)
+			nz += (p.x - q.x) * (p.y + q.y)
+			cx, cy, cz = cx + p.x, cy + p.y, cz + p.z
 		end
+		local gx, gy, gz = gradient(cx / #kept, cy / #kept, cz / #kept)
+		local outward = nx * gx + ny * gy + nz * gz >= 0
+		local verts = {}
+		for n = 1, #kept do
+			verts[n] = kept[if outward then n else #kept + 1 - n].vertex
+		end
+		mesh:face(verts)
 	end
-	for _, entry in surface do
-		local i, j, k = entry[1], entry[2], entry[3]
+	-- Cells built on demand join `surface` and get their own quads in turn.
+	local n = 1
+	while n <= #surface do
+		local i, j, k = surface[n][1], surface[n][2], surface[n][3]
+		n += 1
 		if i < 1 or j < 1 or k < 1 then continue end
-		local here = sample(i, j, k) < 0
 		if crossing(i, j, k, 1) then
-			quad(cells[index(i, j - 1, k - 1)], cells[index(i, j, k - 1)], cells[index(i, j, k)], cells[index(i, j - 1, k)], not here)
+			quad(cellAt(i, j - 1, k - 1), cellAt(i, j, k - 1), cellAt(i, j, k), cellAt(i, j - 1, k))
 		end
 		if crossing(i, j, k, 2) then
-			quad(cells[index(i - 1, j, k - 1)], cells[index(i - 1, j, k)], cells[index(i, j, k)], cells[index(i, j, k - 1)], not here)
+			quad(cellAt(i - 1, j, k - 1), cellAt(i - 1, j, k), cellAt(i, j, k), cellAt(i, j, k - 1))
 		end
 		if crossing(i, j, k, 3) then
-			quad(cells[index(i - 1, j - 1, k)], cells[index(i, j - 1, k)], cells[index(i, j, k)], cells[index(i - 1, j, k)], not here)
+			quad(cellAt(i - 1, j - 1, k), cellAt(i, j - 1, k), cellAt(i, j, k), cellAt(i - 1, j, k))
 		end
 	end
 end, false, function(x, y, z)
-	local _, pillar = wall(math.atan2(y, x), z)
-	return islandPaint(x, y, z - CAP_TOP, if pillar then pillar.seed else nil, if pillar then (blockAt(pillar, z)).tint else nil)
+	-- Paint in the same warped space the mesh was carved from, so blocks,
+	-- tints and strata follow the meshed ledges.
+	local wz = z + WARP * math.noise(x / 7, y / 7, z / 9 + 5)
+	local wa = math.atan2(y, x) + 0.02 * math.noise(x / 5, y / 5, z / 5 + 17)
+	local _, pillar = wall(wa, wz)
+	return islandPaint(x, y, math.min(wz, z) - CAP_TOP, if pillar then pillar.seed else nil, if pillar then (blockAt(pillar, wz)).tint else nil)
 end)
 
 -- Aggressive shading: half-strength edge highlights, ramping 30% stronger
