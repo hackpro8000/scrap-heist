@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-0cb16f0c2270f47b"
+local CACHE_KEY = "YardIsland-31c70e42bd73d475"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -710,7 +710,7 @@ local TIERS = {
 	{ RADIUS * 0.84, 15, -8, 11 },
 	{ RADIUS * 0.58, 11, -14, 23 },
 	{ RADIUS * 0.34, 7, -19.5, 37 },
-	{ RADIUS * 0.15, 4, -24, 51 },
+	{ RADIUS * 0.24, 1, -25, 51 },
 }
 local CLEFT, ROUNDING = 2, 1.2
 
@@ -732,7 +732,7 @@ for t, tier in TIERS do
 			from = angle,
 			span = span,
 			reach = reach * (0.94 + 0.12 * random(seed + i + 40)),
-			bottom = bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.25 * (random(seed + i + 80) - 0.5),
+			bottom = if count == 1 then bottom else bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.25 * (random(seed + i + 80) - 0.5),
 			seed = seed * 31 + i * 7,
 			top = if t == 1 then CAP_TOP else TIERS[t - 1][3] + 0.5,
 			-- Like the old clumps: each pillar tapers and leans in toward
@@ -769,6 +769,15 @@ local function wall(angle: number, z: number)
 	for t = 1, #TIERS do
 		local pillar, u = pillarAt(t, angle)
 		if z < pillar.bottom then continue end
+		-- The tip is one smooth chunk, tapering hard to a point.
+		if t == #TIERS then
+			local s = (z - pillar.bottom) / (pillar.top - pillar.bottom)
+			local r = pillar.reach * outlineScale(angle) * s ^ 1.5 + 0.15 * math.noise(angle * 3, z / 2, 7) * s
+			if r > best then
+				best, owner, across = r, pillar, u
+			end
+			continue
+		end
 		-- Faceted across the face: the round profile sampled at a few
 		-- jittered corners with flat faces between, like the old clumps.
 		local facets = 3 + pillar.seed % 2
