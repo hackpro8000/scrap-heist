@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-94ceb7b5c0a7ea69"
+local CACHE_KEY = "YardIsland-2d72f02ea1f5ce50"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -660,15 +660,15 @@ local function finishParts()
 	end
 end
 -- Yard Island: a floating yard island built from stacked rock columns, in
--- the style of a hand-sculpted stylised island. Three tiers of rounded
--- rock pillars ring the island, each tier tucked further in and ending
--- lower than the last, the bottom tier's columns ending in rounded feet, with deep clefts between pillars and a soil lip
--- draped over the rim. The model is one closed outer shell over the
+-- the style of a hand-sculpted stylised island. Three tiers of chunky
+-- sandstone pillars ring the island, each tier tucked further in and
+-- ending lower than the last. Each pillar is a stack of bevelled blocks,
+-- with deep clefts between pillars and a soil lip draped over the rim. The model is one closed outer shell over the
 -- columns, with nothing inside. Top at z = 0.7.
 useTexelDensity(16)
 local RADIUS = 20
 local GROUND = { 0.3, 0.27, 0.22 }
-local STRATA = { { 0.5, 0.4, 0.27 }, { 0.36, 0.35, 0.34 }, { 0.48, 0.3, 0.22 } }
+local SANDSTONE = { 0.66, 0.48, 0.3 }
 local TOPSOIL = { 0.24, 0.19, 0.14 }
 
 local function random(k: number): number
@@ -676,29 +676,18 @@ local function random(k: number): number
 	return s - math.floor(s)
 end
 
--- The map's island texture: speckled ground on top, then topsoil fading
--- into wavy rock strata that darken with depth. A clump's `seed` shifts its
--- strata, tint and grain so neighbouring clumps don't match.
-local function islandPaint(x: number, y: number, z: number, seed: number?)
+-- The island's texture: speckled ground on top, then topsoil fading into
+-- warm sandstone, tinted per rock block (`tint`) and darkening with depth.
+local function islandPaint(x: number, y: number, z: number, tint: number?)
 	local below = -z
 	if below < 0.3 then
 		local k = 1 + 0.12 * math.noise(x / 4, y / 4, 31) + 0.05 * math.noise(x * 3, y * 3, 37)
 		return GROUND[1] * k, GROUND[2] * k, GROUND[3] * k
 	end
-	local s = seed or 0
-	-- Each pillar's layers dip a little its own way, and bend.
-	local dip = (random(s + 4) - 0.5) * 0.3
-	local heading = random(s + 5) * 2 * math.pi
-	local tilted = z + (x * math.cos(heading) + y * math.sin(heading)) * dip
-	local band = math.noise(x / 6 + s, y / 6, z / 3) * 1.1 + tilted * (0.8 + 0.2 * random(s + 1)) + random(s + 2) * 3
-	local tint = if seed then 0.85 + 0.3 * random(s + 3) else 1
-	local wave = math.sin(band * 2.4)
-	local layer = STRATA[math.floor(band * 2.4 / (2 * math.pi)) % 3 + 1]
-	local k = tint * (1 + 0.1 * wave + 0.06 * math.noise(x * 2 + s, y * 2, z * 2))
-	if wave > 0.93 then k -= 0.25 end
-	k *= 1 - 0.6 * math.clamp((below - 3) / 20, 0, 1)
-	local soil = 1 - math.clamp((below - 0.5) / 4 + 0.3 * math.noise(x / 2, y / 2, 41), 0, 1)
-	local r, g, b = layer[1] * k, layer[2] * k, layer[3] * k
+	local k = (tint or 1) * (1 + 0.07 * math.noise(x / 2, y / 2, z / 2) + 0.04 * math.noise(x * 3, y * 3, z * 3))
+	k *= 1 - 0.45 * math.clamp((below - 3) / 20, 0, 1)
+	local soil = 1 - math.clamp((below - 0.5) / 2 + 0.3 * math.noise(x / 2, y / 2, 41), 0, 1)
+	local r, g, b = SANDSTONE[1] * k, SANDSTONE[2] * k, SANDSTONE[3] * k
 	return r + (TOPSOIL[1] - r) * soil, g + (TOPSOIL[2] - g) * soil, b + (TOPSOIL[3] - b) * soil
 end
 
@@ -711,11 +700,11 @@ end
 -- Lower tiers sit further in, so each shows below the one above it.
 local CAP_TOP = 0.7
 local TIERS = {
-	{ RADIUS * 0.84, 15, -8, 11 },
-	{ RADIUS * 0.58, 11, -14, 23 },
-	{ RADIUS * 0.34, 7, -19.5, 37 },
+	{ RADIUS * 0.84, 10, -8, 11 },
+	{ RADIUS * 0.58, 8, -14, 23 },
+	{ RADIUS * 0.34, 6, -19.5, 37 },
 }
-local CLEFT, ROUNDING = 2, 1.2
+local CLEFT, ROUNDING, BEVEL = 3, 2, 0.6
 
 -- Pillar layout per tier: each pillar's start angle, reach and bottom.
 local pillars = {}
@@ -735,7 +724,7 @@ for t, tier in TIERS do
 			from = angle,
 			span = span,
 			reach = reach * (0.94 + 0.12 * random(seed + i + 40)),
-			bottom = bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.25 * (random(seed + i + 80) - 0.5),
+			bottom = bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.5 * (random(seed + i + 80) - 0.5),
 			seed = seed * 31 + i * 7,
 			top = if t == 1 then CAP_TOP else TIERS[t - 1][3] + 0.5,
 			-- Like the old clumps: each pillar tapers and leans in toward
@@ -746,28 +735,32 @@ for t, tier in TIERS do
 			defect = random(seed + i + 160) - 0.45,
 			defectAt = (random(seed + i + 180) - 0.5) * 1.2,
 		}
-		-- Ledges: at a few random heights the face steps sharply in and
-		-- stays in below. Chips: corners broken off the face.
+		-- Each pillar is a stack of 2-3 rock blocks split by cracks, each
+		-- block sitting a little in or out from the one above.
 		local pillar = list[i]
-		pillar.ledges, pillar.chips = {}, {}
-		for n = 1, 2 + math.floor(random(seed + i + 200) * 3) do
-			local k = random(seed + i + n * 13 + 210)
-			table.insert(pillar.ledges, {
-				at = pillar.top - (pillar.top - pillar.bottom) * (0.15 + 0.75 * k),
-				depth = 0.5 + 0.5 * random(seed + i + n * 13 + 220),
-			})
-		end
-		for n = 1, 2 do
-			table.insert(pillar.chips, {
-				u = if random(seed + i + n * 17 + 230) > 0.5 then 0.75 else -0.75,
-				z = pillar.top - (pillar.top - pillar.bottom) * (0.1 + 0.8 * random(seed + i + n * 17 + 240)),
-				height = 0.8 + 1.2 * random(seed + i + n * 17 + 250),
-				depth = 0.6 + 0.6 * random(seed + i + n * 17 + 260),
+		pillar.blocks = {}
+		local joints = 1 + math.floor(random(seed + i + 200) * 2)
+		local height = pillar.top - pillar.bottom
+		for n = 1, joints + 1 do
+			table.insert(pillar.blocks, {
+				floor = if n > joints then -math.huge else pillar.top - height * (n + (random(seed + i + n * 13 + 210) - 0.5) * 0.5) / (joints + 1),
+				offset = if n == 1 then 0 else (random(seed + i + n * 13 + 220) - 0.4) * 1.2,
+				tint = 0.88 + 0.24 * random(seed + i + n * 13 + 230),
 			})
 		end
 		angle += span
 	end
 	pillars[t] = list
+end
+
+-- The block of `pillar` at height z, and the height of its top.
+local function blockAt(pillar, z: number)
+	local ceiling = pillar.top
+	for _, block in pillar.blocks do
+		if z >= block.floor then return block, ceiling end
+		ceiling = block.floor
+	end
+	return pillar.blocks[#pillar.blocks], ceiling
 end
 
 -- The pillar of `tier` covering `angle`, and where across it the angle
@@ -806,23 +799,14 @@ local function wall(angle: number, z: number)
 		local shift = math.clamp((pillar.top - z) / (pillar.top - pillar.bottom), 0, 1)
 		r -= pillar.reach * pillar.taper * shift + size * pillar.lean * shift
 		r += size * 0.35 * pillar.defect * math.max(1 - math.abs(u - pillar.defectAt) / 0.5, 0)
-		for _, ledge in pillar.ledges do
-			r -= ledge.depth * math.clamp((ledge.at - z) / 0.15, 0, 1)
+		-- The block at this height, with its edges rounded into the cracks
+		-- above and below it.
+		local block, ceiling = blockAt(pillar, z)
+		r += block.offset + 0.2 * math.noise(angle * 4, z / 4, pillar.seed % 97)
+		local edge = math.min(if ceiling < pillar.top then ceiling - z else math.huge, z - block.floor)
+		if edge < BEVEL then
+			r -= BEVEL * (1 - math.sqrt(1 - (1 - edge / BEVEL) ^ 2))
 		end
-		for _, chip in pillar.chips do
-			if math.abs(z - chip.z) < chip.height / 2 and u * chip.u > 0 and math.abs(u) > 1 - (1 - math.abs(chip.u)) * 2 then
-				r -= chip.depth
-			end
-		end
-		-- Every ring of the face nudged a little, stepping down the pillar.
-		local at = (pillar.top - z) / 1.5
-		local ring = math.floor(at)
-		local blend = math.clamp((at - ring - 0.7) / 0.3, 0, 1)
-		local function ringNudge(n: number): number
-			return random(pillar.seed + n * 101)
-		end
-		local nudge = ringNudge(ring) + (ringNudge(ring + 1) - ringNudge(ring)) * blend
-		r += 0.25 * math.noise(angle * 6, z / 3, pillar.seed % 97) + 0.7 * (nudge - 0.5)
 		local lift = z - pillar.bottom
 		if lift < ROUNDING then
 			local inner = if t < #TIERS then pillarAt(t + 1, angle).reach * outlineScale(angle) * 0.9 else 0
@@ -933,10 +917,8 @@ part("Island", nil, GROUND, function(mesh)
 		mesh:face({ bottom, rows[#rows][(j + 1) % ANGLES], rows[#rows][j] })
 	end
 end, false, function(x, y, z)
-	-- The original island colouring: speckled ground on top, then topsoil
-	-- fading into wavy strata, shifted per pillar so neighbours don't match.
 	local _, pillar = wall(math.atan2(y, x), z)
-	return islandPaint(x, y, z - CAP_TOP, if pillar then pillar.seed else nil)
+	return islandPaint(x, y, z - CAP_TOP, if pillar then (blockAt(pillar, z)).tint else nil)
 end)
 
 -- Aggressive shading: half-strength edge highlights, ramping 30% stronger
