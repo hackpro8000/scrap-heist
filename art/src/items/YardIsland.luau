@@ -86,9 +86,9 @@ for t, tier in TIERS do
 		end
 		table.insert(corners, { toAngle, to.reach })
 		local foot = bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.5 * (random(seed + i + 80) - 0.5)
-		-- The bottom tier's pillars all end level, so none hangs alone
-		-- below the rest.
-		if t == #TIERS then foot = bottom end
+		-- The bottom tier's pillars end at stepped heights, so the tip
+		-- comes out ragged.
+		if t == #TIERS then foot = bottom + 3.5 * (random(seed + i + 85) - 0.6) end
 		local pillar = {
 			from = from.angle,
 			to = toAngle,
