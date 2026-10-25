@@ -93,8 +93,6 @@ for t, tier in TIERS do
 		local pillar = {
 			from = from.angle,
 			to = toAngle,
-			fromSeed = seed + i,
-			toSeed = seed + i % count + 1,
 			corners = corners,
 			bottom = foot,
 			top = if t == 1 then CAP_TOP else TIERS[t - 1][3] + 0.5,
@@ -130,7 +128,7 @@ end
 -- How far out `pillar` reaches at `angle` (already inside its slice) and
 -- height z: its faceted face, tapering in toward the tier's foot, with a
 -- crevice at each shared edge and a crack under each block.
-local function pillarReach(pillar, t: number, angle: number, z: number, from: number, to: number): number
+local function pillarReach(pillar, t: number, angle: number, z: number): number
 	local corners = pillar.corners
 	local r = corners[#corners][2]
 	for k = 1, #corners - 1 do
@@ -144,7 +142,7 @@ local function pillarReach(pillar, t: number, angle: number, z: number, from: nu
 	-- Taper by the tier, not the pillar, so shared corners stay shared.
 	local tierTop = if t == 1 then CAP_TOP else TIERS[t - 1][3] + 0.5
 	r *= 1 - 0.15 * math.clamp((tierTop - z) / (tierTop - TIERS[t][3]), 0, 1)
-	local gap = math.min(angle - from, to - angle) * r
+	local gap = math.min(angle - pillar.from, pillar.to - angle) * r
 	r -= CREVICE_DEPTH * math.max(0, 1 - gap / CREVICE_WIDTH)
 	local block, ceiling = blockAt(pillar, z)
 	r += block.jut * math.min(1, gap / CREVICE_WIDTH)
@@ -155,7 +153,7 @@ local function pillarReach(pillar, t: number, angle: number, z: number, from: nu
 	-- at 45 degrees by a depth that wanders along the edge, so they read
 	-- as knocked-off chips rather than a clean chamfer. Only the noise peaks
 	-- chip deep, so chips are long but sparse along a mostly crisp edge.
-	local along = (angle - from) * r
+	local along = (angle - pillar.from) * r
 	local peak = math.clamp((math.noise(along / 2.5, z / 2.5, pillar.seed % 97) - 0.1) * 3, 0, 1)
 	local chip = CHIP * (0.2 + 2 * peak)
 	-- Vertical edges: the shared sides and every facet fold on the face.
@@ -173,24 +171,13 @@ end
 -- How far the island's wall reaches at `angle` and height z, and the
 -- pillar there, for painting: the outermost tier with a pillar standing
 -- at that height.
--- How far the shared edge `edgeSeed` wanders sideways at height z, as an
--- angle: both neighbours use the same wander, so the crevice zigzags
--- down the rock while the columns still butt together.
-local function edgeWander(edgeSeed: number, z: number, reach: number): number
-	local n = math.noise(z / 2.2, edgeSeed * 0.37, 5.3) + 0.4 * math.noise(z / 0.7, edgeSeed * 0.37, 11.9)
-	return 1.4 * n / reach
-end
-
 local function wall(angle: number, z: number)
 	for t = 1, #TIERS do
-		local reach = TIERS[t][1]
 		for _, pillar in pillars[t] do
-			local from = pillar.from + edgeWander(pillar.fromSeed, z, reach)
-			local to = pillar.to + edgeWander(pillar.toSeed, z, reach)
-			local a = from + (angle - from) % (2 * math.pi)
-			if a > to then continue end
+			local a = pillar.from + (angle - pillar.from) % (2 * math.pi)
+			if a > pillar.to then continue end
 			if z >= pillar.bottom and z <= pillar.top then
-				return pillarReach(pillar, t, a, z, from, to), pillar
+				return pillarReach(pillar, t, a, z), pillar
 			end
 			break
 		end
