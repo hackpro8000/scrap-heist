@@ -281,9 +281,7 @@ local function islandField(rows)
 end
 
 local shell = model.cached(CACHE_KEY, function()
-part("Island", nil, GROUND, function(mesh)
-	-- Smooth across the rock, but keep the rim and deep folds creased.
-	mesh:setSmooth(60)
+chunkedPart("Island", nil, GROUND, function(mesh)
 	local rows = reachTable()
 	local field = islandField(rows)
 	local extent = 0
@@ -294,10 +292,7 @@ part("Island", nil, GROUND, function(mesh)
 	end
 	extent += WARP + 2 * CELL
 	local bottom = CAP_TOP - (#rows + 1) * STEP - WARP - 2 * CELL
-	local nx = math.ceil(2 * extent / CELL) + 1
-	local nz = math.ceil((CAP_TOP + 2 * CELL - bottom) / CELL) + 1
-	local function at(i, j, k) return -extent + i * CELL, -extent + j * CELL, bottom + k * CELL end
-	local function index(i, j, 	-- Sample on a coarse grid, then only refine near the surface: the fine
+	-- Sample on a coarse grid, then only refine near the surface: the fine
 	-- grid is read lazily through `sample`.
 	local ratio = math.round(CELL / FINE)
 	local nx = (math.ceil(2 * extent / CELL) + 1) * ratio
@@ -506,11 +501,6 @@ part("Island", nil, GROUND, function(mesh)
 			quad(cells[index(i - 1, j - 1, k)], cells[index(i, j - 1, k)], cells[index(i, j, k)], cells[index(i - 1, j, k)], not here)
 		end
 	end
-not here)
-				end
-			end
-		end
-	end
 end, false, function(x, y, z)
 	local _, pillar = wall(math.atan2(y, x), z)
 	return islandPaint(x, y, z - CAP_TOP, if pillar then pillar.seed else nil, if pillar then (blockAt(pillar, z)).tint else nil)
@@ -520,7 +510,11 @@ end)
 -- toward the bottom, and strong contact shadows, with the shell as its own
 -- occluder so the crevices and overhangs darken.
 local entries = table.clone(parts)
-shade(entries, { entries[1].mesh })
+local meshes = {}
+for _, entry in entries do
+	table.insert(meshes, entry.mesh)
+end
+shade(entries, meshes)
 table.clear(parts)
 return entries
 end)

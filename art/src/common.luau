@@ -599,29 +599,81 @@ local function chunkedPart(name, bone, color, build, smooth, rust)
 		table.insert(chunks[key], f)
 	end
 
-	for _, key in order do
-		part(`{name}_{key}`, bone, color, function(mesh)
-			local remap = {}
-			for _, f in chunks[key] do
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
 				local verts = {}
 				for i, v in f.verts do
-					if not remap[v] then
+					if not handles[v] then
 						local p = positions[v]
-						remap[v] = mesh:vertex(p[1], p[2], p[3])
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
 					end
-					verts[i] = remap[v]
+					verts[i] = handles[v]
 				end
 				mesh:face(verts, f.uvs)
 			end
-		end, smooth, 0, 1024)
+		end, smooth, 0, texture)
 		-- Rust was applied while recording; paint the look on the chunk.
 		local entry = parts[#parts]
-		rust = rust or 0.4
-		if type(rust) == "function" then
-			entry.mesh:paint(entry.image, rust)
-		elseif rust > 0 then
-			entry.mesh:paint(entry.image, weathered(color, rust))
+		local look = rust or 0.4
+		if type(look) == "function" then
+			entry.mesh:paint(entry.image, look)
+		elseif look > 0 then
+			entry.mesh:paint(entry.image, weathered(color, look))
 		end
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
 	end
 end
 
