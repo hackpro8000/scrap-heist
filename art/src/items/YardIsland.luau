@@ -1,13 +1,13 @@
 -- Yard Island: a floating yard island built from stacked rock columns, in
 -- the style of a hand-sculpted stylised island. Three tiers of chunky
--- sandstone pillars ring the island, each tier tucked further in and
+-- rock pillars ring the island, each tier tucked further in and
 -- ending lower than the last. Each pillar is a stack of bevelled blocks,
 -- with deep clefts between pillars and a soil lip draped over the rim. The model is one closed outer shell over the
 -- columns, with nothing inside. Top at z = 0.7.
 useTexelDensity(16)
 local RADIUS = 20
 local GROUND = { 0.3, 0.27, 0.22 }
-local SANDSTONE = { 0.66, 0.48, 0.3 }
+local STRATA = { { 0.5, 0.4, 0.27 }, { 0.36, 0.35, 0.34 }, { 0.48, 0.3, 0.22 } }
 local TOPSOIL = { 0.24, 0.19, 0.14 }
 
 local function random(k: number): number
@@ -16,17 +16,24 @@ local function random(k: number): number
 end
 
 -- The island's texture: speckled ground on top, then topsoil fading into
--- warm sandstone, tinted per rock block (`tint`) and darkening with depth.
-local function islandPaint(x: number, y: number, z: number, tint: number?)
+-- wavy rock strata that darken with depth. A pillar's `seed` shifts its
+-- strata and grain so neighbours don't match, and each rock block has its
+-- own `tint`.
+local function islandPaint(x: number, y: number, z: number, seed: number?, tint: number?)
 	local below = -z
 	if below < 0.3 then
 		local k = 1 + 0.12 * math.noise(x / 4, y / 4, 31) + 0.05 * math.noise(x * 3, y * 3, 37)
 		return GROUND[1] * k, GROUND[2] * k, GROUND[3] * k
 	end
-	local k = (tint or 1) * (1 + 0.07 * math.noise(x / 2, y / 2, z / 2) + 0.04 * math.noise(x * 3, y * 3, z * 3))
-	k *= 1 - 0.45 * math.clamp((below - 3) / 20, 0, 1)
-	local soil = 1 - math.clamp((below - 0.5) / 2 + 0.3 * math.noise(x / 2, y / 2, 41), 0, 1)
-	local r, g, b = SANDSTONE[1] * k, SANDSTONE[2] * k, SANDSTONE[3] * k
+	local s = seed or 0
+	local band = math.noise(x / 9 + s, y / 9, z / 2) * 0.6 + z * (0.8 + 0.2 * random(s + 1)) + random(s + 2) * 3
+	local wave = math.sin(band * 2.4)
+	local layer = STRATA[math.floor(band * 2.4 / (2 * math.pi)) % 3 + 1]
+	local k = (tint or 1) * (1 + 0.1 * wave + 0.06 * math.noise(x * 2 + s, y * 2, z * 2))
+	if wave > 0.93 then k -= 0.25 end
+	k *= 1 - 0.6 * math.clamp((below - 3) / 20, 0, 1)
+	local soil = 1 - math.clamp((below - 0.5) / 4 + 0.3 * math.noise(x / 2, y / 2, 41), 0, 1)
+	local r, g, b = layer[1] * k, layer[2] * k, layer[3] * k
 	return r + (TOPSOIL[1] - r) * soil, g + (TOPSOIL[2] - g) * soil, b + (TOPSOIL[3] - b) * soil
 end
 
@@ -257,7 +264,7 @@ part("Island", nil, GROUND, function(mesh)
 	end
 end, false, function(x, y, z)
 	local _, pillar = wall(math.atan2(y, x), z)
-	return islandPaint(x, y, z - CAP_TOP, if pillar then (blockAt(pillar, z)).tint else nil)
+	return islandPaint(x, y, z - CAP_TOP, if pillar then pillar.seed else nil, if pillar then (blockAt(pillar, z)).tint else nil)
 end)
 
 -- Aggressive shading: half-strength edge highlights, ramping 30% stronger
