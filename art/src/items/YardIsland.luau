@@ -110,6 +110,7 @@ local function wall(angle: number, z: number)
 		if z < pillar.bottom then continue end
 		-- The tip is one smooth chunk, tapering hard to a point.
 		if t == #TIERS then
+			if z > pillar.top then continue end
 			local s = (z - pillar.bottom) / (pillar.top - pillar.bottom)
 			local r = pillar.reach * outlineScale(angle) * s ^ 1.5 + 0.15 * math.noise(angle * 3, z / 2, 7) * s
 			if r > best then
