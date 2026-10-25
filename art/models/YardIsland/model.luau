@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-81246f3ff0299ed8"
+local CACHE_KEY = "YardIsland-6bc3eeb67371a667"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -662,7 +662,7 @@ end
 -- Yard Island: a floating yard island built from stacked rock columns, in
 -- the style of a hand-sculpted stylised island. Three tiers of rounded
 -- rock pillars ring the island, each tier tucked further in and ending
--- lower than the last, sliced flat across the bottom, with deep clefts between pillars and a soil lip
+-- lower than the last, the bottom tier's columns ending in rounded feet, with deep clefts between pillars and a soil lip
 -- draped over the rim. The model is one closed outer shell over the
 -- columns, with nothing inside. Top at z = 0.7.
 useTexelDensity(16)
@@ -793,9 +793,8 @@ local function wall(angle: number, z: number)
 		local nudge = ringNudge(ring) + (ringNudge(ring + 1) - ringNudge(ring)) * blend
 		r += 0.25 * math.noise(angle * 6, z / 3, pillar.seed % 97) + 0.7 * (nudge - 0.5)
 		local lift = z - pillar.bottom
-		-- The last tier is sliced flat, so only the tiers above it round in.
-		if lift < ROUNDING and t < #TIERS then
-			local inner = pillarAt(t + 1, angle).reach * outlineScale(angle) * 0.9
+		if lift < ROUNDING then
+			local inner = if t < #TIERS then pillarAt(t + 1, angle).reach * outlineScale(angle) * 0.9 else 0
 			r = inner + (r - inner) * math.sqrt(1 - (1 - lift / ROUNDING) ^ 2)
 		end
 		if r > best then
@@ -812,8 +811,8 @@ local function drape(angle: number): number
 end
 
 -- One closed outer shell: rows of wall points stepping down from the top to
--- the slice, a flat top in concentric rings and a flat cut at the bottom.
-local ANGLES, STEP, SLICE, LIP, TOP_RINGS = 240, 0.3, -18.5, 0.35, 8
+-- the last column's foot, a flat top in concentric rings and a small cap at the bottom.
+local ANGLES, STEP, FLOOR, LIP, TOP_RINGS = 240, 0.3, -25, 0.35, 8
 local RIM_JAGGED, RIM_POKE = 0.166, 0.06
 local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
 -- The shell and its shading are cached under a key hashing every line above
@@ -843,7 +842,7 @@ part("Island", nil, GROUND, function(mesh)
 	end
 	local rows = {}
 	local z = CAP_TOP
-	while z > SLICE - STEP / 2 do
+	while z > FLOOR + STEP / 2 do
 		-- Stop once every pillar has ended, so no needle trails below.
 		local any = false
 		for j = 0, ANGLES - 1, 8 do
