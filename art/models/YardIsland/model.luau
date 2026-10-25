@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-83f6968f26c15809"
+local CACHE_KEY = "YardIsland-c8d2e92138a485b3"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -711,7 +711,7 @@ local TIERS = {
 	{ RADIUS * 0.58, 8, -14, 23 },
 	{ RADIUS * 0.34, 6, -19.5, 37 },
 }
-local CLEFT, ROUNDING, BEVEL = 3, 2, 0.6
+local CLEFT, ROUNDING, BEVEL, CORNER = 3, 2, 0.6, 1.5
 
 -- Pillar layout per tier: each pillar's start angle, reach and bottom.
 local pillars = {}
@@ -791,18 +791,35 @@ local function wall(angle: number, z: number)
 	for t = 1, #TIERS do
 		local pillar, u = pillarAt(t, angle)
 		if z < pillar.bottom then continue end
-		-- Faceted across the face: the round profile sampled at a few
-		-- jittered corners with flat faces between, like the old clumps.
-		local facets = 3 + pillar.seed % 2
-		local f = math.clamp(math.floor((u + 1) / 2 * facets), 0, facets - 1)
-		local function corner(n: number): (number, number)
-			local cu = if n == 0 or n == facets then n / facets * 2 - 1 else n / facets * 2 - 1 + (random(pillar.seed + n * 29) - 0.5) * 0.3
-			return cu, CLEFT * (1 - math.sqrt(math.max(1 - cu * cu, 0))) + (if n == 0 or n == facets then 0 else 0.35 * (random(pillar.seed + n * 31) - 0.5))
-		end
-		local u0, d0 = corner(f)
-		local u1, d1 = corner(f + 1)
-		local r = pillar.reach * outlineScale(angle) - (d0 + (d1 - d0) * math.clamp((u - u0) / (u1 - u0), 0, 1))
+		-- An irregular polygon across the face: the round profile sampled
+		-- at jittered corners with flat faces between, then averaged over
+		-- CORNER studs so each corner rounds off with a small radius.
 		local size = pillar.reach * pillar.span / 2
+		local facets = 4 + pillar.seed % 3
+		local function corner(n: number): (number, number)
+			if n <= 0 or n >= facets then return n / facets * 2 - 1, CLEFT end
+			local cu = n / facets * 2 - 1 + (random(pillar.seed + n * 29) - 0.5) * 0.35
+			return cu, CLEFT * (1 - math.sqrt(math.max(1 - cu * cu, 0))) + 0.8 * (random(pillar.seed + n * 31) - 0.5)
+		end
+		local function polygon(v: number): number
+			v = math.clamp(v, -1, 1)
+			local f = math.clamp(math.floor((v + 1) / 2 * facets), 0, facets - 1)
+			local u0, d0 = corner(f)
+			local u1, d1 = corner(f + 1)
+			if v < u0 then
+				u1, d1 = u0, d0
+				u0, d0 = corner(f - 1)
+			elseif v > u1 then
+				u0, d0 = u1, d1
+				u1, d1 = corner(f + 2)
+			end
+			return d0 + (d1 - d0) * math.clamp((v - u0) / (u1 - u0), 0, 1)
+		end
+		local spread, depth = CORNER / size, 0
+		for k = -2, 2 do
+			depth += polygon(u + spread * k / 2) / 5
+		end
+		local r = pillar.reach * outlineScale(angle) - depth
 		local shift = math.clamp((pillar.top - z) / (pillar.top - pillar.bottom), 0, 1)
 		r -= pillar.reach * pillar.taper * shift + size * pillar.lean * shift
 		r += size * 0.35 * pillar.defect * math.max(1 - math.abs(u - pillar.defectAt) / 0.5, 0)
