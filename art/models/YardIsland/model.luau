@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-35cc222aac356285"
+local CACHE_KEY = "YardIsland-05dfb87a2fcfe763"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -869,10 +869,24 @@ local function wall(angle: number, z: number, tiers: number?)
 	return 0.05, nil
 end
 
--- The soil lip: how far it drapes down the rim at `angle`, in clumps.
+-- The soil lip: how far it drapes down the rim at `angle`. It hangs to one
+-- depth per facet of the top tier's rocks, stepping at their corners, so the
+-- soil's edge is cut in the same flat planes as the stone below it.
 local function drape(angle: number): number
-	local n = math.noise(angle * 7, 3.7) + 0.5 * math.noise(angle * 23, 9.1)
-	return 0.35 + 1.1 * math.clamp(n + 0.4, 0, 1)
+	for _, pillar in pillars[1] do
+		local a = pillar.from + (angle - pillar.from) % (2 * math.pi)
+		if a > pillar.to then continue end
+		local corners = pillar.corners
+		local k = #corners - 1
+		for c = 1, #corners - 1 do
+			if a <= corners[c + 1][1] then
+				k = c
+				break
+			end
+		end
+		return 0.45 + 0.9 * random(pillar.seed + k * 7)
+	end
+	return 0.8
 end
 
 -- The top slab: one closed shell of rows stepping down from the top to the
