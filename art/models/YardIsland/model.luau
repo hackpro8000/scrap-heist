@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-6bc3eeb67371a667"
+local CACHE_KEY = "YardIsland-94ceb7b5c0a7ea69"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -686,7 +686,11 @@ local function islandPaint(x: number, y: number, z: number, seed: number?)
 		return GROUND[1] * k, GROUND[2] * k, GROUND[3] * k
 	end
 	local s = seed or 0
-	local band = math.noise(x / 9 + s, y / 9, z / 2) * 0.6 + z * (0.8 + 0.2 * random(s + 1)) + random(s + 2) * 3
+	-- Each pillar's layers dip a little its own way, and bend.
+	local dip = (random(s + 4) - 0.5) * 0.3
+	local heading = random(s + 5) * 2 * math.pi
+	local tilted = z + (x * math.cos(heading) + y * math.sin(heading)) * dip
+	local band = math.noise(x / 6 + s, y / 6, z / 3) * 1.1 + tilted * (0.8 + 0.2 * random(s + 1)) + random(s + 2) * 3
 	local tint = if seed then 0.85 + 0.3 * random(s + 3) else 1
 	local wave = math.sin(band * 2.4)
 	local layer = STRATA[math.floor(band * 2.4 / (2 * math.pi)) % 3 + 1]
@@ -742,6 +746,25 @@ for t, tier in TIERS do
 			defect = random(seed + i + 160) - 0.45,
 			defectAt = (random(seed + i + 180) - 0.5) * 1.2,
 		}
+		-- Ledges: at a few random heights the face steps sharply in and
+		-- stays in below. Chips: corners broken off the face.
+		local pillar = list[i]
+		pillar.ledges, pillar.chips = {}, {}
+		for n = 1, 2 + math.floor(random(seed + i + 200) * 3) do
+			local k = random(seed + i + n * 13 + 210)
+			table.insert(pillar.ledges, {
+				at = pillar.top - (pillar.top - pillar.bottom) * (0.15 + 0.75 * k),
+				depth = 0.5 + 0.5 * random(seed + i + n * 13 + 220),
+			})
+		end
+		for n = 1, 2 do
+			table.insert(pillar.chips, {
+				u = if random(seed + i + n * 17 + 230) > 0.5 then 0.75 else -0.75,
+				z = pillar.top - (pillar.top - pillar.bottom) * (0.1 + 0.8 * random(seed + i + n * 17 + 240)),
+				height = 0.8 + 1.2 * random(seed + i + n * 17 + 250),
+				depth = 0.6 + 0.6 * random(seed + i + n * 17 + 260),
+			})
+		end
 		angle += span
 	end
 	pillars[t] = list
@@ -783,6 +806,14 @@ local function wall(angle: number, z: number)
 		local shift = math.clamp((pillar.top - z) / (pillar.top - pillar.bottom), 0, 1)
 		r -= pillar.reach * pillar.taper * shift + size * pillar.lean * shift
 		r += size * 0.35 * pillar.defect * math.max(1 - math.abs(u - pillar.defectAt) / 0.5, 0)
+		for _, ledge in pillar.ledges do
+			r -= ledge.depth * math.clamp((ledge.at - z) / 0.15, 0, 1)
+		end
+		for _, chip in pillar.chips do
+			if math.abs(z - chip.z) < chip.height / 2 and u * chip.u > 0 and math.abs(u) > 1 - (1 - math.abs(chip.u)) * 2 then
+				r -= chip.depth
+			end
+		end
 		-- Every ring of the face nudged a little, stepping down the pillar.
 		local at = (pillar.top - z) / 1.5
 		local ring = math.floor(at)
