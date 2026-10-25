@@ -490,15 +490,22 @@ chunkedPart("Island", nil, GROUND, function(mesh)
 	local function vertexOf(node)
 		if not node then return nil end
 		while node.parent do node = node.parent end
-		if not node.vertex then node.vertex = mesh:vertex(node.x, node.y, node.z) end
+		if node.vertex then return node end
+		-- The top is a dead flat plane: snap onto it and skip the wobble.
+		if node.z > CAP_TOP - 0.05 then
+			node.z = CAP_TOP
+			node.vertex = mesh:exactVertex(node.x, node.y, node.z)
+		else
+			node.vertex = mesh:vertex(node.x, node.y, node.z)
+		end
 		return node
 	end
 
 	-- One quad per fine edge the surface crosses, joining the cells around
 	-- it; where merged cells meet, the quad shrinks to a triangle. Merged
 	-- vertices can fold a quad over, so each face is turned to face out
-	-- along the field rather than trusting the edge's winding.
-	local function quad(a, b, c, d)
+	-- along the crossed edge: from its solid end toward its empty end.
+	local function quad(axis, out, a, b, c, d)
 		a, b, c, d = vertexOf(a), vertexOf(b), vertexOf(c), vertexOf(d)
 		if not (a and b and c and d) then return end
 		local ring = { a, b, c, d }
@@ -507,16 +514,14 @@ chunkedPart("Island", nil, GROUND, function(mesh)
 			if ring[n] ~= ring[n % 4 + 1] then table.insert(kept, ring[n]) end
 		end
 		if #kept < 3 or (#kept == 3 and kept[1] == kept[3]) then return end
-		local nx, ny, nz, cx, cy, cz = 0, 0, 0, 0, 0, 0
+		local normal = { 0, 0, 0 }
 		for n, p in kept do
 			local q = kept[n % #kept + 1]
-			nx += (p.y - q.y) * (p.z + q.z)
-			ny += (p.z - q.z) * (p.x + q.x)
-			nz += (p.x - q.x) * (p.y + q.y)
-			cx, cy, cz = cx + p.x, cy + p.y, cz + p.z
+			normal[1] += (p.y - q.y) * (p.z + q.z)
+			normal[2] += (p.z - q.z) * (p.x + q.x)
+			normal[3] += (p.x - q.x) * (p.y + q.y)
 		end
-		local gx, gy, gz = gradient(cx / #kept, cy / #kept, cz / #kept)
-		local outward = nx * gx + ny * gy + nz * gz >= 0
+		local outward = (normal[axis] >= 0) == out
 		local verts = {}
 		for n = 1, #kept do
 			verts[n] = kept[if outward then n else #kept + 1 - n].vertex
@@ -530,13 +535,13 @@ chunkedPart("Island", nil, GROUND, function(mesh)
 		n += 1
 		if i < 1 or j < 1 or k < 1 then continue end
 		if crossing(i, j, k, 1) then
-			quad(cellAt(i, j - 1, k - 1), cellAt(i, j, k - 1), cellAt(i, j, k), cellAt(i, j - 1, k))
+			quad(1, sample(i, j, k) < 0, cellAt(i, j - 1, k - 1), cellAt(i, j, k - 1), cellAt(i, j, k), cellAt(i, j - 1, k))
 		end
 		if crossing(i, j, k, 2) then
-			quad(cellAt(i - 1, j, k - 1), cellAt(i - 1, j, k), cellAt(i, j, k), cellAt(i, j, k - 1))
+			quad(2, sample(i, j, k) < 0, cellAt(i - 1, j, k - 1), cellAt(i - 1, j, k), cellAt(i, j, k), cellAt(i, j, k - 1))
 		end
 		if crossing(i, j, k, 3) then
-			quad(cellAt(i - 1, j - 1, k), cellAt(i, j - 1, k), cellAt(i, j, k), cellAt(i - 1, j, k))
+			quad(3, sample(i, j, k) < 0, cellAt(i - 1, j - 1, k), cellAt(i, j - 1, k), cellAt(i, j, k), cellAt(i - 1, j, k))
 		end
 	end
 end, false, function(x, y, z)
@@ -545,7 +550,9 @@ end, false, function(x, y, z)
 	local wz = z + WARP * math.noise(x / 7, y / 7, z / 9 + 5)
 	local wa = math.atan2(y, x) + 0.02 * math.noise(x / 5, y / 5, z / 5 + 17)
 	local _, pillar = wall(wa, wz)
-	return islandPaint(x, y, math.min(wz, z) - CAP_TOP, if pillar then pillar.seed else nil, if pillar then (blockAt(pillar, wz)).tint else nil)
+	-- The flat top keeps its true height so it paints as even ground.
+	local depth = if z > CAP_TOP - 0.01 then 0 else math.min(wz, z) - CAP_TOP
+	return islandPaint(x, y, depth, if pillar then pillar.seed else nil, if pillar then (blockAt(pillar, wz)).tint else nil)
 end)
 
 -- Aggressive shading: half-strength edge highlights, ramping 30% stronger

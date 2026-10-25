@@ -577,6 +577,11 @@ local function chunkedPart(name, bone, color, build, smooth, rust)
 			table.insert(positions, { x, y, z })
 			return #positions
 		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
 		face = function(_, verts, uvs)
 			table.insert(faces, { verts = verts, uvs = uvs })
 		end,
