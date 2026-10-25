@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-6c26a35f99ce4579"
+local CACHE_KEY = "YardIsland-f1a461a577954c1d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -804,11 +804,9 @@ local function pillarReach(pillar, t: number, angle: number, z: number): number
 	-- Taper by the tier, not the pillar, so shared corners stay shared.
 	local tierTop = if t == 1 then CAP_TOP else TIERS[t - 1][3] + 0.5
 	r *= 1 - 0.15 * math.clamp((tierTop - z) / (tierTop - TIERS[t][3]), 0, 1)
-	-- The top layer flares out over the columns below it to form a lip,
+	-- Every layer flares out at its top into a lip over the layer below,
 	-- undercut by a short slope.
-	if t == 1 then
-		r += TOP_LIP * math.clamp((z - (tierTop - TOP_LIP_HEIGHT)) / 1.2, 0, 1)
-	end
+	r += TOP_LIP * math.clamp((z - (tierTop - TOP_LIP_HEIGHT)) / 1.2, 0, 1)
 	local gap = math.min(angle - pillar.from, pillar.to - angle) * r
 	r -= CREVICE_DEPTH * math.max(0, 1 - gap / CREVICE_WIDTH)
 	local block, ceiling = blockAt(pillar, z)
