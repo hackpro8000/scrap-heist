@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-d72c987927738a22"
+local CACHE_KEY = "YardIsland-c85f068de1ff70bf"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -732,22 +732,22 @@ for t, tier in TIERS do
 	-- Shared corners: each sits on the outline, pulled in by its own amount.
 	local edges, angle = {}, random(seed) * 2 * math.pi
 	for i = 1, count do
-		edges[i] = { angle = angle, reach = reach * (0.95 + 0.04 * random(seed + i + 60)) }
+		edges[i] = { angle = angle, reach = reach * (0.88 + 0.12 * random(seed + i + 60)) }
 		angle += weights[i] / total * 2 * math.pi
 	end
 	for i = 1, count do
 		local from, to = edges[i], edges[i % count + 1]
 		local toAngle = if i == count then to.angle + 2 * math.pi else to.angle
 		-- The face: the two shared corners plus 1-2 corners between them,
-		-- standing a little proud so the face reads as facets.
+		-- standing proud or sunk so the face reads as jagged facets.
 		local corners = { { from.angle, from.reach } }
-		local inner = 1 + math.floor(random(seed + i + 70) * 2)
+		local inner = 1 + math.floor(random(seed + i + 70) * 3)
 		for k = 1, inner do
 			local f = (k + (random(seed + i * 5 + k + 90) - 0.5) * 0.6) / (inner + 1)
-			table.insert(corners, { from.angle + (toAngle - from.angle) * f, reach * (1 + 0.04 * random(seed + i * 5 + k + 100)) })
+			table.insert(corners, { from.angle + (toAngle - from.angle) * f, reach * (0.94 + 0.14 * random(seed + i * 5 + k + 100)) })
 		end
 		table.insert(corners, { toAngle, to.reach })
-		local foot = bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.5 * (random(seed + i + 80) - 0.5)
+		local foot = bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.9 * (random(seed + i + 80) - 0.5)
 		-- The bottom tier's pillars end at stepped heights, so the tip
 		-- comes out ragged.
 		if t == #TIERS then foot = bottom + 3.5 * (random(seed + i + 85) - 0.6) end
@@ -767,6 +767,8 @@ for t, tier in TIERS do
 			table.insert(pillar.blocks, {
 				floor = if n > joints then -math.huge else pillar.top - height * (n + (random(seed + i + n * 13 + 210) - 0.5) * 0.5) / (joints + 1),
 				tint = 0.88 + 0.24 * random(seed + i + n * 13 + 230),
+				-- Blocks jut out or sit back from their neighbours above and below.
+				jut = 0.9 * (random(seed + i + n * 13 + 240) - 0.4),
 			})
 		end
 		list[i] = pillar
@@ -804,6 +806,7 @@ local function pillarReach(pillar, t: number, angle: number, z: number): number
 	local gap = math.min(angle - pillar.from, pillar.to - angle) * r
 	r -= CREVICE_DEPTH * math.max(0, 1 - gap / CREVICE_WIDTH)
 	local block, ceiling = blockAt(pillar, z)
+	r += block.jut * math.min(1, gap / CREVICE_WIDTH)
 	if block.floor > -math.huge then
 		r -= CRACK_DEPTH * math.max(0, 1 - math.abs(z - block.floor) / CRACK_HEIGHT)
 	end
