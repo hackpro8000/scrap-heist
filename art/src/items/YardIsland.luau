@@ -59,7 +59,7 @@ local TIERS = {
 local CREVICE_DEPTH, CREVICE_WIDTH = 1.1, 0.7
 local CRACK_DEPTH, CRACK_HEIGHT = 0.5, 0.35
 local CHIP = 0.45
-local BULGE = 0.12
+local BULGE = 0.3
 local TOP_LIP, TOP_LIP_HEIGHT = 1.8, 3.5
 local pillars = {}
 for t, tier in TIERS do
@@ -149,7 +149,7 @@ local function pillarReach(pillar, t: number, angle: number, z: number): number
 	if t == 1 then
 		r += TOP_LIP * math.clamp((z - (tierTop - TOP_LIP_HEIGHT)) / 1.2, 0, 1)
 	end
-	-- Each column bulges out across its face by 12% of its width.
+	-- Each column bulges out across its face by 30% of its width.
 	local across = (angle - pillar.from) / (pillar.to - pillar.from)
 	r += BULGE * (pillar.to - pillar.from) * r * math.sin(math.pi * across)
 	local gap = math.min(angle - pillar.from, pillar.to - angle) * r
