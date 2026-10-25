@@ -58,6 +58,7 @@ local TIERS = {
 -- outer face is broken into a few flat facets.
 local CREVICE_DEPTH, CREVICE_WIDTH = 1.1, 0.7
 local CRACK_DEPTH, CRACK_HEIGHT = 0.5, 0.35
+local CHIP = 0.6
 local pillars = {}
 for t, tier in TIERS do
 	local reach, count, bottom, seed = tier[1], tier[2], tier[3], tier[4]
@@ -141,10 +142,17 @@ local function pillarReach(pillar, t: number, angle: number, z: number): number
 	r *= 1 - 0.15 * math.clamp((tierTop - z) / (tierTop - TIERS[t][3]), 0, 1)
 	local gap = math.min(angle - pillar.from, pillar.to - angle) * r
 	r -= CREVICE_DEPTH * math.max(0, 1 - gap / CREVICE_WIDTH)
-	local block = blockAt(pillar, z)
+	local block, ceiling = blockAt(pillar, z)
 	if block.floor > -math.huge then
 		r -= CRACK_DEPTH * math.max(0, 1 - math.abs(z - block.floor) / CRACK_HEIGHT)
 	end
+	-- Chipped bevels: every block edge and the pillar's sides are cut back
+	-- at 45 degrees by a depth that wanders along the edge, so they read
+	-- as knocked-off chips rather than a clean chamfer.
+	local along = (angle - pillar.from) * r
+	local chip = CHIP * (0.3 + 1.4 * math.clamp(math.noise(along / 1.3, z / 1.3, pillar.seed % 97) + 0.5, 0, 1))
+	local edge = math.min(gap, z - math.max(block.floor, pillar.bottom), if ceiling < pillar.top then ceiling - z else math.huge)
+	if edge < chip then r -= chip - edge end
 	return r
 end
 
