@@ -45,6 +45,7 @@ end
 -- Each tier is a ring of pillars: { reach, pillar count, bottom, seed }.
 -- Lower tiers sit further in, so each shows below the one above it.
 local CAP_TOP = 0.7
+local CLEFT = 1.2
 local TIERS = {
 	{ RADIUS * 0.84, 10, -8, 11 },
 	{ RADIUS * 0.58, 8, -14, 23 },
@@ -87,16 +88,16 @@ for t, tier in TIERS do
 		local length = math.sqrt(tx * tx + ty * ty)
 		tx, ty = tx / length, ty / length
 		local nx, ny = ty, -tx
-		local half = ownReach * outlineScale(at) * span / 2 * 1.15
+		local half = ownReach * outlineScale(at) * span / 2 * 1.45
 		local depth = half * 1.3
 		local pillarSeed = seed * 31 + i * 7
-		-- The cross-section: 4-6 corners round the centre, jittered in
+		-- The cross-section: 5-7 corners round the centre, jittered in
 		-- angle and distance so the faces come out uneven.
 		local shape = {}
-		local corners = 4 + pillarSeed % 3
+		local corners = 5 + pillarSeed % 3
 		for k = 0, corners - 1 do
-			local phi = (k + (random(pillarSeed + k * 29) - 0.5) * 0.7) / corners * 2 * math.pi
-			local stretch = 0.7 + 0.6 * random(pillarSeed + k * 31)
+			local phi = (k + (random(pillarSeed + k * 29) - 0.5) * 0.5) / corners * 2 * math.pi
+			local stretch = 0.85 + 0.3 * random(pillarSeed + k * 31)
 			table.insert(shape, { math.cos(phi) * half * stretch, math.sin(phi) * depth * stretch })
 		end
 		local px, py = outlinePoint(ownReach, at)
@@ -187,6 +188,12 @@ local function wall(angle: number, z: number)
 	for t = 1, #TIERS do
 		for _, pillar in pillars[t] do
 			if z < pillar.bottom or z > pillar.top then continue end
+			-- Keep the clefts between columns shallow: never cut more than
+			-- CLEFT inside this tier's outline.
+			local floor = TIERS[t][1] * outlineScale(angle) - CLEFT
+			if floor > best then
+				best, owner = floor, pillar
+			end
 			local r = pillarReach(pillar, dx, dy, z)
 			if r == nil then continue end
 			if ROUNDED then
