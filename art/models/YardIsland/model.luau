@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-c142f5adf667e0f5"
+local CACHE_KEY = "YardIsland-22849515f823d846"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -663,7 +663,7 @@ end
 -- the style of a hand-sculpted stylised island. Three tiers of chunky
 -- rock pillars ring the island, each tier tucked further in and
 -- ending lower than the last. Each pillar is a polygonal prism standing on
--- the shell's profile, a stack of blocks, with clefts between pillars and a soil lip draped over the rim. The model is one closed outer shell over the
+-- the shell's profile, a stack of blocks, with clefts between pillars. The model is one closed outer shell over the
 -- columns, with nothing inside. Top at z = 0.7.
 useTexelDensity(16)
 local RADIUS = 20
@@ -751,13 +751,13 @@ for t, tier in TIERS do
 		local half = ownReach * outlineScale(at) * span / 2 * 1.15
 		local depth = half * 1.3
 		local pillarSeed = seed * 31 + i * 7
-		-- The cross-section: 5-7 corners round the centre, jittered in
+		-- The cross-section: 4-6 corners round the centre, jittered in
 		-- angle and distance so the faces come out uneven.
 		local shape = {}
-		local corners = 5 + pillarSeed % 3
+		local corners = 4 + pillarSeed % 3
 		for k = 0, corners - 1 do
-			local phi = (k + (random(pillarSeed + k * 29) - 0.5) * 0.5) / corners * 2 * math.pi
-			local stretch = 0.85 + 0.3 * random(pillarSeed + k * 31)
+			local phi = (k + (random(pillarSeed + k * 29) - 0.5) * 0.7) / corners * 2 * math.pi
+			local stretch = 0.7 + 0.6 * random(pillarSeed + k * 31)
 			table.insert(shape, { math.cos(phi) * half * stretch, math.sin(phi) * depth * stretch })
 		end
 		local px, py = outlinePoint(ownReach, at)
@@ -810,8 +810,8 @@ local function blockAt(pillar, z: number)
 	return pillar.blocks[#pillar.blocks], ceiling
 end
 
--- How far out along the ray from the island's centre at `angle` the
--- pillar's cross-section at height z reaches, or nil if the ray misses it.
+-- How far out along the ray from the island's centre in direction (dx, dy)
+-- the pillar's cross-section at height z reaches, or nil if it misses.
 local function pillarReach(pillar, dx: number, dy: number, z: number): number?
 	local shift = math.clamp((pillar.top - z) / (pillar.top - pillar.bottom), 0, 1)
 	local scale = 1 - pillar.taper * shift
@@ -872,17 +872,9 @@ local function wall(angle: number, z: number)
 	return best, owner
 end
 
--- The soil lip: how far it drapes down the rim at `angle`, in clumps.
-local function drape(angle: number): number
-	local n = math.noise(angle * 7, 3.7) + 0.5 * math.noise(angle * 23, 9.1)
-	return 0.35 + 1.1 * math.clamp(n + 0.4, 0, 1)
-end
-
 -- One closed outer shell: rows of wall points stepping down from the top to
 -- the last column's foot, a flat top in concentric rings and a small cap at the bottom.
-local ANGLES, STEP, FLOOR, LIP, TOP_RINGS = 240, 0.3, -25, 0.35, 8
-local RIM_JAGGED, RIM_POKE = 0.166, 0.06
-local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
+local ANGLES, STEP, FLOOR, TOP_RINGS = 240, 0.3, -25, 8
 -- The shell and its shading are cached under a key hashing every line above
 -- "-- cached above", so changes below it skip the rebuild.
 local function shade(entries, occluders, gradient: number?)
@@ -901,12 +893,8 @@ local shell = model.cached(CACHE_KEY, function()
 part("Island", nil, GROUND, function(mesh)
 	local rim = {}
 	for j = 0, ANGLES - 1 do
-		-- The rim's jaggedness, its departure from the smooth outline,
-		-- exaggerated inward by RIM_JAGGED and tamed outward by RIM_POKE.
-		local angle = 2 * math.pi * j / ANGLES
-		local smooth = TIERS[1][1] * outlineScale(angle)
-		local departure = wall(angle, CAP_TOP) - smooth
-		rim[j] = smooth + departure * (if departure > 0 then RIM_POKE else RIM_JAGGED)
+		-- The rim follows the top pillars' jagged faces.
+		rim[j] = wall(2 * math.pi * j / ANGLES, CAP_TOP)
 	end
 	local rows = {}
 	local z = CAP_TOP
@@ -923,17 +911,7 @@ part("Island", nil, GROUND, function(mesh)
 		local row = {}
 		for j = 0, ANGLES - 1 do
 			local angle = 2 * math.pi * j / ANGLES
-			-- The calm rim eases into the jagged pillar faces over the top half
-			-- of the first tier.
-			local t = math.clamp((CAP_TOP - z) / RIM_BLEND, 0, 1)
-			t = t * t * (3 - 2 * t)
-			local r = rim[j] + (wall(angle, z) - rim[j]) * t
-			-- The grass lip stands proud of the rock, easing back in over
-			-- its last fifth so it overhangs the stone below.
-			local depth = (CAP_TOP - z) / drape(angle)
-			if depth < 1 then
-				r = math.max(r, rim[j]) + LIP * math.clamp((1 - depth) / 0.2, 0, 1)
-			end
+			local r = wall(angle, z)
 			row[j] = mesh:vertex(math.cos(angle) * r, math.sin(angle) * r, z)
 		end
 		table.insert(rows, row)
@@ -953,7 +931,7 @@ part("Island", nil, GROUND, function(mesh)
 		local row = {}
 		for j = 0, ANGLES - 1 do
 			local angle = 2 * math.pi * j / ANGLES
-			row[j] = mesh:vertex(math.cos(angle) * (rim[j] + LIP) * k, math.sin(angle) * (rim[j] + LIP) * k, CAP_TOP)
+			row[j] = mesh:vertex(math.cos(angle) * rim[j] * k, math.sin(angle) * rim[j] * k, CAP_TOP)
 		end
 		for j = 0, ANGLES - 1 do
 			local l = (j + 1) % ANGLES

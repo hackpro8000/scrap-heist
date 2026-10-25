@@ -90,13 +90,13 @@ for t, tier in TIERS do
 		local half = ownReach * outlineScale(at) * span / 2 * 1.15
 		local depth = half * 1.3
 		local pillarSeed = seed * 31 + i * 7
-		-- The cross-section: 5-7 corners round the centre, jittered in
+		-- The cross-section: 4-6 corners round the centre, jittered in
 		-- angle and distance so the faces come out uneven.
 		local shape = {}
-		local corners = 5 + pillarSeed % 3
+		local corners = 4 + pillarSeed % 3
 		for k = 0, corners - 1 do
-			local phi = (k + (random(pillarSeed + k * 29) - 0.5) * 0.5) / corners * 2 * math.pi
-			local stretch = 0.85 + 0.3 * random(pillarSeed + k * 31)
+			local phi = (k + (random(pillarSeed + k * 29) - 0.5) * 0.7) / corners * 2 * math.pi
+			local stretch = 0.7 + 0.6 * random(pillarSeed + k * 31)
 			table.insert(shape, { math.cos(phi) * half * stretch, math.sin(phi) * depth * stretch })
 		end
 		local px, py = outlinePoint(ownReach, at)
