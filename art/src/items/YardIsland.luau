@@ -149,12 +149,18 @@ local function pillarReach(pillar, t: number, angle: number, z: number): number
 	if t == 1 then
 		r += TOP_LIP * math.clamp((z - (tierTop - TOP_LIP_HEIGHT)) / 1.2, 0, 1)
 	end
-	-- Each column bulges out across its face by 30% of its width.
-	local across = (angle - pillar.from) / (pillar.to - pillar.from)
-	r += BULGE * (pillar.to - pillar.from) * r * math.sin(math.pi * across)
+	local block, ceiling = blockAt(pillar, z)
+	-- Below the top layer, every block bulges out on its own like a
+	-- rounded stone: 30% of the column's width at its middle, easing back
+	-- to nothing at its sides, top and bottom.
+	if t > 1 then
+		local across = (angle - pillar.from) / (pillar.to - pillar.from)
+		local floor = math.max(block.floor, pillar.bottom)
+		local up = math.clamp((z - floor) / (ceiling - floor), 0, 1)
+		r += BULGE * (pillar.to - pillar.from) * r * math.sin(math.pi * across) * math.sin(math.pi * up)
+	end
 	local gap = math.min(angle - pillar.from, pillar.to - angle) * r
 	r -= CREVICE_DEPTH * math.max(0, 1 - gap / CREVICE_WIDTH)
-	local block, ceiling = blockAt(pillar, z)
 	r += block.jut * math.min(1, gap / CREVICE_WIDTH)
 	if block.floor > -math.huge then
 		r -= CRACK_DEPTH * math.max(0, 1 - math.abs(z - block.floor) / CRACK_HEIGHT)
