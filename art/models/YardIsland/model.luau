@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-6c26a35f99ce4579"
+local CACHE_KEY = "YardIsland-8323abb14827066c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -879,6 +879,8 @@ local function shade(entries, occluders, gradient: number?)
 end
 local shell = model.cached(CACHE_KEY, function()
 part("Island", nil, GROUND, function(mesh)
+	-- Smooth across the sampled rock, but keep the rim and deep folds creased.
+	mesh:setSmooth(60)
 	local rim = {}
 	for j = 0, ANGLES - 1 do
 		-- The rim's jaggedness, its departure from the smooth outline,

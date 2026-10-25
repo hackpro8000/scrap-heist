@@ -218,6 +218,8 @@ local function shade(entries, occluders, gradient: number?)
 end
 local shell = model.cached(CACHE_KEY, function()
 part("Island", nil, GROUND, function(mesh)
+	-- Smooth across the sampled rock, but keep the rim and deep folds creased.
+	mesh:setSmooth(60)
 	local rim = {}
 	for j = 0, ANGLES - 1 do
 		-- The rim's jaggedness, its departure from the smooth outline,
