@@ -123,8 +123,8 @@ end
 
 -- How far the island's wall reaches at `angle` and height z, and the
 -- pillar there with its across position, for painting. Each pillar is
--- rounded across its face so clefts open between pillars, and rounded
--- under its foot down onto the tier below.
+-- rounded across its face so clefts open between pillars, and cut flat
+-- under its foot with the bottom edge rounded off by CORNER.
 local function wall(angle: number, z: number)
 	local best, owner, across = 0.05, nil, 0
 	for t = 1, #TIERS do

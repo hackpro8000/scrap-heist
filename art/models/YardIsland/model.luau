@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-5bec5c96f1b93f72"
+local CACHE_KEY = "YardIsland-88875309947d03b3"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -784,8 +784,8 @@ end
 
 -- How far the island's wall reaches at `angle` and height z, and the
 -- pillar there with its across position, for painting. Each pillar is
--- rounded across its face so clefts open between pillars, and rounded
--- under its foot down onto the tier below.
+-- rounded across its face so clefts open between pillars, and cut flat
+-- under its foot with the bottom edge rounded off by CORNER.
 local function wall(angle: number, z: number)
 	local best, owner, across = 0.05, nil, 0
 	for t = 1, #TIERS do
