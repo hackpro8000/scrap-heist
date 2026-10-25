@@ -208,24 +208,10 @@ local function wall(angle: number, z: number, tiers: number?)
 	return 0.05, nil
 end
 
--- The soil lip: how far it drapes down the rim at `angle`. It hangs to one
--- depth per facet of the top tier's rocks, stepping at their corners, so the
--- soil's edge is cut in the same flat planes as the stone below it.
+-- The soil lip: how far it drapes down the rim at `angle`, in clumps.
 local function drape(angle: number): number
-	for _, pillar in pillars[1] do
-		local a = pillar.from + (angle - pillar.from) % (2 * math.pi)
-		if a > pillar.to then continue end
-		local corners = pillar.corners
-		local k = #corners - 1
-		for c = 1, #corners - 1 do
-			if a <= corners[c + 1][1] then
-				k = c
-				break
-			end
-		end
-		return 0.45 + 0.9 * random(pillar.seed + k * 7)
-	end
-	return 0.8
+	local n = math.noise(angle * 7, 3.7) + 0.5 * math.noise(angle * 23, 9.1)
+	return 0.35 + 1.1 * math.clamp(n + 0.4, 0, 1)
 end
 
 -- The top slab: one closed shell of rows stepping down from the top to the
@@ -322,24 +308,32 @@ part("Island", nil, GROUND, function(mesh)
 		local angle = 2 * math.pi * j / ANGLES
 		rim[j] = facetReach(1, angle) * outlineScale(angle) + TOP_LIP
 	end
+	-- Each column steps down the soil to its own drape depth, then evenly
+	-- down the rock to the slab's underside, so the soil's edge follows the
+	-- drape exactly instead of snapping to rows of fixed height. The soil
+	-- steps tighten toward its edge, where it curls back in to the rock.
+	local SOIL_STEPS = { 0, 0.2, 0.4, 0.6, 0.75, 0.85, 0.92, 0.97, 1 }
+	local ROCK_ROWS = math.ceil((CAP_TOP - SLAB_BOTTOM) / STEP)
 	local rows = {}
-	local z = CAP_TOP
-	while z > SLAB_BOTTOM - STEP / 2 do
-		local row = {}
-		for j = 0, ANGLES - 1 do
-			local angle = 2 * math.pi * j / ANGLES
-			-- The slab's underside slopes back in to the columns' faces.
-			local r = rim[j] - TOP_LIP * (1 - math.clamp((z - SLAB_BOTTOM) / 1.2, 0, 1))
-			-- The grass lip stands proud of the rock, easing back in over
-			-- its last fifth so it overhangs the stone below.
-			local depth = (CAP_TOP - z) / drape(angle)
-			if depth < 1 then
-				r = math.max(r, rim[j]) + LIP * math.clamp((1 - depth) / 0.2, 0, 1)
+	for i = 1, #SOIL_STEPS + ROCK_ROWS do
+		rows[i] = {}
+	end
+	for j = 0, ANGLES - 1 do
+		local angle = 2 * math.pi * j / ANGLES
+		local edge = CAP_TOP - drape(angle)
+		for i = 1, #rows do
+			local z, r
+			if i <= #SOIL_STEPS then
+				local u = SOIL_STEPS[i]
+				z = CAP_TOP - u * (CAP_TOP - edge)
+				r = rim[j] + LIP * math.clamp((1 - u) / 0.2, 0, 1)
+			else
+				z = edge + (SLAB_BOTTOM - edge) * (i - #SOIL_STEPS) / ROCK_ROWS
+				-- The slab's underside slopes back in to the columns' faces.
+				r = rim[j] - TOP_LIP * (1 - math.clamp((z - SLAB_BOTTOM) / 1.2, 0, 1))
 			end
-			row[j] = mesh:vertex(math.cos(angle) * r, math.sin(angle) * r, z)
+			rows[i][j] = mesh:vertex(math.cos(angle) * r, math.sin(angle) * r, z)
 		end
-		table.insert(rows, row)
-		z -= STEP
 	end
 	for i = 1, #rows - 1 do
 		for j = 0, ANGLES - 1 do
@@ -367,7 +361,7 @@ part("Island", nil, GROUND, function(mesh)
 	for j = 0, ANGLES - 1 do
 		mesh:face({ middle, inner[j], inner[(j + 1) % ANGLES] })
 	end
-	local bottom = mesh:vertex(0, 0, z + STEP)
+	local bottom = mesh:vertex(0, 0, SLAB_BOTTOM)
 	for j = 0, ANGLES - 1 do
 		mesh:face({ bottom, rows[#rows][(j + 1) % ANGLES], rows[#rows][j] })
 	end
