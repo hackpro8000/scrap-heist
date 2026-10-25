@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-4f5c0fe797545d62"
+local CACHE_KEY = "YardIsland-35cc222aac356285"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -835,6 +835,23 @@ local function pillarReach(pillar, t: number, angle: number, z: number): number
 	return r
 end
 
+-- How far tier t's rock facets reach at `angle`, before the outline's wobble.
+local function facetReach(t: number, angle: number): number
+	for _, pillar in pillars[t] do
+		local a = pillar.from + (angle - pillar.from) % (2 * math.pi)
+		if a > pillar.to then continue end
+		local corners = pillar.corners
+		for k = 1, #corners - 1 do
+			local c, d = corners[k], corners[k + 1]
+			if a <= d[1] then
+				return c[2] + (d[2] - c[2]) * (a - c[1]) / (d[1] - c[1])
+			end
+		end
+		return corners[#corners][2]
+	end
+	return TIERS[t][1]
+end
+
 -- How far the island's wall reaches at `angle` and height z, and the
 -- pillar there, for painting: the outermost tier, of the first `tiers`,
 -- with a pillar standing at that height.
@@ -926,7 +943,6 @@ local function blockRocks(mesh, pillar, t: number)
 end
 
 local ANGLES, STEP, FLOOR, LIP, TOP_RINGS = 480, 0.15, -25, 0.35, 8
-local RIM_JAGGED, RIM_POKE = 0.166, 0.06
 local SLAB_BOTTOM = CAP_TOP - TOP_LIP_HEIGHT
 -- The shell and its shading are cached under a key hashing every line above
 -- "-- cached above", so changes below it skip the rebuild.
@@ -946,14 +962,12 @@ local shell = model.cached(CACHE_KEY, function()
 part("Island", nil, GROUND, function(mesh)
 	-- Smooth across the sampled rock, but keep the rim and deep folds creased.
 	mesh:setSmooth(60)
+	-- The rim follows the top tier's faceted rocks, flared out by the lip,
+	-- so the slab's edge lines up with the columns below it.
 	local rim = {}
 	for j = 0, ANGLES - 1 do
-		-- The rim's jaggedness, its departure from the smooth outline,
-		-- exaggerated inward by RIM_JAGGED and tamed outward by RIM_POKE.
 		local angle = 2 * math.pi * j / ANGLES
-		local smooth = TIERS[1][1] * outlineScale(angle)
-		local departure = wall(angle, CAP_TOP) - smooth
-		rim[j] = smooth + departure * (if departure > 0 then RIM_POKE else RIM_JAGGED)
+		rim[j] = facetReach(1, angle) * outlineScale(angle) + TOP_LIP
 	end
 	local rows = {}
 	local z = CAP_TOP
