@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-670ba9a040efe655"
+local CACHE_KEY = "YardIsland-4f5c0fe797545d62"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -858,21 +858,25 @@ local function drape(angle: number): number
 	return 0.35 + 1.1 * math.clamp(n + 0.4, 0, 1)
 end
 
--- One closed outer shell over the top tier: rows of wall points stepping
--- down from the top to its last column's foot, a flat top in concentric
--- rings and a small cap at the bottom. The lower tiers' blocks are built
--- as separate faceted rocks.
--- The lower tiers' blocks as closed rocks: each block's footprint is its
+-- The top slab: one closed shell of rows stepping down from the top to the
+-- slab's underside, a flat top in concentric rings and a cap at the bottom.
+-- Every column's blocks below it are built as separate faceted rocks.
+-- The columns' blocks as closed rocks: each block's footprint is its
 -- pillar's wedge of facet corners, closed by two inner corners hidden in
 -- the island, and its outer edges are cut back by a bevel that varies
 -- per block. Corners wander a little so no two rocks are true.
 local BEVEL, WANDER = 0.35, 0.2
 local function blockRocks(mesh, pillar, t: number)
-	local tierTop = TIERS[t - 1][3] + 0.5
+	local tierTop = if t == 1 then CAP_TOP else TIERS[t - 1][3] + 0.5
 	local inside = TIERS[t][1] * 0.45
 	local ceiling = CAP_TOP - TOP_LIP_HEIGHT
 	for n, block in pillar.blocks do
 		local floor = math.max(block.floor, pillar.bottom)
+		-- Blocks hidden inside the top slab are skipped.
+		if floor > ceiling - 1 then
+			ceiling = math.min(ceiling, block.floor)
+			continue
+		end
 		local key = pillar.seed + n * 17
 		local bevel = BEVEL * (0.6 + 0.9 * random(key + 1))
 		-- A ring of the footprint at height z, pulled in by `inset`.
@@ -923,7 +927,7 @@ end
 
 local ANGLES, STEP, FLOOR, LIP, TOP_RINGS = 480, 0.15, -25, 0.35, 8
 local RIM_JAGGED, RIM_POKE = 0.166, 0.06
-local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
+local SLAB_BOTTOM = CAP_TOP - TOP_LIP_HEIGHT
 -- The shell and its shading are cached under a key hashing every line above
 -- "-- cached above", so changes below it skip the rebuild.
 local function shade(entries, occluders, gradient: number?)
@@ -953,24 +957,12 @@ part("Island", nil, GROUND, function(mesh)
 	end
 	local rows = {}
 	local z = CAP_TOP
-	while z > FLOOR + STEP / 2 do
-		-- Stop once every pillar has ended, so no needle trails below.
-		local any = false
-		for j = 0, ANGLES - 1, 16 do
-			if wall(2 * math.pi * j / ANGLES, z, 1) > 0.3 then
-				any = true
-				break
-			end
-		end
-		if not any then break end
+	while z > SLAB_BOTTOM - STEP / 2 do
 		local row = {}
 		for j = 0, ANGLES - 1 do
 			local angle = 2 * math.pi * j / ANGLES
-			-- The calm rim eases into the jagged pillar faces over the top half
-			-- of the first tier.
-			local t = math.clamp((CAP_TOP - z) / RIM_BLEND, 0, 1)
-			t = t * t * (3 - 2 * t)
-			local r = rim[j] + (wall(angle, z, 1) - rim[j]) * t
+			-- The slab's underside slopes back in to the columns' faces.
+			local r = rim[j] - TOP_LIP * (1 - math.clamp((z - SLAB_BOTTOM) / 1.2, 0, 1))
 			-- The grass lip stands proud of the rock, easing back in over
 			-- its last fifth so it overhangs the stone below.
 			local depth = (CAP_TOP - z) / drape(angle)
@@ -1012,7 +1004,7 @@ part("Island", nil, GROUND, function(mesh)
 	for j = 0, ANGLES - 1 do
 		mesh:face({ bottom, rows[#rows][(j + 1) % ANGLES], rows[#rows][j] })
 	end
-	for t = 2, #TIERS do
+	for t = 1, #TIERS do
 		for _, pillar in pillars[t] do
 			blockRocks(mesh, pillar, t)
 		end
