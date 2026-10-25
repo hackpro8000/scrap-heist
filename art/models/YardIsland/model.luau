@@ -921,3 +921,303 @@ end)
 for _, entry in shell do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
+
+-- Plumbing: chunky copper pipes wrapping the island on brackets, with fat
+-- flange collars at the joints, all draining into a big grated outfall at
+-- the bottom that drips green goo.
+local COPPER = { 0.74, 0.43, 0.22 }
+local IRON = { 0.42, 0.4, 0.38 }
+local GOO = { 0.45, 0.95, 0.2 }
+local PIPE, STANDOFF = 0.8, 1.1
+local function unit(v)
+	local length = math.sqrt(v[1] ^ 2 + v[2] ^ 2 + v[3] ^ 2)
+	return { v[1] / length, v[2] / length, v[3] / length }
+end
+local function cross(a, b)
+	return { a[2] * b[3] - a[3] * b[2], a[3] * b[1] - a[1] * b[3], a[1] * b[2] - a[2] * b[1] }
+end
+local function circle(radius: number, sides: number)
+	local profile = {}
+	for k = 0, sides - 1 do
+		local a = 2 * math.pi * k / sides
+		table.insert(profile, { math.cos(a) * radius, math.sin(a) * radius })
+	end
+	return profile
+end
+-- A tube of `profile` swept along `points`, its rings kept from twisting by
+-- carrying each ring's side vector on to the next. `capped` closes the ends.
+local function sweep(mesh, points, profile: { { number } }, capped: boolean?)
+	local rings, side = {}, nil
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local axis = unit({ b[1] - a[1], b[2] - a[2], b[3] - a[3] })
+		if not side then
+			side = cross(axis, if math.abs(axis[3]) < 0.9 then { 0, 0, 1 } else { 1, 0, 0 })
+		end
+		local along = side[1] * axis[1] + side[2] * axis[2] + side[3] * axis[3]
+		side = unit({ side[1] - axis[1] * along, side[2] - axis[2] * along, side[3] - axis[3] * along })
+		local up = cross(side, axis)
+		local ring = {}
+		for k, point in profile do
+			ring[k] = mesh:vertex(p[1] + side[1] * point[1] + up[1] * point[2], p[2] + side[2] * point[1] + up[2] * point[2], p[3] + side[3] * point[1] + up[3] * point[2])
+		end
+		rings[i] = ring
+	end
+	for i = 1, #points - 1 do
+		for k = 1, #profile do
+			local l = k % #profile + 1
+			mesh:face({ rings[i][k], rings[i][l], rings[i + 1][l], rings[i + 1][k] })
+		end
+	end
+	if not capped then return end
+	for _, ends in { { 1, points[1] }, { #points, points[#points] } } do
+		local ring, p = rings[ends[1]], ends[2]
+		local middle = mesh:vertex(p[1], p[2], p[3])
+		for k = 1, #profile do
+			local l = k % #profile + 1
+			mesh:face(if ends[1] == 1 then { middle, ring[l], ring[k] } else { middle, ring[k], ring[l] })
+		end
+	end
+end
+local function lerp(a, b, t: number)
+	return { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t }
+end
+local function polarPoint(angle: number, r: number, z: number)
+	return { math.cos(angle) * r, math.sin(angle) * r, z }
+end
+-- The furthest the rock reaches over an arc of angles and a span of heights,
+-- so a pipe at that radius plus STANDOFF clears it.
+local function hull(a0: number, a1: number, z0: number, z1: number): number
+	local best = 0
+	for i = 0, 16 do
+		local angle = a0 + (a1 - a0) * i / 16
+		for j = 0, 6 do
+			best = math.max(best, (wall(angle, z0 + (z1 - z0) * j / 6)))
+		end
+	end
+	return best
+end
+
+-- Where a pipe clears the rock at `angle` and height z.
+local function follow(angle: number, z: number): number
+	return hull(angle - 0.12, angle + 0.12, z - 2.5, z + 1) + STANDOFF
+end
+
+-- A pipe run as corners; straight legs between them become arcs where they
+-- follow the island round (`arc` set on the corner that starts the leg).
+-- Every corner is rounded into a smooth elbow, and each elbow and both ends
+-- get a flange collar.
+type Corner = { angle: number, r: number, z: number, arc: boolean? }
+local runs: { { Corner } } = {}
+local flanges = {}
+local function leg(from: Corner, to: Corner, out)
+	local steps = if from.arc then math.max(math.ceil(math.abs(to.angle - from.angle) * from.r / 1.5), 1) else 1
+	for s = 1, steps do
+		local t = s / steps
+		local angle = from.angle + (to.angle - from.angle) * t
+		-- Arcs hug the rock, eased onto the corner radii at either end.
+		local r = from.r + (to.r - from.r) * t
+		if from.arc then
+			local ends = follow(from.angle, from.z) * (1 - t) + follow(to.angle, from.z) * t
+			r += follow(angle, from.z) - ends
+		end
+		table.insert(out, polarPoint(angle, r, from.z + (to.z - from.z) * t))
+	end
+end
+local function pipePoints(corners: { Corner })
+	local raw = { polarPoint(corners[1].angle, corners[1].r, corners[1].z) }
+	local corner = { 1 }
+	for i = 1, #corners - 1 do
+		leg(corners[i], corners[i + 1], raw)
+		table.insert(corner, #raw)
+	end
+	-- Round each inner corner: cut back along both legs and bend through a
+	-- quadratic curve between the cut points.
+	local points = {}
+	local BEND = 1.6
+	local function towards(a, b, d: number)
+		local length = math.sqrt((b[1] - a[1]) ^ 2 + (b[2] - a[2]) ^ 2 + (b[3] - a[3]) ^ 2)
+		return lerp(a, b, math.min(d / length, 0.45))
+	end
+	for i, p in raw do
+		local isCorner = table.find(corner, i) and i > 1 and i < #raw
+		if not isCorner then
+			table.insert(points, p)
+			continue
+		end
+		local a, c = towards(p, raw[i - 1], BEND), towards(p, raw[i + 1], BEND)
+		for s = 0, 8 do
+			local t = s / 8
+			table.insert(points, lerp(lerp(a, p, t), lerp(p, c, t), t))
+		end
+		local before = lerp(a, raw[i - 1], 0.001)
+		table.insert(flanges, { a, unit({ a[1] - before[1], a[2] - before[2], a[3] - before[3] }) })
+		local after = lerp(c, raw[i + 1], 0.001)
+		table.insert(flanges, { c, unit({ after[1] - c[1], after[2] - c[2], after[3] - c[3] }) })
+	end
+	return points
+end
+
+-- Brackets: an iron triangle bolted to the rock under a pipe, a beam out to
+-- the pipe, a post down the rock and a diagonal brace, riveted at the joints.
+local brackets = {}
+local function bracketAt(angle: number, r: number, z: number)
+	table.insert(brackets, { angle = angle, r = r, z = z })
+end
+
+-- The runs, by tier: a ring along under the rim that drops down the sides,
+-- jogs in under each overhang and gathers at the drain on the front.
+local FRONT = -math.pi / 2
+local DRAIN_Z = -17
+local function arcRun(a0: number, a1: number, z: number, zBelow: number): number
+	return hull(math.min(a0, a1), math.max(a0, a1), zBelow, z + 1) + STANDOFF
+end
+do
+	for _, side in { -1, 1 } do
+		local back, drop, mid = FRONT + side * 2.4, FRONT + side * 1.6, FRONT + side * 0.5
+		-- Drops sit far enough out to clear the rock all the way down.
+		local rDrop = math.max(follow(drop, -3), arcRun(drop, drop, -3, -10))
+		local rMid = math.max(follow(mid, -10), arcRun(mid, mid, -10, DRAIN_Z))
+		local r3 = follow(FRONT, DRAIN_Z)
+		table.insert(runs, {
+			{ angle = back, r = follow(back, -3) - 0.8, z = -2.2 },
+			{ angle = back, r = follow(back, -3), z = -3, arc = true },
+			{ angle = drop, r = rDrop, z = -3 },
+			{ angle = drop, r = rDrop, z = -10 },
+			{ angle = drop, r = follow(drop, -10), z = -10, arc = true },
+			{ angle = mid, r = rMid, z = -10 },
+			{ angle = mid, r = rMid, z = DRAIN_Z },
+			{ angle = mid, r = follow(mid, DRAIN_Z), z = DRAIN_Z, arc = true },
+			{ angle = FRONT + side * 0.12, r = follow(FRONT + side * 0.12, DRAIN_Z), z = DRAIN_Z },
+		})
+		local between = back - side * 0.4
+		bracketAt(between, follow(between, -3), -3)
+		bracketAt(drop, rDrop, -6.5)
+		bracketAt(mid, rMid, -13.5)
+	end
+	-- A straight riser on the back joining the rim ring to the second tier.
+	for _, angle in { FRONT + math.pi - 0.3 } do
+		local r = arcRun(angle, angle, -2, -14)
+		table.insert(runs, {
+			{ angle = angle, r = r - 0.6, z = -1.8 },
+			{ angle = angle, r = r, z = -2.6 },
+			{ angle = angle, r = r, z = -12 },
+			{ angle = angle, r = r - 1.4, z = -13 },
+		})
+		bracketAt(angle, r, -7)
+	end
+end
+
+local DRAIN_R = follow(FRONT, DRAIN_Z) + 1.8
+part("Pipes", nil, COPPER, function(mesh)
+	for _, corners in runs do
+		local points = pipePoints(corners)
+		sweep(mesh, points, circle(PIPE, 14))
+		local first, second = points[1], points[2]
+		table.insert(flanges, { first, unit({ second[1] - first[1], second[2] - first[2], second[3] - first[3] }) })
+		local last, before = points[#points], points[#points - 1]
+		table.insert(flanges, { last, unit({ last[1] - before[1], last[2] - before[2], last[3] - before[3] }) })
+	end
+	-- The outfall: a fat trunk from the gathering point out to a flared mouth.
+	local r3 = follow(FRONT, DRAIN_Z)
+	sweep(mesh, { polarPoint(FRONT, r3 - 1.5, DRAIN_Z), polarPoint(FRONT, DRAIN_R, DRAIN_Z) }, circle(PIPE * 1.5, 18), true)
+	for _, flange in flanges do
+		local p, axis = flange[1], flange[2]
+		sweep(mesh, { lerp(p, { p[1] + axis[1], p[2] + axis[2], p[3] + axis[3] }, -0.18), lerp(p, { p[1] + axis[1], p[2] + axis[2], p[3] + axis[3] }, 0.18) }, circle(PIPE * 1.32, 14), true)
+	end
+end, 50, function(x, y, z)
+	local k = 1 + 0.05 * math.noise(x * 0.8, y * 0.8, z * 0.8)
+	local brass = 0.3 * math.clamp(math.noise(x / 6, y / 6, z / 6 + 5) + 0.5, 0, 1)
+	return (COPPER[1] + (0.78 - COPPER[1]) * brass) * k, (COPPER[2] + (0.6 - COPPER[2]) * brass) * k, (COPPER[3] + (0.28 - COPPER[3]) * brass) * k
+end)
+
+part("Drain", nil, IRON, function(mesh)
+	-- A thick lipped ring round the mouth and a grate of bars across it.
+	local mouth = PIPE * 2.1
+	local out = polarPoint(FRONT, 1, 0)
+	local at = polarPoint(FRONT, DRAIN_R, DRAIN_Z)
+	local ring = {}
+	for k = 0, 24 do
+		local a = 2 * math.pi * k / 24
+		local c = math.cos(a) * mouth
+		table.insert(ring, { at[1] + out[2] * c * -1, at[2] + out[1] * c, at[3] + math.sin(a) * mouth })
+	end
+	sweep(mesh, ring, circle(0.35, 10))
+	sweep(mesh, { at, { at[1] - out[1] * 1.2, at[2] - out[2] * 1.2, at[3] } }, circle(mouth, 24), true)
+	for n = -2, 2 do
+		local d = n * mouth * 0.35
+		local half = math.sqrt(mouth ^ 2 - d ^ 2)
+		local o = { at[1] + out[1] * 0.12, at[2] + out[2] * 0.12, at[3] }
+		sweep(mesh, { { o[1] - out[2] * d * -1, o[2] - out[1] * d, o[3] - half }, { o[1] - out[2] * d * -1, o[2] - out[1] * d, o[3] + half } }, circle(0.13, 6), true)
+	end
+	-- Brackets.
+	for _, b in brackets do
+		local rock = wall(b.angle, b.z - PIPE - 0.4) - 0.4
+		local top = b.z - PIPE - 0.15
+		local p0 = polarPoint(b.angle, rock, top)
+		local p1 = polarPoint(b.angle, b.r + 0.3, top)
+		local p2 = polarPoint(b.angle, wall(b.angle, top - 2.6) - 0.4, top - 2.6)
+		local beam = { { -0.28, -0.28 }, { 0.28, -0.28 }, { 0.28, 0.28 }, { -0.28, 0.28 } }
+		sweep(mesh, { p0, p1 }, beam, true)
+		sweep(mesh, { p0, p2 }, beam, true)
+		sweep(mesh, { p2, lerp(p0, p1, 0.85) }, beam, true)
+		-- A saddle strap over the pipe.
+		local strap = {}
+		local centre = polarPoint(b.angle, b.r, b.z)
+		local tangent = polarPoint(b.angle + math.pi / 2, 1, 0)
+		for k = 0, 12 do
+			local a = math.pi * k / 12
+			local radial = polarPoint(b.angle, math.cos(a) * (PIPE + 0.1), 0)
+			table.insert(strap, { centre[1] + radial[1], centre[2] + radial[2], centre[3] + math.sin(a) * (PIPE + 0.1) })
+		end
+		sweep(mesh, strap, { { -0.25, -0.06 }, { 0.25, -0.06 }, { 0.25, 0.06 }, { -0.25, 0.06 } }, true)
+		-- Rivets at each joint.
+		for _, p in { p0, p2, lerp(p0, p1, 0.85), lerp(p0, p1, 0.5) } do
+			sweep(mesh, { lerp(p, { p[1] + tangent[1], p[2] + tangent[2], p[3] }, -0.32), lerp(p, { p[1] + tangent[1], p[2] + tangent[2], p[3] }, 0.32) }, circle(0.11, 6), true)
+		end
+	end
+end, 40, 0.5)
+
+-- The goo: a pool sagging out of the mouth's lower lip, a strand stretching
+-- down from it and a drop hanging off the end.
+part("Goo", nil, GOO, function(mesh)
+	local mouth = PIPE * 2.1
+	local lip = polarPoint(FRONT, DRAIN_R + 0.15, DRAIN_Z - mouth + 0.15)
+	local strand = {}
+	for k = 0, 10 do
+		local t = k / 10
+		table.insert(strand, { lip[1] + 0.25 * math.sin(t * 2), lip[2] - 0.35 * t, lip[3] - 3.2 * t })
+	end
+	local blob = {}
+	for k = 0, 10 do
+		local t = k / 10
+		local radius = 0.18 + 0.5 * math.sin(math.pi * t) ^ 0.7
+		local row = {}
+		for s = 0, 11 do
+			local a = 2 * math.pi * s / 12
+			row[s] = mesh:vertex(strand[11][1] + math.cos(a) * radius, strand[11][2] + math.sin(a) * radius, strand[11][3] - t * 1.3)
+		end
+		table.insert(blob, row)
+	end
+	for k = 1, #blob - 1 do
+		for s = 0, 11 do
+			local l = (s + 1) % 12
+			mesh:face({ blob[k][s], blob[k][l], blob[k + 1][l], blob[k + 1][s] })
+		end
+	end
+	sweep(mesh, strand, circle(0.22, 10))
+	sweep(mesh, { polarPoint(FRONT - 0.07, DRAIN_R - 0.2, DRAIN_Z - mouth + 0.2), polarPoint(FRONT + 0.07, DRAIN_R - 0.2, DRAIN_Z - mouth + 0.2) }, circle(0.45, 10), true)
+end, 60, 0, nil, 1.5)
+
+local occluders = { shell[1].mesh }
+for _, entry in parts do
+	table.insert(occluders, entry.mesh)
+end
+for _, entry in parts do
+	if entry.emissive then
+		model.part(entry.name, entry.mesh, entry.image, { preview = true, emissive = entry.emissive })
+		continue
+	end
+	shade({ entry }, occluders)
+	model.part(entry.name, entry.mesh, entry.image, { preview = true })
+end
