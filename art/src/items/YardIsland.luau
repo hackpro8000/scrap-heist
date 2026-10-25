@@ -92,22 +92,7 @@ for t, tier in TIERS do
 				floor = if n > joints then -math.huge else pillar.top - height * (n + (random(seed + i + n * 13 + 210) - 0.5) * 0.5) / (joints + 1),
 				offset = if n == 1 then 0 else (random(seed + i + n * 13 + 220) - 0.4) * 1.2,
 				tint = 0.88 + 0.24 * random(seed + i + n * 13 + 230),
-				slices = {},
 			})
-			-- Flat slices across the block's bulge, like the planar cuts
-			-- that knock the apexes off a stylised rock: each a tilted plane
-			-- set a little inside the face around its own centre.
-			local block = pillar.blocks[n]
-			for k = 1, 2 + math.floor(random(seed + i + n * 13 + 240) * 2) do
-				local key = seed + i * 11 + n * 37 + k * 53
-				table.insert(block.slices, {
-					across = (random(key + 1) - 0.5) * 1.4,
-					depth = 0.5 + 0.9 * random(key + 2),
-					tiltAcross = (random(key + 3) - 0.5) * 1.2,
-					tiltUp = (random(key + 4) - 0.5) * 0.9,
-					height = random(key + 5),
-				})
-			end
 		end
 		angle += span
 	end
@@ -164,12 +149,6 @@ local function wall(angle: number, z: number)
 		-- above and below it.
 		local block, ceiling = blockAt(pillar, z)
 		r += block.offset + 0.2 * math.noise(angle * 4, z / 4, pillar.seed % 97)
-		local face = pillar.reach * outlineScale(angle) - pillar.reach * pillar.taper * shift - size * pillar.lean * shift + block.offset
-		local blockBottom = math.max(block.floor, pillar.bottom)
-		for _, slice in block.slices do
-			local at = blockBottom + (ceiling - blockBottom) * (0.2 + 0.6 * slice.height)
-			r = math.min(r, face - slice.depth + slice.tiltAcross * (u - slice.across) * size + slice.tiltUp * (z - at))
-		end
 		local edge = math.min(if ceiling < pillar.top then ceiling - z else math.huge, z - block.floor)
 		if edge < BEVEL then
 			r -= BEVEL * (1 - math.sqrt(1 - (1 - edge / BEVEL) ^ 2))
