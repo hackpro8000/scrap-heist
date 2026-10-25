@@ -258,14 +258,15 @@ local function rock(mesh, pillar, t: number, floor: number, ceiling: number, key
 				local bite = if inset > 0 then chip else (if s == 0 then chip * 0.6 else 0)
 				local wander = if s == 0 then WANDER * (random(key + k * 3 + salt) - 0.5) * 2 else 0
 				local r = reachHere - inset - bite + wander
-				-- The shared sides sit back a hair so neighbours don't touch.
+				-- Neighbours meet along the shared sides; the bevels pull back
+				-- from them so each seam is a V-shaped crevice.
 				local shift = if k == 1 and s == 0 then 1 elseif k == #corners then -1 else 0
-				local angle = base + shift * (0.12 + inset) / r
+				local angle = base + shift * inset / r
 				table.insert(points, mesh:vertex(math.cos(angle) * r, math.sin(angle) * r, z))
 			end
 		end
 		for _, k in { #corners, 1 } do
-			local angle = corners[k][1] + (if k == 1 then 1 else -1) * (0.12 + inset) / inside
+			local angle = corners[k][1] + (if k == 1 then 1 else -1) * inset / inside
 			table.insert(points, mesh:vertex(math.cos(angle) * inside, math.sin(angle) * inside, z))
 		end
 		return points
@@ -310,6 +311,44 @@ local function capRock(mesh, pillar)
 		local flare = TOP_LIP * math.clamp((z - floor) / 1.4, 0.35, 1)
 		return corner[2] * outlineScale(corner[1]) + flare + jut
 	end)
+end
+
+-- The rock that plugs the hollow the bottom tier's columns ring at the tip.
+local TIP_SIDES = 7
+local function tipRock(mesh)
+	local t = #TIERS
+	local radius = TIERS[t][1] * 0.45 + 0.8
+	local floor = math.huge
+	for _, pillar in pillars[t] do
+		floor = math.min(floor, pillar.bottom)
+	end
+	floor -= 0.6
+	local ceiling = TIERS[t - 1][3] + 0.5
+	local function ring(z: number, inset: number, salt: number)
+		local points = {}
+		for k = 1, TIP_SIDES do
+			local angle = (k + 0.3 * (random(t * 40 + k) - 0.5)) / TIP_SIDES * math.pi * 2
+			local peak = math.clamp((math.noise(angle * 9, z / 2.5, 13) - 0.1) * 3, 0, 1)
+			local r = radius * (0.85 + 0.3 * random(t * 40 + k + 7)) - inset - CHIP * peak * (if inset > 0 then 1 else 0.5) + WANDER * (random(t * 40 + k + salt) - 0.5) * 2
+			table.insert(points, mesh:vertex(math.cos(angle) * r, math.sin(angle) * r, z))
+		end
+		return points
+	end
+	local rings = { ring(floor, BEVEL * 1.5, 0), ring(floor + BEVEL * 1.5, 0, 40), ring(ceiling, 0, 80) }
+	for i = 1, #rings - 1 do
+		local low, high = rings[i], rings[i + 1]
+		for j = 1, TIP_SIDES do
+			local l = j % TIP_SIDES + 1
+			mesh:face({ low[j], low[l], high[l], high[j] })
+		end
+	end
+	local bottom = mesh:vertex(0, 0, floor)
+	local top = mesh:vertex(0, 0, ceiling)
+	for j = 1, TIP_SIDES do
+		local l = j % TIP_SIDES + 1
+		mesh:face({ bottom, rings[1][l], rings[1][j] })
+		mesh:face({ top, rings[3][j], rings[3][l] })
+	end
 end
 
 -- The columns' blocks below the cap rocks.
@@ -415,6 +454,7 @@ part("Island", nil, GROUND, function(mesh)
 			blockRocks(mesh, pillar, t)
 		end
 	end
+	tipRock(mesh)
 end, false, function(x, y, z)
 	local _, pillar = wall(math.atan2(y, x), z)
 	return islandPaint(x, y, z - CAP_TOP, if pillar then pillar.seed else nil, if pillar then (blockAt(pillar, z)).tint else nil)
