@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-82ba6696854819c4"
+local CACHE_KEY = "YardIsland-d6303444ee544631"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -747,9 +747,9 @@ for t, tier in TIERS do
 		end
 		table.insert(corners, { toAngle, to.reach })
 		local foot = bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.5 * (random(seed + i + 80) - 0.5)
-		-- The bottom tier's pillars all end level, so none hangs alone
-		-- below the rest.
-		if t == #TIERS then foot = bottom end
+		-- The bottom tier's pillars end at stepped heights, so the tip
+		-- comes out ragged.
+		if t == #TIERS then foot = bottom + 3.5 * (random(seed + i + 85) - 0.6) end
 		local pillar = {
 			from = from.angle,
 			to = toAngle,
