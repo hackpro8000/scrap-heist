@@ -175,10 +175,10 @@ local function pillarReach(pillar, t: number, angle: number, z: number): number
 end
 
 -- How far the island's wall reaches at `angle` and height z, and the
--- pillar there, for painting: the outermost tier with a pillar standing
--- at that height.
-local function wall(angle: number, z: number)
-	for t = 1, #TIERS do
+-- pillar there, for painting: the outermost tier, of the first `tiers`,
+-- with a pillar standing at that height.
+local function wall(angle: number, z: number, tiers: number?)
+	for t = 1, tiers or #TIERS do
 		for _, pillar in pillars[t] do
 			local a = pillar.from + (angle - pillar.from) % (2 * math.pi)
 			if a > pillar.to then continue end
@@ -197,8 +197,69 @@ local function drape(angle: number): number
 	return 0.35 + 1.1 * math.clamp(n + 0.4, 0, 1)
 end
 
--- One closed outer shell: rows of wall points stepping down from the top to
--- the last column's foot, a flat top in concentric rings and a small cap at the bottom.
+-- One closed outer shell over the top tier: rows of wall points stepping
+-- down from the top to its last column's foot, a flat top in concentric
+-- rings and a small cap at the bottom. The lower tiers' blocks are built
+-- as separate faceted rocks.
+-- The lower tiers' blocks as closed rocks: each block's footprint is its
+-- pillar's wedge of facet corners, closed by two inner corners hidden in
+-- the island, and its outer edges are cut back by a bevel that varies
+-- per block. Corners wander a little so no two rocks are true.
+local BEVEL, WANDER = 0.35, 0.2
+local function blockRocks(mesh, pillar, t: number)
+	local tierTop = TIERS[t - 1][3] + 0.5
+	local inside = TIERS[t][1] * 0.45
+	local ceiling = CAP_TOP - TOP_LIP_HEIGHT
+	for n, block in pillar.blocks do
+		local floor = math.max(block.floor, pillar.bottom)
+		local key = pillar.seed + n * 17
+		local bevel = BEVEL * (0.6 + 0.9 * random(key + 1))
+		-- A ring of the footprint at height z, pulled in by `inset`.
+		local function ring(z: number, inset: number, salt: number)
+			local taper = 1 - 0.15 * math.clamp((tierTop - z) / (tierTop - TIERS[t][3]), 0, 1)
+			local points = {}
+			local corners = pillar.corners
+			for k, corner in corners do
+				local r = (corner[2] * outlineScale(corner[1]) * taper + block.jut) - inset
+				r += WANDER * (random(key + k * 3 + salt) - 0.5) * 2
+				-- The shared sides sit back a hair so neighbours don't touch.
+				local shift = if k == 1 then 1 elseif k == #corners then -1 else 0
+				local angle = corner[1] + shift * (0.12 + inset) / r
+				table.insert(points, mesh:vertex(math.cos(angle) * r, math.sin(angle) * r, z))
+			end
+			for _, k in { #corners, 1 } do
+				local angle = corners[k][1] + (if k == 1 then 1 else -1) * (0.12 + inset) / inside
+				table.insert(points, mesh:vertex(math.cos(angle) * inside, math.sin(angle) * inside, z))
+			end
+			return points
+		end
+		local rings = {
+			ring(floor, bevel, 0),
+			ring(floor + bevel, 0, 40),
+			ring(ceiling - bevel, 0, 80),
+			ring(ceiling, bevel, 120),
+		}
+		for i = 1, #rings - 1 do
+			local low, high = rings[i], rings[i + 1]
+			for j = 1, #low do
+				local l = j % #low + 1
+				mesh:face({ low[j], low[l], high[l], high[j] })
+			end
+		end
+		local mid = (pillar.from + pillar.to) / 2
+		local centre = (inside + TIERS[t][1]) / 2
+		local top = mesh:vertex(math.cos(mid) * centre, math.sin(mid) * centre, ceiling)
+		local bottom = mesh:vertex(math.cos(mid) * centre, math.sin(mid) * centre, floor)
+		local last, first = rings[#rings], rings[1]
+		for j = 1, #last do
+			local l = j % #last + 1
+			mesh:face({ top, last[j], last[l] })
+			mesh:face({ bottom, first[l], first[j] })
+		end
+		ceiling = block.floor
+	end
+end
+
 local ANGLES, STEP, FLOOR, LIP, TOP_RINGS = 480, 0.15, -25, 0.35, 8
 local RIM_JAGGED, RIM_POKE = 0.166, 0.06
 local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
@@ -235,7 +296,7 @@ part("Island", nil, GROUND, function(mesh)
 		-- Stop once every pillar has ended, so no needle trails below.
 		local any = false
 		for j = 0, ANGLES - 1, 16 do
-			if wall(2 * math.pi * j / ANGLES, z) > 0.3 then
+			if wall(2 * math.pi * j / ANGLES, z, 1) > 0.3 then
 				any = true
 				break
 			end
@@ -248,7 +309,7 @@ part("Island", nil, GROUND, function(mesh)
 			-- of the first tier.
 			local t = math.clamp((CAP_TOP - z) / RIM_BLEND, 0, 1)
 			t = t * t * (3 - 2 * t)
-			local r = rim[j] + (wall(angle, z) - rim[j]) * t
+			local r = rim[j] + (wall(angle, z, 1) - rim[j]) * t
 			-- The grass lip stands proud of the rock, easing back in over
 			-- its last fifth so it overhangs the stone below.
 			local depth = (CAP_TOP - z) / drape(angle)
@@ -289,6 +350,11 @@ part("Island", nil, GROUND, function(mesh)
 	local bottom = mesh:vertex(0, 0, z + STEP)
 	for j = 0, ANGLES - 1 do
 		mesh:face({ bottom, rows[#rows][(j + 1) % ANGLES], rows[#rows][j] })
+	end
+	for t = 2, #TIERS do
+		for _, pillar in pillars[t] do
+			blockRocks(mesh, pillar, t)
+		end
 	end
 end, false, function(x, y, z)
 	local _, pillar = wall(math.atan2(y, x), z)
