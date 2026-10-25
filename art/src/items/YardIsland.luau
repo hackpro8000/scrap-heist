@@ -220,8 +220,6 @@ end
 -- One closed outer shell: rows of wall points stepping down from the top to
 -- the last column's foot, a flat top in concentric rings and a small cap at the bottom.
 local ANGLES, STEP, FLOOR, LIP, TOP_RINGS = 240, 0.3, -25, 0.35, 8
-local RIM_JAGGED, RIM_POKE = 0.166, 0.06
-local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
 -- The shell and its shading are cached under a key hashing every line above
 -- "-- cached above", so changes below it skip the rebuild.
 local function shade(entries, occluders, gradient: number?)
@@ -240,12 +238,8 @@ local shell = model.cached(CACHE_KEY, function()
 part("Island", nil, GROUND, function(mesh)
 	local rim = {}
 	for j = 0, ANGLES - 1 do
-		-- The rim's jaggedness, its departure from the smooth outline,
-		-- exaggerated inward by RIM_JAGGED and tamed outward by RIM_POKE.
-		local angle = 2 * math.pi * j / ANGLES
-		local smooth = TIERS[1][1] * outlineScale(angle)
-		local departure = wall(angle, CAP_TOP) - smooth
-		rim[j] = smooth + departure * (if departure > 0 then RIM_POKE else RIM_JAGGED)
+		-- The rim follows the top pillars' jagged faces.
+		rim[j] = wall(2 * math.pi * j / ANGLES, CAP_TOP)
 	end
 	local rows = {}
 	local z = CAP_TOP
@@ -262,11 +256,7 @@ part("Island", nil, GROUND, function(mesh)
 		local row = {}
 		for j = 0, ANGLES - 1 do
 			local angle = 2 * math.pi * j / ANGLES
-			-- The calm rim eases into the jagged pillar faces over the top half
-			-- of the first tier.
-			local t = math.clamp((CAP_TOP - z) / RIM_BLEND, 0, 1)
-			t = t * t * (3 - 2 * t)
-			local r = rim[j] + (wall(angle, z) - rim[j]) * t
+			local r = wall(angle, z)
 			-- The grass lip stands proud of the rock, easing back in over
 			-- its last fifth so it overhangs the stone below.
 			local depth = (CAP_TOP - z) / drape(angle)
