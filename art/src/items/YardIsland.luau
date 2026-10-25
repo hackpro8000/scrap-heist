@@ -8,6 +8,7 @@
 useTexelDensity(16)
 local RADIUS = 20
 local GROUND = { 0.3, 0.27, 0.22 }
+local STRATA_DIP = 0.65
 local STRATA = { { 0.5, 0.4, 0.27 }, { 0.36, 0.35, 0.34 }, { 0.48, 0.3, 0.22 } }
 local TOPSOIL = { 0.24, 0.19, 0.14 }
 
@@ -27,7 +28,12 @@ local function islandPaint(x: number, y: number, z: number, seed: number?, tint:
 		return GROUND[1] * k, GROUND[2] * k, GROUND[3] * k
 	end
 	local s = seed or 0
-	local band = math.noise(x / 9 + s, y / 9, z / 2) * 0.6 + z * (0.8 + 0.2 * random(s + 1)) + random(s + 2) * 3
+	-- The strata dip at an angle that varies per pillar, so the bands wrap
+	-- across the blocks instead of lining up with their edges.
+	local dipAngle = random(s + 3) * 2 * math.pi
+	local dip = STRATA_DIP * (0.6 + 0.8 * random(s + 4))
+	local tilted = z + dip * (x * math.cos(dipAngle) + y * math.sin(dipAngle))
+	local band = math.noise(x / 9 + s, y / 9, z / 2) * 0.6 + tilted * (0.8 + 0.2 * random(s + 1)) + random(s + 2) * 3
 	local wave = math.sin(band * 2.4)
 	local layer = STRATA[math.floor(band * 2.4 / (2 * math.pi)) % 3 + 1]
 	local k = (tint or 1) * (1 + 0.1 * wave + 0.06 * math.noise(x * 2 + s, y * 2, z * 2))
@@ -174,37 +180,11 @@ local function pillarReach(pillar, t: number, angle: number, z: number): number
 	return r
 end
 
--- The pillar of tier t standing at `angle`.
-local function pillarAt(t: number, angle: number)
-	for _, pillar in pillars[t] do
-		local a = pillar.from + (angle - pillar.from) % (2 * math.pi)
-		if a <= pillar.to then return pillar end
-	end
-	return pillars[t][1]
-end
-
--- How far tier t's rock facets reach at `angle`, before the outline's wobble.
-local function facetReach(t: number, angle: number): number
-	for _, pillar in pillars[t] do
-		local a = pillar.from + (angle - pillar.from) % (2 * math.pi)
-		if a > pillar.to then continue end
-		local corners = pillar.corners
-		for k = 1, #corners - 1 do
-			local c, d = corners[k], corners[k + 1]
-			if a <= d[1] then
-				return c[2] + (d[2] - c[2]) * (a - c[1]) / (d[1] - c[1])
-			end
-		end
-		return corners[#corners][2]
-	end
-	return TIERS[t][1]
-end
-
 -- How far the island's wall reaches at `angle` and height z, and the
--- pillar there, for painting: the outermost tier, of the first `tiers`,
--- with a pillar standing at that height.
-local function wall(angle: number, z: number, tiers: number?)
-	for t = 1, tiers or #TIERS do
+-- pillar there, for painting: the outermost tier with a pillar standing
+-- at that height.
+local function wall(angle: number, z: number)
+	for t = 1, #TIERS do
 		for _, pillar in pillars[t] do
 			local a = pillar.from + (angle - pillar.from) % (2 * math.pi)
 			if a > pillar.to then continue end
@@ -223,155 +203,11 @@ local function drape(angle: number): number
 	return 0.35 + 1.1 * math.clamp(n + 0.4, 0, 1)
 end
 
--- The top: a soil cap over a ring of rocks jammed together under it, one
--- per top-tier column, so the rim is formed by colliding rocks rather than
--- a smooth slab. Every column's blocks below are separate rocks too.
--- Each rock's footprint is its pillar's wedge of facet corners, closed by
--- two inner corners hidden in the island, and its outer edges are cut back
--- by a bevel that varies per rock. Corners wander a little so no two rocks
--- are true.
-local BEVEL, WANDER = 0.35, 0.2
-local CHIP_STEPS = 4
-local CAP_ROCK_TOP = CAP_TOP - 0.3
-
--- One closed rock between floor and ceiling. `reach(k, z)` is how far
--- corner k of the pillar's face reaches at height z.
-local function rock(mesh, pillar, t: number, floor: number, ceiling: number, key: number, reach: (number, number) -> number)
-	local inside = TIERS[t][1] * 0.45
-	local bevel = BEVEL * (0.6 + 0.9 * random(key + 1))
-	-- A ring of the footprint at height z, pulled in by `inset`.
-	local function ring(z: number, inset: number, salt: number)
-		local points = {}
-		local corners = pillar.corners
-		for k, corner in corners do
-			-- Each facet is split so chips can bite into its edges between corners.
-			local steps = if k < #corners then CHIP_STEPS else 1
-			for s = 0, steps - 1 do
-				local u = s / steps
-				local nextCorner = corners[math.min(k + 1, #corners)]
-				local base = corner[1] + (nextCorner[1] - corner[1]) * u
-				local reachHere = reach(k, z) + (reach(math.min(k + 1, #corners), z) - reach(k, z)) * u
-				-- Chipped edges: only noise peaks bite deep, so chips are long
-				-- but sparse along a mostly crisp edge, deepest at the corners.
-				local peak = math.clamp((math.noise(base * 9, z / 2.5, key % 97) - 0.1) * 3, 0, 1)
-				local chip = CHIP * (0.2 + 2 * peak)
-				local bite = if inset > 0 then chip else (if s == 0 then chip * 0.6 else 0)
-				local wander = if s == 0 then WANDER * (random(key + k * 3 + salt) - 0.5) * 2 else 0
-				local r = reachHere - inset - bite + wander
-				-- Neighbours meet along the shared sides; the bevels pull back
-				-- from them so each seam is a V-shaped crevice.
-				local shift = if k == 1 and s == 0 then 1 elseif k == #corners then -1 else 0
-				local angle = base + shift * inset / r
-				table.insert(points, mesh:vertex(math.cos(angle) * r, math.sin(angle) * r, z))
-			end
-		end
-		for _, k in { #corners, 1 } do
-			local angle = corners[k][1] + (if k == 1 then 1 else -1) * inset / inside
-			table.insert(points, mesh:vertex(math.cos(angle) * inside, math.sin(angle) * inside, z))
-		end
-		return points
-	end
-	local rings = {
-		ring(floor, bevel, 0),
-		ring(floor + bevel, 0, 40),
-		ring(ceiling - bevel, 0, 80),
-		ring(ceiling, bevel, 120),
-	}
-	for i = 1, #rings - 1 do
-		local low, high = rings[i], rings[i + 1]
-		for j = 1, #low do
-			local l = j % #low + 1
-			mesh:face({ low[j], low[l], high[l], high[j] })
-		end
-	end
-	local mid = (pillar.from + pillar.to) / 2
-	local centre = (inside + TIERS[t][1]) / 2
-	local top = mesh:vertex(math.cos(mid) * centre, math.sin(mid) * centre, ceiling)
-	local bottom = mesh:vertex(math.cos(mid) * centre, math.sin(mid) * centre, floor)
-	local last, first = rings[#rings], rings[1]
-	for j = 1, #last do
-		local l = j % #last + 1
-		mesh:face({ top, last[j], last[l] })
-		mesh:face({ bottom, first[l], first[j] })
-	end
-end
-
--- How far a top rock juts past its column, so neighbours collide unevenly.
-local function capJut(pillar): number
-	return 0.8 * (random(pillar.seed + 500) - 0.4)
-end
-
--- The top-tier column's rock under the soil cap: flared out over the column
--- by the lip, its underside slanting back in, its depth varying per rock.
-local function capRock(mesh, pillar)
-	local floor = CAP_TOP - TOP_LIP_HEIGHT + 1.2 * (random(pillar.seed + 510) - 0.5)
-	local jut = capJut(pillar)
-	rock(mesh, pillar, 1, floor, CAP_ROCK_TOP, pillar.seed + 520, function(k, z)
-		local corner = pillar.corners[k]
-		local flare = TOP_LIP * math.clamp((z - floor) / 1.4, 0.35, 1)
-		return corner[2] * outlineScale(corner[1]) + flare + jut
-	end)
-end
-
--- The rock that plugs the hollow the bottom tier's columns ring at the tip.
-local TIP_SIDES = 7
-local function tipRock(mesh)
-	local t = #TIERS
-	local radius = TIERS[t][1] * 0.45 + 0.8
-	local floor = math.huge
-	for _, pillar in pillars[t] do
-		floor = math.min(floor, pillar.bottom)
-	end
-	floor -= 0.6
-	local ceiling = TIERS[t - 1][3] + 0.5
-	local function ring(z: number, inset: number, salt: number)
-		local points = {}
-		for k = 1, TIP_SIDES do
-			local angle = (k + 0.3 * (random(t * 40 + k) - 0.5)) / TIP_SIDES * math.pi * 2
-			local peak = math.clamp((math.noise(angle * 9, z / 2.5, 13) - 0.1) * 3, 0, 1)
-			local r = radius * (0.85 + 0.3 * random(t * 40 + k + 7)) - inset - CHIP * peak * (if inset > 0 then 1 else 0.5) + WANDER * (random(t * 40 + k + salt) - 0.5) * 2
-			table.insert(points, mesh:vertex(math.cos(angle) * r, math.sin(angle) * r, z))
-		end
-		return points
-	end
-	local rings = { ring(floor, BEVEL * 1.5, 0), ring(floor + BEVEL * 1.5, 0, 40), ring(ceiling, 0, 80) }
-	for i = 1, #rings - 1 do
-		local low, high = rings[i], rings[i + 1]
-		for j = 1, TIP_SIDES do
-			local l = j % TIP_SIDES + 1
-			mesh:face({ low[j], low[l], high[l], high[j] })
-		end
-	end
-	local bottom = mesh:vertex(0, 0, floor)
-	local top = mesh:vertex(0, 0, ceiling)
-	for j = 1, TIP_SIDES do
-		local l = j % TIP_SIDES + 1
-		mesh:face({ bottom, rings[1][l], rings[1][j] })
-		mesh:face({ top, rings[3][j], rings[3][l] })
-	end
-end
-
--- The columns' blocks below the cap rocks.
-local function blockRocks(mesh, pillar, t: number)
-	local tierTop = if t == 1 then CAP_TOP else TIERS[t - 1][3] + 0.5
-	local ceiling = CAP_TOP - TOP_LIP_HEIGHT
-	for n, block in pillar.blocks do
-		local floor = math.max(block.floor, pillar.bottom)
-		-- Blocks hidden inside the cap rocks are skipped.
-		if floor > ceiling - 1 then
-			ceiling = math.min(ceiling, block.floor)
-			continue
-		end
-		rock(mesh, pillar, t, floor, ceiling, pillar.seed + n * 17, function(k, z)
-			local corner = pillar.corners[k]
-			local taper = 1 - 0.15 * math.clamp((tierTop - z) / (tierTop - TIERS[t][3]), 0, 1)
-			return corner[2] * outlineScale(corner[1]) * taper + block.jut
-		end)
-		ceiling = block.floor
-	end
-end
-
-local ANGLES, FLOOR, LIP, TOP_RINGS = 480, -25, 0.35, 8
+-- One closed outer shell: rows of wall points stepping down from the top to
+-- the last column's foot, a flat top in concentric rings and a small cap at the bottom.
+local ANGLES, STEP, FLOOR, LIP, TOP_RINGS = 480, 0.15, -25, 0.35, 8
+local RIM_JAGGED, RIM_POKE = 0.166, 0.06
+local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
 -- The shell and its shading are cached under a key hashing every line above
 -- "-- cached above", so changes below it skip the rebuild.
 local function shade(entries, occluders, gradient: number?)
@@ -390,31 +226,45 @@ local shell = model.cached(CACHE_KEY, function()
 part("Island", nil, GROUND, function(mesh)
 	-- Smooth across the sampled rock, but keep the rim and deep folds creased.
 	mesh:setSmooth(60)
-	-- The soil's rim follows the cap rocks under it.
 	local rim = {}
 	for j = 0, ANGLES - 1 do
+		-- The rim's jaggedness, its departure from the smooth outline,
+		-- exaggerated inward by RIM_JAGGED and tamed outward by RIM_POKE.
 		local angle = 2 * math.pi * j / ANGLES
-		rim[j] = facetReach(1, angle) * outlineScale(angle) + TOP_LIP + capJut(pillarAt(1, angle))
+		local smooth = TIERS[1][1] * outlineScale(angle)
+		local departure = wall(angle, CAP_TOP) - smooth
+		rim[j] = smooth + departure * (if departure > 0 then RIM_POKE else RIM_JAGGED)
 	end
-	-- Each column steps down the soil to its own drape depth, then tucks
-	-- in under the soil, hidden in the cap rocks. The steps tighten toward
-	-- the soil's edge, where it curls back in to the rock.
-	local SOIL_STEPS = { 0, 0.2, 0.4, 0.6, 0.75, 0.85, 0.92, 0.97, 1 }
 	local rows = {}
-	for i = 1, #SOIL_STEPS + 1 do
-		rows[i] = {}
-	end
-	local tuck = CAP_TOP - 0.6
-	for j = 0, ANGLES - 1 do
-		local angle = 2 * math.pi * j / ANGLES
-		local edge = CAP_TOP - drape(angle)
-		for i, u in SOIL_STEPS do
-			local z = CAP_TOP - u * (CAP_TOP - edge)
-			local r = rim[j] + LIP * math.clamp((1 - u) / 0.2, 0, 1)
-			rows[i][j] = mesh:vertex(math.cos(angle) * r, math.sin(angle) * r, z)
+	local z = CAP_TOP
+	while z > FLOOR + STEP / 2 do
+		-- Stop once every pillar has ended, so no needle trails below.
+		local any = false
+		for j = 0, ANGLES - 1, 16 do
+			if wall(2 * math.pi * j / ANGLES, z) > 0.3 then
+				any = true
+				break
+			end
 		end
-		local r = rim[j] - TOP_LIP - 0.5
-		rows[#rows][j] = mesh:vertex(math.cos(angle) * r, math.sin(angle) * r, math.min(tuck, edge))
+		if not any then break end
+		local row = {}
+		for j = 0, ANGLES - 1 do
+			local angle = 2 * math.pi * j / ANGLES
+			-- The calm rim eases into the jagged pillar faces over the top half
+			-- of the first tier.
+			local t = math.clamp((CAP_TOP - z) / RIM_BLEND, 0, 1)
+			t = t * t * (3 - 2 * t)
+			local r = rim[j] + (wall(angle, z) - rim[j]) * t
+			-- The grass lip stands proud of the rock, easing back in over
+			-- its last fifth so it overhangs the stone below.
+			local depth = (CAP_TOP - z) / drape(angle)
+			if depth < 1 then
+				r = math.max(r, rim[j]) + LIP * math.clamp((1 - depth) / 0.2, 0, 1)
+			end
+			row[j] = mesh:vertex(math.cos(angle) * r, math.sin(angle) * r, z)
+		end
+		table.insert(rows, row)
+		z -= STEP
 	end
 	for i = 1, #rows - 1 do
 		for j = 0, ANGLES - 1 do
@@ -442,19 +292,10 @@ part("Island", nil, GROUND, function(mesh)
 	for j = 0, ANGLES - 1 do
 		mesh:face({ middle, inner[j], inner[(j + 1) % ANGLES] })
 	end
-	local bottom = mesh:vertex(0, 0, tuck)
+	local bottom = mesh:vertex(0, 0, z + STEP)
 	for j = 0, ANGLES - 1 do
 		mesh:face({ bottom, rows[#rows][(j + 1) % ANGLES], rows[#rows][j] })
 	end
-	for _, pillar in pillars[1] do
-		capRock(mesh, pillar)
-	end
-	for t = 1, #TIERS do
-		for _, pillar in pillars[t] do
-			blockRocks(mesh, pillar, t)
-		end
-	end
-	tipRock(mesh)
 end, false, function(x, y, z)
 	local _, pillar = wall(math.atan2(y, x), z)
 	return islandPaint(x, y, z - CAP_TOP, if pillar then pillar.seed else nil, if pillar then (blockAt(pillar, z)).tint else nil)
