@@ -66,11 +66,15 @@ for t, tier in TIERS do
 	local angle = offset
 	for i = 1, count do
 		local span = weights[i] / total * 2 * math.pi
+		local foot = bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.5 * (random(seed + i + 80) - 0.5)
+		-- The bottom tier's pillars all end level, so none hangs alone
+		-- below the rest.
+		if t == #TIERS then foot = bottom end
 		list[i] = {
 			from = angle,
 			span = span,
 			reach = reach * (0.94 + 0.12 * random(seed + i + 40)),
-			bottom = bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.5 * (random(seed + i + 80) - 0.5),
+			bottom = foot,
 			seed = seed * 31 + i * 7,
 			top = if t == 1 then CAP_TOP else TIERS[t - 1][3] + 0.5,
 			-- Like the old clumps: each pillar tapers and leans in toward
