@@ -148,9 +148,11 @@ local function pillarReach(pillar, t: number, angle: number, z: number): number
 	end
 	-- Chipped bevels: every block edge and the pillar's sides are cut back
 	-- at 45 degrees by a depth that wanders along the edge, so they read
-	-- as knocked-off chips rather than a clean chamfer.
+	-- as knocked-off chips rather than a clean chamfer. Only the noise peaks
+	-- chip deep, so chips are long but sparse along a mostly crisp edge.
 	local along = (angle - pillar.from) * r
-	local chip = CHIP * (0.3 + 1.4 * math.clamp(math.noise(along / 0.6, z / 0.6, pillar.seed % 97) + 0.5, 0, 1))
+	local peak = math.clamp((math.noise(along / 2.5, z / 2.5, pillar.seed % 97) - 0.1) * 3, 0, 1)
+	local chip = CHIP * (0.2 + 2 * peak)
 	local edge = math.min(gap, z - math.max(block.floor, pillar.bottom), if ceiling < pillar.top then ceiling - z else math.huge)
 	if edge < chip then r -= chip - edge end
 	return r
