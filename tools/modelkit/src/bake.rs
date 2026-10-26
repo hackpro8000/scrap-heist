@@ -544,13 +544,13 @@ const DAB_CELL: f64 = 0.7;
 const DAB_LENGTH: f64 = 1.2;
 const DAB_WIDTH: f64 = 0.3;
 
-// Brightness shift from the topmost brush stroke covering a point, so flat
+// Colour multiplier from the topmost brush stroke covering a point, so flat
 // colour reads as overlapping dabs of slightly different paint.
-fn brushwork(p: Vec3, normal: Vec3) -> f64 {
+fn brushwork(p: Vec3, normal: Vec3) -> Vec3 {
 	let home = p.map(|c| (c / DAB_CELL).floor() as i64);
 	let across_up = cross(normal, [0.0, 1.0, 0.0]);
 	let flat = dot(across_up, across_up) < 0.05;
-	let (mut top, mut shift) = (-1.0f64, 0.0f64);
+	let (mut top, mut tint) = (-1.0f64, [1.0; 3]);
 	for x in -1..=1 {
 		for y in -1..=1 {
 			for z in -1..=1 {
@@ -587,11 +587,15 @@ fn brushwork(p: Vec3, normal: Vec3) -> f64 {
 				}
 				top = order;
 				let streak = (hash(seed.wrapping_mul(17).wrapping_add(bristle)) - 0.5) * 0.04;
-				shift = (r(8) - 0.5) * 0.35 + streak * 2.0;
+				let shift = 1.0 + (r(8) - 0.5) * 0.35 + streak * 2.0;
+				// Each dab leans slightly warm or cool, and a touch greener or redder.
+				let warm = (r(9) - 0.5) * 0.12;
+				let green = (r(10) - 0.5) * 0.06;
+				tint = [shift * (1.0 + warm), shift * (1.0 + green), shift * (1.0 - warm)];
 			}
 		}
 	}
-	shift
+	tint
 }
 
 fn segment_distance(p: Vec3, a: Vec3, b: Vec3) -> f64 {
@@ -724,8 +728,8 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 		let dark = ((1.0 - open) * 1.6 * shading.shadow).clamp(0.0, 1.0);
 		let mut color = base[texel.pixel].map(to_linear);
 		if shading.brushed {
-			let shift = 1.0 + brushwork(texel.position, texel.normal);
-			color = color.map(|c| c * shift);
+			let tint = brushwork(texel.position, texel.normal);
+			color = std::array::from_fn(|k| color[k] * tint[k]);
 		}
 		let cream = [1.0, 0.97, 0.85].map(to_linear_f64);
 		let screen: [f64; 3] = std::array::from_fn(|k| {
