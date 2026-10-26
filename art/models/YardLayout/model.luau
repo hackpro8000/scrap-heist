@@ -43,6 +43,23 @@ Mesh = {
 	end,
 }
 
+-- A placed item caches its shell entries, which hold meshes; the cache
+-- stores real meshes only, so unwrap them first.
+local realCached = model.cached
+model.cached = function(key, build)
+	return realCached(key, function()
+		local result = build()
+		if type(result) == "table" then
+			for _, entry in result do
+				if type(entry) == "table" and entry.mesh then
+					entry.mesh = unwrapMesh(entry.mesh)
+				end
+			end
+		end
+		return result
+	end)
+end
+
 -- Layouts override this to leave out parts, such as fill levels.
 local function skipPart(_name: string): boolean
 	return false
@@ -147,6 +164,15 @@ local TEXTURE = 256
 -- Faces are split into a grid about every 0.4 studs so the warp in
 -- `part` can bend and dent flat panels.
 local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud
+end
 
 local function gridFace(mesh, origin, u, v, nu, nv)
 	local rows = {}
@@ -674,8 +700,10 @@ local function part(name, bone, color, build, smooth, rust, texture: number?, em
 	local mesh = Mesh.new()
 	build(if rust == 0 then mesh else imperfect(mesh, name))
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
-	mesh:unwrap()
-	local size = texture or TEXTURE
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
 	local image = Image.new(size, size, color[1], color[2], color[3])
 	rust = rust or 0.4
 	if type(rust) == "function" then
@@ -686,6 +714,125 @@ local function part(name, bone, color, build, smooth, rust, texture: number?, em
 		mesh:paint(image, weathered(color, rust))
 	end
 	table.insert(parts, { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive })
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer.
+local function chunkedPart(name, bone, color, build, smooth, rust)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 then recorder else imperfect(recorder, name))
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+		end, smooth, 0, texture)
+		-- Rust was applied while recording; paint the look on the chunk.
+		local entry = parts[#parts]
+		local look = rust or 0.4
+		if type(look) == "function" then
+			entry.mesh:paint(entry.image, look)
+		elseif look > 0 then
+			entry.mesh:paint(entry.image, weathered(color, look))
+		end
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
 end
 
 -- Shades every part with all the others as occluders, so parts darken where
@@ -712,6 +859,1091 @@ local function finishParts()
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
+local function buildYardIsland()
+local CACHE_KEY = "YardIsland-5c9aaa171a06dcbd"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.85
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering, in sRGB: rust patches (dark pitted core, orange rust, pale
+-- flaky rim) with drips running down out of them, bright scratches, and
+-- grime that darkens toward the ground.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- Scratch coverage at a point: 1 in a scratch, -1 in its dark burr, 0 clear.
+-- Scratches run in clusters, each cluster in its own direction across the
+-- surface, and every line starts and stops on its own so the ends taper.
+local function scratchAt(x, y, z, nx, ny, nz)
+	if math.noise(x * 1.8 + 20, y * 1.8, z * 1.8) < 0.05 then
+		return 0
+	end
+	-- Surface tangents from the normal.
+	local tx, ty, tz = 1, 0, 0
+	if math.abs(nz) < 0.9 then
+		tx, ty, tz = -ny, nx, 0
+	end
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local bx, by, bz = ny * tz - nz * ty, nz * tx - nx * tz, nx * ty - ny * tx
+	local angle = math.noise(x * 0.9 + 4, y * 0.9, z * 0.9) * math.pi
+	local c, s = math.cos(angle), math.sin(angle)
+	local along = (x * tx + y * ty + z * tz) * c + (x * bx + y * by + z * bz) * s
+	local across = (x * bx + y * by + z * bz) * c - (x * tx + y * ty + z * tz) * s
+	local u = across * 9 + math.noise(x * 5, y * 5, z * 5) * 0.4
+	local line = math.floor(u)
+	local reach = math.noise(along * 2.2, line * 1.37, 9)
+	if reach < 0.25 then
+		return 0
+	end
+	local width = 0.07 + (reach - 0.25) * 0.12
+	local d = math.abs(u - line - 0.5)
+	return if d < width then 1 elseif d < width * 2 then -1 else 0
+end
+
+-- Paint fn for `color` worn by `rust` (0 clean, 1 eaten through).
+local function weathered(color, rust)
+	local edge = 0.75 - rust * 0.6
+	return function(x, y, z, nx, ny, nz)
+		local grime = math.clamp((1.2 - z) * 0.18, 0, 0.25) + math.noise(x * 3, y * 3, z * 3) * 0.08
+		local k = 1 - math.clamp(grime, 0, 0.35)
+		local patch = math.noise(x * 2.5 + 7, y * 2.5, z * 2.5) * 0.8 + math.noise(x * 8, y * 8, z * 8 + 5) * 0.3
+		local c = color
+		if patch > edge + 0.18 then
+			local pit = if math.noise(x * 25, y * 25, z * 25) > 0.25 then 0.7 else 1
+			c = { RUST_DARK[1] * pit, RUST_DARK[2] * pit, RUST_DARK[3] * pit }
+		elseif patch > edge + 0.06 then
+			c = RUST_ORANGE
+		elseif patch > edge then
+			c = RUST_FLAKE
+		else
+			local above = math.noise(x * 2.5 + 7, y * 2.5, (z + 0.2) * 2.5) * 0.8
+			local drip = math.noise(x * 16, y * 16, z * 0.8 + 3)
+			if above > edge - 0.05 and drip > 0.3 then
+				c = RUST_ORANGE
+			else
+				local scratch = scratchAt(x, y, z, nx, ny, nz)
+				if scratch > 0 then
+					c = { (color[1] + BARE_METAL[1] * 2) / 3, (color[2] + BARE_METAL[2] * 2) / 3, (color[3] + BARE_METAL[3] * 2) / 3 }
+				elseif scratch < 0 then
+					c = { color[1] * 0.8, color[2] * 0.8, color[3] * 0.8 }
+				end
+			end
+		end
+		return c[1] * k, c[2] * k, c[3] * k
+	end
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Paint fn for rubber: dust settled low and in patches, and pale scuffs where
+-- it has rubbed. Rubber doesn't rust.
+local function scuffed(color)
+	return function(x, y, z, nx, ny, nz)
+		local dust = math.clamp((0.9 - z) * 0.3, 0, 0.3)
+			+ math.clamp(math.noise(x * 3 + 2, y * 3, z * 3) * 0.5, 0, 0.35)
+			+ math.clamp(nz, 0, 1) * 0.15
+		local c = {
+			color[1] + (DUST[1] - color[1]) * dust,
+			color[2] + (DUST[2] - color[2]) * dust,
+			color[3] + (DUST[3] - color[3]) * dust,
+		}
+		if scratchAt(x, y, z, nx, ny, nz) > 0 then
+			return c[1] * 1.6, c[2] * 1.6, c[3] * 1.6
+		end
+		return c[1], c[2], c[3]
+	end
+end
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		mesh:paint(image, rust)
+	elseif rust == RUBBER then
+		mesh:paint(image, scuffed(color))
+	elseif rust > 0 then
+		mesh:paint(image, weathered(color, rust))
+	end
+	table.insert(parts, { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive })
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer.
+local function chunkedPart(name, bone, color, build, smooth, rust)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 then recorder else imperfect(recorder, name))
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+		end, smooth, 0, texture)
+		-- Rust was applied while recording; paint the look on the chunk.
+		local entry = parts[#parts]
+		local look = rust or 0.4
+		if type(look) == "function" then
+			entry.mesh:paint(entry.image, look)
+		elseif look > 0 then
+			entry.mesh:paint(entry.image, weathered(color, look))
+		end
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders = {}
+		for _, other in parts do
+			if other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT,
+			shadow = CONTACT_SHADOW,
+			gradient = GRADIENT,
+			blend = EDGE_BLEND,
+			occluders = occluders,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Yard Island: a floating yard island built from stacked rock columns, in
+-- the style of a hand-sculpted stylised island. Three tiers of chunky
+-- rock pillars ring the island, each tier tucked further in and
+-- ending lower than the last. The pillars of a tier fit edge to edge like
+-- basalt columns, with a crevice down each shared edge, and each is a
+-- stack of blocks. The model is one closed outer shell over the columns,
+-- with a soil lip draped over the rim, meshed as rings of vertices. Top at z = 0.7.
+useTexelDensity(16)
+local RADIUS = 26
+local GROUND = { 0.3, 0.27, 0.22 }
+local STRATA = { { 0.5, 0.4, 0.27 }, { 0.36, 0.35, 0.34 }, { 0.48, 0.3, 0.22 } }
+local TOPSOIL = { 0.24, 0.19, 0.14 }
+
+local function random(k: number): number
+	local s = math.sin(k * 12.9898 + 4.1414) * 43758.5453
+	return s - math.floor(s)
+end
+
+-- The island's texture: speckled ground on top, then topsoil fading into
+-- wavy rock strata that darken with depth. A pillar's `seed` shifts its
+-- strata and grain so neighbours don't match, and each rock block has its
+-- own `tint`.
+local function islandPaint(x: number, y: number, z: number, seed: number?, tint: number?)
+	local below = -z
+	if below < 0.3 then
+		local k = 1 + 0.12 * math.noise(x / 4, y / 4, 31) + 0.05 * math.noise(x * 3, y * 3, 37)
+		return GROUND[1] * k, GROUND[2] * k, GROUND[3] * k
+	end
+	local s = seed or 0
+	local band = math.noise(x / 9 + s, y / 9, z / 2) * 0.6 + z * (0.8 + 0.2 * random(s + 1)) + random(s + 2) * 3
+	local wave = math.sin(band * 2.4)
+	local layer = STRATA[math.floor(band * 2.4 / (2 * math.pi)) % 3 + 1]
+	local k = (tint or 1) * (1 + 0.1 * wave + 0.06 * math.noise(x * 2 + s, y * 2, z * 2))
+	if wave > 0.93 then k -= 0.25 end
+	k *= 1 - 0.6 * math.clamp((below - 3) / 20, 0, 1)
+	local soil = 1 - math.clamp((below - 0.5) / 4 + 0.3 * math.noise(x / 2, y / 2, 41), 0, 1)
+	local r, g, b = layer[1] * k, layer[2] * k, layer[3] * k
+	return r + (TOPSOIL[1] - r) * soil, g + (TOPSOIL[2] - g) * soil, b + (TOPSOIL[3] - b) * soil
+end
+
+-- The island's wobbly outline, as a radius scale per angle.
+local function outlineScale(angle: number): number
+	return 1 + 0.07 * math.sin(3 * angle + 0.6) + 0.05 * math.sin(5 * angle + 2.1) + 0.03 * math.sin(9 * angle)
+end
+
+-- Each tier is a ring of pillars: { reach, pillar count, bottom, seed }.
+-- Lower tiers sit further in, so each shows below the one above it.
+local CAP_TOP = 0.7
+local TIERS = {
+	{ RADIUS * 0.84, 10, -8, 11 },
+	{ RADIUS * 0.58, 8, -14, 23 },
+	{ RADIUS * 0.34, 6, -19.5, 37 },
+}
+-- Pillar layout per tier. The pillars tile their tier's ring like basalt
+-- columns: each owns a slice of the outline, and neighbours share the
+-- corner where their faces meet, so they butt together instead of
+-- overlapping. A V-shaped crevice runs down every shared edge, and each
+-- outer face is broken into a few flat facets.
+local CREVICE_DEPTH, CREVICE_WIDTH = 1.1, 0.7
+local CRACK_DEPTH, CRACK_HEIGHT = 0.5, 0.35
+local CHIP = 0.45
+local TOP_LIP, TOP_LIP_HEIGHT = 1.8, 3.5
+local pillars = {}
+-- A lower pillar rises to just above the highest foot of the pillars it sits
+-- under, so no gap opens between tiers where an upper pillar ends short.
+local function tuckedTop(above, from: number, to: number): number
+	local top = -math.huge
+	for _, upper in above do
+		local start = from + (upper.from - from) % (2 * math.pi)
+		local overlaps = start < to or start + (upper.to - upper.from) > from + 2 * math.pi
+		if overlaps then top = math.max(top, upper.bottom) end
+	end
+	return top + 0.5
+end
+for t, tier in TIERS do
+	local reach, count, bottom, seed = tier[1], tier[2], tier[3], tier[4]
+	local list = {}
+	local weights, total = {}, 0
+	for i = 1, count do
+		weights[i] = 0.7 + 0.6 * random(seed + i)
+		total += weights[i]
+	end
+	-- Shared corners: each sits on the outline, pulled in by its own amount.
+	local edges, angle = {}, random(seed) * 2 * math.pi
+	for i = 1, count do
+		edges[i] = { angle = angle, reach = reach * (0.88 + 0.12 * random(seed + i + 60)) }
+		angle += weights[i] / total * 2 * math.pi
+	end
+	for i = 1, count do
+		local from, to = edges[i], edges[i % count + 1]
+		local toAngle = if i == count then to.angle + 2 * math.pi else to.angle
+		-- The face: the two shared corners plus 1-2 corners between them,
+		-- standing proud or sunk so the face reads as jagged facets.
+		local corners = { { from.angle, from.reach } }
+		local inner = 1 + math.floor(random(seed + i + 70) * 3)
+		for k = 1, inner do
+			local f = (k + (random(seed + i * 5 + k + 90) - 0.5) * 0.6) / (inner + 1)
+			table.insert(corners, { from.angle + (toAngle - from.angle) * f, reach * (0.94 + 0.14 * random(seed + i * 5 + k + 100)) })
+		end
+		table.insert(corners, { toAngle, to.reach })
+		local foot = bottom - (TIERS[t][3] - (if t > 1 then TIERS[t - 1][3] else CAP_TOP)) * 0.9 * (random(seed + i + 80) - 0.5)
+		-- The bottom tier's pillars end at stepped heights, so the tip
+		-- comes out ragged.
+		if t == #TIERS then foot = bottom + 3.5 * (random(seed + i + 85) - 0.6) end
+		local pillar = {
+			from = from.angle,
+			to = toAngle,
+			corners = corners,
+			bottom = foot,
+			top = if t == 1 then CAP_TOP else tuckedTop(pillars[t - 1], from.angle, toAngle),
+			seed = seed * 31 + i * 7,
+			blocks = {},
+		}
+		-- Each pillar is a stack of 2-3 rock blocks split by cracks.
+		local joints = 1 + math.floor(random(seed + i + 200) * 2)
+		local height = pillar.top - pillar.bottom
+		for n = 1, joints + 1 do
+			table.insert(pillar.blocks, {
+				floor = if n > joints then -math.huge else pillar.top - height * (n + (random(seed + i + n * 13 + 210) - 0.5) * 0.5) / (joints + 1),
+				tint = 0.88 + 0.24 * random(seed + i + n * 13 + 230),
+				-- Blocks jut out or sit back from their neighbours above and below.
+				jut = 0.9 * (random(seed + i + n * 13 + 240) - 0.4),
+			})
+		end
+		list[i] = pillar
+	end
+	pillars[t] = list
+end
+
+-- The block of `pillar` at height z, and the height of its top.
+local function blockAt(pillar, z: number)
+	local ceiling = pillar.top
+	for _, block in pillar.blocks do
+		if z >= block.floor then return block, ceiling end
+		ceiling = block.floor
+	end
+	return pillar.blocks[#pillar.blocks], ceiling
+end
+
+-- How far out `pillar` reaches at `angle` (already inside its slice) and
+-- height z: its faceted face, tapering in toward the tier's foot, with a
+-- crevice at each shared edge and a crack under each block.
+local function pillarReach(pillar, t: number, angle: number, z: number): number
+	local corners = pillar.corners
+	local r = corners[#corners][2]
+	for k = 1, #corners - 1 do
+		local a, b = corners[k], corners[k + 1]
+		if angle <= b[1] then
+			r = a[2] + (b[2] - a[2]) * (angle - a[1]) / (b[1] - a[1])
+			break
+		end
+	end
+	r *= outlineScale(angle)
+	-- Taper by the tier, not the pillar, so shared corners stay shared.
+	local tierTop = if t == 1 then CAP_TOP else TIERS[t - 1][3] + 0.5
+	r *= 1 - 0.15 * math.clamp((tierTop - z) / (tierTop - TIERS[t][3]), 0, 1)
+	-- The top layer flares out over the columns below it to form a lip,
+	-- undercut by a short slope.
+	if t == 1 then
+		r += TOP_LIP * math.clamp((z - (tierTop - TOP_LIP_HEIGHT)) / 1.2, 0, 1)
+	end
+	local block, ceiling = blockAt(pillar, z)
+	local gap = math.min(angle - pillar.from, pillar.to - angle) * r
+	r -= CREVICE_DEPTH * math.max(0, 1 - gap / CREVICE_WIDTH)
+	r += block.jut * math.min(1, gap / CREVICE_WIDTH)
+	if block.floor > -math.huge then
+		r -= CRACK_DEPTH * math.max(0, 1 - math.abs(z - block.floor) / CRACK_HEIGHT)
+	end
+	-- Chipped bevels: every block edge and the pillar's sides are cut back
+	-- at 45 degrees by a depth that wanders along the edge, so they read
+	-- as knocked-off chips rather than a clean chamfer. Only the noise peaks
+	-- chip deep, so chips are long but sparse along a mostly crisp edge.
+	local along = (angle - pillar.from) * r
+	local peak = math.clamp((math.noise(along / 2.5, z / 2.5, pillar.seed % 97) - 0.1) * 3, 0, 1)
+	local chip = CHIP * (0.2 + peak)
+	-- Vertical edges: the shared sides and every facet fold on the face.
+	local side = gap
+	for k = 2, #corners - 1 do
+		side = math.min(side, math.abs(angle - corners[k][1]) * r)
+	end
+	local level = math.min(z - math.max(block.floor, pillar.bottom), if ceiling < pillar.top then ceiling - z else math.huge)
+	-- Corners, where a vertical edge meets a block edge, chip deeper.
+	local edge = math.min(side, level, (side + level) * 0.6)
+	if edge < chip then r -= chip - edge end
+	return r
+end
+
+-- How far the island's wall reaches at `angle` and height z, and the
+-- pillar there, for painting: the outermost tier with a pillar standing
+-- at that height.
+local function wall(angle: number, z: number)
+	for t = 1, #TIERS do
+		for _, pillar in pillars[t] do
+			local a = pillar.from + (angle - pillar.from) % (2 * math.pi)
+			if a > pillar.to then continue end
+			if z >= pillar.bottom and z <= pillar.top then
+				return pillarReach(pillar, t, a, z), pillar
+			end
+			break
+		end
+	end
+	return 0.05, nil
+end
+
+-- The soil lip: how far it drapes down the rim at `angle`, in clumps.
+local function drape(angle: number): number
+	local n = math.noise(angle * 7, 3.7) + 0.5 * math.noise(angle * 23, 9.1)
+	return 0.35 + 1.1 * math.clamp(n + 0.4, 0, 1)
+end
+
+-- The column layout above gives the wall's reach per angle and height,
+-- sampled once into a table and meshed directly as rings of vertices, bent
+-- by a slow 3D warp so ledges tilt and curl under each other.
+local ANGLES, STEP, FLOOR, LIP = 360, 0.2, -25, 0.35
+local RIM_JAGGED, RIM_POKE = 0.166, 0.06
+local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
+local WARP, CAP_RINGS = 0.7, 8
+-- Rows are finer through the soil lip so its edge doesn't step.
+local LIP_STEP, LIP_BAND = 0.04, 2.5
+-- The shell and its shading are cached under a key hashing every line above
+-- "-- cached above", so changes below it skip the rebuild.
+local function shade(entries, occluders, gradient: number?)
+	for _, entry in entries do
+		entry.mesh:paintShading(entry.image, {
+			highlight = 0.5,
+			highlightRamp = 0.3,
+			shadow = 0.75,
+			gradient = gradient or GRADIENT,
+			blend = 1,
+			brushed = true,
+			occluders = occluders,
+		})
+	end
+end
+
+-- The wall's reach per row (stepping down from the top) and angle, with the
+-- calm rim easing into the jagged pillar faces and the soil lip standing
+-- proud of the rock. Rows below every pillar's foot are empty.
+local function reachTable()
+	local rim = {}
+	for j = 0, ANGLES - 1 do
+		-- The rim's jaggedness, its departure from the smooth outline,
+		-- exaggerated inward by RIM_JAGGED and tamed outward by RIM_POKE.
+		local angle = 2 * math.pi * j / ANGLES
+		local smooth = TIERS[1][1] * outlineScale(angle)
+		local departure = wall(angle, CAP_TOP) - smooth
+		rim[j] = smooth + departure * (if departure > 0 then RIM_POKE else RIM_JAGGED)
+	end
+	local rows, heights = {}, {}
+	local z = CAP_TOP
+	while z > FLOOR do
+		local row, any = {}, false
+		for j = 0, ANGLES - 1 do
+			local angle = 2 * math.pi * j / ANGLES
+			local reach = wall(angle, z)
+			if reach > 0.3 then any = true end
+			local t = math.clamp((CAP_TOP - z) / RIM_BLEND, 0, 1)
+			t = t * t * (3 - 2 * t)
+			local r = if reach > 0.3 then rim[j] + (reach - rim[j]) * t else -1
+			-- The lip tapers over several rows so its lower edge doesn't step.
+			local lip = math.clamp((drape(angle) - (CAP_TOP - z)) / 0.8, 0, 1)
+			if lip > 0 then
+				r = math.max(r, rim[j]) + LIP * lip * lip * (3 - 2 * lip)
+			end
+			row[j] = r
+		end
+		if not any then break end
+		table.insert(rows, row)
+		table.insert(heights, z)
+		z -= if CAP_TOP - z < LIP_BAND then LIP_STEP else STEP
+	end
+	return rows, heights
+end
+
+local shell = model.cached(CACHE_KEY, function()
+chunkedPart("Island", nil, GROUND, function(mesh)
+	local rows, heights = reachTable()
+	-- The wall is a grid wrapped round the island: one ring of vertices per
+	-- row of the reach table, so every face points outward by construction.
+	-- Where a column has no rock the ring pulls in to the axis, closing the
+	-- underside. Rows are bent by the same slow warp the paint reads, faded
+	-- out toward the top so the rim stays level.
+	local function ringPoint(row: number, j: number, r: number)
+		local zr = heights[row]
+		local angle = 2 * math.pi * j / ANGLES
+		local x, y = r * math.cos(angle), r * math.sin(angle)
+		-- The warp reads the outline, not the vertex, so a column shifts as
+		-- one and its rows never cross where the reach jumps.
+		local wx, wy = RADIUS * math.cos(angle), RADIUS * math.sin(angle)
+		local fade = math.clamp((CAP_TOP - zr) / 1.5, 0, 1)
+		return x, y, zr - fade * WARP * math.noise(wx / 7, wy / 7, zr / 9 + 5)
+	end
+	local rings = {}
+	for row, reach in rows do
+		local ring = {}
+		for j = 0, ANGLES - 1 do
+			local x, y, z = ringPoint(row, j, math.max(reach[j], 0))
+			ring[j] = if row == 1 then mesh:exactVertex(x, y, z) else mesh:vertex(x, y, z)
+		end
+		rings[row] = ring
+	end
+	for row = 1, #rings - 1 do
+		local upper, lower = rings[row], rings[row + 1]
+		for j = 0, ANGLES - 1 do
+			local l = (j + 1) % ANGLES
+			mesh:face({ upper[j], lower[j], lower[l] })
+			mesh:face({ upper[j], lower[l], upper[l] })
+		end
+	end
+	-- The top: dead flat rings shrinking from the rim to the centre.
+	local outer = rings[1]
+	for n = 1, CAP_RINGS do
+		local s = 1 - n / CAP_RINGS
+		local inner = {}
+		for j = 0, ANGLES - 1 do
+			local x, y = ringPoint(1, j, math.max(rows[1][j], 0) * s)
+			inner[j] = if n == CAP_RINGS then nil else mesh:exactVertex(x, y, CAP_TOP)
+		end
+		local centre = if n == CAP_RINGS then mesh:exactVertex(0, 0, CAP_TOP) else nil
+		for j = 0, ANGLES - 1 do
+			local l = (j + 1) % ANGLES
+			if centre then
+				mesh:face({ centre, outer[j], outer[l] })
+			else
+				mesh:face({ outer[j], inner[l], inner[j] })
+				mesh:face({ outer[j], outer[l], inner[l] })
+			end
+		end
+		outer = inner
+	end
+	-- The bottom: the last ring closes onto a point under the axis.
+	local last = rings[#rings]
+	local tip = mesh:vertex(0, 0, heights[#rings] - STEP)
+	for j = 0, ANGLES - 1 do
+		mesh:face({ tip, last[(j + 1) % ANGLES], last[j] })
+	end
+end, 45, function(x, y, z)
+	-- Paint in the same warped space the mesh was carved from, so blocks,
+	-- tints and strata follow the meshed ledges.
+	local wz = z + WARP * math.noise(x / 7, y / 7, z / 9 + 5)
+	local wa = math.atan2(y, x) + 0.02 * math.noise(x / 5, y / 5, z / 5 + 17)
+	local _, pillar = wall(wa, wz)
+	-- The flat top keeps its true height so it paints as even ground.
+	local depth = if z > CAP_TOP - 0.01 then 0 else math.min(wz, z) - CAP_TOP
+	return islandPaint(x, y, depth, if pillar then pillar.seed else nil, if pillar then (blockAt(pillar, wz)).tint else nil)
+end)
+
+-- Aggressive shading: half-strength edge highlights, ramping 30% stronger
+-- toward the bottom, and strong contact shadows, with the shell as its own
+-- occluder so the crevices and overhangs darken.
+local entries = table.clone(parts)
+local meshes = {}
+for _, entry in entries do
+	table.insert(meshes, entry.mesh)
+end
+shade(entries, meshes)
+table.clear(parts)
+return entries
+end)
+-- cached above
+
+for _, entry in shell do
+	model.part(entry.name, entry.mesh, entry.image, { preview = true })
+end
+end
+buildKeys[buildYardIsland] = "YardIsland-4486ed3ec2c394a3"
 local function buildGroundTile()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -1312,7 +2544,7 @@ part("Scrap", nil, DARK_STEEL, function(mesh)
 end, nil, 0.7)
 finishParts()
 end
-buildKeys[buildGroundTile] = "GroundTile-819b19d4e4649a0d"
+buildKeys[buildGroundTile] = "GroundTile-770e94a2cacda21d"
 local function buildMachinePad()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -1928,7 +3160,7 @@ part("Hardware", nil, STEEL, function(mesh)
 end, nil, 0.45)
 finishParts()
 end
-buildKeys[buildMachinePad] = "MachinePad-355033c0fb0f6d36"
+buildKeys[buildMachinePad] = "MachinePad-389883c7be47fb64"
 local function buildYardFence()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -2545,7 +3777,7 @@ part("Fittings", nil, DARK_STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildYardFence] = "YardFence-716b1282dc4bd746"
+buildKeys[buildYardFence] = "YardFence-736cb4a3dff629f7"
 local function buildYardFenceHalf()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -3162,7 +4394,7 @@ part("Fittings", nil, DARK_STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildYardFenceHalf] = "YardFenceHalf-92cd6932f51eb217"
+buildKeys[buildYardFenceHalf] = "YardFenceHalf-e6ac74e1501e4665"
 local function buildYardGate()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -3792,7 +5024,7 @@ part("Hardware", nil, DARK_STEEL, function(mesh)
 end, nil, 0.55)
 finishParts()
 end
-buildKeys[buildYardGate] = "YardGate-cd6a3dba530da6f7"
+buildKeys[buildYardGate] = "YardGate-b6d7e9f4ae82e39a"
 local function buildPlotMarker()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -4416,7 +5648,7 @@ part("Fittings", nil, STEEL, function(mesh)
 end, nil, 0.5)
 finishParts()
 end
-buildKeys[buildPlotMarker] = "PlotMarker-749328c3302befeb"
+buildKeys[buildPlotMarker] = "PlotMarker-0bfdbe74c8dcdbf2"
 local function buildStorageCrate()
 -- Storage crate: a lopsided green scrap bin that flares toward its wobbly rim,
 -- leaning and twisting as it rises. Bolted patch plates cover its sides, a
@@ -5137,7 +6369,7 @@ for number, level in FILL_LEVELS do
 	end
 end
 end
-buildKeys[buildStorageCrate] = "StorageCrate-59186935d74efa17"
+buildKeys[buildStorageCrate] = "StorageCrate-068d6f9f46e9abaf"
 local function buildYardPath()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -5758,7 +6990,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildYardPath] = "YardPath-ad9f59fce436f384"
+buildKeys[buildYardPath] = "YardPath-ade1ba7186f10bef"
 local function buildYardPathStub()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -6371,8 +7603,8 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
--- uses: GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
+buildKeys[buildYardPathStub] = "YardPathStub-a4e045d2950da13c"
+-- uses: YardIsland GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Yard Layout: the template every player's 32x32 stud yard is built from,
 -- centered on the origin with the gate at the front (-y). The gate is
 -- centered in the front fence, a main path runs from it to the storage crate
@@ -6380,6 +7612,9 @@ buildKeys[buildYardPathStub] = "YardPathStub-d2976d4cc663669d"
 -- branch path to each. Pads are empty; machines are placed on them in game.
 -- Labels: Gate, Crate, Pad1-Pad4 (left front, left back, right front, right
 -- back), PlotMarker, plus Tile, Path and Fence pieces.
+
+-- The yard stands on a Yard Island, its top level with the yard floor.
+place("YardIsland", buildYardIsland, 0, 0, -0.7)
 
 -- The crate shows empty in the template.
 skipPart = function(name)
