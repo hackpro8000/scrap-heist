@@ -439,6 +439,9 @@ pub struct Shading {
 	// Extra highlight strength reached at the bottom of each part, ramping
 	// smoothly from none at the top (0.3 = 30% stronger at the bottom).
 	pub highlight_ramp: f64,
+	// Studs: when above 0, highlights follow surface curvature measured over
+	// this radius instead of strokes along sharp mesh edges.
+	pub curvature: f64,
 }
 
 const AO_DISTANCE: f64 = 0.8;
@@ -446,6 +449,7 @@ const AO_SAMPLES: u32 = 16;
 // AO is soft, so it's baked at a fraction of the texture's resolution.
 const AO_DIVISOR: usize = 4;
 const EDGE_RADIUS: f64 = 0.1;
+const CURVATURE_GAIN: f64 = 0.15;
 // Brush strokes: (reach, frequency, thin gain, wide gain, strength).
 const STROKES: [(f64, f64, f64, f64, f64); 3] = [(1.0, 3.0, 6.0, 24.0, 0.8), (2.2, 5.0, 3.0, 14.0, 0.6), (0.5, 9.0, 8.0, 36.0, 0.7)];
 
@@ -493,6 +497,42 @@ fn sharp_edges(mesh: &Mesh, degrees: f64) -> Vec<(Vec3, Vec3, f64)> {
 		found.push((mesh.positions[a], mesh.positions[b], bend));
 	}
 	found
+}
+
+// Surface points about `spacing` apart, each with its face normal.
+fn surface_points(mesh: &Mesh, spacing: f64) -> Vec<(Vec3, Vec3)> {
+	let mut found = Vec::new();
+	for [a, b, c] in mesh_triangles(mesh) {
+		let normal = normalize(cross(sub(b, a), sub(c, a)));
+		let longest = dot(sub(b, a), sub(b, a)).max(dot(sub(c, b), sub(c, b))).max(dot(sub(a, c), sub(a, c))).sqrt();
+		let steps = (longest / spacing).ceil().max(1.0) as usize;
+		for i in 0..steps {
+			for j in 0..steps - i {
+				let (u, v) = ((i as f64 + 1.0 / 3.0) / steps as f64, (j as f64 + 1.0 / 3.0) / steps as f64);
+				found.push((add(a, add(scale(sub(b, a), u), scale(sub(c, a), v))), normal));
+			}
+		}
+	}
+	found
+}
+
+// How convex the surface is around a point: the average turn of nearby normals
+// away from this one, per stud of distance (1/radius on a sphere).
+fn convexity(points: &[(Vec3, Vec3)], nearby: &[usize], p: Vec3, n: Vec3, radius: f64) -> f64 {
+	let (mut sum, mut weight) = (0.0, 0.0);
+	for &index in nearby {
+		let (q, m) = points[index];
+		let d = sub(q, p);
+		let length = dot(d, d).sqrt();
+		// Skip the far side of thin walls, which faces away.
+		if length < 1e-6 || length > radius || dot(m, n) < -0.2 {
+			continue;
+		}
+		let w = 1.0 - length / radius;
+		sum += w * dot(sub(n, m), d) / (length * length);
+		weight += w;
+	}
+	if weight > 0.0 { sum / weight } else { 0.0 }
 }
 
 fn segment_distance(p: Vec3, a: Vec3, b: Vec3) -> f64 {
@@ -568,6 +608,15 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 		}
 	}
 
+	// Surface samples bucketed by the widest curvature reach.
+	let reach = STROKES.iter().map(|s| s.0).fold(0.0, f64::max) * shading.curvature;
+	let points = if shading.curvature > 0.0 { surface_points(mesh, shading.curvature / 4.0) } else { Vec::new() };
+	let point_key = |p: Vec3| p.map(|c| (c / reach).floor() as i64);
+	let mut point_grid: HashMap<[i64; 3], Vec<usize>> = HashMap::new();
+	for (index, &(p, _)) in points.iter().enumerate() {
+		point_grid.entry(point_key(p)).or_default().push(index);
+	}
+
 	let mut low = [f64::MAX; 3];
 	let mut high = [f64::MIN; 3];
 	for p in &mesh.positions {
@@ -584,15 +633,32 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 	let colors = parallel(&full, |texel| {
 		let g = generated(texel.position);
 		let nearby = grid.get(&key(texel.position));
+		let mut close = Vec::new();
+		if shading.curvature > 0.0 {
+			let k = point_key(texel.position);
+			for x in -1..=1 {
+				for y in -1..=1 {
+					for z in -1..=1 {
+						close.extend(point_grid.get(&[k[0] + x, k[1] + y, k[2] + z]).into_iter().flatten());
+					}
+				}
+			}
+		}
 		let mut edge = 0.0f64;
 		for (seed, &(reach, frequency, thin, wide, strength)) in STROKES.iter().enumerate() {
-			let radius = EDGE_RADIUS * reach;
 			let mut bend = 0.0f64;
-			for &index in nearby.into_iter().flatten() {
-				let (a, b, fold) = edges[index];
-				let d = segment_distance(texel.position, a, b);
-				if d < radius {
-					bend = bend.max(fold * (1.0 - d / radius));
+			if shading.curvature > 0.0 {
+				// Scaled so a right-angle edge peaks near the same bend as below.
+				let radius = shading.curvature * reach;
+				bend = (convexity(&points, &close, texel.position, texel.face_normal, radius) * radius * CURVATURE_GAIN).clamp(0.0, 0.5);
+			} else {
+				let radius = EDGE_RADIUS * reach;
+				for &index in nearby.into_iter().flatten() {
+					let (a, b, fold) = edges[index];
+					let d = segment_distance(texel.position, a, b);
+					if d < radius {
+						bend = bend.max(fold * (1.0 - d / radius));
+					}
 				}
 			}
 			if bend <= 0.0 {
