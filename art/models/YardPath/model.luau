@@ -1,3 +1,4 @@
+local CACHE_KEY = "YardPath-d01d6b1939024e80"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -14,12 +15,23 @@ local EDGE_HIGHLIGHT = 0.6
 local CONTACT_SHADOW = 0.85
 local GRADIENT = 0.5
 local EDGE_BLEND = 0.7
+-- Items set this to paint their shading as hand-drawn brushwork.
+local BRUSHED = false
 local SMOOTH_ANGLE = 30
 local TEXTURE = 256
 
 -- Faces are split into a grid about every 0.4 studs so the warp in
 -- `part` can bend and dent flat panels.
 local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud
+end
 
 local function gridFace(mesh, origin, u, v, nu, nv)
 	local rows = {}
@@ -539,25 +551,157 @@ end
 
 local parts = {}
 
-local function part(name, bone, color, build, smooth, rust)
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 then mesh else imperfect(mesh, name))
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
-	mesh:unwrap()
-	local image = Image.new(TEXTURE, TEXTURE, color[1], color[2], color[3])
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
 	rust = rust or 0.4
-	if rust == RUBBER then
+	if type(rust) == "function" then
+		mesh:paint(image, rust)
+	elseif rust == RUBBER then
 		mesh:paint(image, scuffed(color))
 	elseif rust > 0 then
 		mesh:paint(image, weathered(color, rust))
 	end
-	table.insert(parts, { name = name, bone = bone, mesh = mesh, image = image })
+	table.insert(parts, { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive })
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer.
+local function chunkedPart(name, bone, color, build, smooth, rust)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 then recorder else imperfect(recorder, name))
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+		end, smooth, 0, texture)
+		-- Rust was applied while recording; paint the look on the chunk.
+		local entry = parts[#parts]
+		local look = rust or 0.4
+		if type(look) == "function" then
+			entry.mesh:paint(entry.image, look)
+		elseif look > 0 then
+			entry.mesh:paint(entry.image, weathered(color, look))
+		end
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
 end
 
 -- Shades every part with all the others as occluders, so parts darken where
 -- they touch or tuck under each other, then adds them to the model.
 local function finishParts()
 	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
 		local occluders = {}
 		for _, other in parts do
 			if other ~= entry then
@@ -569,6 +713,7 @@ local function finishParts()
 			shadow = CONTACT_SHADOW,
 			gradient = GRADIENT,
 			blend = EDGE_BLEND,
+			brushed = BRUSHED,
 			occluders = occluders,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
@@ -579,6 +724,7 @@ end
 -- few cracked, sunk or missing, so segments laid end to end don't repeat
 -- too obviously. Paver tops sit just above z 0 so they read over a ground
 -- tile.
+BRUSHED = true
 local CONCRETE = { 0.6, 0.59, 0.56 }
 local GRAVEL = { 0.36, 0.34, 0.31 }
 
