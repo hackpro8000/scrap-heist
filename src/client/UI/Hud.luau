@@ -63,21 +63,22 @@ local PHASE_TITLES: { [Phase]: string } = {
 local COUNTER_SIZE = UDim2.fromOffset(180, 44)
 local ICON_SIZE = UDim2.fromOffset(52, 52)
 
--- A counter is a dark plate with an icon overhanging its left end and a
+-- A counter is a dark plate with an icon sitting inside one end and a
 -- number filling the rest.
+local ICON_INSET = 24
 local function counter(icon: string, anchorRight: boolean): (ImageLabel, TextLabel)
 	local plate = ScrapKit.image("Counter", { Size = COUNTER_SIZE })
 	ScrapKit.image(icon, {
 		Size = ICON_SIZE,
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = if anchorRight then UDim2.new(1, 0, 0.5, 0) else UDim2.new(0, 0, 0.5, 0),
+		Position = if anchorRight then UDim2.new(1, -ICON_INSET, 0.5, 0) else UDim2.new(0, ICON_INSET, 0.5, 0),
 		BackgroundTransparency = 1,
 		ZIndex = 2,
 	}).Parent =
 		plate
 	local label = ScrapKit.label("0", {
-		Size = UDim2.new(1, -44, 1, -10),
-		Position = if anchorRight then UDim2.fromOffset(12, 5) else UDim2.fromOffset(32, 5),
+		Size = UDim2.new(1, -60, 1, -10),
+		Position = if anchorRight then UDim2.fromOffset(12, 5) else UDim2.fromOffset(48, 5),
 		TextXAlignment = if anchorRight then Enum.TextXAlignment.Left else Enum.TextXAlignment.Right,
 	})
 	label.Parent = plate
@@ -95,7 +96,7 @@ function Hud.new(parent: Instance): Hud
 
 	-- Top left: scrap and health.
 	local scrap, scrapLabel = counter("IconScrap", false)
-	scrap.Position = UDim2.fromOffset(margin + 26, margin)
+	scrap.Position = UDim2.fromOffset(margin, margin)
 	scrap.Parent = gui
 
 	local health, setHealth = ScrapKit.bar("BarFillHealth")
@@ -126,7 +127,7 @@ function Hud.new(parent: Instance): Hud
 	-- Top right: survivors, and the raid alert below it.
 	local survivors, survivorsLabel = counter("IconBot", true)
 	survivors.AnchorPoint = Vector2.new(1, 0)
-	survivors.Position = UDim2.new(1, -margin - 26, 0, margin)
+	survivors.Position = UDim2.new(1, -margin, 0, margin)
 	survivors.Visible = false
 	survivors.Parent = gui
 
