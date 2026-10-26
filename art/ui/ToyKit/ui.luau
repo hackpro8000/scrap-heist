@@ -328,6 +328,11 @@ do
 	-- Icons, 104 square: each one a tiny toy model in 3/4 view, painted with no
 	-- badge behind it so it can sit on any panel, button or counter.
 	local CREAM = { 0.98, 0.95, 0.86 }
+	-- Icons are painted at twice their HUD size, so every ink line is twice the
+	-- plates' 5px outline to read the same width on screen.
+	local ICON_STROKE = 10
+	-- Lines inside the silhouette stay one even, lighter weight so the fills still read.
+	local DETAIL_STROKE = 4
 	local BLUE, ORANGE, GREEN, RED, GOLD, STEEL =
 		{ 0.2, 0.62, 0.95 }, { 1, 0.6, 0.12 }, { 0.3, 0.82, 0.3 }, { 0.95, 0.25, 0.35 }, { 1, 0.78, 0.2 }, { 0.86, 0.9, 0.97 }
 
@@ -487,7 +492,7 @@ do
 		local function at(up, wobble) return place(p.shape, ox, oy - up, scale, wobble, i) end
 		local sideDark, sideLight = darker(p.color, 0.55), darker(p.color, 0.25)
 		if p.lift == 0 then c:shadow(at(0, 0.7), 4, 5, 1, 0.55) end
-		c:rim(at(p.lift, 0.7), 3, INK)
+		c:outline(at(p.lift, 0.7), DETAIL_STROKE, INK)
 		for k = 0, p.height - 1 do
 			local t = k / math.max(p.height - 1, 1)
 			c:fill(at(p.lift + k, 0.7), { sideDark[1] + (sideLight[1] - sideDark[1]) * t, sideDark[2] + (sideLight[2] - sideDark[2]) * t, sideDark[3] + (sideLight[3] - sideDark[3]) * t })
@@ -500,7 +505,7 @@ do
 		paint(c, top, p.color)
 		c:bevel(top, 4, lighter(p.color, 0.6), darker(p.color, 0.3), 1)
 		c:highlight(top, lighter(p.color, 0.85), 3, 2)
-		c:rim(top, 2.5, INK)
+		c:outline(top, DETAIL_STROKE, INK)
 	end
 
 	-- Each model is scaled and moved so it sits centred in, and fills most of, a
@@ -575,7 +580,7 @@ do
 		-- A thick ink silhouette behind the whole model makes it pop off any panel.
 		for _, p in icon.parts do
 			for _, up in { p.lift, p.lift + p.height } do
-				canvas:rim(place(p.shape, ox, oy - up, scale, 0.7, i), 9, INK)
+				canvas:outline(place(p.shape, ox, oy - up, scale, 0.7, i), ICON_STROKE, INK)
 			end
 		end
 		for _, p in icon.parts do paintPart(canvas, p, ox, oy, scale, i) end
