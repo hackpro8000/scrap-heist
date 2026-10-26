@@ -4,9 +4,8 @@
 
 	The always-on screen overlay, laid out like a Roblox simulator: scrap on the
 	left edge with an oversized icon, a 2x2 grid of square menu buttons under
-	it, one slim round strip top center (phase and time left, taken over in
-	red by a raid alert) with the survivors count beside it since that is round
-	info rather than a stat, and health in the top right corner. Everything is packed tight so the arena
+	it, one slim round strip top center (phase, survivors and time left, taken
+	over in red by a raid alert), and health in the top right corner. Everything is packed tight so the arena
 	stays in view. It only draws; HudController
 	decides what to show and when, so each value has one owner.
 
@@ -99,34 +98,32 @@ local function currency(icon: string, plateWidth: number): (Frame, TextLabel)
 	return holder, label
 end
 
--- The round strip is one slim row: phase on the left, time left on the
--- right. A raid takes it over in red rather than stacking a second banner.
-local ROUND_STRIP = Vector2.new(170, 28)
+-- The round strip is one slim banner holding the whole round state: phase
+-- on the left, then survivors and time left on the right. A raid takes it
+-- over in red rather than stacking a second banner.
+local ROUND_STRIP = Vector2.new(220, 28)
+-- Room kept clear on the right of the title for survivors and the timer.
+local ROUND_RIGHT = 92
 
--- The survivors count is a small number beside the strip, so it gets a
--- shrunk currency plate with the icon at the strip's height.
+-- The survivors count sits inside the strip as a robot icon and a number.
 local function roundCount(): (Frame, TextLabel)
 	local holder = Instance.new("Frame")
 	holder.BackgroundTransparency = 1
-	holder.Size = UDim2.fromOffset(54, ROUND_STRIP.Y)
-	local plate = ScrapKit.image("Counter", {
-		Size = UDim2.fromOffset(40, ROUND_STRIP.Y),
-		Position = UDim2.fromOffset(14, 0),
-	})
-	plate.Parent = holder
+	holder.Size = UDim2.new(0, 42, 1, 0)
+	holder.AnchorPoint = Vector2.new(1, 0)
+	holder.Position = UDim2.new(1, -46, 0, 0)
 	ScrapKit.image("IconBot", {
-		Size = UDim2.fromOffset(34, 34),
+		Size = UDim2.fromOffset(24, 24),
 		AnchorPoint = Vector2.new(0, 0.5),
 		Position = UDim2.fromScale(0, 0.5),
 		BackgroundTransparency = 1,
-		ZIndex = 2,
 	}).Parent =
 		holder
 	local label = ScrapKit.label("0", {
-		Size = UDim2.new(0, 16, 1, -4),
-		Position = UDim2.fromOffset(24, 2),
+		Size = UDim2.new(0, 18, 1, -6),
+		Position = UDim2.fromOffset(24, 3),
 	})
-	label.Parent = plate
+	label.Parent = holder
 	return holder, label
 end
 
@@ -186,11 +183,6 @@ function Hud.new(parent: Instance): Hud
 	local scrap, scrapLabel = currency("IconScrap", CURRENCY_PLATE.X)
 	scrap.Parent = leftColumn
 
-	local survivors, survivorsLabel = roundCount()
-	-- Just right of the round strip, so the round's state reads as one row.
-	survivors.Position = UDim2.new(0.5, ROUND_STRIP.X / 2 + 3, 0, margin)
-	survivors.Visible = false
-	survivors.Parent = gui
 
 	local menuTop = CURRENCY_PLATE.Y + CURRENCY_GAP
 	-- The buttons exist before the Hud does, so they call through this table,
@@ -217,7 +209,8 @@ function Hud.new(parent: Instance): Hud
 	health.Parent = gui
 
 	-- Top center: the round strip. The alert icon only shows during a raid,
-	-- and the title shifts right to make room for it.
+	-- and the title shifts right to make room for it. Survivors and the timer
+	-- share the right end.
 	local banner = ScrapKit.image("BannerCalm", {
 		Size = UDim2.fromOffset(ROUND_STRIP.X, ROUND_STRIP.Y),
 		AnchorPoint = Vector2.new(0.5, 0),
@@ -231,7 +224,7 @@ function Hud.new(parent: Instance): Hud
 	})
 	bannerAlert.Parent = banner
 	local bannerLabel = ScrapKit.label("", {
-		Size = UDim2.new(1, -50, 1, -6),
+		Size = UDim2.new(1, -8 - ROUND_RIGHT, 1, -6),
 		Position = UDim2.fromOffset(8, 3),
 		TextXAlignment = Enum.TextXAlignment.Left,
 	})
@@ -243,6 +236,9 @@ function Hud.new(parent: Instance): Hud
 		TextXAlignment = Enum.TextXAlignment.Right,
 	})
 	timerLabel.Parent = banner
+	local survivors, survivorsLabel = roundCount()
+	survivors.Visible = false
+	survivors.Parent = banner
 	banner.Parent = gui
 
 	gui.Parent = parent
@@ -282,7 +278,7 @@ function Hud._drawBanner(self: Hud)
 	self._bannerLabel.Text = if raider then `{raider} IS RAIDING!` else PHASE_TITLES[self._phase]
 	self._bannerAlert.Visible = raider ~= nil
 	self._bannerLabel.Position = UDim2.fromOffset(if raider then 28 else 8, 3)
-	self._bannerLabel.Size = UDim2.new(1, if raider then -70 else -50, 1, -6)
+	self._bannerLabel.Size = UDim2.new(1, (if raider then -28 else -8) - ROUND_RIGHT, 1, -6)
 end
 
 function Hud.setPhase(self: Hud, phase: Phase)
