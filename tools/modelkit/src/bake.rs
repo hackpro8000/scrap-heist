@@ -539,6 +539,61 @@ fn brush_strokes(edge: usize, t: f64, length: f64, d: f64) -> f64 {
 	paint
 }
 
+// Surface brushwork: strokes scattered on a world grid of this size.
+const DAB_CELL: f64 = 0.7;
+const DAB_LENGTH: f64 = 1.2;
+const DAB_WIDTH: f64 = 0.3;
+
+// Brightness shift from the topmost brush stroke covering a point, so flat
+// colour reads as overlapping dabs of slightly different paint.
+fn brushwork(p: Vec3, normal: Vec3) -> f64 {
+	let home = p.map(|c| (c / DAB_CELL).floor() as i64);
+	let across_up = cross(normal, [0.0, 1.0, 0.0]);
+	let flat = dot(across_up, across_up) < 0.05;
+	let (mut top, mut shift) = (-1.0f64, 0.0f64);
+	for x in -1..=1 {
+		for y in -1..=1 {
+			for z in -1..=1 {
+				let cell = [home[0] + x, home[1] + y, home[2] + z];
+				let seed = (cell[0] as u32).wrapping_mul(73_856_093) ^ (cell[1] as u32).wrapping_mul(19_349_663) ^ (cell[2] as u32).wrapping_mul(83_492_791);
+				let r = |k: u32| hash(seed.wrapping_add(k.wrapping_mul(0x9e37_79b9)));
+				let order = r(0);
+				if order <= top {
+					continue;
+				}
+				let centre = [0, 1, 2].map(|k| (cell[k] as f64 + r(1 + k as u32)) * DAB_CELL);
+				// Strokes run sideways round walls and any way across tops.
+				let angle = (r(4) - 0.5) * 0.6 + if flat { r(5) * std::f64::consts::TAU } else { 0.0 };
+				let base = if flat { [1.0, 0.0, 0.0] } else { normalize(across_up) };
+				let side = cross(normal, base);
+				let along = add(scale(base, angle.cos()), scale(side, angle.sin()));
+				let across = cross(normal, along);
+				let offset = sub(p, centre);
+				let length = DAB_LENGTH * (0.7 + 0.6 * r(6));
+				let u = dot(offset, along) / length + 0.5;
+				if !(0.0..=1.0).contains(&u) {
+					continue;
+				}
+				let half = DAB_WIDTH * (0.7 + 0.6 * r(7)) * (std::f64::consts::PI * u).sin().sqrt();
+				let s = dot(offset, across) / half.max(1e-6);
+				if s.abs() >= 1.0 || dot(offset, normal).abs() > DAB_CELL {
+					continue;
+				}
+				// Bristles thin out toward the stroke's tail.
+				let bristle = ((s + 1.0) * 6.0).floor() as u32;
+				let dry = 0.6 + 0.4 * hash(seed.wrapping_mul(31).wrapping_add(bristle));
+				if u > dry {
+					continue;
+				}
+				top = order;
+				let streak = (hash(seed.wrapping_mul(17).wrapping_add(bristle)) - 0.5) * 0.04;
+				shift = (r(8) - 0.5) * 0.35 + streak * 2.0;
+			}
+		}
+	}
+	shift
+}
+
 fn segment_distance(p: Vec3, a: Vec3, b: Vec3) -> f64 {
 	let ab = sub(b, a);
 	let t = (dot(sub(p, a), ab) / dot(ab, ab).max(1e-12)).clamp(0.0, 1.0);
@@ -668,6 +723,10 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 		let lit = (edge * open * shading.highlight * ramp).clamp(0.0, 1.0);
 		let dark = ((1.0 - open) * 1.6 * shading.shadow).clamp(0.0, 1.0);
 		let mut color = base[texel.pixel].map(to_linear);
+		if shading.brushed {
+			let shift = 1.0 + brushwork(texel.position, texel.normal);
+			color = color.map(|c| c * shift);
+		}
 		let cream = [1.0, 0.97, 0.85].map(to_linear_f64);
 		let screen: [f64; 3] = std::array::from_fn(|k| {
 			let lighter = (color[k] as f64 * 1.8 + 0.08).min(1.0);
