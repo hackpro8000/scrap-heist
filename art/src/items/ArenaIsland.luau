@@ -646,10 +646,53 @@ do
 		end, nil, 0.2)
 	end
 end
--- A steel bridge on spoke `degrees`, placed at (x, y) and turned so local +y
--- runs along it, from its low end at `to` (on deck level) to its far end at
--- `from`, which climbs to `highZ`. Every part is built flat and then sheared
--- up along its length, so posts stay upright and the end pieces sit level at
--- their own tier. A yard end lands on an apron under a gate frame; any other
--- end gets bollards like the low end.
+
+-- The ring road and its kerb, copied from Server Map.
+local ROAD_OUTER = 58
+local ROAD = { 0.42, 0.41, 0.4 }
+-- Asphalt at u studs across and v along a road: fine aggregate, darker
+-- repair patches, polished tyre lanes, oil drips between them, a web of
+-- cracks, and worn paint: white edge lines and a dashed yellow centre line.
+local function asphalt(u: number, v: number, half: number, seed: number): (number, number, number)
+	local k = 1 + fbm(u * 3, v * 3, seed) * 0.12
+	k += (math.noise(u * 9.1, v * 9.1, seed + 1) > 0.35 and 0.1 or 0)
+	local patch = warpedFbm(u / 6, v / 6, seed + 2)
+	if patch > 0.22 then
+		k -= 0.16
+	end
+	local lane = math.exp(-((math.abs(u) - half / 2) / 0.6) ^ 2)
+	k += lane * (0.07 + fbm(u, v / 5, seed + 3) * 0.05)
+	local oil = math.max(0, fbm(u / 1.5, v / 3, seed + 4) - 0.15) * (1 - lane)
+	k -= oil * 0.9
+	local crack = math.abs(warpedFbm(u / 3, v / 3, seed + 5))
+	if crack < 0.012 then
+		k -= 0.35
+	end
+	local r, g, b = ROAD[1] * k, ROAD[2] * k, ROAD[3] * k * 1.02
+	local fade = math.clamp(0.75 + fbm(u * 2, v / 2, seed + 6) * 1.2 - lane * 0.3, 0, 1)
+	local edgeLine = math.abs(math.abs(u) - (half - 0.5)) < 0.1
+	if edgeLine then
+		return r + (0.82 - r) * fade, g + (0.8 - g) * fade, b + (0.74 - b) * fade
+	end
+	return r, g, b
+end
+
+-- The ring road, with a concrete kerb along its outer edge broken only where
+-- the avenue leaves it to the east. The inner edge stays open onto the arena rim.
+do
+	local middle = (ROAD_INNER + ROAD_OUTER) / 2
+	chunkedPart("Ring", nil, ROAD, function(mesh)
+		-- A touch proud of the dirt, which here sits level with the deck.
+		arc(mesh, ROAD_INNER, ROAD_OUTER, DECK - 0.6, DECK + 0.05, 0, 360, true)
+	end, nil, function(x, y)
+		local radius = octagonRadius(x, y)
+		return asphalt(radius - middle, math.atan2(y, x) * middle, (ROAD_OUTER - ROAD_INNER) / 2, 61)
+	end)
+	-- The kerb stops against the outer faces of the avenue bridge's wing walls.
+	local bridgeGap = math.deg(math.asin(3.65 / ROAD_OUTER))
+	part("Kerb", nil, CONCRETE, function(mesh)
+		arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, DECK - 0.6, DECK + 0.3, bridgeGap, 360 - bridgeGap, true)
+	end, nil, 0.5)
+end
+
 finishParts()
