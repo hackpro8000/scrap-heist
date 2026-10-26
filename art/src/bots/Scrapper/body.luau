@@ -209,3 +209,54 @@ part("RadarDish", antenna, GALVANISED, function(mesh)
 end)
 
 finishParts()
+
+-- Clips. Rotations are degrees about model X, Y, Z; Scrapper faces -Y, so
+-- +X turns roll the wheel forward and tip the body nose-down.
+model.clip("Idle", {
+	length = 2,
+	keys = {
+		Body = { { t = 0 }, { t = 1, pos = { 0, 0, -0.04 }, rot = { 2, 0, 0 } }, { t = 2 } },
+		Suspension = { { t = 0 }, { t = 1, rot = { -2, 0, 0 } }, { t = 2 } },
+		Antenna = { { t = 0 }, { t = 0.5, rot = { 6, 4, 0 } }, { t = 1.2, rot = { -5, -3, 0 } }, { t = 2 } },
+		Saw = { { t = 0 }, { t = 2, rot = { -360, 0, 0 } } },
+	},
+})
+
+model.clip("Move", {
+	length = 1,
+	keys = {
+		Body = {
+			{ t = 0, rot = { 8, 0, 0 } },
+			{ t = 0.25, pos = { 0, 0, 0.05 }, rot = { 9, 0, 2 } },
+			{ t = 0.5, rot = { 8, 0, 0 } },
+			{ t = 0.75, pos = { 0, 0, 0.05 }, rot = { 9, 0, -2 } },
+			{ t = 1, rot = { 8, 0, 0 } },
+		},
+		Suspension = { { t = 0, rot = { -8, 0, 0 } }, { t = 0.25, rot = { -12, 0, 0 } }, { t = 0.5, rot = { -8, 0, 0 } }, { t = 0.75, rot = { -12, 0, 0 } }, { t = 1, rot = { -8, 0, 0 } } },
+		Wheel = { { t = 0 }, { t = 1, rot = { 720, 0, 0 } } },
+		Antenna = { { t = 0, rot = { -12, 0, 0 } }, { t = 0.5, rot = { -18, 0, 0 } }, { t = 1, rot = { -12, 0, 0 } } },
+		Saw = { { t = 0 }, { t = 1, rot = { -360, 0, 0 } } },
+	},
+})
+
+-- Wind up back, lunge and swing the saw forward and down, recover.
+model.clip("Attack", {
+	length = 0.8,
+	keys = {
+		Body = {
+			{ t = 0 },
+			{ t = 0.2, rot = { -6, 0, 8 } },
+			{ t = 0.35, pos = { 0, -0.2, 0 }, rot = { 12, 0, -10 } },
+			{ t = 0.55, pos = { 0, -0.15, 0 }, rot = { 10, 0, -6 } },
+			{ t = 0.8 },
+		},
+		SawArm = {
+			{ t = 0 },
+			{ t = 0.2, rot = { 0, -25, 30 } },
+			{ t = 0.35, rot = { 0, 20, -45 } },
+			{ t = 0.55, rot = { 0, 15, -35 } },
+			{ t = 0.8 },
+		},
+		Saw = { { t = 0 }, { t = 0.2, rot = { -180, 0, 0 } }, { t = 0.55, rot = { -1440, 0, 0 } }, { t = 0.8, rot = { -1620, 0, 0 } } },
+	},
+})

@@ -5,6 +5,7 @@
 // group (like a fill level) at a time. With bones, every part is skinned
 // rigidly to its one bone and the joints come in as Studio Bones.
 
+use crate::anim::{self, Clip};
 use crate::{Bone, Part};
 
 fn to_y_up(p: [f64; 3]) -> [f32; 3] {
@@ -17,7 +18,7 @@ fn pad(bytes: &mut Vec<u8>, fill: u8) {
 	}
 }
 
-pub fn write(parts: &[Part], bones: &[Bone]) -> Vec<u8> {
+pub fn write(parts: &[Part], bones: &[Bone], clips: &[Clip]) -> Vec<u8> {
 	let mut bin: Vec<u8> = Vec::new();
 	let mut views = Vec::new();
 	let mut accessors = Vec::new();
@@ -129,6 +130,7 @@ pub fn write(parts: &[Part], bones: &[Bone]) -> Vec<u8> {
 		roots.push(nodes.len() - 1);
 	}
 	let mut skins = String::new();
+	let mut animation_list = String::new();
 	if !bones.is_empty() {
 		let first = nodes.len();
 		let mut inverse_binds = Vec::new();
@@ -150,13 +152,53 @@ pub fn write(parts: &[Part], bones: &[Bone]) -> Vec<u8> {
 		accessors.push(format!("{{\"bufferView\":{view},\"componentType\":5126,\"count\":{},\"type\":\"MAT4\"}}", bones.len()));
 		let joints: Vec<String> = (0..bones.len()).map(|b| (first + b).to_string()).collect();
 		let skeleton = first + bones.iter().position(|b| b.parent.is_none()).unwrap_or(0);
+		// Clips sample every frame: a time accessor shared by each clip's
+		// channels, then a rotation and translation track per moving bone.
+		let mut animations = Vec::new();
+		for clip in clips {
+			let count = clip.frames();
+			let times: Vec<f32> = (0..count).map(|f| (f as f64 / anim::FPS) as f32).collect();
+			let bytes: Vec<u8> = times.iter().flat_map(|t| t.to_le_bytes()).collect();
+			let view = push_view(&mut bin, &bytes, None);
+			accessors.push(format!("{{\"bufferView\":{view},\"componentType\":5126,\"count\":{count},\"type\":\"SCALAR\",\"min\":[0],\"max\":[{}]}}", times[count - 1]));
+			let input = accessors.len() - 1;
+			let poses: Vec<Vec<anim::Pose>> = times.iter().map(|&t| clip.local(bones, t as f64)).collect();
+			let mut samplers = Vec::new();
+			let mut channels = Vec::new();
+			for &(bone, _) in &clip.tracks {
+				let mut rotations = Vec::new();
+				let mut previous = [0.0, 0.0, 0.0, 1.0];
+				let mut translations = Vec::new();
+				for pose in &poses {
+					let q = anim::quaternion(&pose[bone].rotation);
+					let mut q = [q[0], q[2], -q[1], q[3]];
+					// Stay on the near side so frames blend the short way.
+					if q.iter().zip(previous).map(|(a, b)| a * b).sum::<f64>() < 0.0 {
+						q = q.map(|c| -c);
+					}
+					previous = q;
+					rotations.extend(q.iter().flat_map(|c| (*c as f32).to_le_bytes()));
+					translations.extend(to_y_up(pose[bone].translation).iter().flat_map(|c| c.to_le_bytes()));
+				}
+				for (path, data, kind) in [("rotation", rotations, "VEC4"), ("translation", translations, "VEC3")] {
+					let view = push_view(&mut bin, &data, None);
+					accessors.push(format!("{{\"bufferView\":{view},\"componentType\":5126,\"count\":{count},\"type\":\"{kind}\"}}"));
+					samplers.push(format!("{{\"input\":{input},\"output\":{},\"interpolation\":\"LINEAR\"}}", accessors.len() - 1));
+					channels.push(format!("{{\"sampler\":{},\"target\":{{\"node\":{},\"path\":\"{path}\"}}}}", samplers.len() - 1, first + bone));
+				}
+			}
+			animations.push(format!("{{\"name\":\"{}\",\"samplers\":[{}],\"channels\":[{}]}}", clip.name, samplers.join(","), channels.join(",")));
+		}
+		if !animations.is_empty() {
+			animation_list = format!(",\"animations\":[{}]", animations.join(","));
+		}
 		skins = format!(",\"skins\":[{{\"inverseBindMatrices\":{},\"skeleton\":{skeleton},\"joints\":[{}]}}]", accessors.len() - 1, joints.join(","));
 	}
 	let extensions = if parts.iter().any(|p| p.emissive > 0.0) { ",\"extensionsUsed\":[\"KHR_materials_emissive_strength\"]" } else { "" };
 	let root_list: Vec<String> = roots.iter().map(|r| r.to_string()).collect();
 
 	let mut json = format!(
-		"{{\"asset\":{{\"version\":\"2.0\",\"generator\":\"modelkit\"}},\"scene\":0,\"scenes\":[{{\"nodes\":[{}]}}],\"nodes\":[{}],\"meshes\":[{}],\"materials\":[{}],\"textures\":[{}],\"images\":[{}],\"accessors\":[{}],\"bufferViews\":[{}],\"buffers\":[{{\"byteLength\":{}}}]{skins}{extensions}}}",
+		"{{\"asset\":{{\"version\":\"2.0\",\"generator\":\"modelkit\"}},\"scene\":0,\"scenes\":[{{\"nodes\":[{}]}}],\"nodes\":[{}],\"meshes\":[{}],\"materials\":[{}],\"textures\":[{}],\"images\":[{}],\"accessors\":[{}],\"bufferViews\":[{}],\"buffers\":[{{\"byteLength\":{}}}]{skins}{animation_list}{extensions}}}",
 		root_list.join(","),
 		nodes.join(","),
 		meshes.join(","),
