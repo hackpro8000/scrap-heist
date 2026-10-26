@@ -397,6 +397,24 @@ impl Canvas {
 		});
 	}
 
+	// A crisp highlight line `inset` pixels inside edges facing the light
+	// (up-left), fading out as the edge turns away. Brightest at the top-left.
+	pub fn highlight(&mut self, outline: &Outline, color: [f32; 3], inset: f64, width: f64) {
+		let (lx, ly) = (-0.6f64, -0.8f64);
+		self.retint(outline, 0.0, |x, y, d, _| {
+			let depth = -d;
+			let line = (width * 0.5 + 0.5 - (depth - inset).abs()).clamp(0.0, 1.0);
+			if line <= 0.0 {
+				return None;
+			}
+			let (nx, ny) = outline.outward(x, y);
+			let facing = (nx * lx + ny * ly).max(0.0);
+			// Broken here and there, like a worn painted edge.
+			let worn = (noise(x * 0.12, y * 0.12) * 1.6).min(1.0);
+			Some((color, line * facing.powf(0.8) * worn))
+		});
+	}
+
 	// A dark painted rim just inside the outline, like an inked border.
 	pub fn rim(&mut self, outline: &Outline, width: f64, color: [f32; 3]) {
 		self.retint(outline, 0.0, |x, y, d, _| {
