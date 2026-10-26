@@ -161,6 +161,112 @@ fn brushwork(x: f64, y: f64, scale: f64, angle: f64) -> [f32; 3] {
 	tint
 }
 
+// The other brush types. Each returns a tint to multiply the paint by.
+#[derive(Clone, Copy)]
+pub enum Brush {
+	// Leaf-shaped dabs that thin out toward the tail.
+	Dab,
+	// Long straight drags with streaky bristles, like a wide brush pulled across.
+	Drag,
+	// Drags with the paint running out: broken bristles, gaps show darker.
+	Dry,
+	// Short inked hatching lines, crossed where the noise runs dark.
+	Hatch,
+	// Stippled blotches from a sponge dabbed on.
+	Sponge,
+}
+
+impl Brush {
+	pub fn named(name: &str) -> Option<Brush> {
+		Some(match name {
+			"dab" => Brush::Dab,
+			"drag" => Brush::Drag,
+			"dry" => Brush::Dry,
+			"hatch" => Brush::Hatch,
+			"sponge" => Brush::Sponge,
+			_ => return None,
+		})
+	}
+}
+
+fn shade(shift: f64, warm: f64) -> [f32; 3] {
+	[shift * (1.0 + warm), shift, shift * (1.0 - warm)].map(|c| c as f32)
+}
+
+// Long strokes in lanes along `angle`; `dry` breaks the bristles up.
+fn drag(x: f64, y: f64, scale: f64, angle: f64, dry: bool) -> [f32; 3] {
+	let cell = DAB_CELL * scale;
+	let (u, v) = (x * angle.cos() + y * angle.sin(), y * angle.cos() - x * angle.sin());
+	let lane_width = cell * 0.6;
+	let v = v + noise(u / (cell * 4.0), 7.0) * lane_width * 0.5;
+	let lane = (v / lane_width).floor() as i64;
+	let lane_seed = (lane as u32).wrapping_mul(2_654_435_761);
+	let length = cell * 7.0;
+	let u = u + hash(lane_seed) * length;
+	let stroke = (u / length).floor() as i64;
+	let seed = lane_seed ^ (stroke as u32).wrapping_mul(40_503);
+	let along = u / length - stroke as f64;
+	let bristle = ((v / lane_width - lane as f64) * 9.0).floor() as u32;
+	let streak = (hash(seed.wrapping_add(bristle.wrapping_mul(977))) - 0.5) * 0.12;
+	let shift = 1.0 + (hash(seed ^ 0x51) - 0.5) * 0.3 + streak;
+	if dry {
+		// Paint runs out along the stroke, unevenly per bristle.
+		let reach = 0.35 + 0.6 * hash(seed.wrapping_mul(13).wrapping_add(bristle));
+		if along > reach || noise(u * 0.4, v * 1.5) > 0.72 {
+			return shade(0.78, 0.0);
+		}
+		return shade(shift + 0.06, (hash(seed ^ 0x77) - 0.5) * 0.1);
+	}
+	shade(shift, (hash(seed ^ 0x77) - 0.5) * 0.1)
+}
+
+fn hatch(x: f64, y: f64, scale: f64, angle: f64) -> [f32; 3] {
+	let spacing = 5.0 * scale;
+	let line = |a: f64, k: f64| {
+		let (u, v) = (x * a.cos() + y * a.sin(), y * a.cos() - x * a.sin());
+		let v = v + noise(u * 0.05 + k, k) * 2.0;
+		let row = (v / spacing).floor();
+		let seed = (row as i64 as u32).wrapping_mul(2_246_822_519) ^ (k as u32);
+		// Each line is broken into short strokes.
+		let dash = spacing * 6.0;
+		let u = u + hash(seed) * dash;
+		let gap = (u / dash).rem_euclid(1.0) > 0.8;
+		let width = 0.35 + 0.15 * hash(seed ^ 9);
+		!gap && ((v / spacing).rem_euclid(1.0) - 0.5).abs() < width * 0.5
+	};
+	let dark = noise(x * 0.02, y * 0.02);
+	let mut tint = 1.03;
+	if line(angle, 1.0) {
+		tint = 0.8;
+	}
+	if dark > 0.55 && line(angle + 1.3, 2.0) {
+		tint = 0.74;
+	}
+	shade(tint, 0.0)
+}
+
+fn sponge(x: f64, y: f64, scale: f64) -> [f32; 3] {
+	let cell = 4.0 * scale;
+	let (hx, hy) = ((x / cell).floor() as i64, (y / cell).floor() as i64);
+	let mut tint = 1.0;
+	for cx in hx - 1..=hx + 1 {
+		for cy in hy - 1..=hy + 1 {
+			let seed = (cx as u32).wrapping_mul(73_856_093) ^ (cy as u32).wrapping_mul(19_349_663);
+			let (px, py) = ((cx as f64 + hash(seed)) * cell, (cy as f64 + hash(seed ^ 1)) * cell);
+			let r = cell * (0.3 + 0.5 * hash(seed ^ 2));
+			// Pores cluster where the sponge pressed hard.
+			let pressed = noise(px * 0.03, py * 0.03);
+			if hash(seed ^ 3) > pressed + 0.15 {
+				continue;
+			}
+			if (x - px).hypot(y - py) < r {
+				tint = if hash(seed ^ 4) > 0.5 { 1.15 } else { 0.85 };
+			}
+		}
+	}
+	shade(tint, 0.0)
+}
+
 // Paint coverage of streaky strokes laid along an edge: `along` runs with
 // the edge and `depth` measures in from it, both in pixels.
 fn edge_strokes(along: f64, depth: f64, width: f64) -> f64 {
@@ -237,9 +343,15 @@ impl Canvas {
 		}
 	}
 
-	pub fn brushwork(&mut self, outline: &Outline, strength: f64, scale: f64, angle: f64) {
+	pub fn brushwork(&mut self, outline: &Outline, strength: f64, scale: f64, angle: f64, brush: Brush) {
 		self.retint(outline, 0.0, |x, y, _, c| {
-			let tint = brushwork(x, y, scale, angle);
+			let tint = match brush {
+				Brush::Dab => brushwork(x, y, scale, angle),
+				Brush::Drag => drag(x, y, scale, angle, false),
+				Brush::Dry => drag(x, y, scale, angle, true),
+				Brush::Hatch => hatch(x, y, scale, angle),
+				Brush::Sponge => sponge(x, y, scale),
+			};
 			let lit = [0, 1, 2].map(|k| c[k] * (1.0 + (tint[k] - 1.0) * strength as f32));
 			Some((lit, 1.0))
 		});

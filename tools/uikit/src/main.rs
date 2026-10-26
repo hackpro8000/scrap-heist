@@ -4,7 +4,7 @@
 
 mod canvas;
 
-use canvas::{Canvas, Outline, Shape};
+use canvas::{Brush, Canvas, Outline, Shape};
 use mlua::{AnyUserData, Lua, Table, UserData, UserDataMethods};
 use std::cell::RefCell;
 use std::path::Path;
@@ -25,9 +25,11 @@ impl UserData for CanvasHandle {
 			this.0.borrow_mut().shadow(&outline(&shape)?, dx, dy, blur, alpha.unwrap_or(0.6));
 			Ok(())
 		});
-		methods.add_method("brushwork", |_, this, (shape, strength, scale, angle): (Table, Option<f64>, Option<f64>, Option<f64>)| {
+		methods.add_method("brushwork", |_, this, (shape, strength, scale, angle, brush): (Table, Option<f64>, Option<f64>, Option<f64>, Option<String>)| {
 			let angle = angle.unwrap_or(0.0).to_radians();
-			this.0.borrow_mut().brushwork(&outline(&shape)?, strength.unwrap_or(1.0), scale.unwrap_or(1.0), angle);
+			let name = brush.unwrap_or_else(|| "dab".to_string());
+			let brush = Brush::named(&name).ok_or_else(|| mlua::Error::runtime(format!("unknown brush {name}; use dab, drag, dry, hatch or sponge")))?;
+			this.0.borrow_mut().brushwork(&outline(&shape)?, strength.unwrap_or(1.0), scale.unwrap_or(1.0), angle, brush);
 			Ok(())
 		});
 		methods.add_method("bevel", |_, this, (shape, width, light, dark, strength): (Table, f64, Table, Table, Option<f64>)| {
