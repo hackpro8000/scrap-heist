@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-43c80add0202170c"
+local CACHE_KEY = "YardIsland-d883ddd926079e0f"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -724,7 +724,7 @@ end
 -- stack of blocks. The model is one closed outer shell over the columns,
 -- with a soil lip draped over the rim, meshed as rings of vertices. Top at z = 0.7.
 useTexelDensity(16)
-local RADIUS = 32
+local RADIUS = 36
 local GROUND = { 0.3, 0.27, 0.22 }
 local STRATA = { { 0.5, 0.4, 0.27 }, { 0.36, 0.35, 0.34 }, { 0.48, 0.3, 0.22 } }
 local TOPSOIL = { 0.24, 0.19, 0.14 }
