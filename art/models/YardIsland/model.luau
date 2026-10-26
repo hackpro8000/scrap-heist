@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-f0fa878ce1f4f20c"
+local CACHE_KEY = "YardIsland-28bab43a40420314"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -945,6 +945,7 @@ local function shade(entries, occluders, gradient: number?)
 			shadow = 1.5,
 			gradient = gradient or GRADIENT,
 			blend = 1,
+			brushed = true,
 			occluders = occluders,
 		})
 	end
