@@ -136,9 +136,9 @@ local normal = button("Button", STEEL, false)
 button("ButtonHover", lighter(STEEL, 0.25), false)
 local pressed = button("ButtonPressed", darker(STEEL, 0.2), true)
 
--- Menu buttons: the same plastic drawn square at the HUD's 84px, so the
+-- Menu buttons: the same plastic drawn square at the HUD's 94px, so the
 -- simulator-style menu grid shows true corners instead of a squashed bar.
-local MENU_SIZE = 84
+local MENU_SIZE = 94
 local menuButton = button("ButtonMenu", STEEL, false, MENU_SIZE, MENU_SIZE)
 button("ButtonMenuHover", lighter(STEEL, 0.25), false, MENU_SIZE, MENU_SIZE)
 button("ButtonMenuPressed", darker(STEEL, 0.2), true, MENU_SIZE, MENU_SIZE)

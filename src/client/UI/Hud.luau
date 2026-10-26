@@ -103,13 +103,16 @@ local MENU_BUTTONS: { { menu: Menu, icon: string, title: string } } = {
 	{ menu = "Shield", icon = "IconShield", title = "SHIELD" },
 	{ menu = "Inventory", icon = "IconScrap", title = "BAG" },
 }
-local MENU_BUTTON_SIZE = 84
+-- The grid sits under the stat plates and spans exactly their width, the
+-- icons poking out to the left of both alike.
 local MENU_BUTTON_GAP = 12
+local MENU_LEFT = CURRENCY_ICON / 2 - 6
+local MENU_BUTTON_SIZE = (CURRENCY_PLATE.X - MENU_BUTTON_GAP) / 2
 local function menuButton(icon: string, title: string, onActivated: () -> ()): ImageButton
 	local button = ScrapKit.button("", "ButtonMenu", onActivated)
 	button.Size = UDim2.fromOffset(MENU_BUTTON_SIZE, MENU_BUTTON_SIZE)
 	ScrapKit.image(icon, {
-		Size = UDim2.fromOffset(56, 56),
+		Size = UDim2.fromOffset(62, 62),
 		AnchorPoint = Vector2.new(0.5, 0),
 		Position = UDim2.new(0.5, 0, 0, 6),
 		BackgroundTransparency = 1,
@@ -117,7 +120,7 @@ local function menuButton(icon: string, title: string, onActivated: () -> ()): I
 		button
 	ScrapKit.label(title, {
 		Size = UDim2.new(1, 0, 0, 22),
-		Position = UDim2.fromOffset(0, 58),
+		Position = UDim2.fromOffset(0, 66),
 		TextSize = 15,
 		ZIndex = 2,
 	}).Parent =
@@ -150,7 +153,7 @@ function Hud.new(parent: Instance): Hud
 	survivors.Visible = false
 	survivors.Parent = leftColumn
 
-	local menuTop = 2 * (CURRENCY_PLATE.Y + CURRENCY_GAP) + 8
+	local menuTop = 2 * (CURRENCY_PLATE.Y + CURRENCY_GAP)
 	-- The buttons exist before the Hud does, so they call through this table,
 	-- which setMenuHandler fills in later.
 	local menuHandler = { open = function(_menu: Menu) end }
@@ -160,7 +163,7 @@ function Hud.new(parent: Instance): Hud
 			menuHandler.open(entry.menu)
 		end)
 		button.Position = UDim2.fromOffset(
-			column * (MENU_BUTTON_SIZE + MENU_BUTTON_GAP),
+			MENU_LEFT + column * (MENU_BUTTON_SIZE + MENU_BUTTON_GAP),
 			menuTop + row * (MENU_BUTTON_SIZE + MENU_BUTTON_GAP)
 		)
 		button.Parent = leftColumn
