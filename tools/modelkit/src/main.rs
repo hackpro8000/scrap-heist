@@ -5,11 +5,14 @@
 //                                                also write turntable frames
 //   modelkit art/models/StarterWeapon --size 2048
 //                                                render previews at 2048px square
+//   modelkit art/models/Scrapper --clip Idle
+//                                                also write the clip's frames
 //
 // The script (model.luau) builds meshes and paints textures through the API
 // below; this engine does the heavy, generic work (triangulating, export,
 // rendering) so scripts change without a recompile.
 
+mod anim;
 mod bake;
 mod cache;
 mod glb;
@@ -197,7 +200,7 @@ impl UserData for ImageHandle {
 	}
 }
 
-fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<RefCell<Vec<Bone>>>, used: Rc<RefCell<Vec<PathBuf>>>, search: Vec<PathBuf>) -> mlua::Result<()> {
+fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<RefCell<Vec<Bone>>>, clips: Rc<RefCell<Vec<anim::Clip>>>, used: Rc<RefCell<Vec<PathBuf>>>, search: Vec<PathBuf>) -> mlua::Result<()> {
 	let globals = lua.globals();
 
 	let mesh_api = lua.create_table()?;
@@ -220,6 +223,37 @@ fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<R
 	let model_api = lua.create_table()?;
 	// model.bone(name, {at = {x, y, z}, parent = "Name"?}) adds a joint whose
 	// pivot sits at `at`; bones without a parent are roots.
+	// model.clip(name, {length = seconds, keys = {Bone = {{t = 0, rot = {x, y, z}?,
+	// pos = {x, y, z}?}, ...}}}) adds an animation; see anim.rs.
+	let rig = bones.clone();
+	model_api.set(
+		"clip",
+		lua.create_function(move |_, (name, options): (String, Table)| {
+			let length: f64 = options.get("length")?;
+			let rig = rig.borrow();
+			let mut tracks = Vec::new();
+			for pair in options.get::<Table>("keys")?.pairs::<String, Table>() {
+				let (bone, list) = pair?;
+				let index = rig.iter().position(|b| b.name == bone).ok_or_else(|| mlua::Error::runtime(format!("clip {name}: no bone {bone}")))?;
+				let mut keys = Vec::new();
+				for key in list.sequence_values::<Table>() {
+					let key = key?;
+					let vector = |field: &str| -> mlua::Result<[f64; 3]> {
+						Ok(match key.get::<Option<Vec<f64>>>(field)? {
+							None => [0.0; 3],
+							Some(v) if v.len() == 3 => [v[0], v[1], v[2]],
+							Some(_) => return Err(mlua::Error::runtime(format!("clip {name}: {field} needs {{x, y, z}}"))),
+						})
+					};
+					keys.push(anim::Key { time: key.get("t")?, rotation: vector("rot")?, offset: vector("pos")? });
+				}
+				keys.sort_by(|a, b| a.time.total_cmp(&b.time));
+				tracks.push((index, keys));
+			}
+			clips.borrow_mut().push(anim::Clip { name: name.clone(), length, tracks });
+			Ok(name)
+		})?,
+	)?;
 	let rig = bones.clone();
 	model_api.set(
 		"bone",
@@ -330,7 +364,7 @@ fn write_png(path: &Path, size: usize, data: &[u8]) -> std::io::Result<()> {
 // A close-up: focus point x, y, z, framing radius, and camera spin in degrees.
 type Closeup = (f64, f64, f64, f64, f64);
 
-fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup]) -> Result<(), String> {
+fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], shown_clip: Option<&str>) -> Result<(), String> {
 	let started = Instant::now();
 	let name = dir.file_name().and_then(|n| n.to_str()).ok_or("bad model folder")?.to_string();
 	let script = dir.join("model.luau");
@@ -341,8 +375,9 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup]) -> Resul
 	lua.enable_jit(true);
 	let parts = Rc::new(RefCell::new(Vec::new()));
 	let bones = Rc::new(RefCell::new(Vec::new()));
+	let clips = Rc::new(RefCell::new(Vec::new()));
 	let used = Rc::new(RefCell::new(Vec::new()));
-	install_api(&lua, dir, parts.clone(), bones.clone(), used.clone(), vec![dir.to_path_buf(), library]).map_err(|e| e.to_string())?;
+	install_api(&lua, dir, parts.clone(), bones.clone(), clips.clone(), used.clone(), vec![dir.to_path_buf(), library]).map_err(|e| e.to_string())?;
 	lua.load(source).set_name(format!("@{}", script.display())).exec().map_err(|e| e.to_string())?;
 	cache::prune(dir, &used.borrow());
 	let scripted = started.elapsed();
@@ -358,7 +393,7 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup]) -> Resul
 		}
 	}
 	let glb = dir.join(format!("{name}.glb"));
-	std::fs::write(&glb, glb::write(&parts, &bones)).map_err(|e| e.to_string())?;
+	std::fs::write(&glb, glb::write(&parts, &bones, &clips.borrow())).map_err(|e| e.to_string())?;
 	for part in parts.iter() {
 		let png = dir.join(format!("{}.png", part.name));
 		std::fs::write(png, part.image.borrow().encode_png()).map_err(|e| e.to_string())?;
@@ -393,6 +428,30 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup]) -> Resul
 		let data = render::render(&shown, &render::View { size, spin: degrees.to_radians(), focus });
 		write_png(&dir.join(format!("closeup_{}.png", n + 1)), size, &data).map_err(|e| e.to_string())?;
 	}
+	if let Some(wanted) = shown_clip {
+		let clips = clips.borrow();
+		let clip = clips.iter().find(|c| c.name == wanted).ok_or(format!("no clip {wanted}"))?;
+		// Frame the rest pose once, so the camera holds still while it moves.
+		let mut low = [f64::MAX; 3];
+		let mut high = [f64::MIN; 3];
+		for part in &shown {
+			for corner in part.mesh.borrow().triangles().iter().flatten() {
+				for axis in 0..3 {
+					low[axis] = low[axis].min(corner.position[axis]);
+					high[axis] = high[axis].max(corner.position[axis]);
+				}
+			}
+		}
+		let center = [0, 1, 2].map(|a| (low[a] + high[a]) / 2.0);
+		let radius = (0..3).map(|a| high[a] - low[a]).fold(0.0, f64::max) * 0.6;
+		let frames = dir.join(format!("clip_{wanted}"));
+		std::fs::create_dir_all(&frames).map_err(|e| e.to_string())?;
+		for frame in 0..clip.frames() {
+			let skin = clip.skin(&bones, frame as f64 / anim::FPS);
+			let data = render::render_posed(&shown, &skin, &render::View { size, spin: 0.0, focus: Some((center, radius)) });
+			write_png(&frames.join(format!("{frame:04}.png")), size, &data).map_err(|e| e.to_string())?;
+		}
+	}
 	eprintln!("{name}: {} parts, script {:.2?}, total {:.2?}", parts.len(), scripted, started.elapsed());
 	Ok(())
 }
@@ -400,7 +459,7 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup]) -> Resul
 fn main() {
 	let args: Vec<String> = std::env::args().skip(1).collect();
 	let Some(dir) = args.first() else {
-		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]...");
+		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--clip NAME]");
 		std::process::exit(2);
 	};
 	let turntable = match args.iter().position(|a| a == "--turntable") {
@@ -420,7 +479,8 @@ fn main() {
 		};
 		closeups.push((x, y, z, radius, spin));
 	}
-	if let Err(error) = run(Path::new(dir), turntable, size, &closeups) {
+	let clip = args.iter().position(|a| a == "--clip").and_then(|at| args.get(at + 1));
+	if let Err(error) = run(Path::new(dir), turntable, size, &closeups, clip.map(|c| c.as_str())) {
 		eprintln!("error: {error}");
 		std::process::exit(1);
 	}

@@ -117,11 +117,13 @@ end)
 part("CoilTip", coilTip, DARK_STEEL, function(mesh)
 	sphere(mesh, 0, 0, COIL_TOP + 0.2, 0.2, 0.2, 0.2)
 end, true)
+local ANKLE_Z = 0.18
 for _, side in { { "L", -1 }, { "R", 1 } } do
 	local name, s = side[1], side[2]
 	local upper = model.bone("LegUpper" .. name, { at = { s * HIP_X, 0, HIP_Z }, parent = body })
 	local lower = model.bone("LegLower" .. name, { at = { s * FOOT_X, 0, KNEE_Z }, parent = upper })
 	local ankleX = s * FOOT_X * 0.9
+	local foot = model.bone("Foot" .. name, { at = { ankleX, 0, ANKLE_Z }, parent = lower })
 	part("LegUpper" .. name, upper, DARK_STEEL, function(mesh)
 		strut(mesh, s * HIP_X, 0, HIP_Z, s * FOOT_X, 0, KNEE_Z, 0.12)
 		-- Hip: a ball joint in a bracket.
@@ -143,7 +145,9 @@ for _, side in { { "L", -1 }, { "R", 1 } } do
 		cylinder(mesh, ankleX, 0, 0.18, 0.03, 0.28, "x", 6)
 	end)
 	part("LegLower" .. name, lower, DARK_STEEL, function(mesh)
-		strut(mesh, s * FOOT_X, 0, KNEE_Z, ankleX, 0, 0.18, 0.1)
+		strut(mesh, s * FOOT_X, 0, KNEE_Z, ankleX, 0, ANKLE_Z, 0.1)
+	end)
+	part("Foot" .. name, foot, DARK_STEEL, function(mesh)
 		box(mesh, ankleX, -0.1, 0, 0.3, 0.45, 0.1)
 		bolt(mesh, ankleX, -0.25, 0.1, "z", 0.04)
 	end)
@@ -172,3 +176,73 @@ part("Pipes", body, GALVANISED, function(mesh)
 end, nil, 0.6)
 
 finishParts()
+
+-- Legs solved so the feet stay planted wherever the body goes. Body poses are
+-- {t, back, down, pitch}; between them the body eases, and each frame the
+-- two-bone leg (thigh then shin, knee forward) reaches its ankle on the ground.
+local THIGH = HIP_Z - KNEE_Z
+local SHIN = KNEE_Z - ANKLE_Z
+
+local function plantedKeys(length, poses, extra)
+	local keys = extra
+	for _, name in { "Body", "LegUpperL", "LegUpperR", "LegLowerL", "LegLowerR", "FootL", "FootR" } do
+		keys[name] = {}
+	end
+	local frames = math.round(length * 30)
+	for frame = 0, frames do
+		local t = frame / 30
+		local k = 1
+		while poses[k + 1] and poses[k + 1][1] < t do
+			k += 1
+		end
+		local a, b = poses[k], poses[math.min(k + 1, #poses)]
+		local u = if b[1] > a[1] then (t - a[1]) / (b[1] - a[1]) else 0
+		u = (1 - math.cos(u * math.pi)) / 2
+		local oy = a[2] + (b[2] - a[2]) * u
+		local oz = a[3] + (b[3] - a[3]) * u
+		local pitch = a[4] + (b[4] - a[4]) * u
+		local vy, vz = -oy, ANKLE_Z - (HIP_Z + oz)
+		local d = math.min(math.sqrt(vy * vy + vz * vz), THIGH + SHIN - 1e-4)
+		local aim = math.atan2(vy, -vz)
+		local thigh = aim - math.acos((THIGH ^ 2 + d ^ 2 - SHIN ^ 2) / (2 * THIGH * d))
+		local shin = aim + math.acos((SHIN ^ 2 + d ^ 2 - THIGH ^ 2) / (2 * SHIN * d))
+		thigh, shin = math.deg(thigh), math.deg(shin)
+		table.insert(keys.Body, { t = t, pos = { 0, oy, oz }, rot = { pitch, 0, 0 } })
+		for _, side in { "L", "R" } do
+			table.insert(keys["LegUpper" .. side], { t = t, rot = { thigh - pitch, 0, 0 } })
+			table.insert(keys["LegLower" .. side], { t = t, rot = { shin - thigh, 0, 0 } })
+			table.insert(keys["Foot" .. side], { t = t, rot = { -shin, 0, 0 } })
+		end
+	end
+	return keys
+end
+
+model.clip("Idle", {
+	length = 2,
+	keys = plantedKeys(2, { { 0, 0, 0, 0 }, { 1, 0, -0.08, 0 }, { 2, 0, 0, 0 } }, {
+		Eye = { { t = 0 }, { t = 0.6, rot = { 0, 0, 20 } }, { t = 1.4, rot = { 0, 0, -20 } }, { t = 2 } },
+		Coil = { { t = 0 }, { t = 2, rot = { 0, 0, 360 } } },
+		CoilTip = { { t = 0 }, { t = 1, pos = { 0, 0, 0.1 } }, { t = 2 } },
+	}),
+})
+
+model.clip("Move", {
+	length = 0.8,
+	keys = {
+		Body = { { t = 0, pos = { 0, 0, 0 }, rot = { 6, 0, 0 } }, { t = 0.2, pos = { 0, 0, 0.12 }, rot = { 6, 0, 0 } }, { t = 0.4, pos = { 0, 0, 0 }, rot = { 6, 0, 0 } }, { t = 0.6, pos = { 0, 0, 0.12 }, rot = { 6, 0, 0 } }, { t = 0.8, pos = { 0, 0, 0 }, rot = { 6, 0, 0 } } },
+		LegUpperL = { { t = 0, rot = { 25, 0, 0 } }, { t = 0.4, rot = { -25, 0, 0 } }, { t = 0.8, rot = { 25, 0, 0 } } },
+		LegUpperR = { { t = 0, rot = { -25, 0, 0 } }, { t = 0.4, rot = { 25, 0, 0 } }, { t = 0.8, rot = { -25, 0, 0 } } },
+		LegLowerL = { { t = 0 }, { t = 0.2, rot = { -20, 0, 0 } }, { t = 0.4 }, { t = 0.8 } },
+		LegLowerR = { { t = 0 }, { t = 0.4 }, { t = 0.6, rot = { -20, 0, 0 } }, { t = 0.8 } },
+		Coil = { { t = 0 }, { t = 0.8, rot = { 0, 0, 360 } } },
+	},
+})
+
+model.clip("Attack", {
+	length = 1.2,
+	keys = plantedKeys(1.2, { { 0, 0, 0, 0 }, { 0.4, 0.12, -0.35, -10 }, { 0.6, -0.15, -0.08, 10 }, { 0.8, -0.1, -0.12, 6 }, { 1.2, 0, 0, 0 } }, {
+		Coil = { { t = 0 }, { t = 0.6, rot = { 0, 0, 1080 } }, { t = 1.2, rot = { 0, 0, 1440 } } },
+		CoilTip = { { t = 0 }, { t = 0.4, pos = { 0, 0, 0.35 } }, { t = 0.6, pos = { 0, 0, -0.05 } }, { t = 1.2 } },
+		Eye = { { t = 0 }, { t = 0.4, pos = { 0, -0.1, 0 } }, { t = 1.2 } },
+	}),
+})

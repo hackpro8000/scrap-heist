@@ -4,6 +4,7 @@
 // carry their own painted shading.
 
 use crate::mesh::{cross, dot, normalize, scale, sub, Vec3};
+use crate::anim::Pose;
 use crate::Part;
 
 const BACKGROUND: [f32; 3] = [0.36, 0.38, 0.42];
@@ -22,7 +23,24 @@ pub struct View {
 }
 
 pub fn render(parts: &[&Part], view: &View) -> Vec<u8> {
-	let triangles: Vec<_> = parts.iter().map(|part| (part.mesh.borrow().triangles(), part)).collect();
+	render_posed(parts, &[], view)
+}
+
+// Renders with each part moved by its bone's skinning transform from `skin`.
+pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
+	let triangles: Vec<_> = parts
+		.iter()
+		.map(|part| {
+			let mut list = part.mesh.borrow().triangles();
+			if let Some(pose) = part.bone.and_then(|b| skin.get(b)) {
+				for corner in list.iter_mut().flatten() {
+					corner.position = pose.apply(corner.position);
+					corner.normal = pose.turn(corner.normal);
+				}
+			}
+			(list, part)
+		})
+		.collect();
 
 	let mut low = [f64::MAX; 3];
 	let mut high = [f64::MIN; 3];
