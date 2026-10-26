@@ -341,9 +341,10 @@ local function banner(name, a, b, w, h)
 	ui.element(name, canvas)
 	return canvas
 end
-local bannerStorm = banner("BannerStorm", { 0.35, 0.55, 0.9 }, RUBBER_BLACK, 236, 28)
+local bannerStorm = banner("BannerStorm", { 0.35, 0.55, 0.9 }, RUBBER_BLACK, 140, 28)
 local bannerRaid = banner("BannerRaid", RUST_RED, RUBBER_BLACK, 236, 28)
-banner("BannerCalm", CRATE_GREEN, darker(CRATE_GREEN, 0.5), 236, 28)
+banner("BannerCalm", CRATE_GREEN, darker(CRATE_GREEN, 0.5), 140, 28)
+banner("BannerWarning", RUST_RED, RUBBER_BLACK, 140, 28)
 local bannerStormWarning = banner("BannerStormWarning", RUST_RED, RUBBER_BLACK, 700, 96)
 
 -- Icons, 48 square: painted badges for counters, prompts and alerts.
@@ -429,6 +430,14 @@ local icons = {
 	icon("IconCross", function(c)
 		badge(c, cross(24, 24, 18, 5, 13), RUST_RED)
 	end),
+	icon("IconStorm", function(c)
+		badge(c, { rect = { 6, 10, 42, 30 }, radius = 9, wobble = 0.8, seed = 14 }, DARK_STEEL)
+		badge(c, { polygon = { 26, 22, 34, 22, 28, 32, 33, 32, 19, 46, 23, 36, 18, 36 }, wobble = 0.5, seed = 15 }, HAZARD_YELLOW)
+	end),
+	icon("IconCalm", function(c)
+		badge(c, { polygon = { 24.0, 2.0, 29.7, 10.1, 39.6, 8.4, 37.9, 18.3, 46.0, 24.0, 37.9, 29.7, 39.6, 39.6, 29.7, 37.9, 24.0, 46.0, 18.3, 37.9, 8.4, 39.6, 10.1, 29.7, 2.0, 24.0, 10.1, 18.3, 8.4, 8.4, 18.3, 10.1 }, wobble = 0.5, seed = 16 }, HAZARD_YELLOW)
+		badge(c, { circle = { 24, 24, 11 }, wobble = 0.5, seed = 17 }, BARE_METAL)
+	end),
 }
 
 -- Preview: a contact sheet of the kit at half size. The screen mocks show
@@ -451,7 +460,7 @@ show(plateInventoryGrid, 520, 394)
 show(tooltipUpgrade, 340, 190)
 show(rowA, 552, 50)
 show(rowB, 552, 50)
-show(bannerStorm, 236, 28)
+show(bannerStorm, 140, 28)
 show(bannerRaid, 236, 28)
 show(normal, BUTTON_W, BUTTON_H)
 show(pressed, BUTTON_W, BUTTON_H)

@@ -48,6 +48,7 @@ Assets.UI = {
 	BannerStorm = 0,
 	BannerRaid = 0,
 	BannerCalm = 0,
+	BannerWarning = 0,
 	PanelInventory = 0,
 	PanelTrade = 0,
 	PanelResults = 0,
@@ -79,6 +80,8 @@ Assets.UI = {
 	IconTrade = 0,
 	IconTrophy = 0,
 	IconCross = 0,
+	IconStorm = 0,
+	IconCalm = 0,
 }
 
 function Assets.isSet(id: number): boolean

@@ -4,7 +4,7 @@
 
 	The always-on screen overlay, laid out like a Roblox simulator: scrap on the
 	left edge with an oversized icon, a 2x2 grid of square menu buttons under
-	it, one slim storm strip top center (phase, survivors and time left), a
+	it, one slim storm strip top center (phase icon, survivors and time left), a
 	separate red raid strip under it while someone raids, and health in the top
 	right corner. Everything is packed tight so the arena
 	stays in view. It only draws; HudController
@@ -39,7 +39,7 @@ export type Hud = typeof(setmetatable(
 		_scrapLabel: TextLabel,
 		_setHealth: (number) -> (),
 		_banner: ImageLabel,
-		_bannerLabel: TextLabel,
+		_phaseIcon: ImageLabel,
 		_raidAlert: ImageLabel,
 		_raidLabel: TextLabel,
 		_timerLabel: TextLabel,
@@ -51,19 +51,20 @@ export type Hud = typeof(setmetatable(
 	Hud
 ))
 
--- Warning reuses the raid banner: both mean "danger is coming, act now".
+-- The strip's colour and icon name the phase together, so it needs no title.
 local PHASE_BANNERS: { [Phase]: string } = {
 	Calm = "BannerCalm",
-	Warning = "BannerRaid",
+	Warning = "BannerWarning",
 	Storm = "BannerStorm",
 	Results = "BannerCalm",
 }
 
-local PHASE_TITLES: { [Phase]: string } = {
-	Calm = "CALM",
-	Warning = "STORM INCOMING",
-	Storm = "SCRAP STORM",
-	Results = "RESULTS",
+-- Warning reuses the raid alert icon: both mean "danger is coming, act now".
+local PHASE_ICONS: { [Phase]: string } = {
+	Calm = "IconCalm",
+	Warning = "IconAlert",
+	Storm = "IconStorm",
+	Results = "IconCalm",
 }
 
 -- A currency is a dark plate with an oversized icon straddling its left
@@ -99,10 +100,12 @@ local function currency(icon: string, plateWidth: number): (Frame, TextLabel)
 	return holder, label
 end
 
--- The round strip is one slim banner holding the storm state: phase,
+-- The round strip is one slim banner holding the storm state: phase icon,
 -- survivors and time left, centred as one group. A raid is a separate event,
--- so it gets its own strip of the same shape under it, only while it lasts.
-local ROUND_STRIP = Vector2.new(236, 28)
+-- so it gets its own wider strip under it (the raider's name needs the room),
+-- only while it lasts. Each width matches its art, so nothing stretches.
+local ROUND_STRIP = Vector2.new(140, 28)
+local RAID_STRIP = Vector2.new(236, 28)
 -- The stripes only show as a rim around this dark pill, so the text sits on
 -- something calm and stays readable.
 local ROUND_PILL_INSET = Vector2.new(5, 5)
@@ -126,9 +129,9 @@ end
 
 -- A slim striped strip with a dark pill on it whose children line up in one
 -- centred row. Returns the strip and the pill to put children in.
-local function stripWithPill(art: string): (ImageLabel, Frame)
+local function stripWithPill(art: string, size: Vector2): (ImageLabel, Frame)
 	local strip = ScrapKit.image(art, {
-		Size = UDim2.fromOffset(ROUND_STRIP.X, ROUND_STRIP.Y),
+		Size = UDim2.fromOffset(size.X, size.Y),
 		AnchorPoint = Vector2.new(0.5, 0),
 	})
 	local pill = Instance.new("Frame")
@@ -244,10 +247,14 @@ function Hud.new(parent: Instance): Hud
 
 	-- Top center: the round strip, with survivors only shown while a count
 	-- is set; the row recentres itself either way.
-	local banner, pill = stripWithPill("BannerCalm")
+	local banner, pill = stripWithPill("BannerCalm", ROUND_STRIP)
 	banner.Position = UDim2.new(0.5, 0, 0, margin)
-	local bannerLabel = roundText(1)
-	bannerLabel.Parent = pill
+	local phaseIcon = ScrapKit.image("IconCalm", {
+		Size = UDim2.fromOffset(20, 20),
+		BackgroundTransparency = 1,
+		LayoutOrder = 1,
+	})
+	phaseIcon.Parent = pill
 	roundSpacer(3).Parent = pill
 	local survivors = ScrapKit.image("IconBot", {
 		Size = UDim2.fromOffset(22, 22),
@@ -264,7 +271,7 @@ function Hud.new(parent: Instance): Hud
 	timerLabel.Parent = pill
 
 	-- Under it, only during a raid: who is raiding, in red.
-	local raidAlert, raidPill = stripWithPill("BannerRaid")
+	local raidAlert, raidPill = stripWithPill("BannerRaid", RAID_STRIP)
 	raidAlert.Position = UDim2.new(0.5, 0, 0, margin + ROUND_STRIP.Y + 4)
 	raidAlert.Visible = false
 	ScrapKit.image("IconAlert", {
@@ -284,7 +291,7 @@ function Hud.new(parent: Instance): Hud
 		_scrapLabel = scrapLabel,
 		_setHealth = setHealth,
 		_banner = banner,
-		_bannerLabel = bannerLabel,
+		_phaseIcon = phaseIcon,
 		_raidAlert = raidAlert,
 		_raidLabel = raidLabel,
 		_timerLabel = timerLabel,
@@ -309,7 +316,7 @@ end
 function Hud.setPhase(self: Hud, phase: Phase)
 	self._phase = phase
 	ScrapKit.setImage(self._banner, PHASE_BANNERS[phase])
-	self._bannerLabel.Text = PHASE_TITLES[phase]
+	ScrapKit.setImage(self._phaseIcon, PHASE_ICONS[phase])
 end
 
 function Hud.setTimeLeft(self: Hud, seconds: number)

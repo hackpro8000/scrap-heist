@@ -66,6 +66,7 @@ Theme.FALLBACK = {
 	BannerStorm = BLUE,
 	BannerRaid = RED,
 	BannerCalm = GREEN,
+	BannerWarning = RED,
 	PanelInventory = STEEL,
 	PanelTrade = STEEL,
 	PanelResults = STEEL,
@@ -97,6 +98,8 @@ Theme.FALLBACK = {
 	IconTrade = GREEN,
 	IconTrophy = HAZARD,
 	IconCross = RED,
+	IconStorm = BLUE,
+	IconCalm = HAZARD,
 } :: { [string]: Color3 }
 
 return Theme

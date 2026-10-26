@@ -340,9 +340,10 @@ local function banner(name, a, b, w, h)
 	ui.element(name, canvas)
 	return canvas
 end
-local bannerStorm = banner("BannerStorm", { 0.35, 0.55, 0.9 }, RUBBER_BLACK, 236, 28)
+local bannerStorm = banner("BannerStorm", { 0.35, 0.55, 0.9 }, RUBBER_BLACK, 140, 28)
 local bannerRaid = banner("BannerRaid", RUST_RED, RUBBER_BLACK, 236, 28)
-banner("BannerCalm", CRATE_GREEN, darker(CRATE_GREEN, 0.5), 236, 28)
+banner("BannerCalm", CRATE_GREEN, darker(CRATE_GREEN, 0.5), 140, 28)
+banner("BannerWarning", RUST_RED, RUBBER_BLACK, 140, 28)
 local bannerStormWarning = banner("BannerStormWarning", RUST_RED, RUBBER_BLACK, 700, 96)
 
 do
@@ -483,6 +484,17 @@ do
 			part(crossShape(24, 25, 19, 6), RED, 8),
 			part({ circle = { 24, 25, 4 } }, STEEL, 2, 8),
 		} },
+		-- Storm: a dark cloud with a gold lightning bolt striking down out of it.
+		{ color = BLUE, focus = 1, parts = {
+			part({ circle = { 15, 22, 9 } }, BLUE, 5), part({ circle = { 27, 17, 12 } }, BLUE, 5),
+			part({ circle = { 36, 24, 8 } }, BLUE, 5), part({ rect = { 8, 22, 42, 31 }, radius = 4 }, BLUE, 5),
+			part({ polygon = { 26, 24, 34, 24, 28, 34, 33, 34, 19, 47, 23, 37, 18, 37 } }, GOLD, 3, 5),
+		} },
+		-- Calm: a round sun inside a ring of points.
+		{ color = GOLD, focus = 2, parts = {
+			part({ polygon = { 24.0, 2.0, 29.7, 10.1, 39.6, 8.4, 37.9, 18.3, 46.0, 24.0, 37.9, 29.7, 39.6, 39.6, 29.7, 37.9, 24.0, 46.0, 18.3, 37.9, 8.4, 39.6, 10.1, 29.7, 2.0, 24.0, 10.1, 18.3, 8.4, 8.4, 18.3, 10.1 } }, ORANGE, 4),
+			part({ circle = { 24, 24, 12 } }, GOLD, 3, 4),
+		} },
 	}
 
 	-- Each surface gets the brush that says what it is made of. Metal is brushed in
@@ -531,7 +543,7 @@ do
 	-- circle the size of the canvas: the badge or button behind it can be any shape.
 	local ICON_SIZE = 104
 	local FIT_RADIUS = 43 -- canvas radius minus room for the ink silhouette
-	local ICON_NAMES = { "IconScrap", "IconTimer", "IconBot", "IconShield", "IconAlert", "IconTrade", "IconTrophy", "IconCross" }
+	local ICON_NAMES = { "IconScrap", "IconTimer", "IconBot", "IconShield", "IconAlert", "IconTrade", "IconTrophy", "IconCross", "IconStorm", "IconCalm" }
 
 	-- Each part's outline at its bottom and top, drawn at scale s from (0, 0).
 	local function modelOutlines(icon, s)
@@ -627,7 +639,7 @@ show(plateInventoryGrid, 520, 394)
 show(tooltipUpgrade, 340, 190)
 show(rowA, 552, 50)
 show(rowB, 552, 50)
-show(bannerStorm, 236, 28)
+show(bannerStorm, 140, 28)
 show(bannerRaid, 236, 28)
 show(normal, BUTTON_W, BUTTON_H)
 show(pressed, BUTTON_W, BUTTON_H)
