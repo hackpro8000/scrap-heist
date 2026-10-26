@@ -259,7 +259,15 @@ local function well(name, w, h, color)
 	return canvas
 end
 local input = well("InputField", 300, 48, darker(DIRT, 0.55))
-local counter = well("Counter", 200, 48, darker(DARK_STEEL, 0.35))
+local counter = well("Counter", 170, 44, darker(DARK_STEEL, 0.35))
+-- Round plates top centre, each painted at its HUD width. Survivors is dark
+-- like Counter; the timer is tinted by phase, and the raid plate is red, dark
+-- enough that the white number still reads.
+local counterSurvivors = well("CounterSurvivors", 90, 44, darker(DARK_STEEL, 0.35))
+local counterCalm = well("CounterCalm", 130, 44, darker(CRATE_GREEN, 0.45))
+local counterStorm = well("CounterStorm", 130, 44, darker({ 0.35, 0.55, 0.9 }, 0.45))
+local counterWarning = well("CounterWarning", 130, 44, darker(RUST_RED, 0.35))
+local counterRaid = well("CounterRaid", 260, 44, darker(RUST_RED, 0.35))
 
 -- Bar fills for health and the storm timer, sharing the trough above.
 local function barFill(name, color, w, h)
@@ -340,10 +348,6 @@ local function banner(name, a, b, w, h)
 	ui.element(name, canvas)
 	return canvas
 end
-local bannerStorm = banner("BannerStorm", { 0.35, 0.55, 0.9 }, RUBBER_BLACK, 140, 28)
-local bannerRaid = banner("BannerRaid", RUST_RED, RUBBER_BLACK, 236, 28)
-banner("BannerCalm", CRATE_GREEN, darker(CRATE_GREEN, 0.5), 140, 28)
-banner("BannerWarning", RUST_RED, RUBBER_BLACK, 140, 28)
 local bannerStormWarning = banner("BannerStormWarning", RUST_RED, RUBBER_BLACK, 700, 96)
 
 do
@@ -484,11 +488,13 @@ do
 			part(crossShape(24, 25, 19, 6), RED, 8),
 			part({ circle = { 24, 25, 4 } }, STEEL, 2, 8),
 		} },
-		-- Storm: a dark cloud with a gold lightning bolt striking down out of it.
-		{ color = BLUE, focus = 1, parts = {
-			part({ circle = { 15, 22, 9 } }, BLUE, 5), part({ circle = { 27, 17, 12 } }, BLUE, 5),
-			part({ circle = { 36, 24, 8 } }, BLUE, 5), part({ rect = { 8, 22, 42, 31 }, radius = 4 }, BLUE, 5),
-			part({ polygon = { 26, 24, 34, 24, 28, 34, 33, 34, 19, 47, 23, 37, 18, 37 } }, GOLD, 3, 5),
+		-- Storm: a tall pale cloud with a fat gold bolt striking out of it, the two
+		-- together roughly round so the icon fills its circle. No focus part, so
+		-- it centres on the whole model instead of one puff of cloud.
+		{ color = STEEL, parts = {
+			part({ circle = { 13, 20, 10 } }, STEEL, 5), part({ circle = { 25, 13, 12 } }, STEEL, 5),
+			part({ circle = { 36, 20, 10 } }, STEEL, 5), part({ rect = { 3, 18, 46, 32 }, radius = 7 }, STEEL, 5),
+			part({ polygon = { 21, 24, 35, 24, 29, 33, 37, 33, 15, 48, 21, 37, 13, 37 } }, GOLD, 3, 5),
 		} },
 		-- Calm: a round sun inside a ring of points.
 		{ color = GOLD, focus = 2, parts = {
@@ -639,8 +645,12 @@ show(plateInventoryGrid, 520, 394)
 show(tooltipUpgrade, 340, 190)
 show(rowA, 552, 50)
 show(rowB, 552, 50)
-show(bannerStorm, 140, 28)
-show(bannerRaid, 236, 28)
+show(counter, 170, 44)
+show(counterSurvivors, 90, 44)
+show(counterCalm, 130, 44)
+show(counterStorm, 130, 44)
+show(counterWarning, 130, 44)
+show(counterRaid, 260, 44)
 show(normal, BUTTON_W, BUTTON_H)
 show(pressed, BUTTON_W, BUTTON_H)
 show(menuButton, MENU_SIZE, MENU_SIZE)

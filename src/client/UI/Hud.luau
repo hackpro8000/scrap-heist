@@ -2,13 +2,14 @@
 --[[
 	Hud
 
-	The always-on screen overlay, laid out like a Roblox simulator: scrap on the
-	left edge with an oversized icon, a 2x2 grid of square menu buttons under
-	it, one slim storm strip top center (phase icon, survivors and time left), a
-	separate red raid strip under it while someone raids, and health in the top
-	right corner. Everything is packed tight so the arena
-	stays in view. It only draws; HudController
-	decides what to show and when, so each value has one owner.
+	The always-on screen overlay, laid out like a Roblox simulator: every value
+	is a plain dark plate holding just the number, with an oversized icon
+	poking out of its left end. Scrap sits on the left edge with a 2x2 grid of
+	square menu buttons under it. Top center holds two plates side by side,
+	survivors and time left, the timer's colour and icon naming the phase. A
+	red raid plate appears under them while someone raids, and health sits in
+	the top right corner. It only draws; HudController decides what to show
+	and when, so each value has one owner.
 
 	Public API:
 		Hud.new(parent): Hud
@@ -38,25 +39,26 @@ export type Hud = typeof(setmetatable(
 		_gui: ScreenGui,
 		_scrapLabel: TextLabel,
 		_setHealth: (number) -> (),
-		_banner: ImageLabel,
+		_timerPlate: ImageLabel,
 		_phaseIcon: ImageLabel,
-		_raidAlert: ImageLabel,
+		_raidAlert: Frame,
 		_raidLabel: TextLabel,
 		_timerLabel: TextLabel,
 		_phase: Phase,
-		_survivors: ImageLabel,
+		_survivors: Frame,
 		_survivorsLabel: TextLabel,
 		_menuHandler: { open: (Menu) -> () },
 	},
 	Hud
 ))
 
--- The strip's colour and icon name the phase together, so it needs no title.
-local PHASE_BANNERS: { [Phase]: string } = {
-	Calm = "BannerCalm",
-	Warning = "BannerWarning",
-	Storm = "BannerStorm",
-	Results = "BannerCalm",
+-- The timer plate's colour and icon name the phase together, so it needs no
+-- title.
+local PHASE_PLATES: { [Phase]: string } = {
+	Calm = "CounterCalm",
+	Warning = "CounterWarning",
+	Storm = "CounterStorm",
+	Results = "CounterCalm",
 }
 
 -- Warning reuses the raid alert icon: both mean "danger is coming, act now".
@@ -69,100 +71,49 @@ local PHASE_ICONS: { [Phase]: string } = {
 
 -- A currency is a dark plate with an oversized icon straddling its left
 -- end, the simulator look: the icon pokes out past the plate on every side.
--- The plate is only as wide as the number it holds, so a short count gets a
--- short plate.
+-- Each plate's art is painted at the width it shows at, so nothing stretches.
+-- Returns the plate and icon too, so the timer can swap them per phase.
 local CURRENCY_ICON = 60
 local CURRENCY_PLATE = Vector2.new(170, 44)
 local CURRENCY_GAP = 10
-local function currency(icon: string, plateWidth: number): (Frame, TextLabel)
+local CURRENCY_PLATE_LEFT = CURRENCY_ICON / 2 - 6
+local function currency(icon: string, plateArt: string, plateWidth: number): (Frame, TextLabel, ImageLabel, ImageLabel)
 	local holder = Instance.new("Frame")
 	holder.BackgroundTransparency = 1
-	holder.Size = UDim2.fromOffset(CURRENCY_ICON / 2 - 6 + plateWidth, CURRENCY_PLATE.Y)
-	local plate = ScrapKit.image("Counter", {
+	holder.Size = UDim2.fromOffset(CURRENCY_PLATE_LEFT + plateWidth, CURRENCY_PLATE.Y)
+	local plate = ScrapKit.image(plateArt, {
 		Size = UDim2.fromOffset(plateWidth, CURRENCY_PLATE.Y),
-		Position = UDim2.fromOffset(CURRENCY_ICON / 2 - 6, 0),
+		Position = UDim2.fromOffset(CURRENCY_PLATE_LEFT, 0),
 	})
 	plate.Parent = holder
-	ScrapKit.image(icon, {
+	local iconImage = ScrapKit.image(icon, {
 		Size = UDim2.fromOffset(CURRENCY_ICON, CURRENCY_ICON),
 		AnchorPoint = Vector2.new(0, 0.5),
 		Position = UDim2.fromScale(0, 0.5),
 		BackgroundTransparency = 1,
 		ZIndex = 2,
-	}).Parent =
-		holder
+	})
+	iconImage.Parent = holder
 	local label = ScrapKit.label("0", {
 		Size = UDim2.new(1, -52, 1, -10),
 		Position = UDim2.fromOffset(44, 5),
 		TextXAlignment = Enum.TextXAlignment.Left,
 	})
 	label.Parent = plate
-	return holder, label
+	return holder, label, plate, iconImage
 end
 
--- The round strip is one slim banner holding the storm state: phase icon,
--- survivors and time left, centred as one group. A raid is a separate event,
--- so it gets its own wider strip under it (the raider's name needs the room),
--- only while it lasts. Each width matches its art, so nothing stretches.
-local ROUND_STRIP = Vector2.new(140, 28)
-local RAID_STRIP = Vector2.new(236, 28)
--- The stripes only show as a rim around this dark pill, so the text sits on
--- something calm and stays readable.
-local ROUND_PILL_INSET = Vector2.new(5, 5)
-local ROUND_PILL_COLOR = Color3.fromRGB(22, 20, 40)
-local ROUND_TEXT_SIZE = 14
--- Small gaps inside a group (icon and its number), wide ones between groups.
-local ROUND_GAP = 4
-local ROUND_GROUP_GAP = 12
+-- The round plates top center: survivors is a short count, the timer fits
+-- "0:00", and the raid plate is wide enough for a raider's name (longer names
+-- shrink to fit).
+local SURVIVORS_PLATE_WIDTH = 90
+local TIMER_PLATE_WIDTH = 130
+local RAID_PLATE_WIDTH = 260
+local ROUND_GAP = 16
+-- Room under the round row for the timer icon's overhang plus a little air.
+local RAID_GAP = 22
 
--- A fixed size text piece of the strip that grows to fit its words, so the
--- list layout can centre the whole row.
-local function roundText(order: number): TextLabel
-	return ScrapKit.label("", {
-		Size = UDim2.fromScale(0, 1),
-		AutomaticSize = Enum.AutomaticSize.X,
-		TextScaled = false,
-		TextSize = ROUND_TEXT_SIZE,
-		LayoutOrder = order,
-	})
-end
-
--- A slim striped strip with a dark pill on it whose children line up in one
--- centred row. Returns the strip and the pill to put children in.
-local function stripWithPill(art: string, size: Vector2): (ImageLabel, Frame)
-	local strip = ScrapKit.image(art, {
-		Size = UDim2.fromOffset(size.X, size.Y),
-		AnchorPoint = Vector2.new(0.5, 0),
-	})
-	local pill = Instance.new("Frame")
-	pill.BackgroundColor3 = ROUND_PILL_COLOR
-	pill.BackgroundTransparency = 0.15
-	pill.BorderSizePixel = 0
-	pill.AnchorPoint = Vector2.new(0.5, 0.5)
-	pill.Position = UDim2.fromScale(0.5, 0.5)
-	pill.Size = UDim2.new(1, -2 * ROUND_PILL_INSET.X, 1, -2 * ROUND_PILL_INSET.Y)
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0.5, 0)
-	corner.Parent = pill
-	local row = Instance.new("UIListLayout")
-	row.FillDirection = Enum.FillDirection.Horizontal
-	row.HorizontalAlignment = Enum.HorizontalAlignment.Center
-	row.VerticalAlignment = Enum.VerticalAlignment.Center
-	row.SortOrder = Enum.SortOrder.LayoutOrder
-	row.Padding = UDim.new(0, ROUND_GAP)
-	row.Parent = pill
-	pill.Parent = strip
-	return strip, pill
-end
-
--- An empty frame that widens the gap between two groups in the row.
-local function roundSpacer(order: number): Frame
-	local spacer = Instance.new("Frame")
-	spacer.BackgroundTransparency = 1
-	spacer.Size = UDim2.new(0, ROUND_GROUP_GAP - 2 * ROUND_GAP, 1, 0)
-	spacer.LayoutOrder = order
-	return spacer
-end
+local HEALTH_SIZE = Vector2.new(200, 28)
 
 -- Menu buttons are big squares with the icon on top and a short name under
 -- it, so they read at a glance on a phone.
@@ -175,7 +126,7 @@ local MENU_BUTTONS: { { menu: Menu, icon: string, title: string } } = {
 -- The grid sits under the stat plates and spans exactly their width, the
 -- icons poking out to the left of both alike.
 local MENU_BUTTON_GAP = 8
-local MENU_LEFT = CURRENCY_ICON / 2 - 6
+local MENU_LEFT = CURRENCY_PLATE_LEFT
 local MENU_BUTTON_SIZE = (CURRENCY_PLATE.X - MENU_BUTTON_GAP) / 2
 local function menuButton(icon: string, title: string, onActivated: () -> ()): ImageButton
 	local button = ScrapKit.button("", "ButtonMenu", onActivated)
@@ -217,9 +168,8 @@ function Hud.new(parent: Instance): Hud
 	)
 	leftColumn.Parent = gui
 
-	local scrap, scrapLabel = currency("IconScrap", CURRENCY_PLATE.X)
+	local scrap, scrapLabel = currency("IconScrap", "Counter", CURRENCY_PLATE.X)
 	scrap.Parent = leftColumn
-
 
 	local menuTop = CURRENCY_PLATE.Y + CURRENCY_GAP
 	-- The buttons exist before the Hud does, so they call through this table,
@@ -237,52 +187,47 @@ function Hud.new(parent: Instance): Hud
 		button.Parent = leftColumn
 	end
 
-	-- Top right: health, level with the round strip so the top row holds
+	-- The plates sit low enough that the oversized icons don't clip the top
+	-- of the screen.
+	local plateTop = margin + (CURRENCY_ICON - CURRENCY_PLATE.Y) / 2
+
+	-- Top right: health, level with the round plates so the top row holds
 	-- everything the player glances at mid-fight.
 	local health, setHealth = ScrapKit.bar("BarFillHealth", "BarTroughHealth")
-	health.Size = UDim2.fromOffset(200, ROUND_STRIP.Y)
+	health.Size = UDim2.fromOffset(HEALTH_SIZE.X, HEALTH_SIZE.Y)
 	health.AnchorPoint = Vector2.new(1, 0)
-	health.Position = UDim2.new(1, -margin, 0, margin)
+	health.Position = UDim2.new(1, -margin, 0, plateTop + (CURRENCY_PLATE.Y - HEALTH_SIZE.Y) / 2)
 	health.Parent = gui
 
-	-- Top center: the round strip, with survivors only shown while a count
-	-- is set; the row recentres itself either way.
-	local banner, pill = stripWithPill("BannerCalm", ROUND_STRIP)
-	banner.Position = UDim2.new(0.5, 0, 0, margin)
-	local phaseIcon = ScrapKit.image("IconCalm", {
-		Size = UDim2.fromOffset(20, 20),
-		BackgroundTransparency = 1,
-		LayoutOrder = 1,
-	})
-	phaseIcon.Parent = pill
-	roundSpacer(3).Parent = pill
-	local survivors = ScrapKit.image("IconBot", {
-		Size = UDim2.fromOffset(22, 22),
-		BackgroundTransparency = 1,
-		Visible = false,
-		LayoutOrder = 4,
-	})
-	survivors.Parent = pill
-	local survivorsLabel = roundText(5)
-	survivorsLabel.Visible = false
-	survivorsLabel.Parent = pill
-	roundSpacer(6).Parent = pill
-	local timerLabel = roundText(7)
-	timerLabel.Parent = pill
+	-- Top center: survivors and the timer side by side. Survivors only shows
+	-- while a count is set; the row recentres itself either way.
+	local roundRow = Instance.new("Frame")
+	roundRow.BackgroundTransparency = 1
+	roundRow.AnchorPoint = Vector2.new(0.5, 0)
+	roundRow.Position = UDim2.new(0.5, 0, 0, plateTop)
+	roundRow.Size = UDim2.new(1, 0, 0, CURRENCY_PLATE.Y)
+	local rowLayout = Instance.new("UIListLayout")
+	rowLayout.FillDirection = Enum.FillDirection.Horizontal
+	rowLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	rowLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	rowLayout.Padding = UDim.new(0, ROUND_GAP)
+	rowLayout.Parent = roundRow
+	roundRow.Parent = gui
+
+	local survivors, survivorsLabel = currency("IconBot", "CounterSurvivors", SURVIVORS_PLATE_WIDTH)
+	survivors.LayoutOrder = 1
+	survivors.Visible = false
+	survivors.Parent = roundRow
+	local timer, timerLabel, timerPlate, phaseIcon = currency("IconCalm", "CounterCalm", TIMER_PLATE_WIDTH)
+	timer.LayoutOrder = 2
+	timer.Parent = roundRow
 
 	-- Under it, only during a raid: who is raiding, in red.
-	local raidAlert, raidPill = stripWithPill("BannerRaid", RAID_STRIP)
-	raidAlert.Position = UDim2.new(0.5, 0, 0, margin + ROUND_STRIP.Y + 4)
+	local raidAlert, raidLabel = currency("IconAlert", "CounterRaid", RAID_PLATE_WIDTH)
+	raidAlert.AnchorPoint = Vector2.new(0.5, 0)
+	raidAlert.Position = UDim2.new(0.5, 0, 0, plateTop + CURRENCY_PLATE.Y + RAID_GAP)
 	raidAlert.Visible = false
-	ScrapKit.image("IconAlert", {
-		Size = UDim2.fromOffset(16, 16),
-		BackgroundTransparency = 1,
-		LayoutOrder = 1,
-	}).Parent =
-		raidPill
-	local raidLabel = roundText(2)
-	raidLabel.Parent = raidPill
-	banner.Parent = gui
+	raidAlert.Parent = gui
 
 	gui.Parent = parent
 
@@ -290,7 +235,7 @@ function Hud.new(parent: Instance): Hud
 		_gui = gui,
 		_scrapLabel = scrapLabel,
 		_setHealth = setHealth,
-		_banner = banner,
+		_timerPlate = timerPlate,
 		_phaseIcon = phaseIcon,
 		_raidAlert = raidAlert,
 		_raidLabel = raidLabel,
@@ -315,7 +260,7 @@ end
 
 function Hud.setPhase(self: Hud, phase: Phase)
 	self._phase = phase
-	ScrapKit.setImage(self._banner, PHASE_BANNERS[phase])
+	ScrapKit.setImage(self._timerPlate, PHASE_PLATES[phase])
 	ScrapKit.setImage(self._phaseIcon, PHASE_ICONS[phase])
 end
 
@@ -326,7 +271,6 @@ end
 
 function Hud.setSurvivors(self: Hud, count: number?)
 	self._survivors.Visible = count ~= nil
-	self._survivorsLabel.Visible = count ~= nil
 	self._survivorsLabel.Text = if count then tostring(count) else ""
 end
 

@@ -259,7 +259,15 @@ local function well(name, w, h, color)
 	return canvas
 end
 local input = well("InputField", 300, 48, darker(DIRT, 0.55))
-local counter = well("Counter", 200, 48, darker(DARK_STEEL, 0.35))
+local counter = well("Counter", 170, 44, darker(DARK_STEEL, 0.35))
+-- Round plates top centre, each painted at its HUD width. Survivors is dark
+-- like Counter; the timer is tinted by phase, and the raid plate is red, dark
+-- enough that the white number still reads.
+local counterSurvivors = well("CounterSurvivors", 90, 44, darker(DARK_STEEL, 0.35))
+local counterCalm = well("CounterCalm", 130, 44, darker(CRATE_GREEN, 0.45))
+local counterStorm = well("CounterStorm", 130, 44, darker({ 0.35, 0.55, 0.9 }, 0.45))
+local counterWarning = well("CounterWarning", 130, 44, darker(RUST_RED, 0.35))
+local counterRaid = well("CounterRaid", 260, 44, darker(RUST_RED, 0.35))
 
 -- Bar fills for health and the storm timer, sharing the trough above.
 local function barFill(name, color, w, h)
@@ -341,10 +349,6 @@ local function banner(name, a, b, w, h)
 	ui.element(name, canvas)
 	return canvas
 end
-local bannerStorm = banner("BannerStorm", { 0.35, 0.55, 0.9 }, RUBBER_BLACK, 140, 28)
-local bannerRaid = banner("BannerRaid", RUST_RED, RUBBER_BLACK, 236, 28)
-banner("BannerCalm", CRATE_GREEN, darker(CRATE_GREEN, 0.5), 140, 28)
-banner("BannerWarning", RUST_RED, RUBBER_BLACK, 140, 28)
 local bannerStormWarning = banner("BannerStormWarning", RUST_RED, RUBBER_BLACK, 700, 96)
 
 -- Icons, 48 square: painted badges for counters, prompts and alerts.
@@ -431,8 +435,8 @@ local icons = {
 		badge(c, cross(24, 24, 18, 5, 13), RUST_RED)
 	end),
 	icon("IconStorm", function(c)
-		badge(c, { rect = { 6, 10, 42, 30 }, radius = 9, wobble = 0.8, seed = 14 }, DARK_STEEL)
-		badge(c, { polygon = { 26, 22, 34, 22, 28, 32, 33, 32, 19, 46, 23, 36, 18, 36 }, wobble = 0.5, seed = 15 }, HAZARD_YELLOW)
+		badge(c, { rect = { 3, 6, 45, 30 }, radius = 11, wobble = 0.8, seed = 14 }, BARE_METAL)
+		badge(c, { polygon = { 22, 20, 36, 20, 29, 30, 36, 30, 16, 46, 21, 34, 14, 34 }, wobble = 0.5, seed = 15 }, HAZARD_YELLOW)
 	end),
 	icon("IconCalm", function(c)
 		badge(c, { polygon = { 24.0, 2.0, 29.7, 10.1, 39.6, 8.4, 37.9, 18.3, 46.0, 24.0, 37.9, 29.7, 39.6, 39.6, 29.7, 37.9, 24.0, 46.0, 18.3, 37.9, 8.4, 39.6, 10.1, 29.7, 2.0, 24.0, 10.1, 18.3, 8.4, 8.4, 18.3, 10.1 }, wobble = 0.5, seed = 16 }, HAZARD_YELLOW)
@@ -460,8 +464,12 @@ show(plateInventoryGrid, 520, 394)
 show(tooltipUpgrade, 340, 190)
 show(rowA, 552, 50)
 show(rowB, 552, 50)
-show(bannerStorm, 140, 28)
-show(bannerRaid, 236, 28)
+show(counter, 170, 44)
+show(counterSurvivors, 90, 44)
+show(counterCalm, 130, 44)
+show(counterStorm, 130, 44)
+show(counterWarning, 130, 44)
+show(counterRaid, 260, 44)
 show(normal, BUTTON_W, BUTTON_H)
 show(pressed, BUTTON_W, BUTTON_H)
 show(menuButton, MENU_SIZE, MENU_SIZE)
