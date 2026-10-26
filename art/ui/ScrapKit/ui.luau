@@ -49,11 +49,49 @@ local function bolts(canvas, points)
 	end
 end
 
--- Panel: the window background, rusty dark steel with corner bolts.
-local panel = Canvas.new(128, 128)
-paintPlate(panel, plate(4, 4, 124, 124, 10, 1), DARK_STEEL, 0.35)
-bolts(panel, { { 16, 16 }, { 112, 16 }, { 16, 112 }, { 112, 112 } })
-ui.element("Panel", panel, { slice = { 28, 28, 28, 28 } })
+-- Panel: the window background, patched together from scrap plates of
+-- different metals, bolted at the overlaps. Painted near its use size so
+-- the patchwork in the middle barely stretches.
+local GALVANIZED = { 0.5, 0.53, 0.55 }
+local RUST_RED = { 0.45, 0.24, 0.14 }
+local PANEL_W, PANEL_H = 512, 320
+local panel = Canvas.new(PANEL_W, PANEL_H)
+local backing = plate(4, 4, PANEL_W - 4, PANEL_H - 4, 12, 1)
+paintPlate(panel, backing, DARK_STEEL, 0.35)
+-- Each patch: corners, colour, rust, and whether it is hazard-striped.
+local patches = {
+	{ 18, 16, 230, 150, GALVANIZED, 0.15 },
+	{ 200, 22, 494, 130, darker(CRATE_GREEN, 0.15), 0.25 },
+	{ 24, 160, 180, 302, RUST_RED, 0.6 },
+	{ 170, 120, 380, 296, DARK_STEEL, 0.3 },
+	{ 360, 140, 496, 300, GALVANIZED, 0.2 },
+	{ 400, 96, 476, 160, HAZARD_YELLOW, 0.1, true },
+}
+for i, patch in patches do
+	local shape = { rect = { patch[1], patch[2], patch[3], patch[4] }, radius = 4, wobble = 2, seed = 10 + i }
+	panel:shadow(shape, 2, 3, 5, 0.55)
+	if patch[7] then
+		panel:fill(shape, HAZARD_YELLOW)
+		panel:stripes(shape, HAZARD_YELLOW, RUBBER_BLACK, 10, -45)
+		panel:brushwork(shape, 1, 0.6, 0)
+		panel:rust(shape, patch[6], 10, shape.seed)
+		panel:grime(shape, 0.5)
+		panel:bevel(shape, 4, { 1, 0.95, 0.7 }, INK, 0.7)
+		panel:rim(shape, 2, INK)
+	else
+		paintPlate(panel, shape, patch[5], patch[6])
+	end
+	-- Bolts in each patch's corners hold it to the backing.
+	bolts(panel, {
+		{ patch[1] + 9, patch[2] + 9 },
+		{ patch[3] - 9, patch[2] + 9 },
+		{ patch[1] + 9, patch[4] - 9 },
+		{ patch[3] - 9, patch[4] - 9 },
+	})
+end
+bolts(panel, { { 14, 14 }, { PANEL_W - 14, 14 }, { 14, PANEL_H - 14 }, { PANEL_W - 14, PANEL_H - 14 } })
+local PANEL_SLICE = { 40, 40, 40, 40 }
+ui.element("Panel", panel, { slice = PANEL_SLICE })
 
 -- Buttons: galvanized steel, warmer on hover, pushed in when pressed.
 local function button(name, color, pressed)
@@ -126,7 +164,7 @@ end
 local preview = Canvas.new(640, 400, DIRT[1], DIRT[2], DIRT[3], 1)
 preview:brushwork({ rect = { 0, 0, 640, 400 } }, 1.4, 2, 10)
 preview:shadow(plate(40, 30, 600, 370, 10, 0), 6, 8, 10, 0.6)
-preview:drawSliced(panel, { 28, 28, 28, 28 }, 40, 30, 560, 340)
+preview:drawSliced(panel, PANEL_SLICE, 40, 30, 560, 340)
 preview:drawSliced(header, { 12, 12, 12, 12 }, 60, 48, 520, 40)
 for i, canvas in slots do
 	preview:draw(canvas, 72 + (i - 1) * 100, 112, 88, 88)
