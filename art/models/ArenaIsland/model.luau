@@ -1413,4 +1413,26 @@ do
 	end, nil, 0.5)
 end
 
+-- The rim wall: low concrete with yellow caps along the top of the bowl,
+-- broken where each ramp comes in.
+do
+	local gap = math.deg(math.atan((RAMP_HALF + 0.3) / ROAD_INNER))
+	local function eachRun(build: (number, number) -> ())
+		for i = 1, 8 do
+			local from = (i - 1) * 45
+			build(from + gap, from + 45 - gap)
+		end
+	end
+	part("RimWall", nil, CONCRETE, function(mesh)
+		eachRun(function(from, to)
+			arc(mesh, ROAD_INNER - 0.6, ROAD_INNER, DECK - 1, DECK + 0.8, from, to, true)
+		end)
+	end, nil, 0.5)
+	part("RimCap", nil, MARK, function(mesh)
+		eachRun(function(from, to)
+			arc(mesh, ROAD_INNER - 0.7, ROAD_INNER + 0.1, DECK + 0.8, DECK + 0.95, from, to, true)
+		end)
+	end, nil, 0.3)
+end
+
 finishParts()
