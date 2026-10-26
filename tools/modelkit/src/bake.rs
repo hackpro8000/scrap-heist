@@ -439,6 +439,8 @@ pub struct Shading {
 	// Extra highlight strength reached at the bottom of each part, ramping
 	// smoothly from none at the top (0.3 = 30% stronger at the bottom).
 	pub highlight_ramp: f64,
+	// Paints edge highlights as simulated brush strokes laid along each edge.
+	pub brushed: bool,
 }
 
 const AO_DISTANCE: f64 = 0.8;
@@ -493,6 +495,48 @@ fn sharp_edges(mesh: &Mesh, degrees: f64) -> Vec<(Vec3, Vec3, f64)> {
 		found.push((mesh.positions[a], mesh.positions[b], bend));
 	}
 	found
+}
+
+// Brush passes: (width, length, step, pressure).
+const BRUSH_PASSES: [(f64, f64, f64, f64); 2] = [(0.16, 0.6, 0.4, 0.75), (0.08, 0.35, 0.22, 1.0)];
+const BRISTLES: f64 = 14.0;
+
+// Coverage of overlapping brush strokes laid along one edge, at distance d
+// from it and t studs along it.
+fn brush_strokes(edge: usize, t: f64, length: f64, d: f64) -> f64 {
+	let mut paint = 0.0f64;
+	for (pass, &(width, stroke, step, strength)) in BRUSH_PASSES.iter().enumerate() {
+		let first = (t / step).floor() as i64;
+		for i in first - (stroke / step).ceil() as i64 - 1..=first {
+			let seed = (edge as u32).wrapping_mul(7919).wrapping_add((i as u32).wrapping_mul(131)).wrapping_add(pass as u32 * 977);
+			let r = |k: u32| hash(seed.wrapping_mul(16).wrapping_add(k));
+			let start = i as f64 * step + (r(0) - 0.5) * step;
+			let span = stroke * (0.6 + 0.8 * r(1));
+			let u = (t - start) / span;
+			if !(0.0..=1.0).contains(&u) || start + span < 0.0 || start > length {
+				continue;
+			}
+			// Loaded at the start, tapering and running dry toward the end.
+			let taper = (std::f64::consts::PI * u.powf(0.7)).sin().max(0.0).sqrt();
+			let half = width * (0.5 + 0.6 * r(2)) * taper;
+			let centre = width * 0.5 * r(3);
+			let s = (d - centre) / half.max(1e-6);
+			if s.abs() >= 1.0 {
+				continue;
+			}
+			let rim = ((1.0 - s.abs()) / 0.25).clamp(0.0, 1.0);
+			// Bristle streaks across the stroke, each drying out at its own point.
+			let bristle = ((s + 1.0) * 0.5 * BRISTLES).floor() as u32;
+			let b = |k: u32| hash(seed.wrapping_mul(97).wrapping_add(bristle * 13 + k));
+			let load = 0.55 + 0.45 * b(0);
+			let dry = 0.55 + 0.45 * b(1) - 0.25 * (1.0 - r(4));
+			let breakup = ((dry - u) / 0.12).clamp(0.0, 1.0);
+			let pressure = strength * (0.6 + 0.4 * r(5)) * (1.0 - 0.4 * u);
+			let alpha = rim * load * breakup * pressure;
+			paint = 1.0 - (1.0 - paint) * (1.0 - alpha);
+		}
+	}
+	paint
 }
 
 fn segment_distance(p: Vec3, a: Vec3, b: Vec3) -> f64 {
@@ -554,7 +598,7 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 
 	// Sharp edges bucketed in a grid as wide as the longest stroke reaches.
 	let edges = sharp_edges(mesh, shading.sharp);
-	let cell = EDGE_RADIUS * 2.2;
+	let cell = if shading.brushed { BRUSH_PASSES[0].0 * 1.6 } else { EDGE_RADIUS * 2.2 };
 	let key = |p: Vec3| p.map(|c| (c / cell).floor() as i64);
 	let mut grid: HashMap<[i64; 3], Vec<usize>> = HashMap::new();
 	for (index, &(a, b, _)) in edges.iter().enumerate() {
@@ -585,6 +629,17 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 		let g = generated(texel.position);
 		let nearby = grid.get(&key(texel.position));
 		let mut edge = 0.0f64;
+		if shading.brushed {
+			for &index in nearby.into_iter().flatten() {
+				let (a, b, fold) = edges[index];
+				let ab = sub(b, a);
+				let length = dot(ab, ab).sqrt().max(1e-9);
+				let t = dot(sub(texel.position, a), ab) / length;
+				let d = segment_distance(texel.position, a, b);
+				let paint = brush_strokes(index, t, length, d) * (fold * 12.0).min(1.0);
+				edge = 1.0 - (1.0 - edge) * (1.0 - paint);
+			}
+		}
 		for (seed, &(reach, frequency, thin, wide, strength)) in STROKES.iter().enumerate() {
 			let radius = EDGE_RADIUS * reach;
 			let mut bend = 0.0f64;
@@ -595,7 +650,7 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 					bend = bend.max(fold * (1.0 - d / radius));
 				}
 			}
-			if bend <= 0.0 {
+			if bend <= 0.0 || shading.brushed {
 				continue;
 			}
 			let s = seed as f64;
