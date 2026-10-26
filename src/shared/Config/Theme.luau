@@ -17,7 +17,9 @@
 local Theme = {}
 
 Theme.FONT = Font.new("rbxasset://fonts/families/FredokaOne.json")
-Theme.FONT_BOLD = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Bold)
+-- Chunky display face for counters, buttons and banners. Luckiest Guy ships in
+-- one weight only, so no FontWeight is passed.
+Theme.FONT_BOLD = Font.new("rbxasset://fonts/families/LuckiestGuy.json")
 
 Theme.TEXT = Color3.fromRGB(240, 232, 214)
 Theme.TEXT_DIM = Color3.fromRGB(170, 162, 148)
