@@ -25,3 +25,8 @@ __pycache__/
 art/models/*/*
 !art/models/*/model.luau
 !art/models/*/sketch.png
+
+# UI kit outputs; only the kit scripts are source.
+art/ui/*/*
+!art/ui/*/ui.luau
+tools/uikit/target/

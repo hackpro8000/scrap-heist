@@ -145,3 +145,7 @@ Rules:
 - Batch small models into one pass.
 - Shading layers: warp, weathering, edge highlights, contact shadows, gradient (`EDGE_HIGHLIGHT` 0.6, `CONTACT_SHADOW` 0.85, `GRADIENT` 0.5, `EDGE_BLEND` 0.7, `WARP` 0.0385). A part with `rust` 0 gets no warp or weathering; use it for glow cores.
 - Items carry the rarity accent color from `rarity.luau`. The legendary glow is painted only, with no light objects.
+
+## UI kits
+
+UI skins are painted the same way as models: `art/ui/<Kit>/ui.luau` is run by the Rust tool `tools/uikit` (prebuilt in `tools/uikit/bin/`). Run `scripts/build-ui.sh <Kit>`. A kit script paints `Canvas` objects (fill, brushwork, bevel, rim, rust, stripes, grime, shadow) on wobbly hand-drawn shapes, registers each with `ui.element(name, canvas, {slice = {l, t, r, b}})`, and draws a mock screen with `ui.preview(canvas)`. The tool writes `<Name>.png` per element, `slices.luau` with each element's size and 9-slice `SliceCenter`, and `preview.png`. Canvases are capped at 1024×1024.
