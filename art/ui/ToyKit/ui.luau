@@ -324,90 +324,264 @@ local bannerRaid = banner("BannerRaid", RUST_RED, RUBBER_BLACK, 300, 56)
 banner("BannerCalm", CRATE_GREEN, darker(CRATE_GREEN, 0.5), 300, 56)
 local bannerStormWarning = banner("BannerStormWarning", RUST_RED, RUBBER_BLACK, 700, 96)
 
--- Icons, 48 square: painted badges for counters, prompts and alerts.
-local function icon(name, paint)
-	local canvas = Canvas.new(48, 48)
-	paint(canvas)
-	ui.element(name, canvas)
-	return canvas
-end
-local function badge(canvas, shape, color)
-	canvas:shadow(shape, 2, 3, 1, 0.7)
-	handPaint(canvas, shape, color)
-	canvas:bevel(shape, 4, lighter(color, 0.55), darker(color, 0.6), 0.9)
-	canvas:outline(shape, 2.5, INK)
-end
-local function gear(cx, cy, r0, r1, teeth)
-	local points = {}
-	for i = 0, teeth * 4 - 1 do
-		local a = i / (teeth * 4) * math.pi * 2
-		local r = if i % 4 < 2 then r1 else r0
-		table.insert(points, cx + math.cos(a) * r)
-		table.insert(points, cy + math.sin(a) * r)
-	end
-	return { polygon = points, wobble = 0, seed = teeth }
-end
-local function disc(x, y, r, seed)
-	return { circle = { x, y, r }, wobble = 0, seed = seed }
-end
-local icons = {
-	icon("IconScrap", function(c)
-		badge(c, gear(24, 24, 15, 21, 8), BARE_METAL)
-		c:fill(disc(24, 24, 6, 1), darker(DARK_STEEL, 0.3))
-		c:outline(disc(24, 24, 6, 1), 2, INK)
-	end),
-	icon("IconTimer", function(c)
-		badge(c, disc(24, 25, 19, 2), STEEL)
-		c:fill(disc(24, 25, 14, 3), lighter(BARE_METAL, 0.4))
-		c:fill({ polygon = { 23, 25, 25, 25, 25, 13, 23, 13 } }, INK)
-		c:fill({ polygon = { 24, 24, 33, 28, 32, 30, 23, 26 } }, INK)
-	end),
-	icon("IconBot", function(c)
-		c:fill({ rect = { 22, 3, 26, 12 } }, INK)
-		badge(c, disc(24, 6, 4, 4), RUST_RED)
-		badge(c, { rect = { 7, 11, 41, 43 }, radius = 7, wobble = 0, seed = 5 }, STEEL)
-		for _, x in { 17, 31 } do
-			c:fill(disc(x, 25, 5, x), INK)
-			c:fill(disc(x, 25, 3, x + 1), { 1, 0.4, 0.2 })
+do
+	-- Icons, 104 square: each one a tiny toy model in 3/4 view, painted with no
+	-- badge behind it so it can sit on any panel, button or counter.
+	local CREAM = { 0.98, 0.95, 0.86 }
+	local BLUE, ORANGE, GREEN, RED, GOLD, STEEL =
+		{ 0.2, 0.62, 0.95 }, { 1, 0.6, 0.12 }, { 0.3, 0.82, 0.3 }, { 0.95, 0.25, 0.35 }, { 1, 0.78, 0.2 }, { 0.86, 0.9, 0.97 }
+
+	-- 3/4 view: every shape becomes a polygon tipped back (squashed vertically) and
+	-- turned a little (sheared), around the centre of its box.
+	local SQUASH, SHEAR = 0.7, 0.15
+
+	local function outlinePoints(shape)
+		local p = {}
+		if shape.circle then
+			local c = shape.circle
+			for k = 0, 39 do
+				local a = k / 40 * math.pi * 2
+				table.insert(p, { c[1] + math.cos(a) * c[3], c[2] + math.sin(a) * c[3] })
+			end
+		elseif shape.rect then
+			local r, rad = shape.rect, shape.radius or 0
+			local corners = { { r[3] - rad, r[4] - rad, 0 }, { r[1] + rad, r[4] - rad, 90 }, { r[1] + rad, r[2] + rad, 180 }, { r[3] - rad, r[2] + rad, 270 } }
+			for _, k in corners do
+				for step = 0, 6 do
+					local a = math.rad(k[3] + step * 15)
+					table.insert(p, { k[1] + math.cos(a) * rad, k[2] + math.sin(a) * rad })
+				end
+			end
+		else
+			for k = 1, #shape.polygon, 2 do
+				table.insert(p, { shape.polygon[k], shape.polygon[k + 1] })
+			end
 		end
-		c:fill({ rect = { 15, 34, 33, 37 } }, INK)
-	end),
-	icon("IconShield", function(c)
-		badge(
-			c,
-			{ polygon = { 24, 4, 42, 10, 40, 28, 24, 44, 8, 28, 6, 10 }, wobble = 0, seed = 6 },
-			{ 0.35, 0.55, 0.9 }
-		)
-	end),
-	icon("IconAlert", function(c)
-		badge(c, { polygon = { 24, 4, 45, 42, 3, 42 }, wobble = 0, seed = 7 }, HAZARD_YELLOW)
-		c:fill({ rect = { 22, 16, 26, 31 }, radius = 2 }, INK)
-		c:fill(disc(24, 36, 2.5, 8), INK)
-	end),
-	icon("IconTrade", function(c)
-		badge(
-			c,
-			{ polygon = { 4, 16, 16, 6, 16, 12, 36, 12, 36, 20, 16, 20, 16, 26 }, wobble = 0, seed = 9 },
-			CRATE_GREEN
-		)
-		badge(
-			c,
-			{ polygon = { 44, 32, 32, 42, 32, 36, 12, 36, 12, 28, 32, 28, 32, 22 }, wobble = 0, seed = 10 },
-			HAZARD_YELLOW
-		)
-	end),
-	icon("IconTrophy", function(c)
-		badge(c, { rect = { 14, 38, 34, 45 }, radius = 2, wobble = 0, seed = 11 }, DARK_STEEL)
-		badge(
-			c,
-			{ polygon = { 10, 5, 38, 5, 36, 20, 28, 28, 27, 38, 21, 38, 20, 28, 12, 20 }, wobble = 0, seed = 12 },
-			RARITY.Legendary
-		)
-	end),
-	icon("IconCross", function(c)
-		badge(c, cross(24, 24, 18, 5, 13), RUST_RED)
-	end),
-}
+		return p
+	end
+
+	-- Shapes in a box (48 unless given), tilted unless flat, moved to (ox, oy) and scaled by s.
+	local function place(shape, ox, oy, s, wobble, seed, box, flat)
+		local mid = (box or 48) / 2
+		local squash, shear = if flat then 1 else SQUASH, if flat then 0 else SHEAR
+		local p = {}
+		for _, v in outlinePoints(shape) do
+			local dx, dy = v[1] - mid, v[2] - mid
+			table.insert(p, ox + (mid + dx + dy * shear) * s)
+			table.insert(p, oy + (mid + dy * squash) * s)
+		end
+		return { polygon = p, wobble = wobble or 0, seed = seed }
+	end
+	local function hex(cx, cy, r)
+		local p = {}
+		for i = 0, 5 do
+			local a = math.rad(i * 60)
+			table.insert(p, cx + math.cos(a) * r)
+			table.insert(p, cy + math.sin(a) * r)
+		end
+		return { polygon = p }
+	end
+	local function crossShape(cx, cy, r, t)
+		local p = {}
+		for i = 0, 3 do
+			local a = math.rad(45 + i * 90)
+			local c, s = math.cos(a), math.sin(a)
+			for _, q in { { t, -t }, { r, -t }, { r, t } } do
+				table.insert(p, cx + q[1] * c - q[2] * s)
+				table.insert(p, cy + q[1] * s + q[2] * c)
+			end
+		end
+		return { polygon = p }
+	end
+
+	-- Each icon is a small model: parts stacked from the casing up. `focus` names
+	-- the part the eye goes to first (the bot's head, the trophy's cup); the icon is
+	-- centred near it. `raise` lifts a model by hand, in pixels. A part is a shape extruded by `height`, resting `lift` above the casing, in its own colour.
+	local WOOD, GLASS, DARK = { 0.55, 0.32, 0.18 }, { 1, 0.95, 0.55 }, { 0.14, 0.15, 0.22 }
+	local function part(shape, color, height, lift) return { shape = shape, color = color, height = height, lift = lift or 0 } end
+	-- Thread ridges ring the standing shaft, a little proud of it, every few studs up.
+	local function threads()
+		local list = {}
+		for k = 0, 3 do
+			table.insert(list, part({ circle = { 24, 30, 6.8 } }, darker(STEEL, 0.3), 1, 9 + k * 3.5))
+		end
+		return list
+	end
+	local function concat(a, b) for _, v in b do table.insert(a, v) end return a end
+	local ICONS = {
+		-- Parts: a bolt standing on its hex head, threaded shaft rising out of it.
+		{ color = STEEL, focus = 1, raise = 6, parts = concat({
+			part(hex(24, 30, 15), STEEL, 6),
+			part({ circle = { 24, 30, 9 } }, darker(STEEL, 0.25), 1, 6),
+			part({ circle = { 24, 30, 6 } }, STEEL, 16, 6),
+		}, threads()) },
+		{ color = BLUE, focus = 3, parts = {
+			part({ circle = { 13, 8, 6 } }, GOLD, 5), part({ circle = { 35, 8, 6 } }, GOLD, 5),
+			part({ circle = { 24, 26, 20 } }, BLUE, 7),
+			part({ circle = { 24, 26, 15 } }, CREAM, 1, 7),
+			part({ polygon = { 22.5, 27, 25.5, 27, 25.5, 14, 22.5, 14 } }, DARK, 2, 8),
+			part({ polygon = { 23, 25, 33, 29, 32, 31.5, 22, 28 } }, RED, 2, 9),
+			part({ circle = { 24, 26, 2.5 } }, GOLD, 2, 10),
+		} },
+		{ color = RED, focus = 3, parts = {
+			part({ rect = { 22, 4, 26, 14 } }, STEEL, 4),
+			part({ circle = { 24, 5, 4.5 } }, GOLD, 4, 4),
+			part({ rect = { 7, 12, 41, 45 }, radius = 7 }, RED, 9),
+			part({ rect = { 11, 17, 37, 37 }, radius = 4 }, DARK, 1, 9),
+			part({ circle = { 17.5, 25, 4 } }, GLASS, 2, 10), part({ circle = { 30.5, 25, 4 } }, GLASS, 2, 10),
+			part({ rect = { 16, 31, 32, 34 } }, STEEL, 1, 10),
+		} },
+		{ color = BLUE, focus = 2, raise = 5, parts = {
+			part({ polygon = { 24, 3, 43, 9, 41, 28, 24, 46, 7, 28, 5, 9 } }, STEEL, 7),
+			part({ polygon = { 24, 8, 38, 12, 36.5, 27, 24, 40, 11.5, 27, 10, 12 } }, BLUE, 2, 7),
+			part({ polygon = { 21, 12, 27, 12, 27, 36, 24, 39, 21, 36 } }, GOLD, 2, 9),
+		} },
+		{ color = ORANGE, focus = 2, parts = {
+			part({ polygon = { 24, 3, 46, 43, 2, 43 } }, DARK, 6),
+			part({ polygon = { 24, 10, 40, 39, 8, 39 } }, GOLD, 2, 6),
+			part({ rect = { 21.5, 17, 26.5, 30 }, radius = 2 }, DARK, 3, 8),
+			part({ circle = { 24, 34.5, 2.8 } }, DARK, 3, 8),
+		} },
+		{ color = GREEN, parts = {
+			part({ polygon = { 44, 32, 32, 43, 32, 37, 12, 37, 12, 27, 32, 27, 32, 21 } }, RED, 5),
+			part({ polygon = { 4, 16, 16, 5, 16, 11, 36, 11, 36, 21, 16, 21, 16, 27 } }, GOLD, 5, 6),
+		} },
+		-- Trophy: a squat, wide cup on a short stem, so it fills the circle instead of standing tall in it.
+		{ color = GOLD, focus = 6, raise = 12, parts = {
+			part({ rect = { 8, 34, 40, 42 }, radius = 2 }, WOOD, 5),
+			part({ rect = { 14, 31, 34, 36 }, radius = 2 }, GOLD, 2, 5),
+			part({ rect = { 20, 25, 28, 33 } }, GOLD, 3, 6),
+			part({ circle = { 6, 12, 6 } }, GOLD, 3, 8), part({ circle = { 42, 12, 6 } }, GOLD, 3, 8),
+			part({ polygon = { 5, 4, 43, 4, 40, 16, 30, 26, 18, 26, 8, 16 } }, GOLD, 5, 9),
+			part({ circle = { 24, 12, 4 } }, RED, 1, 14),
+		} },
+		{ color = RED, focus = 2, parts = {
+			part(crossShape(24, 25, 19, 6), RED, 8),
+			part({ circle = { 24, 25, 4 } }, STEEL, 2, 8),
+		} },
+	}
+
+	-- Each surface gets the brush that says what it is made of. Metal is brushed in
+	-- long straight drags, painted plastic in soft dabs, wood in dry grain strokes,
+	-- and dark rubber or glass in sponge stipple. Shaded sides are hatched like an
+	-- ink drawing, and casings are sponged so they stay quiet behind the model.
+	local BRUSH_FOR = {
+		[STEEL] = { "drag", 1.3, 1.4, 20 },
+		[GOLD] = { "drag", 1.1, 1.6, 35 },
+		[WOOD] = { "dry", 1.4, 1.2, 0 },
+		[DARK] = { "sponge", 1.0, 1.2, 0 },
+		[GLASS] = { "sponge", 0.8, 1.6, 0 },
+	}
+	local PLASTIC_BRUSH = { "dab", 1.2, 1.5, 30 }
+	local SIDE_BRUSH = { "hatch", 0.9, 1.0, 60 }
+
+	local function paint(c, shape, color, brush)
+		local b = brush or BRUSH_FOR[color] or PLASTIC_BRUSH
+		c:fill(shape, color)
+		c:brushwork(shape, b[2], b[3], b[4], b[1])
+	end
+
+	-- Each model part is drawn as an extruded slab: a cast shadow, then its side
+	-- built up in shaded layers, then a lit top face.
+	local function paintPart(c, p, ox, oy, scale, i)
+		local function at(up, wobble) return place(p.shape, ox, oy - up, scale, wobble, i) end
+		local sideDark, sideLight = darker(p.color, 0.55), darker(p.color, 0.25)
+		if p.lift == 0 then c:shadow(at(0, 0.7), 4, 5, 1, 0.55) end
+		c:rim(at(p.lift, 0.7), 3, INK)
+		for k = 0, p.height - 1 do
+			local t = k / math.max(p.height - 1, 1)
+			c:fill(at(p.lift + k, 0.7), { sideDark[1] + (sideLight[1] - sideDark[1]) * t, sideDark[2] + (sideLight[2] - sideDark[2]) * t, sideDark[3] + (sideLight[3] - sideDark[3]) * t })
+		end
+		if p.height > 1 then
+			local b = SIDE_BRUSH
+			for k = 0, p.height - 1 do c:brushwork(at(p.lift + k, 0.7), b[2] / p.height, b[3], b[4], b[1]) end
+		end
+		local top = at(p.lift + p.height, 0.7)
+		paint(c, top, p.color)
+		c:bevel(top, 4, lighter(p.color, 0.6), darker(p.color, 0.3), 1)
+		c:highlight(top, lighter(p.color, 0.85), 3, 2)
+		c:rim(top, 2.5, INK)
+	end
+
+	-- Each model is scaled and moved so it sits centred in, and fills most of, a
+	-- circle the size of the canvas: the badge or button behind it can be any shape.
+	local ICON_SIZE = 104
+	local FIT_RADIUS = 43 -- canvas radius minus room for the ink silhouette
+	local ICON_NAMES = { "IconScrap", "IconTimer", "IconBot", "IconShield", "IconAlert", "IconTrade", "IconTrophy", "IconCross" }
+
+	-- Each part's outline at its bottom and top, drawn at scale s from (0, 0).
+	local function modelOutlines(icon, s)
+		local outlines = {}
+		for _, p in icon.parts do
+			for _, up in { p.lift, p.lift + p.height } do
+				table.insert(outlines, place(p.shape, 0, -up, s).polygon)
+			end
+		end
+		return outlines
+	end
+
+	-- The centre of a set of outlines, each weighted by its area (shoelace formula).
+	local function areaCentre(outlines)
+		local total, wx, wy = 0, 0, 0
+		for _, poly in outlines do
+			local n = #poly
+			for k = 1, n, 2 do
+				local x0, y0 = poly[k], poly[k + 1]
+				local x1, y1 = poly[(k + 1) % n + 1], poly[(k + 2) % n + 1]
+				local cross = x0 * y1 - x1 * y0
+				total += cross
+				wx += (x0 + x1) * cross
+				wy += (y0 + y1) * cross
+			end
+		end
+		return wx / (3 * total), wy / (3 * total)
+	end
+
+	-- Where the icon should be centred: the visible top face of its focus part, or
+	-- for an icon with no single focus (the trade arrows), the whole model.
+	-- How far the centre leans from the whole model toward its focus part. Full lean
+	-- shrinks icons whose focus sits at one end (trophy cup, shield face); half keeps
+	-- the focus near the middle while the model still fills the circle.
+	local FOCUS_PULL = 0.5
+
+	local function focusCentre(icon, s, outlines)
+		local ax, ay = areaCentre(outlines)
+		local p = icon.parts[icon.focus or 0]
+		if not p then return ax, ay end
+		local fx, fy = areaCentre({ place(p.shape, 0, -(p.lift + p.height), s).polygon })
+		return ax + (fx - ax) * FOCUS_PULL, ay + (fy - ay) * FOCUS_PULL
+	end
+
+	-- Centre the model on its focus, then size it so its farthest point just
+	-- reaches the circle. Part heights are in pixels, not scaled, so refine a few times.
+	local function fitInCircle(icon)
+		local s, cx, cy = 1.75, 0, 0
+		for _ = 1, 4 do
+			local outlines = modelOutlines(icon, s)
+			cx, cy = focusCentre(icon, s, outlines)
+			local reach = 0
+			for _, poly in outlines do
+				for k = 1, #poly, 2 do reach = math.max(reach, math.sqrt((poly[k] - cx) ^ 2 + (poly[k + 1] - cy) ^ 2)) end
+			end
+			s *= FIT_RADIUS / reach
+		end
+		-- `raise` lifts a model by hand, in pixels, when its 3D depth still leaves it sitting low.
+		return s, ICON_SIZE / 2 - cx, ICON_SIZE / 2 - cy - (icon.raise or 0)
+	end
+
+	for i, icon in ICONS do
+		local canvas = Canvas.new(ICON_SIZE, ICON_SIZE)
+		local scale, ox, oy = fitInCircle(icon)
+		-- A thick ink silhouette behind the whole model makes it pop off any panel.
+		for _, p in icon.parts do
+			for _, up in { p.lift, p.lift + p.height } do
+				canvas:rim(place(p.shape, ox, oy - up, scale, 0.7, i), 9, INK)
+			end
+		end
+		for _, p in icon.parts do paintPart(canvas, p, ox, oy, scale, i) end
+		ui.element(ICON_NAMES[i], canvas)
+	end
+end
 
 -- Preview: a contact sheet of the kit at half size. The screen mocks show
 -- the pieces in place.
