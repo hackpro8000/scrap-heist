@@ -36,6 +36,11 @@ impl UserData for CanvasHandle {
 			this.0.borrow_mut().bevel(&outline(&shape)?, width, rgb(&light)?, rgb(&dark)?, strength.unwrap_or(1.0));
 			Ok(())
 		});
+		methods.add_method("halftone", |_, this, (shape, color, spacing, angle, reach, tone): (Table, Table, Option<f64>, Option<f64>, Option<f64>, Option<f64>)| {
+			let angle = angle.unwrap_or(45.0).to_radians();
+			this.0.borrow_mut().halftone(&outline(&shape)?, rgb(&color)?, spacing.unwrap_or(5.0), angle, reach.unwrap_or(24.0), tone.unwrap_or(0.0));
+			Ok(())
+		});
 		methods.add_method("rim", |_, this, (shape, width, color): (Table, f64, Table)| {
 			this.0.borrow_mut().rim(&outline(&shape)?, width, rgb(&color)?);
 			Ok(())

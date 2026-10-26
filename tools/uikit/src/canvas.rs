@@ -375,6 +375,28 @@ impl Canvas {
 		});
 	}
 
+	// Printed halftone shading: a grid of ink dots, `spacing` pixels apart and
+	// turned by `angle`, that swell toward edges facing away from the light
+	// (up-left) over `reach` pixels. `tone` adds an even base of dots.
+	pub fn halftone(&mut self, outline: &Outline, color: [f32; 3], spacing: f64, angle: f64, reach: f64, tone: f64) {
+		let (lx, ly) = (-0.6f64, -0.8f64);
+		let (c, s) = (angle.cos(), angle.sin());
+		self.retint(outline, 0.0, |x, y, d, _| {
+			let (nx, ny) = outline.outward(x, y);
+			let away = (-(nx * lx + ny * ly)).max(0.0);
+			let falloff = (1.0 - -d / reach).clamp(0.0, 1.0);
+			let shade = (tone + away * falloff.powf(1.5)).min(1.0);
+			// Distance to the nearest grid dot centre, in grid cells.
+			let (u, v) = ((x * c + y * s) / spacing, (y * c - x * s) / spacing);
+			let (fu, fv) = (u.rem_euclid(1.0) - 0.5, v.rem_euclid(1.0) - 0.5);
+			let dot = fu.hypot(fv) * spacing;
+			// Dot area tracks shade, so radius grows with its square root.
+			let radius = shade.sqrt() * spacing * 0.62;
+			let ink = (radius - dot + 0.5).clamp(0.0, 1.0);
+			(ink > 0.0).then_some((color, ink))
+		});
+	}
+
 	// A dark painted rim just inside the outline, like an inked border.
 	pub fn rim(&mut self, outline: &Outline, width: f64, color: [f32; 3]) {
 		self.retint(outline, 0.0, |x, y, d, _| {
