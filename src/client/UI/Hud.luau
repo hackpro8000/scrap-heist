@@ -5,8 +5,8 @@
 	The always-on screen overlay, laid out like a Roblox simulator: scrap on the
 	left edge with an oversized icon, a 2x2 grid of square menu buttons under
 	it, the phase banner carrying its own countdown with the raid alert under
-	it top center, the survivors count top right as round info rather than a
-	stat, and health along the bottom. Everything is packed tight so the arena
+	it top center, the survivors count beside the banner since it is round
+	info rather than a stat, and health along the bottom. Everything is packed tight so the arena
 	stays in view. It only draws; HudController
 	decides what to show and when, so each value has one owner.
 
@@ -156,8 +156,9 @@ function Hud.new(parent: Instance): Hud
 	scrap.Parent = leftColumn
 
 	local survivors, survivorsLabel = currency("IconBot", 100)
-	survivors.AnchorPoint = Vector2.new(1, 0)
-	survivors.Position = UDim2.new(1, -margin, 0, margin)
+	-- Just right of the 300 wide phase banner, centered on its height, so
+	-- the round's state reads as one group.
+	survivors.Position = UDim2.new(0.5, 156, 0, margin + 4)
 	survivors.Visible = false
 	survivors.Parent = gui
 
