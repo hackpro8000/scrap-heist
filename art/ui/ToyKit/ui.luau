@@ -25,14 +25,14 @@ local function darker(color, k)
 	return { color[1] * (1 - k), color[2] * (1 - k), color[3] * (1 - k) }
 end
 
--- Every plate shares one silhouette: big round corners and almost no
--- wobble, so the kit reads as clean moulded plastic.
+-- Every plate shares one silhouette: big round corners and crisp, exact
+-- outlines with no wobble. Only the colour inside is hand painted.
 local CORNER = 16
 local function plate(x0, y0, x1, y1, seed)
 	return {
 		rect = { x0, y0, x1, y1 },
 		radius = math.min(CORNER, (x1 - x0) / 2, (y1 - y0) / 2),
-		wobble = 0.4,
+		wobble = 0,
 		seed = seed,
 	}
 end
@@ -40,7 +40,7 @@ end
 -- Visible strokes over a flat fill, so every surface looks hand painted.
 local function handPaint(canvas, shape, color)
 	canvas:fill(shape, color)
-	canvas:brushwork(shape, 0.4, 2.5, 40, "drag")
+	canvas:brushwork(shape, 1.2, 1.6, 30, "drag")
 end
 
 -- A moulded plastic plate: fill, a soft bevel, a thick black outline and
@@ -48,16 +48,16 @@ end
 local function paintPlate(canvas, shape, color, _rustAmount)
 	handPaint(canvas, shape, color)
 	canvas:bevel(shape, 8, lighter(color, 0.45), darker(color, 0.45), 1)
-	canvas:rim(shape, 5, INK)
+	canvas:outline(shape, 5, INK)
 	canvas:highlight(shape, lighter(color, 0.85), 5, 2.5)
 end
 
 local function bolts(canvas, points)
 	for i, p in points do
-		local head = { circle = { p[1], p[2], 4 }, wobble = 0.3, seed = i }
+		local head = { circle = { p[1], p[2], 4 }, wobble = 0, seed = i }
 		canvas:fill(head, BARE_METAL)
 		canvas:bevel(head, 3, { 1, 1, 0.95 }, DARK_STEEL, 1)
-		canvas:rim(head, 2, INK)
+		canvas:outline(head, 2, INK)
 		canvas:highlight(head, { 1, 1, 0.95 }, 2, 1)
 	end
 end
@@ -98,7 +98,7 @@ local function scrapPlate(name, w, h, color, rustAmount, hazard)
 		handPaint(canvas, shape, HAZARD_YELLOW)
 		canvas:stripes(shape, HAZARD_YELLOW, RUBBER_BLACK, 10, -45)
 		canvas:bevel(shape, 4, { 1, 0.95, 0.7 }, INK, 0.7)
-		canvas:rim(shape, 5, INK)
+		canvas:outline(shape, 5, INK)
 		canvas:highlight(shape, { 1, 0.95, 0.7 }, 3, 1.5)
 	else
 		paintPlate(canvas, shape, color, rustAmount)
@@ -151,7 +151,7 @@ local function header(name, w, h)
 	handPaint(canvas, tape, HAZARD_YELLOW)
 	canvas:stripes(tape, HAZARD_YELLOW, RUBBER_BLACK, 12, 45)
 	canvas:bevel(tape, 4, { 1, 0.95, 0.7 }, INK, 0.7)
-	canvas:rim(tape, 5, INK)
+	canvas:outline(tape, 5, INK)
 	canvas:highlight(tape, { 1, 0.95, 0.7 }, 3, 1.5)
 	ui.element(name, canvas)
 	return canvas
@@ -185,7 +185,7 @@ local function slot(name, color)
 	local well = plate(11, 11, 69, 69, #name + 1)
 	handPaint(canvas, well, darker(DARK_STEEL, 0.4))
 	canvas:bevel(well, 6, INK, lighter(DARK_STEEL, 0.15), 0.9)
-	canvas:rim(well, 3, INK)
+	canvas:outline(well, 3, INK)
 	ui.element(name, canvas)
 	return canvas
 end
@@ -210,14 +210,14 @@ local function cross(cx, cy, r, t, seed)
 			table.insert(points, cy + p[1] * s + p[2] * c)
 		end
 	end
-	return { polygon = points, wobble = 0.6, seed = seed }
+	return { polygon = points, wobble = 0, seed = seed }
 end
 local close = Canvas.new(40, 40)
 local closeShape = plate(3, 3, 37, 37, 11)
 close:shadow(closeShape, 0, 4, 1, 0.85)
 paintPlate(close, closeShape, RUST_RED, 0.1)
 close:fill(cross(20, 20, 11, 3.5, 2), BARE_METAL)
-close:rim(cross(20, 20, 11, 3.5, 2), 1.5, INK)
+close:outline(cross(20, 20, 11, 3.5, 2), 1.5, INK)
 ui.element("ButtonClose", close)
 
 -- Tabs: raised galvanized when chosen, sunk dark steel otherwise.
@@ -262,7 +262,7 @@ ui.element("ScrollThumb", scrollThumb)
 
 -- Ready check for trades: an empty well, or one holding a green tick.
 local function tick(seed)
-	return { polygon = { 9, 21, 15, 15, 19, 20, 30, 8, 35, 13, 19, 30 }, wobble = 0.6, seed = seed }
+	return { polygon = { 9, 21, 15, 15, 19, 20, 30, 8, 35, 13, 19, 30 }, wobble = 0, seed = seed }
 end
 local function checkbox(name, ticked)
 	local canvas = Canvas.new(40, 40)
@@ -274,7 +274,7 @@ local function checkbox(name, ticked)
 	if ticked then
 		canvas:fill(tick(1), { 0.4, 0.85, 0.3 })
 		canvas:bevel(tick(1), 2, { 0.8, 1, 0.7 }, { 0.15, 0.4, 0.1 }, 0.8)
-		canvas:rim(tick(1), 1.5, INK)
+		canvas:outline(tick(1), 1.5, INK)
 	end
 	ui.element(name, canvas)
 	return canvas
@@ -315,7 +315,7 @@ local function banner(name, a, b, w, h)
 	handPaint(canvas, shape, a)
 	canvas:stripes(shape, a, b, 14, -45)
 	canvas:bevel(shape, 5, lighter(a, 0.5), INK, 0.8)
-	canvas:rim(shape, 5, INK)
+	canvas:outline(shape, 5, INK)
 	ui.element(name, canvas)
 	return canvas
 end
@@ -335,7 +335,7 @@ local function badge(canvas, shape, color)
 	canvas:shadow(shape, 2, 3, 1, 0.7)
 	handPaint(canvas, shape, color)
 	canvas:bevel(shape, 4, lighter(color, 0.55), darker(color, 0.6), 0.9)
-	canvas:rim(shape, 2.5, INK)
+	canvas:outline(shape, 2.5, INK)
 end
 local function gear(cx, cy, r0, r1, teeth)
 	local points = {}
@@ -345,16 +345,16 @@ local function gear(cx, cy, r0, r1, teeth)
 		table.insert(points, cx + math.cos(a) * r)
 		table.insert(points, cy + math.sin(a) * r)
 	end
-	return { polygon = points, wobble = 0.6, seed = teeth }
+	return { polygon = points, wobble = 0, seed = teeth }
 end
 local function disc(x, y, r, seed)
-	return { circle = { x, y, r }, wobble = 0.5, seed = seed }
+	return { circle = { x, y, r }, wobble = 0, seed = seed }
 end
 local icons = {
 	icon("IconScrap", function(c)
 		badge(c, gear(24, 24, 15, 21, 8), BARE_METAL)
 		c:fill(disc(24, 24, 6, 1), darker(DARK_STEEL, 0.3))
-		c:rim(disc(24, 24, 6, 1), 2, INK)
+		c:outline(disc(24, 24, 6, 1), 2, INK)
 	end),
 	icon("IconTimer", function(c)
 		badge(c, disc(24, 25, 19, 2), STEEL)
@@ -365,7 +365,7 @@ local icons = {
 	icon("IconBot", function(c)
 		c:fill({ rect = { 22, 3, 26, 12 } }, INK)
 		badge(c, disc(24, 6, 4, 4), RUST_RED)
-		badge(c, { rect = { 7, 11, 41, 43 }, radius = 7, wobble = 1, seed = 5 }, STEEL)
+		badge(c, { rect = { 7, 11, 41, 43 }, radius = 7, wobble = 0, seed = 5 }, STEEL)
 		for _, x in { 17, 31 } do
 			c:fill(disc(x, 25, 5, x), INK)
 			c:fill(disc(x, 25, 3, x + 1), { 1, 0.4, 0.2 })
@@ -375,32 +375,32 @@ local icons = {
 	icon("IconShield", function(c)
 		badge(
 			c,
-			{ polygon = { 24, 4, 42, 10, 40, 28, 24, 44, 8, 28, 6, 10 }, wobble = 0.8, seed = 6 },
+			{ polygon = { 24, 4, 42, 10, 40, 28, 24, 44, 8, 28, 6, 10 }, wobble = 0, seed = 6 },
 			{ 0.35, 0.55, 0.9 }
 		)
 	end),
 	icon("IconAlert", function(c)
-		badge(c, { polygon = { 24, 4, 45, 42, 3, 42 }, wobble = 0.8, seed = 7 }, HAZARD_YELLOW)
+		badge(c, { polygon = { 24, 4, 45, 42, 3, 42 }, wobble = 0, seed = 7 }, HAZARD_YELLOW)
 		c:fill({ rect = { 22, 16, 26, 31 }, radius = 2 }, INK)
 		c:fill(disc(24, 36, 2.5, 8), INK)
 	end),
 	icon("IconTrade", function(c)
 		badge(
 			c,
-			{ polygon = { 4, 16, 16, 6, 16, 12, 36, 12, 36, 20, 16, 20, 16, 26 }, wobble = 0.6, seed = 9 },
+			{ polygon = { 4, 16, 16, 6, 16, 12, 36, 12, 36, 20, 16, 20, 16, 26 }, wobble = 0, seed = 9 },
 			CRATE_GREEN
 		)
 		badge(
 			c,
-			{ polygon = { 44, 32, 32, 42, 32, 36, 12, 36, 12, 28, 32, 28, 32, 22 }, wobble = 0.6, seed = 10 },
+			{ polygon = { 44, 32, 32, 42, 32, 36, 12, 36, 12, 28, 32, 28, 32, 22 }, wobble = 0, seed = 10 },
 			HAZARD_YELLOW
 		)
 	end),
 	icon("IconTrophy", function(c)
-		badge(c, { rect = { 14, 38, 34, 45 }, radius = 2, wobble = 0.5, seed = 11 }, DARK_STEEL)
+		badge(c, { rect = { 14, 38, 34, 45 }, radius = 2, wobble = 0, seed = 11 }, DARK_STEEL)
 		badge(
 			c,
-			{ polygon = { 10, 5, 38, 5, 36, 20, 28, 28, 27, 38, 21, 38, 20, 28, 12, 20 }, wobble = 0.8, seed = 12 },
+			{ polygon = { 10, 5, 38, 5, 36, 20, 28, 28, 27, 38, 21, 38, 20, 28, 12, 20 }, wobble = 0, seed = 12 },
 			RARITY.Legendary
 		)
 	end),

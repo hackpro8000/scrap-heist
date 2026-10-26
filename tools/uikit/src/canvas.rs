@@ -425,6 +425,15 @@ impl Canvas {
 		});
 	}
 
+	// A crisp border of even width just inside the outline, with no hand
+	// jitter, for kits that want clean shapes under painted colour.
+	pub fn outline(&mut self, outline: &Outline, width: f64, color: [f32; 3]) {
+		self.retint(outline, 0.0, |_, _, d, _| {
+			let depth = -d;
+			(depth < width).then_some((color, (width - depth).min(1.0)))
+		});
+	}
+
 	// Rust blooming in from the edges, flaking at its rim; `amount` from 0
 	// (clean) to 1 (eaten through), as modelkit's weathered().
 	pub fn rust(&mut self, outline: &Outline, amount: f64, reach: f64, seed: f64) {

@@ -49,6 +49,10 @@ impl UserData for CanvasHandle {
 			this.0.borrow_mut().rim(&outline(&shape)?, width, rgb(&color)?);
 			Ok(())
 		});
+		methods.add_method("outline", |_, this, (shape, width, color): (Table, f64, Table)| {
+			this.0.borrow_mut().outline(&outline(&shape)?, width, rgb(&color)?);
+			Ok(())
+		});
 		methods.add_method("rust", |_, this, (shape, amount, reach, seed): (Table, f64, Option<f64>, Option<f64>)| {
 			this.0.borrow_mut().rust(&outline(&shape)?, amount, reach.unwrap_or(14.0), seed.unwrap_or(0.0));
 			Ok(())
