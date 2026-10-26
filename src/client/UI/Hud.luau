@@ -2,10 +2,11 @@
 --[[
 	Hud
 
-	The always-on screen overlay: scrap counter and health (top left), round
-	phase banner and countdown (top center), survivors left (top right) and
-	the raid alert under it. It only draws; HudController decides what to
-	show and when, so each value has one owner.
+	The always-on screen overlay, laid out like a Roblox simulator: scrap and
+	survivors stacked on the left edge with oversized icons, a 2x2 grid of
+	square menu buttons under them, the round phase banner, countdown and raid
+	alert top center, and health along the bottom. It only draws; HudController
+	decides what to show and when, so each value has one owner.
 
 	Public API:
 		Hud.new(parent): Hud
@@ -15,6 +16,7 @@
 		hud:setTimeLeft(seconds)
 		hud:setSurvivors(count?)            -- nil hides the counter
 		hud:setRaidAlert(raiderName?)       -- nil hides the alert
+		hud:setMenuHandler(handler)         -- called with the Menu a button opens
 		hud:destroy()
 ]]
 
@@ -27,6 +29,7 @@ local Hud = {}
 Hud.__index = Hud
 
 export type Phase = "Calm" | "Warning" | "Storm" | "Results"
+export type Menu = "Inventory" | "Trade" | "Leaderboard" | "Shield"
 
 export type Hud = typeof(setmetatable(
 	{} :: {
@@ -41,6 +44,7 @@ export type Hud = typeof(setmetatable(
 		_survivorsLabel: TextLabel,
 		_raidAlert: ImageLabel,
 		_raidLabel: TextLabel,
+		_menuHandler: { open: (Menu) -> () },
 	},
 	Hud
 ))
@@ -60,29 +64,65 @@ local PHASE_TITLES: { [Phase]: string } = {
 	Results = "RESULTS",
 }
 
-local COUNTER_SIZE = UDim2.fromOffset(180, 44)
-local ICON_SIZE = UDim2.fromOffset(52, 52)
-
--- A counter is a dark plate with an icon sitting inside one end and a
--- number filling the rest.
-local ICON_INSET = 24
-local function counter(icon: string, anchorRight: boolean): (ImageLabel, TextLabel)
-	local plate = ScrapKit.image("Counter", { Size = COUNTER_SIZE })
+-- A currency is a dark plate with an oversized icon straddling its left
+-- end, the simulator look: the icon pokes out past the plate on every side.
+local CURRENCY_ICON = 68
+local CURRENCY_PLATE = Vector2.new(200, 48)
+local CURRENCY_GAP = 16
+local function currency(icon: string): (Frame, TextLabel)
+	local holder = Instance.new("Frame")
+	holder.BackgroundTransparency = 1
+	holder.Size = UDim2.fromOffset(CURRENCY_ICON / 2 - 6 + CURRENCY_PLATE.X, CURRENCY_PLATE.Y)
+	local plate = ScrapKit.image("Counter", {
+		Size = UDim2.fromOffset(CURRENCY_PLATE.X, CURRENCY_PLATE.Y),
+		Position = UDim2.fromOffset(CURRENCY_ICON / 2 - 6, 0),
+	})
+	plate.Parent = holder
 	ScrapKit.image(icon, {
-		Size = ICON_SIZE,
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = if anchorRight then UDim2.new(1, -ICON_INSET, 0.5, 0) else UDim2.new(0, ICON_INSET, 0.5, 0),
+		Size = UDim2.fromOffset(CURRENCY_ICON, CURRENCY_ICON),
+		AnchorPoint = Vector2.new(0, 0.5),
+		Position = UDim2.fromScale(0, 0.5),
 		BackgroundTransparency = 1,
 		ZIndex = 2,
 	}).Parent =
-		plate
+		holder
 	local label = ScrapKit.label("0", {
-		Size = UDim2.new(1, -60, 1, -10),
-		Position = if anchorRight then UDim2.fromOffset(12, 5) else UDim2.fromOffset(48, 5),
-		TextXAlignment = if anchorRight then Enum.TextXAlignment.Left else Enum.TextXAlignment.Right,
+		Size = UDim2.new(1, -60, 1, -12),
+		Position = UDim2.fromOffset(52, 6),
+		TextXAlignment = Enum.TextXAlignment.Left,
 	})
 	label.Parent = plate
-	return plate, label
+	return holder, label
+end
+
+-- Menu buttons are big squares with the icon on top and a short name under
+-- it, so they read at a glance on a phone.
+local MENU_BUTTONS: { { menu: Menu, icon: string, title: string } } = {
+	{ menu = "Trade", icon = "IconTrade", title = "TRADE" },
+	{ menu = "Leaderboard", icon = "IconTrophy", title = "TOP" },
+	{ menu = "Shield", icon = "IconShield", title = "SHIELD" },
+	{ menu = "Inventory", icon = "IconScrap", title = "BAG" },
+}
+local MENU_BUTTON_SIZE = 84
+local MENU_BUTTON_GAP = 12
+local function menuButton(icon: string, title: string, onActivated: () -> ()): ImageButton
+	local button = ScrapKit.button("", "ButtonMenu", onActivated)
+	button.Size = UDim2.fromOffset(MENU_BUTTON_SIZE, MENU_BUTTON_SIZE)
+	ScrapKit.image(icon, {
+		Size = UDim2.fromOffset(56, 56),
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, 6),
+		BackgroundTransparency = 1,
+	}).Parent =
+		button
+	ScrapKit.label(title, {
+		Size = UDim2.new(1, 0, 0, 22),
+		Position = UDim2.fromOffset(0, 58),
+		TextSize = 15,
+		ZIndex = 2,
+	}).Parent =
+		button
+	return button
 end
 
 function Hud.new(parent: Instance): Hud
@@ -94,13 +134,42 @@ function Hud.new(parent: Instance): Hud
 
 	local margin = Theme.HUD_MARGIN
 
-	-- Top left: scrap and health.
-	local scrap, scrapLabel = counter("IconScrap", false)
-	scrap.Position = UDim2.fromOffset(margin, margin)
-	scrap.Parent = gui
+	-- Left edge, centered vertically: currencies with the menu grid under them.
+	local leftColumn = Instance.new("Frame")
+	leftColumn.BackgroundTransparency = 1
+	leftColumn.AnchorPoint = Vector2.new(0, 0.5)
+	leftColumn.Position = UDim2.new(0, margin, 0.5, 0)
+	leftColumn.Size = UDim2.fromOffset(240, 300)
+	leftColumn.Parent = gui
 
-	local health, setHealth = ScrapKit.bar("BarFillHealth")
-	health.Position = UDim2.fromOffset(margin, margin + 56)
+	local scrap, scrapLabel = currency("IconScrap")
+	scrap.Parent = leftColumn
+
+	local survivors, survivorsLabel = currency("IconBot")
+	survivors.Position = UDim2.fromOffset(0, CURRENCY_PLATE.Y + CURRENCY_GAP)
+	survivors.Visible = false
+	survivors.Parent = leftColumn
+
+	local menuTop = 2 * (CURRENCY_PLATE.Y + CURRENCY_GAP) + 8
+	-- The buttons exist before the Hud does, so they call through this table,
+	-- which setMenuHandler fills in later.
+	local menuHandler = { open = function(_menu: Menu) end }
+	for i, entry in MENU_BUTTONS do
+		local column, row = (i - 1) % 2, (i - 1) // 2
+		local button = menuButton(entry.icon, entry.title, function()
+			menuHandler.open(entry.menu)
+		end)
+		button.Position = UDim2.fromOffset(
+			column * (MENU_BUTTON_SIZE + MENU_BUTTON_GAP),
+			menuTop + row * (MENU_BUTTON_SIZE + MENU_BUTTON_GAP)
+		)
+		button.Parent = leftColumn
+	end
+
+	-- Bottom center: health, wide so it reads from the corner of the eye.
+	local health, setHealth = ScrapKit.bar("BarFillHealth", "BarTroughHealth")
+	health.AnchorPoint = Vector2.new(0.5, 1)
+	health.Position = UDim2.new(0.5, 0, 1, -margin)
 	health.Parent = gui
 
 	-- Top center: phase banner with the countdown bar under it.
@@ -124,16 +193,10 @@ function Hud.new(parent: Instance): Hud
 	})
 	timerLabel.Parent = timer
 
-	-- Top right: survivors, and the raid alert below it.
-	local survivors, survivorsLabel = counter("IconBot", true)
-	survivors.AnchorPoint = Vector2.new(1, 0)
-	survivors.Position = UDim2.new(1, -margin, 0, margin)
-	survivors.Visible = false
-	survivors.Parent = gui
-
+	-- Under the countdown: the raid alert, where the eye already is.
 	local raidAlert = ScrapKit.image("BannerRaid", {
-		AnchorPoint = Vector2.new(1, 0),
-		Position = UDim2.new(1, -margin, 0, margin + 60),
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, margin + 98),
 		Visible = false,
 	})
 	ScrapKit.image("IconAlert", {
@@ -160,6 +223,7 @@ function Hud.new(parent: Instance): Hud
 		_survivorsLabel = survivorsLabel,
 		_raidAlert = raidAlert,
 		_raidLabel = raidLabel,
+		_menuHandler = menuHandler,
 	}, Hud)
 	self:setHealth(1)
 	self:setPhase("Calm", 1)
@@ -193,6 +257,10 @@ end
 function Hud.setRaidAlert(self: Hud, raiderName: string?)
 	self._raidAlert.Visible = raiderName ~= nil
 	self._raidLabel.Text = if raiderName then `{raiderName} IS RAIDING!` else ""
+end
+
+function Hud.setMenuHandler(self: Hud, handler: (Menu) -> ())
+	self._menuHandler.open = handler
 end
 
 function Hud.destroy(self: Hud)

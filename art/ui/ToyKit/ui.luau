@@ -123,9 +123,10 @@ scrapPlate("PlateShowcase", 240, 330, BACKING, 0.4)
 
 -- Buttons: sky-blue plastic, brighter on hover, pushed in when pressed.
 local BUTTON_W, BUTTON_H = 200, 52
-local function button(name, color, pressed)
-	local canvas = Canvas.new(BUTTON_W, BUTTON_H)
-	local shape = plate(3, if pressed then 6 else 3, BUTTON_W - 3, BUTTON_H - 3, 7)
+local function button(name, color, pressed, w, h)
+	w, h = w or BUTTON_W, h or BUTTON_H
+	local canvas = Canvas.new(w, h)
+	local shape = plate(3, if pressed then 6 else 3, w - 3, h - 3, 7)
 	if not pressed then
 		canvas:shadow(shape, 0, 5, 1, 0.85)
 	end
@@ -136,6 +137,13 @@ end
 local normal = button("Button", STEEL, false)
 button("ButtonHover", lighter(STEEL, 0.25), false)
 local pressed = button("ButtonPressed", darker(STEEL, 0.2), true)
+
+-- Menu buttons: the same plastic drawn square at the HUD's 84px, so the
+-- simulator-style menu grid shows true corners instead of a squashed bar.
+local MENU_SIZE = 84
+local menuButton = button("ButtonMenu", STEEL, false, MENU_SIZE, MENU_SIZE)
+button("ButtonMenuHover", lighter(STEEL, 0.25), false, MENU_SIZE, MENU_SIZE)
+button("ButtonMenuPressed", darker(STEEL, 0.2), true, MENU_SIZE, MENU_SIZE)
 
 -- Action button: crate green, for buy and confirm.
 local action = Canvas.new(BUTTON_W, BUTTON_H)
@@ -168,6 +176,14 @@ local troughShape = plate(2, 2, BAR_W - 2, BAR_H - 2, 5)
 paintPlate(trough, troughShape, darker(DIRT, 0.55), 0)
 trough:bevel(troughShape, 5, INK, lighter(DIRT, 0.2), 0.8)
 ui.element("BarTrough", trough)
+
+-- The health bar runs wider and taller along the bottom, so it gets its own trough.
+local HEALTH_W, HEALTH_H = 320, 28
+local healthTrough = Canvas.new(HEALTH_W, HEALTH_H)
+local healthTroughShape = plate(2, 2, HEALTH_W - 2, HEALTH_H - 2, 5)
+paintPlate(healthTrough, healthTroughShape, darker(DIRT, 0.55), 0)
+healthTrough:bevel(healthTroughShape, 5, INK, lighter(DIRT, 0.2), 0.8)
+ui.element("BarTroughHealth", healthTrough)
 
 -- Fills are painted at the full bar's width; a part-full bar squeezes them.
 local fill = Canvas.new(BAR_W - 14, BAR_H - 14)
@@ -240,19 +256,19 @@ local function well(name, w, h, color)
 	return canvas
 end
 local input = well("InputField", 300, 48, darker(DIRT, 0.55))
-local counter = well("Counter", 180, 44, darker(DARK_STEEL, 0.35))
+local counter = well("Counter", 200, 48, darker(DARK_STEEL, 0.35))
 
 -- Bar fills for health and the storm timer, sharing the trough above.
-local function barFill(name, color)
-	local canvas = Canvas.new(BAR_W - 14, BAR_H - 14)
-	local shape = plate(0, 0, BAR_W - 14, BAR_H - 14, #name)
+local function barFill(name, color, w, h)
+	local canvas = Canvas.new(w - 14, h - 14)
+	local shape = plate(0, 0, w - 14, h - 14, #name)
 	handPaint(canvas, shape, color)
 	canvas:bevel(shape, 4, lighter(color, 0.5), darker(color, 0.5), 0.9)
 	ui.element(name, canvas)
 	return canvas
 end
-local health = barFill("BarFillHealth", { 0.8, 0.22, 0.16 })
-local storm = barFill("BarFillStorm", { 0.35, 0.55, 0.9 })
+local health = barFill("BarFillHealth", { 0.8, 0.22, 0.16 }, HEALTH_W, HEALTH_H)
+local storm = barFill("BarFillStorm", { 0.35, 0.55, 0.9 }, BAR_W, BAR_H)
 
 -- Scroll bar: a thin trough and a bolted steel thumb.
 well("ScrollTrack", 20, 370, darker(DIRT, 0.55))
@@ -610,6 +626,7 @@ show(bannerStorm, 300, 56)
 show(bannerRaid, 300, 56)
 show(normal, BUTTON_W, BUTTON_H)
 show(pressed, BUTTON_W, BUTTON_H)
+show(menuButton, MENU_SIZE, MENU_SIZE)
 show(action, BUTTON_W, BUTTON_H)
 show(danger, BUTTON_W, BUTTON_H)
 show(input, 300, 48)

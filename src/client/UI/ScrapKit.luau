@@ -95,7 +95,7 @@ function ScrapKit.label(text: string, props: Props?): TextLabel
 	return label
 end
 
--- The plain Button swaps through its hover and pressed art; colored buttons
+-- The plain Button and ButtonMenu swap through their hover and pressed art; colored buttons
 -- (action, danger) keep their color so their meaning never flickers away.
 function ScrapKit.button(text: string, element: string, onActivated: () -> ()): ImageButton
 	local button = Instance.new("ImageButton")
@@ -110,26 +110,26 @@ function ScrapKit.button(text: string, element: string, onActivated: () -> ()): 
 	})
 	label.Parent = button
 
-	if element == "Button" then
+	if element == "Button" or element == "ButtonMenu" then
 		button.MouseEnter:Connect(function()
-			ScrapKit.setImage(button, "ButtonHover")
+			ScrapKit.setImage(button, `{element}Hover`)
 		end)
 		button.MouseLeave:Connect(function()
-			ScrapKit.setImage(button, "Button")
+			ScrapKit.setImage(button, element)
 		end)
 		button.MouseButton1Down:Connect(function()
-			ScrapKit.setImage(button, "ButtonPressed")
+			ScrapKit.setImage(button, `{element}Pressed`)
 		end)
 		button.MouseButton1Up:Connect(function()
-			ScrapKit.setImage(button, "ButtonHover")
+			ScrapKit.setImage(button, `{element}Hover`)
 		end)
 	end
 	button.Activated:Connect(onActivated)
 	return button
 end
 
-function ScrapKit.bar(fillElement: string): (ImageLabel, (fraction: number) -> ())
-	local trough = ScrapKit.image("BarTrough", { Size = UDim2.fromOffset(220, 24) })
+function ScrapKit.bar(fillElement: string, troughElement: string?): (ImageLabel, (fraction: number) -> ())
+	local trough = ScrapKit.image(troughElement or "BarTrough")
 	local fill = ScrapKit.image(fillElement, {
 		Position = UDim2.fromOffset(BAR_INSET, BAR_INSET),
 		Size = UDim2.new(1, -BAR_INSET * 2, 1, -BAR_INSET * 2),
