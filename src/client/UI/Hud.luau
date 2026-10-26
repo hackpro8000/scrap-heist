@@ -4,8 +4,10 @@
 
 	The always-on screen overlay, laid out like a Roblox simulator: scrap on the
 	left edge with an oversized icon, a 2x2 grid of square menu buttons under
-	it, the round phase banner, countdown and raid alert top center, the
-	survivors count top right as round info rather than a stat, and health along the bottom. It only draws; HudController
+	it, the phase banner carrying its own countdown with the raid alert under
+	it top center, the survivors count top right as round info rather than a
+	stat, and health along the bottom. Everything is packed tight so the arena
+	stays in view. It only draws; HudController
 	decides what to show and when, so each value has one owner.
 
 	Public API:
@@ -66,15 +68,17 @@ local PHASE_TITLES: { [Phase]: string } = {
 
 -- A currency is a dark plate with an oversized icon straddling its left
 -- end, the simulator look: the icon pokes out past the plate on every side.
-local CURRENCY_ICON = 68
-local CURRENCY_PLATE = Vector2.new(200, 48)
-local CURRENCY_GAP = 16
-local function currency(icon: string): (Frame, TextLabel)
+-- The plate is only as wide as the number it holds, so a short count gets a
+-- short plate.
+local CURRENCY_ICON = 60
+local CURRENCY_PLATE = Vector2.new(170, 44)
+local CURRENCY_GAP = 10
+local function currency(icon: string, plateWidth: number): (Frame, TextLabel)
 	local holder = Instance.new("Frame")
 	holder.BackgroundTransparency = 1
-	holder.Size = UDim2.fromOffset(CURRENCY_ICON / 2 - 6 + CURRENCY_PLATE.X, CURRENCY_PLATE.Y)
+	holder.Size = UDim2.fromOffset(CURRENCY_ICON / 2 - 6 + plateWidth, CURRENCY_PLATE.Y)
 	local plate = ScrapKit.image("Counter", {
-		Size = UDim2.fromOffset(CURRENCY_PLATE.X, CURRENCY_PLATE.Y),
+		Size = UDim2.fromOffset(plateWidth, CURRENCY_PLATE.Y),
 		Position = UDim2.fromOffset(CURRENCY_ICON / 2 - 6, 0),
 	})
 	plate.Parent = holder
@@ -87,8 +91,8 @@ local function currency(icon: string): (Frame, TextLabel)
 	}).Parent =
 		holder
 	local label = ScrapKit.label("0", {
-		Size = UDim2.new(1, -60, 1, -12),
-		Position = UDim2.fromOffset(52, 6),
+		Size = UDim2.new(1, -52, 1, -10),
+		Position = UDim2.fromOffset(44, 5),
 		TextXAlignment = Enum.TextXAlignment.Left,
 	})
 	label.Parent = plate
@@ -105,23 +109,23 @@ local MENU_BUTTONS: { { menu: Menu, icon: string, title: string } } = {
 }
 -- The grid sits under the stat plates and spans exactly their width, the
 -- icons poking out to the left of both alike.
-local MENU_BUTTON_GAP = 12
+local MENU_BUTTON_GAP = 8
 local MENU_LEFT = CURRENCY_ICON / 2 - 6
 local MENU_BUTTON_SIZE = (CURRENCY_PLATE.X - MENU_BUTTON_GAP) / 2
 local function menuButton(icon: string, title: string, onActivated: () -> ()): ImageButton
 	local button = ScrapKit.button("", "ButtonMenu", onActivated)
 	button.Size = UDim2.fromOffset(MENU_BUTTON_SIZE, MENU_BUTTON_SIZE)
 	ScrapKit.image(icon, {
-		Size = UDim2.fromOffset(62, 62),
+		Size = UDim2.fromOffset(50, 50),
 		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, 6),
+		Position = UDim2.new(0.5, 0, 0, 5),
 		BackgroundTransparency = 1,
 	}).Parent =
 		button
 	ScrapKit.label(title, {
-		Size = UDim2.new(1, 0, 0, 22),
-		Position = UDim2.fromOffset(0, 66),
-		TextSize = 15,
+		Size = UDim2.new(1, 0, 0, 20),
+		Position = UDim2.fromOffset(0, 56),
+		TextSize = 13,
 		ZIndex = 2,
 	}).Parent =
 		button
@@ -142,13 +146,16 @@ function Hud.new(parent: Instance): Hud
 	leftColumn.BackgroundTransparency = 1
 	leftColumn.AnchorPoint = Vector2.new(0, 0.5)
 	leftColumn.Position = UDim2.new(0, margin, 0.5, 0)
-	leftColumn.Size = UDim2.fromOffset(240, 300 - CURRENCY_PLATE.Y - CURRENCY_GAP)
+	leftColumn.Size = UDim2.fromOffset(
+		MENU_LEFT + CURRENCY_PLATE.X,
+		CURRENCY_PLATE.Y + CURRENCY_GAP + 2 * MENU_BUTTON_SIZE + MENU_BUTTON_GAP
+	)
 	leftColumn.Parent = gui
 
-	local scrap, scrapLabel = currency("IconScrap")
+	local scrap, scrapLabel = currency("IconScrap", CURRENCY_PLATE.X)
 	scrap.Parent = leftColumn
 
-	local survivors, survivorsLabel = currency("IconBot")
+	local survivors, survivorsLabel = currency("IconBot", 100)
 	survivors.AnchorPoint = Vector2.new(1, 0)
 	survivors.Position = UDim2.new(1, -margin, 0, margin)
 	survivors.Visible = false
@@ -176,40 +183,54 @@ function Hud.new(parent: Instance): Hud
 	health.Position = UDim2.new(0.5, 0, 1, -margin)
 	health.Parent = gui
 
-	-- Top center: phase banner with the countdown bar under it.
+	-- Top center: the phase banner with its title on the left and the time
+	-- left on the right, so one plate says both what is happening and for how
+	-- long. The countdown bar tucks under it, drawn first so the banner's
+	-- shadow overlaps its top edge.
+	local timer, setTimer = ScrapKit.bar("BarFillStorm")
+	timer.Size = UDim2.fromOffset(260, 20)
+	timer.AnchorPoint = Vector2.new(0.5, 0)
+	timer.Position = UDim2.new(0.5, 0, 0, margin + 48)
+	timer.Parent = gui
+
 	local banner = ScrapKit.image("BannerCalm", {
-		Size = UDim2.fromOffset(300, 56),
+		Size = UDim2.fromOffset(300, 52),
 		AnchorPoint = Vector2.new(0.5, 0),
 		Position = UDim2.new(0.5, 0, 0, margin),
 	})
-	local bannerLabel = ScrapKit.label("", { Size = UDim2.new(1, -24, 1, -14), Position = UDim2.fromOffset(12, 7) })
-	bannerLabel.Parent = banner
-	banner.Parent = gui
-
-	local timer, setTimer = ScrapKit.bar("BarFillStorm")
-	timer.AnchorPoint = Vector2.new(0.5, 0)
-	timer.Position = UDim2.new(0.5, 0, 0, margin + 62)
-	timer.Parent = gui
-	local timerLabel = ScrapKit.label("", {
-		Size = UDim2.new(0, 80, 0, 22),
-		Position = UDim2.new(1, 8, 0, 1),
+	local bannerLabel = ScrapKit.label("", {
+		Size = UDim2.new(1, -110, 1, -12),
+		Position = UDim2.fromOffset(14, 6),
 		TextXAlignment = Enum.TextXAlignment.Left,
 	})
-	timerLabel.Parent = timer
+	bannerLabel.Parent = banner
+	local timerLabel = ScrapKit.label("", {
+		Size = UDim2.new(0, 80, 1, -12),
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, -14, 0, 6),
+		TextXAlignment = Enum.TextXAlignment.Right,
+	})
+	timerLabel.Parent = banner
+	banner.Parent = gui
 
 	-- Under the countdown: the raid alert, where the eye already is.
 	local raidAlert = ScrapKit.image("BannerRaid", {
+		Size = UDim2.fromOffset(260, 44),
 		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, margin + 98),
+		Position = UDim2.new(0.5, 0, 0, margin + 76),
 		Visible = false,
 	})
 	ScrapKit.image("IconAlert", {
-		Size = UDim2.fromOffset(40, 40),
-		Position = UDim2.fromOffset(10, 6),
+		Size = UDim2.fromOffset(36, 36),
+		Position = UDim2.fromOffset(8, 4),
 		BackgroundTransparency = 1,
 	}).Parent =
 		raidAlert
-	local raidLabel = ScrapKit.label("", { Size = UDim2.new(1, -66, 1, -14), Position = UDim2.fromOffset(56, 7) })
+	local raidLabel = ScrapKit.label("", {
+		Size = UDim2.new(1, -60, 1, -8),
+		Position = UDim2.fromOffset(50, 4),
+		TextXAlignment = Enum.TextXAlignment.Left,
+	})
 	raidLabel.Parent = raidAlert
 	raidAlert.Parent = gui
 
