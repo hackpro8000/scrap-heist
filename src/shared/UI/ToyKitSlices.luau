@@ -42,7 +42,7 @@ return {
 	CounterCalm = { size = Vector2.new(130, 44) },
 	CounterStorm = { size = Vector2.new(130, 44) },
 	CounterWarning = { size = Vector2.new(130, 44) },
-	CounterRaid = { size = Vector2.new(260, 44) },
+	CounterRaid = { size = Vector2.new(236, 44) },
 	BarFillHealth = { size = Vector2.new(306, 14) },
 	BarFillStorm = { size = Vector2.new(206, 10) },
 	ScrollTrack = { size = Vector2.new(20, 370) },

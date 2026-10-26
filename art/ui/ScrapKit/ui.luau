@@ -267,7 +267,7 @@ local counterSurvivors = well("CounterSurvivors", 90, 44, darker(DARK_STEEL, 0.3
 local counterCalm = well("CounterCalm", 130, 44, darker(CRATE_GREEN, 0.45))
 local counterStorm = well("CounterStorm", 130, 44, darker({ 0.35, 0.55, 0.9 }, 0.45))
 local counterWarning = well("CounterWarning", 130, 44, darker(RUST_RED, 0.35))
-local counterRaid = well("CounterRaid", 260, 44, darker(RUST_RED, 0.35))
+local counterRaid = well("CounterRaid", 236, 44, darker(RUST_RED, 0.35))
 
 -- Bar fills for health and the storm timer, sharing the trough above.
 local function barFill(name, color, w, h)
@@ -469,7 +469,7 @@ show(counterSurvivors, 90, 44)
 show(counterCalm, 130, 44)
 show(counterStorm, 130, 44)
 show(counterWarning, 130, 44)
-show(counterRaid, 260, 44)
+show(counterRaid, 236, 44)
 show(normal, BUTTON_W, BUTTON_H)
 show(pressed, BUTTON_W, BUTTON_H)
 show(menuButton, MENU_SIZE, MENU_SIZE)

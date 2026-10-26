@@ -59,6 +59,14 @@ function ScrapKit.setImage(gui: ImageLabel | ImageButton, element: string)
 	gui.ScaleType = Enum.ScaleType.Stretch
 end
 
+-- Flips an image left to right. Roblox has no flip property, but reading the
+-- texture from its right edge with a negative width draws it mirrored.
+function ScrapKit.mirror(gui: ImageLabel | ImageButton, element: string)
+	local size = ScrapKitSlices[element].size
+	gui.ImageRectOffset = Vector2.new(size.X, 0)
+	gui.ImageRectSize = Vector2.new(-size.X, size.Y)
+end
+
 local function decorate(gui: ImageLabel | ImageButton, element: string, props: Props?)
 	gui.Name = element
 	gui.BorderSizePixel = 0

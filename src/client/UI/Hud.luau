@@ -103,15 +103,49 @@ local function currency(icon: string, plateArt: string, plateWidth: number): (Fr
 	return holder, label, plate, iconImage
 end
 
--- The round plates top center: survivors is a short count, the timer fits
--- "0:00", and the raid plate is wide enough for a raider's name (longer names
--- shrink to fit).
+-- The round plates top center: survivors is a short count and the timer fits
+-- "0:00".
 local SURVIVORS_PLATE_WIDTH = 90
 local TIMER_PLATE_WIDTH = 130
-local RAID_PLATE_WIDTH = 260
 local ROUND_GAP = 16
 -- Room under the round row for the timer icon's overhang plus a little air.
 local RAID_GAP = 22
+
+-- The raid plate is an alert, not a value, so it breaks the currency look on
+-- purpose: an alert icon straddles each end, mirrored and the text is centred between
+-- them, a symmetrical warning sign under the round row. Long raider names
+-- shrink to fit.
+local RAID_PLATE_WIDTH = 236
+local function raidPlate(): (Frame, TextLabel)
+	local holder = Instance.new("Frame")
+	holder.BackgroundTransparency = 1
+	holder.Size = UDim2.fromOffset(2 * CURRENCY_PLATE_LEFT + RAID_PLATE_WIDTH, CURRENCY_PLATE.Y)
+	local plate = ScrapKit.image("CounterRaid", {
+		Size = UDim2.fromOffset(RAID_PLATE_WIDTH, CURRENCY_PLATE.Y),
+		Position = UDim2.fromOffset(CURRENCY_PLATE_LEFT, 0),
+	})
+	plate.Parent = holder
+	-- The right icon is the left one mirrored, so the two face each other.
+	for _, side in { 0, 1 } do
+		local icon = ScrapKit.image("IconAlert", {
+			Size = UDim2.fromOffset(CURRENCY_ICON, CURRENCY_ICON),
+			AnchorPoint = Vector2.new(side, 0.5),
+			Position = UDim2.fromScale(side, 0.5),
+			BackgroundTransparency = 1,
+			ZIndex = 2,
+		})
+		if side == 1 then
+			ScrapKit.mirror(icon, "IconAlert")
+		end
+		icon.Parent = holder
+	end
+	local label = ScrapKit.label("", {
+		Size = UDim2.new(1, -72, 1, -10),
+		Position = UDim2.fromOffset(36, 5),
+	})
+	label.Parent = plate
+	return holder, label
+end
 
 local HEALTH_SIZE = Vector2.new(200, 28)
 
@@ -223,7 +257,7 @@ function Hud.new(parent: Instance): Hud
 	timer.Parent = roundRow
 
 	-- Under it, only during a raid: who is raiding, in red.
-	local raidAlert, raidLabel = currency("IconAlert", "CounterRaid", RAID_PLATE_WIDTH)
+	local raidAlert, raidLabel = raidPlate()
 	raidAlert.AnchorPoint = Vector2.new(0.5, 0)
 	raidAlert.Position = UDim2.new(0.5, 0, 0, plateTop + CURRENCY_PLATE.Y + RAID_GAP)
 	raidAlert.Visible = false
