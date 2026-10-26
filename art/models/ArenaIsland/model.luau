@@ -1107,3 +1107,267 @@ end)
 for _, entry in shell do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
+
+-- The arena, copied from Server Map and lowered to sit in the bowl: the
+-- concrete fight floor, hazard-striped entry ramps down from the road, the
+-- spawn ring and the storm beacon.
+local CONCRETE = { 0.55, 0.54, 0.5 }
+local MARK = { 0.85, 0.65, 0.15 }
+local DECK = CAP_TOP
+local ARENA_DEPTH = ARENA_DROP - CAP_TOP
+local HAZARD_WIDTH = 1.8
+local function octagonScale(degrees: number): number
+	return 1 / math.cos(math.rad((degrees + 22.5) % 45 - 22.5))
+end
+local function fbm(x: number, y: number, z: number): number
+	local total, amplitude = 0, 0.5
+	for _ = 1, 4 do
+		total += math.noise(x, y, z) * amplitude
+		x, y, z, amplitude = x * 2, y * 2, z * 2, amplitude / 2
+	end
+	return total
+end
+-- fBm sampled through another fBm, so the wear twists into blotches and
+-- streaks instead of even waves.
+local function warpedFbm(x: number, y: number, z: number): number
+	return fbm(x + 1.8 * fbm(x + 5.2, y + 1.3, z), y + 1.8 * fbm(x + 1.7, y + 9.2, z), z)
+end
+-- A solid band following a circle between two angles, used for the kerb,
+-- floor stripes and rim wall. With `octagon` it follows the arena octagon
+-- instead, with a row on every corner it passes so the corners stay sharp.
+local function arc(mesh, inner: number, outer: number, bottom: number, top: number, from: number, to: number, octagon: boolean?)
+	local angles = {}
+	local steps = math.max(1, math.ceil((to - from) / 4))
+	for s = 0, steps do
+		table.insert(angles, from + (to - from) * s / steps)
+	end
+	if octagon then
+		for corner = math.floor((from - 22.5) / 45 + 1) * 45 + 22.5, to - 0.01, 45 do
+			if math.abs((corner - from) % ((to - from) / steps)) > 0.01 then
+				table.insert(angles, corner)
+			end
+		end
+		table.sort(angles)
+	end
+	steps = #angles - 1
+	local rows = {}
+	for s = 0, steps do
+		local scale = if octagon then octagonScale(angles[s + 1]) else 1
+		local angle = math.rad(angles[s + 1])
+		local c, n = math.cos(angle) * scale, math.sin(angle) * scale
+		rows[s] = {
+			mesh:vertex(c * outer, n * outer, bottom),
+			mesh:vertex(c * outer, n * outer, top),
+			mesh:vertex(c * inner, n * inner, top),
+			mesh:vertex(c * inner, n * inner, bottom),
+		}
+	end
+	for s = 0, steps - 1 do
+		local a, b = rows[s], rows[s + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	mesh:face({ rows[0][4], rows[0][3], rows[0][2], rows[0][1] })
+	mesh:face(rows[steps])
+end
+
+-- Arena concrete: broad warped stains from oil and fights, mottled patches
+-- of differing cure, fine aggregate showing through the worn top, and
+-- scuffs: short streaks scraped by bots, running one way per patch of floor.
+local function scuff(x: number, y: number): number
+	local angle = math.noise(x / 12, y / 12, 17) * math.pi * 2
+	local u = x * math.cos(angle) + y * math.sin(angle)
+	local v = y * math.cos(angle) - x * math.sin(angle)
+	local streak = math.noise(u / 1.6, v * 7, 19)
+	local patch = fbm(x / 6, y / 6, 23) + 0.02
+	if patch <= 0 then return 0 end
+	return math.clamp(math.abs(streak) - 0.12, 0, 1) * math.sign(streak) * math.min(1, patch * 8)
+end
+local function arenaConcrete(x: number, y: number, _z: number)
+	local stain = warpedFbm(x / 14, y / 14, 3)
+	local mottle = fbm(x / 3, y / 3, 7)
+	local grain = math.noise(x * 6, y * 6, 11) * 0.5 + math.noise(x * 19, y * 19, 13) * 0.5
+	local k = 1 + mottle * 0.12 + grain * 0.05 - math.max(0, stain) * 0.35
+	if grain > 0.42 then
+		k += 0.1
+	elseif grain < -0.45 then
+		k -= 0.08
+	end
+	local mark = scuff(x, y)
+	k += if mark > 0 then mark * 0.4 else mark * 0.5
+	return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * (k - math.max(0, stain) * 0.04)
+end
+-- Bridge deck: riveted steel tread plates laid across the span, with dark
+-- seams, raised diamond treads worn smooth down the two wheel paths, hazard
+-- chevrons painted along both outer plates, and grime and rust bleeding in
+-- from the edges. Painted in the bridge's own frame so every bridge wears
+-- the same way along its length.
+do
+	chunkedPart("Floor", nil, CONCRETE, function(mesh)
+		arc(mesh, 0, ARENA_FLOOR - HAZARD_WIDTH, -ARENA_DEPTH - 0.1, 0.1 - ARENA_DEPTH, 0, 360, true)
+	end, nil, arenaConcrete)
+end
+-- New players start on a ring round the crusher.
+do
+	part("Pad", nil, MARK, function(mesh)
+		ring(mesh, 0, 0, 0.2 - ARENA_DEPTH, 6.5, 8.5, 0.1, "z", 32)
+	end, nil, 0)
+end
+
+-- The crusher, the arena's centrepiece: a hydraulic press over a sunken
+-- bed, four pillars carrying a crossbeam, and a press head held up over a
+-- half-flattened car.
+-- A square beam with flat ends running from one point up to another, for
+-- legs that lean.
+local function leg(mesh, x0: number, y0: number, z0: number, x1: number, y1: number, z1: number, width: number)
+	local h = width / 2
+	local corners = { { -h, -h }, { h, -h }, { h, h }, { -h, h } }
+	local base, cap = {}, {}
+	for k, c in corners do
+		base[k] = mesh:vertex(x0 + c[1], y0 + c[2], z0)
+		cap[k] = mesh:vertex(x1 + c[1], y1 + c[2], z1)
+	end
+	for k = 1, 4 do
+		local l = k % 4 + 1
+		mesh:face({ base[k], base[l], cap[l], cap[k] })
+	end
+	mesh:face(cap)
+	mesh:face({ base[4], base[3], base[2], base[1] })
+end
+
+-- The storm beacon: a mast with a glowing core that lights up when a storm
+-- round starts, visible from every yard.
+local MAST_TOP = 24
+local STORM_GLOW = { 0.35, 0.85, 1 }
+do
+	local floor = 0.1 - ARENA_DEPTH
+	part("Plinth", nil, CONCRETE, function(mesh)
+		cylinder(mesh, 0, 0, floor + 0.6, 4.5, 1.2, "z", 8)
+		cylinder(mesh, 0, 0, floor + 1.5, 3.4, 0.6, "z", 8)
+	end, nil, 0.5)
+	part("PlinthStripe", nil, MARK, function(mesh)
+		ring(mesh, 0, 0, floor + 1.15, 4.4, 4.55, 0.25, "z", 8)
+	end, nil, 0.3)
+	-- Four straight legs leaning in towards the top, tied together with braces.
+	part("Mast", nil, DARK_STEEL, function(mesh)
+		local bottom, top = floor + 1.8, floor + MAST_TOP
+		for _, sx in { -1, 1 } do
+			for _, sy in { -1, 1 } do
+				leg(mesh, sx * 2.2, sy * 2.2, bottom, sx * 0.8, sy * 0.8, top, 0.45)
+			end
+		end
+		local braces = 6
+		for i = 1, braces do
+			local t = i / braces
+			local z = bottom + t * (top - bottom) - 0.25
+			local half = 2.2 - t * 1.4
+			box(mesh, 0, half, z, half * 2, 0.25, 0.25)
+			box(mesh, 0, -half, z, half * 2, 0.25, 0.25)
+			box(mesh, half, 0, z, 0.25, half * 2, 0.25)
+			box(mesh, -half, 0, z, 0.25, half * 2, 0.25)
+		end
+	end, nil, 0.6)
+	part("CoreMount", nil, STEEL, function(mesh)
+		cylinder(mesh, 0, 0, floor + MAST_TOP + 0.3, 1.9, 0.6, "z", 16)
+		cylinder(mesh, 0, 0, floor + MAST_TOP + 4.25, 1.9, 0.5, "z", 16)
+		cylinder(mesh, 0, 0, floor + MAST_TOP + 6.5, 0.15, 4, "z", 8)
+	end, nil, 0.2)
+	-- The core sits on top of the mast and is the part that glows during a storm.
+	part("Core", nil, STORM_GLOW, function(mesh)
+		cylinder(mesh, 0, 0, floor + MAST_TOP + 2.3, 1.4, 3.4, "z", 16)
+	end, nil, 0, nil, 1)
+	part("CoreCage", nil, DARK_STEEL, function(mesh)
+		for k = 0, 5 do
+			local angle = math.rad(k * 60)
+			box(mesh, math.cos(angle) * 1.65, math.sin(angle) * 1.65, floor + MAST_TOP + 0.6, 0.2, 0.2, 3.4)
+		end
+	end, nil, 0.3)
+end
+
+
+-- The arena edge stands out from the yards around it: hazard stripes ring the
+-- fight floor, and a low concrete wall with yellow caps tops the bowl,
+-- broken where each spoke comes in.
+local LANE_HALF = 3.6
+local RAMP_HALF = LANE_HALF + HAZARD_WIDTH
+-- Entry ramps: a concrete deck at each spoke, from the ring road down the
+-- bank to the fight floor, one straight slope a touch above the bank so it
+-- never dips into the terrain.
+local RAMP_FLOOR = 0.1 - ARENA_DEPTH
+local RAMP_CREST = DECK + 0.1
+local function rampTop(radius: number): number
+	return RAMP_FLOOR + (RAMP_CREST - RAMP_FLOOR) * math.clamp((radius - ARENA_FLOOR) / (ROAD_INNER - ARENA_FLOOR), 0, 1)
+end
+-- A block on spoke `degrees` between `from` and `to` across it and over
+-- `radii` along it, its top `lift` above the deck and its bottom at the
+-- arena floor or `depth` below its top.
+local function rampBlock(mesh, degrees: number, radii: { number }, from: number, to: number, lift: number, depth: number?)
+	local angle = math.rad(degrees)
+	local c, n = math.cos(angle), math.sin(angle)
+	local rows = {}
+	for s, radius in radii do
+		local top = rampTop(radius) + lift
+		local bottom = if depth then top - depth else RAMP_FLOOR - 0.1
+		rows[s] = {}
+		local miter = radius * math.tan(math.rad(22.5))
+		for k, side in { from, to } do
+			side = math.clamp(side, -miter, miter)
+			local x, y = c * radius - n * side, n * radius + c * side
+			rows[s][k] = mesh:vertex(x, y, top)
+			rows[s][k + 2] = mesh:vertex(x, y, bottom)
+		end
+	end
+	for s = 1, #radii - 1 do
+		local a, b = rows[s], rows[s + 1]
+		mesh:face({ b[1], b[2], a[2], a[1] })
+		mesh:face({ a[4], b[4], b[3], a[3] })
+		mesh:face({ a[3], b[3], b[1], a[1] })
+		mesh:face({ b[2], b[4], a[4], a[2] })
+	end
+	local first, last = rows[1], rows[#radii]
+	mesh:face({ first[2], first[4], first[3], first[1] })
+	mesh:face({ last[3], last[4], last[2], last[1] })
+end
+-- Hazard strips inlaid outside both lane edges, as wide as the arena's ring
+-- and flush with the deck. They run from the road, ending yellow, across
+-- the ring, which is cut at each ramp mouth and runs from strip to strip
+-- along each octagon side, mitred at the corners. Blocks are clamped to the
+-- octagon miters, so the last ring piece on each side runs into the corner.
+local STRIP_BREAKS = { ARENA_FLOOR - HAZARD_WIDTH }
+for k = 0, 6 do
+	table.insert(STRIP_BREAKS, ARENA_FLOOR + k * (ROAD_INNER - ARENA_FLOOR) / 6)
+end
+do
+	part("Deck", nil, CONCRETE, function(mesh)
+		for i = 1, 8 do
+			rampBlock(mesh, (i - 1) * 45, { ARENA_FLOOR - HAZARD_WIDTH, ARENA_FLOOR, ROAD_INNER }, -LANE_HALF, LANE_HALF, 0)
+		end
+	end, nil, 0.25)
+	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
+		part(if k == 1 then "RampStripeYellow" else "RampStripeBlack", nil, color, function(mesh)
+			for i = 1, 8 do
+				for s = k, #STRIP_BREAKS - 1, 2 do
+					local radii = { STRIP_BREAKS[s], STRIP_BREAKS[s + 1] }
+					rampBlock(mesh, (i - 1) * 45, radii, -RAMP_HALF, -LANE_HALF, 0)
+					rampBlock(mesh, (i - 1) * 45, radii, LANE_HALF, RAMP_HALF, 0)
+				end
+				-- Ring pieces, black-yellow-black from the mouth to the corner.
+				local ring = { ARENA_FLOOR - HAZARD_WIDTH, ARENA_FLOOR }
+				local cuts = { RAMP_HALF, RAMP_HALF + 3.2, RAMP_HALF + 6.4, 99 }
+				for s = 3 - k, 3, 2 do
+					rampBlock(mesh, (i - 1) * 45, ring, cuts[s], cuts[s + 1], 0)
+					rampBlock(mesh, (i - 1) * 45, ring, -cuts[s + 1], -cuts[s], 0)
+				end
+			end
+		end, nil, 0.2)
+	end
+end
+-- A steel bridge on spoke `degrees`, placed at (x, y) and turned so local +y
+-- runs along it, from its low end at `to` (on deck level) to its far end at
+-- `from`, which climbs to `highZ`. Every part is built flat and then sheared
+-- up along its length, so posts stay upright and the end pieces sit level at
+-- their own tier. A yard end lands on an apron under a gate frame; any other
+-- end gets bollards like the low end.
+finishParts()
