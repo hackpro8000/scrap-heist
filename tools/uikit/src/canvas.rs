@@ -357,6 +357,26 @@ impl Canvas {
 		});
 	}
 
+	// Hand-painted vertical gradient: shades the paint from `top` at the top
+	// edge to `bottom` at the bottom (1 keeps it), laid down in `bands`
+	// overlapping horizontal strokes with ragged edges, the way a painter
+	// blends by hand instead of an airbrushed ramp.
+	pub fn gradient(&mut self, outline: &Outline, top: f64, bottom: f64, bands: f64) {
+		let rows: Vec<usize> = self.area(outline, 0.0).map(|(_, y)| y).collect();
+		let Some((&y0, &y1)) = rows.iter().min().zip(rows.iter().max()) else {
+			return;
+		};
+		let span = (y1 - y0).max(1) as f64;
+		self.retint(outline, 0.0, |x, y, _, c| {
+			// Stroke lanes push the band edges up and down so no line is straight.
+			let ragged = (drag(x, y, 1.4, 0.0, true)[0] as f64 - 1.0) * 1.6 + noise(x / 18.0, y / 6.0) * 0.35;
+			let t = ((y - y0 as f64) / span + ragged / bands).clamp(0.0, 1.0) * bands;
+			let blend = t.floor() + smoothstep(0.3, 0.7, t.fract());
+			let shade = (top + (bottom - top) * blend / bands) as f32;
+			Some((c.map(|k| k * shade), 1.0))
+		});
+	}
+
 	// Hand-painted bevel: light strokes along edges facing the light (up-left),
 	// dark ones along edges turned away, `width` pixels deep.
 	pub fn bevel(&mut self, outline: &Outline, width: f64, light: [f32; 3], dark: [f32; 3], strength: f64) {
@@ -570,4 +590,9 @@ fn offset(shape: &Shape, dx: f64, dy: f64) -> Shape {
 		Shape::Circle { x, y, radius } => Shape::Circle { x: x + dx, y: y + dy, radius: *radius },
 		Shape::Polygon(points) => Shape::Polygon(points.iter().map(|&(x, y)| (x + dx, y + dy)).collect()),
 	}
+}
+
+fn smoothstep(a: f64, b: f64, x: f64) -> f64 {
+	let t = ((x - a) / (b - a)).clamp(0.0, 1.0);
+	t * t * (3.0 - 2.0 * t)
 }

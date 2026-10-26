@@ -131,6 +131,9 @@ local function button(name, color, pressed, w, h)
 		canvas:shadow(shape, 0, 5, 1, 0.85)
 	end
 	paintPlate(canvas, shape, color, 0.12)
+	-- Lighter up top, darker below, blended in a few loose strokes so the
+	-- button reads as lit from above without an airbrushed ramp.
+	canvas:gradient(shape, 1.15, 0.42, 3)
 	ui.element(name, canvas)
 	return canvas
 end

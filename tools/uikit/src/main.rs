@@ -32,6 +32,10 @@ impl UserData for CanvasHandle {
 			this.0.borrow_mut().brushwork(&outline(&shape)?, strength.unwrap_or(1.0), scale.unwrap_or(1.0), angle, brush);
 			Ok(())
 		});
+		methods.add_method("gradient", |_, this, (shape, top, bottom, bands): (Table, f64, f64, Option<f64>)| {
+			this.0.borrow_mut().gradient(&outline(&shape)?, top, bottom, bands.unwrap_or(4.0));
+			Ok(())
+		});
 		methods.add_method("bevel", |_, this, (shape, width, light, dark, strength): (Table, f64, Table, Table, Option<f64>)| {
 			this.0.borrow_mut().bevel(&outline(&shape)?, width, rgb(&light)?, rgb(&dark)?, strength.unwrap_or(1.0));
 			Ok(())
