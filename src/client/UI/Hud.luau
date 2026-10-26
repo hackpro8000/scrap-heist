@@ -131,7 +131,6 @@ function Hud.new(parent: Instance): Hud
 	survivors.Parent = gui
 
 	local raidAlert = ScrapKit.image("BannerRaid", {
-		Size = UDim2.fromOffset(280, 52),
 		AnchorPoint = Vector2.new(1, 0),
 		Position = UDim2.new(1, -margin, 0, margin + 60),
 		Visible = false,
