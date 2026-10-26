@@ -227,7 +227,6 @@ local function shade(entries, occluders, gradient: number?)
 			shadow = 1.5,
 			gradient = gradient or GRADIENT,
 			blend = 0.78,
-			curvature = 0.1,
 			occluders = occluders,
 		})
 	end
