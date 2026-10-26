@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-28bab43a40420314"
+local CACHE_KEY = "YardIsland-4c726a70156f12a5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -942,7 +942,7 @@ local function shade(entries, occluders, gradient: number?)
 		entry.mesh:paintShading(entry.image, {
 			highlight = 0.5,
 			highlightRamp = 0.3,
-			shadow = 1.5,
+			shadow = 0.75,
 			gradient = gradient or GRADIENT,
 			blend = 1,
 			brushed = true,
