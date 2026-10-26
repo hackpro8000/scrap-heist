@@ -49,49 +49,45 @@ local function bolts(canvas, points)
 	end
 end
 
--- Panel: the window background, patched together from scrap plates of
--- different metals, bolted at the overlaps. Painted near its use size so
--- the patchwork in the middle barely stretches.
-local GALVANIZED = { 0.5, 0.53, 0.55 }
-local RUST_RED = { 0.45, 0.24, 0.14 }
-local PANEL_W, PANEL_H = 512, 320
-local panel = Canvas.new(PANEL_W, PANEL_H)
-local backing = plate(4, 4, PANEL_W - 4, PANEL_H - 4, 12, 1)
-paintPlate(panel, backing, DARK_STEEL, 0.35)
--- Each patch: corners, colour, rust, and whether it is hazard-striped.
-local patches = {
-	{ 18, 16, 230, 150, GALVANIZED, 0.15 },
-	{ 200, 22, 494, 130, darker(CRATE_GREEN, 0.15), 0.25 },
-	{ 24, 160, 180, 302, RUST_RED, 0.6 },
-	{ 170, 120, 380, 296, DARK_STEEL, 0.3 },
-	{ 360, 140, 496, 300, GALVANIZED, 0.2 },
-	{ 400, 96, 476, 160, HAZARD_YELLOW, 0.1, true },
-}
-for i, patch in patches do
-	local shape = { rect = { patch[1], patch[2], patch[3], patch[4] }, radius = 4, wobble = 2, seed = 10 + i }
-	panel:shadow(shape, 2, 3, 5, 0.55)
-	if patch[7] then
-		panel:fill(shape, HAZARD_YELLOW)
-		panel:stripes(shape, HAZARD_YELLOW, RUBBER_BLACK, 10, -45)
-		panel:brushwork(shape, 1, 0.6, 0)
-		panel:rust(shape, patch[6], 10, shape.seed)
-		panel:grime(shape, 0.5)
-		panel:bevel(shape, 4, { 1, 0.95, 0.7 }, INK, 0.7)
-		panel:rim(shape, 2, INK)
-	else
-		paintPlate(panel, shape, patch[5], patch[6])
-	end
-	-- Bolts in each patch's corners hold it to the backing.
-	bolts(panel, {
-		{ patch[1] + 9, patch[2] + 9 },
-		{ patch[3] - 9, patch[2] + 9 },
-		{ patch[1] + 9, patch[4] - 9 },
-		{ patch[3] - 9, patch[4] - 9 },
-	})
-end
-bolts(panel, { { 14, 14 }, { PANEL_W - 14, 14 }, { 14, PANEL_H - 14 }, { PANEL_W - 14, PANEL_H - 14 } })
-local PANEL_SLICE = { 40, 40, 40, 40 }
+-- Panel: the window's backing, rusty dark steel with corner bolts. It
+-- stays dull so the scrap plates bolted onto it carry the layout.
+local panel = Canvas.new(128, 128)
+paintPlate(panel, plate(4, 4, 124, 124, 10, 1), DARK_STEEL, 0.35)
+bolts(panel, { { 16, 16 }, { 112, 16 }, { 16, 112 }, { 112, 112 } })
+local PANEL_SLICE = { 28, 28, 28, 28 }
 ui.element("Panel", panel, { slice = PANEL_SLICE })
+
+-- Scrap plates: bolted onto a panel to group its content. The metal says
+-- how much attention a group gets, from quiet to loud:
+--   PlateBacking  near the panel's own steel, for secondary info
+--   PlateContent  galvanized, for the main content
+--   PlateAction   crate green, behind what the player should do next
+--   PlateWarning  hazard stripes, for the one thing that must be seen
+local GALVANIZED = { 0.5, 0.53, 0.55 }
+local PLATE_SLICE = { 20, 20, 20, 20 }
+local function scrapPlate(name, color, rustAmount, hazard)
+	local canvas = Canvas.new(96, 96)
+	local shape = { rect = { 4, 3, 90, 90 }, radius = 4, wobble = 2, seed = #name }
+	canvas:shadow(shape, 2, 3, 4, 0.6)
+	if hazard then
+		canvas:fill(shape, HAZARD_YELLOW)
+		canvas:stripes(shape, HAZARD_YELLOW, RUBBER_BLACK, 10, -45)
+		canvas:brushwork(shape, 1, 0.6, 0)
+		canvas:rust(shape, rustAmount, 10, shape.seed)
+		canvas:grime(shape, 0.5)
+		canvas:bevel(shape, 4, { 1, 0.95, 0.7 }, INK, 0.7)
+		canvas:rim(shape, 2, INK)
+	else
+		paintPlate(canvas, shape, color, rustAmount)
+	end
+	bolts(canvas, { { 13, 12 }, { 81, 12 }, { 13, 81 }, { 81, 81 } })
+	ui.element(name, canvas, { slice = PLATE_SLICE })
+	return canvas
+end
+local plateBacking = scrapPlate("PlateBacking", darker(DARK_STEEL, 0.25), 0.4)
+local plateContent = scrapPlate("PlateContent", GALVANIZED, 0.15)
+local plateAction = scrapPlate("PlateAction", darker(CRATE_GREEN, 0.1), 0.2)
+local plateWarning = scrapPlate("PlateWarning", HAZARD_YELLOW, 0.1, true)
 
 -- Buttons: galvanized steel, warmer on hover, pushed in when pressed.
 local function button(name, color, pressed)
@@ -105,7 +101,7 @@ local function button(name, color, pressed)
 	return canvas
 end
 local normal = button("Button", STEEL, false)
-local hover = button("ButtonHover", lighter(STEEL, 0.25), false)
+button("ButtonHover", lighter(STEEL, 0.25), false)
 local pressed = button("ButtonPressed", darker(STEEL, 0.2), true)
 
 -- Action button: crate green, for buy and confirm.
@@ -159,19 +155,23 @@ for _, rarity in { "Common", "Uncommon", "Rare", "Legendary" } do
 	table.insert(slots, slot(`Slot{rarity}`, RARITY[rarity]))
 end
 
--- Preview: a mock shop window with each element stretched to use size,
--- so the 9-slices get checked.
+-- Preview: a mock shop window. Plates order the eye: the warning first,
+-- then the action, then the item grid, then the secondary stats.
 local preview = Canvas.new(640, 400, DIRT[1], DIRT[2], DIRT[3], 1)
 preview:brushwork({ rect = { 0, 0, 640, 400 } }, 1.4, 2, 10)
 preview:shadow(plate(40, 30, 600, 370, 10, 0), 6, 8, 10, 0.6)
 preview:drawSliced(panel, PANEL_SLICE, 40, 30, 560, 340)
 preview:drawSliced(header, { 12, 12, 12, 12 }, 60, 48, 520, 40)
+preview:drawSliced(plateContent, PLATE_SLICE, 58, 98, 524, 120)
 for i, canvas in slots do
-	preview:draw(canvas, 72 + (i - 1) * 100, 112, 88, 88)
+	preview:draw(canvas, 72 + (i - 1) * 100, 114, 88, 88)
 end
-preview:drawSliced(trough, { 10, 10, 10, 10 }, 72, 228, 496, 28)
-preview:drawSliced(fill, { 8, 8, 8, 8 }, 72, 228, 330, 28)
-for i, canvas in { action, normal, hover, pressed } do
-	preview:drawSliced(canvas, { 16, 16, 16, 16 }, 72 + (i - 1) * 126, 290, 116, 52)
-end
+preview:drawSliced(plateBacking, PLATE_SLICE, 58, 226, 320, 128)
+preview:drawSliced(trough, { 10, 10, 10, 10 }, 76, 246, 284, 26)
+preview:drawSliced(fill, { 8, 8, 8, 8 }, 76, 246, 180, 26)
+preview:drawSliced(normal, { 16, 16, 16, 16 }, 76, 288, 134, 48)
+preview:drawSliced(pressed, { 16, 16, 16, 16 }, 226, 288, 134, 48)
+preview:drawSliced(plateWarning, PLATE_SLICE, 390, 226, 192, 40)
+preview:drawSliced(plateAction, PLATE_SLICE, 390, 270, 192, 84)
+preview:drawSliced(action, { 16, 16, 16, 16 }, 406, 286, 160, 52)
 ui.preview(preview)
