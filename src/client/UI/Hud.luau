@@ -101,21 +101,21 @@ end
 
 -- The round strip is one slim row: phase on the left, time left on the
 -- right. A raid takes it over in red rather than stacking a second banner.
-local ROUND_STRIP = Vector2.new(220, 36)
+local ROUND_STRIP = Vector2.new(170, 28)
 
 -- The survivors count is a small number beside the strip, so it gets a
 -- shrunk currency plate with the icon at the strip's height.
 local function roundCount(): (Frame, TextLabel)
 	local holder = Instance.new("Frame")
 	holder.BackgroundTransparency = 1
-	holder.Size = UDim2.fromOffset(74, ROUND_STRIP.Y)
+	holder.Size = UDim2.fromOffset(54, ROUND_STRIP.Y)
 	local plate = ScrapKit.image("Counter", {
-		Size = UDim2.fromOffset(56, ROUND_STRIP.Y),
-		Position = UDim2.fromOffset(18, 0),
+		Size = UDim2.fromOffset(40, ROUND_STRIP.Y),
+		Position = UDim2.fromOffset(14, 0),
 	})
 	plate.Parent = holder
 	ScrapKit.image("IconBot", {
-		Size = UDim2.fromOffset(48, 48),
+		Size = UDim2.fromOffset(34, 34),
 		AnchorPoint = Vector2.new(0, 0.5),
 		Position = UDim2.fromScale(0, 0.5),
 		BackgroundTransparency = 1,
@@ -123,8 +123,8 @@ local function roundCount(): (Frame, TextLabel)
 	}).Parent =
 		holder
 	local label = ScrapKit.label("0", {
-		Size = UDim2.new(0, 20, 1, -8),
-		Position = UDim2.fromOffset(32, 4),
+		Size = UDim2.new(0, 16, 1, -4),
+		Position = UDim2.fromOffset(24, 2),
 	})
 	label.Parent = plate
 	return holder, label
@@ -188,7 +188,7 @@ function Hud.new(parent: Instance): Hud
 
 	local survivors, survivorsLabel = roundCount()
 	-- Just right of the round strip, so the round's state reads as one row.
-	survivors.Position = UDim2.new(0.5, ROUND_STRIP.X / 2 + 4, 0, margin)
+	survivors.Position = UDim2.new(0.5, ROUND_STRIP.X / 2 + 3, 0, margin)
 	survivors.Visible = false
 	survivors.Parent = gui
 
@@ -222,22 +222,22 @@ function Hud.new(parent: Instance): Hud
 		Position = UDim2.new(0.5, 0, 0, margin),
 	})
 	local bannerAlert = ScrapKit.image("IconAlert", {
-		Size = UDim2.fromOffset(28, 28),
-		Position = UDim2.fromOffset(6, 4),
+		Size = UDim2.fromOffset(20, 20),
+		Position = UDim2.fromOffset(5, 4),
 		BackgroundTransparency = 1,
 		Visible = false,
 	})
 	bannerAlert.Parent = banner
 	local bannerLabel = ScrapKit.label("", {
-		Size = UDim2.new(1, -70, 1, -8),
-		Position = UDim2.fromOffset(10, 4),
+		Size = UDim2.new(1, -50, 1, -6),
+		Position = UDim2.fromOffset(8, 3),
 		TextXAlignment = Enum.TextXAlignment.Left,
 	})
 	bannerLabel.Parent = banner
 	local timerLabel = ScrapKit.label("", {
-		Size = UDim2.new(0, 48, 1, -8),
+		Size = UDim2.new(0, 36, 1, -6),
 		AnchorPoint = Vector2.new(1, 0),
-		Position = UDim2.new(1, -10, 0, 4),
+		Position = UDim2.new(1, -8, 0, 3),
 		TextXAlignment = Enum.TextXAlignment.Right,
 	})
 	timerLabel.Parent = banner
@@ -279,8 +279,8 @@ function Hud._drawBanner(self: Hud)
 	ScrapKit.setImage(self._banner, if raider then "BannerRaid" else PHASE_BANNERS[self._phase])
 	self._bannerLabel.Text = if raider then `{raider} IS RAIDING!` else PHASE_TITLES[self._phase]
 	self._bannerAlert.Visible = raider ~= nil
-	self._bannerLabel.Position = UDim2.fromOffset(if raider then 38 else 10, 4)
-	self._bannerLabel.Size = UDim2.new(1, if raider then -98 else -70, 1, -8)
+	self._bannerLabel.Position = UDim2.fromOffset(if raider then 28 else 8, 3)
+	self._bannerLabel.Size = UDim2.new(1, if raider then -70 else -50, 1, -6)
 end
 
 function Hud.setPhase(self: Hud, phase: Phase)
