@@ -2,10 +2,10 @@
 --[[
 	Hud
 
-	The always-on screen overlay, laid out like a Roblox simulator: scrap and
-	survivors stacked on the left edge with oversized icons, a 2x2 grid of
-	square menu buttons under them, the round phase banner, countdown and raid
-	alert top center, and health along the bottom. It only draws; HudController
+	The always-on screen overlay, laid out like a Roblox simulator: scrap on the
+	left edge with an oversized icon, a 2x2 grid of square menu buttons under
+	it, the round phase banner, countdown and raid alert top center, the
+	survivors count top right as round info rather than a stat, and health along the bottom. It only draws; HudController
 	decides what to show and when, so each value has one owner.
 
 	Public API:
@@ -40,7 +40,7 @@ export type Hud = typeof(setmetatable(
 		_bannerLabel: TextLabel,
 		_setTimer: (number) -> (),
 		_timerLabel: TextLabel,
-		_survivors: ImageLabel,
+		_survivors: Frame,
 		_survivorsLabel: TextLabel,
 		_raidAlert: ImageLabel,
 		_raidLabel: TextLabel,
@@ -142,18 +142,19 @@ function Hud.new(parent: Instance): Hud
 	leftColumn.BackgroundTransparency = 1
 	leftColumn.AnchorPoint = Vector2.new(0, 0.5)
 	leftColumn.Position = UDim2.new(0, margin, 0.5, 0)
-	leftColumn.Size = UDim2.fromOffset(240, 300)
+	leftColumn.Size = UDim2.fromOffset(240, 300 - CURRENCY_PLATE.Y - CURRENCY_GAP)
 	leftColumn.Parent = gui
 
 	local scrap, scrapLabel = currency("IconScrap")
 	scrap.Parent = leftColumn
 
 	local survivors, survivorsLabel = currency("IconBot")
-	survivors.Position = UDim2.fromOffset(0, CURRENCY_PLATE.Y + CURRENCY_GAP)
+	survivors.AnchorPoint = Vector2.new(1, 0)
+	survivors.Position = UDim2.new(1, -margin, 0, margin)
 	survivors.Visible = false
-	survivors.Parent = leftColumn
+	survivors.Parent = gui
 
-	local menuTop = 2 * (CURRENCY_PLATE.Y + CURRENCY_GAP)
+	local menuTop = CURRENCY_PLATE.Y + CURRENCY_GAP
 	-- The buttons exist before the Hud does, so they call through this table,
 	-- which setMenuHandler fills in later.
 	local menuHandler = { open = function(_menu: Menu) end }
