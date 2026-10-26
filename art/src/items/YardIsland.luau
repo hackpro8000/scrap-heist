@@ -224,7 +224,7 @@ local function shade(entries, occluders, gradient: number?)
 		entry.mesh:paintShading(entry.image, {
 			highlight = 0.5,
 			highlightRamp = 0.3,
-			shadow = 1.5,
+			shadow = 0.75,
 			gradient = gradient or GRADIENT,
 			blend = 1,
 			brushed = true,
