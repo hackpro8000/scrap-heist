@@ -6,7 +6,7 @@
 	left edge with an oversized icon, a 2x2 grid of square menu buttons under
 	it, one slim round strip top center (phase and time left, taken over in
 	red by a raid alert) with the survivors count beside it since that is round
-	info rather than a stat, and health along the bottom. Everything is packed tight so the arena
+	info rather than a stat, and health in the top right corner. Everything is packed tight so the arena
 	stays in view. It only draws; HudController
 	decides what to show and when, so each value has one owner.
 
@@ -208,10 +208,12 @@ function Hud.new(parent: Instance): Hud
 		button.Parent = leftColumn
 	end
 
-	-- Bottom center: health, wide so it reads from the corner of the eye.
+	-- Top right: health, level with the round strip so the top row holds
+	-- everything the player glances at mid-fight.
 	local health, setHealth = ScrapKit.bar("BarFillHealth", "BarTroughHealth")
-	health.AnchorPoint = Vector2.new(0.5, 1)
-	health.Position = UDim2.new(0.5, 0, 1, -margin)
+	health.Size = UDim2.fromOffset(200, ROUND_STRIP.Y)
+	health.AnchorPoint = Vector2.new(1, 0)
+	health.Position = UDim2.new(1, -margin, 0, margin)
 	health.Parent = gui
 
 	-- Top center: the round strip. The alert icon only shows during a raid,
