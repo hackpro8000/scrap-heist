@@ -5,8 +5,9 @@
 -- ending lower than the last. The pillars of a tier fit edge to edge like
 -- basalt columns, with a crevice down each shared edge, and each is a
 -- stack of blocks. The model is one closed outer shell over the columns,
--- with a soil lip draped over the rim, meshed as rings of vertices. Top at z = 0.7.
-useTexelDensity(8)
+-- with a soil lip draped over the rim, meshed as rings of vertices. Top at z = 0.7,
+-- sinking into the arena bowl in the middle.
+useTexelDensity(16)
 local RADIUS = 61
 local GROUND = { 0.3, 0.27, 0.22 }
 local STRATA = { { 0.5, 0.4, 0.27 }, { 0.36, 0.35, 0.34 }, { 0.48, 0.3, 0.22 } }
@@ -41,19 +42,35 @@ end
 
 -- The island's wobbly outline, as a radius scale per angle.
 local function outlineScale(angle: number): number
-	-- An octagon, softened at the corners, with a gentle wobble.
-	local sector = (angle % (math.pi / 4)) - math.pi / 8
-	local octagon = math.cos(math.pi / 8) / math.cos(sector * 0.85)
-	return octagon + 0.5 * 0.07 * math.sin(3 * angle + 0.6) + 0.05 * math.sin(5 * angle + 2.1) + 0.03 * math.sin(9 * angle)
+	-- The arena's octagon, faces at 0 and 45 degrees, its corners softened,
+	-- with a gentle wobble.
+	local sector = (angle + math.pi / 8) % (math.pi / 4) - math.pi / 8
+	local wobble = 0.07 * math.sin(3 * angle + 0.6) + 0.05 * math.sin(5 * angle + 2.1) + 0.03 * math.sin(9 * angle)
+	return 1 / math.cos(sector * 0.85) + 0.2 * wobble
 end
+
+-- The arena on top, matching ServerMap: a flat ring road from ROAD_INNER
+-- out, banking down to the sunken floor inside ARENA_FLOOR. Radii are
+-- octagon radii, measured to the middle of a face.
+local ROAD_INNER, ARENA_FLOOR, ARENA_DROP = 50, 36, 5.5
+local function octagonRadius(x: number, y: number): number
+	local sector = (math.atan2(y, x) + math.pi / 8) % (math.pi / 4) - math.pi / 8
+	return math.sqrt(x * x + y * y) * math.cos(sector)
+end
+local function bowlDrop(radius: number): number
+	return ARENA_DROP * (1 - math.clamp((radius - ARENA_FLOOR) / (ROAD_INNER - ARENA_FLOOR), 0, 1))
+end
+-- The top's rings, by octagon radius: the road's inner edge, the bank, the
+-- floor's edge, then the floor.
+local BOWL_RINGS = { 55, ROAD_INNER, 46.5, 43, 39.5, ARENA_FLOOR, 24, 12 }
 
 -- Each tier is a ring of pillars: { reach, pillar count, bottom, seed }.
 -- Lower tiers sit further in, so each shows below the one above it.
 local CAP_TOP = 0.7
 local TIERS = {
-	{ RADIUS * 0.84, 22, -17, 11 },
-	{ RADIUS * 0.58, 16, -30, 23 },
-	{ RADIUS * 0.34, 10, -42, 37 },
+	{ RADIUS * 1.02, 22, -17, 11 },
+	{ RADIUS * 0.72, 16, -30, 23 },
+	{ RADIUS * 0.43, 10, -42, 37 },
 }
 -- Pillar layout per tier. The pillars tile their tier's ring like basalt
 -- columns: each owns a slice of the outline, and neighbours share the
@@ -218,7 +235,7 @@ end
 local ANGLES, STEP, FLOOR, LIP = 720, 0.4, -52, 0.6
 local RIM_JAGGED, RIM_POKE = 0.166, 0.06
 local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
-local WARP, CAP_RINGS = 1.4, 12
+local WARP = 1.4
 -- Rows are finer through the soil lip so its edge doesn't step.
 local LIP_STEP, LIP_BAND = 0.08, 3.5
 -- The shell and its shading are cached under a key hashing every line above
@@ -311,16 +328,21 @@ chunkedPart("Island", nil, GROUND, function(mesh)
 			mesh:face({ upper[j], lower[l], upper[l] })
 		end
 	end
-	-- The top: dead flat rings shrinking from the rim to the centre.
+	-- The top: octagonal rings from the rim in to the centre, flat under
+	-- the road and dropping into the arena bowl.
 	local outer = rings[1]
-	for n = 1, CAP_RINGS do
-		local s = 1 - n / CAP_RINGS
+	for n = 1, #BOWL_RINGS + 1 do
+		local radius = BOWL_RINGS[n]
 		local inner = {}
-		for j = 0, ANGLES - 1 do
-			local x, y = ringPoint(1, j, math.max(rows[1][j], 0) * s)
-			inner[j] = if n == CAP_RINGS then nil else mesh:exactVertex(x, y, CAP_TOP)
+		if radius then
+			for j = 0, ANGLES - 1 do
+				local angle = 2 * math.pi * j / ANGLES
+				local sector = (angle + math.pi / 8) % (math.pi / 4) - math.pi / 8
+				local r = math.min(radius / math.cos(sector), math.max(rows[1][j], 0) - 1)
+				inner[j] = mesh:exactVertex(r * math.cos(angle), r * math.sin(angle), CAP_TOP - bowlDrop(radius))
+			end
 		end
-		local centre = if n == CAP_RINGS then mesh:exactVertex(0, 0, CAP_TOP) else nil
+		local centre = if radius then nil else mesh:exactVertex(0, 0, CAP_TOP - ARENA_DROP)
 		for j = 0, ANGLES - 1 do
 			local l = (j + 1) % ANGLES
 			if centre then
@@ -345,7 +367,8 @@ end, 45, function(x, y, z)
 	local wa = math.atan2(y, x) + 0.02 * math.noise(x / 5, y / 5, z / 5 + 17)
 	local _, pillar = wall(wa, wz)
 	-- The flat top keeps its true height so it paints as even ground.
-	local depth = if z > CAP_TOP - 0.01 then 0 else math.min(wz, z) - CAP_TOP
+	local top = CAP_TOP - bowlDrop(octagonRadius(x, y))
+	local depth = if z > top - 0.01 then 0 else math.min(wz, z) - CAP_TOP
 	return islandPaint(x, y, depth, if pillar then pillar.seed else nil, if pillar then (blockAt(pillar, wz)).tint else nil)
 end)
 
