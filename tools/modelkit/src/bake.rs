@@ -449,7 +449,7 @@ const AO_SAMPLES: u32 = 16;
 // AO is soft, so it's baked at a fraction of the texture's resolution.
 const AO_DIVISOR: usize = 4;
 const EDGE_RADIUS: f64 = 0.1;
-const CURVATURE_GAIN: f64 = 0.15;
+const CURVATURE_GAIN: f64 = 0.4;
 // Brush strokes: (reach, frequency, thin gain, wide gain, strength).
 const STROKES: [(f64, f64, f64, f64, f64); 3] = [(1.0, 3.0, 6.0, 24.0, 0.8), (2.2, 5.0, 3.0, 14.0, 0.6), (0.5, 9.0, 8.0, 36.0, 0.7)];
 
