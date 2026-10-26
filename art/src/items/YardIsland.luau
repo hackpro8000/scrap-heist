@@ -4,7 +4,7 @@
 -- ending lower than the last. The pillars of a tier fit edge to edge like
 -- basalt columns, with a crevice down each shared edge, and each is a
 -- stack of blocks. The model is one closed outer shell over the columns,
--- with a soil lip draped over the rim, meshed as a solid volume. Top at z = 0.7.
+-- with a soil lip draped over the rim, meshed as rings of vertices. Top at z = 0.7.
 useTexelDensity(16)
 local RADIUS = 20
 local GROUND = { 0.3, 0.27, 0.22 }
@@ -208,14 +208,13 @@ local function drape(angle: number): number
 	return 0.35 + 1.1 * math.clamp(n + 0.4, 0, 1)
 end
 
--- The island is a solid volume, meshed by adaptive dual contouring. The column layout
--- above gives the wall's reach per angle and height, sampled once into a
--- table; the volume is everything inside that reach and under the top,
--- bent by a slow 3D warp so ledges tilt and curl under each other.
-local ANGLES, STEP, FLOOR, LIP = 480, 0.15, -25, 0.35
+-- The column layout above gives the wall's reach per angle and height,
+-- sampled once into a table and meshed directly as rings of vertices, bent
+-- by a slow 3D warp so ledges tilt and curl under each other.
+local ANGLES, STEP, FLOOR, LIP = 360, 0.2, -25, 0.35
 local RIM_JAGGED, RIM_POKE = 0.166, 0.06
 local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
-local CELL, FINE, WARP, FLAT = 0.6, 0.15, 0.7, 0.03
+local WARP, CAP_RINGS = 0.7, 8
 -- The shell and its shading are cached under a key hashing every line above
 -- "-- cached above", so changes below it skip the rebuild.
 local function shade(entries, occluders, gradient: number?)
@@ -268,281 +267,67 @@ local function reachTable()
 	return rows
 end
 
--- Signed distance-ish field: negative inside the island.
-local function islandField(rows)
-	return function(x: number, y: number, z: number): number
-		local flat = math.sqrt(x * x + y * y)
-		-- The warp shifts which height and angle a point reads, so block
-		-- ledges wander and undercut instead of running dead level.
-		local wz = z + WARP * math.noise(x / 7, y / 7, z / 9 + 5)
-		local wa = math.atan2(y, x) + 0.02 * math.noise(x / 5, y / 5, z / 5 + 17)
-		local u = (CAP_TOP - wz) / STEP + 1
-		local v = (wa % (2 * math.pi)) / (2 * math.pi) * ANGLES
-		local i = math.clamp(math.floor(u), 1, #rows)
-		local i2 = math.min(i + 1, #rows)
-		local fu = math.clamp(u - i, 0, 1)
-		local j = math.floor(v) % ANGLES
-		local fv = v - math.floor(v)
-		local l = (j + 1) % ANGLES
-		local r0 = rows[i][j] + (rows[i][l] - rows[i][j]) * fv
-		local r1 = rows[i2][j] + (rows[i2][l] - rows[i2][j]) * fv
-		local reach = if u < 1 or u > #rows + 1 then -1 else r0 + (r1 - r0) * fu
-		return math.max(flat - reach, z - CAP_TOP)
-	end
-end
-
 local shell = model.cached(CACHE_KEY, function()
 chunkedPart("Island", nil, GROUND, function(mesh)
 	local rows = reachTable()
-	local field = islandField(rows)
-	local extent = 0
-	for _, row in rows do
+	-- The wall is a grid wrapped round the island: one ring of vertices per
+	-- row of the reach table, so every face points outward by construction.
+	-- Where a column has no rock the ring pulls in to the axis, closing the
+	-- underside. Rows are bent by the same slow warp the paint reads, faded
+	-- out toward the top so the rim stays level.
+	local function ringPoint(row: number, j: number, r: number)
+		local zr = CAP_TOP - (row - 1) * STEP
+		local angle = 2 * math.pi * j / ANGLES
+		local x, y = r * math.cos(angle), r * math.sin(angle)
+		-- The warp reads the outline, not the vertex, so a column shifts as
+		-- one and its rows never cross where the reach jumps.
+		local wx, wy = RADIUS * math.cos(angle), RADIUS * math.sin(angle)
+		local fade = math.clamp((CAP_TOP - zr) / 1.5, 0, 1)
+		return x, y, zr - fade * WARP * math.noise(wx / 7, wy / 7, zr / 9 + 5)
+	end
+	local rings = {}
+	for row, reach in rows do
+		local ring = {}
 		for j = 0, ANGLES - 1 do
-			extent = math.max(extent, row[j])
+			local x, y, z = ringPoint(row, j, math.max(reach[j], 0))
+			ring[j] = if row == 1 then mesh:exactVertex(x, y, z) else mesh:vertex(x, y, z)
+		end
+		rings[row] = ring
+	end
+	for row = 1, #rings - 1 do
+		local upper, lower = rings[row], rings[row + 1]
+		for j = 0, ANGLES - 1 do
+			local l = (j + 1) % ANGLES
+			mesh:face({ upper[j], lower[j], lower[l] })
+			mesh:face({ upper[j], lower[l], upper[l] })
 		end
 	end
-	extent += WARP + 2 * CELL
-	local bottom = CAP_TOP - (#rows + 1) * STEP - WARP - 2 * CELL
-	-- Sample on a coarse grid, then only refine near the surface: the fine
-	-- grid is read lazily through `sample`.
-	local ratio = math.round(CELL / FINE)
-	local nx = (math.ceil(2 * extent / CELL) + 1) * ratio
-	local nz = (math.ceil((CAP_TOP + 2 * CELL - bottom) / CELL) + 1) * ratio
-	local function at(i, j, k) return -extent + i * FINE, -extent + j * FINE, bottom + k * FINE end
-	local function index(i, j, k) return (k * nx + j) * nx + i end
-	local values = {}
-	local function sample(i, j, k)
-		local key = index(i, j, k)
-		local v = values[key]
-		if v == nil then
-			v = field(at(i, j, k))
-			values[key] = v
+	-- The top: dead flat rings shrinking from the rim to the centre.
+	local outer = rings[1]
+	for n = 1, CAP_RINGS do
+		local s = 1 - n / CAP_RINGS
+		local inner = {}
+		for j = 0, ANGLES - 1 do
+			local x, y = ringPoint(1, j, math.max(rows[1][j], 0) * s)
+			inner[j] = if n == CAP_RINGS then nil else mesh:exactVertex(x, y, CAP_TOP)
 		end
-		return v
-	end
-	local function gradient(x, y, z)
-		local h = 0.05
-		local gx = field(x + h, y, z) - field(x - h, y, z)
-		local gy = field(x, y + h, z) - field(x, y - h, z)
-		local gz = field(x, y, z + h) - field(x, y, z - h)
-		local len = math.sqrt(gx * gx + gy * gy + gz * gz)
-		if len < 1e-9 then return 0, 0, 0 end
-		return gx / len, gy / len, gz / len
-	end
-
-	-- Hermite data: every edge the surface crosses gives a point and a normal,
-	-- shared by the four cells around it.
-	local crossings = {}
-	local AXES = { { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } }
-	local function crossing(i, j, k, axis)
-		local key = index(i, j, k) * 3 + axis
-		local found = crossings[key]
-		if found ~= nil then return found end
-		local o = AXES[axis]
-		local da, db = sample(i, j, k), sample(i + o[1], j + o[2], k + o[3])
-		found = false
-		if (da < 0) ~= (db < 0) then
-			local f = da / (da - db)
-			local x, y, z = at(i + o[1] * f, j + o[2] * f, k + o[3] * f)
-			local gx, gy, gz = gradient(x, y, z)
-			found = { x, y, z, gx, gy, gz }
-		end
-		crossings[key] = found
-		return found
-	end
-
-	-- A quadric error function: the summed squared distance to each
-	-- crossing's tangent plane, plus the crossings' mass point.
-	local function newQef()
-		return { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-	end
-	local function addPlane(q, c)
-		local px, py, pz = c[4], c[5], c[6]
-		local d = px * c[1] + py * c[2] + pz * c[3]
-		q[1] += px * px; q[2] += px * py; q[3] += px * pz
-		q[4] += py * py; q[5] += py * pz; q[6] += pz * pz
-		q[7] += px * d; q[8] += py * d; q[9] += pz * d
-		q[10] += d * d
-		q[11] += c[1]; q[12] += c[2]; q[13] += c[3]; q[14] += 1
-	end
-	local function addQef(q, other)
-		for n = 1, 14 do q[n] += other[n] end
-	end
-	-- Minimise the quadric, leaning toward the mass point where the planes
-	-- leave it free, kept inside the (slightly grown) box. Returns the point
-	-- and its mean squared error.
-	local function solve(q, lo, hi)
-		local count = q[14]
-		local mx, my, mz = q[11] / count, q[12] / count, q[13] / count
-		local lambda = 0.02 * count
-		local a, b, c, d, e, f = q[1] + lambda, q[2], q[3], q[4] + lambda, q[5], q[6] + lambda
-		local rx, ry, rz = q[7] + lambda * mx, q[8] + lambda * my, q[9] + lambda * mz
-		local det = a * (d * f - e * e) - b * (b * f - e * c) + c * (b * e - d * c)
-		local x, y, z = mx, my, mz
-		if math.abs(det) > 1e-12 then
-			x = (rx * (d * f - e * e) - b * (ry * f - e * rz) + c * (ry * e - d * rz)) / det
-			y = (a * (ry * f - e * rz) - rx * (b * f - e * c) + c * (b * rz - ry * c)) / det
-			z = (a * (d * rz - ry * e) - b * (b * rz - ry * c) + rx * (b * e - d * c)) / det
-		end
-		x = math.clamp(x, lo[1], hi[1])
-		y = math.clamp(y, lo[2], hi[2])
-		z = math.clamp(z, lo[3], hi[3])
-		local err = x * (q[1] * x + q[2] * y + q[3] * z) + y * (q[2] * x + q[4] * y + q[5] * z)
-			+ z * (q[3] * x + q[5] * y + q[6] * z) - 2 * (x * q[7] + y * q[8] + z * q[9]) + q[10]
-		return x, y, z, math.max(err, 0) / count
-	end
-	local function box(i, j, k, size)
-		local x, y, z = at(i - 0.5, j - 0.5, k - 0.5)
-		local span = (size + 1) * FINE
-		return { x, y, z }, { x + span, y + span, z + span }
-	end
-
-	-- Fine cells the surface crosses, found only inside coarse cells near it.
-	local CORNERS = { { 0, 0, 0 }, { 1, 0, 0 }, { 0, 1, 0 }, { 1, 1, 0 }, { 0, 0, 1 }, { 1, 0, 1 }, { 0, 1, 1 }, { 1, 1, 1 } }
-	local EDGES = {
-		{ 0, 0, 0, 1 }, { 0, 1, 0, 1 }, { 0, 0, 1, 1 }, { 0, 1, 1, 1 },
-		{ 0, 0, 0, 2 }, { 1, 0, 0, 2 }, { 0, 0, 1, 2 }, { 1, 0, 1, 2 },
-		{ 0, 0, 0, 3 }, { 1, 0, 0, 3 }, { 0, 1, 0, 3 }, { 1, 1, 0, 3 },
-	}
-	local cells = {}
-	local surface = {}
-	-- The fine cell at (i, j, k), built on first use; false if the surface
-	-- misses it. Quads also build missing neighbours here, so a stretch the
-	-- coarse band test skipped is still closed.
-	local function cellAt(i, j, k)
-		local key = index(i, j, k)
-		local node = cells[key]
-		if node ~= nil then return node end
-		local q
-		for _, e in EDGES do
-			local c = crossing(i + e[1], j + e[2], k + e[3], e[4])
-			if not c then continue end
-			q = q or newQef()
-			addPlane(q, c)
-		end
-		node = false
-		if q then
-			local lo, hi = box(i, j, k, 1)
-			local x, y, z = solve(q, lo, hi)
-			node = { qef = q, x = x, y = y, z = z, ok = true }
-			table.insert(surface, { i, j, k, node })
-		end
-		cells[key] = node
-		return node
-	end
-	local band = 1.5 * CELL
-	for ck = 0, nz - 1 - ratio, ratio do
-		for cj = 0, nx - 1 - ratio, ratio do
-			for ci = 0, nx - 1 - ratio, ratio do
-				local near = false
-				for _, o in CORNERS do
-					if math.abs(sample(ci + o[1] * ratio, cj + o[2] * ratio, ck + o[3] * ratio)) < band then
-						near = true
-						break
-					end
-				end
-				if not near then continue end
-				for k = ck, ck + ratio - 1 do
-					for j = cj, cj + ratio - 1 do
-						for i = ci, ci + ratio - 1 do
-							cellAt(i, j, k)
-						end
-					end
-				end
+		local centre = if n == CAP_RINGS then mesh:exactVertex(0, 0, CAP_TOP) else nil
+		for j = 0, ANGLES - 1 do
+			local l = (j + 1) % ANGLES
+			if centre then
+				mesh:face({ centre, outer[j], outer[l] })
+			else
+				mesh:face({ outer[j], inner[l], inner[j] })
+				mesh:face({ outer[j], outer[l], inner[l] })
 			end
 		end
+		outer = inner
 	end
-
-	-- Merge blocks of 2, 4 and 8 cells where one plane still fits them all
-	-- within FLAT; chips, cracks and corners don't fit and stay fine.
-	local level = surface
-	for _, size in { 2, 4, 8 } do
-		local blocks, nextLevel = {}, {}
-		for _, entry in level do
-			local bi, bj, bk = entry[1] // size * size, entry[2] // size * size, entry[3] // size * size
-			local key = index(bi, bj, bk)
-			local block = blocks[key]
-			if not block then
-				block = { bi, bj, bk, { qef = newQef(), ok = true, children = {} } }
-				blocks[key] = block
-				table.insert(nextLevel, block)
-			end
-			local parent, child = block[4], entry[4]
-			table.insert(parent.children, child)
-			if not child.ok then parent.ok = false end
-			addQef(parent.qef, child.qef)
-		end
-		for _, block in nextLevel do
-			local parent = block[4]
-			if parent.ok then
-				local lo, hi = box(block[1], block[2], block[3], size)
-				local x, y, z, err = solve(parent.qef, lo, hi)
-				parent.x, parent.y, parent.z = x, y, z
-				parent.ok = err < FLAT * FLAT
-			end
-			if parent.ok then
-				for _, child in parent.children do child.parent = parent end
-			end
-			parent.children = nil
-		end
-		level = nextLevel
-	end
-	local function vertexOf(node)
-		if not node then return nil end
-		while node.parent do node = node.parent end
-		if node.vertex then return node end
-		-- The top is a dead flat plane: snap onto it and skip the wobble.
-		if node.z > CAP_TOP - 0.05 then
-			node.z = CAP_TOP
-			node.vertex = mesh:exactVertex(node.x, node.y, node.z)
-		else
-			node.vertex = mesh:vertex(node.x, node.y, node.z)
-		end
-		return node
-	end
-
-	-- One quad per fine edge the surface crosses, joining the cells around
-	-- it; where merged cells meet, the quad shrinks to a triangle. Merged
-	-- vertices can fold a quad over, so each face is turned to face out
-	-- along the crossed edge: from its solid end toward its empty end.
-	local function quad(axis, out, a, b, c, d)
-		a, b, c, d = vertexOf(a), vertexOf(b), vertexOf(c), vertexOf(d)
-		if not (a and b and c and d) then return end
-		local ring = { a, b, c, d }
-		local kept = {}
-		for n = 1, 4 do
-			if ring[n] ~= ring[n % 4 + 1] then table.insert(kept, ring[n]) end
-		end
-		if #kept < 3 or (#kept == 3 and kept[1] == kept[3]) then return end
-		local normal = { 0, 0, 0 }
-		for n, p in kept do
-			local q = kept[n % #kept + 1]
-			normal[1] += (p.y - q.y) * (p.z + q.z)
-			normal[2] += (p.z - q.z) * (p.x + q.x)
-			normal[3] += (p.x - q.x) * (p.y + q.y)
-		end
-		local outward = (normal[axis] >= 0) == out
-		local verts = {}
-		for n = 1, #kept do
-			verts[n] = kept[if outward then n else #kept + 1 - n].vertex
-		end
-		mesh:face(verts)
-	end
-	-- Cells built on demand join `surface` and get their own quads in turn.
-	local n = 1
-	while n <= #surface do
-		local i, j, k = surface[n][1], surface[n][2], surface[n][3]
-		n += 1
-		if i < 1 or j < 1 or k < 1 then continue end
-		if crossing(i, j, k, 1) then
-			quad(1, sample(i, j, k) < 0, cellAt(i, j - 1, k - 1), cellAt(i, j, k - 1), cellAt(i, j, k), cellAt(i, j - 1, k))
-		end
-		if crossing(i, j, k, 2) then
-			quad(2, sample(i, j, k) < 0, cellAt(i - 1, j, k - 1), cellAt(i - 1, j, k), cellAt(i, j, k), cellAt(i, j, k - 1))
-		end
-		if crossing(i, j, k, 3) then
-			quad(3, sample(i, j, k) < 0, cellAt(i - 1, j - 1, k), cellAt(i, j - 1, k), cellAt(i, j, k), cellAt(i - 1, j, k))
-		end
+	-- The bottom: the last ring closes onto a point under the axis.
+	local last = rings[#rings]
+	local tip = mesh:vertex(0, 0, CAP_TOP - #rings * STEP)
+	for j = 0, ANGLES - 1 do
+		mesh:face({ tip, last[(j + 1) % ANGLES], last[j] })
 	end
 end, false, function(x, y, z)
 	-- Paint in the same warped space the mesh was carved from, so blocks,
