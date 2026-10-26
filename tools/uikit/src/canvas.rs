@@ -378,8 +378,9 @@ impl Canvas {
 	// Printed halftone shading: a grid of ink dots, `spacing` pixels apart and
 	// turned by `angle`, that swell toward edges facing away from the light
 	// (up-left) over `reach` pixels. `tone` adds an even base of dots.
-	pub fn halftone(&mut self, outline: &Outline, color: [f32; 3], spacing: f64, angle: f64, reach: f64, tone: f64) {
-		let (lx, ly) = (-0.6f64, -0.8f64);
+	pub fn halftone(&mut self, outline: &Outline, color: [f32; 3], spacing: f64, angle: f64, reach: f64, tone: f64, lit: bool) {
+		// Lit dots gather on edges facing the light instead of away from it.
+		let (lx, ly) = if lit { (0.6f64, 0.8f64) } else { (-0.6f64, -0.8f64) };
 		let (c, s) = (angle.cos(), angle.sin());
 		self.retint(outline, 0.0, |x, y, d, _| {
 			let (nx, ny) = outline.outward(x, y);
