@@ -2,11 +2,11 @@
 -- style as the models. Rusty dark steel panels, galvanized buttons, hazard
 -- stripes and rarity-coloured frames. Text stays with Roblox fonts.
 local DARK_STEEL = { 0.3, 0.3, 0.32 }
-local STEEL = { 0.62, 0.64, 0.66 }
+local STEEL = { 0.7, 0.72, 0.74 }
 local BARE_METAL = { 0.74, 0.73, 0.7 }
 local HAZARD_YELLOW = { 0.9, 0.72, 0.12 }
 local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
-local CRATE_GREEN = { 0.3, 0.42, 0.24 }
+local CRATE_GREEN = { 0.3, 0.6, 0.22 }
 local DIRT = { 0.42, 0.36, 0.28 }
 local INK = { 0.07, 0.06, 0.06 }
 local RARITY = {
@@ -43,9 +43,9 @@ local function paintPlate(canvas, shape, color, rustAmount)
 	if rustAmount > 0 then
 		canvas:rust(shape, rustAmount, 16, shape.seed)
 	end
-	canvas:bevel(shape, 6, lighter(color, 0.6), darker(color, 0.65), 0.9)
+	canvas:bevel(shape, 6, lighter(color, 0.7), darker(color, 0.75), 1)
 	canvas:rim(shape, 3.5, INK)
-	--	canvas:highlight(shape, lighter(color, 0.75), 3, 1.5)
+	canvas:highlight(shape, lighter(color, 0.75), 3, 1.5)
 end
 
 local function bolts(canvas, points)
@@ -82,11 +82,10 @@ panel("PanelLeaderboard", 320, 340)
 
 -- Scrap plates: bolted onto a panel to group its content. The metal says
 -- how much attention a group gets, from quiet to loud:
---   PlateBacking  near the panel's own steel, for secondary info
---   PlateContent  galvanized, for the main content
---   PlateAction   crate green, behind what the player should do next
---   PlateWarning  hazard stripes, for the one thing that must be seen
-local GALVANIZED = { 0.5, 0.53, 0.55 }
+--   backing   near-black, recessed behind grids and lists
+--   content   bright bare metal, for the main info
+--   hazard    stripes, for the one thing that must be seen
+local GALVANIZED = { 0.8, 0.79, 0.74 }
 local function scrapPlate(name, w, h, color, rustAmount, hazard)
 	local canvas = Canvas.new(w, h)
 	local shape = plate(4, 3, w - 6, h - 6, #name)
@@ -108,7 +107,9 @@ local function scrapPlate(name, w, h, color, rustAmount, hazard)
 	ui.element(name, canvas)
 	return canvas
 end
-local BACKING, CONTENT = darker(DARK_STEEL, 0.25), GALVANIZED
+-- Backing is near-black so slots and text pop; content is bright bare
+-- metal so it stands well clear of the dark panel.
+local BACKING, CONTENT = darker(DARK_STEEL, 0.6), GALVANIZED
 local plateInventoryGrid = scrapPlate("PlateInventoryGrid", 520, 394, BACKING, 0.4)
 scrapPlate("PlateInventoryDetail", 216, 394, CONTENT, 0.15)
 scrapPlate("PlateTradeOffer", 456, 330, BACKING, 0.4)
@@ -194,7 +195,7 @@ for _, rarity in { "Common", "Uncommon", "Rare", "Legendary" } do
 end
 
 -- Danger button: rusty red, for cancel, decline and raid.
-local RUST_RED = { 0.66, 0.2, 0.14 }
+local RUST_RED = { 0.82, 0.2, 0.12 }
 local danger = button("ButtonDanger", RUST_RED, false)
 
 -- Close button: a small red square marked with an inked cross.
@@ -288,7 +289,7 @@ local function row(name, w, h, color)
 	ui.element(name, canvas)
 	return canvas
 end
-local ROW_A, ROW_B = darker(DARK_STEEL, 0.1), lighter(DARK_STEEL, 0.1)
+local ROW_A, ROW_B = darker(DARK_STEEL, 0.55), lighter(DARK_STEEL, 0.2)
 local rowA = row("ResultsRow", 552, 50, ROW_A)
 local rowB = row("ResultsRowAlt", 552, 50, ROW_B)
 row("LeaderboardRow", 288, 44, ROW_A)
