@@ -1,4 +1,4 @@
--- uses: GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
+-- uses: YardIsland GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Yard Layout: the template every player's 32x32 stud yard is built from,
 -- centered on the origin with the gate at the front (-y). The gate is
 -- centered in the front fence, a main path runs from it to the storage crate
@@ -6,6 +6,9 @@
 -- branch path to each. Pads are empty; machines are placed on them in game.
 -- Labels: Gate, Crate, Pad1-Pad4 (left front, left back, right front, right
 -- back), PlotMarker, plus Tile, Path and Fence pieces.
+
+-- The yard stands on a Yard Island, its top level with the yard floor.
+place("YardIsland", buildYardIsland, 0, 0, -0.7)
 
 -- The crate shows empty in the template.
 skipPart = function(name)

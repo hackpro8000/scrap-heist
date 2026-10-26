@@ -43,6 +43,23 @@ Mesh = {
 	end,
 }
 
+-- A placed item caches its shell entries, which hold meshes; the cache
+-- stores real meshes only, so unwrap them first.
+local realCached = model.cached
+model.cached = function(key, build)
+	return realCached(key, function()
+		local result = build()
+		if type(result) == "table" then
+			for _, entry in result do
+				if type(entry) == "table" and entry.mesh then
+					entry.mesh = unwrapMesh(entry.mesh)
+				end
+			end
+		end
+		return result
+	end)
+end
+
 -- Layouts override this to leave out parts, such as fill levels.
 local function skipPart(_name: string): boolean
 	return false
