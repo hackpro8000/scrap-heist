@@ -156,6 +156,7 @@ impl UserData for MeshHandle {
 				blend: get("blend", 0.0)?.clamp(0.0, 1.0),
 				gradient: get("gradient", 0.0)?.clamp(0.0, 1.0),
 				highlight_ramp: get("highlightRamp", 0.0)?.max(0.0),
+				curvature: get("curvature", 0.0)?.max(0.0),
 			};
 			let mut occluders = Vec::new();
 			if let Some(list) = options.as_ref().map(|o| o.get::<Option<Vec<AnyUserData>>>("occluders")).transpose()?.flatten() {
