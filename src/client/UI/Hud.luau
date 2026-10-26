@@ -126,22 +126,11 @@ end
 
 -- A slim striped strip with a dark pill on it whose children line up in one
 -- centred row. Returns the strip and the pill to put children in.
--- The strip art is 300x56 but the strip is far wider for its height. Slicing
--- keeps the rounded ends whole at half scale and only stretches the striped
--- middle, which the pill mostly covers anyway. ScrapKit.setImage resets the
--- scale type, so this runs again after every art swap.
-local function sliceRoundStrip(strip: ImageLabel)
-	strip.ScaleType = Enum.ScaleType.Slice
-	strip.SliceCenter = Rect.new(28, 27, 272, 29)
-	strip.SliceScale = ROUND_STRIP.Y / 56
-end
-
 local function stripWithPill(art: string): (ImageLabel, Frame)
 	local strip = ScrapKit.image(art, {
 		Size = UDim2.fromOffset(ROUND_STRIP.X, ROUND_STRIP.Y),
 		AnchorPoint = Vector2.new(0.5, 0),
 	})
-	sliceRoundStrip(strip)
 	local pill = Instance.new("Frame")
 	pill.BackgroundColor3 = ROUND_PILL_COLOR
 	pill.BackgroundTransparency = 0.15
@@ -320,7 +309,6 @@ end
 function Hud.setPhase(self: Hud, phase: Phase)
 	self._phase = phase
 	ScrapKit.setImage(self._banner, PHASE_BANNERS[phase])
-	sliceRoundStrip(self._banner)
 	self._bannerLabel.Text = PHASE_TITLES[phase]
 end
 
