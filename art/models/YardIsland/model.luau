@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-740bf3591064513f"
+local CACHE_KEY = "YardIsland-8150a75cb38261e7"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -933,6 +933,8 @@ local ANGLES, STEP, FLOOR, LIP = 360, 0.2, -25, 0.35
 local RIM_JAGGED, RIM_POKE = 0.166, 0.06
 local RIM_BLEND = (CAP_TOP - TIERS[1][3]) * 0.5
 local WARP, CAP_RINGS = 0.7, 8
+-- Rows are finer through the soil lip so its edge doesn't step.
+local LIP_STEP, LIP_BAND = 0.04, 2.5
 -- The shell and its shading are cached under a key hashing every line above
 -- "-- cached above", so changes below it skip the rebuild.
 local function shade(entries, occluders, gradient: number?)
@@ -961,7 +963,7 @@ local function reachTable()
 		local departure = wall(angle, CAP_TOP) - smooth
 		rim[j] = smooth + departure * (if departure > 0 then RIM_POKE else RIM_JAGGED)
 	end
-	local rows = {}
+	local rows, heights = {}, {}
 	local z = CAP_TOP
 	while z > FLOOR do
 		local row, any = {}, false
@@ -972,29 +974,31 @@ local function reachTable()
 			local t = math.clamp((CAP_TOP - z) / RIM_BLEND, 0, 1)
 			t = t * t * (3 - 2 * t)
 			local r = if reach > 0.3 then rim[j] + (reach - rim[j]) * t else -1
-			local depth = (CAP_TOP - z) / drape(angle)
-			if depth < 1 then
-				r = math.max(r, rim[j]) + LIP * math.clamp((1 - depth) / 0.2, 0, 1)
+			-- The lip tapers over several rows so its lower edge doesn't step.
+			local lip = math.clamp((drape(angle) - (CAP_TOP - z)) / 0.8, 0, 1)
+			if lip > 0 then
+				r = math.max(r, rim[j]) + LIP * lip * lip * (3 - 2 * lip)
 			end
 			row[j] = r
 		end
 		if not any then break end
 		table.insert(rows, row)
-		z -= STEP
+		table.insert(heights, z)
+		z -= if CAP_TOP - z < LIP_BAND then LIP_STEP else STEP
 	end
-	return rows
+	return rows, heights
 end
 
 local shell = model.cached(CACHE_KEY, function()
 chunkedPart("Island", nil, GROUND, function(mesh)
-	local rows = reachTable()
+	local rows, heights = reachTable()
 	-- The wall is a grid wrapped round the island: one ring of vertices per
 	-- row of the reach table, so every face points outward by construction.
 	-- Where a column has no rock the ring pulls in to the axis, closing the
 	-- underside. Rows are bent by the same slow warp the paint reads, faded
 	-- out toward the top so the rim stays level.
 	local function ringPoint(row: number, j: number, r: number)
-		local zr = CAP_TOP - (row - 1) * STEP
+		local zr = heights[row]
 		local angle = 2 * math.pi * j / ANGLES
 		local x, y = r * math.cos(angle), r * math.sin(angle)
 		-- The warp reads the outline, not the vertex, so a column shifts as
@@ -1043,11 +1047,11 @@ chunkedPart("Island", nil, GROUND, function(mesh)
 	end
 	-- The bottom: the last ring closes onto a point under the axis.
 	local last = rings[#rings]
-	local tip = mesh:vertex(0, 0, CAP_TOP - #rings * STEP)
+	local tip = mesh:vertex(0, 0, heights[#rings] - STEP)
 	for j = 0, ANGLES - 1 do
 		mesh:face({ tip, last[(j + 1) % ANGLES], last[j] })
 	end
-end, false, function(x, y, z)
+end, 45, function(x, y, z)
 	-- Paint in the same warped space the mesh was carved from, so blocks,
 	-- tints and strata follow the meshed ledges.
 	local wz = z + WARP * math.noise(x / 7, y / 7, z / 9 + 5)
