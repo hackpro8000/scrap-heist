@@ -1400,7 +1400,8 @@ end
 do
 	local middle = (ROAD_INNER + ROAD_OUTER) / 2
 	chunkedPart("Ring", nil, ROAD, function(mesh)
-		arc(mesh, ROAD_INNER, ROAD_OUTER, DECK - 0.6, DECK, 0, 360, true)
+		-- A touch proud of the dirt, which here sits level with the deck.
+		arc(mesh, ROAD_INNER, ROAD_OUTER, DECK - 0.6, DECK + 0.05, 0, 360, true)
 	end, nil, function(x, y)
 		local radius = octagonRadius(x, y)
 		return asphalt(radius - middle, math.atan2(y, x) * middle, (ROAD_OUTER - ROAD_INNER) / 2, 61)
