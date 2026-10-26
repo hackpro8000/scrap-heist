@@ -4,8 +4,8 @@
 
 	The always-on screen overlay, laid out like a Roblox simulator: scrap on the
 	left edge with an oversized icon, a 2x2 grid of square menu buttons under
-	it, the phase banner carrying its own countdown with the raid alert under
-	it top center, the survivors count beside the banner since it is round
+	it, one slim round strip top center (phase and time left, taken over in
+	red by a raid alert) with the survivors count beside it since that is round
 	info rather than a stat, and health along the bottom. Everything is packed tight so the arena
 	stays in view. It only draws; HudController
 	decides what to show and when, so each value has one owner.
@@ -14,7 +14,7 @@
 		Hud.new(parent): Hud
 		hud:setScrap(amount)
 		hud:setHealth(fraction)
-		hud:setPhase(phase, timeFraction)   -- phase: "Calm" | "Warning" | "Storm" | "Results"
+		hud:setPhase(phase)                 -- phase: "Calm" | "Warning" | "Storm" | "Results"
 		hud:setTimeLeft(seconds)
 		hud:setSurvivors(count?)            -- nil hides the counter
 		hud:setRaidAlert(raiderName?)       -- nil hides the alert
@@ -40,12 +40,12 @@ export type Hud = typeof(setmetatable(
 		_setHealth: (number) -> (),
 		_banner: ImageLabel,
 		_bannerLabel: TextLabel,
-		_setTimer: (number) -> (),
+		_bannerAlert: ImageLabel,
 		_timerLabel: TextLabel,
+		_phase: Phase,
+		_raiderName: string?,
 		_survivors: Frame,
 		_survivorsLabel: TextLabel,
-		_raidAlert: ImageLabel,
-		_raidLabel: TextLabel,
 		_menuHandler: { open: (Menu) -> () },
 	},
 	Hud
@@ -94,6 +94,37 @@ local function currency(icon: string, plateWidth: number): (Frame, TextLabel)
 		Size = UDim2.new(1, -52, 1, -10),
 		Position = UDim2.fromOffset(44, 5),
 		TextXAlignment = Enum.TextXAlignment.Left,
+	})
+	label.Parent = plate
+	return holder, label
+end
+
+-- The round strip is one slim row: phase on the left, time left on the
+-- right. A raid takes it over in red rather than stacking a second banner.
+local ROUND_STRIP = Vector2.new(220, 36)
+
+-- The survivors count is a small number beside the strip, so it gets a
+-- shrunk currency plate with the icon at the strip's height.
+local function roundCount(): (Frame, TextLabel)
+	local holder = Instance.new("Frame")
+	holder.BackgroundTransparency = 1
+	holder.Size = UDim2.fromOffset(74, ROUND_STRIP.Y)
+	local plate = ScrapKit.image("Counter", {
+		Size = UDim2.fromOffset(56, ROUND_STRIP.Y),
+		Position = UDim2.fromOffset(18, 0),
+	})
+	plate.Parent = holder
+	ScrapKit.image("IconBot", {
+		Size = UDim2.fromOffset(48, 48),
+		AnchorPoint = Vector2.new(0, 0.5),
+		Position = UDim2.fromScale(0, 0.5),
+		BackgroundTransparency = 1,
+		ZIndex = 2,
+	}).Parent =
+		holder
+	local label = ScrapKit.label("0", {
+		Size = UDim2.new(0, 20, 1, -8),
+		Position = UDim2.fromOffset(32, 4),
 	})
 	label.Parent = plate
 	return holder, label
@@ -155,10 +186,9 @@ function Hud.new(parent: Instance): Hud
 	local scrap, scrapLabel = currency("IconScrap", CURRENCY_PLATE.X)
 	scrap.Parent = leftColumn
 
-	local survivors, survivorsLabel = currency("IconBot", 80)
-	-- Just right of the 250 wide phase banner, centered on its height, so
-	-- the round's state reads as one group.
-	survivors.Position = UDim2.new(0.5, 128, 0, margin + 2)
+	local survivors, survivorsLabel = roundCount()
+	-- Just right of the round strip, so the round's state reads as one row.
+	survivors.Position = UDim2.new(0.5, ROUND_STRIP.X / 2 + 4, 0, margin)
 	survivors.Visible = false
 	survivors.Parent = gui
 
@@ -184,56 +214,34 @@ function Hud.new(parent: Instance): Hud
 	health.Position = UDim2.new(0.5, 0, 1, -margin)
 	health.Parent = gui
 
-	-- Top center: the phase banner with its title on the left and the time
-	-- left on the right, so one plate says both what is happening and for how
-	-- long. The countdown bar tucks under it, drawn first so the banner's
-	-- shadow overlaps its top edge.
-	local timer, setTimer = ScrapKit.bar("BarFillStorm")
-	timer.Size = UDim2.fromOffset(220, 18)
-	timer.AnchorPoint = Vector2.new(0.5, 0)
-	timer.Position = UDim2.new(0.5, 0, 0, margin + 38)
-	timer.Parent = gui
-
+	-- Top center: the round strip. The alert icon only shows during a raid,
+	-- and the title shifts right to make room for it.
 	local banner = ScrapKit.image("BannerCalm", {
-		Size = UDim2.fromOffset(250, 44),
+		Size = UDim2.fromOffset(ROUND_STRIP.X, ROUND_STRIP.Y),
 		AnchorPoint = Vector2.new(0.5, 0),
 		Position = UDim2.new(0.5, 0, 0, margin),
 	})
+	local bannerAlert = ScrapKit.image("IconAlert", {
+		Size = UDim2.fromOffset(28, 28),
+		Position = UDim2.fromOffset(6, 4),
+		BackgroundTransparency = 1,
+		Visible = false,
+	})
+	bannerAlert.Parent = banner
 	local bannerLabel = ScrapKit.label("", {
-		Size = UDim2.new(1, -90, 1, -10),
-		Position = UDim2.fromOffset(12, 5),
+		Size = UDim2.new(1, -70, 1, -8),
+		Position = UDim2.fromOffset(10, 4),
 		TextXAlignment = Enum.TextXAlignment.Left,
 	})
 	bannerLabel.Parent = banner
 	local timerLabel = ScrapKit.label("", {
-		Size = UDim2.new(0, 70, 1, -10),
+		Size = UDim2.new(0, 48, 1, -8),
 		AnchorPoint = Vector2.new(1, 0),
-		Position = UDim2.new(1, -12, 0, 5),
+		Position = UDim2.new(1, -10, 0, 4),
 		TextXAlignment = Enum.TextXAlignment.Right,
 	})
 	timerLabel.Parent = banner
 	banner.Parent = gui
-
-	-- Under the countdown: the raid alert, where the eye already is.
-	local raidAlert = ScrapKit.image("BannerRaid", {
-		Size = UDim2.fromOffset(230, 36),
-		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, margin + 60),
-		Visible = false,
-	})
-	ScrapKit.image("IconAlert", {
-		Size = UDim2.fromOffset(30, 30),
-		Position = UDim2.fromOffset(6, 3),
-		BackgroundTransparency = 1,
-	}).Parent =
-		raidAlert
-	local raidLabel = ScrapKit.label("", {
-		Size = UDim2.new(1, -48, 1, -6),
-		Position = UDim2.fromOffset(41, 3),
-		TextXAlignment = Enum.TextXAlignment.Left,
-	})
-	raidLabel.Parent = raidAlert
-	raidAlert.Parent = gui
 
 	gui.Parent = parent
 
@@ -243,16 +251,16 @@ function Hud.new(parent: Instance): Hud
 		_setHealth = setHealth,
 		_banner = banner,
 		_bannerLabel = bannerLabel,
-		_setTimer = setTimer,
+		_bannerAlert = bannerAlert,
 		_timerLabel = timerLabel,
+		_phase = "Calm" :: Phase,
+		_raiderName = nil :: string?,
 		_survivors = survivors,
 		_survivorsLabel = survivorsLabel,
-		_raidAlert = raidAlert,
-		_raidLabel = raidLabel,
 		_menuHandler = menuHandler,
 	}, Hud)
 	self:setHealth(1)
-	self:setPhase("Calm", 1)
+	self:_drawBanner()
 	return self
 end
 
@@ -264,10 +272,20 @@ function Hud.setHealth(self: Hud, fraction: number)
 	self._setHealth(fraction)
 end
 
-function Hud.setPhase(self: Hud, phase: Phase, timeFraction: number)
-	ScrapKit.setImage(self._banner, PHASE_BANNERS[phase])
-	self._bannerLabel.Text = PHASE_TITLES[phase]
-	self._setTimer(timeFraction)
+-- Shows the raid if there is one, otherwise the phase. Both setters store
+-- their value and redraw through here, so neither overwrites the other.
+function Hud._drawBanner(self: Hud)
+	local raider = self._raiderName
+	ScrapKit.setImage(self._banner, if raider then "BannerRaid" else PHASE_BANNERS[self._phase])
+	self._bannerLabel.Text = if raider then `{raider} IS RAIDING!` else PHASE_TITLES[self._phase]
+	self._bannerAlert.Visible = raider ~= nil
+	self._bannerLabel.Position = UDim2.fromOffset(if raider then 38 else 10, 4)
+	self._bannerLabel.Size = UDim2.new(1, if raider then -98 else -70, 1, -8)
+end
+
+function Hud.setPhase(self: Hud, phase: Phase)
+	self._phase = phase
+	self:_drawBanner()
 end
 
 function Hud.setTimeLeft(self: Hud, seconds: number)
@@ -281,8 +299,8 @@ function Hud.setSurvivors(self: Hud, count: number?)
 end
 
 function Hud.setRaidAlert(self: Hud, raiderName: string?)
-	self._raidAlert.Visible = raiderName ~= nil
-	self._raidLabel.Text = if raiderName then `{raiderName} IS RAIDING!` else ""
+	self._raiderName = raiderName
+	self:_drawBanner()
 end
 
 function Hud.setMenuHandler(self: Hud, handler: (Menu) -> ())
