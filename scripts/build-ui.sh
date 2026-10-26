@@ -31,4 +31,8 @@ for name in "${kits[@]}"; do
 		exit 1
 	fi
 	"${uikit}" "${dir}"
+	# The game reads each element's size and slice from a copy in src, since
+	# Rojo only syncs src.
+	mkdir -p "${root}/src/shared/UI"
+	cp "${dir}/slices.luau" "${root}/src/shared/UI/${name}Slices.luau"
 done

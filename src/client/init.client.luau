@@ -13,6 +13,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Boot = require(ReplicatedStorage.Shared.Util.Boot)
 
-local CONTROLLERS: { Boot.Entry } = {}
+local HudController = require(script.Controllers.HudController)
+
+local CONTROLLERS: { Boot.Entry } = {
+	{ name = "HudController", module = HudController },
+}
 
 Boot.run("Client", CONTROLLERS)
