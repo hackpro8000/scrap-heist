@@ -170,8 +170,8 @@ trough:bevel(troughShape, 5, INK, lighter(DIRT, 0.2), 0.8)
 ui.element("BarTrough", trough)
 
 -- Fills are painted at the full bar's width; a part-full bar squeezes them.
-local fill = Canvas.new(BAR_W - 8, BAR_H - 8)
-local fillShape = plate(0, 0, BAR_W - 8, BAR_H - 8, 6)
+local fill = Canvas.new(BAR_W - 14, BAR_H - 14)
+local fillShape = plate(0, 0, BAR_W - 14, BAR_H - 14, 6)
 handPaint(fill, fillShape, HAZARD_YELLOW)
 fill:highlight(fillShape, { 1, 0.95, 0.7 }, 2, 1.2)
 fill:bevel(fillShape, 4, { 1, 0.95, 0.7 }, darker(HAZARD_YELLOW, 0.5), 0.9)
@@ -244,8 +244,8 @@ local counter = well("Counter", 180, 44, darker(DARK_STEEL, 0.35))
 
 -- Bar fills for health and the storm timer, sharing the trough above.
 local function barFill(name, color)
-	local canvas = Canvas.new(BAR_W - 8, BAR_H - 8)
-	local shape = plate(0, 0, BAR_W - 8, BAR_H - 8, #name)
+	local canvas = Canvas.new(BAR_W - 14, BAR_H - 14)
+	local shape = plate(0, 0, BAR_W - 14, BAR_H - 14, #name)
 	handPaint(canvas, shape, color)
 	canvas:bevel(shape, 4, lighter(color, 0.5), darker(color, 0.5), 0.9)
 	ui.element(name, canvas)

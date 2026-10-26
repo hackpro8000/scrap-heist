@@ -30,7 +30,7 @@ local ScrapKit = {}
 -- Fallback frames round their corners about as much as the painted art.
 local FALLBACK_CORNER = UDim.new(0, 10)
 -- Bars inset their fill so the trough's rim shows around it.
-local BAR_INSET = 4
+local BAR_INSET = 7
 
 type Props = { [string]: any }
 
