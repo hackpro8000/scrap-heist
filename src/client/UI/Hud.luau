@@ -155,10 +155,10 @@ function Hud.new(parent: Instance): Hud
 	local scrap, scrapLabel = currency("IconScrap", CURRENCY_PLATE.X)
 	scrap.Parent = leftColumn
 
-	local survivors, survivorsLabel = currency("IconBot", 100)
-	-- Just right of the 300 wide phase banner, centered on its height, so
+	local survivors, survivorsLabel = currency("IconBot", 80)
+	-- Just right of the 250 wide phase banner, centered on its height, so
 	-- the round's state reads as one group.
-	survivors.Position = UDim2.new(0.5, 156, 0, margin + 4)
+	survivors.Position = UDim2.new(0.5, 128, 0, margin + 2)
 	survivors.Visible = false
 	survivors.Parent = gui
 
@@ -189,26 +189,26 @@ function Hud.new(parent: Instance): Hud
 	-- long. The countdown bar tucks under it, drawn first so the banner's
 	-- shadow overlaps its top edge.
 	local timer, setTimer = ScrapKit.bar("BarFillStorm")
-	timer.Size = UDim2.fromOffset(260, 20)
+	timer.Size = UDim2.fromOffset(220, 18)
 	timer.AnchorPoint = Vector2.new(0.5, 0)
-	timer.Position = UDim2.new(0.5, 0, 0, margin + 48)
+	timer.Position = UDim2.new(0.5, 0, 0, margin + 38)
 	timer.Parent = gui
 
 	local banner = ScrapKit.image("BannerCalm", {
-		Size = UDim2.fromOffset(300, 52),
+		Size = UDim2.fromOffset(250, 44),
 		AnchorPoint = Vector2.new(0.5, 0),
 		Position = UDim2.new(0.5, 0, 0, margin),
 	})
 	local bannerLabel = ScrapKit.label("", {
-		Size = UDim2.new(1, -110, 1, -12),
-		Position = UDim2.fromOffset(14, 6),
+		Size = UDim2.new(1, -90, 1, -10),
+		Position = UDim2.fromOffset(12, 5),
 		TextXAlignment = Enum.TextXAlignment.Left,
 	})
 	bannerLabel.Parent = banner
 	local timerLabel = ScrapKit.label("", {
-		Size = UDim2.new(0, 80, 1, -12),
+		Size = UDim2.new(0, 70, 1, -10),
 		AnchorPoint = Vector2.new(1, 0),
-		Position = UDim2.new(1, -14, 0, 6),
+		Position = UDim2.new(1, -12, 0, 5),
 		TextXAlignment = Enum.TextXAlignment.Right,
 	})
 	timerLabel.Parent = banner
@@ -216,20 +216,20 @@ function Hud.new(parent: Instance): Hud
 
 	-- Under the countdown: the raid alert, where the eye already is.
 	local raidAlert = ScrapKit.image("BannerRaid", {
-		Size = UDim2.fromOffset(260, 44),
+		Size = UDim2.fromOffset(230, 36),
 		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, margin + 76),
+		Position = UDim2.new(0.5, 0, 0, margin + 60),
 		Visible = false,
 	})
 	ScrapKit.image("IconAlert", {
-		Size = UDim2.fromOffset(36, 36),
-		Position = UDim2.fromOffset(8, 4),
+		Size = UDim2.fromOffset(30, 30),
+		Position = UDim2.fromOffset(6, 3),
 		BackgroundTransparency = 1,
 	}).Parent =
 		raidAlert
 	local raidLabel = ScrapKit.label("", {
-		Size = UDim2.new(1, -60, 1, -8),
-		Position = UDim2.fromOffset(50, 4),
+		Size = UDim2.new(1, -48, 1, -6),
+		Position = UDim2.fromOffset(41, 3),
 		TextXAlignment = Enum.TextXAlignment.Left,
 	})
 	raidLabel.Parent = raidAlert
