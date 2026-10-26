@@ -1,6 +1,7 @@
 -- Yard Fence: one 8-stud panel of a yard's boundary, about 5 studs tall.
 -- Corrugated sheets between two posts, held by rails and a diagonal brace
 -- behind. Panels tile end to end along x, centered on the origin.
+BRUSHED = true
 part("Posts", nil, DARK_STEEL, function(mesh)
 	for _, x in { -4, 4 } do
 		box(mesh, x, 0, 0, 0.4, 0.4, 5.2)

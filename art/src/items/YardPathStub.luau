@@ -1,6 +1,7 @@
 -- Yard Path Stub: a 4x4 stud stretch of walkway for short branches off the
 -- main path, running along y and centered on the origin. Same pavers and
 -- gravel bed as YardPath, with one sunk paver and a cracked one.
+BRUSHED = true
 local CONCRETE = { 0.6, 0.59, 0.56 }
 local GRAVEL = { 0.36, 0.34, 0.31 }
 

@@ -1,6 +1,7 @@
 -- Ground Tile: one 8x8 stud square of yard floor. Packed dirt with a few
 -- sunken concrete slabs and scattered scrap so a grid of
 -- tiles doesn't read as one flat sheet. Top surface sits at z 0.
+BRUSHED = true
 local DIRT = { 0.42, 0.36, 0.28 }
 local CONCRETE = { 0.56, 0.55, 0.52 }
 

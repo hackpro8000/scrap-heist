@@ -1,6 +1,7 @@
 -- Machine Pad: the fixed spot in a yard where a salvage machine is placed,
 -- 6x6 studs. A steel plate with a hazard-striped border, an inset bay for
 -- the machine and a bolt in each corner. Built flat with the top at z 0.36.
+BRUSHED = true
 local HAZARD_YELLOW = { 0.9, 0.72, 0.15 }
 
 part("Plate", nil, DARK_STEEL, function(mesh)

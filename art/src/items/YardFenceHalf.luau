@@ -1,6 +1,7 @@
 -- Yard Fence Half: a 4-stud fence panel for closing the gaps beside a
 -- centered yard gate. Same build as YardFence at half length, centered on the
 -- origin along x.
+BRUSHED = true
 part("Posts", nil, DARK_STEEL, function(mesh)
 	for _, x in { -2, 2 } do
 		box(mesh, x, 0, 0, 0.4, 0.4, 5.2)

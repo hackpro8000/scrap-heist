@@ -1,6 +1,7 @@
 -- Yard Gate: the 8-stud fence panel players walk through, two barred doors
 -- in a frame with a padlocked hasp where they meet. Matches YardFence so it
 -- tiles into a fence line, centered on the origin.
+BRUSHED = true
 part("Frame", nil, DARK_STEEL, function(mesh)
 	for _, x in { -4, 4 } do
 		box(mesh, x, 0, 0, 0.4, 0.4, 5.2)

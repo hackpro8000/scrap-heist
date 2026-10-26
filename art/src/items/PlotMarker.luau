@@ -1,6 +1,7 @@
 -- Plot Marker: the post at a yard entrance naming its owner, about 7.5
 -- studs tall. A steel post with an arm, a hanging sign with a blank face
 -- for the owner's name, and a warning lamp on top that will flash on a raid.
+BRUSHED = true
 local HAZARD_YELLOW = { 0.9, 0.72, 0.15 }
 local LAMP_RED = { 0.85, 0.18, 0.12 }
 

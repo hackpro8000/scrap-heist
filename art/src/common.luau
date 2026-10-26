@@ -5,6 +5,8 @@ local EDGE_HIGHLIGHT = 0.6
 local CONTACT_SHADOW = 0.85
 local GRADIENT = 0.5
 local EDGE_BLEND = 0.7
+-- Items set this to paint their shading as hand-drawn brushwork.
+local BRUSHED = false
 local SMOOTH_ANGLE = 30
 local TEXTURE = 256
 
@@ -701,6 +703,7 @@ local function finishParts()
 			shadow = CONTACT_SHADOW,
 			gradient = GRADIENT,
 			blend = EDGE_BLEND,
+			brushed = BRUSHED,
 			occluders = occluders,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })

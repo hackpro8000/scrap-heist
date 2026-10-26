@@ -646,22 +646,22 @@ local trimMesh = trim()
 local hazardMesh, stripes = hazard()
 
 bodyMesh:unwrap()
-local green = Image.new(2048, 2048, color(BODY))
-bodyMesh:paintShading(green, { bands = 6, occluders = { bolts, plateMesh, trimMesh, hazardMesh } })
+local green = Image.new(1024, 1024, color(BODY))
+bodyMesh:paintShading(green, { brushed = true, bands = 6, occluders = { bolts, plateMesh, trimMesh, hazardMesh } })
 
 plateMesh:unwrap()
 local steel = Image.new(512, 512, color(PLATE))
-plateMesh:paintShading(steel, { occluders = { bodyMesh, bolts } })
+plateMesh:paintShading(steel, { brushed = true, occluders = { bodyMesh, bolts } })
 
 trimMesh:unwrap()
 local orange = Image.new(512, 512, color(TRIM))
-trimMesh:paintShading(orange, { occluders = { bodyMesh } })
+trimMesh:paintShading(orange, { brushed = true, occluders = { bodyMesh } })
 
 bolts:unwrap()
 local boltColor = Image.new(256, 256, color(BOLT))
-bolts:paintShading(boltColor, { occluders = { bodyMesh, plateMesh } })
+bolts:paintShading(boltColor, { brushed = true, occluders = { bodyMesh, plateMesh } })
 
-hazardMesh:paintShading(stripes, { occluders = { bodyMesh } })
+hazardMesh:paintShading(stripes, { brushed = true, occluders = { bodyMesh } })
 
 model.part("Body", bodyMesh, green)
 model.part("Hazard", hazardMesh, stripes)
@@ -702,7 +702,7 @@ for number, level in FILL_LEVELS do
 	end
 	fill:unwrap()
 	local scrap = Image.new(1024, 1024, color(SCRAP))
-	fill:paintShading(scrap, { occluders = junkMeshes })
+	fill:paintShading(scrap, { brushed = true, occluders = junkMeshes })
 	model.part(name, fill, scrap, { group = name, preview = preview })
 
 	for i, piece in pieces do
@@ -712,7 +712,7 @@ for number, level in FILL_LEVELS do
 			local p = scale(unrotate(piece.turn, sub({ x, y, z }, piece.location)), 1 / piece.size)
 			return color(piece.paint(p))
 		end)
-		piece.mesh:paintShading(texture, { occluders = { fill } })
+		piece.mesh:paintShading(texture, { brushed = true, occluders = { fill } })
 		model.part(`{name}_{piece.kind}{i}`, piece.mesh, texture, { group = name, preview = preview })
 	end
 end

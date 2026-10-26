@@ -3,6 +3,7 @@
 -- few cracked, sunk or missing, so segments laid end to end don't repeat
 -- too obviously. Paver tops sit just above z 0 so they read over a ground
 -- tile.
+BRUSHED = true
 local CONCRETE = { 0.6, 0.59, 0.56 }
 local GRAVEL = { 0.36, 0.34, 0.31 }
 
