@@ -3,11 +3,11 @@
 	ScrapKit
 
 	Builds UI pieces from the ScrapKit images (art/ui/ScrapKit). Screens never
-	create ImageLabels for kit art themselves; they ask this module, so slice
-	margins, image IDs and placeholder fallbacks are handled in one place.
+	create ImageLabels for kit art themselves; they ask this module, so sizes,
+	image IDs and placeholder fallbacks are handled in one place.
 
-	Kit images are 9-sliced: the painted corners keep their size while the
-	middle stretches, so one 96px button image fits any button size. Until an
+	Kit images are stretched to fill their frame (no 9-slice), so each piece
+	should be placed near the size its art was painted at. Until an
 	image's ID is set in Assets.UI, the piece is a flat rounded frame in the
 	element's fallback color from Config/Theme.
 
@@ -46,7 +46,6 @@ end
 function ScrapKit.setImage(gui: ImageLabel | ImageButton, element: string)
 	local id = Assets.UI[element]
 	assert(id ~= nil, `unknown ScrapKit element {element}`)
-	local slice = ScrapKitSlices[element]
 
 	if not Assets.isSet(id) then
 		gui.Image = ""
@@ -57,10 +56,7 @@ function ScrapKit.setImage(gui: ImageLabel | ImageButton, element: string)
 
 	gui.Image = Assets.image(id)
 	gui.BackgroundTransparency = 1
-	gui.ScaleType = if slice.slice then Enum.ScaleType.Slice else Enum.ScaleType.Fit
-	if slice.slice then
-		gui.SliceCenter = slice.slice
-	end
+	gui.ScaleType = Enum.ScaleType.Stretch
 end
 
 local function decorate(gui: ImageLabel | ImageButton, element: string, props: Props?)
