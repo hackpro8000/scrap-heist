@@ -592,10 +592,11 @@ end
 -- `rust` can also be a paint fn for surfaces with their own look.
 -- `texture` overrides the texture size for parts that need more detail.
 -- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
--- glowing parts skip painted shading.
-local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?)
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?)
 	local mesh = Mesh.new()
-	build(if rust == 0 then mesh else imperfect(mesh, name))
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
 	local fit = mesh:unwrap()
 	local size = if texture then texture
@@ -749,6 +750,7 @@ local function finishParts()
 			blend = EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
 			custom = entry.custom,
