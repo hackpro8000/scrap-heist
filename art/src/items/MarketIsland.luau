@@ -1,5 +1,5 @@
 -- Market Island: the market plaza's octagonal floating island, from the
--- shared rock-column generator (shared/RockIsland.luau).
+-- shared rock-wall generator (shared/RockIsland.luau).
 local RADIUS = 38
 
 -- The island's wobbly outline, as a radius scale per angle.
@@ -11,4 +11,5 @@ local function outlineScale(angle: number): number
 	return 1 / math.cos(sector * 0.85) + 0.2 * wobble
 end
 
+-- include: IslandPaint
 -- include: RockIsland
