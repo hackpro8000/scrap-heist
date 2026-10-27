@@ -5,71 +5,11 @@
 
 use std::collections::HashMap;
 
+use crate::coat;
 use crate::image::Image;
 use crate::mesh::{add, cross, dot, normalize, scale, sub, Mesh, Vec3};
 
-// --- Noise ------------------------------------------------------------------
-
-// Improved Perlin noise in roughly -1..1, with a fixed permutation so bakes
-// are repeatable.
-pub struct Noise {
-	perm: [u8; 512],
-}
-
-impl Noise {
-	pub fn new() -> Self {
-		let mut table: Vec<u8> = (0..=255).collect();
-		let mut state: u32 = 0x9e37_79b9;
-		for i in (1..256).rev() {
-			state = state.wrapping_mul(1_664_525).wrapping_add(1_013_904_223);
-			table.swap(i, (state >> 8) as usize % (i + 1));
-		}
-		let mut perm = [0u8; 512];
-		for i in 0..512 {
-			perm[i] = table[i & 255];
-		}
-		Noise { perm }
-	}
-
-	pub fn perlin(&self, p: Vec3) -> f64 {
-		let fade = |t: f64| t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
-		let lerp = |t: f64, a: f64, b: f64| a + t * (b - a);
-		let grad = |hash: u8, x: f64, y: f64, z: f64| {
-			let h = hash & 15;
-			let u = if h < 8 { x } else { y };
-			let v = if h < 4 { y } else if h == 12 || h == 14 { x } else { z };
-			(if h & 1 == 0 { u } else { -u }) + (if h & 2 == 0 { v } else { -v })
-		};
-		let floor = p.map(f64::floor);
-		let [x, y, z] = [p[0] - floor[0], p[1] - floor[1], p[2] - floor[2]];
-		let [xi, yi, zi] = floor.map(|f| (f as i64 & 255) as usize);
-		let perm = &self.perm;
-		let a = perm[xi] as usize + yi;
-		let (aa, ab) = (perm[a] as usize + zi, perm[a + 1] as usize + zi);
-		let b = perm[xi + 1] as usize + yi;
-		let (ba, bb) = (perm[b] as usize + zi, perm[b + 1] as usize + zi);
-		let (u, v, w) = (fade(x), fade(y), fade(z));
-		lerp(
-			w,
-			lerp(v, lerp(u, grad(perm[aa], x, y, z), grad(perm[ba], x - 1.0, y, z)), lerp(u, grad(perm[ab], x, y - 1.0, z), grad(perm[bb], x - 1.0, y - 1.0, z))),
-			lerp(
-				v,
-				lerp(u, grad(perm[aa + 1], x, y, z - 1.0), grad(perm[ba + 1], x - 1.0, y, z - 1.0)),
-				lerp(u, grad(perm[ab + 1], x, y - 1.0, z - 1.0), grad(perm[bb + 1], x - 1.0, y - 1.0, z - 1.0)),
-			),
-		)
-	}
-
-	// Like Blender's Noise Texture factor with detail 1: two octaves, centered
-	// on 0.5. `seed` stands in for its 4D W input.
-	pub fn factor(&self, p: Vec3, frequency: f64, seed: f64) -> f64 {
-		let q = add(scale(p, frequency), [seed * 1.7, seed * 3.1, seed * 2.3]);
-		let n = (self.perlin(q) + 0.5 * self.perlin(scale(q, 2.0))) / 1.5;
-		0.5 + 0.5 * n
-	}
-}
-
-fn hash(mut x: u32) -> f64 {
+pub fn hash(mut x: u32) -> f64 {
 	x ^= x >> 16;
 	x = x.wrapping_mul(0x7feb_352d);
 	x ^= x >> 15;
@@ -214,7 +154,6 @@ pub fn unwrap(mesh: &mut Mesh, margin: f64) -> f64 {
 #[derive(Clone, Copy)]
 pub struct Texel {
 	pub pixel: usize,
-	pub uv: [f64; 2],
 	pub position: Vec3,
 	pub normal: Vec3,
 	pub face_normal: Vec3,
@@ -255,7 +194,6 @@ pub fn samples(mesh: &Mesh, width: usize, height: usize, grid: usize) -> Vec<Tex
 				let blend = |f: &dyn Fn(usize) -> Vec3| add(add(scale(f(0), w0), scale(f(1), w1)), scale(f(2), w2));
 				found.push(Texel {
 					pixel: y * width + x,
-					uv: [(fx + 0.5) / width as f64, (fy + 0.5) / height as f64],
 					position: blend(&|k| corners[k].position),
 					normal: normalize(blend(&|k| corners[k].normal)),
 					face_normal,
@@ -311,112 +249,38 @@ pub fn dilate(pixels: &mut [[f32; 3]], covered: &mut [bool], width: usize, heigh
 	}
 }
 
-// --- Ray queries ------------------------------------------------------------
-
-struct Node {
-	low: Vec3,
-	high: Vec3,
-	// Leaf: first triangle and count. Inner: left child at `first`, right
-	// child right after this node's subtree; count is 0.
-	first: usize,
-	count: usize,
-	right: usize,
-}
-
-pub struct Bvh {
-	triangles: Vec<[Vec3; 3]>,
-	nodes: Vec<Node>,
-}
-
-impl Bvh {
-	pub fn new(mut triangles: Vec<[Vec3; 3]>) -> Self {
-		let mut nodes = Vec::new();
-		let count = triangles.len();
-		build(&mut triangles, 0, count, &mut nodes);
-		Bvh { triangles, nodes }
+// Point of the triangle nearest p (Ericson, Real-Time Collision Detection 5.1.5).
+fn closest_on_triangle(p: Vec3, [a, b, c]: [Vec3; 3]) -> Vec3 {
+	let (ab, ac) = (sub(b, a), sub(c, a));
+	let ap = sub(p, a);
+	let (d1, d2) = (dot(ab, ap), dot(ac, ap));
+	if d1 <= 0.0 && d2 <= 0.0 {
+		return a;
 	}
-
-	// True when the ray hits any triangle closer than `reach`.
-	pub fn blocked(&self, origin: Vec3, direction: Vec3, reach: f64) -> bool {
-		if self.nodes.is_empty() {
-			return false;
-		}
-		let inverse = direction.map(|d| 1.0 / d);
-		let mut stack = vec![0usize];
-		while let Some(index) = stack.pop() {
-			let node = &self.nodes[index];
-			let (mut near, mut far) = (0.0f64, reach);
-			for k in 0..3 {
-				let a = (node.low[k] - origin[k]) * inverse[k];
-				let b = (node.high[k] - origin[k]) * inverse[k];
-				near = near.max(a.min(b));
-				far = far.min(a.max(b));
-			}
-			if near > far {
-				continue;
-			}
-			if node.count == 0 {
-				stack.push(index + 1);
-				stack.push(node.right);
-				continue;
-			}
-			for triangle in &self.triangles[node.first..node.first + node.count] {
-				if hit(triangle, origin, direction, reach) {
-					return true;
-				}
-			}
-		}
-		false
+	let bp = sub(p, b);
+	let (d3, d4) = (dot(ab, bp), dot(ac, bp));
+	if d3 >= 0.0 && d4 <= d3 {
+		return b;
 	}
-}
-
-fn build(triangles: &mut [[Vec3; 3]], first: usize, count: usize, nodes: &mut Vec<Node>) -> usize {
-	let slice = &mut triangles[first..first + count];
-	let mut low = [f64::MAX; 3];
-	let mut high = [f64::MIN; 3];
-	for triangle in slice.iter() {
-		for p in triangle {
-			for k in 0..3 {
-				low[k] = low[k].min(p[k]);
-				high[k] = high[k].max(p[k]);
-			}
-		}
+	let vc = d1 * d4 - d3 * d2;
+	if vc <= 0.0 && d1 >= 0.0 && d3 <= 0.0 {
+		return add(a, scale(ab, d1 / (d1 - d3)));
 	}
-	let index = nodes.len();
-	nodes.push(Node { low, high, first, count, right: 0 });
-	if count <= 4 {
-		return index;
+	let cp = sub(p, c);
+	let (d5, d6) = (dot(ab, cp), dot(ac, cp));
+	if d6 >= 0.0 && d5 <= d6 {
+		return c;
 	}
-	let axis = (0..3).max_by(|&a, &b| (high[a] - low[a]).total_cmp(&(high[b] - low[b]))).unwrap();
-	let centre = |t: &[Vec3; 3]| t[0][axis] + t[1][axis] + t[2][axis];
-	slice.select_nth_unstable_by(count / 2, |a, b| centre(a).total_cmp(&centre(b)));
-	nodes[index].count = 0;
-	build(triangles, first, count / 2, nodes);
-	let right = build(triangles, first + count / 2, count - count / 2, nodes);
-	nodes[index].right = right;
-	index
-}
-
-fn hit(triangle: &[Vec3; 3], origin: Vec3, direction: Vec3, reach: f64) -> bool {
-	let e1 = sub(triangle[1], triangle[0]);
-	let e2 = sub(triangle[2], triangle[0]);
-	let p = cross(direction, e2);
-	let det = dot(e1, p);
-	if det.abs() < 1e-12 {
-		return false;
+	let vb = d5 * d2 - d1 * d6;
+	if vb <= 0.0 && d2 >= 0.0 && d6 <= 0.0 {
+		return add(a, scale(ac, d2 / (d2 - d6)));
 	}
-	let t0 = sub(origin, triangle[0]);
-	let u = dot(t0, p) / det;
-	if !(0.0..=1.0).contains(&u) {
-		return false;
+	let va = d3 * d6 - d5 * d4;
+	if va <= 0.0 && d4 - d3 >= 0.0 && d5 - d6 >= 0.0 {
+		return add(b, scale(sub(c, b), (d4 - d3) / ((d4 - d3) + (d5 - d6))));
 	}
-	let q = cross(t0, e1);
-	let v = dot(direction, q) / det;
-	if v < 0.0 || u + v > 1.0 {
-		return false;
-	}
-	let t = dot(e2, q) / det;
-	t > 1e-6 && t < reach
+	let denom = 1.0 / (va + vb + vc);
+	add(a, add(scale(ab, vb * denom), scale(ac, vc * denom)))
 }
 
 pub fn mesh_triangles(mesh: &Mesh) -> Vec<[Vec3; 3]> {
@@ -429,73 +293,19 @@ pub struct Shading {
 	pub highlight: f64,
 	pub shadow: f64,
 	pub bands: usize,
-	// Edges folding more than this many degrees get highlighted.
-	pub sharp: f64,
 	// 0-1: feathers highlight strokes and tints them toward a lighter base
 	// color instead of cream, so they melt into the paint. 0 keeps the classic look.
 	pub blend: f64,
-	// 0-1: smooth top-to-bottom darkening across each part, cool in the low end.
-	pub gradient: f64,
 	// Extra highlight strength reached at the bottom of each part, ramping
 	// smoothly from none at the top (0.3 = 30% stronger at the bottom).
 	pub highlight_ramp: f64,
-	// Paints edge highlights as simulated brush strokes laid along each edge.
-	pub brushed: bool,
 }
 
-const AO_DISTANCE: f64 = 0.8;
-const AO_SAMPLES: u32 = 16;
-// AO is soft, so it's baked at a fraction of the texture's resolution.
-const AO_DIVISOR: usize = 4;
-const EDGE_RADIUS: f64 = 0.1;
-// Brush strokes: (reach, frequency, thin gain, wide gain, strength).
-const STROKES: [(f64, f64, f64, f64, f64); 3] = [(1.0, 3.0, 6.0, 24.0, 0.8), (2.2, 5.0, 3.0, 14.0, 0.6), (0.5, 9.0, 8.0, 36.0, 0.7)];
-
-fn openness(bvh: &Bvh, texel: &Texel) -> f64 {
-	let n = texel.face_normal;
-	let helper = if n[0].abs() < 0.9 { [1.0, 0.0, 0.0] } else { [0.0, 1.0, 0.0] };
-	let t = normalize(cross(n, helper));
-	let b = cross(n, t);
-	let origin = add(texel.position, scale(n, 1e-3));
-	let seed = (texel.position[0] * 7919.0 + texel.position[1] * 104_729.0 + texel.position[2] * 1_299_709.0) as i64 as u32;
-	let mut open = 0;
-	for sample in 0..AO_SAMPLES {
-		// Cosine-weighted direction over the hemisphere.
-		let r1 = (sample as f64 + hash(seed.wrapping_add(sample * 2))) / AO_SAMPLES as f64;
-		let r2 = hash(seed.wrapping_add(sample * 2 + 1).wrapping_mul(31));
-		let (radius, angle) = (r1.sqrt(), r2 * std::f64::consts::TAU);
-		let direction = add(add(scale(t, radius * angle.cos()), scale(b, radius * angle.sin())), scale(n, (1.0 - r1).sqrt()));
-		if !bvh.blocked(origin, direction, AO_DISTANCE) {
-			open += 1;
-		}
-	}
-	open as f64 / AO_SAMPLES as f64
-}
-
-// Convex edges sharper than the threshold, as segments with how hard they fold.
-fn sharp_edges(mesh: &Mesh, degrees: f64) -> Vec<(Vec3, Vec3, f64)> {
-	let normals: Vec<Vec3> = mesh.faces.iter().map(|face| mesh.face_normal(face)).collect();
-	let centre = |face: usize| {
-		let verts = &mesh.faces[face].verts;
-		scale(verts.iter().fold([0.0; 3], |sum, &v| add(sum, mesh.positions[v])), 1.0 / verts.len() as f64)
-	};
-	let limit = degrees.to_radians().cos();
-	let mut found = Vec::new();
-	for ((a, b), faces) in edge_faces(mesh) {
-		if faces.len() != 2 {
-			continue;
-		}
-		let (f, g) = (faces[0], faces[1]);
-		let fold = dot(normals[f], normals[g]).clamp(-1.0, 1.0);
-		if fold > limit || dot(normals[f], sub(centre(g), centre(f))) > 1e-9 {
-			continue;
-		}
-		// A rounded normal halfway between the faces turns half the fold.
-		let bend = 1.0 - (fold.acos() / 2.0).cos();
-		found.push((mesh.positions[a], mesh.positions[b], bend));
-	}
-	found
-}
+// How far a contact shadow spreads from the corner that casts it.
+const CONTACT_REACH: f64 = 0.2;
+// Folds gentler than this (as a fraction of a half turn) cast nothing,
+// so the facets inside a rounded hollow stay clean.
+const CONTACT_MIN_FOLD: f64 = 1.0 / 6.0;
 
 // Brush passes: (width, length, step, pressure).
 const BRUSH_PASSES: [(f64, f64, f64, f64); 2] = [(0.16, 0.6, 0.4, 0.75), (0.08, 0.35, 0.22, 1.0)];
@@ -539,73 +349,8 @@ fn brush_strokes(edge: usize, t: f64, length: f64, d: f64) -> f64 {
 	paint
 }
 
-// Surface brushwork: strokes scattered on a world grid of this size.
-const DAB_CELL: f64 = 0.7;
-const DAB_LENGTH: f64 = 1.2;
-const DAB_WIDTH: f64 = 0.3;
 
-// Colour multiplier from the topmost brush stroke covering a point, so flat
-// colour reads as overlapping dabs of slightly different paint.
-fn brushwork(p: Vec3, normal: Vec3) -> Vec3 {
-	let home = p.map(|c| (c / DAB_CELL).floor() as i64);
-	let across_up = cross(normal, [0.0, 1.0, 0.0]);
-	let flat = dot(across_up, across_up) < 0.05;
-	let (mut top, mut tint) = (-1.0f64, [1.0; 3]);
-	for x in -1..=1 {
-		for y in -1..=1 {
-			for z in -1..=1 {
-				let cell = [home[0] + x, home[1] + y, home[2] + z];
-				let seed = (cell[0] as u32).wrapping_mul(73_856_093) ^ (cell[1] as u32).wrapping_mul(19_349_663) ^ (cell[2] as u32).wrapping_mul(83_492_791);
-				let r = |k: u32| hash(seed.wrapping_add(k.wrapping_mul(0x9e37_79b9)));
-				let order = r(0);
-				if order <= top {
-					continue;
-				}
-				let centre = [0, 1, 2].map(|k| (cell[k] as f64 + r(1 + k as u32)) * DAB_CELL);
-				// Strokes run sideways round walls and any way across tops.
-				let angle = (r(4) - 0.5) * 0.6 + if flat { r(5) * std::f64::consts::TAU } else { 0.0 };
-				let base = if flat { [1.0, 0.0, 0.0] } else { normalize(across_up) };
-				let side = cross(normal, base);
-				let along = add(scale(base, angle.cos()), scale(side, angle.sin()));
-				let across = cross(normal, along);
-				let offset = sub(p, centre);
-				let length = DAB_LENGTH * (0.7 + 0.6 * r(6));
-				let u = dot(offset, along) / length + 0.5;
-				if !(0.0..=1.0).contains(&u) {
-					continue;
-				}
-				let half = DAB_WIDTH * (0.7 + 0.6 * r(7)) * (std::f64::consts::PI * u).sin().sqrt();
-				let s = dot(offset, across) / half.max(1e-6);
-				if s.abs() >= 1.0 || dot(offset, normal).abs() > DAB_CELL {
-					continue;
-				}
-				// Bristles thin out toward the stroke's tail.
-				let bristle = ((s + 1.0) * 6.0).floor() as u32;
-				let dry = 0.6 + 0.4 * hash(seed.wrapping_mul(31).wrapping_add(bristle));
-				if u > dry {
-					continue;
-				}
-				top = order;
-				let streak = (hash(seed.wrapping_mul(17).wrapping_add(bristle)) - 0.5) * 0.04;
-				let shift = 1.0 + (r(8) - 0.5) * 0.35 + streak * 2.0;
-				// Each dab leans slightly warm or cool, and a touch greener or redder.
-				let warm = (r(9) - 0.5) * 0.12;
-				let green = (r(10) - 0.5) * 0.06;
-				tint = [shift * (1.0 + warm), shift * (1.0 + green), shift * (1.0 - warm)];
-			}
-		}
-	}
-	tint
-}
-
-fn segment_distance(p: Vec3, a: Vec3, b: Vec3) -> f64 {
-	let ab = sub(b, a);
-	let t = (dot(sub(p, a), ab) / dot(ab, ab).max(1e-12)).clamp(0.0, 1.0);
-	let d = sub(p, add(a, scale(ab, t)));
-	dot(d, d).sqrt()
-}
-
-fn to_linear(c: f32) -> f64 {
+pub fn to_linear(c: f32) -> f64 {
 	let c = c as f64;
 	if c <= 0.04045 { c / 12.92 } else { ((c + 0.055) / 1.055).powf(2.4) }
 }
@@ -624,52 +369,91 @@ fn parallel<T: Send, F: Fn(&Texel) -> T + Sync>(texels: &[Texel], work: F) -> Ve
 	})
 }
 
-pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shading: &Shading) {
+pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shading: &Shading, look: &coat::Look, base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3]) {
 	let (width, height) = (image.width, image.height);
+	// Shadows and highlights both come from the corners a texel sits in: a
+	// surface nearby that faces it makes an interior angle, which shades, and
+	// one that faces away makes an exterior angle, which catches the light.
+	// Either way the sharper the corner the stronger the paint, so rounded
+	// facets stay clean. Only this part's own surfaces make exterior angles;
+	// another part merely passing close by is not an edge of this one.
+	let own = mesh_triangles(mesh).len();
+	// Only occluders close enough to reach this mesh can cast or catch anything.
+	let (own_low, own_high) = bounds(mesh);
 	let mut triangles = mesh_triangles(mesh);
 	for other in occluders {
-		triangles.extend(mesh_triangles(other));
+		let (low, high) = bounds(other);
+		let gap = (0..3).map(|k| (low[k] - own_high[k]).max(own_low[k] - high[k]).max(0.0)).fold(0.0, |sum, g| sum + g * g);
+		if gap <= CONTACT_REACH * CONTACT_REACH {
+			triangles.extend(mesh_triangles(other));
+		}
 	}
-	let bvh = Bvh::new(triangles);
-
-	// Openness at low resolution, sampled bilinearly below.
-	let (aw, ah) = ((width / AO_DIVISOR).max(8), (height / AO_DIVISOR).max(8));
-	let coarse = texels(mesh, aw, ah);
-	let values = parallel(&coarse, |texel| openness(&bvh, texel));
-	let mut ao = vec![[1.0f32; 3]; aw * ah];
-	let mut covered = vec![false; aw * ah];
-	for (texel, value) in coarse.iter().zip(values) {
-		ao[texel.pixel] = [value as f32; 3];
-		covered[texel.pixel] = true;
-	}
-	dilate(&mut ao, &mut covered, aw, ah, 4);
-	let sample_ao = |uv: [f64; 2]| -> f64 {
-		let x = (uv[0] * aw as f64 - 0.5).clamp(0.0, (aw - 1) as f64);
-		let y = (uv[1] * ah as f64 - 0.5).clamp(0.0, (ah - 1) as f64);
-		let (x0, y0) = (x as usize, y as usize);
-		let (x1, y1) = ((x0 + 1).min(aw - 1), (y0 + 1).min(ah - 1));
-		let (fx, fy) = (x - x0 as f64, y - y0 as f64);
-		let at = |x: usize, y: usize| ao[y * aw + x][0] as f64;
-		let low = at(x0, y0) * (1.0 - fx) + at(x1, y0) * fx;
-		let high = at(x0, y1) * (1.0 - fx) + at(x1, y1) * fx;
-		low * (1.0 - fy) + high * fy
-	};
-
-	// Sharp edges bucketed in a grid as wide as the longest stroke reaches.
-	let edges = sharp_edges(mesh, shading.sharp);
-	let cell = if shading.brushed { BRUSH_PASSES[0].0 * 1.6 } else { EDGE_RADIUS * 2.2 };
-	let key = |p: Vec3| p.map(|c| (c / cell).floor() as i64);
-	let mut grid: HashMap<[i64; 3], Vec<usize>> = HashMap::new();
-	for (index, &(a, b, _)) in edges.iter().enumerate() {
-		let (ka, kb) = (key(a), key(b));
-		for x in ka[0].min(kb[0]) - 1..=ka[0].max(kb[0]) + 1 {
-			for y in ka[1].min(kb[1]) - 1..=ka[1].max(kb[1]) + 1 {
-				for z in ka[2].min(kb[2]) - 1..=ka[2].max(kb[2]) + 1 {
-					grid.entry([x, y, z]).or_default().push(index);
+	let surfaces: Vec<([Vec3; 3], Vec3, bool)> = triangles
+		.into_iter()
+		.enumerate()
+		.filter_map(|(index, t)| {
+			let n = cross(sub(t[1], t[0]), sub(t[2], t[0]));
+			let length = dot(n, n).sqrt();
+			(length > 1e-12).then(|| (t, scale(n, 1.0 / length), index < own))
+		})
+		.collect();
+	let contact_key = |p: Vec3| p.map(|c| (c / CONTACT_REACH).floor() as i64);
+	let mut contact_grid: HashMap<[i64; 3], Vec<usize>> = HashMap::new();
+	for (index, (t, _, _)) in surfaces.iter().enumerate() {
+		let low = contact_key([0, 1, 2].map(|k| t[0][k].min(t[1][k]).min(t[2][k])));
+		let high = contact_key([0, 1, 2].map(|k| t[0][k].max(t[1][k]).max(t[2][k])));
+		for x in low[0]..=high[0] {
+			for y in low[1]..=high[1] {
+				for z in low[2]..=high[2] {
+					contact_grid.entry([x, y, z]).or_default().push(index);
 				}
 			}
 		}
 	}
+	// Paint laid along the corners at p, `outward` for exterior angles.
+	// One pass over the surfaces near p: the strongest interior-angle paint, and
+	// the strongest exterior-angle paint from this part's own surfaces.
+	let crease_paint = |p: Vec3, n: Vec3| -> (f64, f64) {
+		let home = contact_key(p);
+		let (mut inward, mut outward) = (0.0f64, 0.0f64);
+		for x in -1..=1 {
+			for y in -1..=1 {
+				for z in -1..=1 {
+					for &index in contact_grid.get(&[home[0] + x, home[1] + y, home[2] + z]).into_iter().flatten() {
+						let (triangle, facing, mine) = surfaces[index];
+						let offset = sub(p, closest_on_triangle(p, triangle));
+						let distance = dot(offset, offset).sqrt();
+						// An interior angle's surface faces the texel, so the texel sits in
+						// front of its plane; an exterior angle's faces away, so behind it.
+						let side = dot(facing, offset);
+						let front = side > 0.0;
+						let behind = side < 0.0 && mine;
+						if distance < 1e-6 || distance >= CONTACT_REACH || !(front || behind) || dot(n, offset) > 0.3 * distance {
+							continue;
+						}
+						// 0 for a flat continuation, 1 for a right angle or anything sharper.
+						let fold = dot(n, facing).clamp(-1.0, 1.0).acos() / std::f64::consts::PI;
+						let sharpness = ((fold - CONTACT_MIN_FOLD) / (0.5 - CONTACT_MIN_FOLD)).clamp(0.0, 1.0);
+						// Painted as brush strokes dragged along the crease. The crease is
+						// seeded by both planes, so every triangle along it agrees on the strokes.
+						let crease = normalize(cross(n, facing));
+						let along = dot(p, crease) + 1000.0;
+						let plane = |m: Vec3, at: Vec3| [m[0] * 8.0, m[1] * 8.0, m[2] * 8.0, dot(m, at) * 20.0].map(|c| c.round() as i64 as u32);
+						let seed = plane(n, p).into_iter().chain(plane(facing, triangle[0])).fold(0x811c_9dc5u32, |h, c| (h ^ c).wrapping_mul(0x0100_0193));
+						let paint = brush_strokes(seed as usize, along, f64::MAX, distance);
+						let value = sharpness * paint * (1.0 - distance / CONTACT_REACH);
+						if front {
+							inward = inward.max(value);
+						}
+						if behind {
+							outward = outward.max(value);
+						}
+					}
+				}
+			}
+		}
+		(inward, outward)
+	};
 
 	let mut low = [f64::MAX; 3];
 	let mut high = [f64::MIN; 3];
@@ -681,59 +465,27 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 	}
 	let generated = |p: Vec3| -> Vec3 { [0, 1, 2].map(|k| (p[k] - low[k]) / (high[k] - low[k]).max(1e-9)) };
 
-	let noise = Noise::new();
+	// Every color comes from strokes laid on a canvas, wear gathering on
+	// sharp edges, in creases and low down.
+	let edge_wear = |p: Vec3, n: Vec3| (crease_paint(p, n).1 * 2.5).min(1.0);
+	let crease_wear = |p: Vec3, n: Vec3| (crease_paint(p, n).0 * 2.5).min(1.0);
+	let low_wear = |p: Vec3| 1.0 - generated(p)[2];
+	let wear = coat::Wear { edge: &edge_wear, crease: &crease_wear, low: &low_wear };
+	let canvas = coat::paint(mesh, look, &wear, base);
+
 	let full = texels(mesh, width, height);
-	let base = &image.pixels;
 	let colors = parallel(&full, |texel| {
 		let g = generated(texel.position);
-		let nearby = grid.get(&key(texel.position));
-		let mut edge = 0.0f64;
-		if shading.brushed {
-			for &index in nearby.into_iter().flatten() {
-				let (a, b, fold) = edges[index];
-				let ab = sub(b, a);
-				let length = dot(ab, ab).sqrt().max(1e-9);
-				let t = dot(sub(texel.position, a), ab) / length;
-				let d = segment_distance(texel.position, a, b);
-				let paint = brush_strokes(index, t, length, d) * (fold * 12.0).min(1.0);
-				edge = 1.0 - (1.0 - edge) * (1.0 - paint);
-			}
-		}
-		for (seed, &(reach, frequency, thin, wide, strength)) in STROKES.iter().enumerate() {
-			let radius = EDGE_RADIUS * reach;
-			let mut bend = 0.0f64;
-			for &index in nearby.into_iter().flatten() {
-				let (a, b, fold) = edges[index];
-				let d = segment_distance(texel.position, a, b);
-				if d < radius {
-					bend = bend.max(fold * (1.0 - d / radius));
-				}
-			}
-			if bend <= 0.0 || shading.brushed {
-				continue;
-			}
-			let s = seed as f64;
-			let width = ((noise.factor(g, frequency, s * 3.1) - 0.3) / 0.4).clamp(0.0, 1.0);
-			let gain = thin + (wide - thin) * width;
-			let feather = 0.08 + 0.22 * shading.blend;
-			let painted = ((noise.factor(g, frequency * 0.8, s * 5.7 + 1.3) - 0.42) / feather).clamp(0.0, 1.0);
-			let push = ((noise.factor(g, frequency * 0.5, s * 2.3 + 7.9) - 0.35) / 0.3).clamp(0.0, 1.0);
-			let pressure = 0.35 * strength + (strength - 0.35 * strength) * push;
-			edge = (edge + (bend * gain).min(1.0) * painted * pressure).min(1.0);
-		}
-		let open = sample_ao(texel.uv);
+		let (p, n) = (texel.position, texel.face_normal);
+		let (shade, outward) = crease_paint(p, n);
 		let low = 1.0 - g[2];
 		let ramp = 1.0 + shading.highlight_ramp * low * low * (3.0 - 2.0 * low);
-		let lit = (edge * open * shading.highlight * ramp).clamp(0.0, 1.0);
-		let dark = ((1.0 - open) * 1.6 * shading.shadow).clamp(0.0, 1.0);
-		let mut color = base[texel.pixel].map(to_linear);
-		if shading.brushed {
-			let tint = brushwork(texel.position, texel.normal);
-			color = std::array::from_fn(|k| color[k] * tint[k]);
-		}
+		let lit = (outward * (1.0 - shade) * shading.highlight * ramp).clamp(0.0, 1.0);
+		let dark = (shade * 1.6 * shading.shadow).clamp(0.0, 1.0);
+		let mut color = canvas.paint(texel.position, texel.face_normal);
 		let cream = [1.0, 0.97, 0.85].map(to_linear_f64);
 		let screen: [f64; 3] = std::array::from_fn(|k| {
-			let lighter = (color[k] as f64 * 1.8 + 0.08).min(1.0);
+			let lighter = (color[k] * 1.8 + 0.08).min(1.0);
 			cream[k] + (lighter - cream[k]) * shading.blend
 		});
 		let multiply = [0.32, 0.3, 0.5].map(to_linear_f64);
@@ -741,14 +493,6 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 			let screened = 1.0 - (1.0 - color[k]) * (1.0 - screen[k]);
 			color[k] += (screened - color[k]) * lit;
 			color[k] += (color[k] * multiply[k] - color[k]) * dark;
-		}
-		if shading.gradient > 0.0 {
-			let t = 1.0 - g[2];
-			let factor = t * t * (3.0 - 2.0 * t) * shading.gradient;
-			let tint = [0.45, 0.42, 0.6].map(to_linear_f64);
-			for k in 0..3 {
-				color[k] += (color[k] * tint[k] - color[k]) * factor;
-			}
 		}
 		if shading.bands > 0 {
 			let bands = shading.bands as f64;
@@ -773,4 +517,59 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 
 fn to_linear_f64(c: f64) -> f64 {
 	to_linear(c as f32)
+}
+
+// Looks up the color an image already holds at a surface point, from the
+// nearest texel facing the same way, for coats painted over existing colors.
+pub struct ImageSampler {
+	texels: Vec<(Vec3, Vec3, [f32; 3])>,
+	grid: HashMap<[i64; 3], Vec<usize>>,
+}
+
+const SAMPLER_CELL: f64 = 0.1;
+
+impl ImageSampler {
+	pub fn new(mesh: &Mesh, image: &Image) -> ImageSampler {
+		let key = |p: Vec3| p.map(|c| (c / SAMPLER_CELL).floor() as i64);
+		let mut sampler = ImageSampler { texels: Vec::new(), grid: HashMap::new() };
+		for texel in texels(mesh, image.width, image.height) {
+			sampler.grid.entry(key(texel.position)).or_default().push(sampler.texels.len());
+			sampler.texels.push((texel.position, texel.face_normal, image.pixels[texel.pixel]));
+		}
+		sampler
+	}
+
+	// sRGB color at p on a surface with normal n.
+	pub fn color(&self, p: Vec3, n: Vec3) -> [f64; 3] {
+		let home = p.map(|c| (c / SAMPLER_CELL).floor() as i64);
+		let mut best = (f64::MAX, [0.5f32; 3]);
+		for x in -1..=1 {
+			for y in -1..=1 {
+				for z in -1..=1 {
+					for &index in self.grid.get(&[home[0] + x, home[1] + y, home[2] + z]).into_iter().flatten() {
+						let (at, normal, color) = self.texels[index];
+						let offset = sub(p, at);
+						let d = dot(offset, offset) + if dot(n, normal) < 0.5 { 1.0 } else { 0.0 };
+						if d < best.0 {
+							best = (d, color);
+						}
+					}
+				}
+			}
+		}
+		best.1.map(f64::from)
+	}
+}
+
+// Corners of the box round a mesh's positions.
+fn bounds(mesh: &Mesh) -> (Vec3, Vec3) {
+	let mut low = [f64::MAX; 3];
+	let mut high = [f64::MIN; 3];
+	for p in &mesh.positions {
+		for k in 0..3 {
+			low[k] = low[k].min(p[k]);
+			high[k] = high[k].max(p[k]);
+		}
+	}
+	(low, high)
 }

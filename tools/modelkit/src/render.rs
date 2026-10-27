@@ -20,7 +20,15 @@ pub struct View {
 	// whole model. The camera is orthographic, so nothing is clipped; it sees
 	// everything in frame as a player would from above.
 	pub focus: Option<(Vec3, f64)>,
+	// Perspective camera standing at an eye point and looking at a target,
+	// for seeing the model from right beside it as a player would.
+	pub eye: Option<(Vec3, Vec3)>,
 }
+
+// Horizontal field of view of the perspective camera, in degrees.
+const EYE_FOV: f64 = 70.0;
+// Corners closer than this to the eye are culled with their triangle.
+const NEAR: f64 = 0.05;
 
 pub fn render(parts: &[&Part], view: &View) -> Vec<u8> {
 	render_posed(parts, &[], view)
@@ -61,7 +69,10 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 	};
 
 	let (sin, cos) = view.spin.sin_cos();
-	let toward = [cos + sin, sin - cos, 0.8];
+	let toward = match view.eye {
+		Some((eye, target)) => sub(eye, target),
+		None => [cos + sin, sin - cos, 0.8],
+	};
 	let forward = normalize(scale(toward, -1.0));
 	let right = normalize(cross(forward, [0.0, 0.0, 1.0]));
 	let up = cross(right, forward);
@@ -72,7 +83,17 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 	let mut color = vec![BACKGROUND; size * size];
 	let mut depth = vec![f64::MAX; size * size];
 	let mut glow = vec![[0.0f32; 3]; size * size];
+	let spread = (EYE_FOV.to_radians() / 2.0).tan() * 2.0;
 	let to_screen = |p: Vec3| -> [f64; 3] {
+		if let Some((eye, _)) = view.eye {
+			let d = sub(p, eye);
+			let ahead = dot(d, forward);
+			return [
+				(dot(d, right) / (ahead * spread) + 0.5) * size as f64,
+				(0.5 - dot(d, up) / (ahead * spread)) * size as f64,
+				ahead,
+			];
+		}
 		let d = sub(p, center);
 		[
 			(dot(d, right) / width + 0.5) * size as f64,
@@ -85,6 +106,9 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 		let image = part.image.borrow();
 		for triangle in list {
 			let s = triangle.map(|corner| to_screen(corner.position));
+			if view.eye.is_some() && s.iter().any(|p| p[2] < NEAR) {
+				continue;
+			}
 			let area = (s[1][0] - s[0][0]) * (s[2][1] - s[0][1]) - (s[2][0] - s[0][0]) * (s[1][1] - s[0][1]);
 			if area.abs() < 1e-12 {
 				continue;
@@ -103,7 +127,14 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 					if w0 < 0.0 || w1 < 0.0 || w2 < 0.0 {
 						continue;
 					}
-					let z = w0 * s[0][2] + w1 * s[1][2] + w2 * s[2][2];
+					// Perspective: weights interpolate linearly in 1/depth.
+					let (w0, w1, w2, z) = if view.eye.is_some() {
+						let p = [w0 / s[0][2], w1 / s[1][2], w2 / s[2][2]];
+						let sum = p[0] + p[1] + p[2];
+						(p[0] / sum, p[1] / sum, p[2] / sum, 1.0 / sum)
+					} else {
+						(w0, w1, w2, w0 * s[0][2] + w1 * s[1][2] + w2 * s[2][2])
+					};
 					let at = y * size + x;
 					if z >= depth[at] {
 						continue;
@@ -146,7 +177,45 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 			data.extend(sum.map(|c| ((c / samples).clamp(0.0, 1.0) * 255.0 + 0.5) as u8));
 		}
 	}
+	fxaa(&mut data, view.size, view.size);
 	data
+}
+
+// Fast approximate anti-aliasing: where the picture changes sharply, each
+// pixel blends toward its neighbours across the edge, so stair-steps soften.
+const FXAA_EDGE_MIN: f32 = 0.0312;
+const FXAA_EDGE_RELATIVE: f32 = 0.125;
+
+fn fxaa(data: &mut [u8], width: usize, height: usize) {
+	let source = data.to_vec();
+	let luma: Vec<f32> = source.chunks(3).map(|c| (0.299 * c[0] as f32 + 0.587 * c[1] as f32 + 0.114 * c[2] as f32) / 255.0).collect();
+	let at = |x: usize, y: usize| y * width + x;
+	for y in 1..height - 1 {
+		for x in 1..width - 1 {
+			let l = luma[at(x, y)];
+			let (n, s, w, e) = (luma[at(x, y - 1)], luma[at(x, y + 1)], luma[at(x - 1, y)], luma[at(x + 1, y)]);
+			let corners = [luma[at(x - 1, y - 1)], luma[at(x + 1, y - 1)], luma[at(x - 1, y + 1)], luma[at(x + 1, y + 1)]];
+			let (mut low, mut high, mut sum) = (l.min(n).min(s).min(w).min(e), l.max(n).max(s).max(w).max(e), l + n + s + w + e);
+			for &c in &corners {
+				low = low.min(c);
+				high = high.max(c);
+				sum += c;
+			}
+			let range = high - low;
+			if range < FXAA_EDGE_MIN.max(high * FXAA_EDGE_RELATIVE) {
+				continue;
+			}
+			// A horizontal edge changes from one row to the next, so blend up and down.
+			let horizontal = (n + s - 2.0 * l).abs() >= (w + e - 2.0 * l).abs();
+			let (a, b) = if horizontal { (at(x, y - 1), at(x, y + 1)) } else { (at(x - 1, y), at(x + 1, y)) };
+			let weight = ((sum / 9.0 - l).abs() / range).clamp(0.0, 1.0).powi(2) * 0.5;
+			let p = at(x, y) * 3;
+			for k in 0..3 {
+				let blended = source[a * 3 + k] as f32 * 0.5 + source[b * 3 + k] as f32 * 0.5;
+				data[p + k] = (source[p + k] as f32 * (1.0 - weight) + blended * weight + 0.5) as u8;
+			}
+		}
+	}
 }
 
 // Box blur run three times each way, which is close to a gaussian.

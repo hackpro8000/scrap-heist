@@ -15,6 +15,10 @@ Supplementary rules for agents working on Scrap Heist.
 - Keep dependencies, ownership, state, control flow and cleanup traceable within the file.
 - No `WaitForChild` in server module requires.
 
+## Tooling
+- Search with `rg`, never `grep`.
+- Edit files with `sd`, never `sed`. Pass `--` before patterns that start with `-`.
+
 ## Design
 - Prefer obvious over clever, and simple over comprehensive.
 - Prefer composition over inheritance.

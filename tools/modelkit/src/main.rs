@@ -14,7 +14,9 @@
 
 mod anim;
 mod bake;
+mod brush;
 mod cache;
+mod coat;
 mod glb;
 mod image;
 mod mesh;
@@ -146,7 +148,10 @@ impl UserData for MeshHandle {
 			bake::dilate(&mut image.pixels, &mut covered, width, height, 8);
 			Ok(())
 		});
-		// Paints edge highlights and contact shadows over the base colors.
+		// Paints the part stroke by stroke (a coat in the colors `paint`
+		// returns, then grime, rust or dust, and scratches), then edge
+		// highlights and contact shadows over it. Without `paint` the coat takes
+		// the colors already in the image.
 		methods.add_method("paintShading", |_, this, (image, options): (AnyUserData, Option<Table>)| {
 			let get = |key: &str, default: f64| -> mlua::Result<f64> {
 				Ok(options.as_ref().map(|o| o.get::<Option<f64>>(key)).transpose()?.flatten().unwrap_or(default))
@@ -155,12 +160,15 @@ impl UserData for MeshHandle {
 				highlight: get("highlight", 0.7)?,
 				shadow: get("shadow", 0.75)?,
 				bands: get("bands", 0.0)? as usize,
-				sharp: get("sharp", 30.0)?,
 				blend: get("blend", 0.0)?.clamp(0.0, 1.0),
-				gradient: get("gradient", 0.0)?.clamp(0.0, 1.0),
 				highlight_ramp: get("highlightRamp", 0.0)?.max(0.0),
-				brushed: options.as_ref().map(|o| o.get::<Option<bool>>("brushed")).transpose()?.flatten().unwrap_or(false),
 			};
+			let look = coat::Look {
+				rust: get("rust", 0.0)?.clamp(0.0, 1.0),
+				rubber: options.as_ref().map(|o| o.get::<Option<bool>>("rubber")).transpose()?.flatten().unwrap_or(false),
+				gradient: get("gradient", 0.0)?.clamp(0.0, 1.0),
+			};
+			let paint = options.as_ref().map(|o| o.get::<Option<mlua::Function>>("paint")).transpose()?.flatten();
 			let mut occluders = Vec::new();
 			if let Some(list) = options.as_ref().map(|o| o.get::<Option<Vec<AnyUserData>>>("occluders")).transpose()?.flatten() {
 				for handle in list {
@@ -170,8 +178,26 @@ impl UserData for MeshHandle {
 			let borrowed: Vec<_> = occluders.iter().map(|m| m.borrow()).collect();
 			let refs: Vec<&Mesh> = borrowed.iter().map(|m| &**m).collect();
 			let image = image.borrow::<ImageHandle>()?.0.clone();
-			bake::paint_shading(&this.0.borrow(), &refs, &mut image.borrow_mut(), &shading);
-			Ok(())
+			let mesh = this.0.borrow();
+			let painted = bake::ImageSampler::new(&mesh, &image.borrow());
+			let mut failed = None;
+			let mut base = |p: mesh::Vec3, n: mesh::Vec3| -> [f64; 3] {
+				let Some(paint) = &paint else {
+					return painted.color(p, n);
+				};
+				match paint.call::<(f64, f64, f64)>((p[0], p[1], p[2], n[0], n[1], n[2])) {
+					Ok((r, g, b)) => [r, g, b],
+					Err(error) => {
+						failed.get_or_insert(error);
+						[1.0, 0.0, 1.0]
+					}
+				}
+			};
+			bake::paint_shading(&mesh, &refs, &mut image.borrow_mut(), &shading, &look, &mut base);
+			match failed {
+				Some(error) => Err(error),
+				None => Ok(()),
+			}
 		});
 	}
 }
@@ -200,8 +226,10 @@ impl UserData for ImageHandle {
 	}
 }
 
-fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<RefCell<Vec<Bone>>>, clips: Rc<RefCell<Vec<anim::Clip>>>, used: Rc<RefCell<Vec<PathBuf>>>, search: Vec<PathBuf>) -> mlua::Result<()> {
+fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<RefCell<Vec<Bone>>>, clips: Rc<RefCell<Vec<anim::Clip>>>, used: Rc<RefCell<Vec<PathBuf>>>, search: Vec<PathBuf>, texel_scale: f64) -> mlua::Result<()> {
 	let globals = lua.globals();
+	// Scales every texel density a layout asks for: 1 for final builds, less for previews.
+	globals.set("TEXEL_SCALE", texel_scale)?;
 
 	let mesh_api = lua.create_table()?;
 	mesh_api.set("new", lua.create_function(|_, ()| Ok(MeshHandle(Rc::new(RefCell::new(Mesh::new())))))?)?;
@@ -303,6 +331,8 @@ fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<R
 	model_api.set(
 		"cached",
 		lua.create_function(move |lua, (key, build): (String, mlua::Function)| {
+			// A preview build is kept apart from the final one, which it differs from.
+			let key = if texel_scale == 1.0 { key } else { format!("{key} @{texel_scale}") };
 			let path = cache::path(&folder, &key);
 			used.borrow_mut().push(path.clone());
 			if let Some(saved) = cache::load(&path) {
@@ -364,7 +394,7 @@ fn write_png(path: &Path, size: usize, data: &[u8]) -> std::io::Result<()> {
 // A close-up: focus point x, y, z, framing radius, and camera spin in degrees.
 type Closeup = (f64, f64, f64, f64, f64);
 
-fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], shown_clip: Option<&str>) -> Result<(), String> {
+fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[(mesh::Vec3, mesh::Vec3)], shown_clip: Option<&str>, texel_scale: f64) -> Result<(), String> {
 	let started = Instant::now();
 	let name = dir.file_name().and_then(|n| n.to_str()).ok_or("bad model folder")?.to_string();
 	let script = dir.join("model.luau");
@@ -377,7 +407,7 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], shown_cl
 	let bones = Rc::new(RefCell::new(Vec::new()));
 	let clips = Rc::new(RefCell::new(Vec::new()));
 	let used = Rc::new(RefCell::new(Vec::new()));
-	install_api(&lua, dir, parts.clone(), bones.clone(), clips.clone(), used.clone(), vec![dir.to_path_buf(), library]).map_err(|e| e.to_string())?;
+	install_api(&lua, dir, parts.clone(), bones.clone(), clips.clone(), used.clone(), vec![dir.to_path_buf(), library], texel_scale).map_err(|e| e.to_string())?;
 	lua.load(source).set_name(format!("@{}", script.display())).exec().map_err(|e| e.to_string())?;
 	cache::prune(dir, &used.borrow());
 	let scripted = started.elapsed();
@@ -411,7 +441,7 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], shown_cl
 		}
 	}
 	let shown: Vec<&Part> = parts.iter().filter(|p| p.preview).collect();
-	let preview = render::render(&shown, &render::View { size, spin: 0.0, focus: None });
+	let preview = render::render(&shown, &render::View { size, spin: 0.0, focus: None, eye: None });
 	write_png(&dir.join("preview.png"), size, &preview).map_err(|e| e.to_string())?;
 
 	if turntable > 0 {
@@ -419,14 +449,18 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], shown_cl
 		std::fs::create_dir_all(&frames).map_err(|e| e.to_string())?;
 		for frame in 0..turntable {
 			let spin = frame as f64 / turntable as f64 * std::f64::consts::TAU;
-			let data = render::render(&shown, &render::View { size, spin, focus: None });
+			let data = render::render(&shown, &render::View { size, spin, focus: None, eye: None });
 			write_png(&frames.join(format!("{frame:04}.png")), size, &data).map_err(|e| e.to_string())?;
 		}
 	}
 	for (n, &(x, y, z, radius, degrees)) in closeups.iter().enumerate() {
 		let focus = Some(([x, y, z], radius));
-		let data = render::render(&shown, &render::View { size, spin: degrees.to_radians(), focus });
+		let data = render::render(&shown, &render::View { size, spin: degrees.to_radians(), focus, eye: None });
 		write_png(&dir.join(format!("closeup_{}.png", n + 1)), size, &data).map_err(|e| e.to_string())?;
+	}
+	for (n, &(eye, target)) in eyes.iter().enumerate() {
+		let data = render::render(&shown, &render::View { size, spin: 0.0, focus: None, eye: Some((eye, target)) });
+		write_png(&dir.join(format!("eye_{}.png", n + 1)), size, &data).map_err(|e| e.to_string())?;
 	}
 	if let Some(wanted) = shown_clip {
 		let clips = clips.borrow();
@@ -448,7 +482,7 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], shown_cl
 		std::fs::create_dir_all(&frames).map_err(|e| e.to_string())?;
 		for frame in 0..clip.frames() {
 			let skin = clip.skin(&bones, frame as f64 / anim::FPS);
-			let data = render::render_posed(&shown, &skin, &render::View { size, spin: 0.0, focus: Some((center, radius)) });
+			let data = render::render_posed(&shown, &skin, &render::View { size, spin: 0.0, focus: Some((center, radius)), eye: None });
 			write_png(&frames.join(format!("{frame:04}.png")), size, &data).map_err(|e| e.to_string())?;
 		}
 	}
@@ -459,7 +493,7 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], shown_cl
 fn main() {
 	let args: Vec<String> = std::env::args().skip(1).collect();
 	let Some(dir) = args.first() else {
-		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--clip NAME]");
+		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--eye EX,EY,EZ,TX,TY,TZ]... [--clip NAME]");
 		std::process::exit(2);
 	};
 	let turntable = match args.iter().position(|a| a == "--turntable") {
@@ -479,8 +513,19 @@ fn main() {
 		};
 		closeups.push((x, y, z, radius, spin));
 	}
+	let mut eyes = Vec::new();
+	for (at, _) in args.iter().enumerate().filter(|(_, a)| *a == "--eye") {
+		let numbers: Vec<f64> = args.get(at + 1).map_or(vec![], |list| list.split(',').filter_map(|n| n.parse().ok()).collect());
+		let [ex, ey, ez, tx, ty, tz] = numbers[..] else {
+			eprintln!("--eye takes EX,EY,EZ,TX,TY,TZ");
+			std::process::exit(2);
+		};
+		eyes.push(([ex, ey, ez], [tx, ty, tz]));
+	}
 	let clip = args.iter().position(|a| a == "--clip").and_then(|at| args.get(at + 1));
-	if let Err(error) = run(Path::new(dir), turntable, size, &closeups, clip.map(|c| c.as_str())) {
+	// --preview builds texels at half the density, for quick looks.
+	let texel_scale = if args.iter().any(|a| a == "--preview") { 0.5 } else { 1.0 };
+	if let Err(error) = run(Path::new(dir), turntable, size, &closeups, &eyes, clip.map(|c| c.as_str()), texel_scale) {
 		eprintln!("error: {error}");
 		std::process::exit(1);
 	}
