@@ -4,7 +4,9 @@
 // on top of a script's base colors, like the old Blender paint_shading.
 
 use std::collections::HashMap;
+use std::path::PathBuf;
 
+use crate::cache;
 use crate::coat;
 use crate::image::Image;
 use crate::mesh::{add, cross, dot, normalize, scale, sub, Mesh, Vec3};
@@ -369,7 +371,7 @@ fn parallel<T: Send, F: Fn(&Texel) -> T + Sync>(texels: &[Texel], work: F) -> Ve
 	})
 }
 
-pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shading: &Shading, look: &coat::Look, base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3]) {
+pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &mut Image, shading: &Shading, look: &coat::Look, base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3], source: &cache::Source) {
 	let (width, height) = (image.width, image.height);
 	// Shadows and highlights both come from the corners a texel sits in: a
 	// surface nearby that faces it makes an interior angle, which shades, and
@@ -377,14 +379,18 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 	// Either way the sharper the corner the stronger the paint, so rounded
 	// facets stay clean. Only this part's own surfaces make exterior angles;
 	// another part merely passing close by is not an edge of this one.
-	let own = mesh_triangles(mesh).len();
 	// Only occluders close enough to reach this mesh can cast or catch anything.
-	let (own_low, own_high) = bounds(mesh);
+	// The part's other chunks count as its own surfaces, so a chunk seam shades like
+	// any other edge.
 	let mut triangles = mesh_triangles(mesh);
+	for other in group {
+		if within_reach(mesh, other) {
+			triangles.extend(mesh_triangles(other));
+		}
+	}
+	let own = triangles.len();
 	for other in occluders {
-		let (low, high) = bounds(other);
-		let gap = (0..3).map(|k| (low[k] - own_high[k]).max(own_low[k] - high[k]).max(0.0)).fold(0.0, |sum, g| sum + g * g);
-		if gap <= CONTACT_REACH * CONTACT_REACH {
+		if within_reach(mesh, other) {
 			triangles.extend(mesh_triangles(other));
 		}
 	}
@@ -398,6 +404,8 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 		})
 		.collect();
 	let contact_key = |p: Vec3| p.map(|c| (c / CONTACT_REACH).floor() as i64);
+	// Dot products at or above this are folds gentler than CONTACT_MIN_FOLD.
+	let min_cos = (CONTACT_MIN_FOLD * std::f64::consts::PI).cos();
 	let mut contact_grid: HashMap<[i64; 3], Vec<usize>> = HashMap::new();
 	for (index, (t, _, _)) in surfaces.iter().enumerate() {
 		let low = contact_key([0, 1, 2].map(|k| t[0][k].min(t[1][k]).min(t[2][k])));
@@ -421,6 +429,11 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 				for z in -1..=1 {
 					for &index in contact_grid.get(&[home[0] + x, home[1] + y, home[2] + z]).into_iter().flatten() {
 						let (triangle, facing, mine) = surfaces[index];
+						// A fold gentler than CONTACT_MIN_FOLD casts nothing, so drop it before
+						// any distance work.
+						if dot(n, facing) >= min_cos {
+							continue;
+						}
 						let offset = sub(p, closest_on_triangle(p, triangle));
 						let distance = dot(offset, offset).sqrt();
 						// An interior angle's surface faces the texel, so the texel sits in
@@ -471,18 +484,43 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 	let crease_wear = |p: Vec3, n: Vec3| (crease_paint(p, n).0 * 2.5).min(1.0);
 	let low_wear = |p: Vec3| 1.0 - generated(p)[2];
 	let wear = coat::Wear { edge: &edge_wear, crease: &crease_wear, low: &low_wear };
-	let canvas = coat::paint(mesh, look, &wear, base);
-
 	let full = texels(mesh, width, height);
+	// Each layer is cached on its own, so an edit only rebakes the layers it
+	// reads. Layers hold per texel values, in the order of `full`.
+	let neighbours: Vec<&Mesh> = group.iter().chain(occluders).copied().collect();
+	let coat_layer = cached_layer(cache::layer_path("coat", mesh, &neighbours, false, &[look.gradient], Some(&*image), source), || {
+		let canvas = coat::coat(mesh, look, &wear, base);
+		vec![layer_image(width, height, &full, &parallel(&full, |t| to_f32(canvas.paint(t.position, t.face_normal))))]
+	});
+	let wear_numbers = [look.rust, f64::from(u8::from(look.rubber)), look.gradient];
+	let wear_layer = cached_layer(cache::layer_path("wear", mesh, &neighbours, true, &wear_numbers, Some(&*image), source), || {
+		let canvas = coat::wear(mesh, look, &wear, base);
+		let over = parallel(&full, |t| canvas.over(t.position, t.face_normal));
+		let colour: Vec<[f32; 3]> = over.iter().map(|(c, _)| to_f32(*c)).collect();
+		let cover: Vec<[f32; 3]> = over.iter().map(|(_, a)| [*a as f32, 0.0, 0.0]).collect();
+		vec![layer_image(width, height, &full, &colour), layer_image(width, height, &full, &cover)]
+	});
+	let shade_layer = cached_layer(cache::layer_path("shade", mesh, &neighbours, true, &[], None, source), || {
+		let values = parallel(&full, |t| {
+			let (shade, outward) = crease_paint(t.position, t.face_normal);
+			[shade as f32, outward as f32, 0.0]
+		});
+		vec![layer_image(width, height, &full, &values)]
+	});
+
+	// Combine the layers per texel: the wear over the coat, then the lit and
+	// dark creases, then the bands.
 	let colors = parallel(&full, |texel| {
 		let g = generated(texel.position);
-		let (p, n) = (texel.position, texel.face_normal);
-		let (shade, outward) = crease_paint(p, n);
+		let coat_colour = coat_layer[0].pixels[texel.pixel].map(f64::from);
+		let wear_colour = wear_layer[0].pixels[texel.pixel].map(f64::from);
+		let cover = f64::from(wear_layer[1].pixels[texel.pixel][0]);
+		let mut color: [f64; 3] = std::array::from_fn(|k| coat_colour[k] + (wear_colour[k] - coat_colour[k]) * cover);
+		let [shade, outward, _] = shade_layer[0].pixels[texel.pixel].map(f64::from);
 		let low = 1.0 - g[2];
 		let ramp = 1.0 + shading.highlight_ramp * low * low * (3.0 - 2.0 * low);
 		let lit = (outward * (1.0 - shade) * shading.highlight * ramp).clamp(0.0, 1.0);
 		let dark = (shade * 1.6 * shading.shadow).clamp(0.0, 1.0);
-		let mut color = canvas.paint(texel.position, texel.face_normal);
 		let cream = [1.0, 0.97, 0.85].map(to_linear_f64);
 		let screen: [f64; 3] = std::array::from_fn(|k| {
 			let lighter = (color[k] * 1.8 + 0.08).min(1.0);
@@ -513,6 +551,35 @@ pub fn paint_shading(mesh: &Mesh, occluders: &[&Mesh], image: &mut Image, shadin
 		covered[texel.pixel] = true;
 	}
 	dilate(&mut image.pixels, &mut covered, width, height, 8);
+}
+
+// Returns a layer's images from the cache when present, else builds them and
+// saves them there.
+fn cached_layer(path: Option<PathBuf>, build: impl FnOnce() -> Vec<Image>) -> Vec<Image> {
+	if let Some(images) = path.as_deref().and_then(cache::load_layers) {
+		return images;
+	}
+	let images = build();
+	if let Some(path) = &path {
+		let refs: Vec<&Image> = images.iter().collect();
+		if let Err(error) = cache::save_layers(path, &refs) {
+			eprintln!("could not cache paint: {error}");
+		}
+	}
+	images
+}
+
+// A layer image holding one value per texel, placed at the texel's pixel.
+fn layer_image(width: usize, height: usize, texels: &[Texel], values: &[[f32; 3]]) -> Image {
+	let mut image = Image::new(width, height, [0.0; 3]);
+	for (texel, value) in texels.iter().zip(values) {
+		image.pixels[texel.pixel] = *value;
+	}
+	image
+}
+
+fn to_f32(c: [f64; 3]) -> [f32; 3] {
+	c.map(|x| x as f32)
 }
 
 fn to_linear_f64(c: f64) -> f64 {
@@ -561,6 +628,15 @@ impl ImageSampler {
 	}
 }
 
+// Whether another mesh is close enough to a mesh's surfaces to shade or be
+// shaded by them. The paint only reads occluders this close.
+pub fn within_reach(own: &Mesh, other: &Mesh) -> bool {
+	let (own_low, own_high) = bounds(own);
+	let (low, high) = bounds(other);
+	let gap = (0..3).map(|k| (low[k] - own_high[k]).max(own_low[k] - high[k]).max(0.0)).fold(0.0, |sum, g| sum + g * g);
+	gap <= CONTACT_REACH * CONTACT_REACH
+}
+
 // Corners of the box round a mesh's positions.
 fn bounds(mesh: &Mesh) -> (Vec3, Vec3) {
 	let mut low = [f64::MAX; 3];
@@ -573,3 +649,4 @@ fn bounds(mesh: &Mesh) -> (Vec3, Vec3) {
 	}
 	(low, high)
 }
+

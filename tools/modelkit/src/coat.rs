@@ -125,27 +125,34 @@ fn scatter(mesh: &Mesh, density: f64, least: u32, salt: u32, mut place: impl FnM
 }
 
 // Paints the part. `base` gives the sRGB coat color at a point and normal.
-pub fn paint(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3]) -> Canvas {
-	let mut canvas = Canvas::default();
-	let coat_at = |base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3], spot: &Spot| {
-		let color = linear(base(spot.at, spot.normal));
-		let low = (wear.low)(spot.at);
-		let fade = low * low * (3.0 - 2.0 * low) * look.gradient;
-		let tint = linear([0.45, 0.42, 0.6]);
-		std::array::from_fn::<f64, 3, _>(|k| color[k] + (color[k] * tint[k] - color[k]) * fade)
-	};
+// The base colour at a spot, darkened toward the bottom of the part.
+fn coat_at(look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3], spot: &Spot) -> [f64; 3] {
+	let color = linear(base(spot.at, spot.normal));
+	let low = (wear.low)(spot.at);
+	let fade = low * low * (3.0 - 2.0 * low) * look.gradient;
+	let tint = linear([0.45, 0.42, 0.6]);
+	std::array::from_fn::<f64, 3, _>(|k| color[k] + (color[k] * tint[k] - color[k]) * fade)
+}
 
-	// The coat: flat strokes sideways round walls and any way across tops.
+// The base coat: flat strokes sideways round walls and any way across tops.
+pub fn coat(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3]) -> Canvas {
+	let mut canvas = Canvas::default();
 	scatter(mesh, COAT_DENSITY, 1, 1, |spot, id| {
 		let r = |j: u32| hash(id.wrapping_add(j));
 		let angle = (r(2) - 0.5) * 0.5 + if spot.normal[2].abs() > WALL { r(3) * std::f64::consts::TAU } else { 0.0 };
 		// Each stroke is mixed a little lighter or darker, warmer or cooler.
 		let shade = 1.0 + (r(4) - 0.5) * 0.3;
 		let warm = (r(7) - 0.5) * 0.14;
-		let coat = coat_at(base, &spot);
+		let coat = coat_at(look, wear, base, &spot);
 		let color = [coat[0] * shade * (1.0 + warm), coat[1] * shade, coat[2] * shade * (1.0 - warm)];
 		canvas.add(spot.stroke(Brush::Flat, spot.at, spot.heading(angle), 0.35 + 0.35 * r(5), 0.16 + 0.08 * r(6), color, 1.0, id));
 	});
+	canvas
+}
+
+// Wear over the base coat: grime, rust, drips, scuffs and scratches.
+pub fn wear(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3]) -> Canvas {
+	let mut canvas = Canvas::default();
 	if look.rust <= 0.0 && !look.rubber {
 		return canvas;
 	}
@@ -164,7 +171,7 @@ pub fn paint(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, V
 		let color = if look.rubber {
 			linear(DUST)
 		} else {
-			let coat = coat_at(base, &spot);
+			let coat = coat_at(look, wear, base, &spot);
 			let tint = linear(GRIME_TINT);
 			std::array::from_fn(|k| coat[k] * tint[k])
 		};
@@ -179,7 +186,7 @@ pub fn paint(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, V
 			if r(2) >= 0.2 + 0.8 * (wear.edge)(spot.at, spot.normal) {
 				return;
 			}
-			let color = coat_at(base, &spot).map(|c| (c * 1.8).min(1.0));
+			let color = coat_at(look, wear, base, &spot).map(|c| (c * 1.8).min(1.0));
 			canvas.add(spot.stroke(Brush::Liner, spot.at, spot.heading(r(3) * 6.3), 0.1 + 0.2 * r(4), 0.02, color, 0.5, id));
 		});
 		return canvas;
@@ -222,7 +229,7 @@ pub fn paint(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, V
 		}
 		// Chipped paint: a shadow lined in under the top edge, and a lit lip
 		// lined along under the bottom edge.
-		let lip = coat_at(base, &spot).map(|c| (c * 1.45 + 0.03).min(1.0));
+		let lip = coat_at(look, wear, base, &spot).map(|c| (c * 1.45 + 0.03).min(1.0));
 		let dark = linear(RUST_DARK).map(|c| c * 0.45);
 		canvas.add(spot.stroke(Brush::Liner, spot.moved((r(5) - 0.5) * size * 0.4, size * 0.7), spot.side, size * 1.3, 0.02, dark, 0.9, id ^ 7));
 		canvas.add(spot.stroke(Brush::Liner, spot.moved((r(6) - 0.5) * size * 0.4, lowest - 0.012), spot.side, size * 1.4, 0.02, lip, 0.9, id ^ 8));
@@ -249,7 +256,7 @@ pub fn paint(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, V
 		}
 		let along = spot.heading(r(3) * 6.3);
 		let across = cross(spot.normal, along);
-		let coat = coat_at(base, &spot);
+		let coat = coat_at(look, wear, base, &spot);
 		let metal = linear(BARE_METAL);
 		let color = std::array::from_fn(|k| (coat[k] + metal[k] * 2.0) / 3.0);
 		for k in 0..3 + (r(4) * 4.0) as u32 {
