@@ -1,7 +1,9 @@
 ---
 name: model-previewer
 description: Builds one item model and renders a preview PNG. Give it the item name, the scratch output directory and the eye arguments. Returns the PNG path and any errors only.
-tools: Bash, Read
+tools:
+  - Bash
+  - Read
 model: haiku
 ---
 
