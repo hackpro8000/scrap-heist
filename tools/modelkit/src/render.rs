@@ -4,7 +4,11 @@
 // carry their own painted shading.
 
 use crate::mesh::{cross, dot, normalize, scale, sub, Vec3};
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use crate::anim::Pose;
+use crate::image::Image;
 use crate::Part;
 
 const BACKGROUND: [f32; 3] = [0.36, 0.38, 0.42];
@@ -27,6 +31,61 @@ pub struct View {
 
 // Horizontal field of view of the perspective camera, in degrees.
 const EYE_FOV: f64 = 70.0;
+// Texels per stud the eye camera can tell apart at this distance, for a
+// picture `size` pixels across; denser texels only blur together.
+pub fn texels_resolved(distance: f64, size: usize) -> f64 {
+	let spread = (EYE_FOV.to_radians() / 2.0).tan() * 2.0;
+	size as f64 / (spread * distance)
+}
+
+// Whether any of a ball at `centre` with `radius` falls inside the eye
+// camera's square frame, looking from `eye` toward `target`.
+pub fn in_view(eye: Vec3, target: Vec3, centre: Vec3, radius: f64) -> bool {
+	let offset = sub(centre, eye);
+	let distance = dot(offset, offset).sqrt();
+	if distance <= radius {
+		return true;
+	}
+	// The frame's corners lie furthest off axis, so the cone through them
+	// holds the whole frame.
+	let corner = ((EYE_FOV.to_radians() / 2.0).tan() * 2f64.sqrt()).atan();
+	let off_axis = dot(scale(offset, 1.0 / distance), normalize(sub(target, eye))).clamp(-1.0, 1.0).acos();
+	off_axis - (radius / distance).asin() <= corner
+}
+
+// Steepest viewing angle the mip choice accounts for; grazing surfaces past it
+// blur no further.
+const MIP_MIN_FACING: f64 = 0.02;
+
+// Mip chain: each level halves the one before by averaging 2×2 texels, so a
+// far surface shows its texture's average instead of whichever texel lands
+// under the pixel, and fine detail stops breaking into noise.
+struct Mips(Vec<Image>);
+
+impl Mips {
+	fn new(image: &Image) -> Self {
+		let mut levels = vec![image.half()];
+		while levels.last().is_some_and(|l| l.width > 1 || l.height > 1) {
+			let next = levels.last().unwrap().half();
+			levels.push(next);
+		}
+		Mips(levels)
+	}
+
+	// Level 0 is the full texture; between levels the two nearest blend.
+	fn sample(&self, full: &Image, u: f64, v: f64, level: f64) -> [f32; 3] {
+		let at = |l: usize| if l == 0 { full.sample(u, v) } else { self.0[(l - 1).min(self.0.len() - 1)].sample(u, v) };
+		let level = level.clamp(0.0, self.0.len() as f64);
+		let low = level.floor() as usize;
+		let t = (level - low as f64) as f32;
+		let near = at(low);
+		if t == 0.0 {
+			return near;
+		}
+		let far = at(low + 1);
+		[0, 1, 2].map(|a| near[a] + (far[a] - near[a]) * t)
+	}
+}
 // Corners closer than this to the eye are culled with their triangle.
 const NEAR: f64 = 0.05;
 
@@ -102,13 +161,38 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 		]
 	};
 
+	// Parts can share an image, so each chain is built once.
+	let mut chains: Vec<(*const RefCell<Image>, Mips)> = Vec::new();
+	for (_, part) in &triangles {
+		let key = Rc::as_ptr(&part.image);
+		if !chains.iter().any(|(k, _)| *k == key) {
+			chains.push((key, Mips::new(&part.image.borrow())));
+		}
+	}
+	// Studs one screen pixel spans, before foreshortening; the eye camera
+	// multiplies it by the distance ahead.
+	let pixel_studs = if view.eye.is_some() { spread / size as f64 } else { width / size as f64 };
+
 	for (list, part) in &triangles {
 		let image = part.image.borrow();
+		let key = Rc::as_ptr(&part.image);
+		let mips = &chains.iter().find(|(k, _)| *k == key).unwrap().1;
 		for triangle in list {
 			let s = triangle.map(|corner| to_screen(corner.position));
 			if view.eye.is_some() && s.iter().any(|p| p[2] < NEAR) {
 				continue;
 			}
+			// Texels per stud on this triangle, and how squarely it faces us.
+			let edge = |k: usize| sub(triangle[k].position, triangle[0].position);
+			let face = cross(edge(1), edge(2));
+			let world_area = dot(face, face).sqrt();
+			let uv_edge = |k: usize, a: usize| (triangle[k].uv[a] - triangle[0].uv[a]) * if a == 0 { image.width } else { image.height } as f64;
+			let texel_area = (uv_edge(1, 0) * uv_edge(2, 1) - uv_edge(2, 0) * uv_edge(1, 1)).abs();
+			let density = if world_area > 1e-12 { (texel_area / world_area).sqrt() } else { 0.0 };
+			let facing = if world_area > 1e-12 { (dot(face, forward).abs() / world_area).max(MIP_MIN_FACING) } else { 1.0 };
+			// A tilted surface stretches the footprint along one axis only, so
+			// the root of the facing splits the difference between the axes.
+			let texels_per_pixel = density * pixel_studs / facing.sqrt();
 			let area = (s[1][0] - s[0][0]) * (s[2][1] - s[0][1]) - (s[2][0] - s[0][0]) * (s[1][1] - s[0][1]);
 			if area.abs() < 1e-12 {
 				continue;
@@ -151,7 +235,8 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 					let shade = (0.72 + 0.38 * dot(normal, light).max(0.0)) as f32;
 					// Emission adds to the lighting before the albedo, as
 					// SurfaceAppearance does, and spills into a bloom.
-					let albedo = image.sample(u, v);
+					let footprint = if view.eye.is_some() { texels_per_pixel * z } else { texels_per_pixel };
+					let albedo = mips.sample(&image, u, v, footprint.max(1.0).log2());
 					color[at] = albedo.map(|c| c * (shade + part.emissive));
 					glow[at] = albedo.map(|c| c * part.emissive);
 				}
