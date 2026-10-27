@@ -21,8 +21,10 @@ if [ -d "${src}/bots/${name}" ]; then
 elif [ -f "${src}/items/${name}.luau" ]; then
 	# CACHE_KEY hashes the shared code and the item down to "-- cached
 	# above", for a model.cached build of the part above that line.
-	key="$({ cat "${src}/rarity.luau" "${src}/common.luau"; sed '/^-- cached above$/q' "${src}/items/${name}.luau"; } | sha1sum | cut -c1-16)"
-	{ echo "local CACHE_KEY = \"${name}-${key}\""; cat "${src}/rarity.luau" "${src}/common.luau" "${src}/items/${name}.luau"; } > "${out}"
+	# An "-- include: <Name>" line pulls in art/src/shared/<Name>.luau.
+	item="$(awk -v shared="${src}/shared" '/^-- include: / { file = shared "/" $3 ".luau"; while ((getline line < file) > 0) print line; close(file); next } 1' "${src}/items/${name}.luau")"
+	key="$({ cat "${src}/rarity.luau" "${src}/common.luau"; printf '%s\n' "${item}" | sed '/^-- cached above$/q'; } | sha1sum | cut -c1-16)"
+	{ echo "local CACHE_KEY = \"${name}-${key}\""; cat "${src}/rarity.luau" "${src}/common.luau"; printf '%s\n' "${item}"; } > "${out}"
 elif [ -f "${src}/layouts/${name}.luau" ]; then
 	# Skipped parts never reach the cache, so the skip rule is part of each key.
 	skip="$(awk '/^skipPart = function/ { open = 1 } open { print } open && /^end/ { open = 0 }' "${src}/layouts/${name}.luau")"

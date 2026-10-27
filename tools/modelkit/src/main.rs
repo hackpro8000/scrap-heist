@@ -169,14 +169,26 @@ impl UserData for MeshHandle {
 				gradient: get("gradient", 0.0)?.clamp(0.0, 1.0),
 			};
 			let paint = options.as_ref().map(|o| o.get::<Option<mlua::Function>>("paint")).transpose()?.flatten();
+			// A custom paint fn is keyed by `salt`, the item's source key, since its code can't be hashed.
+			let custom = options.as_ref().map(|o| o.get::<Option<bool>>("custom")).transpose()?.flatten().unwrap_or(false);
+			let salt = options.as_ref().map(|o| o.get::<Option<String>>("salt")).transpose()?.flatten();
 			let mut occluders = Vec::new();
 			if let Some(list) = options.as_ref().map(|o| o.get::<Option<Vec<AnyUserData>>>("occluders")).transpose()?.flatten() {
 				for handle in list {
 					occluders.push(handle.borrow::<MeshHandle>()?.0.clone());
 				}
 			}
+			// Other chunks of this part: their edges count as this part's own.
+			let mut group = Vec::new();
+			if let Some(list) = options.as_ref().map(|o| o.get::<Option<Vec<AnyUserData>>>("group")).transpose()?.flatten() {
+				for handle in list {
+					group.push(handle.borrow::<MeshHandle>()?.0.clone());
+				}
+			}
 			let borrowed: Vec<_> = occluders.iter().map(|m| m.borrow()).collect();
 			let refs: Vec<&Mesh> = borrowed.iter().map(|m| &**m).collect();
+			let borrowed_group: Vec<_> = group.iter().map(|m| m.borrow()).collect();
+			let group_refs: Vec<&Mesh> = borrowed_group.iter().map(|m| &**m).collect();
 			let image = image.borrow::<ImageHandle>()?.0.clone();
 			let mesh = this.0.borrow();
 			let painted = bake::ImageSampler::new(&mesh, &image.borrow());
@@ -193,7 +205,8 @@ impl UserData for MeshHandle {
 					}
 				}
 			};
-			bake::paint_shading(&mesh, &refs, &mut image.borrow_mut(), &shading, &look, &mut base);
+			let source = cache::Source { custom, salt };
+			bake::paint_shading(&mesh, &group_refs, &refs, &mut image.borrow_mut(), &shading, &look, &mut base, &source);
 			match failed {
 				Some(error) => Err(error),
 				None => Ok(()),
@@ -407,6 +420,7 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 	let bones = Rc::new(RefCell::new(Vec::new()));
 	let clips = Rc::new(RefCell::new(Vec::new()));
 	let used = Rc::new(RefCell::new(Vec::new()));
+	cache::enable_paint_cache(dir, used.clone());
 	install_api(&lua, dir, parts.clone(), bones.clone(), clips.clone(), used.clone(), vec![dir.to_path_buf(), library], texel_scale).map_err(|e| e.to_string())?;
 	lua.load(source).set_name(format!("@{}", script.display())).exec().map_err(|e| e.to_string())?;
 	cache::prune(dir, &used.borrow());
@@ -530,3 +544,4 @@ fn main() {
 		std::process::exit(1);
 	}
 }
+

@@ -579,7 +579,7 @@ local parts = {}
 local function setLook(entry, color, rust)
 	rust = rust or 0.4
 	if type(rust) == "function" then
-		entry.paint, entry.rust = rust, paintRust[rust] or 0
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
 		return
 	end
 	entry.paint = function()
@@ -718,6 +718,8 @@ local function chunkedPart(name, bone, color, build, smooth, rust)
 		end, smooth, 0, texture)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
 	end
 	for _, key in order do
 		emit(`{name}_{key}`, chunks[key], CHUNK)
@@ -732,9 +734,11 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders = {}
+		local occluders, group = {}, {}
 		for _, other in parts do
-			if other ~= entry then
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
 		end
@@ -744,7 +748,11 @@ local function finishParts()
 			gradient = GRADIENT,
 			blend = EDGE_BLEND,
 			occluders = occluders,
+			group = group,
 			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
 			rust = entry.rust * WEAR,
 			rubber = entry.rubber,
 		})

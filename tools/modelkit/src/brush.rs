@@ -173,6 +173,22 @@ impl Canvas {
 
 	// The color the strokes leave at p, laid over the color of the nearest
 	// coat stroke, so a spot the coat's bristles skipped shows the same paint.
+	// The colour the strokes lay at p, and how much of p they cover (0-1).
+	pub fn over(&self, p: Vec3, n: Vec3) -> ([f64; 3], f64) {
+		let nearby = self.grid.get(&cell(p)).map(Vec::as_slice).unwrap_or(&[]);
+		let (mut color, mut covered) = ([0.0; 3], 0.0f64);
+		for &index in nearby {
+			let stroke = &self.strokes[index];
+			let alpha = stroke.cover(p, n);
+			if alpha > 0.0 {
+				let paint = stroke.color.map(|c| c * stroke.tone(p));
+				color = if covered == 0.0 { paint } else { std::array::from_fn(|k| color[k] + (paint[k] - color[k]) * alpha) };
+				covered = 1.0 - (1.0 - covered) * (1.0 - alpha);
+			}
+		}
+		(color, covered)
+	}
+
 	pub fn paint(&self, p: Vec3, n: Vec3) -> [f64; 3] {
 		let nearby = self.grid.get(&cell(p)).map(Vec::as_slice).unwrap_or(&[]);
 		let mut under = (f64::MAX, [0.5; 3]);

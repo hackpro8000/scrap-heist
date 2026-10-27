@@ -3,9 +3,11 @@
 // <model folder>/.cache, one per key, and a build deletes the ones it didn't
 // use.
 
+use std::cell::RefCell;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 use std::path::{Path, PathBuf};
+use std::rc::Rc;
 
 use crate::image::Image;
 use crate::mesh::{Face, Mesh};
@@ -136,4 +138,105 @@ impl Reader<'_> {
 	fn f64(&mut self) -> Option<f64> {
 		Some(f64::from_le_bytes(self.take(8)?.try_into().ok()?))
 	}
+}
+
+thread_local! {
+	// While a build runs, each part's painted texture is cached in the model's
+	// folder: where the cache lives, and the build's list of used files.
+	static PAINT_CACHE: RefCell<Option<(PathBuf, Rc<RefCell<Vec<PathBuf>>>)>> = const { RefCell::new(None) };
+}
+
+pub fn enable_paint_cache(dir: &Path, used: Rc<RefCell<Vec<PathBuf>>>) {
+	PAINT_CACHE.with(|cell| *cell.borrow_mut() = Some((dir.to_path_buf(), used)));
+}
+
+// What a paint is keyed by beyond its geometry: a custom Lua paint fn has no
+// code to hash, so it is keyed by `salt`, the item's source key. Without a salt
+// a custom paint is not cached.
+pub struct Source {
+	pub custom: bool,
+	pub salt: Option<String>,
+}
+
+// Where one layer of a part's paint is cached, keyed by what that layer reads:
+// the part's geometry, the parts in reach when `reach`, the layer's settings in
+// `numbers`, the colour it starts from when `colour`, and the paint source.
+// None when caching is off, or a custom paint has no salt.
+pub fn layer_path(kind: &str, mesh: &Mesh, occluders: &[&Mesh], reach: bool, numbers: &[f64], colour: Option<&Image>, source: &Source) -> Option<PathBuf> {
+	PAINT_CACHE.with(|cell| {
+		let state = cell.borrow();
+		let (dir, used) = state.as_ref()?;
+		if source.custom && source.salt.is_none() {
+			return None;
+		}
+		let mut hasher = DefaultHasher::new();
+		kind.hash(&mut hasher);
+		hash_mesh(&mut hasher, mesh);
+		if reach {
+			for other in occluders.iter().filter(|other| crate::bake::within_reach(mesh, other)) {
+				hash_mesh(&mut hasher, other);
+			}
+		}
+		numbers.iter().for_each(|n| n.to_bits().hash(&mut hasher));
+		if let Some(image) = colour {
+			(image.width, image.height).hash(&mut hasher);
+			for pixel in &image.pixels {
+				pixel.iter().for_each(|c| c.to_bits().hash(&mut hasher));
+			}
+		}
+		(source.custom, &source.salt).hash(&mut hasher);
+		let path = path(dir, &format!("{kind} {:016x}", hasher.finish()));
+		used.borrow_mut().push(path.clone());
+		Some(path)
+	})
+}
+
+fn hash_mesh(hasher: &mut DefaultHasher, mesh: &Mesh) {
+	mesh.smooth_angle.to_bits().hash(hasher);
+	for p in &mesh.positions {
+		p.iter().for_each(|c| c.to_bits().hash(hasher));
+	}
+	for face in &mesh.faces {
+		face.verts.hash(hasher);
+		face.uvs.is_some().hash(hasher);
+		for uv in face.uvs.iter().flatten() {
+			uv.iter().for_each(|c| c.to_bits().hash(hasher));
+		}
+	}
+}
+
+// Saves a layer's images, one after another.
+pub fn save_layers(path: &Path, images: &[&Image]) -> std::io::Result<()> {
+	let mut out = Vec::new();
+	put_u32(&mut out, VERSION);
+	put_u32(&mut out, images.len() as u32);
+	for image in images {
+		put_u32(&mut out, image.width as u32);
+		put_u32(&mut out, image.height as u32);
+		for pixel in &image.pixels {
+			pixel.iter().for_each(|&c| out.extend(c.to_le_bytes()));
+		}
+	}
+	std::fs::create_dir_all(path.parent().expect("cache folder"))?;
+	std::fs::write(path, out)
+}
+
+// None when the file is missing, from another version or damaged.
+pub fn load_layers(path: &Path) -> Option<Vec<Image>> {
+	let bytes = std::fs::read(path).ok()?;
+	let mut r = Reader { bytes: &bytes, at: 0 };
+	if r.u32()? != VERSION {
+		return None;
+	}
+	let mut images = Vec::new();
+	for _ in 0..r.u32()? {
+		let (width, height) = (r.u32()? as usize, r.u32()? as usize);
+		let mut image = Image::new(width, height, [0.0; 3]);
+		let raw = r.take(width * height * 12)?;
+		for (pixel, bytes) in image.pixels.iter_mut().zip(raw.chunks_exact(12)) {
+			*pixel = std::array::from_fn(|k| f32::from_le_bytes(bytes[k * 4..k * 4 + 4].try_into().unwrap()));
+		}
+		images.push(image);
+	}
+	(r.at == bytes.len()).then_some(images)
 }

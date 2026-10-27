@@ -92,7 +92,7 @@ part("Sign", nil, { 0.62, 0.3, 0.18 }, function(mesh)
 	end
 end, nil, 0.7)
 
-part("SignJaw", nil, { 0.56, 0.27, 0.16 }, function(mesh)
+part("SignJaw", nil, { 0.56, 0.27, 0.20 }, function(mesh)
 	mesh = enlarged(mesh)
 	-- The hooked top jaw, toothed on its inner face.
 	local z = TOP + 1.25
