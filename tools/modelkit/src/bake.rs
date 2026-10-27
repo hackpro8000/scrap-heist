@@ -4,6 +4,7 @@
 // on top of a script's base colors, like the old Blender paint_shading.
 
 use std::collections::HashMap;
+use std::hash::{BuildHasherDefault, Hasher};
 use std::path::PathBuf;
 
 use crate::cache;
@@ -285,8 +286,35 @@ fn closest_on_triangle(p: Vec3, [a, b, c]: [Vec3; 3]) -> Vec3 {
 	add(a, add(scale(ab, vb * denom), scale(ac, vc * denom)))
 }
 
+// The contact grid hashes millions of small integer cell keys; std's default
+// hasher guards against crafted keys, which only slows that down.
+#[derive(Default)]
+struct CellHasher(u64);
+
+impl Hasher for CellHasher {
+	fn write(&mut self, bytes: &[u8]) {
+		for chunk in bytes.chunks(8) {
+			let mut word = [0u8; 8];
+			word[..chunk.len()].copy_from_slice(chunk);
+			self.0 = (self.0.rotate_left(5) ^ u64::from_le_bytes(word)).wrapping_mul(0x517c_c1b7_2722_0a95);
+		}
+	}
+
+	fn finish(&self) -> u64 {
+		self.0
+	}
+}
+
+type CellMap<V> = HashMap<[i64; 3], V, BuildHasherDefault<CellHasher>>;
+
+// Corner positions only, fanned the way Mesh::triangles fans each face, but
+// without working out the smoothed normals nobody here reads.
 pub fn mesh_triangles(mesh: &Mesh) -> Vec<[Vec3; 3]> {
-	mesh.triangles().iter().map(|t| t.map(|c| c.position)).collect()
+	let at = |vert: usize| mesh.positions[vert];
+	mesh.faces
+		.iter()
+		.flat_map(|face| (1..face.verts.len() - 1).map(move |k| [at(face.verts[0]), at(face.verts[k]), at(face.verts[k + 1])]))
+		.collect()
 }
 
 // --- Shading ----------------------------------------------------------------
@@ -394,9 +422,15 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 			triangles.extend(mesh_triangles(other));
 		}
 	}
+	// Texels only ever look within CONTACT_REACH of this mesh, so surfaces
+	// outside that box are dropped and big ones only fill the grid inside it.
+	let (mesh_low, mesh_high) = bounds(mesh);
+	let reach_low = mesh_low.map(|c| c - CONTACT_REACH);
+	let reach_high = mesh_high.map(|c| c + CONTACT_REACH);
 	let surfaces: Vec<([Vec3; 3], Vec3, bool)> = triangles
 		.into_iter()
 		.enumerate()
+		.filter(|(_, t)| (0..3).all(|k| t[0][k].max(t[1][k]).max(t[2][k]) >= reach_low[k] && t[0][k].min(t[1][k]).min(t[2][k]) <= reach_high[k]))
 		.filter_map(|(index, t)| {
 			let n = cross(sub(t[1], t[0]), sub(t[2], t[0]));
 			let length = dot(n, n).sqrt();
@@ -406,13 +440,24 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 	let contact_key = |p: Vec3| p.map(|c| (c / CONTACT_REACH).floor() as i64);
 	// Dot products at or above this are folds gentler than CONTACT_MIN_FOLD.
 	let min_cos = (CONTACT_MIN_FOLD * std::f64::consts::PI).cos();
-	let mut contact_grid: HashMap<[i64; 3], Vec<usize>> = HashMap::new();
-	for (index, (t, _, _)) in surfaces.iter().enumerate() {
+	let mut contact_grid: CellMap<Vec<usize>> = CellMap::default();
+	let (key_low, key_high) = (contact_key(reach_low), contact_key(reach_high));
+	// A cell whose centre is further than this from a plane can't touch it.
+	let cell_reach = CONTACT_REACH * 3f64.sqrt() / 2.0;
+	for (index, (t, facing, _)) in surfaces.iter().enumerate() {
 		let low = contact_key([0, 1, 2].map(|k| t[0][k].min(t[1][k]).min(t[2][k])));
 		let high = contact_key([0, 1, 2].map(|k| t[0][k].max(t[1][k]).max(t[2][k])));
+		let low: [i64; 3] = std::array::from_fn(|k| low[k].max(key_low[k]));
+		let high: [i64; 3] = std::array::from_fn(|k| high[k].min(key_high[k]));
 		for x in low[0]..=high[0] {
 			for y in low[1]..=high[1] {
 				for z in low[2]..=high[2] {
+					// A tilted triangle's box is mostly empty space; only the
+					// cells its plane passes through can hold it.
+					let centre = [x, y, z].map(|c| (c as f64 + 0.5) * CONTACT_REACH);
+					if dot(*facing, sub(centre, t[0])).abs() > cell_reach {
+						continue;
+					}
 					contact_grid.entry([x, y, z]).or_default().push(index);
 				}
 			}
@@ -488,11 +533,11 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 	// Each layer is cached on its own, so an edit only rebakes the layers it
 	// reads. Layers hold per texel values, in the order of `full`.
 	let neighbours: Vec<&Mesh> = group.iter().chain(occluders).copied().collect();
-	let coat_layer = cached_layer(cache::layer_path("coat", mesh, &neighbours, false, &[look.gradient], Some(&*image), source), || {
+	let coat_layer = cached_layer(cache::layer_path("coat", mesh, &neighbours, false, &[look.gradient, look.brush], Some(&*image), source), || {
 		let canvas = coat::coat(mesh, look, &wear, base);
 		vec![layer_image(width, height, &full, &parallel(&full, |t| to_f32(canvas.paint(t.position, t.face_normal))))]
 	});
-	let wear_numbers = [look.rust, f64::from(u8::from(look.rubber)), look.gradient];
+	let wear_numbers = [look.rust, f64::from(u8::from(look.rubber)), look.gradient, look.brush];
 	let wear_layer = cached_layer(cache::layer_path("wear", mesh, &neighbours, true, &wear_numbers, Some(&*image), source), || {
 		let canvas = coat::wear(mesh, look, &wear, base);
 		let over = parallel(&full, |t| canvas.over(t.position, t.face_normal));
@@ -500,7 +545,9 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 		let cover: Vec<[f32; 3]> = over.iter().map(|(_, a)| [*a as f32, 0.0, 0.0]).collect();
 		vec![layer_image(width, height, &full, &colour), layer_image(width, height, &full, &cover)]
 	});
-	let shade_layer = cached_layer(cache::layer_path("shade", mesh, &neighbours, true, &[], None, source), || {
+	// No colour goes in, so the texture size keys the layer instead.
+	let shade_size = [width as f64, height as f64];
+	let shade_layer = cached_layer(cache::layer_path("shade", mesh, &neighbours, true, &shade_size, None, source), || {
 		let values = parallel(&full, |t| {
 			let (shade, outward) = crease_paint(t.position, t.face_normal);
 			[shade as f32, outward as f32, 0.0]

@@ -24,12 +24,14 @@ Mesh = {
 				return real:vertex(x * c - y * s + ox, x * s + y * c + oy, z + oz)
 			end,
 			paintShading = function(_, image, options)
-				if options and options.occluders then
-					local occluders = {}
-					for i, occluder in options.occluders do
-						occluders[i] = unwrapMesh(occluder)
+				for _, list in { "occluders", "group" } do
+					if options and options[list] then
+						local real = {}
+						for i, other in options[list] do
+							real[i] = unwrapMesh(other)
+						end
+						options[list] = real
 					end
-					options.occluders = occluders
 				end
 				return real:paintShading(image, options)
 			end,
@@ -43,6 +45,28 @@ Mesh = {
 	end,
 }
 
+-- A placed item caches its shell entries, which hold meshes; the cache
+-- stores real meshes only, so unwrap them first. Inside a place() build the
+-- placement cache already stores the item, so skip the item's own cache.
+local realCached = model.cached
+local builtParts = nil
+model.cached = function(key, build)
+	if builtParts then
+		return build()
+	end
+	return realCached(key, function()
+		local result = build()
+		if type(result) == "table" then
+			for _, entry in result do
+				if type(entry) == "table" and entry.mesh then
+					entry.mesh = unwrapMesh(entry.mesh)
+				end
+			end
+		end
+		return result
+	end)
+end
+
 -- Layouts override this to leave out parts, such as fill levels.
 local function skipPart(_name: string): boolean
 	return false
@@ -54,7 +78,6 @@ local buildKeys = {}
 -- And a hash of each slab body with the code around it, by the line its
 -- function starts on, so placeSlab() can reuse an unchanged slab.
 local slabKeys = {}
-local builtParts = nil
 
 local function addPart(name, mesh, image, preview, emissive)
 	if skipPart(name) then
@@ -85,13 +108,23 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 		return
 	end
 	-- Built once at the origin per model and stretch, then moved into place,
-	-- so moving a prop never rebuilds it.
+	-- so moving a prop never rebuilds it. Eye previews size textures by
+	-- distance, so there placements share a build per distance band.
 	key = `{key} {placeStretch} {placeAxis}`
+	if previewBand then
+		key = `{key} band {previewBand(x, y, z or 0)}`
+	end
 	local x0, y0, z0, turn0 = placeX, placeY, placeZ, placeTurn
 	for _, part in model.cached(key, function()
 		placeX, placeY, placeZ, placeTurn = 0, 0, 0, 0
+		if previewPlacing then
+			previewPlacing(x0, y0, z0, turn0)
+		end
 		builtParts = {}
 		build()
+		if previewPlacing then
+			previewPlacing()
+		end
 		local built = builtParts
 		builtParts = nil
 		return built

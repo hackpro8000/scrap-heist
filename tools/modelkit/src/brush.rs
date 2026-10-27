@@ -145,22 +145,29 @@ impl Stroke {
 	}
 }
 
+// Grid cell size for strokes at their usual size.
 const CELL: f64 = 0.3;
 
-fn cell(p: Vec3) -> [i64; 3] {
-	p.map(|c| (c / CELL).floor() as i64)
-}
-
-#[derive(Default)]
 pub struct Canvas {
+	// Grid cell size, grown with the strokes so each still spans a few cells.
+	cell_size: f64,
 	strokes: Vec<Stroke>,
 	grid: HashMap<[i64; 3], Vec<usize>>,
 }
 
 impl Canvas {
+	// A canvas for strokes `brush` times their usual size.
+	pub fn new(brush: f64) -> Canvas {
+		Canvas { cell_size: CELL * brush, strokes: Vec::new(), grid: HashMap::new() }
+	}
+
+	fn cell(&self, p: Vec3) -> [i64; 3] {
+		p.map(|c| (c / self.cell_size).floor() as i64)
+	}
+
 	pub fn add(&mut self, stroke: Stroke) {
 		let (centre, reach) = (stroke.centre(), stroke.reach());
-		let (low, high) = (cell(centre.map(|c| c - reach)), cell(centre.map(|c| c + reach)));
+		let (low, high) = (self.cell(centre.map(|c| c - reach)), self.cell(centre.map(|c| c + reach)));
 		for x in low[0]..=high[0] {
 			for y in low[1]..=high[1] {
 				for z in low[2]..=high[2] {
@@ -175,7 +182,7 @@ impl Canvas {
 	// coat stroke, so a spot the coat's bristles skipped shows the same paint.
 	// The colour the strokes lay at p, and how much of p they cover (0-1).
 	pub fn over(&self, p: Vec3, n: Vec3) -> ([f64; 3], f64) {
-		let nearby = self.grid.get(&cell(p)).map(Vec::as_slice).unwrap_or(&[]);
+		let nearby = self.grid.get(&self.cell(p)).map(Vec::as_slice).unwrap_or(&[]);
 		let (mut color, mut covered) = ([0.0; 3], 0.0f64);
 		for &index in nearby {
 			let stroke = &self.strokes[index];
@@ -190,7 +197,7 @@ impl Canvas {
 	}
 
 	pub fn paint(&self, p: Vec3, n: Vec3) -> [f64; 3] {
-		let nearby = self.grid.get(&cell(p)).map(Vec::as_slice).unwrap_or(&[]);
+		let nearby = self.grid.get(&self.cell(p)).map(Vec::as_slice).unwrap_or(&[]);
 		let mut under = (f64::MAX, [0.5; 3]);
 		for &index in nearby {
 			let stroke = &self.strokes[index];

@@ -9,7 +9,7 @@
 -- Each plot slab carries the Yard Layout template, placed piece by piece the
 -- same way YardLayout.luau places it, so the map shows every yard set up.
 -- Labels: ArenaIsland (carrying the arena, ramps, spawn, beacon and road), Pad1-Pad4,
--- Avenue1-Avenue5, MarketIsland, Shop1-Shop5, Island1-Island8, Plot1-Plot8,
+-- Avenue1-Avenue5, MarketIsland, Shop, Island1-Island8, Plot1-Plot8,
 -- Yard1_<piece>-Yard8_<piece>, Spoke1-Spoke8, Bridge1-Bridge8,
 -- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4 and Cones1-Cones8.
 -- Yard crates show empty, as in the Yard Layout template.
