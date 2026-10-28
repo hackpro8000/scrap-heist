@@ -28,6 +28,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Economy = require(ReplicatedStorage.Shared.Config.Economy)
 local InventoryTypes = require(ReplicatedStorage.Shared.Inventory.InventoryTypes)
 
 local ProfileSchema = {}
@@ -70,7 +71,7 @@ ProfileSchema.VERSION = 1
 
 ProfileSchema.TEMPLATE = {
 	version = ProfileSchema.VERSION,
-	scrap = 0,
+	scrap = Economy.STARTING_SCRAP,
 	inventory = {
 		stacks = {},
 		uniques = {},
