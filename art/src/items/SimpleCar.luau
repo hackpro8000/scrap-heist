@@ -28,9 +28,49 @@ part("RearWindow", nil, GLASS, function(mesh)
 	box(mesh, 0, 1.38, 1.55, 1.7, 0.1, 0.55)
 end, nil, 0)
 
+-- Matching bumpers on the front and the back.
 part("Bumper", nil, BUMPER, function(mesh)
-	box(mesh, 0, -2.2, 0.45, 2.0, 0.15, 0.25)
+	for _, y in { -2.2, 2.2 } do
+		box(mesh, 0, y, 0.45, 2.0, 0.15, 0.25)
+	end
 end, nil, 0.3)
+
+-- A dark grille block between the headlights.
+part("Grille", nil, BUMPER, function(mesh)
+	box(mesh, 0, -2.13, 0.75, 0.9, 0.06, 0.3)
+end, nil, 0.3)
+
+-- A dark rocker panel band along each lower side, between the wheels.
+part("Sills", nil, BUMPER, function(mesh)
+	for _, x in { -1.13, 1.13 } do
+		box(mesh, x, 0, 0.22, 0.06, 1.6, 0.18)
+	end
+end, nil, 0.3)
+
+-- Thin flared lips over the top of each wheel.
+part("ArchLips", nil, RUST_ORANGE, function(mesh)
+	for _, x in { -1.18, 1.18 } do
+		for _, y in { -1.4, 1.4 } do
+			box(mesh, x, y, 1.03, 0.3, 1.2, 0.08)
+		end
+	end
+end, nil, 0.6)
+
+-- Two dark door seams cut into each side of the body.
+part("DoorSeams", nil, BUMPER, function(mesh)
+	for _, x in { -1.11, 1.11 } do
+		for _, y in { -0.6, 0.5 } do
+			box(mesh, x, y, 0.58, 0.02, 0.04, 0.66)
+		end
+	end
+end, nil, 0)
+
+-- A small side mirror on each side of the cabin front.
+part("Mirrors", nil, PAINT, function(mesh)
+	for _, x in { -1.05, 1.05 } do
+		box(mesh, x, -0.65, 1.2, 0.2, 0.08, 0.12)
+	end
+end, nil, 0.5)
 
 part("Lights", nil, GLOW, function(mesh)
 	for _, x in { -0.7, 0.7 } do
