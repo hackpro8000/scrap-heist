@@ -1,5 +1,6 @@
 -- Shipping Container: a 20-foot box, ribbed walls, one door hanging open.
 -- Large cover piece. Centered on the origin.
+useTexelDensity(64)
 local ORANGE = { 0.65, 0.3, 0.15 }
 
 part("Shell", nil, ORANGE, function(mesh)
