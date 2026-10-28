@@ -27,6 +27,7 @@ local Signal = require(ReplicatedStorage.Shared.Util.Signal)
 local Theme = require(ReplicatedStorage.Shared.Config.Theme)
 
 local ItemText = require(script.Parent.Parent.UI.ItemText)
+local Pop = require(script.Parent.Parent.UI.Pop)
 local Widgets = require(script.Parent.Parent.UI.Widgets)
 
 local REFRESH_SECONDS = 0.2
@@ -162,7 +163,7 @@ local function showResults(results: { [string]: any })
 		playSound("LootRare")
 	end
 
-	resultsPanel.Visible = true
+	Pop.show(resultsPanel)
 	resultsToken += 1
 	local token = resultsToken
 	task.delay(RESULTS_SECONDS, function()

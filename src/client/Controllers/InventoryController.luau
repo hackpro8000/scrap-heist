@@ -22,6 +22,7 @@ local Theme = require(ReplicatedStorage.Shared.Config.Theme)
 
 local HudController = require(script.Parent.HudController)
 local ItemText = require(script.Parent.Parent.UI.ItemText)
+local Pop = require(script.Parent.Parent.UI.Pop)
 local Widgets = require(script.Parent.Parent.UI.Widgets)
 
 local InventoryController = {}
@@ -64,7 +65,11 @@ local function render()
 end
 
 function InventoryController.toggle()
-	panel.Visible = not panel.Visible
+	if panel.Visible then
+		panel.Visible = false
+	else
+		Pop.show(panel)
+	end
 end
 
 function InventoryController.init()

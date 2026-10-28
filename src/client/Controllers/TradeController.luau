@@ -28,6 +28,7 @@ local HudController = require(script.Parent.HudController)
 local InventoryController = require(script.Parent.InventoryController)
 local NotifyController = require(script.Parent.NotifyController)
 local ItemText = require(script.Parent.Parent.UI.ItemText)
+local Pop = require(script.Parent.Parent.UI.Pop)
 local Widgets = require(script.Parent.Parent.UI.Widgets)
 
 local localPlayer = Players.LocalPlayer
@@ -189,10 +190,11 @@ end
 
 local function render()
 	local state = snapshot
-	window.Visible = state ~= nil
 	if not state then
+		window.Visible = false
 		return
 	end
+	Pop.show(window)
 
 	titleLabel.Text = `Trading with {state.partnerName}`
 	statusLabel.Text = statusText(state)
