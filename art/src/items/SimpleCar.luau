@@ -18,6 +18,11 @@ part("Glass", nil, GLASS, function(mesh)
 	box(mesh, 0, 0.3, 1.5, 1.96, 1.8, 0.5)
 end, nil, 0)
 
+-- A separate pane in front of the cabin, so the windshield reads as glass from the game camera.
+part("Windshield", nil, GLASS, function(mesh)
+	box(mesh, 0, -0.78, 1.55, 1.7, 0.1, 0.55)
+end, nil, 0)
+
 part("Bumper", nil, BUMPER, function(mesh)
 	box(mesh, 0, -2.2, 0.45, 2.0, 0.15, 0.25)
 end, nil, 0.3)
