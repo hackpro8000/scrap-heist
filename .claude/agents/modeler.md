@@ -13,7 +13,7 @@ Stop and report instead of editing if:
 
 Steps:
 1. Edit the source under art/src. Never edit art/models/<Name>/model.luau, which is generated. Use Edit or `sd` to change files, never `sed`. Search with `rg`, never `grep`.
-2. Run `scripts/assemble-model.sh <Name>` and fix any error it reports. Don't render or view the model; the user reviews the screenshot and points out mistakes.
+2. Run `scripts/assemble-model.sh <Name>` and fix any error it reports. Then run `scripts/view-model.sh <Name> <out.png>` with an output PNG in your scratch directory, and open that PNG. Check it against the change you were given: the shape, that every part is attached with no gaps or floating geometry, and that the change reads from the front, side, and back. Fix what you see and re-render until it matches, before you checkpoint.
 3. Stage your source edits with `git add <changed art/src files>`, then run `scripts/checkpoint-model.sh <Name> "<short message naming the change>"`. It rebuilds, commits the staged sources together with the model, pushes on the models branch, and prints the screenshot path.
 
 Rules:
