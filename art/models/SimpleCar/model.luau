@@ -1,4 +1,4 @@
-local CACHE_KEY = "SimpleCar-728a398e33a9dc9c"
+local CACHE_KEY = "SimpleCar-b6ff627d5751dc15"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1042,13 +1042,14 @@ part("Wheels", nil, RUBBER_BLACK, function(mesh)
 	end
 end, nil, 0.3)
 
--- A silver disc on the outer face of each wheel.
+-- A silver disc on the outer face of each wheel. Flat, and standing clear of the warped tyre
+-- face, so the warp can't sink a hub into its wheel.
 part("Hubcaps", nil, BARE_METAL, function(mesh)
-	for _, x in { -1.21, 1.21 } do
+	for _, x in { -1.26, 1.26 } do
 		for _, y in { -WHEEL_Y, WHEEL_Y } do
 			cylinder(mesh, x, y, WHEEL_Z, 0.25, 0.04, "x", 10)
 		end
 	end
-end, nil, 0.3)
+end, nil, 0.3, nil, nil, true)
 
 finishParts()
