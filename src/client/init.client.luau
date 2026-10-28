@@ -16,6 +16,7 @@ local Boot = require(ReplicatedStorage.Shared.Util.Boot)
 local Controllers = script.Controllers
 
 local CONTROLLERS: { Boot.Entry } = {
+	{ name = "NotifyController", module = require(Controllers.NotifyController) },
 	{ name = "CombatController", module = require(Controllers.CombatController) },
 }
 

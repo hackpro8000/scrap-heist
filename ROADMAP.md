@@ -292,15 +292,23 @@ runs; the agent writes the steps into `docs/testing/phase-N.md`.
       join, release on leave, kick if the profile can't load.
   - *Done when:* data persists across rejoins; joining a second server while
     still in the first can't load a second copy.
+  - *Note:* code done. Needs `wally install` and Studio API access to
+    test (`docs/testing/phase-2.md`).
 - [ ] Template versioning and a migration function for old saves.
   - *Done when:* adding a new field to the template fills it in for existing
     profiles without wiping anything.
-- [ ] Safe currency API (`addScrap`, `trySpend`) that refuses negatives and
+  - *Note:* `ProfileSchema.reconcile` and `migrate`, covered by
+    `ProfileSchema.spec`. Waiting on a Studio rejoin check.
+- [x] Safe currency API (`addScrap`, `trySpend`) that refuses negatives and
       overspending.
   - *Done when:* no code path outside `DataService` writes currency directly.
+  - *Note:* rules in `src/server/Data/Currency.luau` (`Currency.spec`).
+    `rg 'scrap ='` finds the only write in `DataService.setScrap`.
 - [ ] Studio-only debug commands (give scrap, reset data) gated to Studio or
       an admin user ID list in Config.
-- [ ] `docs/systems/data.md`: explain session locking and why it stops dupes.
+  - *Note:* `/givescrap`, `/resetdata`, `/help` via `DebugService`, gated in
+    `DebugService.run`. Waiting on Studio test.
+- [x] `docs/systems/data.md`: explain session locking and why it stops dupes.
 
 ### Phase 3: Inventory and trading
 
