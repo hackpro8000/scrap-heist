@@ -1,4 +1,4 @@
-local CACHE_KEY = "SimpleCar-b9bd6190b11e1183"
+local CACHE_KEY = "SimpleCar-21ea7ecbd1399e12"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -881,10 +881,10 @@ for _, ring in CABIN_RINGS do
 end
 local CABIN_CENTER = { 0, 0.9, 1.6 }
 
--- A glass pane lying on a cabin wall between its waist and glass-top rings. `a`, `b` index the
--- waist corners in order, so `a + 4`, `b + 4` are the corners above; `u` runs a to b and `v` up
--- the wall. `outer` and `inner` are its faces' distances out from the wall plane.
-local function cabinPane(mesh, a, b, u0, u1, v0, v1, outer, inner)
+-- The corners of a patch of a cabin wall between its waist and glass-top rings, plus the wall's
+-- outward unit normal. `a`, `b` index the waist corners in order, so `a + 4`, `b + 4` are the
+-- corners above; `u` runs a to b and `v` up the wall.
+local function wallPatch(a, b, u0, u1, v0, v1)
 	local function at(u, v)
 		local p = {}
 		for k = 1, 3 do
@@ -901,13 +901,48 @@ local function cabinPane(mesh, a, b, u0, u1, v0, v1, outer, inner)
 	local len = math.sqrt(n[1] * n[1] + n[2] * n[2] + n[3] * n[3])
 	local side = (corners[1][1] - CABIN_CENTER[1]) * n[1] + (corners[1][2] - CABIN_CENTER[2]) * n[2] + (corners[1][3] - CABIN_CENTER[3]) * n[3]
 	local scale = if side >= 0 then 1 / len else -1 / len
+	return corners, { n[1] * scale, n[2] * scale, n[3] * scale }
+end
+
+-- A point moved `offset` out along a normal.
+local function pushed(p, n, offset)
+	return { p[1] + n[1] * offset, p[2] + n[2] * offset, p[3] + n[3] * offset }
+end
+
+-- A glass pane lying on a cabin wall, over the same patch wallPatch takes. `outer` and `inner`
+-- are its faces' distances out from the wall plane.
+local function cabinPane(mesh, a, b, u0, u1, v0, v1, outer, inner)
+	local corners, n = wallPatch(a, b, u0, u1, v0, v1)
 	local points = {}
 	for _, offset in { outer, inner } do
 		for _, c in corners do
-			table.insert(points, { c[1] + n[1] * scale * offset, c[2] + n[2] * scale * offset, c[3] + n[3] * scale * offset })
+			table.insert(points, pushed(c, n, offset))
 		end
 	end
 	solid(mesh, points, ringFaces(2))
+end
+
+-- The four walls lining an opening, from the wall plane down to `depth` inside it, each quad
+-- facing into the opening so it reads from outside.
+local function cabinReveals(mesh, a, b, u0, u1, v0, v1, depth)
+	local corners, n = wallPatch(a, b, u0, u1, v0, v1)
+	local cx, cy, cz = 0, 0, 0
+	for _, c in corners do
+		cx, cy, cz = cx + c[1] / 4, cy + c[2] / 4, cz + c[3] / 4
+	end
+	for k = 1, 4 do
+		local p, q = corners[k], corners[k % 4 + 1]
+		local quad = { p, q, pushed(q, n, -depth), pushed(p, n, -depth) }
+		local e1 = { q[1] - p[1], q[2] - p[2], q[3] - p[3] }
+		local f = { e1[2] * n[3] - e1[3] * n[2], e1[3] * n[1] - e1[1] * n[3], e1[1] * n[2] - e1[2] * n[1] }
+		local facesIn = f[1] * (cx - p[1]) + f[2] * (cy - p[2]) + f[3] * (cz - p[3]) >= 0
+		local verts = {}
+		for i = 1, 4 do
+			local c = quad[if facesIn then i else 5 - i]
+			verts[i] = mesh:vertex(c[1], c[2], c[3])
+		end
+		mesh:face(verts)
+	end
 end
 
 part("Body", nil, RUST_ORANGE, function(mesh)
@@ -918,8 +953,8 @@ end, false, 0.6)
 -- wall coordinates cabinPane uses. Two side windows per side split by a pillar, so they read from
 -- the game camera, and one opening each across the windscreen and the hatch.
 local WALL_THICKNESS = 0.06
-local GLASS_RECESS = 0.06
-local GLASS_OVERLAP = 0.01
+local GLASS_RECESS = 0.18
+local GLASS_THICKNESS = 0.04
 local SIDE_WINDOWS = { v0 = 0.2, v1 = 0.82, { 0.15, 0.42 }, { 0.53, 0.88 } }
 local CABIN_WALLS = {
 	{ a = 1, b = 2, openings = { v0 = 0.18, v1 = 0.84, { 0.15, 0.85 } } },
@@ -957,15 +992,19 @@ part("Cabin", nil, PAINT, function(mesh)
 			u = span[2]
 		end
 		cabinPane(mesh, wall.a, wall.b, u, 1, v0, v1, 0, -WALL_THICKNESS)
+		-- Reveal walls line each opening from the outside of the wall down to the back of its glass.
+		for _, span in wallSpans(wall) do
+			cabinReveals(mesh, wall.a, wall.b, span[1], span[2], v0, v1, GLASS_RECESS + GLASS_THICKNESS)
+		end
 	end
 end, false, 0.5)
 
--- A pane recessed into an opening, its front at the back of the wall and its edges tucked behind
--- the frame so it stays attached.
+-- A pane at the bottom of an opening's recess, filling it edge to edge so it meets the reveal
+-- walls with no gap.
 local function recessedPanes(mesh, wall)
 	local v0, v1 = wall.openings.v0, wall.openings.v1
 	for _, span in wallSpans(wall) do
-		cabinPane(mesh, wall.a, wall.b, span[1] - GLASS_OVERLAP, span[2] + GLASS_OVERLAP, v0 - GLASS_OVERLAP, v1 + GLASS_OVERLAP, -GLASS_RECESS, -GLASS_RECESS - 0.04)
+		cabinPane(mesh, wall.a, wall.b, span[1], span[2], v0, v1, -GLASS_RECESS, -GLASS_RECESS - GLASS_THICKNESS)
 	end
 end
 
