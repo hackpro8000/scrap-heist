@@ -7,7 +7,7 @@
 	module under test needs more, add it here and nowhere else.
 
 	- task: Lune ships the same scheduler, but as a library, not a global.
-	- Vector3: Lune's own, which matches Roblox's. CFrame is left out on
+	- Vector3, Color3: Lune's own, which match Roblox's. CFrame is left out on
 	  purpose: Lune's CFrame.lookAt faces the opposite way to Roblox's, so
 	  rules modules do their maths with positions and facing vectors.
 	- game:GetService("Players"): a fake Players with a PlayerRemoving
@@ -121,7 +121,9 @@ function Roblox.install()
 	-- Plain assignment, not _G: Lune shares globals between the runner and
 	-- every module it requires, but keeps _G as a separate table.
 	task = require("@lune/task") :: any
-	Vector3 = require("@lune/roblox").Vector3 :: any
+	local lune = require("@lune/roblox")
+	Vector3 = lune.Vector3 :: any
+	Color3 = lune.Color3 :: any
 	game = fakeGame :: any
 
 	-- Luau caches built-in globals like print when a module loads, so
