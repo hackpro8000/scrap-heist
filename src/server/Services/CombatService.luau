@@ -175,7 +175,10 @@ function CombatService.register(model: Model, weaponName: string)
 
 	local humanoid = model:FindFirstChildOfClass("Humanoid")
 	local root = model:FindFirstChild("HumanoidRootPart")
-	assert(humanoid and root and root:IsA("BasePart"), `CombatService: {model.Name} needs a Humanoid and HumanoidRootPart`)
+	assert(
+		humanoid and root and root:IsA("BasePart"),
+		`CombatService: {model.Name} needs a Humanoid and HumanoidRootPart`
+	)
 
 	local fighter: Fighter = {
 		model = model,

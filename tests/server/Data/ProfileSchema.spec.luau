@@ -11,7 +11,10 @@ describe("ProfileSchema.reconcile", function()
 		local oldSave = {
 			version = 1,
 			scrap = 750,
-			inventory = { stacks = { RustyGear = 3 }, uniques = { ["guid-1"] = { itemId = "GoldenCog", createdAt = 5 } } },
+			inventory = {
+				stacks = { RustyGear = 3 },
+				uniques = { ["guid-1"] = { itemId = "GoldenCog", createdAt = 5 } },
+			},
 		}
 
 		ProfileSchema.reconcile(oldSave)
