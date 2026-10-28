@@ -16,6 +16,8 @@ local Boot = require(ReplicatedStorage.Shared.Util.Boot)
 local Services = script.Services
 
 local SERVICES: { Boot.Entry } = {
+	{ name = "DataService", module = require(Services.DataService) },
+	{ name = "DebugService", module = require(Services.DebugService) },
 	{ name = "CombatService", module = require(Services.CombatService) },
 	{ name = "DummyService", module = require(Services.DummyService) },
 }
