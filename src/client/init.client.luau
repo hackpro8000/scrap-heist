@@ -22,6 +22,7 @@ local CONTROLLERS: { Boot.Entry } = {
 	{ name = "TradeController", module = require(Controllers.TradeController) },
 	{ name = "PlotController", module = require(Controllers.PlotController) },
 	{ name = "RoundController", module = require(Controllers.RoundController) },
+	{ name = "TutorialController", module = require(Controllers.TutorialController) },
 	{ name = "CombatController", module = require(Controllers.CombatController) },
 }
 
