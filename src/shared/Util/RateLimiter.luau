@@ -11,12 +11,15 @@
 	short natural bursts (a quick combo) while capping the sustained rate.
 
 	Public API:
-		RateLimiter.new(perSecond, burst?): RateLimiter
+		RateLimiter.new(perSecond, burst?, clock?): RateLimiter
 		limiter:check(player): boolean   -- true if allowed (spends a token)
 		limiter:forget(player)           -- drop a player's state on leave
 		limiter:destroy()
 
 	State for leaving players is dropped automatically.
+
+	`clock` defaults to os.clock. Unit tests pass a fake clock so they can
+	step time forward instead of waiting in real time.
 ]]
 
 local Players = game:GetService("Players")
@@ -39,10 +42,11 @@ type RateLimiterState = {
 	_perSecond: number,
 	_burst: number,
 	_buckets: { [Player]: Bucket },
+	_clock: () -> number,
 	_leavingConnection: RBXScriptConnection,
 }
 
-function RateLimiter.new(perSecond: number, burst: number?): RateLimiter
+function RateLimiter.new(perSecond: number, burst: number?, clock: (() -> number)?): RateLimiter
 	assert(perSecond > 0, "RateLimiter: perSecond must be positive")
 
 	local self: RateLimiterState = {
@@ -50,6 +54,7 @@ function RateLimiter.new(perSecond: number, burst: number?): RateLimiter
 		-- Default burst of one second's worth of calls.
 		_burst = burst or math.max(1, perSecond),
 		_buckets = {},
+		_clock = clock or os.clock,
 		_leavingConnection = nil :: any,
 	}
 
@@ -61,7 +66,7 @@ function RateLimiter.new(perSecond: number, burst: number?): RateLimiter
 end
 
 function RateLimiter.check(self: RateLimiterState, player: Player): boolean
-	local now = os.clock()
+	local now = self._clock()
 	local bucket = self._buckets[player]
 
 	if not bucket then
