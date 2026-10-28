@@ -14,11 +14,13 @@ local PLATE_FRONT = PLATE_Y - 0.03
 local function spokedGear(mesh, cx, cy, cz, radius, thick, teeth, spokes, axis)
 	gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
 	local hub = radius * 0.3
+	local rimIn = radius * 0.6
 	cylinder(mesh, cx, cy, cz, hub, thick * 1.4, axis, 10)
+	ring(mesh, cx, cy, cz, rimIn, radius * 0.7, thick * 1.3, axis, teeth * 2)
 	for k = 0, spokes - 1 do
 		local t = k / spokes * TAU
 		local ax, ay, az = onAxis(cx, cy, cz, axis, hub * 0.8, t, 0)
-		local bx, by, bz = onAxis(cx, cy, cz, axis, radius * 0.8, t, 0)
+		local bx, by, bz = onAxis(cx, cy, cz, axis, rimIn, t, 0)
 		strut(mesh, ax, ay, az, bx, by, bz, radius * 0.12)
 	end
 end
