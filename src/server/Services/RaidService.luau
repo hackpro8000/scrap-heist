@@ -18,7 +18,7 @@
 	yard its owner is alerted and takes less damage.
 
 	Public API:
-		RaidService.setPaused(paused)          -- RoundService pauses raids in storms
+		RaidService.setPaused(paused)          -- also paused automatically during storms
 		RaidService.isCarrying(player): boolean
 		RaidService.raidBanked: Signal(raider, parts)
 		RaidService.bundleRecovered: Signal(owner, parts)
@@ -42,6 +42,7 @@ local MachineRules = require(script.Parent.Parent.Tycoon.MachineRules)
 local PlotService = require(script.Parent.PlotService)
 local RaidRules = require(script.Parent.Parent.Tycoon.RaidRules)
 local RemoteGuard = require(script.Parent.Parent.Security.RemoteGuard)
+local RoundService = require(script.Parent.RoundService)
 
 local SYSTEM = "Raid"
 local BUNDLE_MODEL_NAME = "PartBundle"
@@ -369,6 +370,10 @@ function RaidService.init()
 end
 
 function RaidService.start()
+	RoundService.phaseChanged:connect(function(phase)
+		RaidService.setPaused(phase == "Storm")
+	end)
+
 	Players.PlayerRemoving:Connect(function(player)
 		local carry = stopCarrying(player)
 		if carry then

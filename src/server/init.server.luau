@@ -24,7 +24,10 @@ local SERVICES: { Boot.Entry } = {
 	{ name = "DummyService", module = require(Services.DummyService) },
 	{ name = "PlotService", module = require(Services.PlotService) },
 	{ name = "MachineService", module = require(Services.MachineService) },
+	{ name = "RoundService", module = require(Services.RoundService) },
 	{ name = "RaidService", module = require(Services.RaidService) },
+	{ name = "BotService", module = require(Services.BotService) },
+	{ name = "LootService", module = require(Services.LootService) },
 }
 
 Boot.run("Server", SERVICES)

@@ -153,8 +153,11 @@ sourceRequire = function(target: any): any
 			require = sourceRequire,
 		},
 	})
-	local result = chunk()
+	local ok, result = pcall(chunk)
 	loading[file] = nil
+	if not ok then
+		error(result, 0)
+	end
 	loaded[file] = if result == nil then true else result
 
 	return loaded[file]

@@ -383,22 +383,36 @@ runs; the agent writes the steps into `docs/testing/phase-N.md`.
       clients.
   - *Done when:* the cycle runs forever without drift or overlapping rounds;
     players who join mid-round get the current state.
+  - *Note:* phases come from one start time (`Rounds/RoundClock`), so no
+    drift or overlap (`RoundClock.spec` runs 10,000 cycles). Durations live in
+    `Config/Game.ROUND_DURATIONS` (Phase 6 asks for them there). Waiting on
+    Studio test (`docs/testing/phase-5.md`).
 - [ ] During a storm: raiding is paused, yards are safe, players fight bots in
       the shared arena (or the whole map, per Config).
+  - *Note:* `Config/Rounds.ARENA_MODE`. Bots ignore players in yards;
+    survivors must end the storm outside a yard. Waiting on Studio test.
 - [ ] `BotService` and `Bots/`: pooled bot spawning with a cap, simple state
       machine (`Idle -> Chase -> Attack -> Retreat`), `PathfindingService`
       with path recompute throttling, target selection by distance and threat.
       Bots use the Phase 1 combat kit for their attacks.
   - *Done when:* 20+ bots run without noticeable server lag; bots don't get
     stuck on corners for more than a few seconds; bots clean up at round end.
-- [ ] Bot types in `Config/Bots.luau` (at least: fast weak scrapper, slow
+  - *Note:* `Bots/BotBrain` (state machine, targeting, stuck detection)
+    and `Bots/WaveRules`, both specced. Pooled models with Humanoid death
+    off. Waiting on Studio perf and pathing test.
+- [x] Bot types in `Config/Bots.luau` (at least: fast weak scrapper, slow
       tank, ranged zapper) with waves that scale by round number.
+  - *Note:* Scrapper, Bruiser, Zapper (the bot art names); wave growth
+    covered by `WaveRules.spec`.
 - [ ] `LootService`: weighted loot tables, survivors and top damage dealers
       get rewards, rare drops create unique items through `InventoryService`.
   - *Done when:* loot is granted only by the server and only once per round
     per player.
+  - *Note:* `Rounds/LootRules` (weighted rolls, top damage, once-per-round
+    claim) specced. Waiting on Studio test.
 - [ ] Round UI: phase banner, countdown, survivors left, results screen.
-- [ ] `docs/systems/rounds-ai.md`.
+  - *Note:* `RoundController`. Waiting on Studio test.
+- [x] `docs/systems/rounds-ai.md`.
 
 ### Phase 6: Game flow glue
 
