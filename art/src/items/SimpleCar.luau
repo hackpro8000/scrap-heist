@@ -30,35 +30,55 @@ end, nil, 0)
 
 -- Matching bumpers on the front and the back.
 part("Bumper", nil, BUMPER, function(mesh)
-	for _, y in { -2.2, 2.2 } do
+	for _, y in { -2.15, 2.15 } do
 		box(mesh, 0, y, 0.45, 2.0, 0.15, 0.25)
 	end
 end, nil, 0.3)
 
--- A dark grille block between the headlights.
+-- A dark grille block between the headlights, resting on the front bumper.
 part("Grille", nil, BUMPER, function(mesh)
-	box(mesh, 0, -2.13, 0.75, 0.9, 0.06, 0.3)
+	box(mesh, 0, -2.15, 0.65, 0.9, 0.12, 0.3)
 end, nil, 0.3)
 
--- A dark rocker panel band along each lower side, between the wheels.
+-- Three pale horizontal slats set into the face of the grille.
+part("GrilleSlats", nil, PAINT, function(mesh)
+	for _, z in { 0.72, 0.8, 0.88 } do
+		box(mesh, 0, -2.22, z, 0.8, 0.04, 0.03)
+	end
+end, nil, 0.5)
+
+-- A dark rocker panel band along the bottom of each side, between the wheels.
 part("Sills", nil, BUMPER, function(mesh)
-	for _, x in { -1.13, 1.13 } do
-		box(mesh, x, 0, 0.22, 0.06, 1.6, 0.18)
+	for _, x in { -1.12, 1.12 } do
+		box(mesh, x, 0, 0.45, 0.06, 1.6, 0.15)
 	end
 end, nil, 0.3)
 
--- Thin flared lips over the top of each wheel.
-part("ArchLips", nil, RUST_ORANGE, function(mesh)
-	for _, x in { -1.18, 1.18 } do
+-- A stepped fender over each wheel: a top plate, two shoulders and two legs that wrap the tire.
+part("Fenders", nil, RUST_ORANGE, function(mesh)
+	for _, x in { -1.2, 1.2 } do
 		for _, y in { -1.4, 1.4 } do
-			box(mesh, x, y, 1.03, 0.3, 1.2, 0.08)
+			box(mesh, x, y, 1.0, 0.4, 1.0, 0.08)
+			for _, side in { -1, 1 } do
+				box(mesh, x, y + side * 0.52, 0.78, 0.4, 0.16, 0.27)
+				box(mesh, x, y + side * 0.64, 0.55, 0.4, 0.12, 0.3)
+			end
+		end
+	end
+end, nil, 0.6)
+
+-- Thin flared lips along the top edge of each fender.
+part("ArchLips", nil, RUST_ORANGE, function(mesh)
+	for _, x in { -1.22, 1.22 } do
+		for _, y in { -1.4, 1.4 } do
+			box(mesh, x, y, 1.06, 0.4, 1.1, 0.06)
 		end
 	end
 end, nil, 0.6)
 
 -- Two dark door seams cut into each side of the body.
 part("DoorSeams", nil, BUMPER, function(mesh)
-	for _, x in { -1.11, 1.11 } do
+	for _, x in { -1.105, 1.105 } do
 		for _, y in { -0.6, 0.5 } do
 			box(mesh, x, y, 0.58, 0.02, 0.04, 0.66)
 		end
@@ -68,7 +88,7 @@ end, nil, 0)
 -- A small side mirror on each side of the cabin front.
 part("Mirrors", nil, PAINT, function(mesh)
 	for _, x in { -1.05, 1.05 } do
-		box(mesh, x, -0.65, 1.2, 0.2, 0.08, 0.12)
+		box(mesh, x, -0.65, 1.5, 0.3, 0.08, 0.12)
 	end
 end, nil, 0.5)
 
