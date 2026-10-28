@@ -1,14 +1,18 @@
--- Simple Car: a rounded hatchback about 4.3 studs long, 2.2 wide and 2.2 tall. A rust-streaked body
--- with a curved hood and trunk, a cabin with a sloped roof and a glass band, four rubber wheels under
--- arched fenders and two headlights. Local -y is the front.
+-- Simple Car: a low-poly hatchback about 4.4 studs long, 2.2 wide and 2.1 tall. A faceted
+-- rust-streaked body with a flat sloped hood, a tall cabin of sloped planes with a glass band, a
+-- black cladding band round the bottom, rectangular headlights with amber indicators, red rear
+-- lights and four rubber wheels with silver hubcaps. Local -y is the front.
 local PAINT = { 0.62, 0.6, 0.55 }
 local GLASS = { 0.2, 0.24, 0.27 }
 local GLOW = { 1, 0.85, 0.5 }
+local AMBER = { 1, 0.55, 0.1 }
+local TAIL_RED = { 0.85, 0.12, 0.08 }
 local BUMPER = { 0.18, 0.17, 0.16 }
+local VENT = { 0.06, 0.06, 0.06 }
 
 local WHEEL_Y = 1.4
 local WHEEL_Z = 0.5
-local ARCH_RADIUS = 0.58
+local ARCH_RADIUS = 0.6
 
 -- `plate` drawn side-on: the outline runs in y-z (y first) and the plate is extruded across x,
 -- centred on `x`. A quarter turn about z, so faces keep their winding.
@@ -24,208 +28,200 @@ local function sidePlate(mesh, outline, x, width, bevel)
 	plate(turned, outline, -x, width, bevel)
 end
 
--- A thin pane lying along a cabin edge from (y0, z0) to (y1, z1), standing just proud of it.
--- The edge must run clockwise round the cabin outline, so its outward side is to the left.
-local function pane(mesh, y0, z0, y1, z1, width)
-	local dy, dz = y1 - y0, z1 - z0
-	local len = math.sqrt(dy * dy + dz * dz)
-	local ny, nz = -dz / len, dy / len
-	local out, back = 0.05, -0.02
-	sidePlate(mesh, {
-		{ y0 + ny * out, z0 + nz * out },
-		{ y1 + ny * out, z1 + nz * out },
-		{ y1 + ny * back, z1 + nz * back },
-		{ y0 + ny * back, z0 + nz * back },
-	}, 0, width, 0.015)
-end
-
--- Appends arc points (in y-z) to an outline.
-local function addArc(outline, cy, cz, radius, a0, a1, steps)
-	for _, p in arc(cy, cz, radius, a0, a1, steps) do
-		table.insert(outline, p)
+-- A convex solid from corner points ({x, y, z} each) and faces (index lists). Each face is wound
+-- to point away from the centre of the points, so faces can be listed in any order.
+local function solid(mesh, points, faces)
+	local cx, cy, cz = 0, 0, 0
+	for _, p in points do
+		cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+	end
+	cx, cy, cz = cx / #points, cy / #points, cz / #points
+	local ids = {}
+	for i, p in points do
+		ids[i] = mesh:vertex(p[1], p[2], p[3])
+	end
+	for _, face in faces do
+		local nx, ny, nz, fx, fy, fz = 0, 0, 0, 0, 0, 0
+		for k, i in face do
+			local a, b = points[i], points[face[k % #face + 1]]
+			nx += (a[2] - b[2]) * (a[3] + b[3])
+			ny += (a[3] - b[3]) * (a[1] + b[1])
+			nz += (a[1] - b[1]) * (a[2] + b[2])
+			fx, fy, fz = fx + a[1], fy + a[2], fz + a[3]
+		end
+		local outward = nx * (fx / #face - cx) + ny * (fy / #face - cy) + nz * (fz / #face - cz) >= 0
+		local verts = {}
+		for k = 1, #face do
+			verts[k] = ids[face[if outward then k else #face + 1 - k]]
+		end
+		mesh:face(verts)
 	end
 end
 
--- Side profile of the body, clockwise from the bottom of the nose: a rounded nose, a curved hood
--- rising to the cabin, a curved trunk falling to the tail, and an arch cut over each wheel.
-local bodyOutline = {
-	{ -2.1, 0.6 },
-	{ -2.16, 0.82 },
-	{ -2.12, 1.0 },
-	{ -2.0, 1.14 },
-	{ -1.75, 1.24 },
-	{ -1.3, 1.32 },
-	{ -0.8, 1.37 },
-	{ 0.3, 1.4 },
-	{ 1.4, 1.38 },
-	{ 1.8, 1.32 },
-	{ 2.04, 1.18 },
-	{ 2.15, 0.95 },
-	{ 2.12, 0.62 },
-	{ 2.05, 0.5 },
-}
-addArc(bodyOutline, WHEEL_Y, WHEEL_Z, ARCH_RADIUS, 0, 180, 10)
-addArc(bodyOutline, -WHEEL_Y, WHEEL_Z, ARCH_RADIUS, 0, 180, 10)
-table.insert(bodyOutline, { -2.05, 0.5 })
+-- Faces of a stack of four-corner rings: the walls between each ring and the next, plus both caps.
+local function ringFaces(rings)
+	local faces = { { 1, 2, 3, 4 }, { rings * 4 - 3, rings * 4 - 2, rings * 4 - 1, rings * 4 } }
+	for r = 0, rings - 2 do
+		for c = 1, 4 do
+			local d = c % 4 + 1
+			table.insert(faces, { r * 4 + c, r * 4 + d, r * 4 + 4 + d, r * 4 + 4 + c })
+		end
+	end
+	return faces
+end
 
--- Side profile of the cabin, clockwise from the foot of the windshield: a raked windshield, a
--- crowned roof and a steep hatch. The wide bevel tapers the roof in toward the top.
-local WINDSHIELD = { -0.9, 1.3, -0.32, 2.04 }
-local HATCH = { 1.22, 2.06, 1.45, 1.4 }
-local cabinOutline = {
-	{ WINDSHIELD[1], WINDSHIELD[2] },
-	{ WINDSHIELD[3], WINDSHIELD[4] },
-	{ -0.1, 2.12 },
-	{ 0.3, 2.16 },
-	{ 0.75, 2.16 },
-	{ 1.05, 2.12 },
-	{ HATCH[1], HATCH[2] },
-	{ HATCH[3], HATCH[4] },
-	{ 1.45, 1.3 },
+-- Side profile of the body, clockwise from the bottom of the nose: a near-upright nose, a short
+-- chamfer, a flat hood sloping up to the windscreen, a level waist, a chamfered tail and an arch
+-- of straight facets over each wheel.
+local bodyOutline = {
+	{ -2.15, 0.45 },
+	{ -2.2, 0.95 },
+	{ -2.0, 1.07 },
+	{ -0.85, 1.32 },
+	{ 1.98, 1.36 },
+	{ 2.14, 1.28 },
+	{ 2.18, 0.8 },
+	{ 2.14, 0.45 },
 }
+for _, p in arc(WHEEL_Y, WHEEL_Z, ARCH_RADIUS, 0, 180, 6) do
+	table.insert(bodyOutline, p)
+end
+for _, p in arc(-WHEEL_Y, WHEEL_Z, ARCH_RADIUS, 0, 180, 6) do
+	table.insert(bodyOutline, p)
+end
+
+-- The cabin as three rings of corners (front-left, front-right, back-right, back-left), each
+-- { z, front y, back y, half width }: the waist sunk into the body, the top of the glass, and a
+-- narrower roof. The sloped planes between them are the windscreen, hatch and tumbled-in sides.
+local CABIN_RINGS = {
+	{ 1.28, -0.9, 1.98, 1.04 },
+	{ 2.02, -0.1, 1.86, 0.9 },
+	{ 2.12, 0.02, 1.76, 0.8 },
+}
+local cabinPoints = {}
+for _, ring in CABIN_RINGS do
+	local z, front, back, half = table.unpack(ring)
+	table.insert(cabinPoints, { -half, front, z })
+	table.insert(cabinPoints, { half, front, z })
+	table.insert(cabinPoints, { half, back, z })
+	table.insert(cabinPoints, { -half, back, z })
+end
+local CABIN_CENTER = { 0, 0.9, 1.6 }
+
+-- A glass pane lying on a cabin wall between its waist and glass-top rings. `a`, `b` index the
+-- waist corners in order, so `a + 4`, `b + 4` are the corners above; `u` runs a to b and `v` up
+-- the wall. The pane stands just proud of the wall, with its back sunk in.
+local function cabinPane(mesh, a, b, u0, u1, v0, v1)
+	local function at(u, v)
+		local p = {}
+		for k = 1, 3 do
+			local bottom = cabinPoints[a][k] + (cabinPoints[b][k] - cabinPoints[a][k]) * u
+			local top = cabinPoints[a + 4][k] + (cabinPoints[b + 4][k] - cabinPoints[a + 4][k]) * u
+			p[k] = bottom + (top - bottom) * v
+		end
+		return p
+	end
+	local corners = { at(u0, v0), at(u1, v0), at(u1, v1), at(u0, v1) }
+	local e1 = { corners[2][1] - corners[1][1], corners[2][2] - corners[1][2], corners[2][3] - corners[1][3] }
+	local e2 = { corners[4][1] - corners[1][1], corners[4][2] - corners[1][2], corners[4][3] - corners[1][3] }
+	local n = { e1[2] * e2[3] - e1[3] * e2[2], e1[3] * e2[1] - e1[1] * e2[3], e1[1] * e2[2] - e1[2] * e2[1] }
+	local len = math.sqrt(n[1] * n[1] + n[2] * n[2] + n[3] * n[3])
+	local side = (corners[1][1] - CABIN_CENTER[1]) * n[1] + (corners[1][2] - CABIN_CENTER[2]) * n[2] + (corners[1][3] - CABIN_CENTER[3]) * n[3]
+	local scale = if side >= 0 then 1 / len else -1 / len
+	local points = {}
+	for _, offset in { 0.03, -0.02 } do
+		for _, c in corners do
+			table.insert(points, { c[1] + n[1] * scale * offset, c[2] + n[2] * scale * offset, c[3] + n[3] * scale * offset })
+		end
+	end
+	solid(mesh, points, ringFaces(2))
+end
 
 part("Body", nil, RUST_ORANGE, function(mesh)
 	sidePlate(mesh, bodyOutline, 0, 2.2, 0.1)
-end, 50, 0.6)
+end, false, 0.6)
 
 part("Cabin", nil, PAINT, function(mesh)
-	sidePlate(mesh, cabinOutline, 0, 1.9, 0.2)
-end, 50, 0.5)
+	solid(mesh, cabinPoints, ringFaces(#CABIN_RINGS))
+end, false, 0.5)
 
--- Side windows standing just outside the cabin walls, following the roof line, so they read
--- from the game camera.
+-- Two side windows split by a pillar on each cabin wall, so they read from the game camera.
 part("Glass", nil, GLASS, function(mesh)
-	sidePlate(mesh, {
-		{ -0.5, 1.52 },
-		{ -0.2, 1.88 },
-		{ 0.3, 1.94 },
-		{ 0.9, 1.94 },
-		{ 1.12, 1.86 },
-		{ 1.2, 1.52 },
-	}, 0, 1.96, 0.03)
-end, 50, 0)
+	for _, wall in { { 1, 4 }, { 2, 3 } } do
+		cabinPane(mesh, wall[1], wall[2], 0.07, 0.44, 0.12, 0.9)
+		cabinPane(mesh, wall[1], wall[2], 0.5, 0.96, 0.12, 0.9)
+	end
+end, false, 0)
 
--- A raked pane along the cabin's windshield slope.
+-- A raked pane across the windscreen plane.
 part("Windshield", nil, GLASS, function(mesh)
-	local y0, z0, y1, z1 = table.unpack(WINDSHIELD)
-	pane(mesh, y0 + (y1 - y0) * 0.12, z0 + (z1 - z0) * 0.12, y0 + (y1 - y0) * 0.9, z0 + (z1 - z0) * 0.9, 1.5)
-end, 50, 0)
+	cabinPane(mesh, 1, 2, 0.07, 0.93, 0.1, 0.92)
+end, false, 0)
 
--- A matching pane along the hatch slope at the back of the cabin.
+-- A matching pane across the hatch at the back of the cabin.
 part("RearWindow", nil, GLASS, function(mesh)
-	local y0, z0, y1, z1 = table.unpack(HATCH)
-	pane(mesh, y0 + (y1 - y0) * 0.1, z0 + (z1 - z0) * 0.1, y0 + (y1 - y0) * 0.8, z0 + (z1 - z0) * 0.8, 1.5)
-end, 50, 0)
+	cabinPane(mesh, 3, 4, 0.08, 0.92, 0.25, 0.9)
+end, false, 0)
 
--- Round bars across the front and the back, curving round the corners into the body.
-part("Bumper", nil, BUMPER, function(mesh)
-	for _, side in { -1, 1 } do
-		tube(mesh, {
-			{ -1.05, side * 2.0, 0.6 },
-			{ -0.85, side * 2.17, 0.6 },
-			{ -0.4, side * 2.22, 0.6 },
-			{ 0.4, side * 2.22, 0.6 },
-			{ 0.85, side * 2.17, 0.6 },
-			{ 1.05, side * 2.0, 0.6 },
-		}, 0.12, 10)
-	end
-end, 50, 0.3)
+-- A black band round the bottom of the body: a bumper wrapping the nose, a sill between the
+-- arches and a bumper wrapping the tail, with a row of vents painted across the front bumper.
+part("Cladding", nil, BUMPER, function(mesh)
+	sidePlate(mesh, { { -2.24, 0.4 }, { -2.27, 0.74 }, { -1.96, 0.74 }, { -2.02, 0.4 } }, 0, 2.26, 0.05)
+	sidePlate(mesh, { { -0.82, 0.4 }, { -0.84, 0.66 }, { 0.84, 0.66 }, { 0.82, 0.4 } }, 0, 2.26, 0.05)
+	sidePlate(mesh, { { 2.02, 0.4 }, { 1.96, 0.74 }, { 2.27, 0.74 }, { 2.24, 0.4 } }, 0, 2.26, 0.05)
+end, false, rusting(0.3, function(x, _y, z, _nx, ny, _nz)
+	local isVent = ny < -0.6 and z > 0.5 and z < 0.6 and math.abs(x) < 0.85 and (x + 0.85) % 0.24 < 0.18
+	local color = if isVent then VENT else BUMPER
+	return color[1], color[2], color[3]
+end))
 
--- A dark rounded grille panel between the headlights, resting on the front bumper.
+-- A dark slot across the nose between the headlights.
 part("Grille", nil, BUMPER, function(mesh)
-	local outline = {}
-	for _, corner in { { 0.36, 0.9, 90, 0 }, { 0.36, 0.78, 0, -90 }, { -0.36, 0.78, -90, -180 }, { -0.36, 0.9, 180, 90 } } do
-		for _, p in arc(corner[1], corner[2], 0.09, corner[3], corner[4], 3) do
-			table.insert(outline, p)
-		end
-	end
-	plate(mesh, outline, -2.17, 0.1, 0.03)
-end, 50, 0.3)
+	box(mesh, 0, -2.2, 0.8, 0.7, 0.05, 0.06)
+end, false, 0.3)
 
--- Three pale slats bowed slightly forward across the face of the grille.
-part("GrilleSlats", nil, PAINT, function(mesh)
-	for _, z in { 0.75, 0.84, 0.93 } do
-		tube(mesh, { { -0.38, -2.2, z }, { 0, -2.24, z }, { 0.38, -2.2, z } }, 0.022, 6)
+-- A boxy side mirror on each side, standing on the waist at the foot of the windscreen.
+part("Mirrors", nil, BUMPER, function(mesh)
+	for _, x in { -1.12, 1.12 } do
+		box(mesh, x, -0.62, 1.3, 0.22, 0.08, 0.14)
 	end
-end, 50, 0.5)
+end, false, 0.3)
 
--- A round dark rocker bar along the bottom of each side, between the arches.
-part("Sills", nil, BUMPER, function(mesh)
-	for _, x in { -1.08, 1.08 } do
-		tube(mesh, { { x, -0.8, 0.56 }, { x, 0, 0.55 }, { x, 0.8, 0.56 } }, 0.07, 8)
-	end
-end, 50, 0.3)
-
--- A curved shell over each wheel: a half ring that wraps the tire, overlapping the body arch.
-part("Fenders", nil, RUST_ORANGE, function(mesh)
-	local inner, outer = ARCH_RADIUS, ARCH_RADIUS + 0.09
-	for _, x in { -1.2, 1.2 } do
-		for _, y in { -WHEEL_Y, WHEEL_Y } do
-			local x0, x1 = x - 0.18, x + 0.18
-			local rows = {}
-			for i, p in arc(0, 0, 1, 0, 180, 12) do
-				local cy, cz = p[1], p[2]
-				rows[i] = {
-					mesh:vertex(x0, y + cy * outer, WHEEL_Z + cz * outer),
-					mesh:vertex(x1, y + cy * outer, WHEEL_Z + cz * outer),
-					mesh:vertex(x1, y + cy * inner, WHEEL_Z + cz * inner),
-					mesh:vertex(x0, y + cy * inner, WHEEL_Z + cz * inner),
-				}
-			end
-			for i = 1, #rows - 1 do
-				local a, b = rows[i], rows[i + 1]
-				for k = 1, 4 do
-					local l = k % 4 + 1
-					mesh:face({ a[k], b[k], b[l], a[l] })
-				end
-			end
-			local first, last = rows[1], rows[#rows]
-			mesh:face({ first[1], first[2], first[3], first[4] })
-			mesh:face({ last[4], last[3], last[2], last[1] })
-		end
-	end
-end, 50, 0.6)
-
--- A round flared lip along the outer edge of each fender.
-part("ArchLips", nil, RUST_ORANGE, function(mesh)
-	for _, x in { -1.37, 1.37 } do
-		for _, y in { -WHEEL_Y, WHEEL_Y } do
-			local points = {}
-			for _, p in arc(y, WHEEL_Z, ARCH_RADIUS + 0.07, 0, 180, 12) do
-				table.insert(points, { x, p[1], p[2] })
-			end
-			tube(mesh, points, 0.04, 6)
-		end
-	end
-end, 50, 0.6)
-
--- Two thin dark door seams on each side of the body, rounded so they read as grooves.
-part("DoorSeams", nil, BUMPER, function(mesh)
-	for _, x in { -1.1, 1.1 } do
-		for _, y in { -0.6, 0.5 } do
-			tube(mesh, { { x, y, 0.66 }, { x, y - 0.01, 0.95 }, { x, y - 0.03, 1.24 } }, 0.018, 6)
-		end
-	end
-end, 50, 0)
-
--- A rounded side mirror pod on each side of the cabin front.
-part("Mirrors", nil, PAINT, function(mesh)
-	for _, x in { -1.05, 1.05 } do
-		sphere(mesh, x, -0.4, 1.52, 0.15, 0.06, 0.08, 4, 8)
-	end
-end, 50, 0.5)
-
+-- Rectangular headlights set into the nose under the hood edge.
 part("Lights", nil, GLOW, function(mesh)
-	for _, x in { -0.7, 0.7 } do
-		sphere(mesh, x, -2.1, 0.95, 0.12, 0.08, 0.12, 4, 6)
+	for _, x in { -0.68, 0.68 } do
+		box(mesh, x, -2.2, 0.78, 0.4, 0.06, 0.14)
 	end
 end, nil, 0, nil, 2)
+
+-- An amber indicator at the outer end of each headlight.
+part("Indicators", nil, AMBER, function(mesh)
+	for _, x in { -0.94, 0.94 } do
+		box(mesh, x, -2.19, 0.78, 0.12, 0.06, 0.14)
+	end
+end, nil, 0, nil, 1)
+
+-- Tall red lights at the top corners of the tail.
+part("RearLights", nil, TAIL_RED, function(mesh)
+	for _, x in { -0.85, 0.85 } do
+		box(mesh, x, 2.17, 0.9, 0.26, 0.06, 0.3)
+	end
+end, nil, 0, nil, 1)
 
 -- Wheels stick out past the body so they read as separate parts. The axle runs along x.
 part("Wheels", nil, RUBBER_BLACK, function(mesh)
 	for _, x in { -1.2, 1.2 } do
 		for _, y in { -WHEEL_Y, WHEEL_Y } do
 			cylinder(mesh, x, y, WHEEL_Z, 0.5, 0.3, "x", 14)
+		end
+	end
+end, nil, 0.3)
+
+-- A silver disc on the outer face of each wheel.
+part("Hubcaps", nil, BARE_METAL, function(mesh)
+	for _, x in { -1.36, 1.36 } do
+		for _, y in { -WHEEL_Y, WHEEL_Y } do
+			cylinder(mesh, x, y, WHEEL_Z, 0.3, 0.04, "x", 10)
 		end
 	end
 end, nil, 0.3)
