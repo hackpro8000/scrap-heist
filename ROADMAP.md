@@ -418,12 +418,19 @@ runs; the agent writes the steps into `docs/testing/phase-N.md`.
 
 - [ ] New player flow: spawn, get a yard, short tutorial prompts (first
       machine, first collect, what storms are).
+  - *Note:* `TutorialService` + `TutorialController`, steps in
+    `Config/Tutorial.luau`, order rules in `Tutorial/TutorialRules`
+    (specced). Waiting on Studio test (`docs/testing/full-game.md`).
 - [ ] Leaderboard (scrap and raids won) via leaderstats.
-- [ ] Settings in one `Config/Game.luau`: yard count, round timing, economy
+  - *Note:* `LeaderboardService`. Waiting on Studio test.
+- [x] Settings in one `Config/Game.luau`: yard count, round timing, economy
       multipliers.
+  - *Note:* also holds `ADMIN_USER_IDS`. Economy rules apply the
+    multipliers in `Tycoon/MachineRules` (specced).
 - [ ] Full playtest checklist in `docs/testing/full-game.md`.
   - *Done when:* Tristen can play a full 20-minute session with 2+ players
     (build, raid, storm, trade) with no errors in output.
+  - *Note:* checklist written; the playtest itself is Tristen's.
 
 **End of week 1 checkpoint:** game is playable start to finish with Tristen's
 assets swapped in through `Assets.luau`.
