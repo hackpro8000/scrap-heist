@@ -1,4 +1,4 @@
-local CACHE_KEY = "GearPanel-5ebf95f9c1cd517f"
+local CACHE_KEY = "GearPanel-0c0d948de2bc2ca7"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -789,6 +789,8 @@ local function spokedGear(mesh, cx, cy, cz, radius, thick, teeth, spokes, axis)
 	local hub = radius * 0.3
 	local rimIn = radius * 0.6
 	cylinder(mesh, cx, cy, cz, hub, thick * 1.4, axis, 10)
+	-- A shaft from the hub back to the plate, so the gear is mounted rather than floating.
+	cylinder(mesh, cx, (cy + PLATE_FRONT) / 2, cz, radius * 0.15, PLATE_FRONT - cy, axis, 8)
 	ring(mesh, cx, cy, cz, rimIn, radius * 0.7, thick * 1.3, axis, teeth * 2)
 	for k = 0, spokes - 1 do
 		local t = k / spokes * TAU
@@ -810,17 +812,18 @@ end
 -- The dark back plate the gears and frame are mounted on, with a rivet along each edge and a
 -- bolt in each corner.
 part("BackPlate", nil, DARK_STEEL, function(mesh)
-	box(mesh, 0, PLATE_Y, 0, PANEL_HALF * 2, 0.06, PANEL_HALF * 2)
+	-- box() runs from its centre up to cz + size along z, so start it at -PANEL_HALF to centre the plate.
+	box(mesh, 0, PLATE_Y, -PANEL_HALF, PANEL_HALF * 2, 0.06, PANEL_HALF * 2)
 	for k = -3, 3 do
 		local p = k * 0.9
-		stud(mesh, p, PLATE_FRONT, PANEL_HALF - 0.12, 0, -1, 0, 0.05)
-		stud(mesh, p, PLATE_FRONT, -PANEL_HALF + 0.12, 0, -1, 0, 0.05)
-		stud(mesh, PANEL_HALF - 0.12, PLATE_FRONT, p, 0, -1, 0, 0.05)
-		stud(mesh, -PANEL_HALF + 0.12, PLATE_FRONT, p, 0, -1, 0, 0.05)
+		stud(mesh, p, PLATE_FRONT, PANEL_HALF - 0.42, 0, -1, 0, 0.05)
+		stud(mesh, p, PLATE_FRONT, -PANEL_HALF + 0.42, 0, -1, 0, 0.05)
+		stud(mesh, PANEL_HALF - 0.42, PLATE_FRONT, p, 0, -1, 0, 0.05)
+		stud(mesh, -PANEL_HALF + 0.42, PLATE_FRONT, p, 0, -1, 0, 0.05)
 	end
 	for _, sx in { -1, 1 } do
 		for _, sz in { -1, 1 } do
-			bolt(mesh, sx * (PANEL_HALF - 0.2), PLATE_FRONT, sz * (PANEL_HALF - 0.2), "y", 0.1)
+			bolt(mesh, sx * 2.7, PLATE_FRONT, sz * 2.7, "y", 0.1)
 		end
 	end
 end, nil, 0.8)
@@ -840,8 +843,8 @@ end, nil, 0.7)
 
 -- Large brass gears, the top two and the bottom right, each spoked.
 part("LargeGears", nil, BRASS, function(mesh)
-	spokedGear(mesh, -1.42, 0.1, 1.97, 1.48, 0.3, 14, 5, "y")
-	spokedGear(mesh, 0.66, 0.0, 2.44, 1.64, 0.3, 16, 6, "y")
+	spokedGear(mesh, -1.42, 0.1, 1.85, 1.48, 0.3, 14, 5, "y")
+	spokedGear(mesh, 0.66, 0.0, 1.66, 1.64, 0.3, 16, 6, "y")
 	spokedGear(mesh, 1.6, -0.1, -1.07, 1.41, 0.3, 14, 5, "y")
 end, nil, 0.5)
 
@@ -857,23 +860,23 @@ end, nil, 0.5)
 -- The steel-rimmed gear at the bottom, with a rim standing proud of its teeth, a spoked hub and a
 -- rivet on the rim.
 part("SteelGear", nil, STEEL, function(mesh)
-	spokedGear(mesh, 0.38, -0.15, -3.0, 0.7, 0.24, 9, 3, "y")
-	ring(mesh, 0.38, -0.15, -3.0, 0.62, 0.8, 0.14, "y", 14)
-	rivetBand(mesh, 0.38, -0.15, -3.0, 0.71, "y", 6, 0.04)
+	spokedGear(mesh, 0.38, -0.15, -2.6, 0.7, 0.24, 9, 3, "y")
+	ring(mesh, 0.38, -0.15, -2.6, 0.62, 0.8, 0.14, "y", 14)
+	rivetBand(mesh, 0.38, -0.15, -2.6, 0.71, "y", 6, 0.04)
 end, nil, 0.4)
 
 -- Two riveted steel boilers on the right: a tall one above and a longer one below, each with rivet
 -- bands at its ends and a cap.
 part("Boilers", nil, STEEL, function(mesh)
-	cylinder(mesh, 2.6, -0.2, 2.2, 0.6, 1.8, "z", 14)
-	sphere(mesh, 2.6, -0.2, 3.1, 0.6, 0.6, 0.5, 6, 14)
+	cylinder(mesh, 2.6, -0.2, 2.0, 0.6, 1.6, "z", 14)
+	sphere(mesh, 2.6, -0.2, 2.8, 0.6, 0.6, 0.4, 6, 14)
 	cylinder(mesh, 2.6, -0.2, -0.4, 0.75, 2.8, "z", 14)
 	ring(mesh, 2.6, -0.2, -0.4, 0.75, 0.85, 0.12, "z", 14)
 	ring(mesh, 2.6, -0.2, -1.0, 0.75, 0.85, 0.12, "z", 14)
-	for _, z in { 1.5, 2.9 } do
+	for _, z in { 1.3, 2.5 } do
 		rivetBand(mesh, 2.6, -0.2, z, 0.6, "z", 12, 0.04)
 	end
-	for _, z in { -1.9, 0.2, 0.9 } do
+	for _, z in { -1.6, 0.2, 0.9 } do
 		rivetBand(mesh, 2.6, -0.2, z, 0.75, "z", 14, 0.045)
 	end
 end, nil, 0.6)
@@ -883,6 +886,8 @@ part("Dial", nil, BRASS, function(mesh)
 	local cx, cy, cz = -2.35, -0.2, -1.6
 	ring(mesh, cx, cy, cz, 0.8, 0.95, 0.16, "y", 16)
 	cylinder(mesh, cx, cy - 0.1, cz, 0.8, 0.1, "y", 16)
+	-- A standoff from the dial back to the plate.
+	cylinder(mesh, cx, (cy + PLATE_FRONT) / 2, cz, 0.15, PLATE_FRONT - cy, "y", 8)
 	cylinder(mesh, cx, cy - 0.3, cz, 0.12, 0.1, "y", 8)
 	for k = 0, 11 do
 		local t = k / 12 * TAU
