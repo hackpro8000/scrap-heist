@@ -17,7 +17,12 @@
 	can't raid yards far below their level, and while raiders are inside a
 	yard its owner is alerted and takes less damage.
 
+	Showcase mode can stage a fake raid: an NPC raider walks to a player's
+	crate, grabs a bundle and runs for the gate, so the defend-and-recover
+	loop can be recorded solo.
+
 	Public API:
+		RaidService.startFakeRaid(owner): reason?
 		RaidService.setPaused(paused)          -- also paused automatically during storms
 		RaidService.isCarrying(player): boolean
 		RaidService.raidBanked: Signal(raider, parts)
@@ -38,16 +43,34 @@ local Trove = require(ReplicatedStorage.Shared.Util.Trove)
 
 local CombatService = require(script.Parent.CombatService)
 local DataService = require(script.Parent.DataService)
+local DebugService = require(script.Parent.DebugService)
 local MachineRules = require(script.Parent.Parent.Tycoon.MachineRules)
+local NpcRig = require(script.Parent.Parent.Npc.NpcRig)
 local PlotService = require(script.Parent.PlotService)
 local RaidRules = require(script.Parent.Parent.Tycoon.RaidRules)
 local RemoteGuard = require(script.Parent.Parent.Security.RemoteGuard)
 local RoundService = require(script.Parent.RoundService)
+local YardLayout = require(script.Parent.Parent.Tycoon.YardLayout)
 
 local SYSTEM = "Raid"
 local BUNDLE_MODEL_NAME = "PartBundle"
 local BUNDLE_COLOR = Color3.fromRGB(150, 120, 70)
 local CARRY_SPEED_KEY = "CarryingBundle"
+
+-- Fake raid (showcase mode).
+local FAKE_RAIDER_LOOK: NpcRig.Look = {
+	size = Vector3.new(2, 5, 1.5),
+	color = Color3.fromRGB(190, 60, 60),
+	maxHealth = 100,
+}
+local FAKE_RAIDER_WEAPON = "Bat"
+local FAKE_RAID_SECONDS = 40
+-- Parts put in an empty crate so a fake raid always has something to take.
+local FAKE_RAID_CRATE_PARTS = 400
+-- Yard-space offsets: where the raider appears, and where it runs to.
+local FAKE_RAIDER_START = Vector3.new(0, 3, 26)
+local FAKE_RAIDER_ESCAPE = Vector3.new(0, 3, 60)
+local FAKE_RAID_STEP_SECONDS = 0.25
 
 type Carry = {
 	parts: number,
@@ -330,6 +353,70 @@ local function checkYards()
 	intruders = current
 end
 
+local function walkUntil(humanoid: Humanoid, root: BasePart, goal: Vector3, closeEnough: number, deadline: number)
+	while humanoid.Health > 0 and os.clock() < deadline and (root.Position - goal).Magnitude > closeEnough do
+		humanoid:MoveTo(goal)
+		task.wait(FAKE_RAID_STEP_SECONDS)
+	end
+end
+
+function RaidService.startFakeRaid(owner: Player): string?
+	local yard = PlotService.yardOf(owner)
+	if not yard then
+		return "You need a yard"
+	end
+	if PlotService.getCrateParts(owner) < RaidConfig.MIN_CRATE_PARTS then
+		PlotService.setCrateParts(owner, FAKE_RAID_CRATE_PARTS)
+	end
+
+	local model = NpcRig.build("FakeRaider", FAKE_RAIDER_LOOK)
+	local humanoid = model:FindFirstChildOfClass("Humanoid") :: Humanoid
+	local root = model.PrimaryPart :: BasePart
+	model:PivotTo(CFrame.new(YardLayout.toWorld(yard.origin, yard.yaw, FAKE_RAIDER_START)))
+	model.Parent = workspace
+	root:SetNetworkOwner(nil)
+	CombatService.register(model, FAKE_RAIDER_WEAPON)
+
+	Remotes.Alert:FireClient(owner, "Intruder", "A raider is heading for your crate!")
+
+	task.spawn(function()
+		local deadline = os.clock() + FAKE_RAID_SECONDS
+		walkUntil(humanoid, root, yard.crate.Position, RaidConfig.GRAB_DISTANCE - 2, deadline)
+
+		local carried = 0
+		if humanoid.Health > 0 and os.clock() < deadline then
+			carried = PlotService.takeFromCrate(owner, RaidRules.bundleSize(PlotService.getCrateParts(owner)))
+			local bundle = newBundlePart(carried)
+			bundle.CFrame = root.CFrame * CFrame.new(0, 0.5, root.Size.Z / 2 + bundle.Size.Z / 2)
+			local weld = Instance.new("WeldConstraint")
+			weld.Part0 = root
+			weld.Part1 = bundle
+			weld.Parent = bundle
+			bundle.Parent = model
+			CombatService.setSpeedMultiplier(model, CARRY_SPEED_KEY, RaidConfig.CARRY_SPEED_MULTIPLIER)
+			Remotes.Alert:FireClient(owner, "Grabbed", `A raider stole {carried} parts! Stop them!`)
+
+			local escape = YardLayout.toWorld(yard.origin, yard.yaw, FAKE_RAIDER_ESCAPE)
+			walkUntil(humanoid, root, escape, 4, deadline)
+		end
+
+		if carried > 0 then
+			if humanoid.Health <= 0 then
+				spawnDrop(root.Position, carried, owner.UserId)
+			else
+				-- It's only a showcase: an escaped fake raider gives the parts back.
+				returnToOwner(owner.UserId, carried)
+				Notify.Message:FireClient(owner, "The raider got away (showcase: parts returned)")
+			end
+		end
+
+		task.wait(2)
+		model:Destroy()
+	end)
+
+	return nil
+end
+
 function RaidService.isCarrying(player: Player): boolean
 	return carries[player] ~= nil
 end
@@ -353,6 +440,10 @@ function RaidService.setPaused(isPaused: boolean)
 end
 
 function RaidService.init()
+	DebugService.register("fakeraid", "/fakeraid", function(player)
+		return RaidService.startFakeRaid(player) or "Fake raid started"
+	end)
+
 	for _, yard in PlotService.getYards() do
 		local prompt = Instance.new("ProximityPrompt")
 		prompt.ActionText = "Grab parts"

@@ -16,6 +16,7 @@
 	Public API:
 		Source.require(path)    -- run a module by repo path, without .luau
 		Source.instance(path)   -- the fake Instance for a file or folder
+		Source.fileOf(fake)     -- the .luau file a fake Instance would run, if any
 ]]
 
 local fs = require("@lune/fs")
@@ -165,6 +166,11 @@ end
 
 function Source.instance(path: string): any
 	return fakeFor(path) or error(`Source: nothing at {path}`, 2)
+end
+
+function Source.fileOf(fake: any): string?
+	local info = infoByFake[fake]
+	return if info then info.file else nil
 end
 
 function Source.require(path: string): any

@@ -37,8 +37,48 @@ for the plan.
 2. Open a place in Roblox Studio, open the Rojo plugin and click **Connect**.
    Code from `src/` now syncs live into the place.
 
-3. Press **Play**. The Output window should show each service and controller
-   booting (see `docs/testing/`).
+3. In **Game Settings > Security**, turn on **Enable Studio Access to API
+   Services** so player data saves (otherwise ProfileStore uses a mock).
+
+4. Press **Play**. The Output window shows each service and controller
+   booting. Per-phase test steps are in `docs/testing/`, and the full
+   playtest is `docs/testing/full-game.md`.
+
+## Debug commands
+
+In Studio (or for user IDs in `src/shared/Config/Game.luau`
+`ADMIN_USER_IDS`), type in chat:
+
+| Command | Does |
+|---|---|
+| `/help` | list every command |
+| `/givescrap <n>` | add scrap |
+| `/giveitem <ItemId> [n]` | add items, e.g. `/giveitem GoldenCog` |
+| `/fillcrate [n]` | fill your storage crate |
+| `/storm`, `/phase <name>` | jump to a storm or any round phase |
+| `/spawnbots <type> [n]`, `/clearbots` | bots near you (Scrapper, Bruiser, Zapper) |
+| `/dummy` | a training dummy in front of you |
+| `/fakeraid` | an NPC raids your crate |
+| `/overlay` | debug overlay: hitboxes, bot paths and states, rejections |
+| `/resetdata` | wipe your save (you're kicked to reload) |
+
+The **Showcase** button on the HUD runs the same commands with one tap.
+
+## Dropping in art
+
+Everything runs on gray-block placeholders. To swap in real assets:
+
+- **Animations and sounds:** paste IDs into `src/shared/Assets.luau`.
+- **Yard:** a Model named `YardTemplate` in ServerStorage, with parts (or
+  models) named `Pad1`-`Pad4`, `Crate` and `PlotMarker`.
+- **Yard positions on the map:** parts named `Yard1`..`Yard8` in a
+  workspace folder `YardSpots` (each part's position and facing).
+- **Arena:** a part named `Arena` in workspace.
+- **Machines:** `ServerStorage.MachineModels.SalvageMachine1`..`3`.
+- **Bots and dummy:** models in `ServerStorage.NpcModels` named `Scrapper`,
+  `Bruiser`, `Zapper`, `TrainingDummy`, `FakeRaider` (each needs a Humanoid
+  and HumanoidRootPart).
+- **Part bundle:** a MeshPart named `PartBundle` in ServerStorage.
 
 ## Building a place file
 
@@ -76,10 +116,12 @@ For editor autocomplete of `@lune/*` modules, run `lune setup` once.
 
 ## Layout
 
-- `src/shared` → `ReplicatedStorage.Shared` (config, types, utilities)
+- `src/shared` → `ReplicatedStorage.Shared` (config, types, remotes, utilities)
 - `src/server` → `ServerScriptService.Server` (services)
 - `src/client` → `StarterPlayer.StarterPlayerScripts.Client` (controllers, UI)
 - `Packages`, `ServerPackages` → installed by Wally, not committed
+- `tests/` → Lune unit tests (never synced into Studio)
+- `docs/systems/` → client-facing explainers, `docs/testing/` → Studio checklists
 
 ## Cloud environment
 

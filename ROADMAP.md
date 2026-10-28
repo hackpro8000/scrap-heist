@@ -245,6 +245,8 @@ runs; the agent writes the steps into `docs/testing/phase-N.md`.
   - *Done when:* `lune run tests/run` passes and exits non-zero on a failure.
 - [ ] Write `README.md` (install tools, `rojo serve`, connect in Studio).
   - *Done when:* Tristen can follow it from a fresh clone.
+  - *Note:* now also covers Studio API access, debug commands, art drop-in
+    points and unit tests. Waiting on Tristen's fresh-clone run.
 
 ### Phase 1: Combat kit
 
@@ -438,19 +440,32 @@ assets swapped in through `Assets.luau`.
 ### Phase 7: Polish, showcase, and clips (week 2)
 
 - [ ] Bug fixes from Tristen's playtests (track them in `docs/bugs.md`).
+  - *Note:* `docs/bugs.md` is ready; no playtest reports yet.
 - [ ] Juice: screen shake, hit pause, damage numbers, UI tweens. All toggleable
       in Config.
+  - *Note:* `JuiceController` and `UI/Pop`, switches in
+    `Config/Juice.luau`. Waiting on Studio test (`docs/testing/phase-7.md`).
 - [ ] **Showcase mode** (Studio or admin only): buttons to trigger a storm
       now, spawn bots, give items, start a fake raid. Makes recording clips
       fast.
+  - *Note:* `ShowcaseService` + `ShowcaseController` (HUD button), runs
+    the gated DebugService commands. Fake raid is an NPC raider
+    (`RaidService.startFakeRaid`). Waiting on Studio test.
 - [ ] Debug overlay for clips: show server hitboxes, bot paths and states,
       remote rejection counts. Shows clients the systems are real.
+  - *Note:* from `CombatService.swingChecked`, `BotService.pathComputed`,
+    `BotState` attributes and `RemoteGuard.rejectionCounts`. Waiting on
+    Studio test.
 - [ ] Performance pass: microprofiler check with full bots, no memory growth
       over a 30-minute session.
+  - *Note:* steps in `docs/testing/phase-7.md`; needs Studio.
 - [ ] Publish the showcase place (Tristen).
-- [ ] Clip list for Tristen (one clip per system, what to show in each).
-- [ ] Final pass on `docs/systems/` so each explainer works as a client
+- [x] Clip list for Tristen (one clip per system, what to show in each).
+  - *Note:* `docs/clips.md`.
+- [x] Final pass on `docs/systems/` so each explainer works as a client
       handout.
+  - *Note:* added `docs/systems/README.md` as the handout index. Revisit
+    after Studio testing if behaviour changes.
 
 ---
 

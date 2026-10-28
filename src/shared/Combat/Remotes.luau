@@ -9,7 +9,7 @@
 
 	Server to client:
 		PlaySwing(model, weaponName, stepIndex)   -- all clients: animate a swing
-		HitEffect(model, outcome, damage)         -- all clients: show a hit
+		HitEffect(model, outcome, damage, attacker)   -- all clients: show a hit
 		Knockback(velocity)                       -- the hit player's client only
 ]]
 

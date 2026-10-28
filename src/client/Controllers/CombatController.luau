@@ -15,7 +15,7 @@
 	clearly with no art at all.
 
 	Public API:
-		CombatController.hitShown: Signal(model, outcome, damage)   -- for juice effects
+		CombatController.hitShown: Signal(model, outcome, damage, attacker)   -- for juice effects
 ]]
 
 local ContextActionService = game:GetService("ContextActionService")
@@ -145,14 +145,14 @@ local function onPlaySwing(model: Model, weaponName: string, stepIndex: number)
 	playSound(if weaponName == "Zap" then "Zap" else "Swing", model.PrimaryPart)
 end
 
-local function onHitEffect(model: Model, outcome: string, damage: number)
+local function onHitEffect(model: Model, outcome: string, damage: number, attacker: Model?)
 	if typeof(model) ~= "Instance" then
 		return
 	end
 
 	flash(model, outcome)
 	playSound(OUTCOME_SOUNDS[outcome] or "Hit", model.PrimaryPart)
-	CombatController.hitShown:fire(model, outcome, damage)
+	CombatController.hitShown:fire(model, outcome, damage, attacker)
 end
 
 local function onKnockback(velocity: Vector3)

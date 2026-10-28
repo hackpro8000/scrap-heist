@@ -135,7 +135,7 @@ local function applyHit(attacker: Fighter, target: Fighter, attack: CombatRules.
 	end
 
 	target.model:SetAttribute("Blocking", target.combatant.blocking)
-	Remotes.HitEffect:FireAllClients(target.model, result.outcome, result.damage)
+	Remotes.HitEffect:FireAllClients(target.model, result.outcome, result.damage, attacker.model)
 	CombatService.hitLanded:fire(attacker.model, target.model, result)
 end
 
