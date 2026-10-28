@@ -1,9 +1,11 @@
 --!strict
-local Boot = require("@shared/Util/Boot")
 local Roblox = require("../../Roblox")
+local Source = require("../../Source")
 local Test = require("../../Test")
 
 local describe, it, expect = Test.describe, Test.it, Test.expect
+
+local Boot = Source.require("src/shared/Util/Boot")
 
 -- A module that records its init/start calls into a shared log.
 local function newModule(name: string, log: { string }): Boot.Entry

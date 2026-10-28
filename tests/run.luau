@@ -15,8 +15,8 @@
 	Exits with code 1 if any test fails or a spec can't load.
 
 	Spec layout mirrors src: tests/shared/Util/Signal.spec.luau tests
-	src/shared/Util/Signal.luau. Specs require source through the @shared
-	alias in .luaurc, and use Test.luau and Roblox.luau from this folder.
+	src/shared/Util/Signal.luau. Specs load game code with Source.luau and
+	use Test.luau and Roblox.luau from this folder.
 ]]
 
 local fs = require("@lune/fs")
