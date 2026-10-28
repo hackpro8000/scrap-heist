@@ -30,6 +30,26 @@ type FakeInfo = {
 	file: string?,
 }
 
+-- src/ is read once up front: Lune's file functions can yield, and a
+-- yield isn't allowed inside the __index lookups that resolve requires.
+local SOURCE_ROOT = "src"
+local fileContents: { [string]: string } = {}
+local directories: { [string]: boolean } = {}
+
+local function scan(directory: string)
+	directories[directory] = true
+	for _, name in fs.readDir(directory) do
+		local path = `{directory}/{name}`
+		if fs.isDir(path) then
+			scan(path)
+		elseif string.sub(name, -5) == ".luau" then
+			fileContents[path] = fs.readFile(path)
+		end
+	end
+end
+
+scan(SOURCE_ROOT)
+
 -- One fake per path, so the same file always gives the same Instance.
 local fakesByPath: { [string]: any } = {}
 local infoByFake: { [any]: FakeInfo } = {}
@@ -49,15 +69,19 @@ local function fakeFor(path: string): any
 	end
 
 	local file: string? = nil
-	if fs.isFile(path .. ".luau") then
-		file = path .. ".luau"
-	elseif fs.isFile(path .. "/init.luau") then
-		file = path .. "/init.luau"
-	elseif fs.isFile(path .. "/init.server.luau") then
-		file = path .. "/init.server.luau"
-	elseif fs.isFile(path .. "/init.client.luau") then
-		file = path .. "/init.client.luau"
-	elseif not fs.isDir(path) then
+	local candidates = {
+		path .. ".luau",
+		path .. "/init.luau",
+		path .. "/init.server.luau",
+		path .. "/init.client.luau",
+	}
+	for _, candidate in candidates do
+		if fileContents[candidate] then
+			file = candidate
+			break
+		end
+	end
+	if not file and not directories[path] then
 		return nil
 	end
 
@@ -120,7 +144,7 @@ sourceRequire = function(target: any): any
 	end
 
 	loading[file] = true
-	local chunk = luau.load(fs.readFile(file), {
+	local chunk = luau.load(fileContents[file], {
 		debugName = file,
 		-- Lune adds the runner's globals (task, game, Vector3, print) on top
 		-- of this, so the module sees the fakes from tests/Roblox.luau.
