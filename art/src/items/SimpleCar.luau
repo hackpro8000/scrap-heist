@@ -110,8 +110,8 @@ local CABIN_CENTER = { 0, 0.9, 1.6 }
 
 -- A glass pane lying on a cabin wall between its waist and glass-top rings. `a`, `b` index the
 -- waist corners in order, so `a + 4`, `b + 4` are the corners above; `u` runs a to b and `v` up
--- the wall. The pane stands just proud of the wall, with its back sunk in.
-local function cabinPane(mesh, a, b, u0, u1, v0, v1)
+-- the wall. `outer` and `inner` are its faces' distances out from the wall plane.
+local function cabinPane(mesh, a, b, u0, u1, v0, v1, outer, inner)
 	local function at(u, v)
 		local p = {}
 		for k = 1, 3 do
@@ -129,7 +129,7 @@ local function cabinPane(mesh, a, b, u0, u1, v0, v1)
 	local side = (corners[1][1] - CABIN_CENTER[1]) * n[1] + (corners[1][2] - CABIN_CENTER[2]) * n[2] + (corners[1][3] - CABIN_CENTER[3]) * n[3]
 	local scale = if side >= 0 then 1 / len else -1 / len
 	local points = {}
-	for _, offset in { 0.03, -0.02 } do
+	for _, offset in { outer, inner } do
 		for _, c in corners do
 			table.insert(points, { c[1] + n[1] * scale * offset, c[2] + n[2] * scale * offset, c[3] + n[3] * scale * offset })
 		end
@@ -141,26 +141,75 @@ part("Body", nil, RUST_ORANGE, function(mesh)
 	sidePlate(mesh, bodyOutline, 0, 2.2, 0.1)
 end, false, 0.6)
 
+-- Window openings on each cabin wall, as { u0, u1 } spans between the wall's v0 and v1, in the
+-- wall coordinates cabinPane uses. Two side windows per side split by a pillar, so they read from
+-- the game camera, and one opening each across the windscreen and the hatch.
+local WALL_THICKNESS = 0.06
+local GLASS_RECESS = 0.06
+local GLASS_OVERLAP = 0.01
+local SIDE_WINDOWS = { v0 = 0.2, v1 = 0.82, { 0.15, 0.42 }, { 0.53, 0.88 } }
+local CABIN_WALLS = {
+	{ a = 1, b = 2, openings = { v0 = 0.18, v1 = 0.84, { 0.15, 0.85 } } },
+	{ a = 2, b = 3, openings = SIDE_WINDOWS },
+	{ a = 3, b = 4, openings = { v0 = 0.33, v1 = 0.82, { 0.16, 0.84 } } },
+	{ a = 4, b = 1, openings = SIDE_WINDOWS },
+}
+-- The left side runs back to front (4 to 1), so its openings mirror the right side's.
+local function wallSpans(wall)
+	local spans = {}
+	for i, span in ipairs(wall.openings) do
+		spans[i] = if wall.a == 4 then { 1 - span[2], 1 - span[1] } else span
+	end
+	table.sort(spans, function(p, q)
+		return p[1] < q[1]
+	end)
+	return spans
+end
+
+-- The cabin as a roof block over four framed walls. Each wall is a sill under its openings, a
+-- header over them and pillars between them, all slabs of cabin paint from the wall plane inward.
 part("Cabin", nil, PAINT, function(mesh)
-	solid(mesh, cabinPoints, ringFaces(#CABIN_RINGS))
+	local roof = {}
+	for i = 5, #cabinPoints do
+		table.insert(roof, cabinPoints[i])
+	end
+	solid(mesh, roof, ringFaces(#CABIN_RINGS - 1))
+	for _, wall in CABIN_WALLS do
+		local v0, v1 = wall.openings.v0, wall.openings.v1
+		cabinPane(mesh, wall.a, wall.b, 0, 1, 0, v0, 0, -WALL_THICKNESS)
+		cabinPane(mesh, wall.a, wall.b, 0, 1, v1, 1, 0, -WALL_THICKNESS)
+		local u = 0
+		for _, span in wallSpans(wall) do
+			cabinPane(mesh, wall.a, wall.b, u, span[1], v0, v1, 0, -WALL_THICKNESS)
+			u = span[2]
+		end
+		cabinPane(mesh, wall.a, wall.b, u, 1, v0, v1, 0, -WALL_THICKNESS)
+	end
 end, false, 0.5)
 
--- Two side windows split by a pillar on each cabin wall, so they read from the game camera.
-part("Glass", nil, GLASS, function(mesh)
-	for _, wall in { { 1, 4 }, { 2, 3 } } do
-		cabinPane(mesh, wall[1], wall[2], 0.07, 0.44, 0.12, 0.9)
-		cabinPane(mesh, wall[1], wall[2], 0.5, 0.96, 0.12, 0.9)
+-- A pane recessed into an opening, its front at the back of the wall and its edges tucked behind
+-- the frame so it stays attached.
+local function recessedPanes(mesh, wall)
+	local v0, v1 = wall.openings.v0, wall.openings.v1
+	for _, span in wallSpans(wall) do
+		cabinPane(mesh, wall.a, wall.b, span[1] - GLASS_OVERLAP, span[2] + GLASS_OVERLAP, v0 - GLASS_OVERLAP, v1 + GLASS_OVERLAP, -GLASS_RECESS, -GLASS_RECESS - 0.04)
 	end
+end
+
+-- The side windows, set into both cabin sides.
+part("Glass", nil, GLASS, function(mesh)
+	recessedPanes(mesh, CABIN_WALLS[2])
+	recessedPanes(mesh, CABIN_WALLS[4])
 end, false, 0)
 
--- A raked pane across the windscreen plane.
+-- A raked pane set into the windscreen plane.
 part("Windshield", nil, GLASS, function(mesh)
-	cabinPane(mesh, 1, 2, 0.07, 0.93, 0.1, 0.92)
+	recessedPanes(mesh, CABIN_WALLS[1])
 end, false, 0)
 
--- A matching pane across the hatch at the back of the cabin.
+-- A matching pane set into the hatch at the back of the cabin.
 part("RearWindow", nil, GLASS, function(mesh)
-	cabinPane(mesh, 3, 4, 0.08, 0.92, 0.25, 0.9)
+	recessedPanes(mesh, CABIN_WALLS[3])
 end, false, 0)
 
 -- A black band round the bottom of the body: a bumper wrapping the nose, a sill between the
