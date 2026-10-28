@@ -312,22 +312,32 @@ runs; the agent writes the steps into `docs/testing/phase-N.md`.
 
 ### Phase 3: Inventory and trading
 
-- [ ] Item definitions in `Config/Items.luau` (common parts, rare loot,
+- [x] Item definitions in `Config/Items.luau` (common parts, rare loot,
       rarity tiers).
+  - *Note:* item IDs match the art loot models; commons/uncommons stack,
+    rares/legendaries are unique.
 - [ ] `InventoryService`: every non-stackable item gets a unique ID (GUID)
       when created; stackables are counts. Server-only grant and remove.
   - *Done when:* two of the same rare item have different IDs and can't be
     merged or cloned.
+  - *Note:* code and specs done (`InventoryRules.spec`). `/giveitem` for
+    testing. Waiting on Studio test (`docs/testing/phase-3.md`).
 - [ ] `TradeService`: request, accept, add/remove items, both players ready,
       short countdown, both confirm, then **one atomic swap** that re-verifies
       both inventories right before moving anything.
   - *Done when:* changing an offer resets both ready states; leaving
     mid-trade cancels cleanly; a failed check moves nothing; trades only
     happen between players in the same server who both have loaded profiles.
-- [ ] Trade log (last N trades per player stored in profile) for support.
+  - *Note:* rules and swap in `src/server/Trade/TradeSession.luau`
+    (`TradeSession.spec` covers resets, failed checks moving nothing, and
+    GUIDs surviving the swap). Waiting on 2-player Studio test.
+- [x] Trade log (last N trades per player stored in profile) for support.
+  - *Note:* `profile.tradeLog`, newest first, `Config/Trade.LOG_SIZE` entries.
 - [ ] Inventory and trade UI (placeholder styling, readable on mobile).
   - *Done when:* Studio test with 2 players completes a trade end to end.
-- [ ] `docs/systems/inventory-trading.md`.
+  - *Note:* `InventoryController`, `TradeController`, HUD buttons. Waiting
+    on Studio test.
+- [x] `docs/systems/inventory-trading.md`.
 
 ### Phase 4: Tycoon loop and raiding
 

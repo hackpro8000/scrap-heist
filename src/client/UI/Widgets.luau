@@ -15,6 +15,8 @@
 		Widgets.label(text, props?): TextLabel
 		Widgets.button(text, onClick, props?): TextButton
 		Widgets.list(parent, direction?, padding?): UIListLayout
+		Widgets.scrollList(props?): ScrollingFrame   -- vertical list that grows to fit
+		Widgets.clear(container)                     -- remove GuiObjects, keep layouts
 ]]
 
 local Players = game:GetService("Players")
@@ -114,6 +116,30 @@ function Widgets.list(parent: Instance, direction: Enum.FillDirection?, padding:
 	layout.Parent = parent
 
 	return layout
+end
+
+function Widgets.scrollList(props: Props?): ScrollingFrame
+	local frame = Instance.new("ScrollingFrame")
+	frame.BackgroundColor3 = Theme.Colors.Background
+	frame.BackgroundTransparency = 0.3
+	frame.BorderSizePixel = 0
+	frame.ScrollBarThickness = 6
+	frame.CanvasSize = UDim2.new()
+	frame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+	frame.ScrollingDirection = Enum.ScrollingDirection.Y
+	round(frame)
+	Widgets.list(frame, nil, 4)
+
+	applyProps(frame, props)
+	return frame
+end
+
+function Widgets.clear(container: Instance)
+	for _, child in container:GetChildren() do
+		if child:IsA("GuiObject") then
+			child:Destroy()
+		end
+	end
 end
 
 return Widgets

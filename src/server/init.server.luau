@@ -18,6 +18,8 @@ local Services = script.Services
 local SERVICES: { Boot.Entry } = {
 	{ name = "DataService", module = require(Services.DataService) },
 	{ name = "DebugService", module = require(Services.DebugService) },
+	{ name = "InventoryService", module = require(Services.InventoryService) },
+	{ name = "TradeService", module = require(Services.TradeService) },
 	{ name = "CombatService", module = require(Services.CombatService) },
 	{ name = "DummyService", module = require(Services.DummyService) },
 }

@@ -17,6 +17,9 @@ local Controllers = script.Controllers
 
 local CONTROLLERS: { Boot.Entry } = {
 	{ name = "NotifyController", module = require(Controllers.NotifyController) },
+	{ name = "HudController", module = require(Controllers.HudController) },
+	{ name = "InventoryController", module = require(Controllers.InventoryController) },
+	{ name = "TradeController", module = require(Controllers.TradeController) },
 	{ name = "CombatController", module = require(Controllers.CombatController) },
 }
 

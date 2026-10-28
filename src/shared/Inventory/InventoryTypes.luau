@@ -29,4 +29,11 @@ export type Offer = {
 	uniques: { [string]: boolean },
 }
 
+-- An offer with each unique item's item ID filled in, so the other player
+-- can see what they'd get and trade logs say what moved.
+export type OfferDescription = {
+	stacks: { [string]: number },
+	uniques: { [string]: string },
+}
+
 return {}

@@ -39,8 +39,8 @@ export type MachineSave = {
 export type TradeLogEntry = {
 	at: number,
 	withUserId: number,
-	gave: InventoryTypes.Offer,
-	got: InventoryTypes.Offer,
+	gave: InventoryTypes.OfferDescription,
+	got: InventoryTypes.OfferDescription,
 }
 
 export type ProfileData = {
@@ -127,7 +127,11 @@ function ProfileSchema.reconcile(data: { [any]: any }, template: { [any]: any }?
 	end
 end
 
-function ProfileSchema.migrate(data: { [any]: any }, migrations: { [number]: (any) -> any }?, targetVersion: number?): any
+function ProfileSchema.migrate(
+	data: { [any]: any },
+	migrations: { [number]: (any) -> any }?,
+	targetVersion: number?
+): any
 	local steps = migrations or ProfileSchema.MIGRATIONS
 	local target = targetVersion or ProfileSchema.VERSION
 	-- Saves from before versioning existed count as version 1.
