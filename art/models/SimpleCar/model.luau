@@ -1,4 +1,4 @@
-local CACHE_KEY = "SimpleCar-cb841924e9173fb4"
+local CACHE_KEY = "SimpleCar-9985cf5a7bf14254"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -794,6 +794,11 @@ end, nil, 0)
 -- A separate pane in front of the cabin, so the windshield reads as glass from the game camera.
 part("Windshield", nil, GLASS, function(mesh)
 	box(mesh, 0, -0.78, 1.55, 1.7, 0.1, 0.55)
+end, nil, 0)
+
+-- A matching pane on the back of the cabin, so the rear window reads as glass too.
+part("RearWindow", nil, GLASS, function(mesh)
+	box(mesh, 0, 1.38, 1.55, 1.7, 0.1, 0.55)
 end, nil, 0)
 
 part("Bumper", nil, BUMPER, function(mesh)
