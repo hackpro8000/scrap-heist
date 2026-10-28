@@ -175,6 +175,58 @@ end, false, rusting(0.3, function(x, _y, z, _nx, ny, _nz)
 	return color[1], color[2], color[3]
 end))
 
+-- A flared fender over each wheel: a five-sided section swept round the arch from the body side.
+part("Fenders", nil, RUST_ORANGE, function(mesh)
+	local section = { { 1.0, 0.62 }, { 1.42, 0.6 }, { 1.42, 0.68 }, { 1.3, 0.8 }, { 1.0, 0.88 } }
+	local steps = 8
+	local function angle(k)
+		return math.rad(8 + 164 * k / steps)
+	end
+	for _, side in { -1, 1 } do
+		for _, wheelY in { -WHEEL_Y, WHEEL_Y } do
+			local function centre(a)
+				return { side * 1.2, wheelY + math.cos(a) * 0.72, WHEEL_Z + math.sin(a) * 0.72 }
+			end
+			local function face(corners, inside)
+				local nx, ny, nz, fx, fy, fz = 0, 0, 0, 0, 0, 0
+				for k, c in corners do
+					local a, b = c.p, corners[k % #corners + 1].p
+					nx += (a[2] - b[2]) * (a[3] + b[3])
+					ny += (a[3] - b[3]) * (a[1] + b[1])
+					nz += (a[1] - b[1]) * (a[2] + b[2])
+					fx, fy, fz = fx + a[1], fy + a[2], fz + a[3]
+				end
+				local n = #corners
+				local outward = nx * (fx / n - inside[1]) + ny * (fy / n - inside[2]) + nz * (fz / n - inside[3]) >= 0
+				local verts = {}
+				for k = 1, n do
+					verts[k] = corners[if outward then k else n + 1 - k].id
+				end
+				mesh:face(verts)
+			end
+			local rings = {}
+			for k = 0, steps do
+				local a = angle(k)
+				local ring = {}
+				for i, s in section do
+					local p = { side * s[1], wheelY + math.cos(a) * s[2], WHEEL_Z + math.sin(a) * s[2] }
+					ring[i] = { id = mesh:vertex(p[1], p[2], p[3]), p = p }
+				end
+				rings[k] = ring
+			end
+			for k = 0, steps - 1 do
+				local inside = centre(angle(k + 0.5))
+				for i = 1, #section do
+					local j = i % #section + 1
+					face({ rings[k][i], rings[k][j], rings[k + 1][j], rings[k + 1][i] }, inside)
+				end
+			end
+			face(rings[0], centre(angle(0.5)))
+			face(rings[steps], centre(angle(steps - 0.5)))
+		end
+	end
+end, false, 0.6)
+
 -- A dark slot across the nose between the headlights.
 part("Grille", nil, BUMPER, function(mesh)
 	box(mesh, 0, -2.2, 0.8, 0.7, 0.05, 0.06)
