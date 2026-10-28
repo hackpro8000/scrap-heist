@@ -94,7 +94,7 @@ end
 -- { z, front y, back y, half width }: the waist sunk into the body, the top of the glass, and a
 -- narrower roof. The sloped planes between them are the windscreen, hatch and tumbled-in sides.
 local CABIN_RINGS = {
-	{ 1.28, -0.9, 1.98, 1.04 },
+	{ 1.12, -0.9, 1.98, 1.04 },
 	{ 2.02, -0.1, 1.86, 0.9 },
 	{ 2.12, 0.02, 1.76, 0.8 },
 }
@@ -182,11 +182,11 @@ end, false, 0.6)
 local WALL_THICKNESS = 0.06
 local GLASS_RECESS = 0.18
 local GLASS_THICKNESS = 0.04
-local SIDE_WINDOWS = { v0 = 0.2, v1 = 0.82, { 0.15, 0.42 }, { 0.53, 0.88 } }
+local SIDE_WINDOWS = { v0 = 0.31, v1 = 0.87, { 0.12, 0.43 }, { 0.5, 0.9 } }
 local CABIN_WALLS = {
-	{ a = 1, b = 2, openings = { v0 = 0.18, v1 = 0.84, { 0.15, 0.85 } } },
+	{ a = 1, b = 2, openings = { v0 = 0.24, v1 = 0.87, { 0.1, 0.9 } } },
 	{ a = 2, b = 3, openings = SIDE_WINDOWS },
-	{ a = 3, b = 4, openings = { v0 = 0.33, v1 = 0.82, { 0.16, 0.84 } } },
+	{ a = 3, b = 4, openings = { v0 = 0.36, v1 = 0.85, { 0.12, 0.88 } } },
 	{ a = 4, b = 1, openings = SIDE_WINDOWS },
 }
 -- The left side runs back to front (4 to 1), so its openings mirror the right side's.
