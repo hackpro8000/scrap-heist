@@ -13,6 +13,11 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Boot = require(ReplicatedStorage.Shared.Util.Boot)
 
-local SERVICES: { Boot.Entry } = {}
+local Services = script.Services
+
+local SERVICES: { Boot.Entry } = {
+	{ name = "CombatService", module = require(Services.CombatService) },
+	{ name = "DummyService", module = require(Services.DummyService) },
+}
 
 Boot.run("Server", SERVICES)
