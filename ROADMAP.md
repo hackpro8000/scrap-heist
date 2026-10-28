@@ -82,8 +82,11 @@ than a missing one.
 - **Data library:** ProfileStore (by loleris) for session-locked saves. If it
   can't be installed, ask before writing a custom DataStore wrapper.
 - **Formatting and linting:** StyLua and Selene, with config files committed.
+- **Unit tests:** [Lune](https://lune-org.github.io/docs) runs specs in
+  `tests/` outside Studio, with our own small runner (`tests/run.luau`), no
+  test framework package. Approved by Tristen.
 - **Toolchain manager:** Rokit (or Aftman) with a `rokit.toml` pinning Rojo,
-  Wally, StyLua, and Selene versions.
+  Wally, StyLua, Selene, and Lune versions.
 - **No other frameworks** (no Knit, no full networking libraries) unless
   Tristen approves. Plain modules are easier to explain to clients.
 
@@ -115,6 +118,11 @@ scrap-heist/
 ├── docs/
 │   ├── systems/               # one short explainer per system (for clients)
 │   └── testing/               # Studio test checklists per phase
+├── tests/                     # Lune unit tests, never synced into Studio
+│   ├── run.luau               # runner: `lune run tests/run`
+│   ├── Test.luau              # describe / it / expect
+│   ├── Roblox.luau            # fakes for the engine bits modules touch
+│   └── shared/ server/ ...    # *.spec.luau, mirroring src/
 └── src/
     ├── shared/                # ReplicatedStorage.Shared
     │   ├── Assets.luau        # EVERY asset ID lives here
@@ -172,6 +180,18 @@ scrap-heist/
 - Clean up connections on player leave and object destroy (use a Trove/Maid
   style helper).
 
+### Testing
+- Split each system into a **rules module** (plain tables in, results out;
+  time passed in as `now` or an injected clock) and a **service** (remotes,
+  instances, `Players` events) that calls it. Rules modules get Lune specs;
+  service glue gets Studio checklist steps.
+- Write the spec with the code, not after. A task is ticked only when its
+  specs pass (`lune run tests/run`) and its Studio test passes.
+- Specs mirror `src/` (`tests/shared/Util/Signal.spec.luau` tests
+  `src/shared/Util/Signal.luau`) and require source via the `@shared` alias.
+- Only fake engine pieces in `tests/Roblox.luau`, and only what code under
+  test actually touches.
+
 ### Comments (important)
 Tristen will explain this code to clients on calls, so comments must teach.
 
@@ -212,6 +232,12 @@ runs; the agent writes the steps into `docs/testing/phase-N.md`.
     order with no errors.
   - *Note:* boot lives in `src/shared/Util/Boot.luau`. No services exist
     yet, so the test checks for `booted 0 module(s)` (`docs/testing/phase-0.md`).
+  - *Note:* Signal, Trove, RateLimiter and Boot now have Lune specs.
+    RateLimiter takes an optional clock so specs can step time.
+- [x] Unit test setup: Lune pinned in `rokit.toml`, own runner in `tests/`,
+      specs for the existing `Util/` modules. Added because Studio access
+      isn't available yet; Tristen approved Lune and an in-repo runner.
+  - *Done when:* `lune run tests/run` passes and exits non-zero on a failure.
 - [ ] Write `README.md` (install tools, `rojo serve`, connect in Studio).
   - *Done when:* Tristen can follow it from a fresh clone.
 
@@ -365,6 +391,7 @@ assets swapped in through `Assets.luau`.
 - [ ] Every module has a header comment and `SECURITY:` / `DUPE-SAFE:` tags
       where relevant.
 - [ ] `selene` and `stylua --check` pass.
+- [ ] `lune run tests/run` passes.
 - [ ] One clip per system recorded.
 
 ---
