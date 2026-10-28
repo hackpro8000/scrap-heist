@@ -1,4 +1,4 @@
-local CACHE_KEY = "GearPanel-829e03e0645249c9"
+local CACHE_KEY = "GearPanel-06eeff4abe9664d3"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -776,9 +776,9 @@ end
 -- depths, two riveted steel boilers down the right side and a brass dial bottom left. Centred on
 -- the origin, facing -y, with z up.
 local BRASS = { 0.78, 0.6, 0.3 }
-local PANEL_HALF = 3.9
 local PIPE_RADIUS = 0.13
 local PIPE_AT = 3.25
+local PANEL_HALF = PIPE_AT + PIPE_RADIUS
 
 -- The dark back plate the gears and frame are mounted on.
 part("BackPlate", nil, DARK_STEEL, function(mesh)
@@ -819,18 +819,18 @@ end, nil, 0.4)
 
 -- Two riveted steel boilers on the right: a tall one above and a longer one below.
 part("Boilers", nil, STEEL, function(mesh)
-	cylinder(mesh, 3.0, -0.2, 2.2, 0.55, 1.6, "z", 14)
-	sphere(mesh, 3.0, -0.2, 3.0, 0.55, 0.55, 0.45, 6, 14)
-	cylinder(mesh, 3.0, -0.2, -0.4, 0.7, 2.6, "z", 14)
-	ring(mesh, 3.0, -0.2, -0.4, 0.7, 0.8, 0.12, "z", 14)
-	ring(mesh, 3.0, -0.2, -1.0, 0.7, 0.8, 0.12, "z", 14)
+	cylinder(mesh, 2.6, -0.2, 2.2, 0.6, 1.8, "z", 14)
+	sphere(mesh, 2.6, -0.2, 3.1, 0.6, 0.6, 0.5, 6, 14)
+	cylinder(mesh, 2.6, -0.2, -0.4, 0.75, 2.8, "z", 14)
+	ring(mesh, 2.6, -0.2, -0.4, 0.75, 0.85, 0.12, "z", 14)
+	ring(mesh, 2.6, -0.2, -1.0, 0.75, 0.85, 0.12, "z", 14)
 end, nil, 0.6)
 
 -- Brass dial at the bottom left: a rim, a face and a centre pin.
 part("Dial", nil, BRASS, function(mesh)
-	ring(mesh, -2.5, -0.2, -1.6, 0.7, 0.82, 0.16, "y", 16)
-	cylinder(mesh, -2.5, -0.1, -1.6, 0.7, 0.1, "y", 16)
-	cylinder(mesh, -2.5, -0.3, -1.6, 0.1, 0.1, "y", 8)
+	ring(mesh, -2.35, -0.2, -1.6, 0.8, 0.95, 0.16, "y", 16)
+	cylinder(mesh, -2.35, -0.1, -1.6, 0.8, 0.1, "y", 16)
+	cylinder(mesh, -2.35, -0.3, -1.6, 0.12, 0.1, "y", 8)
 end, nil, 0.45)
 
 finishParts()
