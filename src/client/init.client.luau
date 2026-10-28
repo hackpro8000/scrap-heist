@@ -13,6 +13,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Boot = require(ReplicatedStorage.Shared.Util.Boot)
 
-local CONTROLLERS: { Boot.Entry } = {}
+local Controllers = script.Controllers
+
+local CONTROLLERS: { Boot.Entry } = {
+	{ name = "CombatController", module = require(Controllers.CombatController) },
+}
 
 Boot.run("Client", CONTROLLERS)

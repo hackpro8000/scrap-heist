@@ -254,24 +254,37 @@ runs; the agent writes the steps into `docs/testing/phase-N.md`.
       (`Attack`, `SetBlocking`, `PlaySwing`, `HitEffect`, `Knockback`).
   - *Done when:* the modules require cleanly in Studio and every combat number
     lives in `WeaponConfig`.
+  - *Note:* code done; `WeaponConfig.spec` checks every step's numbers and
+    animation keys. Waiting on the Studio require check.
 
 - [ ] `CombatService`: combo tracking, windup/recovery timing, server-side
       hitbox (spatial query in front of the attacker), damage, knockback.
   - *Done when:* hits only land when the server's hitbox overlaps; spamming
     the `Attack` remote faster than the combo allows does nothing.
+  - *Note:* code and specs done (`CombatRules.spec`: spam is refused until
+    recovery). Rules live in `src/server/Combat/CombatRules.luau`. Waiting
+    on Studio test (`docs/testing/phase-1.md`).
 - [ ] Blocking, directional block angle, parry window, posture and guard
       break, stun states and walk speed changes.
   - *Done when:* Studio test: blocked hits deal reduced damage, a well-timed
     block parries and stuns the attacker, draining posture breaks guard.
+  - *Note:* code and specs done. Waiting on Studio test.
 - [ ] `CombatController`: input (click to attack, F or right-click to block),
       animations and sounds via `Assets`, hit effects from `HitEffect`.
   - *Done when:* combat works with all assets still placeholders, no errors.
+  - *Note:* code done. Mobile gets touch buttons through
+    ContextActionService. Waiting on Studio test.
 - [ ] Combat works against NPC humanoids too (needed for bots in Phase 5).
   - *Done when:* a test dummy can be hit, blocked against, and killed.
-- [ ] Add a second weapon in `WeaponConfig` (for example `Wrench`) to prove
+  - *Note:* `DummyService` spawns a training dummy in Studio; NPC models
+    come from `NpcRig` (gray blocks until `ServerStorage.NpcModels` has art).
+    Waiting on Studio test.
+- [x] Add a second weapon in `WeaponConfig` (for example `Wrench`) to prove
       the kit is data-driven.
   - *Done when:* switching weapons needs zero logic changes.
-- [ ] `docs/systems/combat.md`: one-page client-facing explainer.
+  - *Note:* `Spanner` (the Big Spanner art) plus the bot weapons, all data
+    only. `CombatRules.spec` switches weapons with no logic change.
+- [x] `docs/systems/combat.md`: one-page client-facing explainer.
 
 ### Phase 2: Dupe-proof data
 
