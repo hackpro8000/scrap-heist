@@ -269,13 +269,14 @@ part("Wheels", nil, RUBBER_BLACK, function(mesh)
 	end
 end, nil, 0.3)
 
--- A silver disc on the outer face of each wheel.
+-- A silver disc on the outer face of each wheel. Flat, and standing clear of the warped tyre
+-- face, so the warp can't sink a hub into its wheel.
 part("Hubcaps", nil, BARE_METAL, function(mesh)
-	for _, x in { -1.21, 1.21 } do
+	for _, x in { -1.26, 1.26 } do
 		for _, y in { -WHEEL_Y, WHEEL_Y } do
 			cylinder(mesh, x, y, WHEEL_Z, 0.25, 0.04, "x", 10)
 		end
 	end
-end, nil, 0.3)
+end, nil, 0.3, nil, nil, true)
 
 finishParts()
