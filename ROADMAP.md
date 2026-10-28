@@ -344,22 +344,37 @@ runs; the agent writes the steps into `docs/testing/phase-N.md`.
 - [ ] `PlotService`: N yards per server, auto-assign on join, release and
       reset on leave. Yard layout comes from a template model Tristen builds
       (agent uses gray-block placeholders until then).
+  - *Note:* code done; yard geometry in `Tycoon/YardLayout.luau`
+    (`YardLayout.spec`). Uses `ServerStorage.YardTemplate` and
+    `workspace.YardSpots` when present. Waiting on Studio test
+    (`docs/testing/phase-4.md`).
 - [ ] `MachineService`: buy and place salvage machines on fixed pads, upgrade
       levels, each produces parts into the yard's **storage crate** on a tick.
       Costs, rates, and upgrade curves in `Config/Economy.luau`.
   - *Done when:* income is calculated on the server from owned machines;
     buying with insufficient scrap fails cleanly.
+  - *Note:* one machine type with 3 tiers on 4 pads (matches the art).
+    Rules in `Tycoon/MachineRules.luau` (`MachineRules.spec`). Prompts, not
+    remotes, with server-side owner and distance checks. Waiting on Studio test.
 - [ ] Offline earnings (capped) granted on join, based on saved machines.
+  - *Note:* `MachineRules.offlineEarnings` (specced): half rate, 2 h cap,
+    paid as scrap. Waiting on Studio test.
 - [ ] `RaidService`: other players can enter your yard, grab a part bundle
       from your storage crate, and carry it back to their own yard to bank it.
       Carrier is slowed and drops the bundle on death.
   - *Done when:* the server validates every step (in yard, near crate,
     carrying limit, reached own yard); a dropped bundle can be recovered.
+  - *Note:* every check in `Tycoon/RaidRules.canGrab` (`RaidRules.spec`).
+    Waiting on 2-player Studio test.
 - [ ] Anti-grief rules in Config: raid shield after being raided, can't raid
       players far below your level, owner gets an alert and a defense buff
       while raided.
+  - *Note:* `Config/Raid.luau`; shield, level gap and defense buff wired in
+    `RaidService`. Waiting on Studio test.
 - [ ] Plot UI: scrap counter, buy/upgrade prompts, raid alert.
-- [ ] `docs/systems/tycoon-raiding.md`.
+  - *Note:* HUD scrap counter, ProximityPrompts, raid banner and carry
+    bar in `PlotController`. Waiting on Studio test.
+- [x] `docs/systems/tycoon-raiding.md`.
 
 ### Phase 5: Storm rounds and scrap bots
 
