@@ -7,8 +7,14 @@
 	module under test needs more, add it here and nowhere else.
 
 	- task: Lune ships the same scheduler, but as a library, not a global.
+	- Vector3: Lune's own, which matches Roblox's. CFrame is left out on
+	  purpose: Lune's CFrame.lookAt faces the opposite way to Roblox's, so
+	  rules modules do their maths with positions and facing vectors.
 	- game:GetService("Players"): a fake Players with a PlayerRemoving
 	  signal that specs fire by hand to simulate a player leaving.
+	- ReplicatedStorage.Shared and ServerScriptService.Server: the src/
+	  folders, loaded through tests/Source.luau as default.project.json maps
+	  them.
 
 	Lune already provides print, warn and typeof as globals.
 
@@ -18,6 +24,8 @@
 		Roblox.newSignal(): FakeSignal
 		Roblox.captureOutput(body): { prints, warns }
 ]]
+
+local Source = require("./Source")
 
 local Roblox = {}
 
@@ -87,6 +95,12 @@ Roblox.Players = {
 
 local services: { [string]: any } = {
 	Players = Roblox.Players,
+	ReplicatedStorage = {
+		Shared = Source.instance("src/shared"),
+	},
+	ServerScriptService = {
+		Server = Source.instance("src/server"),
+	},
 }
 
 -- Where print and warn go while captureOutput runs; nil means the console.
@@ -107,6 +121,7 @@ function Roblox.install()
 	-- Plain assignment, not _G: Lune shares globals between the runner and
 	-- every module it requires, but keeps _G as a separate table.
 	task = require("@lune/task") :: any
+	Vector3 = require("@lune/roblox").Vector3 :: any
 	game = fakeGame :: any
 
 	-- Luau caches built-in globals like print when a module loads, so

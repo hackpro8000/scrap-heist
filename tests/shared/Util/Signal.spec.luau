@@ -1,8 +1,10 @@
 --!strict
-local Signal = require("@shared/Util/Signal")
+local Source = require("../../Source")
 local Test = require("../../Test")
 
 local describe, it, expect = Test.describe, Test.it, Test.expect
+
+local Signal = Source.require("src/shared/Util/Signal")
 
 describe("Signal", function()
 	it("passes fired arguments to every listener", function()

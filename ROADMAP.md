@@ -188,7 +188,10 @@ scrap-heist/
 - Write the spec with the code, not after. A task is ticked only when its
   specs pass (`lune run tests/run`) and its Studio test passes.
 - Specs mirror `src/` (`tests/shared/Util/Signal.spec.luau` tests
-  `src/shared/Util/Signal.luau`) and require source via the `@shared` alias.
+  `src/shared/Util/Signal.luau`) and load source with
+  `Source.require("src/...")`, which resolves normal Roblox requires
+  (`script.Parent.X`, `ReplicatedStorage.Shared.X`) to files. Game code
+  needs no test-only require style.
 - Only fake engine pieces in `tests/Roblox.luau`, and only what code under
   test actually touches.
 
@@ -234,6 +237,8 @@ runs; the agent writes the steps into `docs/testing/phase-N.md`.
     yet, so the test checks for `booted 0 module(s)` (`docs/testing/phase-0.md`).
   - *Note:* Signal, Trove, RateLimiter and Boot now have Lune specs.
     RateLimiter takes an optional clock so specs can step time.
+  - *Note:* `tests/Source.luau` loads src/ files with Roblox-style requires,
+    so rules modules can require config normally and still run in Lune.
 - [x] Unit test setup: Lune pinned in `rokit.toml`, own runner in `tests/`,
       specs for the existing `Util/` modules. Added because Studio access
       isn't available yet; Tristen approved Lune and an in-repo runner.

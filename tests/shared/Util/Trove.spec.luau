@@ -1,9 +1,11 @@
 --!strict
 local Roblox = require("../../Roblox")
+local Source = require("../../Source")
 local Test = require("../../Test")
-local Trove = require("@shared/Util/Trove")
 
 local describe, it, expect = Test.describe, Test.it, Test.expect
+
+local Trove = Source.require("src/shared/Util/Trove")
 
 describe("Trove", function()
 	it("runs cleanup functions newest first", function()

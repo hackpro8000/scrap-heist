@@ -1,9 +1,11 @@
 --!strict
-local RateLimiter = require("@shared/Util/RateLimiter")
 local Roblox = require("../../Roblox")
+local Source = require("../../Source")
 local Test = require("../../Test")
 
 local describe, it, expect = Test.describe, Test.it, Test.expect
+
+local RateLimiter = Source.require("src/shared/Util/RateLimiter")
 
 -- A clock the spec moves by hand, so refill timing is exact and instant.
 local function newClock()
