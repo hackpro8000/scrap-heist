@@ -12,7 +12,7 @@ local VENT = { 0.06, 0.06, 0.06 }
 
 local WHEEL_Y = 1.4
 local WHEEL_Z = 0.5
-local ARCH_RADIUS = 0.6
+local ARCH_RADIUS = 0.52
 
 -- `plate` drawn side-on: the outline runs in y-z (y first) and the plate is extruded across x,
 -- centred on `x`. A quarter turn about z, so faces keep their winding.
@@ -177,7 +177,7 @@ end))
 
 -- A flared fender over each wheel: a five-sided section swept round the arch from the body side.
 part("Fenders", nil, RUST_ORANGE, function(mesh)
-	local section = { { 1.0, 0.62 }, { 1.42, 0.6 }, { 1.42, 0.68 }, { 1.3, 0.8 }, { 1.0, 0.88 } }
+	local section = { { 1.0, 0.52 }, { 1.4, 0.5 }, { 1.4, 0.57 }, { 1.29, 0.64 }, { 1.0, 0.66 } }
 	local steps = 8
 	local function angle(k)
 		return math.rad(8 + 164 * k / steps)
@@ -185,7 +185,7 @@ part("Fenders", nil, RUST_ORANGE, function(mesh)
 	for _, side in { -1, 1 } do
 		for _, wheelY in { -WHEEL_Y, WHEEL_Y } do
 			local function centre(a)
-				return { side * 1.2, wheelY + math.cos(a) * 0.72, WHEEL_Z + math.sin(a) * 0.72 }
+				return { side * 1.2, wheelY + math.cos(a) * 0.58, WHEEL_Z + math.sin(a) * 0.58 }
 			end
 			local function face(corners, inside)
 				local nx, ny, nz, fx, fy, fz = 0, 0, 0, 0, 0, 0
@@ -264,7 +264,7 @@ end, nil, 0, nil, 1)
 part("Wheels", nil, RUBBER_BLACK, function(mesh)
 	for _, x in { -1.2, 1.2 } do
 		for _, y in { -WHEEL_Y, WHEEL_Y } do
-			cylinder(mesh, x, y, WHEEL_Z, 0.5, 0.3, "x", 14)
+			cylinder(mesh, x, y, WHEEL_Z, 0.42, 0.3, "x", 14)
 		end
 	end
 end, nil, 0.3)
@@ -273,7 +273,7 @@ end, nil, 0.3)
 part("Hubcaps", nil, BARE_METAL, function(mesh)
 	for _, x in { -1.36, 1.36 } do
 		for _, y in { -WHEEL_Y, WHEEL_Y } do
-			cylinder(mesh, x, y, WHEEL_Z, 0.3, 0.04, "x", 10)
+			cylinder(mesh, x, y, WHEEL_Z, 0.25, 0.04, "x", 10)
 		end
 	end
 end, nil, 0.3)
