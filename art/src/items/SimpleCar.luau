@@ -23,6 +23,11 @@ part("Windshield", nil, GLASS, function(mesh)
 	box(mesh, 0, -0.78, 1.55, 1.7, 0.1, 0.55)
 end, nil, 0)
 
+-- A matching pane on the back of the cabin, so the rear window reads as glass too.
+part("RearWindow", nil, GLASS, function(mesh)
+	box(mesh, 0, 1.38, 1.55, 1.7, 0.1, 0.55)
+end, nil, 0)
+
 part("Bumper", nil, BUMPER, function(mesh)
 	box(mesh, 0, -2.2, 0.45, 2.0, 0.15, 0.25)
 end, nil, 0.3)
