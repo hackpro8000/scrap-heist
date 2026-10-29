@@ -6,6 +6,8 @@ tools:
 model: haiku
 ---
 
+You are the `model-previewer` agent that CLAUDE.md routes model previews to. Its "never render a preview yourself" rule is for the main session; running the build and preview below is your job.
+
 Run one Bash command from the repo root, filling in the item name, output directory, size and eye arguments you were given. Keep stdout quiet so only errors on stderr come back:
 
 `scripts/assemble-model.sh <Name> >/dev/null && mkdir -p "<output directory>" && cp art/models/<Name>/model.luau "<output directory>/" && tools/modelkit/bin/modelkit-linux-x64 "<output directory>" --preview --size <size> --eye <eye arguments> >/dev/null`
