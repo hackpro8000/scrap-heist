@@ -7,9 +7,11 @@
 	crate into scrap, and paying offline earnings when a player returns.
 
 	Buying, upgrading and collecting use ProximityPrompts on the pads and
-	crate. The prompts are marked OwnerOnly and the client hides them from
-	everyone but the owner, but that's only for tidiness: every press is
-	checked here (right player, close enough, enough scrap).
+	crate. The prompts are marked OwnerOnly, and their Available attribute
+	says whether there's anything to do (a maxed machine has nothing to
+	buy). Each client shows a prompt only if it owns the yard and the prompt
+	is available, but that's only for tidiness: every press is checked here
+	(right player, close enough, enough scrap).
 
 	All income is calculated on the server from the machines saved in the
 	owner's profile (Tycoon/MachineRules).
@@ -116,7 +118,7 @@ local function refreshPad(yard: PlotService.Yard, padName: string)
 	end
 
 	if not data then
-		state.prompt.Enabled = false
+		state.prompt:SetAttribute("Available", false)
 		return
 	end
 
@@ -128,7 +130,7 @@ local function refreshPad(yard: PlotService.Yard, padName: string)
 	local cost = if machine
 		then MachineRules.upgradeCost(padName, machine.level)
 		else MachineRules.buyCost(padName)
-	state.prompt.Enabled = cost ~= nil
+	state.prompt:SetAttribute("Available", cost ~= nil)
 	state.prompt.ActionText = if machine then `Upgrade to level {machine.level + 1}` else "Buy salvage machine"
 	state.prompt.ObjectText = if cost then `{cost} scrap` else "Max level"
 end
@@ -233,7 +235,7 @@ function MachineService.init()
 		local states = {}
 		for padName, pad in yard.pads do
 			local prompt = newPrompt(pad, "Buy salvage machine")
-			prompt.Enabled = false
+			prompt:SetAttribute("Available", false)
 			prompt.Triggered:Connect(function(player)
 				onPadTriggered(player, yard, padName)
 			end)
@@ -251,15 +253,22 @@ end
 
 function MachineService.start()
 	PlotService.yardAssigned:connect(onYardAssigned)
+	-- A profile can load (and get its yard) before this service starts,
+	-- for example with ProfileStore's offline mock in Studio.
+	for _, yard in PlotService.getYards() do
+		if yard.owner then
+			onYardAssigned(yard.owner, yard)
+		end
+	end
 	PlotService.yardReleased:connect(function(_player: Player, yard: PlotService.Yard)
-		-- The owner is still set while released fires; clear models now and
-		-- the prompts go quiet because refreshPad finds no data next time.
+		-- The owner is still set while released fires, so clear the models
+		-- and prompts here rather than through refreshPad.
 		for _, state in padStates[yard] do
 			if state.model then
 				state.model:Destroy()
 				state.model = nil
 			end
-			state.prompt.Enabled = false
+			state.prompt:SetAttribute("Available", false)
 		end
 	end)
 	DataService.profileReleasing:connect(function(_player, data)

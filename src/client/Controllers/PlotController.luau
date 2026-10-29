@@ -4,8 +4,9 @@
 
 	The yard UI:
 	- Shows each yard prompt only to the right players: buy, upgrade and
-	  collect (OwnerOnly) to the owner, "Grab parts" (RaiderOnly) to
-	  everyone else. This is tidiness only; the server checks every press.
+	  collect (OwnerOnly) to the owner when the server marks them
+	  Available, "Grab parts" (RaiderOnly) to everyone else. This is
+	  tidiness only; the server checks every press.
 	- A red banner when someone raids your yard, cleared when it's safe.
 	- A "carrying" bar while you haul a stolen bundle home.
 
@@ -57,13 +58,19 @@ local function filterPrompt(prompt: ProximityPrompt)
 	local isMine = owner == localPlayer.UserId
 	local hasOwner = owner ~= nil and owner ~= 0
 
-	-- The server decides whether owner prompts are enabled at all (a maxed
-	-- machine has nothing to buy), so only ever switch them off here.
 	if ownerOnly then
-		prompt.Enabled = prompt.Enabled and isMine
+		-- Available is the server saying there's something to do here.
+		prompt.Enabled = isMine and prompt:GetAttribute("Available") ~= false
 	else
 		prompt.Enabled = hasOwner and not isMine
 	end
+end
+
+local function watchPrompt(prompt: ProximityPrompt)
+	filterPrompt(prompt)
+	prompt:GetAttributeChangedSignal("Available"):Connect(function()
+		filterPrompt(prompt)
+	end)
 end
 
 local function refreshYard(yard: Instance)
@@ -75,25 +82,19 @@ local function refreshYard(yard: Instance)
 end
 
 local function watchYard(yard: Instance)
-	refreshYard(yard)
+	for _, descendant in yard:GetDescendants() do
+		if descendant:IsA("ProximityPrompt") then
+			watchPrompt(descendant)
+		end
+	end
+	yard.DescendantAdded:Connect(function(descendant)
+		if descendant:IsA("ProximityPrompt") then
+			watchPrompt(descendant)
+		end
+	end)
 	yard:GetAttributeChangedSignal("OwnerUserId"):Connect(function()
 		refreshYard(yard)
 	end)
-	yard.DescendantAdded:Connect(function(descendant)
-		if descendant:IsA("ProximityPrompt") then
-			filterPrompt(descendant)
-		end
-	end)
-	-- The server re-enables owner prompts as machines change; filter again.
-	for _, descendant in yard:GetDescendants() do
-		if descendant:IsA("ProximityPrompt") then
-			descendant:GetPropertyChangedSignal("Enabled"):Connect(function()
-				if descendant:GetAttribute("OwnerOnly") and yardOwnerOf(descendant) ~= localPlayer.UserId then
-					descendant.Enabled = false
-				end
-			end)
-		end
-	end
 end
 
 local function showAlert(kind: string, text: string)
