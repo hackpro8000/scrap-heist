@@ -10,7 +10,9 @@ You are the `model-previewer` agent that CLAUDE.md routes model previews to. Its
 
 Run one Bash command from the repo root, filling in the item name, output directory, size and eye arguments you were given. Keep stdout quiet so only errors on stderr come back:
 
-`scripts/assemble-model.sh <Name> >/dev/null && mkdir -p "<output directory>" && cp art/models/<Name>/model.luau "<output directory>/" && tools/modelkit/bin/modelkit-linux-x64 "<output directory>" --preview --size <size> --eye <eye arguments> >/dev/null`
+`if [ -e art/src/bots/<Name> ] || [ -e art/src/items/<Name>.luau ] || [ -e art/src/layouts/<Name>.luau ]; then scripts/assemble-model.sh <Name> >/dev/null; else test -f art/models/<Name>/model.luau; fi && mkdir -p "<output directory>" && cp art/models/<Name>/model.luau "<output directory>/" && tools/modelkit/bin/modelkit-linux-x64 "<output directory>" --preview --size <size> --eye <eye arguments> >/dev/null`
+
+Models with a source in art/src are assembled first; older models that only have a committed art/models/<Name>/model.luau are built from that file as is.
 
 Do not open the rendered images.
 
