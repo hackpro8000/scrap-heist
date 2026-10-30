@@ -617,9 +617,12 @@ end
 -- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
 -- build runs once into a recorder, then each face goes to the chunk holding
 -- its centre. Cells sit on the origin across, and centred on z = 0 up and
--- down, so ground near sea level stays in one layer.
-local function chunkedPart(name, bone, color, build, smooth, rust)
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part().
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?)
 	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
 	local positions, faces = {}, {}
 	local recorder = {
 		vertex = function(_, x, y, z)
@@ -635,7 +638,7 @@ local function chunkedPart(name, bone, color, build, smooth, rust)
 			table.insert(faces, { verts = verts, uvs = uvs })
 		end,
 	}
-	build(if rust == 0 then recorder else imperfect(recorder, name))
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
 
 	local chunks, order = {}, {}
 	for _, f in faces do
@@ -698,6 +701,13 @@ local function chunkedPart(name, bone, color, build, smooth, rust)
 					for _, sub in octantOrder do
 						emit(`{label}_{sub}`, octants[sub], half)
 					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
 					return
 				end
 			end

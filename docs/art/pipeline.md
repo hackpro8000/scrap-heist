@@ -2,7 +2,14 @@
 
 Models are Luau scripts run by `modelkit`, a small Rust engine in
 `tools/modelkit` that builds meshes, paints and bakes textures, and writes a
-`.glb` with a preview render. No Blender, no GPU; a model builds in seconds.
+`.glb` with a preview render. No Blender; a model builds in seconds.
+
+The shading bake's per-texel passes (contact creases, coat, wear) run as
+compute shaders on the GPU when there is one (`tools/modelkit/src/gpu.rs`,
+`crease.wgsl`, `canvas.wgsl`), and on the CPU threads otherwise, such as in
+cloud sessions. The build prints which it used. `MODELKIT_GPU=off` forces the
+CPU bake. GPU textures match the CPU ones up to f32 rounding (well under 1% of
+texels differ), so cached layers from either can be mixed.
 
 ## Layout
 
