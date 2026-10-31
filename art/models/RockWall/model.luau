@@ -1,4 +1,4 @@
-local CACHE_KEY = "RockWall-ccd7fbb2fa43308d"
+local CACHE_KEY = "RockWall-72e5415428601b71"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -793,11 +793,16 @@ local COLS, ROWS = 4, 3
 -- Cell spacing across and up, and how big each rock's sphere is. The sphere
 -- must overlap its neighbours or the cells pull apart at the seams.
 local SPACING_X, SPACING_Z = 4.6, 4.2
-local RADIUS = 3.4
+local RADIUS = 4.1
 -- How far back the wall is cut flat, and how much the fronts are displaced.
 local BACK = 1.2
 local LUMPS, BUMPS = 0.12, 0.04
 local SUBDIVISIONS = 2
+-- Facet slices per rock, applied before the bisector cuts so the front keeps
+-- its flat spots while the seams still close exactly.
+local FACETS = 5
+local FACET_MIN, FACET_MAX = 0.72, 0.95
+local TAU = 2 * math.pi
 
 local function hash(k: number): number
 	local s = math.sin(k * 12.9898 + 4.1414) * 43758.5453
@@ -974,6 +979,17 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 		for _, f in unitFaces do
 			table.insert(tris, { points[f[1]], points[f[2]], points[f[3]] })
 		end
+		-- The flat spots: random slices, seeded per rock, cut while the rock is
+		-- still free-standing. They are applied before the bisectors, so the
+		-- seams that close the wall are unaffected by them.
+		for k = 1, FACETS do
+			local angle = hash(SEED * 31 + i * 13 + k * 7.1) * TAU
+			local z = 2 * hash(SEED * 17 + i * 13 + k * 3.3) - 1
+			local ring = math.sqrt(1 - z * z)
+			local n = { ring * math.cos(angle), ring * math.sin(angle), z }
+			local reach = FACET_MIN + (FACET_MAX - FACET_MIN) * hash(SEED * 5 + i * 13 + k * 11.7)
+			tris = clip(tris, { n[1], n[2], n[3], dot(n, seed) + reach * RADIUS })
+		end
 		-- The cut to fit: the bisector between this seed and every other.
 		for j, other in seeds do
 			if j ~= i then
@@ -1007,6 +1023,10 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 			})
 		end
 	end
-end, false, 0, 512)
+	-- Weld the triangle soup back together so the shading can run smooth over
+	-- each rock's curved front. The 30 degree crease angle keeps the cut faces
+	-- and the seams sharp, so only the rounded parts soften.
+	mesh:weld(1e-4)
+end, nil, 0, 512)
 
 finishParts()
