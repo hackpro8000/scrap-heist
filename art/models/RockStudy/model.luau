@@ -1,4 +1,4 @@
-local CACHE_KEY = "RockStudy-d9e4eabb601ea06c"
+local CACHE_KEY = "RockStudy-5d397ef039655c2b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -790,10 +790,18 @@ local SEED = 1
 local SIZE = 7
 -- How far the surface moves in and out of the sphere, as a share of the
 -- radius: coarse lumps first, then two finer waves.
-local LUMPS, BUMPS, GRAIN = 0.2, 0.08, 0.035
+local LUMPS, BUMPS, GRAIN = 0.22, 0.09, 0.05
+-- The ridged wave folds the surface into creases, and CRAG jitters each
+-- corner the other way, so the silhouette breaks into chips and notches.
+local RIDGE, CRAG = 0.09, 0.16
 -- How many times the icosphere is split; 2 gives 320 faces, enough for a
 -- basic boulder without turning it into a ball of soup.
 local SUBDIVISIONS = 2
+
+local function hash(k: number): number
+	local s = math.sin(k * 12.9898 + 4.1414) * 43758.5453
+	return s - math.floor(s)
+end
 
 local function normalize(p: { number }): { number }
 	local length = math.sqrt(p[1] * p[1] + p[2] * p[2] + p[3] * p[3])
@@ -862,6 +870,8 @@ part("Rock", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 		local n = LUMPS * wave(p, 2.3, SEED)
 			+ BUMPS * wave(p, 4.9, SEED + 3.1)
 			+ GRAIN * wave(p, 9.7, SEED + 7.4)
+			+ RIDGE * (1 - 2 * math.abs(wave(p, 6.1, SEED + 5.2)))
+			+ CRAG * (2 * hash(i * 3.7 + SEED * 11.3) - 1)
 		local r = 1 + n
 		local x, y = p[1] * r * SIZE, p[2] * r * SIZE
 		local z = p[3] * r * SIZE * 0.8 + SIZE * 0.55
