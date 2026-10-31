@@ -7,13 +7,16 @@ local SEED = 1
 local SIZE = 7
 -- How far the surface moves in and out of the sphere, as a share of the
 -- radius: coarse lumps first, then two finer waves.
-local LUMPS, BUMPS, GRAIN = 0.22, 0.09, 0.05
+local LUMPS, BUMPS, GRAIN = 0.2, 0.07, 0.03
 -- The ridged wave folds the surface into creases, and CRAG jitters each
 -- corner the other way, so the silhouette breaks into chips and notches.
-local RIDGE, CRAG = 0.09, 0.16
+local RIDGE, CRAG = 0.04, 0.05
+-- How many planes cut the blob into flat faces, and the radii they sit at.
+local FACETS = 10
+local FACET_MIN, FACET_MAX = 0.6, 1.0
 -- How many times the icosphere is split; 2 gives 320 faces, enough for a
 -- basic boulder without turning it into a ball of soup.
-local SUBDIVISIONS = 2
+local SUBDIVISIONS = 1
 
 local function hash(k: number): number
 	local s = math.sin(k * 12.9898 + 4.1414) * 43758.5453
@@ -79,6 +82,22 @@ local function wave(p: { number }, frequency: number, salt: number): number
 		* math.sin(frequency * p[3] + salt * 2.3)
 end
 
+-- The cutting planes: seeded directions all round the rock, each at its own
+-- radius. Where a plane faces the surface it wins, and the rock lands on it,
+-- so the shape is the intersection of the blob and these half-spaces.
+local planes = {}
+for i = 1, FACETS do
+	local angle = hash(SEED * 31 + i * 7.1) * TAU
+	local z = 2 * hash(SEED * 17 + i * 3.3) - 1
+	local ring = math.sqrt(1 - z * z)
+	planes[i] = {
+		ring * math.cos(angle),
+		ring * math.sin(angle),
+		z,
+		FACET_MIN + (FACET_MAX - FACET_MIN) * hash(SEED * 5 + i * 11.7),
+	}
+end
+
 local CUT = 0.0
 
 part("Rock", nil, { 0.37, 0.34, 0.29 }, function(mesh)
@@ -90,7 +109,14 @@ part("Rock", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 			+ RIDGE * (1 - 2 * math.abs(wave(p, 6.1, SEED + 5.2)))
 			+ CRAG * (2 * hash(i * 3.7 + SEED * 11.3) - 1)
 		local r = 1 + n
-		local x, y = p[1] * r * SIZE, p[2] * r * SIZE
+		for _, plane in planes do
+			local facing = plane[1] * p[1] + plane[2] * p[2] + plane[3] * p[3]
+			if facing > 0.2 then
+				r = math.min(r, plane[4] / facing)
+			end
+		end
+		-- Slightly out of round, so no two axes are alike.
+		local x, y = p[1] * r * SIZE, p[2] * r * SIZE * 0.88
 		local z = p[3] * r * SIZE * 0.8 + SIZE * 0.55
 		points[i] = mesh:vertex(x, y, math.max(z, CUT))
 	end
