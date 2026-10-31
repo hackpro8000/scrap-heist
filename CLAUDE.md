@@ -30,7 +30,6 @@ Supplementary rules for agents working on Scrap Heist.
 - After every model change, run `scripts/checkpoint-model.sh` (see `docs/art/pipeline.md`) and send the user the screenshot. Never batch changes or leave progress unpushed.
 - Keep model builds cached: layout slabs go through `placeSlab`, prop textures stay at or under 1024×1024, and an unchanged rebuild finishes in seconds. See the caching rules in `docs/art/pipeline.md`.
 - Split large meshes (terrain, roads, floors) into cubic chunks via `chunkedPart`: 128 studs, or 1024 texels at the layout's texel density if smaller, with textures at or under 1024×1024.
-- Delegate changes to an existing model in `art/src` to the `modeler` agent (`.claude/agents/modeler.md`), one model and one change per call. It builds, checkpoints and reports back; relay its screenshot to the user.
-- Strict: all modeling (creating or changing a model: editing `art/src`, assembling, building, checkpointing) goes to the `modeler` agent (`.claude/agents/modeler.md`). Never edit model sources or run model builds yourself.
-- Strict: all model previews go to the `model-previewer` agent (`.claude/agents/model-previewer.md`). Never render a preview yourself, and never use the modeler for previews.
-- If an agent can't do a model task, stop and report why to the user. Don't fall back to doing it yourself.
+- Model work routing — **Claude Code only:** delegate model changes to the `modeler` subagent (`.claude/agents/modeler.md`) and previews to the `model-previewer` subagent (`.claude/agents/model-previewer.md`), one model and one change per call, and relay its screenshot to the user. That main session never edits model sources, runs model builds or renders previews itself.
+- **DeepSeek Harness** does model work directly in the main session, following `docs/art/pipeline.md`. Same rules apply: sketch approval for a new model, one change per checkpoint, screenshot to the user.
+- If a model task can't be done, stop and report why to the user. Don't fall back to doing it a different way.
