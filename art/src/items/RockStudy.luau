@@ -10,13 +10,13 @@ local SIZE = 7
 local LUMPS, BUMPS, GRAIN = 0.2, 0.07, 0.03
 -- The ridged wave folds the surface into creases, and CRAG jitters each
 -- corner the other way, so the silhouette breaks into chips and notches.
-local RIDGE, CRAG = 0.04, 0.05
+local RIDGE, CRAG = 0.09, 0.16
 -- How many planes cut the blob into flat faces, and the radii they sit at.
 local FACETS = 10
 local FACET_MIN, FACET_MAX = 0.6, 1.0
 -- How many times the icosphere is split; 2 gives 320 faces, enough for a
 -- basic boulder without turning it into a ball of soup.
-local SUBDIVISIONS = 1
+local SUBDIVISIONS = 2
 
 local function hash(k: number): number
 	local s = math.sin(k * 12.9898 + 4.1414) * 43758.5453
