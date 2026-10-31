@@ -7,7 +7,7 @@
 local SEED = 1
 local RADIUS = 30
 -- How deep the underside hangs, as a share of the radius.
-local DEPTH_SHARE = 0.5
+local DEPTH_SHARE = 1.05
 -- The top's height, matching the other islands so sea level stays at 0.
 local CAP_TOP = 0.7
 -- How far the outline moves in and out, as a share of the radius.
@@ -15,7 +15,11 @@ local WOBBLE = 0.08
 -- The bay: how far it cuts in and how wide (radians) it is.
 local BAY_DEPTH, BAY_WIDTH = 0.09, 0.5
 -- The wall's reach at the rim, and the share it narrows to at the underside.
-local WALL_REACH, UNDERSIDE_SHARE = 0.86, 0.34
+-- Nearly zero, so the island closes on a point rather than a flat cap.
+local WALL_REACH, UNDERSIDE_SHARE = 0.86, 0.03
+-- How sharply the wall draws to that point: 1 is a straight cone, higher
+-- numbers keep the top broad and pull the taper into the lower half.
+local TAPER_POWER = 1.35
 -- The rock cells: rows down the wall, roughly how wide a cell is, and how
 -- many facet slices each stone gets.
 local ROCK_ROWS = 3
@@ -66,9 +70,10 @@ end
 local DEPTH = RADIUS * DEPTH_SHARE
 local RIM_Z = CAP_TOP - DEPTH
 
--- The wall's reach at `t`, 0 at the rim and 1 at the underside: a cosine.
+-- The wall's reach at `t`, 0 at the rim and 1 at the underside: a power
+-- curve, so the island stays broad near the top and draws to a point below.
 local function shareAt(t: number): number
-	return UNDERSIDE_SHARE + (1 - UNDERSIDE_SHARE) * (0.5 + 0.5 * math.cos(math.pi * t))
+	return UNDERSIDE_SHARE + (1 - UNDERSIDE_SHARE) * (1 - t) ^ TAPER_POWER
 end
 
 local function wallPoint(angle: number, t: number): { number }
@@ -221,7 +226,7 @@ end
 -- The cells: seeds round the wall in staggered rows, each with its own size.
 local seeds = {}
 for row = 0, ROCK_ROWS - 1 do
-	local t = 0.14 + (0.86 - 0.14) * (row + 0.5) / ROCK_ROWS
+	local t = 0.1 + (0.6 - 0.1) * (row + 0.5) / ROCK_ROWS
 	local circumference = TAU * RADIUS * WALL_REACH * shareAt(t)
 	local count = math.max(6, math.round(circumference / ROCK_WIDTH))
 	local offset = (row % 2) * 0.5
