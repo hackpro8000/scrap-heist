@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-eff219e2a816b4a3"
+local CACHE_KEY = "IslandStudy-b56ddfc3617b75e6"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1059,6 +1059,22 @@ for i, seed in seeds do
 	cellRadius[i] = farthest * 0.62 * (0.75 + 0.25 * shareAt(seed.t))
 end
 
+-- Cracks: two wandering fracture fields. Each is the sum of three waves, so
+-- its zero crossing traces a meandering line over the surface; the paint
+-- darkens wherever that line passes. Because the fields are in world space
+-- they run across several stones at once, like a real fracture.
+local CRACK_WIDTH = 0.075
+local function crackShade(x: number, y: number, z: number): number
+	local a = math.abs(math.sin(0.19 * x + 0.4) + math.sin(0.23 * y + 1.1) + math.sin(0.17 * z + 2.2))
+	local b = math.abs(math.sin(0.27 * x + 2.7) + math.sin(0.15 * y + 0.2) + math.sin(0.21 * z + 1.9))
+	local d = math.min(a, b)
+	if d >= CRACK_WIDTH then
+		return 1
+	end
+	local t = d / CRACK_WIDTH
+	return 0.3 + 0.7 * t
+end
+
 part("Body", nil, { 0.33, 0.3, 0.26 }, function(mesh)
 	local rings = {}
 	for i = 0, STEPS do
@@ -1156,6 +1172,9 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 	-- Weld so the shading can run smooth over each stone; the crease angle in
 	-- part() keeps the cut faces and the seams sharp.
 	mesh:weld(1e-4)
-end, nil, 0, 512)
+end, nil, function(x, y, z)
+	local shade = crackShade(x, y, z)
+	return 0.37 * shade, 0.34 * shade, 0.29 * shade
+end, 1024, nil, true)
 
 finishParts()
