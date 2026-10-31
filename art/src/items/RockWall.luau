@@ -17,8 +17,8 @@ local LUMPS, BUMPS = 0.12, 0.04
 local SUBDIVISIONS = 2
 -- Facet slices per rock, applied before the bisector cuts so the front keeps
 -- its flat spots while the seams still close exactly.
-local FACETS = 5
-local FACET_MIN, FACET_MAX = 0.72, 0.95
+local FACETS = 9
+local FACET_MIN, FACET_MAX = 0.62, 0.95
 local TAU = 2 * math.pi
 
 local function hash(k: number): number
@@ -176,7 +176,14 @@ for row = 0, ROWS - 1 do
 		local x = (col - (COLS - 1) / 2) * SPACING_X + (hash(SEED * 13 + i) - 0.5) * 1.6
 		local z = (row - (ROWS - 1) / 2) * SPACING_Z + (hash(SEED * 29 + i) - 0.5) * 1.4
 		local y = (hash(SEED * 41 + i) - 0.5) * 0.8
-		seeds[i] = { x, y, z }
+		-- Variety: each stone is its own size, and about half of them hang
+		-- downward instead of being a ball.
+		local size = 0.86 + 0.28 * hash(SEED * 53 + i)
+		local stretch = 1
+		if hash(SEED * 79 + i) < 0.5 then
+			stretch = 1.35 + 1.05 * hash(SEED * 67 + i)
+		end
+		seeds[i] = { x, y, z, size = size, stretch = stretch }
 	end
 end
 
@@ -185,12 +192,14 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 		-- The cell's own blob, displaced the way RockStudy is.
 		local points = {}
 		for v, p in unitVertices do
-			local r = 1 + LUMPS * wave(p, 2.3, SEED + i) + BUMPS * wave(p, 4.9, SEED + i + 3.1)
-			points[v] = {
-				seed[1] + p[1] * r * RADIUS,
-				seed[2] + p[2] * r * RADIUS,
-				seed[3] + p[3] * r * RADIUS,
-			}
+			local r = (1 + LUMPS * wave(p, 2.3, SEED + i) + BUMPS * wave(p, 4.9, SEED + i + 3.1)) * seed.size
+			local x, y, z = p[1] * r * RADIUS, p[2] * r * RADIUS, p[3] * r * RADIUS
+			-- The lower half is what stretches, so the stone grows downward
+			-- from its seed rather than swelling in both directions.
+			if z < 0 then
+				z = z * seed.stretch
+			end
+			points[v] = { seed[1] + x, seed[2] + y, seed[3] + z }
 		end
 		local tris = {}
 		for _, f in unitFaces do
@@ -205,7 +214,7 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 			local ring = math.sqrt(1 - z * z)
 			local n = { ring * math.cos(angle), ring * math.sin(angle), z }
 			local reach = FACET_MIN + (FACET_MAX - FACET_MIN) * hash(SEED * 5 + i * 13 + k * 11.7)
-			tris = clip(tris, { n[1], n[2], n[3], dot(n, seed) + reach * RADIUS })
+			tris = clip(tris, { n[1], n[2], n[3], dot(n, seed) + reach * RADIUS * seed.size })
 		end
 		-- The cut to fit: the bisector between this seed and every other.
 		for j, other in seeds do
