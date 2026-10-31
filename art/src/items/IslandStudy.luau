@@ -276,22 +276,6 @@ for i, seed in seeds do
 	cellRadius[i] = farthest * 0.62 * (0.75 + 0.25 * shareAt(seed.t))
 end
 
--- Cracks: two wandering fracture fields. Each is the sum of three waves, so
--- its zero crossing traces a meandering line over the surface; the paint
--- darkens wherever that line passes. Because the fields are in world space
--- they run across several stones at once, like a real fracture.
-local CRACK_WIDTH = 0.075
-local function crackShade(x: number, y: number, z: number): number
-	local a = math.abs(math.sin(0.19 * x + 0.4) + math.sin(0.23 * y + 1.1) + math.sin(0.17 * z + 2.2))
-	local b = math.abs(math.sin(0.27 * x + 2.7) + math.sin(0.15 * y + 0.2) + math.sin(0.21 * z + 1.9))
-	local d = math.min(a, b)
-	if d >= CRACK_WIDTH then
-		return 1
-	end
-	local t = d / CRACK_WIDTH
-	return 0.3 + 0.7 * t
-end
-
 part("Body", nil, { 0.33, 0.3, 0.26 }, function(mesh)
 	local rings = {}
 	for i = 0, STEPS do
@@ -371,27 +355,46 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 				end
 			end
 		end
-		for _, tri in tris do
-			local a, b, c = tri[1], tri[2], tri[3]
-			local n = cross({ b[1] - a[1], b[2] - a[2], b[3] - a[3] }, { c[1] - a[1], c[2] - a[2], c[3] - a[3] })
-			local mid = { (a[1] + b[1] + c[1]) / 3, (a[2] + b[2] + c[2]) / 3, (a[3] + b[3] + c[3]) / 3 }
-			local facing = n[1] * (mid[1] - seed[1]) + n[2] * (mid[2] - seed[2]) + n[3] * (mid[3] - seed[3])
-			if facing < 0 then
-				a, b, c = a, c, b
+		local function emit(list, offsetX: number, offsetY: number, offsetZ: number)
+			for _, tri in list do
+				local a, b, c = tri[1], tri[2], tri[3]
+				local n = cross({ b[1] - a[1], b[2] - a[2], b[3] - a[3] }, { c[1] - a[1], c[2] - a[2], c[3] - a[3] })
+				local mid = { (a[1] + b[1] + c[1]) / 3, (a[2] + b[2] + c[2]) / 3, (a[3] + b[3] + c[3]) / 3 }
+				local facing = n[1] * (mid[1] - seed[1] - offsetX)
+					+ n[2] * (mid[2] - seed[2] - offsetY)
+					+ n[3] * (mid[3] - seed[3] - offsetZ)
+				if facing < 0 then
+					a, b, c = a, c, b
+				end
+				mesh:face({
+					mesh:vertex(a[1] + offsetX, a[2] + offsetY, a[3] + offsetZ),
+					mesh:vertex(b[1] + offsetX, b[2] + offsetY, b[3] + offsetZ),
+					mesh:vertex(c[1] + offsetX, c[2] + offsetY, c[3] + offsetZ),
+				})
 			end
-			mesh:face({
-				mesh:vertex(a[1], a[2], a[3]),
-				mesh:vertex(b[1], b[2], b[3]),
-				mesh:vertex(c[1], c[2], c[3]),
-			})
+		end
+
+		-- A crack: cut the stone in two along its own plane and pull the halves
+		-- apart, so the fracture is geometry with a real gap, not paint. The
+		-- halves are capped by the same clip as any other cut.
+		if hash(SEED * 137 + i) < 0.45 then
+			local angle = hash(SEED * 151 + i) * TAU
+			local z = 2 * hash(SEED * 163 + i) - 1
+			local ring = math.sqrt(1 - z * z)
+			local n = { ring * math.cos(angle), ring * math.sin(angle), z }
+			local offset = dot(n, seed)
+			local gap = 0.34
+			local first = clip(tris, { n[1], n[2], n[3], offset })
+			local second = clip(tris, { -n[1], -n[2], -n[3], -offset })
+			emit(first, n[1] * gap / 2, n[2] * gap / 2, n[3] * gap / 2)
+			emit(second, -n[1] * gap / 2, -n[2] * gap / 2, -n[3] * gap / 2)
+		else
+			emit(tris, 0, 0, 0)
 		end
 	end
 	-- Weld so the shading can run smooth over each stone; the crease angle in
 	-- part() keeps the cut faces and the seams sharp.
 	mesh:weld(1e-4)
-end, nil, function(x, y, z)
-	local shade = crackShade(x, y, z)
-	return 0.37 * shade, 0.34 * shade, 0.29 * shade
-end, 1024, nil, true)
+end, nil, 0, 512)
 
 finishParts()
