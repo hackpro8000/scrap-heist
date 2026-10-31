@@ -386,6 +386,28 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 			local gap = 0.34
 			local first = clip(tris, { n[1], n[2], n[3], offset })
 			local second = clip(tris, { -n[1], -n[2], -n[3], -offset })
+
+			-- Bevel: shave each crack rim with two tilted, slightly inset
+			-- planes. The cut faces still meet at a fine plane, but the edge
+			-- where they meet the stone is a chamfer, not a saw cut.
+			for b = 1, 2 do
+				local key = SEED * 211 + i * 17 + b
+				local spin = hash(key) * TAU
+				local helper = if math.abs(n[3]) < 0.9 then { 0, 0, 1 } else { 1, 0, 0 }
+				local tangent = normalize(cross(n, helper))
+				local bitangent = cross(n, tangent)
+				local tilt = 0.35 + 0.3 * hash(key + 3)
+				local normal = normalize({
+					n[1] + (math.cos(spin) * tangent[1] + math.sin(spin) * bitangent[1]) * tilt,
+					n[2] + (math.cos(spin) * tangent[2] + math.sin(spin) * bitangent[2]) * tilt,
+					n[3] + (math.cos(spin) * tangent[3] + math.sin(spin) * bitangent[3]) * tilt,
+				})
+				local inset = 0.12 + 0.2 * hash(key + 7)
+				local cut = dot(normal, seed) - inset
+				first = clip(first, { normal[1], normal[2], normal[3], cut })
+				second = clip(second, { -normal[1], -normal[2], -normal[3], -cut })
+			end
+
 			emit(first, n[1] * gap / 2, n[2] * gap / 2, n[3] * gap / 2)
 			emit(second, -n[1] * gap / 2, -n[2] * gap / 2, -n[3] * gap / 2)
 		else
