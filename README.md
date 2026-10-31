@@ -3,6 +3,11 @@
 A Roblox junkyard tycoon with raiding and survival rounds. See `ROADMAP.md`
 for the plan.
 
+Both Claude Code and DeepSeek Harness (DSH) are supported. Rules live in
+`CLAUDE.md` (loaded by both agents) with `AGENTS.md` as the shared entry
+point. Claude subagents live under `.claude/agents/`; DeepSeek Harness
+does model work directly in the main session.
+
 ## Setup
 
 1. Install [Rokit](https://github.com/rojo-rbx/rokit), then from the repo root:
@@ -125,6 +130,7 @@ For editor autocomplete of `@lune/*` modules, run `lune setup` once.
 
 ## Cloud environment
 
-`scripts/cloud-setup.sh` sets up a Claude Code cloud environment. Paste it
+`scripts/cloud-setup.sh` sets up a Claude Code or DeepSeek Harness cloud
+environment. Paste it
 into the environment's **Setup script** setting. It installs ffmpeg and
 starts a virtual 1920 × 1080 desktop on `:99` for GUI apps.
