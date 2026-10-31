@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-f8db25b5ee2d0701"
+local CACHE_KEY = "IslandStudy-eff219e2a816b4a3"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1138,63 +1138,19 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 				end
 			end
 		end
-		local function emit(list, offsetX: number, offsetY: number, offsetZ: number)
-			for _, tri in list do
-				local a, b, c = tri[1], tri[2], tri[3]
-				local n = cross({ b[1] - a[1], b[2] - a[2], b[3] - a[3] }, { c[1] - a[1], c[2] - a[2], c[3] - a[3] })
-				local mid = { (a[1] + b[1] + c[1]) / 3, (a[2] + b[2] + c[2]) / 3, (a[3] + b[3] + c[3]) / 3 }
-				local facing = n[1] * (mid[1] - seed[1] - offsetX)
-					+ n[2] * (mid[2] - seed[2] - offsetY)
-					+ n[3] * (mid[3] - seed[3] - offsetZ)
-				if facing < 0 then
-					a, b, c = a, c, b
-				end
-				mesh:face({
-					mesh:vertex(a[1] + offsetX, a[2] + offsetY, a[3] + offsetZ),
-					mesh:vertex(b[1] + offsetX, b[2] + offsetY, b[3] + offsetZ),
-					mesh:vertex(c[1] + offsetX, c[2] + offsetY, c[3] + offsetZ),
-				})
+		for _, tri in tris do
+			local a, b, c = tri[1], tri[2], tri[3]
+			local n = cross({ b[1] - a[1], b[2] - a[2], b[3] - a[3] }, { c[1] - a[1], c[2] - a[2], c[3] - a[3] })
+			local mid = { (a[1] + b[1] + c[1]) / 3, (a[2] + b[2] + c[2]) / 3, (a[3] + b[3] + c[3]) / 3 }
+			local facing = n[1] * (mid[1] - seed[1]) + n[2] * (mid[2] - seed[2]) + n[3] * (mid[3] - seed[3])
+			if facing < 0 then
+				a, b, c = a, c, b
 			end
-		end
-
-		-- A crack: cut the stone in two along its own plane and pull the halves
-		-- apart, so the fracture is geometry with a real gap, not paint. The
-		-- halves are capped by the same clip as any other cut.
-		if hash(SEED * 137 + i) < 0.45 then
-			local angle = hash(SEED * 151 + i) * TAU
-			local z = 2 * hash(SEED * 163 + i) - 1
-			local ring = math.sqrt(1 - z * z)
-			local n = { ring * math.cos(angle), ring * math.sin(angle), z }
-			local offset = dot(n, seed)
-			local gap = 0.34
-			local first = clip(tris, { n[1], n[2], n[3], offset })
-			local second = clip(tris, { -n[1], -n[2], -n[3], -offset })
-
-			-- Bevel: shave each crack rim with two tilted, slightly inset
-			-- planes. The cut faces still meet at a fine plane, but the edge
-			-- where they meet the stone is a chamfer, not a saw cut.
-			for b = 1, 2 do
-				local key = SEED * 211 + i * 17 + b
-				local spin = hash(key) * TAU
-				local helper = if math.abs(n[3]) < 0.9 then { 0, 0, 1 } else { 1, 0, 0 }
-				local tangent = normalize(cross(n, helper))
-				local bitangent = cross(n, tangent)
-				local tilt = 0.35 + 0.3 * hash(key + 3)
-				local normal = normalize({
-					n[1] + (math.cos(spin) * tangent[1] + math.sin(spin) * bitangent[1]) * tilt,
-					n[2] + (math.cos(spin) * tangent[2] + math.sin(spin) * bitangent[2]) * tilt,
-					n[3] + (math.cos(spin) * tangent[3] + math.sin(spin) * bitangent[3]) * tilt,
-				})
-				local inset = 0.12 + 0.2 * hash(key + 7)
-				local cut = dot(normal, seed) - inset
-				first = clip(first, { normal[1], normal[2], normal[3], cut })
-				second = clip(second, { -normal[1], -normal[2], -normal[3], -cut })
-			end
-
-			emit(first, n[1] * gap / 2, n[2] * gap / 2, n[3] * gap / 2)
-			emit(second, -n[1] * gap / 2, -n[2] * gap / 2, -n[3] * gap / 2)
-		else
-			emit(tris, 0, 0, 0)
+			mesh:face({
+				mesh:vertex(a[1], a[2], a[3]),
+				mesh:vertex(b[1], b[2], b[3]),
+				mesh:vertex(c[1], c[2], c[3]),
+			})
 		end
 	end
 	-- Weld so the shading can run smooth over each stone; the crease angle in
