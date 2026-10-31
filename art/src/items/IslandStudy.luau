@@ -22,7 +22,7 @@ local WALL_REACH, UNDERSIDE_SHARE = 0.86, 0.03
 local TAPER_POWER = 1.35
 -- The rock cells: rows down the wall, roughly how wide a cell is, and how
 -- many facet slices each stone gets.
-local ROCK_ROWS = 3
+local ROCK_ROWS = 4
 local ROCK_WIDTH = 7
 local ROCK_FACETS = 7
 -- How many times a cell's blob is split. One is enough: the fitting and the
@@ -226,7 +226,7 @@ end
 -- The cells: seeds round the wall in staggered rows, each with its own size.
 local seeds = {}
 for row = 0, ROCK_ROWS - 1 do
-	local t = 0.1 + (0.6 - 0.1) * (row + 0.5) / ROCK_ROWS
+	local t = 0.1 + (0.86 - 0.1) * (row + 0.5) / ROCK_ROWS
 	local circumference = TAU * RADIUS * WALL_REACH * shareAt(t)
 	local count = math.max(6, math.round(circumference / ROCK_WIDTH))
 	local offset = (row % 2) * 0.5
@@ -249,6 +249,7 @@ for row = 0, ROCK_ROWS - 1 do
 			p[2] + n[2] * lift,
 			p[3] + n[3] * lift,
 			size = 0.85 + 0.3 * hash(SEED * 53 + i),
+			t = t,
 		}
 	end
 end
@@ -290,13 +291,21 @@ end, nil, 0)
 
 part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 	for i, seed in seeds do
+		-- Stones shrink with the wall, so the bottom rows are chips rather
+		-- than full-size boulders crowded round a point.
+		local radius = CELL_RADIUS * (0.5 + 0.5 * shareAt(seed.t)) * seed.size
 		local points = {}
 		for v, p in unitVertices do
 			local r = (1 + 0.16 * wave(p, 2.3, SEED + i) + 0.05 * wave(p, 4.9, SEED + i + 3.1)) * seed.size
+			local z = p[3] * r * radius
+			-- A hanging stone grows downward from its seed, not both ways.
+			if z < 0 then
+				z = z * (seed.stretch or 1)
+			end
 			points[v] = {
-				seed[1] + p[1] * r * CELL_RADIUS,
-				seed[2] + p[2] * r * CELL_RADIUS,
-				seed[3] + p[3] * r * CELL_RADIUS,
+				seed[1] + p[1] * r * radius,
+				seed[2] + p[2] * r * radius,
+				seed[3] + z,
 			}
 		end
 		local tris = {}
@@ -310,12 +319,10 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 			local ring = math.sqrt(1 - z * z)
 			local n = { ring * math.cos(angle), ring * math.sin(angle), z }
 			local reach = 0.68 + 0.27 * hash(SEED * 5 + i * 13 + k * 11.7)
-			tris = clip(tris, { n[1], n[2], n[3], dot(n, seed) + reach * CELL_RADIUS * seed.size })
+			tris = clip(tris, { n[1], n[2], n[3], dot(n, seed) + reach * radius })
 		end
-		-- Keep the flat top and the underside clear: rocks stop just under the
-		-- rim, so the island's own silhouette still reads.
+		-- Keep the flat top clear.
 		tris = clip(tris, { 0, 0, 1, CAP_TOP - 0.2 })
-		tris = clip(tris, { 0, 0, -1, -(RIM_Z + 1.2) })
 		-- The fit: cut against every nearby seed, so neighbours share planes.
 		for j, other in seeds do
 			if j ~= i then
