@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-a636573227b23729"
+local CACHE_KEY = "IslandStudy-eff219e2a816b4a3"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1006,7 +1006,12 @@ local function clip(tris, plane)
 	return out
 end
 
--- The cells: seeds round the wall in staggered rows, each with its own size.
+-- How far apart stones sit round the wall, from the widest row.
+local spacing = TAU * RADIUS * WALL_REACH * shareAt(0.5) / math.max(6, math.round(TAU * RADIUS * WALL_REACH * shareAt(0.5) / ROCK_WIDTH))
+
+-- The cells: seeds round the wall in staggered rows. Every slot keeps a
+-- stone; size variety comes from a power weight instead of dropped slots,
+-- because a dropped slot leaves a hole its neighbours may not reach across.
 local seeds = {}
 for row = 0, ROCK_ROWS - 1 do
 	local t = 0.1 + (0.86 - 0.1) * (row + 0.5) / ROCK_ROWS
@@ -1014,12 +1019,6 @@ for row = 0, ROCK_ROWS - 1 do
 	local count = math.max(6, math.round(circumference / ROCK_WIDTH))
 	local offset = (row % 2) * 0.5
 	for col = 0, count - 1 do
-		-- Not every slot gets a stone. A missing one is swallowed by its
-		-- neighbours, which is what gives the wall a mix of big and small
-		-- stones instead of one uniform grid.
-		if hash(SEED * 91 + row * 100 + col) < 0.34 then
-			continue
-		end
 		local i = #seeds + 1
 		local angle = TAU * (col + offset) / count
 		local p = wallPoint(angle, t)
@@ -1033,15 +1032,32 @@ for row = 0, ROCK_ROWS - 1 do
 			p[3] + n[3] * lift,
 			size = 0.85 + 0.3 * hash(SEED * 53 + i),
 			t = t,
+			-- A heavy seed claims more of the wall than a light one. The
+			-- weight is in squared-distance units, so it scales with spacing.
+			weight = (hash(SEED * 57 + i) - 0.5) * spacing * spacing * 0.55,
 		}
 	end
 end
 
-local spacing = TAU * RADIUS * WALL_REACH * shareAt(0.5) / math.max(6, math.round(TAU * RADIUS * WALL_REACH * shareAt(0.5) / ROCK_WIDTH))
--- Bigger than the spacing, because a stone that lost a neighbour has to
--- reach across the empty slot to still meet the one beyond it.
-local CELL_RADIUS = spacing * 1.15
 local REACH = spacing * 3.2
+
+-- Each stone's blob has to reach past the furthest bisector it can be cut
+-- by, or the cell never fills its share and a hole appears. So the radius is
+-- worked out per cell from its own neighbours, not from one global constant.
+local cellRadius = {}
+for i, seed in seeds do
+	local farthest = spacing
+	for j, other in seeds do
+		if j ~= i then
+			local dx, dy, dz = other[1] - seed[1], other[2] - seed[2], other[3] - seed[3]
+			local distance = dx * dx + dy * dy + dz * dz
+			if distance < REACH * REACH and distance > farthest * farthest then
+				farthest = math.sqrt(distance)
+			end
+		end
+	end
+	cellRadius[i] = farthest * 0.62 * (0.75 + 0.25 * shareAt(seed.t))
+end
 
 part("Body", nil, { 0.33, 0.3, 0.26 }, function(mesh)
 	local rings = {}
@@ -1076,7 +1092,7 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 	for i, seed in seeds do
 		-- Stones shrink with the wall, so the bottom rows are chips rather
 		-- than full-size boulders crowded round a point.
-		local radius = CELL_RADIUS * (0.5 + 0.5 * shareAt(seed.t)) * seed.size
+		local radius = cellRadius[i] * seed.size
 		local points = {}
 		for v, p in unitVertices do
 			local r = (1 + 0.16 * wave(p, 2.3, SEED + i) + 0.05 * wave(p, 4.9, SEED + i + 3.1)) * seed.size
@@ -1113,12 +1129,12 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 				local distance = math.sqrt(dx * dx + dy * dy + dz * dz)
 				if distance < REACH and distance > 1e-6 then
 					local n = { dx / distance, dy / distance, dz / distance }
-					local mid = {
-						(seed[1] + other[1]) / 2,
-						(seed[2] + other[2]) / 2,
-						(seed[3] + other[3]) / 2,
-					}
-					tris = clip(tris, { n[1], n[2], n[3], dot(n, mid) })
+					-- The power plane: the midpoint shifts by the weight
+					-- difference, so a heavy seed pushes it away from itself.
+					local seedSq = seed[1] ^ 2 + seed[2] ^ 2 + seed[3] ^ 2
+					local otherSq = other[1] ^ 2 + other[2] ^ 2 + other[3] ^ 2
+					local offset = (otherSq - seedSq + seed.weight - other.weight) / (2 * distance)
+					tris = clip(tris, { n[1], n[2], n[3], offset })
 				end
 			end
 		end
