@@ -231,6 +231,12 @@ for row = 0, ROCK_ROWS - 1 do
 	local count = math.max(6, math.round(circumference / ROCK_WIDTH))
 	local offset = (row % 2) * 0.5
 	for col = 0, count - 1 do
+		-- Not every slot gets a stone. A missing one is swallowed by its
+		-- neighbours, which is what gives the wall a mix of big and small
+		-- stones instead of one uniform grid.
+		if hash(SEED * 91 + row * 100 + col) < 0.34 then
+			continue
+		end
 		local i = #seeds + 1
 		local angle = TAU * (col + offset) / count
 		local p = wallPoint(angle, t)
@@ -248,8 +254,10 @@ for row = 0, ROCK_ROWS - 1 do
 end
 
 local spacing = TAU * RADIUS * WALL_REACH * shareAt(0.5) / math.max(6, math.round(TAU * RADIUS * WALL_REACH * shareAt(0.5) / ROCK_WIDTH))
-local CELL_RADIUS = spacing * 0.82
-local REACH = spacing * 2.2
+-- Bigger than the spacing, because a stone that lost a neighbour has to
+-- reach across the empty slot to still meet the one beyond it.
+local CELL_RADIUS = spacing * 1.15
+local REACH = spacing * 3.2
 
 part("Body", nil, { 0.33, 0.3, 0.26 }, function(mesh)
 	local rings = {}
