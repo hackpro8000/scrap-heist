@@ -42,6 +42,11 @@ local LOOSEN_DRIFT_OUT, LOOSEN_DRIFT_DOWN = 0.8, 0.6
 local TIP_STONES = 3
 local TIP_SIZE, TIP_SHRINK = 1.5, 0.75
 local TIP_GAP = 0.5
+-- The chips: an edge counts as sharp when its two facets' normals agree
+-- less than this (0 is a right angle), and the edge and corner cuts go
+-- this deep, as a share of the stone's radius.
+local CHIP_SHARPNESS = 0.3
+local CHIP_EDGE, CHIP_CORNER = 0.05, 0.09
 local ANGLES, STEPS = 128, 28
 local TAU = 2 * math.pi
 
@@ -370,13 +375,60 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 			table.insert(tris, { points[f[1]], points[f[2]], points[f[3]] })
 		end
 		-- The flat spots, cut while the stone is still free-standing.
+		local facets = {}
 		for k = 1, ROCK_FACETS do
 			local angle = hash(SEED * 31 + i * 13 + k * 7.1) * TAU
 			local z = 2 * hash(SEED * 17 + i * 13 + k * 3.3) - 1
 			local ring = math.sqrt(1 - z * z)
 			local n = { ring * math.cos(angle), ring * math.sin(angle), z }
 			local reach = 0.68 + 0.27 * hash(SEED * 5 + i * 13 + k * 11.7)
-			tris = clip(tris, { n[1], n[2], n[3], dot(n, seed) + reach * radius })
+			local facet = { n[1], n[2], n[3], dot(n, seed) + reach * radius }
+			table.insert(facets, facet)
+			tris = clip(tris, facet)
+		end
+		-- The chips: a small cut along every sharp edge two facets make, and
+		-- on every corner three of them make. Only facet edges are touched, so
+		-- the seams cut later stay exact. Each cut is bounded by its facets,
+		-- so it can only take a sliver off that edge or corner.
+		for a = 1, #facets do
+			for b = a + 1, #facets do
+				local p, q = facets[a], facets[b]
+				if dot(p, q) < CHIP_SHARPNESS then
+					local m = { p[1] + q[1], p[2] + q[2], p[3] + q[3] }
+					local length = math.sqrt(dot(m, m))
+					if length > 0.5 then
+						local edge = (p[4] + q[4]) / length
+						tris = clip(tris, { m[1] / length, m[2] / length, m[3] / length, edge - CHIP_EDGE * radius })
+					end
+				end
+			end
+		end
+		for a = 1, #facets do
+			for b = a + 1, #facets do
+				for c = b + 1, #facets do
+					local p, q, r = facets[a], facets[b], facets[c]
+					local qr, rp, pq = cross(q, r), cross(r, p), cross(p, q)
+					local determinant = dot(p, qr)
+					if
+						dot(p, q) < CHIP_SHARPNESS
+						and dot(q, r) < CHIP_SHARPNESS
+						and dot(r, p) < CHIP_SHARPNESS
+						and math.abs(determinant) > 1e-3
+					then
+						local corner = {
+							(p[4] * qr[1] + q[4] * rp[1] + r[4] * pq[1]) / determinant,
+							(p[4] * qr[2] + q[4] * rp[2] + r[4] * pq[2]) / determinant,
+							(p[4] * qr[3] + q[4] * rp[3] + r[4] * pq[3]) / determinant,
+						}
+						local m = { p[1] + q[1] + r[1], p[2] + q[2] + r[2], p[3] + q[3] + r[3] }
+						local length = math.sqrt(dot(m, m))
+						if length > 0.5 then
+							m = { m[1] / length, m[2] / length, m[3] / length }
+							tris = clip(tris, { m[1], m[2], m[3], dot(m, corner) - CHIP_CORNER * radius })
+						end
+					end
+				end
+			end
 		end
 		-- Keep the flat top clear.
 		tris = clip(tris, { 0, 0, 1, CAP_TOP - 0.2 })
