@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-c8d09725e3d8f939"
+local CACHE_KEY = "IslandStudy-cdb6757dc766fb17"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -843,6 +843,11 @@ local LIP_OUT, LIP_SPREAD = 1, 1
 local LIP_RISE = 1.2
 local ANGLES, STEPS = 128, 28
 local TAU = 2 * math.pi
+-- Texture detail in pixels per stud. The stones are split into parts by angle
+-- so no part's texture needs more than ROCK_TEXTURE at this density.
+local TEXEL_DENSITY = 20
+local ROCK_TEXTURE = 1024
+useTexelDensity(TEXEL_DENSITY)
 
 local function hash(k: number): number
 	local s = math.sin(k * 12.9898 + 4.1414) * 43758.5453
@@ -1404,7 +1409,20 @@ end
 -- The stone faces nobody sees, kept only so the bake still shades with them.
 local hiddenRocks = Mesh.new()
 
-local function buildRocks(mesh)
+local function emitPolygon(target, polygon)
+	for k = 2, #polygon - 1 do
+		local a, b, c = polygon[1], polygon[k], polygon[k + 1]
+		target:face({
+			target:vertex(a[1], a[2], a[3]),
+			target:vertex(b[1], b[2], b[3]),
+			target:vertex(c[1], c[2], c[3]),
+		})
+	end
+end
+
+-- Builds every stone and returns each one's visible faces as polygons, with
+-- their area. The faces nobody sees go into hiddenRocks.
+local function buildRocks()
 	local stones = {}
 	for i, seed in seeds do
 		-- Stones shrink with the wall, so the bottom rows are chips rather
@@ -1517,20 +1535,10 @@ local function buildRocks(mesh)
 		end
 		stones[i] = { tris = tris, seams = seams }
 	end
-	-- Only the faces anyone can see go in the mesh. A seam face loses the part
-	-- its neighbour's matching face covers, and anything left wholly inside the
+	-- Only the faces anyone can see are kept. A seam face loses the part its
+	-- neighbour's matching face covers, and anything left wholly inside the
 	-- body goes too. The dropped faces still shade the stones and the body,
 	-- through the hidden part.
-	local function emit(target, polygon)
-		for k = 2, #polygon - 1 do
-			local a, b, c = polygon[1], polygon[k], polygon[k + 1]
-			target:face({
-				target:vertex(a[1], a[2], a[3]),
-				target:vertex(b[1], b[2], b[3]),
-				target:vertex(c[1], c[2], c[3]),
-			})
-		end
-	end
 	-- Each stone's faces sorted by the seam they lie on, keyed by neighbour.
 	for _, stone in stones do
 		stone.onSeam, stone.seamOf = {}, {}
@@ -1545,7 +1553,9 @@ local function buildRocks(mesh)
 			end
 		end
 	end
+	local visible = {}
 	for i, stone in stones do
+		visible[i] = { polygons = {}, area = 0 }
 		for k, tri in stone.tris do
 			local pieces = { tri }
 			local seam = stone.seamOf[k]
@@ -1562,18 +1572,69 @@ local function buildRocks(mesh)
 				if insideBody(polygon) then
 					whole = false
 				else
-					emit(mesh, polygon)
+					table.insert(visible[i].polygons, polygon)
+					visible[i].area += polygonArea(polygon)
 				end
 			end
 			if not whole then
-				emit(hiddenRocks, tri)
+				emitPolygon(hiddenRocks, tri)
 			end
 		end
 	end
-	-- Weld so the shading can run smooth over each stone; the crease angle in
-	-- part() keeps the cut faces and the seams sharp.
-	mesh:weld(1e-4)
 	hiddenRocks:weld(1e-4)
+	return visible
+end
+
+-- One mesh of the given stones' visible faces, welded so the shading can run
+-- smooth over each stone; the crease angle keeps the cuts and seams sharp.
+local function stonesMesh(mesh, visible, members)
+	for _, i in members do
+		for _, polygon in visible[i].polygons do
+			emitPolygon(mesh, polygon)
+		end
+	end
+	mesh:weld(1e-4)
+end
+
+-- The stones in runs of neighbours round the island, as few runs as fit: runs
+-- of about equal area, one more each try, until every run's texture holds it
+-- at TEXEL_DENSITY within ROCK_TEXTURE.
+local function rockGroups(visible)
+	local order, total = {}, 0
+	for i in visible do
+		table.insert(order, i)
+		total += visible[i].area
+	end
+	table.sort(order, function(a, b)
+		return seeds[a].angle % TAU < seeds[b].angle % TAU
+	end)
+	local function fits(members): boolean
+		local mesh = Mesh.new()
+		stonesMesh(mesh, visible, members)
+		mesh:setSmooth(SMOOTH_ANGLE)
+		return math.ceil(TEXEL_DENSITY / mesh:unwrap() / 4) * 4 <= ROCK_TEXTURE
+	end
+	local count = math.max(1, math.ceil(total * TEXEL_DENSITY ^ 2 / ROCK_TEXTURE ^ 2))
+	while true do
+		local groups, sum = {}, 0
+		for _, i in order do
+			local g = math.min(count, math.floor(sum / total * count) + 1)
+			groups[g] = groups[g] or {}
+			table.insert(groups[g], i)
+			sum += visible[i].area
+		end
+		local ok = true
+		for g = 1, count do
+			if groups[g] and not fits(groups[g]) then
+				ok = false
+				break
+			end
+		end
+		if ok then
+			return groups
+		end
+		count += 1
+	end
 end
 
 -- The parts and their shading are cached under a key hashing every line above
@@ -1581,12 +1642,19 @@ end
 -- finishParts() adds parts straight to the model, so model.part is swapped
 -- for a collector while it runs and the collected list is what gets cached.
 local baked = model.cached(CACHE_KEY, function()
-	part("Body", nil, { 0.33, 0.3, 0.26 }, buildBody, nil, 0)
-	part("Rocks", nil, { 0.37, 0.34, 0.29 }, buildRocks, nil, 0, 512)
+	chunkedPart("Body", nil, { 0.33, 0.3, 0.26 }, buildBody, nil, 0)
+	-- The stones go in a few parts of neighbouring stones, all in one group, so
+	-- they shade each other as one surface.
+	local visible = buildRocks()
+	for g, members in rockGroups(visible) do
+		part(`Rocks_{g}`, nil, { 0.37, 0.34, 0.29 }, function(mesh)
+			stonesMesh(mesh, visible, members)
+		end, nil, 0)
+		parts[#parts].group = "Rocks"
+	end
 	-- The hidden faces join the rocks' group, so the stones still shade with
 	-- them as their own surfaces and the body still takes their shadows. Marked
 	-- emissive, finishParts skips baking them, and they are left out below.
-	parts[#parts].group = "Rocks"
 	table.insert(parts, { name = "HiddenRocks", mesh = hiddenRocks, emissive = 1, group = "Rocks" })
 	local addPart, collected = model.part, {}
 	model.part = function(name, mesh, image, options)
