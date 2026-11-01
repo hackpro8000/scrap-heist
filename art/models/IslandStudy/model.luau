@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-cdb6757dc766fb17"
+local CACHE_KEY = "IslandStudy-2762cd704791b0ed"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -842,6 +842,8 @@ local CHIP_EDGE, CHIP_CORNER = 0.05, 0.09
 local LIP_OUT, LIP_SPREAD = 1, 1
 local LIP_RISE = 1.2
 local ANGLES, STEPS = 128, 28
+-- Bands across the flat top, centre to rim.
+local CAP_RINGS = 4
 local TAU = 2 * math.pi
 -- Texture detail in pixels per stud. The stones are split into parts by angle
 -- so no part's texture needs more than ROCK_TEXTURE at this density.
@@ -1218,11 +1220,28 @@ local function buildBody(mesh)
 			mesh:face({ upper[j], lower[l], upper[l] })
 		end
 	end
+	-- The flat top in CAP_RINGS bands rather than one fan from the axis: a fan
+	-- triangle runs centre to rim, so chunkedPart, which files a face by its
+	-- centre, could leave a lone sliver in its own chunk that bakes dark.
+	local cap = { [CAP_RINGS] = rings[0] }
+	for i = 1, CAP_RINGS - 1 do
+		local s = i / CAP_RINGS
+		cap[i] = {}
+		for j = 0, ANGLES - 1 do
+			local p = wallPoint(TAU * j / ANGLES, 0)
+			cap[i][j] = mesh:vertex(p[1] * s, p[2] * s, CAP_TOP)
+		end
+	end
 	local top = mesh:vertex(0, 0, CAP_TOP)
 	local bottom = mesh:vertex(0, 0, RIM_Z)
 	for j = 0, ANGLES - 1 do
 		local l = (j + 1) % ANGLES
-		mesh:face({ top, rings[0][j], rings[0][l] })
+		mesh:face({ top, cap[1][j], cap[1][l] })
+		for i = 1, CAP_RINGS - 1 do
+			local inner, outer = cap[i], cap[i + 1]
+			mesh:face({ inner[j], outer[j], outer[l] })
+			mesh:face({ inner[j], outer[l], inner[l] })
+		end
 		mesh:face({ bottom, rings[STEPS][l], rings[STEPS][j] })
 	end
 end
