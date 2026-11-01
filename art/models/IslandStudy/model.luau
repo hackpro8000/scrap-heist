@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-00f1a6b52ef8596c"
+local CACHE_KEY = "IslandStudy-8dfc203f46ec62f8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -841,6 +841,10 @@ local CHIP_EDGE, CHIP_CORNER = 0.05, 0.09
 -- tops reach the flat-top cut just under the cap.
 local LIP_OUT, LIP_SPREAD = 1, 1
 local LIP_RISE = 1.2
+-- How far (studs) a stone below the top row may stand out from the wall, at
+-- the rim and at the underside; it shrinks with the wall's reach and with the
+-- stone's size, so small low stones sit tight instead of poking out the sides.
+local STAND_OUT_RIM, STAND_OUT_UNDERSIDE = 6, 0.4
 local ANGLES, STEPS = 128, 28
 local TAU = 2 * math.pi
 
@@ -1050,6 +1054,15 @@ local function makeSeed(angle: number, t: number, row: number, key: number)
 	-- Some seeds sit inside the wall, some just outside, so the cells cut
 	-- the surface at angles rather than all from one shell.
 	local lift = -1.2 + 2.6 * hash(SEED * 71 + key)
+	local size = 0.85 + 0.3 * hash(SEED * 53 + key)
+	-- The stand-out limit: a cut plane parallel to the wall, and an outward
+	-- seed is pulled back to half of it so the stone keeps its middle.
+	local standOut = (STAND_OUT_UNDERSIDE + (STAND_OUT_RIM - STAND_OUT_UNDERSIDE) * shareAt(t)) * size
+	local wallCut = nil
+	if row > 0 then
+		lift = math.min(lift, standOut * 0.5)
+		wallCut = { n[1], n[2], n[3], dot(n, p) + standOut }
+	end
 	-- The top row's lip: its seeds move out and up before the fit, so the
 	-- stones stand past the cap's edge and the seams still come out exact.
 	local lip = if row == 0 then LIP_OUT + LIP_SPREAD * hash(SEED * 61 + key) else 0
@@ -1058,10 +1071,11 @@ local function makeSeed(angle: number, t: number, row: number, key: number)
 		p[1] + n[1] * lift + math.cos(angle) * lip,
 		p[2] + n[2] * lift + math.sin(angle) * lip,
 		p[3] + n[3] * lift + rise,
-		size = 0.85 + 0.3 * hash(SEED * 53 + key),
+		size = size,
 		t = t,
 		row = row,
 		angle = angle,
+		wallCut = wallCut,
 		-- A heavy seed claims more of the wall than a light one. The
 		-- weight is in squared-distance units, so it scales with spacing.
 		weight = (hash(SEED * 57 + key) - 0.5) * spacing * spacing * 0.55,
@@ -1208,6 +1222,11 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 			local facet = { n[1], n[2], n[3], dot(n, seed) + reach * radius }
 			table.insert(facets, facet)
 			tris = clip(tris, facet)
+		end
+		-- The stand-out cut goes in with the facets, so it gets chipped too.
+		if seed.wallCut then
+			table.insert(facets, seed.wallCut)
+			tris = clip(tris, seed.wallCut)
 		end
 		-- The chips: a small cut along every sharp edge two facets make, and
 		-- on every corner three of them make. Only facet edges are touched, so
