@@ -358,6 +358,49 @@ for i, seed in seeds do
 	cellRadius[i] = farthest * 0.62 * (0.75 + 0.25 * shareAt(seed.t))
 end
 
+-- A stone beside one that stands further out must still reach their shared
+-- plane all the way out to the neighbour's face, or the seam opens into a
+-- notch. So each blob also grows to cover, on every plane that cuts it, the
+-- point level with the neighbour's outer face. The blob's surface is about
+-- radius * size^2, give or take the wave, so the reach is divided by that.
+-- A grown stone is capped at the furthest such face (seamLimit), so it rises
+-- to meet its neighbour but never past it.
+local SEAM_WAVE, SEAM_CORE = 0.9, 0.7
+local seamRadius, seamLimit = {}, {}
+for i, seed in seeds do
+	local blob = cellRadius[i] * seed.size * seed.size
+	local own = wallNormal(seed.angle, seed.t)
+	local needed = cellRadius[i]
+	for j, other in seeds do
+		if j ~= i then
+			local dx, dy, dz = other[1] - seed[1], other[2] - seed[2], other[3] - seed[3]
+			local distance = math.sqrt(dx * dx + dy * dy + dz * dz)
+			if distance < REACH and distance > 1e-6 then
+				local n = { dx / distance, dy / distance, dz / distance }
+				local seedSq = seed[1] ^ 2 + seed[2] ^ 2 + seed[3] ^ 2
+				local otherSq = other[1] ^ 2 + other[2] ^ 2 + other[3] ^ 2
+				local offset = (otherSq - seedSq + seed.weight - other.weight) / (2 * distance)
+				local out = wallNormal(other.angle, other.t)
+				local extent = cellRadius[j] * other.size * other.size
+				local face = { other[1] + out[1] * extent, other[2] + out[2] * extent, other[3] + out[3] * extent }
+				-- Only a plane that cuts this blob's facet core makes a seam
+				-- with it, and only a neighbour standing further out leaves one
+				-- open.
+				local seam = offset - dot(n, seed) < blob * SEAM_CORE
+				if seam and dot(own, face) > dot(own, seed) + blob then
+					local past = dot(n, face) - offset
+					local onPlane = { face[1] - n[1] * past - seed[1], face[2] - n[2] * past - seed[2], face[3] - n[3] * past - seed[3] }
+					local reach = math.sqrt(dot(onPlane, onPlane)) / (seed.size * seed.size * SEAM_WAVE)
+					needed = math.max(needed, reach)
+					seamLimit[i] = math.max(seamLimit[i] or -math.huge, dot(own, face))
+				end
+			end
+		end
+	end
+	seamRadius[i] = needed
+end
+cellRadius = seamRadius
+
 part("Body", nil, { 0.33, 0.3, 0.26 }, function(mesh)
 	local rings = {}
 	for i = 0, STEPS do
@@ -460,6 +503,11 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 					end
 				end
 			end
+		end
+		-- A stone grown to seal a seam stops level with the neighbour it meets.
+		if seamLimit[i] then
+			local own = wallNormal(seed.angle, seed.t)
+			tris = clip(tris, { own[1], own[2], own[3], seamLimit[i] })
 		end
 		-- Keep the flat top clear.
 		tris = clip(tris, { 0, 0, 1, CAP_TOP - 0.2 })
