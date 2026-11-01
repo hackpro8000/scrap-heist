@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-54b10c1e5a39b3b6"
+local CACHE_KEY = "IslandStudy-eda7f77339690600"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -839,6 +839,11 @@ local TIP_GAP = 0.5
 -- this deep, as a share of the stone's radius.
 local CHIP_SHARPNESS = 0.3
 local CHIP_EDGE, CHIP_CORNER = 0.05, 0.09
+-- The overhanging lip: how far (studs) the top row stands out past where it
+-- sat, plus up to LIP_SPREAD more per stone, and how far it is raised so its
+-- tops reach the flat-top cut just under the cap.
+local LIP_OUT, LIP_SPREAD = 1, 1
+local LIP_RISE = 1.2
 local ANGLES, STEPS = 128, 28
 local TAU = 2 * math.pi
 
@@ -1060,10 +1065,14 @@ for row = 0, ROCK_ROWS - 1 do
 		-- Some seeds sit inside the wall, some just outside, so the cells cut
 		-- the surface at angles rather than all from one shell.
 		local lift = -1.2 + 2.6 * hash(SEED * 71 + i)
+		-- The top row's lip: its seeds move out and up before the fit, so the
+		-- stones stand past the cap's edge and the seams still come out exact.
+		local lip = if row == 0 then LIP_OUT + LIP_SPREAD * hash(SEED * 61 + i) else 0
+		local rise = if row == 0 then LIP_RISE else 0
 		seeds[i] = {
-			p[1] + n[1] * lift,
-			p[2] + n[2] * lift,
-			p[3] + n[3] * lift,
+			p[1] + n[1] * lift + math.cos(angle) * lip,
+			p[2] + n[2] * lift + math.sin(angle) * lip,
+			p[3] + n[3] * lift + rise,
 			size = 0.85 + 0.3 * hash(SEED * 53 + i),
 			t = t,
 			-- A heavy seed claims more of the wall than a light one. The
