@@ -851,6 +851,9 @@ end
 -- for a collector while it runs and the collected list is what gets cached.
 local baked = model.cached(CACHE_KEY, function()
 	chunkedPart("Body", nil, { 0.33, 0.3, 0.26 }, buildBody, nil, 0)
+	-- The stones shade against the body's island-wide height range, so the
+	-- gradient runs on across every part instead of restarting in each.
+	local islandRange = parts[#parts].heightRange
 	-- The stones go in a few parts of neighbouring stones, all in one group, so
 	-- they shade each other as one surface.
 	local visible = buildRocks()
@@ -859,6 +862,7 @@ local baked = model.cached(CACHE_KEY, function()
 			stonesMesh(mesh, visible, members)
 		end, nil, 0)
 		parts[#parts].group = "Rocks"
+		parts[#parts].heightRange = islandRange
 	end
 	-- The hidden faces join the rocks' group, so the stones still shade with
 	-- them as their own surfaces and the body still takes their shadows. Marked

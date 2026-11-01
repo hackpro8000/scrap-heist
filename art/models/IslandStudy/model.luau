@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-cdb6757dc766fb17"
+local CACHE_KEY = "IslandStudy-598428442bd03aea"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -632,8 +632,10 @@ end
 -- build runs once into a recorder, then each face goes to the chunk holding
 -- its centre. Cells sit on the origin across, and centred on z = 0 up and
 -- down, so ground near sea level stays in one layer. `flat` skips the warp,
--- as for part().
-local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?)
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
 	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
 	-- Smallest cell a chunk is halved down to while looking for a split.
 	local MIN_CELL = 2
@@ -653,6 +655,13 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end,
 	}
 	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
 
 	local chunks, order = {}, {}
 	for _, f in faces do
@@ -748,6 +757,7 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		setLook(parts[#parts], color, rust)
 		-- Chunks of one part share a group, so their edges count as its own.
 		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
 		emit(`{name}_{key}`, chunks[key], CHUNK)
@@ -786,6 +796,7 @@ local function finishParts()
 			rubber = entry.rubber,
 			reach = entry.edge,
 			highlightWidth = entry.wide,
+			heightRange = entry.heightRange,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
@@ -1643,6 +1654,9 @@ end
 -- for a collector while it runs and the collected list is what gets cached.
 local baked = model.cached(CACHE_KEY, function()
 	chunkedPart("Body", nil, { 0.33, 0.3, 0.26 }, buildBody, nil, 0)
+	-- The stones shade against the body's island-wide height range, so the
+	-- gradient runs on across every part instead of restarting in each.
+	local islandRange = parts[#parts].heightRange
 	-- The stones go in a few parts of neighbouring stones, all in one group, so
 	-- they shade each other as one surface.
 	local visible = buildRocks()
@@ -1651,6 +1665,7 @@ local baked = model.cached(CACHE_KEY, function()
 			stonesMesh(mesh, visible, members)
 		end, nil, 0)
 		parts[#parts].group = "Rocks"
+		parts[#parts].heightRange = islandRange
 	end
 	-- The hidden faces join the rocks' group, so the stones still shade with
 	-- them as their own surfaces and the body still takes their shadows. Marked
