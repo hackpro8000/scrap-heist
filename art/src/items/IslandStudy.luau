@@ -25,6 +25,17 @@ local TAPER_POWER = 1.35
 local ROCK_ROWS = 4
 local ROCK_WIDTH = 7
 local ROCK_FACETS = 7
+-- Breaking up the rows: the wall is split into sectors round the island, and
+-- each sector gets ROCK_ROWS plus up to ROW_SPREAD more rows, so the rows
+-- don't line up all the way round.
+local ROW_SECTORS, ROW_SPREAD = 5, 1
+-- How far a seed may wander in its slot, either way, as a share of the
+-- row's height and the slot's width. Small, so no slot is left uncovered.
+local HEIGHT_JITTER, ANGLE_JITTER = 0.3, 0.25
+-- The odd big stone: the share of top-row slots merged with the nearest
+-- second-row slot into one stone over both rows, and its power weight in
+-- spacing-squared units, so it claims both slots from its neighbours.
+local BIG_STONE_SHARE, BIG_STONE_WEIGHT = 1 / 8, 0.5
 -- How many times a cell's blob is split. One is enough: the fitting and the
 -- slices do the shaping, and the cells are small on screen.
 local ROCK_SUBDIVISIONS = 1
@@ -236,37 +247,94 @@ end
 -- How far apart stones sit round the wall, from the widest row.
 local spacing = TAU * RADIUS * WALL_REACH * shareAt(0.5) / math.max(6, math.round(TAU * RADIUS * WALL_REACH * shareAt(0.5) / ROCK_WIDTH))
 
--- The cells: seeds round the wall in staggered rows. Every slot keeps a
--- stone; size variety comes from a power weight instead of dropped slots,
--- because a dropped slot leaves a hole its neighbours may not reach across.
+-- The cells: seeds round the wall in rows. Every slot keeps a stone; size
+-- variety comes from a power weight instead of dropped slots, because a
+-- dropped slot leaves a hole its neighbours may not reach across. The rows
+-- are broken up: each sector has its own row count, each seed wanders in its
+-- slot, and now and then two slots on the upper rows share one big stone.
+local function makeSeed(angle: number, t: number, row: number, key: number)
+	local p = wallPoint(angle, t)
+	local n = wallNormal(angle, t)
+	-- Some seeds sit inside the wall, some just outside, so the cells cut
+	-- the surface at angles rather than all from one shell.
+	local lift = -1.2 + 2.6 * hash(SEED * 71 + key)
+	-- The top row's lip: its seeds move out and up before the fit, so the
+	-- stones stand past the cap's edge and the seams still come out exact.
+	local lip = if row == 0 then LIP_OUT + LIP_SPREAD * hash(SEED * 61 + key) else 0
+	local rise = if row == 0 then LIP_RISE else 0
+	return {
+		p[1] + n[1] * lift + math.cos(angle) * lip,
+		p[2] + n[2] * lift + math.sin(angle) * lip,
+		p[3] + n[3] * lift + rise,
+		size = 0.85 + 0.3 * hash(SEED * 53 + key),
+		t = t,
+		row = row,
+		angle = angle,
+		-- A heavy seed claims more of the wall than a light one. The
+		-- weight is in squared-distance units, so it scales with spacing.
+		weight = (hash(SEED * 57 + key) - 0.5) * spacing * spacing * 0.55,
+	}
+end
+
 local seeds = {}
-for row = 0, ROCK_ROWS - 1 do
-	local t = 0.1 + (0.86 - 0.1) * (row + 0.5) / ROCK_ROWS
-	local circumference = TAU * RADIUS * WALL_REACH * shareAt(t)
-	local count = math.max(6, math.round(circumference / ROCK_WIDTH))
-	local offset = (row % 2) * 0.5
-	for col = 0, count - 1 do
-		local i = #seeds + 1
-		local angle = TAU * (col + offset) / count
-		local p = wallPoint(angle, t)
-		local n = wallNormal(angle, t)
-		-- Some seeds sit inside the wall, some just outside, so the cells cut
-		-- the surface at angles rather than all from one shell.
-		local lift = -1.2 + 2.6 * hash(SEED * 71 + i)
-		-- The top row's lip: its seeds move out and up before the fit, so the
-		-- stones stand past the cap's edge and the seams still come out exact.
-		local lip = if row == 0 then LIP_OUT + LIP_SPREAD * hash(SEED * 61 + i) else 0
-		local rise = if row == 0 then LIP_RISE else 0
-		seeds[i] = {
-			p[1] + n[1] * lift + math.cos(angle) * lip,
-			p[2] + n[2] * lift + math.sin(angle) * lip,
-			p[3] + n[3] * lift + rise,
-			size = 0.85 + 0.3 * hash(SEED * 53 + i),
-			t = t,
-			-- A heavy seed claims more of the wall than a light one. The
-			-- weight is in squared-distance units, so it scales with spacing.
-			weight = (hash(SEED * 57 + i) - 0.5) * spacing * spacing * 0.55,
-		}
+local key = 0
+for sector = 0, ROW_SECTORS - 1 do
+	local from, to = TAU * sector / ROW_SECTORS, TAU * (sector + 1) / ROW_SECTORS
+	local rows = ROCK_ROWS + math.floor(hash(SEED * 83 + sector) * (ROW_SPREAD + 1))
+	local band = (0.86 - 0.1) / rows
+	local sectorSeeds = {}
+	for row = 0, rows - 1 do
+		local t = 0.1 + band * (row + 0.5)
+		local circumference = TAU * RADIUS * WALL_REACH * shareAt(t)
+		local count = math.max(6, math.round(circumference / ROCK_WIDTH))
+		local offset = (row % 2) * 0.5
+		for col = 0, count - 1 do
+			-- Slots are spaced over the whole ring, and each sector keeps the
+			-- ones that start inside it, so every slot belongs to one sector.
+			local slotAngle = (TAU * (col + offset) / count) % TAU
+			if slotAngle >= from and slotAngle < to then
+				key += 1
+				local angle = slotAngle + (2 * hash(SEED * 87 + key) - 1) * ANGLE_JITTER * TAU / count
+				-- The top row keeps its height so the rim stays flush with the cap.
+				local drift = if row == 0 then 0 else (2 * hash(SEED * 89 + key) - 1) * HEIGHT_JITTER * band
+				table.insert(sectorSeeds, makeSeed(angle, t + drift, row, key))
+			end
+		end
+	end
+	-- The big stones: a top-row seed and its nearest second-row seed become
+	-- one heavy seed between them, so the pair's two slots are one stone.
+	local merged = {}
+	for a, top in sectorSeeds do
+		if top.row == 0 and hash(SEED * 91 + sector * 31 + a) < BIG_STONE_SHARE then
+			local nearest, gap = nil, math.huge
+			for b, below in sectorSeeds do
+				if below.row == 1 and not merged[b] then
+					local d = math.abs((below.angle - top.angle + math.pi) % TAU - math.pi)
+					if d < gap then
+						nearest, gap = b, d
+					end
+				end
+			end
+			if nearest then
+				local below = sectorSeeds[nearest]
+				merged[nearest] = true
+				sectorSeeds[a] = {
+					(top[1] + below[1]) / 2,
+					(top[2] + below[2]) / 2,
+					(top[3] + below[3]) / 2,
+					size = math.max(top.size, below.size),
+					t = (top.t + below.t) / 2,
+					row = 0,
+					angle = top.angle,
+					weight = BIG_STONE_WEIGHT * spacing * spacing,
+				}
+			end
+		end
+	end
+	for b, seed in sectorSeeds do
+		if not merged[b] then
+			table.insert(seeds, seed)
+		end
 	end
 end
 
