@@ -401,7 +401,7 @@ for i, seed in seeds do
 end
 cellRadius = seamRadius
 
-part("Body", nil, { 0.33, 0.3, 0.26 }, function(mesh)
+local function buildBody(mesh)
 	local rings = {}
 	for i = 0, STEPS do
 		local t = i / STEPS
@@ -428,9 +428,9 @@ part("Body", nil, { 0.33, 0.3, 0.26 }, function(mesh)
 		mesh:face({ top, rings[0][j], rings[0][l] })
 		mesh:face({ bottom, rings[STEPS][l], rings[STEPS][j] })
 	end
-end, nil, 0)
+end
 
-part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
+local function buildRocks(mesh)
 	for i, seed in seeds do
 		-- Stones shrink with the wall, so the bottom rows are chips rather
 		-- than full-size boulders crowded round a point.
@@ -545,6 +545,26 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 	-- Weld so the shading can run smooth over each stone; the crease angle in
 	-- part() keeps the cut faces and the seams sharp.
 	mesh:weld(1e-4)
-end, nil, 0, 512)
+end
 
-finishParts()
+-- The parts and their shading are cached under a key hashing every line above
+-- "-- cached above", so an unchanged rebuild loads them instead of baking.
+-- finishParts() adds parts straight to the model, so model.part is swapped
+-- for a collector while it runs and the collected list is what gets cached.
+local baked = model.cached(CACHE_KEY, function()
+	part("Body", nil, { 0.33, 0.3, 0.26 }, buildBody, nil, 0)
+	part("Rocks", nil, { 0.37, 0.34, 0.29 }, buildRocks, nil, 0, 512)
+	local addPart, collected = model.part, {}
+	model.part = function(name, mesh, image, options)
+		table.insert(collected, { name = name, mesh = mesh, image = image, preview = options.preview, emissive = options.emissive })
+	end
+	finishParts()
+	model.part = addPart
+	table.clear(parts)
+	return collected
+end)
+-- cached above
+
+for _, entry in baked do
+	model.part(entry.name, entry.mesh, entry.image, { preview = entry.preview, emissive = entry.emissive })
+end
