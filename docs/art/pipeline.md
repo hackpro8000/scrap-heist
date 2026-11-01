@@ -103,12 +103,27 @@ reference.
 1. Avatar or Home tab → **Import 3D**, pick `<Name>.glb`.
 2. Upload it, then paste the asset ID into `src/shared/Assets.luau`.
 
+## Quick tweaks
+
+To tune settings fast, keep the model building while you edit:
+
+```
+scripts/watch-model.sh <Name> [--eye EX,EY,EZ,TX,TY,TZ ...]
+```
+
+It re-assembles on every save under `art/src` and re-renders
+`art/models/<Name>/preview.png` (and `eye_N.png` per `--eye`) at preview
+density, committing nothing. Checkpoint once the result is right.
+
 ## Saving changes
 Every model change, however small, ends with a checkpoint so no progress is lost:
 
 ```
 scripts/checkpoint-model.sh <Name> "phase N: <Name> - <change>"
 ```
+
+The checkpoint also renders four turns round the model into `views.png`, so a
+change needs no separate preview pass.
 
 It rebuilds the model, copies `preview.png` to `screenshot.png`, and commits and pushes the `model.luau` source on the `models` branch. Send that screenshot to the user after each change.
 

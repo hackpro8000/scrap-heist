@@ -8,6 +8,8 @@
 #
 #   scripts/build-model.sh StarterWeapon
 #   scripts/build-model.sh            # all models
+#   scripts/build-model.sh StarterWeapon -- --turntable 4   # extra modelkit flags
+#   scripts/build-model.sh --engine   # only refresh the engine binary
 
 set -euo pipefail
 
@@ -24,7 +26,18 @@ if command -v cargo >/dev/null 2>&1; then
 	fi
 fi
 
-models=("$@")
+if [ "${1:-}" = "--engine" ]; then
+	exit 0
+fi
+
+# Model names come first; anything after "--" goes to modelkit for every model.
+models=()
+while [ $# -gt 0 ] && [ "$1" != "--" ]; do
+	models+=("$1")
+	shift
+done
+[ $# -gt 0 ] && shift
+flags=("$@")
 if [ ${#models[@]} -eq 0 ]; then
 	for dir in "${root}"/art/models/*/; do
 		models+=("$(basename "${dir}")")
@@ -37,5 +50,5 @@ for name in "${models[@]}"; do
 		echo "no model script: ${dir}/model.luau" >&2
 		exit 1
 	fi
-	"${modelkit}" "${dir}"
+	"${modelkit}" "${dir}" "${flags[@]}"
 done
