@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-eda7f77339690600"
+local CACHE_KEY = "IslandStudy-99e8acdad096ea14"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -820,20 +820,6 @@ local ROCK_FACETS = 7
 -- How many times a cell's blob is split. One is enough: the fitting and the
 -- slices do the shaping, and the cells are small on screen.
 local ROCK_SUBDIVISIONS = 1
--- The loosening: stones stay fitted down to LOOSEN_FROM (0 is the rim, 1 the
--- point) and are fully loose by LOOSEN_TO, eased in between.
-local LOOSEN_FROM, LOOSEN_TO = 0.4, 0.85
--- At full looseness: how far (studs) each stone pulls back from every
--- neighbour's cut, how far it tilts (radians, top falling outward), and how
--- far it drifts out from the wall and down.
-local LOOSEN_GAP = 0.9
-local LOOSEN_TILT = 0.24
-local LOOSEN_DRIFT_OUT, LOOSEN_DRIFT_DOWN = 0.8, 0.6
--- The stones hanging free under the point: how many, the first one's radius
--- (each next one is smaller by TIP_SHRINK), and the gap between them.
-local TIP_STONES = 3
-local TIP_SIZE, TIP_SHRINK = 1.5, 0.75
-local TIP_GAP = 0.5
 -- The chips: an edge counts as sharp when its two facets' normals agree
 -- less than this (0 is a right angle), and the edge and corner cuts go
 -- this deep, as a share of the stone's radius.
@@ -890,12 +876,6 @@ local RIM_Z = CAP_TOP - DEPTH
 -- curve, so the island stays broad near the top and draws to a point below.
 local function shareAt(t: number): number
 	return UNDERSIDE_SHARE + (1 - UNDERSIDE_SHARE) * (1 - t) ^ TAPER_POWER
-end
-
--- How loose the stones are at `t`: 0 fitted, 1 fully loose.
-local function looseness(t: number): number
-	local x = math.clamp((t - LOOSEN_FROM) / (LOOSEN_TO - LOOSEN_FROM), 0, 1)
-	return x * x * (3 - 2 * x)
 end
 
 local function wallPoint(angle: number, t: number): { number }
@@ -1082,27 +1062,6 @@ for row = 0, ROCK_ROWS - 1 do
 	end
 end
 
--- The hanging stones: a short chain under the point, each smaller than the
--- one above and nudged off the axis so the chain doesn't read as a stack.
-local tipZ = RIM_Z
-for k = 1, TIP_STONES do
-	local i = #seeds + 1
-	local size = TIP_SIZE * TIP_SHRINK ^ (k - 1)
-	local z = tipZ - TIP_GAP - size
-	local angle = hash(SEED * 83 + k) * TAU
-	local nudge = size * 0.35 * hash(SEED * 89 + k)
-	seeds[i] = {
-		nudge * math.cos(angle),
-		nudge * math.sin(angle),
-		z,
-		size = 1,
-		t = 1,
-		weight = 0,
-		hanging = size,
-	}
-	tipZ = z - size
-end
-
 local REACH = spacing * 3.2
 
 -- Each stone's blob has to reach past the furthest bisector it can be cut
@@ -1112,7 +1071,7 @@ local cellRadius = {}
 for i, seed in seeds do
 	local farthest = spacing
 	for j, other in seeds do
-		if j ~= i and not other.hanging then
+		if j ~= i then
 			local dx, dy, dz = other[1] - seed[1], other[2] - seed[2], other[3] - seed[3]
 			local distance = dx * dx + dy * dy + dz * dz
 			if distance < REACH * REACH and distance > farthest * farthest then
@@ -1120,7 +1079,7 @@ for i, seed in seeds do
 			end
 		end
 	end
-	cellRadius[i] = seed.hanging or farthest * 0.62 * (0.75 + 0.25 * shareAt(seed.t))
+	cellRadius[i] = farthest * 0.62 * (0.75 + 0.25 * shareAt(seed.t))
 end
 
 part("Body", nil, { 0.33, 0.3, 0.26 }, function(mesh)
@@ -1160,15 +1119,10 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 		local points = {}
 		for v, p in unitVertices do
 			local r = (1 + 0.16 * wave(p, 2.3, SEED + i) + 0.05 * wave(p, 4.9, SEED + i + 3.1)) * seed.size
-			local z = p[3] * r * radius
-			-- A hanging stone grows downward from its seed, not both ways.
-			if z < 0 then
-				z = z * (seed.stretch or 1)
-			end
 			points[v] = {
 				seed[1] + p[1] * r * radius,
 				seed[2] + p[2] * r * radius,
-				seed[3] + z,
+				seed[3] + p[3] * r * radius,
 			}
 		end
 		local tris = {}
@@ -1234,10 +1188,8 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 		-- Keep the flat top clear.
 		tris = clip(tris, { 0, 0, 1, CAP_TOP - 0.2 })
 		-- The fit: cut against every nearby seed, so neighbours share planes.
-		-- Wall stones ignore the hanging ones, which only cut themselves free.
-		local loose = looseness(seed.t)
 		for j, other in seeds do
-			if j ~= i and (seed.hanging or not other.hanging) then
+			if j ~= i then
 				local dx, dy, dz = other[1] - seed[1], other[2] - seed[2], other[3] - seed[3]
 				local distance = math.sqrt(dx * dx + dy * dy + dz * dz)
 				if distance < REACH and distance > 1e-6 then
@@ -1247,47 +1199,15 @@ part("Rocks", nil, { 0.37, 0.34, 0.29 }, function(mesh)
 					local seedSq = seed[1] ^ 2 + seed[2] ^ 2 + seed[3] ^ 2
 					local otherSq = other[1] ^ 2 + other[2] ^ 2 + other[3] ^ 2
 					local offset = (otherSq - seedSq + seed.weight - other.weight) / (2 * distance)
-					-- A loose stone pulls its side of the cut back toward its
-					-- seed, opening a gap, but never past most of its body.
-					local floor = math.min(offset, dot(n, seed) + 0.3 * radius)
-					offset = math.max(offset - LOOSEN_GAP * loose, floor)
 					tris = clip(tris, { n[1], n[2], n[3], offset })
 				end
 			end
 		end
-		-- Loose stones tilt about the wall's horizontal tangent, top falling
-		-- outward, then drift out and down.
-		local outAngle = if seed.hanging
-			then hash(SEED * 97 + i) * TAU
-			else math.atan2(seed[2], seed[1])
-		local out = { math.cos(outAngle), math.sin(outAngle), 0 }
-		local axis = { -out[2], out[1], 0 }
-		local tilt = LOOSEN_TILT * loose * (0.4 + 0.6 * hash(SEED * 101 + i))
-		local cosTilt, sinTilt = math.cos(tilt), math.sin(tilt)
-		local shift = {
-			out[1] * LOOSEN_DRIFT_OUT * loose,
-			out[2] * LOOSEN_DRIFT_OUT * loose,
-			-LOOSEN_DRIFT_DOWN * loose,
-		}
-		local function settle(p: { number }): { number }
-			if loose <= 0 then
-				return p
-			end
-			local d = { p[1] - seed[1], p[2] - seed[2], p[3] - seed[3] }
-			local k = cross(axis, d)
-			local along = dot(axis, d) * (1 - cosTilt)
-			return {
-				seed[1] + d[1] * cosTilt + k[1] * sinTilt + axis[1] * along + shift[1],
-				seed[2] + d[2] * cosTilt + k[2] * sinTilt + axis[2] * along + shift[2],
-				seed[3] + d[3] * cosTilt + k[3] * sinTilt + axis[3] * along + shift[3],
-			}
-		end
 		for _, tri in tris do
-			local a, b, c = settle(tri[1]), settle(tri[2]), settle(tri[3])
+			local a, b, c = tri[1], tri[2], tri[3]
 			local n = cross({ b[1] - a[1], b[2] - a[2], b[3] - a[3] }, { c[1] - a[1], c[2] - a[2], c[3] - a[3] })
 			local mid = { (a[1] + b[1] + c[1]) / 3, (a[2] + b[2] + c[2]) / 3, (a[3] + b[3] + c[3]) / 3 }
-			local centre = { seed[1] + shift[1], seed[2] + shift[2], seed[3] + shift[3] }
-			local facing = n[1] * (mid[1] - centre[1]) + n[2] * (mid[2] - centre[2]) + n[3] * (mid[3] - centre[3])
+			local facing = n[1] * (mid[1] - seed[1]) + n[2] * (mid[2] - seed[2]) + n[3] * (mid[3] - seed[3])
 			if facing < 0 then
 				a, b, c = a, c, b
 			end
