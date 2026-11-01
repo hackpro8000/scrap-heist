@@ -13,6 +13,19 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Boot = require(ReplicatedStorage.Shared.Util.Boot)
 
-local CONTROLLERS: { Boot.Entry } = {}
+local Controllers = script.Controllers
+
+local CONTROLLERS: { Boot.Entry } = {
+	{ name = "NotifyController", module = require(Controllers.NotifyController) },
+	{ name = "HudController", module = require(Controllers.HudController) },
+	{ name = "InventoryController", module = require(Controllers.InventoryController) },
+	{ name = "TradeController", module = require(Controllers.TradeController) },
+	{ name = "PlotController", module = require(Controllers.PlotController) },
+	{ name = "RoundController", module = require(Controllers.RoundController) },
+	{ name = "TutorialController", module = require(Controllers.TutorialController) },
+	{ name = "ShowcaseController", module = require(Controllers.ShowcaseController) },
+	{ name = "CombatController", module = require(Controllers.CombatController) },
+	{ name = "JuiceController", module = require(Controllers.JuiceController) },
+}
 
 Boot.run("Client", CONTROLLERS)

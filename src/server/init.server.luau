@@ -13,6 +13,24 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Boot = require(ReplicatedStorage.Shared.Util.Boot)
 
-local SERVICES: { Boot.Entry } = {}
+local Services = script.Services
+
+local SERVICES: { Boot.Entry } = {
+	{ name = "DataService", module = require(Services.DataService) },
+	{ name = "DebugService", module = require(Services.DebugService) },
+	{ name = "InventoryService", module = require(Services.InventoryService) },
+	{ name = "TradeService", module = require(Services.TradeService) },
+	{ name = "CombatService", module = require(Services.CombatService) },
+	{ name = "DummyService", module = require(Services.DummyService) },
+	{ name = "PlotService", module = require(Services.PlotService) },
+	{ name = "MachineService", module = require(Services.MachineService) },
+	{ name = "RoundService", module = require(Services.RoundService) },
+	{ name = "RaidService", module = require(Services.RaidService) },
+	{ name = "BotService", module = require(Services.BotService) },
+	{ name = "LootService", module = require(Services.LootService) },
+	{ name = "TutorialService", module = require(Services.TutorialService) },
+	{ name = "LeaderboardService", module = require(Services.LeaderboardService) },
+	{ name = "ShowcaseService", module = require(Services.ShowcaseService) },
+}
 
 Boot.run("Server", SERVICES)
