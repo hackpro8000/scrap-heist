@@ -1,6 +1,7 @@
 -- Island Study: steps 1 to 3 of the island generator.
--- The body is the flat-topped solid: a wobbly outline with one shallow bay,
--- a cosine wall and a small flat underside. Over the wall sit fitted rock
+-- The island is a flat top over a wobbly outline with one shallow bay; the
+-- body under it (a cosine wall and a small flat underside) is only a guide the
+-- stones are fitted round, kept for the bake but not exported. Over the wall sit fitted rock
 -- cells: each one a displaced blob cut by the bisector planes to its
 -- neighbours, so the stones meet exactly, then sliced with a few facet
 -- planes so they read as cut stone rather than balls.
@@ -406,7 +407,22 @@ for i, seed in seeds do
 end
 cellRadius = seamRadius
 
-local function buildBody(mesh)
+-- The flat top players stand on: a fan over the rim's outline.
+local function buildTop(mesh)
+	local top = mesh:vertex(0, 0, CAP_TOP)
+	local rim = {}
+	for j = 0, ANGLES - 1 do
+		local p = wallPoint(TAU * j / ANGLES, 0)
+		rim[j] = mesh:vertex(p[1], p[2], p[3])
+	end
+	for j = 0, ANGLES - 1 do
+		mesh:face({ top, rim[j], rim[(j + 1) % ANGLES] })
+	end
+end
+
+-- The body under the top: the wall and underside the stones were fitted
+-- round. It is never exported, only shaded against.
+local function buildWall(mesh)
 	local rings = {}
 	for i = 0, STEPS do
 		local t = i / STEPS
@@ -426,13 +442,11 @@ local function buildBody(mesh)
 			mesh:face({ upper[j], lower[l], upper[l] })
 		end
 	end
-	local top = mesh:vertex(0, 0, CAP_TOP)
 	local bottom = mesh:vertex(0, 0, RIM_Z)
 	for j = 0, ANGLES - 1 do
-		local l = (j + 1) % ANGLES
-		mesh:face({ top, rings[0][j], rings[0][l] })
-		mesh:face({ bottom, rings[STEPS][l], rings[STEPS][j] })
+		mesh:face({ bottom, rings[STEPS][(j + 1) % ANGLES], rings[STEPS][j] })
 	end
+	mesh:weld(1e-4)
 end
 
 -- A triangle lies on a seam plane when all its corners do.
@@ -614,6 +628,22 @@ local function insideBody(polygon): boolean
 	return inside({ centre[1] / #polygon, centre[2] / #polygon, centre[3] / #polygon })
 end
 
+-- The stones are cut 0.2 under the top, so a thin slit runs round the rim
+-- between the top's edge and the stones. Through it, at a grazing angle, the
+-- stones' tops under the rim and the far side's inner faces just below them
+-- show, so faces reaching this close under the slit stay exported. The
+-- stones reach at least 12 studs in under the rim, so a ray through the slit
+-- drops under a stud before it crosses the island.
+local SLIT_VIEW = 1.5
+local function seenThroughRim(polygon): boolean
+	for _, p in polygon do
+		if p[3] > CAP_TOP - 0.2 - SLIT_VIEW then
+			return true
+		end
+	end
+	return false
+end
+
 -- The stone faces nobody sees, kept only so the bake still shades with them.
 local hiddenRocks = Mesh.new()
 
@@ -745,8 +775,9 @@ local function buildRocks()
 	end
 	-- Only the faces anyone can see are kept. A seam face loses the part its
 	-- neighbour's matching face covers, and anything left wholly inside the
-	-- body goes too. The dropped faces still shade the stones and the body,
-	-- through the hidden part.
+	-- body goes too: the stones cover the whole wall, so only the slit under
+	-- the rim looks inside. The dropped faces still shade the stones and the
+	-- top, through the hidden part.
 	-- Each stone's faces sorted by the seam they lie on, keyed by neighbour.
 	for _, stone in stones do
 		stone.onSeam, stone.seamOf = {}, {}
@@ -777,7 +808,7 @@ local function buildRocks()
 			-- part, so the bake still sees every stone as it was.
 			local whole = #pieces == 1 and pieces[1] == tri
 			for _, polygon in pieces do
-				if insideBody(polygon) then
+				if insideBody(polygon) and not seenThroughRim(polygon) then
 					whole = false
 				else
 					table.insert(visible[i].polygons, polygon)
@@ -850,10 +881,11 @@ end
 -- finishParts() adds parts straight to the model, so model.part is swapped
 -- for a collector while it runs and the collected list is what gets cached.
 local baked = model.cached(CACHE_KEY, function()
-	chunkedPart("Body", nil, { 0.33, 0.3, 0.26 }, buildBody, nil, 0)
-	-- The stones shade against the body's island-wide height range, so the
-	-- gradient runs on across every part instead of restarting in each.
-	local islandRange = parts[#parts].heightRange
+	-- The top and the stones shade against the body's island-wide height
+	-- range, so the gradient runs on across every part instead of restarting
+	-- in each.
+	local islandRange = { RIM_Z, CAP_TOP }
+	chunkedPart("Top", nil, { 0.33, 0.3, 0.26 }, buildTop, nil, 0, nil, nil, nil, nil, islandRange)
 	-- The stones go in a few parts of neighbouring stones, all in one group, so
 	-- they shade each other as one surface.
 	local visible = buildRocks()
@@ -868,9 +900,14 @@ local baked = model.cached(CACHE_KEY, function()
 	-- them as their own surfaces and the body still takes their shadows. Marked
 	-- emissive, finishParts skips baking them, and they are left out below.
 	table.insert(parts, { name = "HiddenRocks", mesh = hiddenRocks, emissive = 1, group = "Rocks" })
+	-- The body's wall stays for the bake the same way, in the top's group as
+	-- it was when they were one part, so the stones still take its shadows.
+	local wall = Mesh.new()
+	buildWall(wall)
+	table.insert(parts, { name = "BodyWall", mesh = wall, emissive = 1, group = "Top" })
 	local addPart, collected = model.part, {}
 	model.part = function(name, mesh, image, options)
-		if name == "HiddenRocks" then
+		if name == "HiddenRocks" or name == "BodyWall" then
 			return
 		end
 		table.insert(collected, { name = name, mesh = mesh, image = image, preview = options.preview, emissive = options.emissive })
