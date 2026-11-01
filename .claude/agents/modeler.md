@@ -25,4 +25,4 @@ Rules:
 - For layouts, follow the placement rules in pipeline.md: `placeSlab` for slabs, `chunkedPart` for large meshes, textures at most 1024×1024.
 - Don't change tools/modelkit or scripts/.
 
-Reply in under 60 words: the screenshot path from checkpoint-model.sh, the commit hash from `git rev-parse --short HEAD`, the art/src files you changed and any error. Don't paste build logs.
+Reply in under 60 words: the screenshot and views paths from checkpoint-model.sh, the commit hash from `git rev-parse --short HEAD`, the art/src files you changed and any error. Don't paste build logs.

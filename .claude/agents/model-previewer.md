@@ -14,6 +14,13 @@ Run one Bash command from the repo root, filling in the item name, output direct
 
 Models with a source in art/src are assembled first; older models that only have a committed art/models/<Name>/model.luau are built from that file as is.
 
+Arguments:
+- `--size N` is the image width and height in pixels (default 768).
+- Each view is one `--eye EX,EY,EZ,TX,TY,TZ` (eye position, then the point it looks at, Z-up studs, no spaces). Repeat it per view. Views are written as `eye_1.png`, `eye_2.png`, ... in the output directory, in the order given.
+- Leave out `--preview` only when asked for a full-density render; add `--no-outputs` then to skip the glb.
+
+The bake cache lives in `<output directory>/.cache` and preview builds key it on the eye list, so the caller should reuse one output directory per model with the same eyes for repeat previews.
+
 Do not open the rendered images.
 
-Reply in under 40 words: the PNG path of the first eye, and the error lines if any step failed. Do not paste build logs.
+Reply in under 40 words: the PNG path of every eye, and the error lines if any step failed. Do not paste build logs.
