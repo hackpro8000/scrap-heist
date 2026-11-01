@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-07ffb24262872523"
+local CACHE_KEY = "IslandStudy-c8d09725e3d8f939"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1222,7 +1222,190 @@ local function buildBody(mesh)
 	end
 end
 
+-- A triangle lies on a seam plane when all its corners do.
+local function onPlane(tri, plane): boolean
+	for k = 1, 3 do
+		if math.abs(planeDistance(plane, tri[k])) > 1e-5 then
+			return false
+		end
+	end
+	return true
+end
+
+local function polygonArea(polygon): number
+	local total = { 0, 0, 0 }
+	for k = 2, #polygon - 1 do
+		local a, b, c = polygon[1], polygon[k], polygon[k + 1]
+		local n = cross({ b[1] - a[1], b[2] - a[2], b[3] - a[3] }, { c[1] - a[1], c[2] - a[2], c[3] - a[3] })
+		total = { total[1] + n[1], total[2] + n[2], total[3] + n[3] }
+	end
+	return math.sqrt(dot(total, total)) / 2
+end
+
+-- Splits a convex polygon by a plane into the part behind it and the part in
+-- front, both keeping the polygon's winding.
+local function split(polygon, plane)
+	local behind, front = {}, {}
+	for k, p in polygon do
+		local q = polygon[k % #polygon + 1]
+		local dp, dq = planeDistance(plane, p), planeDistance(plane, q)
+		if dp <= 0 then
+			table.insert(behind, p)
+		end
+		if dp >= 0 then
+			table.insert(front, p)
+		end
+		if (dp < 0 and dq > 0) or (dp > 0 and dq < 0) then
+			local t = dp / (dp - dq)
+			local point = { p[1] + (q[1] - p[1]) * t, p[2] + (q[2] - p[2]) * t, p[3] + (q[3] - p[3]) * t }
+			table.insert(behind, point)
+			table.insert(front, point)
+		end
+	end
+	return behind, front
+end
+
+-- A neighbour's faces on one seam plane as convex covers: one outline when
+-- they make a convex polygon (their hull holds no more than their own area),
+-- else the triangles themselves, so a cover never reaches past the face.
+local function seamCover(tris, plane)
+	if #tris == 0 then
+		return {}
+	end
+	local normal = { plane[1], plane[2], plane[3] }
+	local u = cross(normal, { 0, 0, 1 })
+	if dot(u, u) < 1e-8 then
+		u = cross(normal, { 1, 0, 0 })
+	end
+	u = normalize(u)
+	local v = cross(normal, u)
+	local points, area = {}, 0
+	for _, tri in tris do
+		area += polygonArea(tri)
+		for _, p in tri do
+			table.insert(points, { p = p, x = dot(p, u), y = dot(p, v) })
+		end
+	end
+	table.sort(points, function(a, b)
+		return a.x < b.x or (a.x == b.x and a.y < b.y)
+	end)
+	local function turn(o, a, b): number
+		return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x)
+	end
+	-- Andrew's monotone chain: lower then upper hull.
+	local hull = {}
+	for _, pass in { 1, -1 } do
+		local start = #hull
+		local from, to = if pass == 1 then 1 else #points, if pass == 1 then #points else 1
+		for k = from, to, pass do
+			local point = points[k]
+			while #hull >= start + 2 and turn(hull[#hull - 1], hull[#hull], point) <= 0 do
+				table.remove(hull)
+			end
+			table.insert(hull, point)
+		end
+		table.remove(hull)
+	end
+	local outline = {}
+	for _, h in hull do
+		table.insert(outline, h.p)
+	end
+	if #outline >= 3 and polygonArea(outline) <= area + 1e-4 * math.max(area, 1) then
+		return { outline }
+	end
+	return tris
+end
+
+-- The parts of a seam triangle its neighbour's covers on the same plane leave
+-- uncovered, as convex polygons. Slivers thinner
+-- than a hair are dropped as rounding noise.
+local SLIVER = 1e-6
+local function uncovered(tri, cover, plane)
+	local normal = { plane[1], plane[2], plane[3] }
+	local pieces = { tri }
+	for _, c in cover do
+		local remaining = {}
+		for _, piece in pieces do
+			-- A piece clear of this cover triangle's box keeps whole.
+			local clear = false
+			for axis = 1, 3 do
+				local low, high = math.huge, -math.huge
+				for _, p in c do
+					low, high = math.min(low, p[axis]), math.max(high, p[axis])
+				end
+				local pieceLow, pieceHigh = math.huge, -math.huge
+				for _, p in piece do
+					pieceLow, pieceHigh = math.min(pieceLow, p[axis]), math.max(pieceHigh, p[axis])
+				end
+				if pieceLow > high or pieceHigh < low then
+					clear = true
+					break
+				end
+			end
+			if clear then
+				table.insert(remaining, piece)
+				continue
+			end
+			local rest = piece
+			local centre = { 0, 0, 0 }
+			for _, p in c do
+				centre = { centre[1] + p[1] / #c, centre[2] + p[2] / #c, centre[3] + p[3] / #c }
+			end
+			for e = 1, #c do
+				local p, q = c[e], c[e % #c + 1]
+				local edge = cross({ q[1] - p[1], q[2] - p[2], q[3] - p[3] }, normal)
+				local length = math.sqrt(dot(edge, edge))
+				if length > 1e-9 then
+					edge = { edge[1] / length, edge[2] / length, edge[3] / length }
+					if dot(edge, { centre[1] - p[1], centre[2] - p[2], centre[3] - p[3] }) > 0 then
+						edge = { -edge[1], -edge[2], -edge[3] }
+					end
+					local inside, outside = split(rest, { edge[1], edge[2], edge[3], dot(edge, p) })
+					if #outside >= 3 and polygonArea(outside) > SLIVER then
+						table.insert(remaining, outside)
+					end
+					rest = inside
+					if #rest < 3 then
+						break
+					end
+				end
+			end
+		end
+		pieces = remaining
+	end
+	return pieces
+end
+
+-- Whether a polygon sits wholly inside the body, a hair in from its wall so
+-- the body's flat-sided rings still cover it. Corners, edge midpoints and the
+-- centre are tested, so a long face can't bow out between them.
+local BODY_MARGIN = 0.15
+local function insideBody(polygon): boolean
+	local function inside(p): boolean
+		if p[3] > CAP_TOP - BODY_MARGIN or p[3] < RIM_Z + BODY_MARGIN then
+			return false
+		end
+		local t = (CAP_TOP - p[3]) / DEPTH
+		local angle = math.atan2(p[2], p[1])
+		local reach = RADIUS * WALL_REACH * shareAt(t) * outlineScale(angle)
+		return math.sqrt(p[1] * p[1] + p[2] * p[2]) < reach - BODY_MARGIN
+	end
+	local centre = { 0, 0, 0 }
+	for k, p in polygon do
+		local q = polygon[k % #polygon + 1]
+		if not inside(p) or not inside({ (p[1] + q[1]) / 2, (p[2] + q[2]) / 2, (p[3] + q[3]) / 2 }) then
+			return false
+		end
+		centre = { centre[1] + p[1], centre[2] + p[2], centre[3] + p[3] }
+	end
+	return inside({ centre[1] / #polygon, centre[2] / #polygon, centre[3] / #polygon })
+end
+
+-- The stone faces nobody sees, kept only so the bake still shades with them.
+local hiddenRocks = Mesh.new()
+
 local function buildRocks(mesh)
+	local stones = {}
 	for i, seed in seeds do
 		-- Stones shrink with the wall, so the bottom rows are chips rather
 		-- than full-size boulders crowded round a point.
@@ -1304,6 +1487,7 @@ local function buildRocks(mesh)
 		-- Keep the flat top clear.
 		tris = clip(tris, { 0, 0, 1, CAP_TOP - 0.2 })
 		-- The fit: cut against every nearby seed, so neighbours share planes.
+		local seams = {}
 		for j, other in seeds do
 			if j ~= i then
 				local dx, dy, dz = other[1] - seed[1], other[2] - seed[2], other[3] - seed[3]
@@ -1315,28 +1499,81 @@ local function buildRocks(mesh)
 					local seedSq = seed[1] ^ 2 + seed[2] ^ 2 + seed[3] ^ 2
 					local otherSq = other[1] ^ 2 + other[2] ^ 2 + other[3] ^ 2
 					local offset = (otherSq - seedSq + seed.weight - other.weight) / (2 * distance)
-					tris = clip(tris, { n[1], n[2], n[3], offset })
+					local plane = { n[1], n[2], n[3], offset }
+					tris = clip(tris, plane)
+					table.insert(seams, { other = j, plane = plane })
 				end
 			end
 		end
-		for _, tri in tris do
+		-- Wind every triangle outward from the seed.
+		for k, tri in tris do
 			local a, b, c = tri[1], tri[2], tri[3]
 			local n = cross({ b[1] - a[1], b[2] - a[2], b[3] - a[3] }, { c[1] - a[1], c[2] - a[2], c[3] - a[3] })
 			local mid = { (a[1] + b[1] + c[1]) / 3, (a[2] + b[2] + c[2]) / 3, (a[3] + b[3] + c[3]) / 3 }
 			local facing = n[1] * (mid[1] - seed[1]) + n[2] * (mid[2] - seed[2]) + n[3] * (mid[3] - seed[3])
 			if facing < 0 then
-				a, b, c = a, c, b
+				tris[k] = { a, c, b }
 			end
-			mesh:face({
-				mesh:vertex(a[1], a[2], a[3]),
-				mesh:vertex(b[1], b[2], b[3]),
-				mesh:vertex(c[1], c[2], c[3]),
+		end
+		stones[i] = { tris = tris, seams = seams }
+	end
+	-- Only the faces anyone can see go in the mesh. A seam face loses the part
+	-- its neighbour's matching face covers, and anything left wholly inside the
+	-- body goes too. The dropped faces still shade the stones and the body,
+	-- through the hidden part.
+	local function emit(target, polygon)
+		for k = 2, #polygon - 1 do
+			local a, b, c = polygon[1], polygon[k], polygon[k + 1]
+			target:face({
+				target:vertex(a[1], a[2], a[3]),
+				target:vertex(b[1], b[2], b[3]),
+				target:vertex(c[1], c[2], c[3]),
 			})
+		end
+	end
+	-- Each stone's faces sorted by the seam they lie on, keyed by neighbour.
+	for _, stone in stones do
+		stone.onSeam, stone.seamOf = {}, {}
+		for k, tri in stone.tris do
+			for _, seam in stone.seams do
+				if onPlane(tri, seam.plane) then
+					stone.onSeam[seam.other] = stone.onSeam[seam.other] or {}
+					table.insert(stone.onSeam[seam.other], tri)
+					stone.seamOf[k] = seam
+					break
+				end
+			end
+		end
+	end
+	for i, stone in stones do
+		for k, tri in stone.tris do
+			local pieces = { tri }
+			local seam = stone.seamOf[k]
+			if seam then
+				local other = stones[seam.other]
+				other.covers = other.covers or {}
+				other.covers[i] = other.covers[i] or seamCover(other.onSeam[i] or {}, seam.plane)
+				pieces = uncovered(tri, other.covers[i], seam.plane)
+			end
+			-- A face that loses any part keeps its whole self in the hidden
+			-- part, so the bake still sees every stone as it was.
+			local whole = #pieces == 1 and pieces[1] == tri
+			for _, polygon in pieces do
+				if insideBody(polygon) then
+					whole = false
+				else
+					emit(mesh, polygon)
+				end
+			end
+			if not whole then
+				emit(hiddenRocks, tri)
+			end
 		end
 	end
 	-- Weld so the shading can run smooth over each stone; the crease angle in
 	-- part() keeps the cut faces and the seams sharp.
 	mesh:weld(1e-4)
+	hiddenRocks:weld(1e-4)
 end
 
 -- The parts and their shading are cached under a key hashing every line above
@@ -1346,8 +1583,16 @@ end
 local baked = model.cached(CACHE_KEY, function()
 	part("Body", nil, { 0.33, 0.3, 0.26 }, buildBody, nil, 0)
 	part("Rocks", nil, { 0.37, 0.34, 0.29 }, buildRocks, nil, 0, 512)
+	-- The hidden faces join the rocks' group, so the stones still shade with
+	-- them as their own surfaces and the body still takes their shadows. Marked
+	-- emissive, finishParts skips baking them, and they are left out below.
+	parts[#parts].group = "Rocks"
+	table.insert(parts, { name = "HiddenRocks", mesh = hiddenRocks, emissive = 1, group = "Rocks" })
 	local addPart, collected = model.part, {}
 	model.part = function(name, mesh, image, options)
+		if name == "HiddenRocks" then
+			return
+		end
 		table.insert(collected, { name = name, mesh = mesh, image = image, preview = options.preview, emissive = options.emissive })
 	end
 	finishParts()
