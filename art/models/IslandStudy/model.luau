@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-c0b8bdb17905b1bc"
+local CACHE_KEY = "IslandStudy-628586312a0661ed"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1816,8 +1816,8 @@ local SOIL_RIDGE, SOIL_RIDGE_SPACING = 0.17, 5.5
 local SOIL_LUMP = 0.14
 -- How far the bead's outer edge sits past the stones' top edge, on average,
 -- and how far either way it wanders; then the drips.
-local SOIL_OVERHANG, SOIL_OVERHANG_SPREAD = 0.45, 0.9
-local SOIL_DRIPS, SOIL_DRIP_WIDTH = 6, 0.07
+local SOIL_OVERHANG, SOIL_OVERHANG_SPREAD = 0.9, 2
+local SOIL_DRIPS, SOIL_DRIP_WIDTH = 10, 0.09
 local SOIL_COLOUR = { 0.34, 0.235, 0.15 }
 local BEAD_STEPS = 8
 local UNDER_RINGS = { 0.5, 1.2, 2.2, 3.5 }
@@ -1896,7 +1896,7 @@ local function buildSoil(mesh, visible)
 		over += 0.8 * drip
 		local outer = stoneEdge[j] + over
 		-- The bead hangs lower where it is past the stones, and lowest at a drip.
-		local droop = 0.3 * math.clamp(over / 1.5, 0, 1) + 0.75 * drip
+		local droop = 1 * math.clamp(over / 2.5, 0, 1) + 1.6 * drip
 		local bottom = SOIL_BASE - droop
 		-- The bead: its top meets the surface level, its round runs out to `outer`.
 		local probe = outer - 1
