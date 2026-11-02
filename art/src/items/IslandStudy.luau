@@ -45,6 +45,23 @@ local POINT_LENGTH, POINT_BACK, POINT_SHIFT = 1.2, 0.45, 0.35
 local CRACK_SHARE, CRACK_LEVEL_SHARE = 0, 0.65
 local CRACK_SHIFT, CRACK_TILT = 0.35, 0.25
 local CRACK_BEVEL = 0.35
+-- Painted cracks: 1 to CRACK_LINES_MAX per stone, each where the stone meets
+-- a plane through it, starting at an edge and reaching CRACK_LINE_REACH_MIN
+-- to CRACK_LINE_REACH_MAX of the half-width in, narrowing to nothing.
+-- CRACK_LINE_LEVEL of them run level, the rest down from the top, sloping by
+-- up to CRACK_LINE_SLOPE. A dark core CRACK_LINE_WIDTH studs either side
+-- (CRACK_LINE_DARK at its darkest), a cream lip CRACK_LINE_LIP studs wide on
+-- the lit side, a wobble of CRACK_LINE_WOBBLE studs, and on CRACK_LINE_BRANCH
+-- of them a branch off partway along. They wrap CRACK_LINE_WRAP studs past
+-- the starting edge onto the next face.
+local CRACK_LINES_MAX = 2
+local CRACK_LINE_REACH_MIN, CRACK_LINE_REACH_MAX = 0.7, 1.4
+local CRACK_LINE_LEVEL, CRACK_LINE_SLOPE = 0.6, 0.3
+local CRACK_LINE_WIDTH, CRACK_LINE_DARK = 0.2, 0.2
+local CRACK_LINE_LIP = 0.3
+local CRACK_LINE_WOBBLE = 0.15
+local CRACK_LINE_BRANCH = 0.5
+local CRACK_LINE_WRAP = 1.5
 local ROWS_FROM, ROWS_TO = 0.1, 0.86
 local ROW_GROWTH = 1.45
 local ROCK_WIDTH_TOP, ROCK_WIDTH_BOTTOM = 10, 4.5
@@ -748,6 +765,8 @@ end
 local stoneSpan = {}
 -- Each stone's cut planes, kept for the edge highlight in the paint.
 local stoneCuts = {}
+-- Each stone's painted cracks: plane, start point, direction in and reach.
+local stoneCracks = {}
 local function buildRocks()
 	local stones = {}
 	for i, seed in seeds do
@@ -856,6 +875,59 @@ local function buildRocks()
 			toward({ -across[1], -across[2], -across[3] }, half + shift, 6)
 			toward(face, back, 7)
 		end
+		-- The painted cracks, laid out in the block's frame: level ones in
+		-- from a side edge, upright ones down from the top edge.
+		local cracks = {}
+		local tall = half * BLOCK_HEIGHT
+		for k = 1, 1 + math.floor(hash(SEED * 113 + i * 7.7) * CRACK_LINES_MAX) do
+			local key = SEED * 127 + i * 13 + k * 17.3
+			local slope = (2 * hash(key + 1) - 1) * CRACK_LINE_SLOPE
+			local start, dir
+			if hash(key + 2) < CRACK_LINE_LEVEL then
+				local from = if hash(key + 3) < 0.5 then -1 else 1
+				local height = (2 * hash(key + 4) - 1) * 0.6 * tall
+				start = {
+					centre[1] + across[1] * from * half + up[1] * height,
+					centre[2] + across[2] * from * half + up[2] * height,
+					centre[3] + across[3] * from * half + up[3] * height,
+				}
+				dir = normalize({
+					-across[1] * from + up[1] * slope,
+					-across[2] * from + up[2] * slope,
+					-across[3] * from + up[3] * slope,
+				})
+			else
+				local offset = (2 * hash(key + 4) - 1) * 0.6 * half
+				start = {
+					centre[1] + up[1] * tall + across[1] * offset,
+					centre[2] + up[2] * tall + across[2] * offset,
+					centre[3] + up[3] * tall + across[3] * offset,
+				}
+				dir = normalize({
+					-up[1] + across[1] * slope,
+					-up[2] + across[2] * slope,
+					-up[3] + across[3] * slope,
+				})
+			end
+			local reach = (CRACK_LINE_REACH_MIN + (CRACK_LINE_REACH_MAX - CRACK_LINE_REACH_MIN) * hash(key + 5)) * half
+			local n = normalize(cross(dir, face))
+			table.insert(cracks, { n = n, offset = dot(n, start), start = start, dir = dir, reach = reach, wrap = CRACK_LINE_WRAP })
+			if hash(key + 6) < CRACK_LINE_BRANCH then
+				-- The branch leaves partway along, turned 30 to 50 degrees.
+				local fork = reach * (0.35 + 0.35 * hash(key + 7))
+				local from = { start[1] + dir[1] * fork, start[2] + dir[2] * fork, start[3] + dir[3] * fork }
+				local turn = math.rad(30 + 20 * hash(key + 8)) * (if hash(key + 9) < 0.5 then -1 else 1)
+				local side = cross(face, dir)
+				local branch = normalize({
+					dir[1] * math.cos(turn) + side[1] * math.sin(turn),
+					dir[2] * math.cos(turn) + side[2] * math.sin(turn),
+					dir[3] * math.cos(turn) + side[3] * math.sin(turn),
+				})
+				local bn = normalize(cross(branch, face))
+				table.insert(cracks, { n = bn, offset = dot(bn, from), start = from, dir = branch, reach = reach * 0.45, wrap = 0 })
+			end
+		end
+		stoneCracks[i] = cracks
 		-- The worn edges. An edge exists where two cuts share at least two of
 		-- the stone's corners. Each is rounded by planes tangent to a cylinder
 		-- of the bevel's radius sitting inside both cuts, at normals stepped
@@ -1288,6 +1360,33 @@ local function stonePaint(base, members)
 				nearest, second = d, nearest
 			elseif d < second then
 				second = d
+			end
+		end
+		-- Painted cracks: a dark core along each crack plane, narrowing toward
+		-- its end, with a cream lip on the side facing the light.
+		for _, crack in stoneCracks[last] or {} do
+			local px, py, pz = x - crack.start[1], y - crack.start[2], z - crack.start[3]
+			local along = px * crack.dir[1] + py * crack.dir[2] + pz * crack.dir[3]
+			if along > -crack.wrap and along < crack.reach then
+				local taper = if along <= 0 then 1 else (1 - along / crack.reach) ^ 0.7
+				local n = crack.n
+				local d = n[1] * x + n[2] * y + n[3] * z - crack.offset
+					+ CRACK_LINE_WOBBLE * math.noise(x / 1.6, y / 1.6, z / 1.6 + 353)
+				local width = CRACK_LINE_WIDTH * taper
+				local lit = if n[1] * FACET_KEY[1] + n[2] * FACET_KEY[2] + n[3] * FACET_KEY[3] < 0 then 1 else -1
+				local core = math.clamp(1 - math.abs(d) / math.max(width, 1e-3), 0, 1)
+				core = core * core * (3 - 2 * core)
+				local dark = 1 - (1 - CRACK_LINE_DARK) * core
+				colour = { colour[1] * dark, colour[2] * dark, colour[3] * dark }
+				local beyond = d * lit - width
+				if beyond > 0 and beyond < CRACK_LINE_LIP * taper then
+					local lip = (1 - beyond / (CRACK_LINE_LIP * taper)) * 0.6 * taper
+					colour = {
+						colour[1] + (EDGE_COLOUR[1] - colour[1]) * lip,
+						colour[2] + (EDGE_COLOUR[2] - colour[2]) * lip,
+						colour[3] + (EDGE_COLOUR[3] - colour[3]) * lip,
+					}
+				end
 			end
 		end
 		local rim = math.clamp(1 - second / EDGE_WIDTH, 0, 1)
