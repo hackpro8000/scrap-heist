@@ -59,6 +59,15 @@ local ROUND_MIN_FOLD = math.cos(math.rad(10))
 -- tops reach the flat-top cut just under the cap.
 local LIP_OUT, LIP_SPREAD = 1, 1
 local LIP_RISE = 1.2
+-- Seam soil: a bead of soil settled into each seam between stones that reaches
+-- the top, running from under the soil's lip SEAM_SOIL_MIN to SEAM_SOIL_MAX
+-- studs further down. SEAM_SOIL_WIDTH studs across and SEAM_SOIL_PROUD out
+-- past the crease at the lip, tapering to nothing at its end, in
+-- SEAM_SOIL_STEPS rings of SEAM_SOIL_SIDES segments.
+local SEAM_SOIL_MIN, SEAM_SOIL_MAX = 4, 6
+local SEAM_SOIL_WIDTH = 0.7
+local SEAM_SOIL_PROUD = 0.25
+local SEAM_SOIL_STEPS, SEAM_SOIL_SIDES = 6, 4
 local ANGLES, STEPS = 128, 28
 local TAU = 2 * math.pi
 -- Texture detail in pixels per stud. The stones are split into parts by angle
@@ -839,7 +848,7 @@ local function buildRocks()
 	end
 	local visible = {}
 	for i, stone in stones do
-		visible[i] = { polygons = {}, area = 0 }
+		visible[i] = { polygons = {}, area = 0, seams = stone.seams }
 		for k, tri in stone.tris do
 			local pieces = { tri }
 			local seam = stone.seamOf[k]
@@ -1223,6 +1232,112 @@ local function buildSoil(mesh, visible)
 	end
 end
 
+-- Soil settled into the seams. For each pair of neighbouring stones, the
+-- seam's outer edge is traced from their visible corners lying on the shared
+-- plane (the outermost one per height band), and a half-round bead runs down
+-- it from the stones' tops, under the soil's lip, tapering to a point.
+local function buildSeamSoil(mesh, visible)
+	local top = CAP_TOP - 0.2
+	local lip = CAP_TOP - SOIL_HANG * DEPTH
+	for i, stone in visible do
+		for _, seam in stone.seams do
+			local j, plane = seam.other, seam.plane
+			if j < i or not visible[j] then
+				continue
+			end
+			local length = SEAM_SOIL_MIN + (SEAM_SOIL_MAX - SEAM_SOIL_MIN) * hash(SEED * 401 + i * 13.1 + j * 7.7)
+			local bottom = lip - length
+			-- The outermost corner on the seam per band, from both stones.
+			local band = (top - bottom) / SEAM_SOIL_STEPS
+			local outer = {}
+			for _, owner in { stone, visible[j] } do
+				for _, polygon in owner.polygons do
+					for _, p in polygon do
+						if math.abs(planeDistance(plane, p)) < 1e-3 and p[3] <= top + 0.05 and p[3] >= bottom - band then
+							local b = math.clamp(math.floor((top - p[3]) / band), 0, SEAM_SOIL_STEPS)
+							local r = p[1] * p[1] + p[2] * p[2]
+							if not outer[b] or r > outer[b].r then
+								outer[b] = { r = r, p = p }
+							end
+						end
+					end
+				end
+			end
+			-- Only seams that reach the top band, near the lip.
+			if not outer[0] then
+				continue
+			end
+			local found = {}
+			for b = 0, SEAM_SOIL_STEPS do
+				if outer[b] then
+					table.insert(found, outer[b].p)
+				end
+			end
+			local function edgeAt(z: number): { number }
+				local above = found[1]
+				for _, p in found do
+					if p[3] >= z then
+						above = p
+					else
+						local t = (above[3] - z) / math.max(above[3] - p[3], 1e-6)
+						return { above[1] + (p[1] - above[1]) * t, above[2] + (p[2] - above[2]) * t, z }
+					end
+				end
+				return { above[1], above[2], z }
+			end
+			-- Across the seam, and outward from the crease along the plane.
+			local across = { plane[1], plane[2], plane[3] }
+			local rings, flip = {}, false
+			for s = 0, SEAM_SOIL_STEPS - 1 do
+				local z = top - (top - bottom) * s / SEAM_SOIL_STEPS
+				local centre = edgeAt(z)
+				local radial = normalize({ centre[1], centre[2], 0 })
+				local out = normalize({
+					radial[1] - across[1] * dot(radial, across),
+					radial[2] - across[2] * dot(radial, across),
+					radial[3] - across[3] * dot(radial, across),
+				})
+				-- Wind the faces outward: ring order runs from +across over the top.
+				if s == 0 then
+					flip = dot(cross({ 0, 0, -1 }, out), across) < 0
+				end
+				-- Full down to the lip, then tapering, its width wobbling.
+				local taper = math.clamp((z - bottom) / math.max(lip - bottom, 1e-6), 0, 1) ^ 0.7
+				local wobble = 1 + 0.3 * math.noise(centre[1] / 1.5, centre[2] / 1.5, z / 1.5 + 421)
+				local width, proud = SEAM_SOIL_WIDTH * taper * wobble, SEAM_SOIL_PROUD * taper * wobble
+				local ring = {}
+				for k = 0, SEAM_SOIL_SIDES do
+					local theta = math.pi * k / SEAM_SOIL_SIDES
+					local a, o = width * math.cos(theta), proud * math.sin(theta) - 0.1
+					ring[k] = mesh:vertex(
+						centre[1] + across[1] * a + out[1] * o,
+						centre[2] + across[2] * a + out[2] * o,
+						centre[3] + across[3] * a + out[3] * o
+					)
+				end
+				rings[s] = ring
+			end
+			local tip = edgeAt(bottom)
+			local tipVertex = mesh:vertex(tip[1], tip[2], tip[3])
+			local function face(p, q, r)
+				mesh:face(if flip then { p, r, q } else { p, q, r })
+			end
+			for s = 0, SEAM_SOIL_STEPS - 1 do
+				local a = rings[s]
+				local b = rings[s + 1]
+				for k = 0, SEAM_SOIL_SIDES - 1 do
+					if b then
+						face(a[k], b[k], b[k + 1])
+						face(a[k], b[k + 1], a[k + 1])
+					else
+						face(a[k], tipVertex, a[k + 1])
+					end
+				end
+			end
+		end
+	end
+end
+
 -- The soil's coat: the brown shifted in soft wide patches and fine grain,
 -- warmed on top and cooled below like the stones.
 local soilPaint = rusting(0, function(x, y, z, _nx, _ny, nz)
@@ -1252,6 +1367,7 @@ local baked = model.cached(CACHE_KEY, function()
 	-- with the stones' bold painted highlights.
 	chunkedPart("Soil", nil, SOIL_COLOUR, function(mesh)
 		buildSoil(mesh, visible)
+		buildSeamSoil(mesh, visible)
 	end, true, soilPaint, true, 1, nil, nil, islandRange)
 	for _, entry in parts do
 		if entry.group == "Soil" then
