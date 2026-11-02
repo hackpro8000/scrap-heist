@@ -882,6 +882,17 @@ end
 local STONE_BRIGHTNESS, STONE_WARMTH = 0.08, 1
 -- How far the light's colour shifts each channel: warm on tops, cool below.
 local SKY_TINT = 0.1
+-- Moss on the stones' upward faces near the rim: solid painted patches with
+-- a ragged edge, a muted green, thinning out over MOSS_FADE studs below the
+-- top. MOSS_UP is the normal z a face needs; MOSS_COVER is the share of
+-- upward faces at the rim it covers; MOSS_PATCH is the patch size in studs
+-- and MOSS_RAGGED how much the finer noise wobbles the patch edges.
+local MOSS_COLOUR = { 0.34, 0.4, 0.2 }
+local MOSS_UP = 0.6
+local MOSS_COVER = 0.45
+local MOSS_FADE = 9
+local MOSS_PATCH = 3.5
+local MOSS_RAGGED = 0.22
 local stoneNeighbours, stoneColour = {}, {}
 for i, seed in seeds do
 	stoneNeighbours[i] = {}
@@ -936,9 +947,30 @@ local function stonePaint(base, members)
 		local up = math.clamp(nz, -1, 1)
 		local warm, cool = math.max(up, 0), math.max(-up, 0)
 		local tint = SKY_TINT
-		return colour[1] * (1 + tint * (warm - 0.6 * cool)),
-			colour[2] * (1 + tint * (0.5 * warm - 0.3 * cool)),
-			colour[3] * (1 + tint * (-warm + cool))
+		local r = colour[1] * (1 + tint * (warm - 0.6 * cool))
+		local g = colour[2] * (1 + tint * (0.5 * warm - 0.3 * cool))
+		local b = colour[3] * (1 + tint * (-warm + cool))
+		-- Moss: a slow noise picks the patches, a fast one roughens their edges,
+		-- and the threshold climbs with depth below the top and on steeper
+		-- faces, so patches shrink away instead of fading.
+		if up <= MOSS_UP then
+			return r, g, b
+		end
+		local high = 1 - math.clamp((CAP_TOP - z) / MOSS_FADE, 0, 1)
+		local flat = math.clamp((up - MOSS_UP) / (1 - MOSS_UP), 0, 1)
+		local reach = MOSS_COVER * high * math.sqrt(flat)
+		if reach <= 0 then
+			return r, g, b
+		end
+		local patch = math.noise(x / MOSS_PATCH, y / MOSS_PATCH, z / MOSS_PATCH + 97)
+			+ MOSS_RAGGED * math.noise(x * 1.3, y * 1.3, z * 1.3 + 131)
+		-- math.noise spreads roughly over -0.5..0.5, so this threshold covers
+		-- about `reach` of the faces.
+		if patch < 0.45 - reach * 0.9 then
+			return r, g, b
+		end
+		local shade = 1 + 0.08 * math.noise(x / 1.2, y / 1.2, 151)
+		return MOSS_COLOUR[1] * shade, MOSS_COLOUR[2] * shade, MOSS_COLOUR[3] * shade
 	end)
 end
 
