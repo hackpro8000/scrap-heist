@@ -897,7 +897,7 @@ local baked = model.cached(CACHE_KEY, function()
 		parts[#parts].heightRange = islandRange
 		parts[#parts].wide = 4
 		parts[#parts].edge = 1
-		parts[#parts].crisp = true
+		parts[#parts].painted = true
 	end
 	-- The hidden faces join the rocks' group, so the stones still shade with
 	-- them as their own surfaces and the body still takes their shadows. Marked
