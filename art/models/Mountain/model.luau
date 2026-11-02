@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-d1908c048d1f3f2d"
+local CACHE_KEY = "Mountain-8a23f7cbfe48ebd3"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -968,6 +968,6 @@ part("Columns", nil, STONE, function(mesh)
 			})
 		end
 	end
-end, false, 0.1, nil, nil, true)
+end, false, 0.1, 1024, nil, true)
 
 finishParts()
