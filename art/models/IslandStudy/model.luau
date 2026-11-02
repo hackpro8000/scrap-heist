@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-47fb06e69df07c87"
+local CACHE_KEY = "IslandStudy-c0b8bdb17905b1bc"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -810,7 +810,8 @@ end
 -- stones are fitted round, kept for the bake but not exported. Over the wall sit fitted rock
 -- cells: each one a displaced blob cut by the bisector planes to its
 -- neighbours, so the stones meet exactly, then sliced with a few facet
--- planes so they read as cut stone rather than balls.
+-- planes so they read as cut stone rather than balls. A thick layer of soil
+-- is spread over the top and the rim stones' tops.
 local SEED = 1
 local RADIUS = 30
 -- How deep the underside hangs, as a share of the radius.
@@ -1212,19 +1213,6 @@ for i, seed in seeds do
 	seamRadius[i] = needed
 end
 cellRadius = seamRadius
-
--- The flat top players stand on: a fan over the rim's outline.
-local function buildTop(mesh)
-	local top = mesh:vertex(0, 0, CAP_TOP)
-	local rim = {}
-	for j = 0, ANGLES - 1 do
-		local p = wallPoint(TAU * j / ANGLES, 0)
-		rim[j] = mesh:vertex(p[1], p[2], p[3])
-	end
-	for j = 0, ANGLES - 1 do
-		mesh:face({ top, rim[j], rim[(j + 1) % ANGLES] })
-	end
-end
 
 -- The body under the top: the wall and underside the stones were fitted
 -- round. It is never exported, only shaded against.
@@ -1813,6 +1801,156 @@ local function stonePaint(base, members)
 	end)
 end
 
+-- The soil: a thick layer spread like peanut butter over the flat top and on
+-- over the rim stones' tops, ending in a rounded bead that overhangs the
+-- stones unevenly with a few drips. It hides the old flat top completely, so
+-- it replaces it. Built as one sheet over a polar grid: the top surface out
+-- to the bead, round the bead, then a short way back in underneath (the rest
+-- of the underside sits inside the stones, so it is left open).
+local SOIL_ANGLES, SOIL_RINGS = 192, 24
+-- Where the soil rests: just under the stones' cut tops, so no face is shared.
+local SOIL_BASE = CAP_TOP - 0.25
+-- Thickness above the old flat top's height, and the knife-stroke ridges and lumps.
+local SOIL_THICKNESS = 1.15
+local SOIL_RIDGE, SOIL_RIDGE_SPACING = 0.17, 5.5
+local SOIL_LUMP = 0.14
+-- How far the bead's outer edge sits past the stones' top edge, on average,
+-- and how far either way it wanders; then the drips.
+local SOIL_OVERHANG, SOIL_OVERHANG_SPREAD = 0.45, 0.9
+local SOIL_DRIPS, SOIL_DRIP_WIDTH = 6, 0.07
+local SOIL_COLOUR = { 0.34, 0.235, 0.15 }
+local BEAD_STEPS = 8
+local UNDER_RINGS = { 0.5, 1.2, 2.2, 3.5 }
+
+local soilPhase = {}
+for i = 1, 4 do
+	soilPhase[i] = hash(SEED * 301 + i) * TAU
+end
+local drips = {}
+for d = 1, SOIL_DRIPS do
+	drips[d] = { angle = hash(SEED * 311 + d) * TAU, size = 0.6 + 0.4 * hash(SEED * 313 + d) }
+end
+
+-- Thickness at a point: wide gentle strokes whose direction turns slowly over
+-- the island, plus soft lumps, kept to 0.8-1.5 studs.
+local function soilThickness(x: number, y: number): number
+	local turn = 1.4 * math.noise(x / 22, y / 22, 7.3) + soilPhase[1]
+	local along = x * math.cos(turn) + y * math.sin(turn) + 1.8 * math.noise(x / 9, y / 9, 3.1)
+	local ridge = math.sin(along / SOIL_RIDGE_SPACING * TAU)
+	local lump = math.noise(x / 4.5, y / 4.5, 11.7)
+	return math.clamp(SOIL_THICKNESS + SOIL_RIDGE * ridge + SOIL_LUMP * lump, 0.8, 1.5)
+end
+
+-- The stones' top edge per angle: the furthest point of their cut tops, with
+-- the gaps between stones bridged and smoothed so the soil follows them loosely.
+local function stoneTopEdge(visible)
+	local edge = {}
+	for _, stone in visible do
+		for _, polygon in stone.polygons do
+			for _, p in polygon do
+				if p[3] > CAP_TOP - 0.25 then
+					local j = math.floor((math.atan2(p[2], p[1]) % TAU) / TAU * SOIL_ANGLES + 0.5) % SOIL_ANGLES
+					local r = math.sqrt(p[1] * p[1] + p[2] * p[2])
+					edge[j] = math.max(edge[j] or 0, r)
+				end
+			end
+		end
+	end
+	local widened = {}
+	for j = 0, SOIL_ANGLES - 1 do
+		local best = 0
+		for k = -3, 3 do
+			best = math.max(best, edge[(j + k) % SOIL_ANGLES] or 0)
+		end
+		if best == 0 then
+			local p = wallPoint(TAU * j / SOIL_ANGLES, 0)
+			best = math.sqrt(p[1] * p[1] + p[2] * p[2]) + 1
+		end
+		widened[j] = best
+	end
+	local smooth = {}
+	for j = 0, SOIL_ANGLES - 1 do
+		local sum = 0
+		for k = -4, 4 do
+			sum += widened[(j + k) % SOIL_ANGLES]
+		end
+		smooth[j] = sum / 9
+	end
+	return smooth
+end
+
+local function buildSoil(mesh, visible)
+	local stoneEdge = stoneTopEdge(visible)
+	local columns = {}
+	for j = 0, SOIL_ANGLES - 1 do
+		local angle = TAU * j / SOIL_ANGLES
+		local c, s = math.cos(angle), math.sin(angle)
+		local wander = 0.5 * math.sin(3 * angle + soilPhase[2]) + 0.3 * math.sin(7 * angle + soilPhase[3])
+			+ 0.2 * math.sin(13 * angle + soilPhase[4])
+		local over = SOIL_OVERHANG + SOIL_OVERHANG_SPREAD * wander
+		local drip = 0
+		for _, d in drips do
+			local gap = (angle - d.angle + math.pi) % TAU - math.pi
+			drip = math.max(drip, d.size * math.exp(-((gap / SOIL_DRIP_WIDTH) ^ 2)))
+		end
+		over += 0.8 * drip
+		local outer = stoneEdge[j] + over
+		-- The bead hangs lower where it is past the stones, and lowest at a drip.
+		local droop = 0.3 * math.clamp(over / 1.5, 0, 1) + 0.75 * drip
+		local bottom = SOIL_BASE - droop
+		-- The bead: its top meets the surface level, its round runs out to `outer`.
+		local probe = outer - 1
+		local top = SOIL_BASE + 0.25 + soilThickness(probe * c, probe * s)
+		local half = (top - bottom) / 2
+		local width = half * (0.85 + 0.25 * hash(SEED * 331 + j))
+		local centre = outer - width
+		local column = {}
+		for k = 1, SOIL_RINGS do
+			local r = centre * k / SOIL_RINGS
+			local x, y = r * c, r * s
+			local z = SOIL_BASE + 0.25 + soilThickness(x, y)
+			-- Ease the last stretch onto the bead's top so the surface runs on smooth.
+			local blend = math.clamp((k / SOIL_RINGS - 0.85) / 0.15, 0, 1)
+			z += (top - z) * blend * blend
+			table.insert(column, mesh:vertex(x, y, z))
+		end
+		local middle = (top + bottom) / 2
+		for step = 1, BEAD_STEPS do
+			local phi = math.pi * step / BEAD_STEPS
+			local r = centre + width * math.sin(phi)
+			table.insert(column, mesh:vertex(r * c, r * s, middle + half * math.cos(phi)))
+		end
+		for _, inward in UNDER_RINGS do
+			local r = centre - inward
+			local z = SOIL_BASE - droop * math.exp(-((inward / 1.2) ^ 2))
+			table.insert(column, mesh:vertex(r * c, r * s, z))
+		end
+		columns[j] = column
+	end
+	local middle = mesh:vertex(0, 0, SOIL_BASE + 0.25 + soilThickness(0, 0))
+	for j = 0, SOIL_ANGLES - 1 do
+		local a, b = columns[j], columns[(j + 1) % SOIL_ANGLES]
+		mesh:face({ middle, a[1], b[1] })
+		for k = 1, #a - 1 do
+			mesh:face({ a[k], a[k + 1], b[k + 1] })
+			mesh:face({ a[k], b[k + 1], b[k] })
+		end
+	end
+end
+
+-- The soil's coat: the brown shifted in soft wide patches and fine grain,
+-- warmed on top and cooled below like the stones.
+local soilPaint = rusting(0, function(x, y, z, _nx, _ny, nz)
+	local patch = math.noise(x / 6, y / 6, z / 6 + 401)
+	local grain = math.noise(x / 0.3, y / 0.3, z / 0.3 + 409)
+	local light = 1 + 0.06 * patch + 0.035 * grain
+	local up = math.clamp(nz, -1, 1)
+	local warm, cool = math.max(up, 0), math.max(-up, 0)
+	return SOIL_COLOUR[1] * light * (1 + SKY_TINT * (warm - 0.6 * cool)),
+		SOIL_COLOUR[2] * light * (1 + SKY_TINT * (0.5 * warm - 0.3 * cool)),
+		SOIL_COLOUR[3] * light * (1 + SKY_TINT * (-warm + cool))
+end)
+
 -- The parts and their shading are cached under a key hashing every line above
 -- "-- cached above", so an unchanged rebuild loads them instead of baking.
 -- finishParts() adds parts straight to the model, so model.part is swapped
@@ -1822,10 +1960,21 @@ local baked = model.cached(CACHE_KEY, function()
 	-- range, so the gradient runs on across every part instead of restarting
 	-- in each.
 	local islandRange = { RIM_Z, CAP_TOP }
-	chunkedPart("Top", nil, { 0.33, 0.3, 0.26 }, buildTop, nil, 0, nil, nil, nil, nil, islandRange)
 	-- The stones go in a few parts of neighbouring stones, all in one group, so
 	-- they shade each other as one surface.
 	local visible = buildRocks()
+	-- The soil replaces the flat top, which it hides completely. Fully smooth,
+	-- with the stones' bold painted highlights.
+	chunkedPart("Soil", nil, SOIL_COLOUR, function(mesh)
+		buildSoil(mesh, visible)
+	end, true, soilPaint, true, 1, nil, nil, islandRange)
+	for _, entry in parts do
+		if entry.group == "Soil" then
+			entry.wide = 4
+			entry.painted = true
+			entry.blend = 1
+		end
+	end
 	for g, members in rockGroups(visible) do
 		-- Flat, since a paint fn would otherwise bring back the warp rust 0 skips.
 		local rock = { 0.37, 0.34, 0.29 }
