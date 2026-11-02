@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-ec7f47ee237e8cda"
+local CACHE_KEY = "IslandStudy-d1e6b84ae5f85825"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -808,10 +808,11 @@ end
 -- The island is a flat top over a wobbly outline with one shallow bay; the
 -- body under it (a cosine wall and a small flat underside) is only a guide the
 -- stones are fitted round, kept for the bake but not exported. Over the wall sit fitted rock
--- cells: each one a displaced blob cut by the bisector planes to its
--- neighbours, so the stones meet exactly, then sliced with a few facet
--- planes so they read as cut stone rather than balls. A thick layer of soil
--- is spread over the top and the rim stones' tops.
+-- cells: each one a solid cut by the bisector planes to its neighbours, so
+-- the stones meet exactly, and faced with one flat plane across its row so
+-- neighbours sit nearly flush. A few tilted planes chip that face, and every
+-- edge is worn, seams included, so the joints read as thin grooves. A thick
+-- layer of soil is spread over the top and the rim stones' tops.
 local SEED = 1
 local RADIUS = 30
 -- How deep the underside hangs, as a share of the radius.
@@ -828,11 +829,17 @@ local WALL_REACH, UNDERSIDE_SHARE = 0.86, 0.03
 -- How sharply the wall draws to that point: 1 is a straight cone, higher
 -- numbers keep the top broad and pull the taper into the lower half.
 local TAPER_POWER = 1.35
--- The rock cells: rows down the wall, roughly how wide a cell is, and how
--- many facet slices each stone gets.
-local ROCK_ROWS = 4
-local ROCK_WIDTH = 7
-local ROCK_FACETS = 7
+-- The rock cells: ROCK_ROWS rows down the wall from ROWS_FROM to ROWS_TO
+-- (shares of the depth), each ROW_GROWTH times taller than the one above, so
+-- the top rows are thin plates and the low rows tall columns. A stone is
+-- ROCK_WIDTH_TOP studs wide in the top row, narrowing to ROCK_WIDTH_BOTTOM in
+-- the lowest.
+local ROCK_ROWS = 5
+-- How many stones to keep while studying the stone shape; nil keeps them all.
+local STUDY_STONES: number? = 3
+local ROWS_FROM, ROWS_TO = 0.1, 0.86
+local ROW_GROWTH = 1.45
+local ROCK_WIDTH_TOP, ROCK_WIDTH_BOTTOM = 10, 4.5
 -- Breaking up the rows: the wall is split into sectors round the island, and
 -- each sector gets ROCK_ROWS plus up to ROW_SPREAD more rows, so the rows
 -- don't line up all the way round.
@@ -844,14 +851,20 @@ local HEIGHT_JITTER, ANGLE_JITTER = 0.3, 0.25
 -- second-row slot into one stone over both rows, and its power weight in
 -- spacing-squared units, so it claims both slots from its neighbours.
 local BIG_STONE_SHARE, BIG_STONE_WEIGHT = 1 / 8, 0.5
--- How many times a cell's blob is split. One is enough: the fitting and the
--- slices do the shaping, and the cells are small on screen.
+-- How many times a cell's ball is split. Only its inside shows nowhere, so
+-- one is enough.
 local ROCK_SUBDIVISIONS = 1
--- The chips: an edge counts as sharp when its two facets' normals agree
--- less than this (0 is a right angle), and the edge and corner cuts go
--- this deep, as a share of the stone's radius.
-local CHIP_SHARPNESS = 0.3
-local CHIP_EDGE, CHIP_CORNER = 0.05, 0.09
+-- The face: each stone's front is one plane across its row, STONE_PROUD
+-- studs out from the wall plus up to PROUD_SPREAD more, less ROW_STEP_IN per
+-- row down, so a lower stone never stands past the one above it.
+local STONE_PROUD, PROUD_SPREAD = 0.6, 0.35
+local ROW_STEP_IN = 0.35
+-- The chips: ROCK_FACETS planes per stone, each tilted FACET_TILT_MIN to
+-- FACET_TILT_MAX degrees off the face, meeting it FACET_REACH_MIN to
+-- FACET_REACH_MAX of the stone's half-width from its middle.
+local ROCK_FACETS = 4
+local FACET_TILT_MIN, FACET_TILT_MAX = 14, 32
+local FACET_REACH_MIN, FACET_REACH_MAX = 0.45, 0.95
 -- The worn edges: every edge two cuts (facets and chips) make is rounded off
 -- with a bevel ROUND_RADIUS studs in radius (at most ROUND_SHARE of the
 -- stone's radius, so small stones keep their facets) in ROUND_SEGMENTS
@@ -1080,49 +1093,75 @@ local function clip(tris, plane)
 	return out
 end
 
--- How far apart stones sit round the wall, from the widest row.
-local spacing = TAU * RADIUS * WALL_REACH * shareAt(0.5) / math.max(6, math.round(TAU * RADIUS * WALL_REACH * shareAt(0.5) / ROCK_WIDTH))
+-- How far apart stones sit round the wall, on average.
+local spacing = (ROCK_WIDTH_TOP + ROCK_WIDTH_BOTTOM) / 2
 
 -- The cells: seeds round the wall in rows. Every slot keeps a stone; size
 -- variety comes from a power weight instead of dropped slots, because a
 -- dropped slot leaves a hole its neighbours may not reach across. The rows
 -- are broken up: each sector has its own row count, each seed wanders in its
 -- slot, and now and then two slots on the upper rows share one big stone.
-local function makeSeed(angle: number, t: number, row: number, key: number)
+-- `band` is the row's height and `width` the slot's, both kept for the face.
+local function makeSeed(angle: number, t: number, row: number, key: number, band: number, width: number)
 	local p = wallPoint(angle, t)
 	local n = wallNormal(angle, t)
-	-- Some seeds sit inside the wall, some just outside, so the cells cut
-	-- the surface at angles rather than all from one shell.
-	local lift = -1.2 + 2.6 * hash(SEED * 71 + key)
+	local radial = { math.cos(angle), math.sin(angle), 0 }
+	-- Seeds sit a little inside the wall at differing depths, so the cells
+	-- cut the surface at angles rather than all from one shell.
+	local lift = -(0.6 + 1.6 * hash(SEED * 71 + key))
 	-- The top row's lip: its seeds move out and up before the fit, so the
 	-- stones stand past the cap's edge and the seams still come out exact.
 	local lip = if row == 0 then LIP_OUT + LIP_SPREAD * hash(SEED * 61 + key) else 0
 	local rise = if row == 0 then LIP_RISE else 0
+	-- The face runs through the wall at the row's top and bottom edges, so
+	-- the rows meet on the wall with no step between them.
+	local top, bottom = wallPoint(angle, math.max(t - band / 2, 0)), wallPoint(angle, t + band / 2)
+	local e = 1e-3
+	local a1, a0 = wallPoint(angle + e, t), wallPoint(angle - e, t)
+	local face = normalize(cross(
+		{ a1[1] - a0[1], a1[2] - a0[2], a1[3] - a0[3] },
+		{ bottom[1] - top[1], bottom[2] - top[2], bottom[3] - top[3] }
+	))
+	if dot(face, radial) < 0 then
+		face = { -face[1], -face[2], -face[3] }
+	end
+	local proud = STONE_PROUD + PROUD_SPREAD * hash(SEED * 67 + key) - ROW_STEP_IN * row
+	local reach = dot(face, top) + proud + lip * dot(face, radial) + rise * face[3]
 	return {
-		p[1] + n[1] * lift + math.cos(angle) * lip,
-		p[2] + n[2] * lift + math.sin(angle) * lip,
+		p[1] + n[1] * lift + radial[1] * lip,
+		p[2] + n[2] * lift + radial[2] * lip,
 		p[3] + n[3] * lift + rise,
-		size = 0.85 + 0.3 * hash(SEED * 53 + key),
 		t = t,
 		row = row,
 		angle = angle,
+		width = width,
+		face = { face[1], face[2], face[3], reach },
 		-- A heavy seed claims more of the wall than a light one. The
 		-- weight is in squared-distance units, so it scales with spacing.
-		weight = (hash(SEED * 57 + key) - 0.5) * spacing * spacing * 0.55,
+		weight = (hash(SEED * 57 + key) - 0.5) * spacing * spacing * 0.4,
 	}
 end
 
 local seeds = {}
 local key = 0
+local tallest = 0
 for sector = 0, ROW_SECTORS - 1 do
 	local from, to = TAU * sector / ROW_SECTORS, TAU * (sector + 1) / ROW_SECTORS
 	local rows = ROCK_ROWS + math.floor(hash(SEED * 83 + sector) * (ROW_SPREAD + 1))
-	local band = (0.86 - 0.1) / rows
-	local sectorSeeds = {}
+	local total = 0
 	for row = 0, rows - 1 do
-		local t = 0.1 + band * (row + 0.5)
+		total += ROW_GROWTH ^ row
+	end
+	local sectorSeeds = {}
+	local start = ROWS_FROM
+	for row = 0, rows - 1 do
+		local band = (ROWS_TO - ROWS_FROM) * ROW_GROWTH ^ row / total
+		tallest = math.max(tallest, band * DEPTH)
+		local t = start + band / 2
+		start += band
+		local width = ROCK_WIDTH_TOP + (ROCK_WIDTH_BOTTOM - ROCK_WIDTH_TOP) * row / (rows - 1)
 		local circumference = TAU * RADIUS * WALL_REACH * shareAt(t)
-		local count = math.max(6, math.round(circumference / ROCK_WIDTH))
+		local count = math.max(5, math.round(circumference / width))
 		local offset = (row % 2) * 0.5
 		for col = 0, count - 1 do
 			-- Slots are spaced over the whole ring, and each sector keeps the
@@ -1133,7 +1172,7 @@ for sector = 0, ROW_SECTORS - 1 do
 				local angle = slotAngle + (2 * hash(SEED * 87 + key) - 1) * ANGLE_JITTER * TAU / count
 				-- The top row keeps its height so the rim stays flush with the cap.
 				local drift = if row == 0 then 0 else (2 * hash(SEED * 89 + key) - 1) * HEIGHT_JITTER * band
-				table.insert(sectorSeeds, makeSeed(angle, t + drift, row, key))
+				table.insert(sectorSeeds, makeSeed(angle, t + drift, row, key, band, circumference / count))
 			end
 		end
 	end
@@ -1158,10 +1197,11 @@ for sector = 0, ROW_SECTORS - 1 do
 					(top[1] + below[1]) / 2,
 					(top[2] + below[2]) / 2,
 					(top[3] + below[3]) / 2,
-					size = math.max(top.size, below.size),
 					t = (top.t + below.t) / 2,
 					row = 0,
 					angle = top.angle,
+					width = math.max(top.width, below.width),
+					face = top.face,
 					weight = BIG_STONE_WEIGHT * spacing * spacing,
 				}
 			end
@@ -1174,11 +1214,27 @@ for sector = 0, ROW_SECTORS - 1 do
 	end
 end
 
-local REACH = spacing * 3.2
+-- The study keeps only the first top-row stone and its nearest neighbours,
+-- so the stone shape can be judged on a few stones before the full wall.
+if STUDY_STONES then
+	local first = seeds[1]
+	local function gap(seed)
+		local dx, dy, dz = seed[1] - first[1], seed[2] - first[2], seed[3] - first[3]
+		return dx * dx + dy * dy + dz * dz
+	end
+	table.sort(seeds, function(a, b)
+		return gap(a) < gap(b)
+	end)
+	for i = #seeds, STUDY_STONES + 1, -1 do
+		seeds[i] = nil
+	end
+end
 
--- Each stone's blob has to reach past the furthest bisector it can be cut
--- by, or the cell never fills its share and a hole appears. So the radius is
--- worked out per cell from its own neighbours, not from one global constant.
+local REACH = math.max(ROCK_WIDTH_TOP, tallest) * 2.2
+
+-- Each stone starts as a ball that has to reach past the furthest bisector it
+-- can be cut by, or the cell never fills its share and a hole appears. So
+-- the radius is worked out per cell from its own neighbours.
 local cellRadius = {}
 for i, seed in seeds do
 	local farthest = spacing
@@ -1191,51 +1247,8 @@ for i, seed in seeds do
 			end
 		end
 	end
-	cellRadius[i] = farthest * 0.62 * (0.75 + 0.25 * shareAt(seed.t))
+	cellRadius[i] = farthest * 0.8
 end
-
--- A stone beside one that stands further out must still reach their shared
--- plane all the way out to the neighbour's face, or the seam opens into a
--- notch. So each blob also grows to cover, on every plane that cuts it, the
--- point level with the neighbour's outer face. The blob's surface is about
--- radius * size^2, give or take the wave, so the reach is divided by that.
--- A grown stone is capped at the furthest such face (seamLimit), so it rises
--- to meet its neighbour but never past it.
-local SEAM_WAVE, SEAM_CORE = 0.9, 0.7
-local seamRadius, seamLimit = {}, {}
-for i, seed in seeds do
-	local blob = cellRadius[i] * seed.size * seed.size
-	local own = wallNormal(seed.angle, seed.t)
-	local needed = cellRadius[i]
-	for j, other in seeds do
-		if j ~= i then
-			local dx, dy, dz = other[1] - seed[1], other[2] - seed[2], other[3] - seed[3]
-			local distance = math.sqrt(dx * dx + dy * dy + dz * dz)
-			if distance < REACH and distance > 1e-6 then
-				local n = { dx / distance, dy / distance, dz / distance }
-				local seedSq = seed[1] ^ 2 + seed[2] ^ 2 + seed[3] ^ 2
-				local otherSq = other[1] ^ 2 + other[2] ^ 2 + other[3] ^ 2
-				local offset = (otherSq - seedSq + seed.weight - other.weight) / (2 * distance)
-				local out = wallNormal(other.angle, other.t)
-				local extent = cellRadius[j] * other.size * other.size
-				local face = { other[1] + out[1] * extent, other[2] + out[2] * extent, other[3] + out[3] * extent }
-				-- Only a plane that cuts this blob's facet core makes a seam
-				-- with it, and only a neighbour standing further out leaves one
-				-- open.
-				local seam = offset - dot(n, seed) < blob * SEAM_CORE
-				if seam and dot(own, face) > dot(own, seed) + blob then
-					local past = dot(n, face) - offset
-					local onPlane = { face[1] - n[1] * past - seed[1], face[2] - n[2] * past - seed[2], face[3] - n[3] * past - seed[3] }
-					local reach = math.sqrt(dot(onPlane, onPlane)) / (seed.size * seed.size * SEAM_WAVE)
-					needed = math.max(needed, reach)
-					seamLimit[i] = math.max(seamLimit[i] or -math.huge, dot(own, face))
-				end
-			end
-		end
-	end
-	seamRadius[i] = needed
-end
-cellRadius = seamRadius
 
 -- The body under the top: the wall and underside the stones were fitted
 -- round. It is never exported, only shaded against.
@@ -1482,12 +1495,10 @@ local stoneSpan = {}
 local function buildRocks()
 	local stones = {}
 	for i, seed in seeds do
-		-- Stones shrink with the wall, so the bottom rows are chips rather
-		-- than full-size boulders crowded round a point.
-		local radius = cellRadius[i] * seed.size
+		local radius = cellRadius[i]
 		local points = {}
 		for v, p in unitVertices do
-			local r = (1 + 0.16 * wave(p, 2.3, SEED + i) + 0.05 * wave(p, 4.9, SEED + i + 3.1)) * seed.size
+			local r = 1 + 0.12 * wave(p, 2.3, SEED + i)
 			points[v] = {
 				seed[1] + p[1] * r * radius,
 				seed[2] + p[2] * r * radius,
@@ -1498,72 +1509,57 @@ local function buildRocks()
 		for _, f in unitFaces do
 			table.insert(tris, { points[f[1]], points[f[2]], points[f[3]] })
 		end
-		-- The flat spots, cut while the stone is still free-standing.
-		local facets, cuts = {}, {}
+		-- The face, then the flat top kept clear.
+		local face = seed.face
+		local cuts = { face }
+		tris = clip(tris, face)
+		tris = clip(tris, { 0, 0, 1, CAP_TOP - 0.2 })
+		-- The fit: cut against every nearby seed, so neighbours share planes.
+		local seams = {}
+		for j, other in seeds do
+			if j ~= i then
+				local dx, dy, dz = other[1] - seed[1], other[2] - seed[2], other[3] - seed[3]
+				local distance = math.sqrt(dx * dx + dy * dy + dz * dz)
+				if distance < REACH and distance > 1e-6 then
+					local n = { dx / distance, dy / distance, dz / distance }
+					-- The power plane: the midpoint shifts by the weight
+					-- difference, so a heavy seed pushes it away from itself.
+					local seedSq = seed[1] ^ 2 + seed[2] ^ 2 + seed[3] ^ 2
+					local otherSq = other[1] ^ 2 + other[2] ^ 2 + other[3] ^ 2
+					local offset = (otherSq - seedSq + seed.weight - other.weight) / (2 * distance)
+					local plane = { n[1], n[2], n[3], offset }
+					tris = clip(tris, plane)
+					table.insert(seams, { other = j, plane = plane })
+					table.insert(cuts, plane)
+				end
+			end
+		end
+		-- The chips: planes tilted off the face round its middle, each taking
+		-- a slanted bite out of the face towards one edge.
+		local half = seed.width / 2
+		local across = normalize(cross(face, { 0, 0, 1 }))
+		local up = cross(face, across)
+		local middle = planeDistance(face, seed)
+		local centre = { seed[1] - face[1] * middle, seed[2] - face[2] * middle, seed[3] - face[3] * middle }
 		for k = 1, ROCK_FACETS do
-			local angle = hash(SEED * 31 + i * 13 + k * 7.1) * TAU
-			local z = 2 * hash(SEED * 17 + i * 13 + k * 3.3) - 1
-			local ring = math.sqrt(1 - z * z)
-			local n = { ring * math.cos(angle), ring * math.sin(angle), z }
-			local reach = 0.68 + 0.27 * hash(SEED * 5 + i * 13 + k * 11.7)
-			local facet = { n[1], n[2], n[3], dot(n, seed) + reach * radius }
-			table.insert(facets, facet)
+			local turn = hash(SEED * 31 + i * 13 + k * 7.1) * TAU
+			local tilt = math.rad(FACET_TILT_MIN + (FACET_TILT_MAX - FACET_TILT_MIN) * hash(SEED * 17 + i * 13 + k * 3.3))
+			local c, sn = math.cos(tilt), math.sin(tilt)
+			local n = {
+				face[1] * c + (across[1] * math.cos(turn) + up[1] * math.sin(turn)) * sn,
+				face[2] * c + (across[2] * math.cos(turn) + up[2] * math.sin(turn)) * sn,
+				face[3] * c + (across[3] * math.cos(turn) + up[3] * math.sin(turn)) * sn,
+			}
+			local reach = (FACET_REACH_MIN + (FACET_REACH_MAX - FACET_REACH_MIN) * hash(SEED * 5 + i * 13 + k * 11.7)) * half
+			local facet = { n[1], n[2], n[3], dot(n, centre) + reach * sn }
 			table.insert(cuts, facet)
 			tris = clip(tris, facet)
-		end
-		-- The chips: a small cut along every sharp edge two facets make, and
-		-- on every corner three of them make. Only facet edges are touched, so
-		-- the seams cut later stay exact. Each cut is bounded by its facets,
-		-- so it can only take a sliver off that edge or corner.
-		for a = 1, #facets do
-			for b = a + 1, #facets do
-				local p, q = facets[a], facets[b]
-				if dot(p, q) < CHIP_SHARPNESS then
-					local m = { p[1] + q[1], p[2] + q[2], p[3] + q[3] }
-					local length = math.sqrt(dot(m, m))
-					if length > 0.5 then
-						local edge = (p[4] + q[4]) / length
-						local chip = { m[1] / length, m[2] / length, m[3] / length, edge - CHIP_EDGE * radius }
-						table.insert(cuts, chip)
-						tris = clip(tris, chip)
-					end
-				end
-			end
-		end
-		for a = 1, #facets do
-			for b = a + 1, #facets do
-				for c = b + 1, #facets do
-					local p, q, r = facets[a], facets[b], facets[c]
-					local qr, rp, pq = cross(q, r), cross(r, p), cross(p, q)
-					local determinant = dot(p, qr)
-					if
-						dot(p, q) < CHIP_SHARPNESS
-						and dot(q, r) < CHIP_SHARPNESS
-						and dot(r, p) < CHIP_SHARPNESS
-						and math.abs(determinant) > 1e-3
-					then
-						local corner = {
-							(p[4] * qr[1] + q[4] * rp[1] + r[4] * pq[1]) / determinant,
-							(p[4] * qr[2] + q[4] * rp[2] + r[4] * pq[2]) / determinant,
-							(p[4] * qr[3] + q[4] * rp[3] + r[4] * pq[3]) / determinant,
-						}
-						local m = { p[1] + q[1] + r[1], p[2] + q[2] + r[2], p[3] + q[3] + r[3] }
-						local length = math.sqrt(dot(m, m))
-						if length > 0.5 then
-							m = { m[1] / length, m[2] / length, m[3] / length }
-							local chip = { m[1], m[2], m[3], dot(m, corner) - CHIP_CORNER * radius }
-							table.insert(cuts, chip)
-							tris = clip(tris, chip)
-						end
-					end
-				end
-			end
 		end
 		-- The worn edges. An edge exists where two cuts share at least two of
 		-- the stone's corners. Each is rounded by planes tangent to a cylinder
 		-- of the bevel's radius sitting inside both cuts, at normals stepped
-		-- evenly between theirs, so the bevel stays on the stone and the seams
-		-- cut later stay exact.
+		-- evenly between theirs, so the bevel stays on the stone. Seams wear
+		-- too, which opens each joint into a thin groove.
 		local shared, seenCorner = {}, {}
 		for _, tri in tris do
 			for _, p in tri do
@@ -1591,7 +1587,7 @@ local function buildRocks()
 			if count >= 2 and fold < ROUND_MIN_FOLD and fold > -0.99 then
 				local angle = math.acos(math.clamp(fold, -1, 1))
 				local wear = ROUND_MIN + (ROUND_MAX - ROUND_MIN) * hash(SEED * 241 + i * 13.1 + pair * 0.731) ^ ROUND_SKEW
-				local bevel = math.min(ROUND_RADIUS * wear, ROUND_SHARE * radius * math.max(wear, 1), ROUND_STONE_SHARE * radius)
+				local bevel = math.min(ROUND_RADIUS * wear, ROUND_SHARE * half * math.max(wear, 1), ROUND_STONE_SHARE * half)
 				for s = 1, ROUND_SEGMENTS do
 					local t = (s - 0.5) / ROUND_SEGMENTS
 					local a, b = math.sin((1 - t) * angle) / math.sin(angle), math.sin(t * angle) / math.sin(angle)
@@ -1601,32 +1597,6 @@ local function buildRocks()
 						a * p[3] + b * q[3],
 						a * (p[4] - bevel) + b * (q[4] - bevel) + bevel,
 					})
-				end
-			end
-		end
-		-- A stone grown to seal a seam stops level with the neighbour it meets.
-		if seamLimit[i] then
-			local own = wallNormal(seed.angle, seed.t)
-			tris = clip(tris, { own[1], own[2], own[3], seamLimit[i] })
-		end
-		-- Keep the flat top clear.
-		tris = clip(tris, { 0, 0, 1, CAP_TOP - 0.2 })
-		-- The fit: cut against every nearby seed, so neighbours share planes.
-		local seams = {}
-		for j, other in seeds do
-			if j ~= i then
-				local dx, dy, dz = other[1] - seed[1], other[2] - seed[2], other[3] - seed[3]
-				local distance = math.sqrt(dx * dx + dy * dy + dz * dz)
-				if distance < REACH and distance > 1e-6 then
-					local n = { dx / distance, dy / distance, dz / distance }
-					-- The power plane: the midpoint shifts by the weight
-					-- difference, so a heavy seed pushes it away from itself.
-					local seedSq = seed[1] ^ 2 + seed[2] ^ 2 + seed[3] ^ 2
-					local otherSq = other[1] ^ 2 + other[2] ^ 2 + other[3] ^ 2
-					local offset = (otherSq - seedSq + seed.weight - other.weight) / (2 * distance)
-					local plane = { n[1], n[2], n[3], offset }
-					tris = clip(tris, plane)
-					table.insert(seams, { other = j, plane = plane })
 				end
 			end
 		end
