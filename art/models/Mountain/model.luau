@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-c2285b8aff0a7acd"
+local CACHE_KEY = "Mountain-9cd69142ef15bb73"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -832,6 +832,9 @@ local GAP = 0.12
 -- the stone's size.
 local MAX_CUTS = 3
 local CUT_DEPTH = { 0.2, 0.55 }
+-- Fine chips per column (fewest, most) and how deep one bites, in studs.
+local CHIPS = { 3, 6 }
+local CHIP_DEPTH = { 0.15, 0.45 }
 -- How far a cut's heading may swing from straight out, in radians.
 local CUT_SPREAD = math.rad(55)
 
@@ -1052,9 +1055,25 @@ part("Columns", nil, STONE, function(mesh)
 		-- faces away from the island's centre, within CUT_SPREAD either side,
 		-- so the carving shows on the outside and never faces inward.
 		local outward = math.atan2(column.peak[2], column.peak[1])
+		-- The cuts to make: heading, lift and depth. The big chisel cuts come
+		-- first, then fine chips that knock small corners off what is left.
+		local cuts = {}
 		for k = 1, 1 + math.floor(hash(index, 40) * MAX_CUTS) do
-			local heading = outward + (hash(index, 40 + k) - 0.5) * 2 * CUT_SPREAD
-			local lift = 0.35 + hash(index, 50 + k) * 0.85
+			table.insert(cuts, {
+				outward + (hash(index, 40 + k) - 0.5) * 2 * CUT_SPREAD,
+				0.35 + hash(index, 50 + k) * 0.85,
+				column.size * (CUT_DEPTH[1] + (CUT_DEPTH[2] - CUT_DEPTH[1]) * hash(index, 60 + k)),
+			})
+		end
+		for k = 1, CHIPS[1] + math.floor(hash(index, 70) * (CHIPS[2] - CHIPS[1] + 1)) do
+			table.insert(cuts, {
+				outward + (hash(index, 70 + k) - 0.5) * 2 * CUT_SPREAD,
+				0.35 + hash(index, 80 + k) * 1.05,
+				CHIP_DEPTH[1] + (CHIP_DEPTH[2] - CHIP_DEPTH[1]) * hash(index, 90 + k),
+			})
+		end
+		for _, cut in cuts do
+			local heading, lift, depth = cut[1], cut[2], cut[3]
 			local n = { math.cos(heading) * math.cos(lift), math.sin(heading) * math.cos(lift), math.sin(lift) }
 			local farthest = -math.huge
 			for _, face in faces do
@@ -1068,7 +1087,6 @@ part("Columns", nil, STONE, function(mesh)
 			for _, corner in corners do
 				footmost = math.max(footmost, corner[1] * n[1] + corner[2] * n[2])
 			end
-			local depth = column.size * (CUT_DEPTH[1] + (CUT_DEPTH[2] - CUT_DEPTH[1]) * hash(index, 60 + k))
 			local plane = math.max(farthest - depth, footmost + 0.3)
 			if plane < farthest then
 				faces = carve(faces, n, plane)
