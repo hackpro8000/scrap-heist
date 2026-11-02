@@ -290,6 +290,34 @@ for _, column in columns do
 	end
 
 	column.faces = faces
+	-- Where the column's carved underside begins: the shallowest point of
+	-- any face that isn't a side wall or its foot.
+	column.surfaceFrom = math.huge
+	for _, face in faces do
+		local foot, nz = true, 0
+		for i, p in face do
+			local q = face[i % #face + 1]
+			foot = foot and p[3] == 0
+			nz += (p[1] - q[1]) * (p[2] + q[2])
+		end
+		if not foot and math.abs(nz) > 1e-3 then
+			for _, p in face do
+				column.surfaceFrom = math.min(column.surfaceFrom, p[3])
+			end
+		end
+	end
+end
+
+-- How deep each column hides behind the tier around it: it comes into view
+-- where its shallowest neighbour's underside begins, or at the top if it
+-- faces the open edge.
+for _, column in columns do
+	column.shownFrom = math.huge
+	for _, corner in column.corners do
+		local neighbour = corner[4] and columns[corner[4]]
+		column.shownFrom = math.min(column.shownFrom, if neighbour then neighbour.surfaceFrom else 0)
+	end
+	column.shownFrom = math.min(column.shownFrom, column.peak[3])
 end
 
 -- Each face's plane, as a unit normal pointing out and its distance.
@@ -430,11 +458,14 @@ local function rockAt(x: number, y: number)
 	return found
 end
 
--- Per-rock gradient: light where a rock meets the top, darkening toward
--- its tip. The island hangs below z = 0, so depth is -z.
+-- Per-rock gradient over the part of a rock that shows: light where it
+-- comes out from behind the tier around it, darkening toward its tip. The
+-- island hangs below z = 0, so depth is -z.
 local paintRock = rusting(0.1, function(x, y, z)
 	local rock = rockAt(x, y)
-	local depth = if rock then math.clamp(-z / rock.peak[3], 0, 1) else 0
+	local depth = if rock
+		then math.clamp((-z - rock.shownFrom) / math.max(rock.peak[3] - rock.shownFrom, 0.5), 0, 1)
+		else 0
 	local shade = ROCK_GRADIENT[1] + (ROCK_GRADIENT[2] - ROCK_GRADIENT[1]) * depth ^ 0.8
 	return STONE[1] * shade, STONE[2] * shade, STONE[3] * shade
 end)
