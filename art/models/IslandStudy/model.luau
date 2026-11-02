@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-41367ef0ba86d5bd"
+local CACHE_KEY = "IslandStudy-561a6e8ce5b27917"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -870,9 +870,9 @@ local LIP_RISE = 1.2
 -- studs further down. SEAM_SOIL_WIDTH studs across and SEAM_SOIL_PROUD out
 -- past the crease at the lip, tapering to nothing at its end, in
 -- SEAM_SOIL_STEPS rings of SEAM_SOIL_SIDES segments.
-local SEAM_SOIL_MIN, SEAM_SOIL_MAX = 4, 6
-local SEAM_SOIL_WIDTH = 0.7
-local SEAM_SOIL_PROUD = 0.25
+local SEAM_SOIL_MIN, SEAM_SOIL_MAX = 6, 9
+local SEAM_SOIL_WIDTH = 1.5
+local SEAM_SOIL_PROUD = 0.5
 local SEAM_SOIL_STEPS, SEAM_SOIL_SIDES = 6, 4
 local ANGLES, STEPS = 128, 28
 local TAU = 2 * math.pi
