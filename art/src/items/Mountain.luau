@@ -3,12 +3,18 @@
 -- tall as the slope at its centre with a low faceted top, so the terrain
 -- climbs in uneven steps to the summit and a lower shoulder. The columns are
 -- the cells of a weighted Voronoi diagram (a power diagram) over scattered
--- stones, so big stones claim big cells. Only the faces that show are
+-- stones, so big stones claim big cells. Stones grow from small near the
+-- summit to big at the foot, and the big foot stones give the rim its
+-- lobed outline. Only the faces that show are
 -- built: a side wall runs down just past its neighbour's lowest top corner.
 -- Centered on the origin, base at z = 0.
 local RADIUS = 20
 local PEAK = 28
-local SMALLEST, LARGEST = 0.9, 2.8
+-- Stone sizes at the summit and at the foot.
+local SMALLEST, LARGEST = 0.7, 4.5
+-- Stones are scattered a stone's width past the rim, so rim cells close
+-- on real neighbours before the ones outside are dropped.
+local SCATTER = RADIUS + LARGEST
 -- Groove left between neighbouring columns.
 local GAP = 0.12
 
@@ -38,13 +44,14 @@ local function heightAt(x: number, y: number): number
 	return math.max(main, shoulder)
 end
 
--- Stones scattered over the disc by dart throwing, mostly small with a few
--- big ones, none crowding another: x, y and size.
+-- Stones scattered by dart throwing, none crowding another, sized by how
+-- high on the slope they sit: x, y and size.
 local stones = {}
-for _ = 1, 6000 do
-	local angle, reach = random() * TAU, math.sqrt(random()) * RADIUS
+for _ = 1, 8000 do
+	local angle, reach = random() * TAU, math.sqrt(random()) * SCATTER
 	local x, y = reach * math.cos(angle), reach * math.sin(angle)
-	local size = SMALLEST + (LARGEST - SMALLEST) * random() ^ 2
+	local height = math.clamp(heightAt(x, y) / PEAK, 0, 1)
+	local size = (LARGEST + (SMALLEST - LARGEST) * height ^ 0.5) * (0.8 + 0.4 * random())
 	local clear = true
 	for _, other in stones do
 		local dx, dy = x - other[1], y - other[2]
@@ -93,7 +100,7 @@ for index, stone in stones do
 	local outline = {}
 	for i = 0, 31 do
 		local angle = i / 32 * TAU
-		table.insert(outline, { RADIUS * math.cos(angle), RADIUS * math.sin(angle), nil })
+		table.insert(outline, { SCATTER * math.cos(angle), SCATTER * math.sin(angle), nil })
 	end
 	for other, neighbour in stones do
 		if other ~= index and #outline >= 3 then
@@ -103,13 +110,13 @@ for index, stone in stones do
 			end
 		end
 	end
-	-- Cells cut by the outer rim are dropped, so the foot ends ragged
-	-- instead of on a clean circle.
-	local onRim = false
+	-- Stones outside the rim, and cells cut by the scatter's edge, are
+	-- dropped, so the foot ends on whole stones instead of a clean circle.
+	local onEdge = stone[1] ^ 2 + stone[2] ^ 2 > RADIUS ^ 2
 	for _, corner in outline do
-		onRim = onRim or corner[3] == nil
+		onEdge = onEdge or corner[3] == nil
 	end
-	if #outline < 3 or onRim then
+	if #outline < 3 or onEdge then
 		continue
 	end
 	local cx, cy = 0, 0
