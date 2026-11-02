@@ -895,7 +895,8 @@ local baked = model.cached(CACHE_KEY, function()
 		end, nil, 0)
 		parts[#parts].group = "Rocks"
 		parts[#parts].heightRange = islandRange
-		parts[#parts].wide = 2
+		parts[#parts].wide = 2.5
+		parts[#parts].edge = 0.6
 	end
 	-- The hidden faces join the rocks' group, so the stones still shade with
 	-- them as their own surfaces and the body still takes their shadows. Marked
