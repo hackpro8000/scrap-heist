@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-d88e175f76f8d6b6"
+local CACHE_KEY = "Mountain-6c2cc9e3c89c5ff2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -826,8 +826,6 @@ local SMALLEST, LARGEST = 0.7, 4.5
 local SCATTER = RADIUS + LARGEST
 -- Shortest a column hangs, so the rim stones read as a thick slab.
 local MIN_LENGTH = 4
--- Groove left between neighbouring columns.
-local GAP = 0.12
 -- Chisel cuts per column, at most, and how deep one bites as a share of
 -- the stone's size.
 local MAX_CUTS = 3
@@ -915,8 +913,7 @@ local function clip(outline, p, q, neighbour)
 	return kept
 end
 
--- Each stone's column: its outline pulled in by the groove, and its top
--- corners on a slanted plane.
+-- Each stone's column: its outline and its top corners on a slanted plane.
 local columns = {}
 for index, stone in stones do
 	local outline = {}
@@ -948,12 +945,11 @@ for index, stone in stones do
 	local rise = math.max(MIN_LENGTH * (0.8 + 0.4 * hash(index, 5)), heightAt(cx, cy) + (hash(index, 1) - 0.5) * (1 + stone[3]))
 	local tiltX, tiltY = (hash(index, 2) - 0.5) * 0.45, (hash(index, 3) - 0.5) * 0.45
 	local corners = {}
+	-- Neighbouring columns share their edges exactly, so no gap opens
+	-- between them.
 	for i, corner in outline do
-		local ox, oy = corner[1] - cx, corner[2] - cy
-		local pull = math.max(0, 1 - GAP / math.max(math.sqrt(ox * ox + oy * oy), 1e-3))
-		local x, y = cx + ox * pull, cy + oy * pull
-		local z = rise + ox * tiltX + oy * tiltY
-		corners[i] = { x, y, z, corner[3] }
+		local z = rise + (corner[1] - cx) * tiltX + (corner[2] - cy) * tiltY
+		corners[i] = { corner[1], corner[2], z, corner[3] }
 	end
 	columns[index] = {
 		index = index,
@@ -1171,10 +1167,10 @@ chunkedPart("Columns", nil, STONE, function(mesh)
 			end
 			local across = math.sqrt(nx * nx + ny * ny)
 			if across > 1e-6 and math.abs(nz) < 0.05 * across then
-				local px, py = cx + nx / across * GAP * 3, cy + ny / across * GAP * 3
+				local px, py = cx + nx / across * 0.3, cy + ny / across * 0.3
 				for _, neighbour in neighbours do
 					if inside(neighbour, px, py) then
-						face = above(face, neighbour.solidTo - 0.4)
+						face = above(face, neighbour.solidTo)
 						break
 					end
 				end
