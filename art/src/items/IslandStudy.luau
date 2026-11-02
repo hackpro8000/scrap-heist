@@ -1186,8 +1186,16 @@ local SOIL_STAIN_COLOUR = { 0.34, 0.22, 0.13 }
 -- within EDGE_WIDTH studs of a second cut plane, up to EDGE_STRENGTH, a little
 -- weaker on faces turned down.
 local EDGE_WIDTH = 0.9
-local EDGE_STRENGTH = 0.75
+local EDGE_STRENGTH = 0.95
 local EDGE_COLOUR = { 0.93, 0.89, 0.8 }
+-- The highlight gathers at corners: full where a third cut comes within
+-- EDGE_CORNER_REACH studs, widening there by up to EDGE_CORNER_WIDEN times.
+-- Along the rest of an edge it shows only in patches, up to EDGE_ALONG
+-- strong, where slow noise EDGE_BREAK_SIZE studs across rises past
+-- EDGE_BREAK_GAP, fading in and out over EDGE_BREAK_SOFT.
+local EDGE_CORNER_REACH, EDGE_CORNER_WIDEN = 2, 1.8
+local EDGE_ALONG = 0.4
+local EDGE_BREAK_SIZE, EDGE_BREAK_GAP, EDGE_BREAK_SOFT = 1.8, 0.1, 0.25
 local stoneNeighbours, stoneColour = {}, {}
 for i, seed in seeds do
 	stoneNeighbours[i] = {}
@@ -1353,13 +1361,15 @@ local function stonePaint(base, members)
 		}
 		-- Edge highlight: on a flat face only one cut is near; on a rounded
 		-- edge two are, so the second-nearest cut's distance finds the rims.
-		local nearest, second = math.huge, math.huge
+		local nearest, second, third = math.huge, math.huge, math.huge
 		for _, cut in stoneCuts[last] or {} do
 			local d = math.abs(cut[1] * x + cut[2] * y + cut[3] * z - cut[4])
 			if d < nearest then
-				nearest, second = d, nearest
+				nearest, second, third = d, nearest, second
 			elseif d < second then
-				second = d
+				second, third = d, second
+			elseif d < third then
+				third = d
 			end
 		end
 		-- Painted cracks: a dark core along each crack plane, narrowing toward
@@ -1389,8 +1399,20 @@ local function stonePaint(base, members)
 				end
 			end
 		end
-		local rim = math.clamp(1 - second / EDGE_WIDTH, 0, 1)
-		rim = rim * rim * (3 - 2 * rim) * EDGE_STRENGTH * (0.65 + 0.35 * math.max(nz, 0)) * (1 - ink)
+		-- A third cut close by means a corner: the rim is full and wider there,
+		-- and elsewhere along the edge only in soft patches.
+		local corner = math.clamp(1 - third / EDGE_CORNER_REACH, 0, 1)
+		corner = corner * corner * (3 - 2 * corner)
+		local patch = math.clamp(
+			(math.noise(x / EDGE_BREAK_SIZE, y / EDGE_BREAK_SIZE, z / EDGE_BREAK_SIZE + last * 1.91 + 367) - EDGE_BREAK_GAP)
+				/ EDGE_BREAK_SOFT,
+			0,
+			1
+		)
+		patch = patch * patch * (3 - 2 * patch)
+		local strength = math.min(corner + EDGE_ALONG * patch, 1)
+		local rim = math.clamp(1 - second / (EDGE_WIDTH * (1 + (EDGE_CORNER_WIDEN - 1) * corner)), 0, 1)
+		rim = rim * rim * (3 - 2 * rim) * strength * EDGE_STRENGTH * (0.65 + 0.35 * math.max(nz, 0)) * (1 - ink)
 		colour = {
 			colour[1] + (EDGE_COLOUR[1] - colour[1]) * rim,
 			colour[2] + (EDGE_COLOUR[2] - colour[2]) * rim,
