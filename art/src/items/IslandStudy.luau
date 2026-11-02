@@ -880,6 +880,8 @@ end
 -- warmer and browner, some cooler and greyer, up to 8% lighter or darker, flat
 -- across the stone so neighbours read apart without any noise.
 local STONE_BRIGHTNESS, STONE_WARMTH = 0.08, 1
+-- How far the light's colour shifts each channel: warm on tops, cool below.
+local SKY_TINT = 0.1
 local stoneNeighbours, stoneColour = {}, {}
 for i, seed in seeds do
 	stoneNeighbours[i] = {}
@@ -913,7 +915,7 @@ local function stonePaint(base, members)
 		local s = seeds[i]
 		return (x - s[1]) ^ 2 + (y - s[2]) ^ 2 + (z - s[3]) ^ 2 - s.weight
 	end
-	return rusting(0, function(x, y, z)
+	return rusting(0, function(x, y, z, _nx, _ny, nz)
 		local best = power(last, x, y, z)
 		while true do
 			local step = nil
@@ -929,7 +931,14 @@ local function stonePaint(base, members)
 			last = step
 		end
 		local colour = stoneColour[last] or base
-		return colour[1], colour[2], colour[3]
+		-- Sunlit tops warm toward yellow-orange, undersides cool toward a
+		-- blue-purple bounce, the sides blending between.
+		local up = math.clamp(nz, -1, 1)
+		local warm, cool = math.max(up, 0), math.max(-up, 0)
+		local tint = SKY_TINT
+		return colour[1] * (1 + tint * (warm - 0.6 * cool)),
+			colour[2] * (1 + tint * (0.5 * warm - 0.3 * cool)),
+			colour[3] * (1 + tint * (-warm + cool))
 	end)
 end
 
