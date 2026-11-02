@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-68cea7cc2a6af607"
+local CACHE_KEY = "Mountain-7a8ead5ebef96b41"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -151,52 +151,6 @@ end
 local function bolt(mesh, cx, cy, cz, axis, size)
 	size = size or 0.05
 	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
-end
-
--- A line of `count` rivets from one point to another, evenly spaced from end
--- to end: along a seam, round a rim, up a brace. `axis` is the way each rivet
--- faces out of its surface.
-local function rivets(mesh, x0, y0, z0, x1, y1, z1, count, axis, size)
-	size = size or 0.045
-	for i = 0, count - 1 do
-		local t = if count > 1 then i / (count - 1) else 0
-		bolt(mesh, x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, z0 + (z1 - z0) * t, axis or "z", size)
-	end
-end
-
--- `count` evenly spaced boards spanning a0..a1 across `axis`, lined up from
--- z0 to z1 on the same one, each `width` deep and `gap` apart along it: crate
--- slats, fence planks, grating.
-local function slats(mesh, axis, at, a0, a1, z0, z1, count, width, gap)
-	gap = gap or 0.04
-	local pitch = (z1 - z0) / count
-	local thick = math.max(pitch - gap, pitch * 0.2)
-	for i = 0, count - 1 do
-		local z = z0 + pitch * (i + 0.5)
-		if axis == "x" then
-			box(mesh, (a0 + a1) / 2, at, z, a1 - a0, width, thick)
-		else
-			box(mesh, at, (a0 + a1) / 2, z, width, a1 - a0, thick)
-		end
-	end
-end
-
--- A hand crank turning about `axis` at (cx, cy, cz): a hub, an arm out to
--- `reach`, and a grip standing `grip` out of the turning plane at its end.
-local function crank(mesh, cx, cy, cz, axis, reach, grip, thick)
-	thick = thick or 0.06
-	bolt(mesh, cx, cy, cz, axis, thick * 1.3)
-	local ex, ey, ez = onAxis(cx, cy, cz, axis, reach, 0, 0)
-	bolt(mesh, ex, ey, ez, axis, thick)
-	local gx, gy, gz = onAxis(ex, ey, ez, axis, 0, 0, math.abs(grip))
-	cylinder(mesh, gx, gy, gz, thick * 0.8, math.abs(grip), axis, 8)
-	-- The arm, a bar across the shaft's plane from hub to grip.
-	local ax, ay, az = (cx + ex) / 2, (cy + ey) / 2, (cz + ez) / 2
-	if axis == "x" then
-		box(mesh, ax, ay, az, thick, math.abs(ey - cy), thick)
-	else
-		box(mesh, ax, ay, az, math.abs(ex - cx), thick, thick)
-	end
 end
 
 -- Square beam from one point to another, for limbs and antennae.
@@ -649,8 +603,14 @@ end
 -- `texture` overrides the texture size for parts that need more detail.
 -- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
 -- glowing parts skip painted shading. `flat` skips the warp, for parts so
--- thin it would visibly bend them.
-local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?)
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
@@ -659,7 +619,7 @@ local function part(name, bone, color, build, smooth, rust, texture: number?, em
 		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
 		else TEXTURE
 	local image = Image.new(size, size, color[1], color[2], color[3])
-	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive }
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
 	setLook(entry, color, rust)
 	-- Glowing parts skip the painted bake, so their colors go on as they are.
 	if emissive then
@@ -674,8 +634,10 @@ end
 -- build runs once into a recorder, then each face goes to the chunk holding
 -- its centre. Cells sit on the origin across, and centred on z = 0 up and
 -- down, so ground near sea level stays in one layer. `flat` skips the warp,
--- as for part().
-local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?)
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
 	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
 	-- Smallest cell a chunk is halved down to while looking for a split.
 	local MIN_CELL = 2
@@ -695,6 +657,13 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end,
 	}
 	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
 
 	local chunks, order = {}, {}
 	for _, f in faces do
@@ -782,11 +751,15 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 				end
 				mesh:face(verts, f.uvs)
 			end
-		end, smooth, 0, texture)
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
 		-- Chunks of one part share a group, so their edges count as its own.
 		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
 		emit(`{name}_{key}`, chunks[key], CHUNK)
@@ -810,10 +783,10 @@ local function finishParts()
 			end
 		end
 		entry.mesh:paintShading(entry.image, {
-			highlight = EDGE_HIGHLIGHT,
-			shadow = CONTACT_SHADOW,
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
 			gradient = GRADIENT,
-			blend = EDGE_BLEND,
+			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
 			name = entry.name,
@@ -823,6 +796,10 @@ local function finishParts()
 			salt = if entry.custom then CACHE_KEY else nil,
 			rust = entry.rust * WEAR,
 			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
@@ -894,6 +871,55 @@ part("Rock", nil, ROCK, function(mesh)
 			verts[k] = mesh:vertex(p[1], p[2], p[3])
 		end
 		mesh:face(verts)
+	end
+end, false, 0.1, nil, nil, true)
+
+-- Clusters of hexagonal basalt columns pushing out of the slope: x, y,
+-- column radius and how tall the tallest stands above the ground.
+local COLUMN_STONE = { 0.42, 0.41, 0.46 }
+local CLUSTERS = {
+	{ 13, 6, 1.3, 6 },
+	{ -4, 14, 1.2, 5 },
+	{ -14, 4, 1.4, 7 },
+	{ -9, -11, 1.2, 5 },
+	{ 5, -14, 1.3, 6 },
+	{ 3, 6, 1, 4 },
+	{ -5, -3, 1, 3.5 },
+}
+
+-- One column sunk into the slope, its top cut on a slant.
+local function column(mesh, cx, cy, radius, rise, tiltX, tiltY)
+	local ground = heightAt(cx, cy)
+	local bottom, top = {}, {}
+	for i = 0, 5 do
+		local angle = i / 6 * TAU
+		local x, y = cx + radius * math.cos(angle), cy + radius * math.sin(angle)
+		bottom[i + 1] = mesh:vertex(x, y, ground - 2)
+		top[i + 1] = mesh:vertex(x, y, ground + rise + (x - cx) * tiltX + (y - cy) * tiltY)
+	end
+	for i = 1, 6 do
+		local j = i % 6 + 1
+		mesh:face({ bottom[i], bottom[j], top[j], top[i] })
+	end
+	mesh:face(top)
+end
+
+part("Columns", nil, COLUMN_STONE, function(mesh)
+	for c, cluster in CLUSTERS do
+		local cx, cy, radius, tallest = cluster[1], cluster[2], cluster[3], cluster[4]
+		-- A centre column with a ring of six packed round it, a few left out.
+		local spots = { { cx, cy } }
+		for i = 0, 5 do
+			local angle = (i + 0.5) / 6 * TAU
+			table.insert(spots, { cx + radius * math.sqrt(3) * math.cos(angle), cy + radius * math.sqrt(3) * math.sin(angle) })
+		end
+		for s, spot in spots do
+			if s > 1 and hash(c, s) < 0.3 then
+				continue
+			end
+			local rise = tallest * (if s == 1 then 1 else 0.45 + 0.4 * hash(s, c))
+			column(mesh, spot[1], spot[2], radius * 0.97, rise, (hash(c + 3, s) - 0.5) * 0.5, (hash(s + 3, c) - 0.5) * 0.5)
+		end
 	end
 end, false, 0.1, nil, nil, true)
 
