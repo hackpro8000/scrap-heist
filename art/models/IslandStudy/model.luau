@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-63a8fe31a9896aa0"
+local CACHE_KEY = "IslandStudy-d5299453e48716f8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -814,7 +814,7 @@ end
 -- edge is worn, seams included, so the joints read as thin grooves. A thick
 -- layer of soil is spread over the top and the rim stones' tops.
 local SEED = 1
-local RADIUS = 30
+local RADIUS = 15
 -- How deep the underside hangs, as a share of the radius.
 local DEPTH_SHARE = 1.05
 -- The top's height, matching the other islands so sea level stays at 0.
