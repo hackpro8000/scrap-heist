@@ -1013,6 +1013,9 @@ local SOIL_LUMP = 0.14
 -- by at least SOIL_HANG of the island's height everywhere.
 local SOIL_OVERHANG, SOIL_OVERHANG_SPREAD = 3, 1.8
 local SOIL_HANG = 0.05
+-- How much more the hang varies round the edge, as a share of it, so the
+-- whole lip drips unevenly rather than at one depth.
+local SOIL_DRIP_VARIANCE = 0.25
 local SOIL_DRIPS, SOIL_DRIP_WIDTH = 10, 0.09
 local SOIL_COLOUR = { 0.34, 0.235, 0.15 }
 local BEAD_STEPS = 8
@@ -1092,7 +1095,8 @@ local function buildSoil(mesh, visible)
 		over = math.max(over, SOIL_HANG * DEPTH) + 0.8 * drip
 		local outer = stoneEdge[j] + over
 		-- The bead hangs lower where it is past the stones, and lowest at a drip.
-		local droop = SOIL_HANG * DEPTH + math.clamp(over / 4, 0, 1) + 1.6 * drip
+		local sag = 0.5 + 0.5 * math.noise(c * 6, s * 6, 5.9) + 0.35 * math.sin(23 * angle + soilPhase[1])
+		local droop = (SOIL_HANG * DEPTH + math.clamp(over / 4, 0, 1) + 1.6 * drip) * (1 + SOIL_DRIP_VARIANCE * math.clamp(sag, 0, 1))
 		local bottom = SOIL_BASE - droop
 		-- The bead: its top meets the surface level, its round runs out to `outer`.
 		local probe = outer - 1
