@@ -53,6 +53,12 @@ local CHIP_EDGE, CHIP_CORNER = 0.05, 0.09
 -- ROUND_MIN_FOLD (dot of the two normals above it) are left alone.
 local ROUND_RADIUS, ROUND_SHARE = 0.3, 0.08
 local ROUND_SEGMENTS = 3
+-- Uneven wear: each edge's bevel is ROUND_RADIUS scaled between ROUND_MIN
+-- (crisp) and ROUND_MAX (worn broad), skewed by ROUND_SKEW so most edges sit
+-- near crisp and a few go wide. Wide ones may pass the ROUND_SHARE cap by up
+-- to ROUND_MAX times, but never past ROUND_STONE_SHARE of the stone's radius.
+local ROUND_MIN, ROUND_MAX, ROUND_SKEW = 0.3, 2.5, 2
+local ROUND_STONE_SHARE = 0.18
 local ROUND_MIN_FOLD = math.cos(math.rad(10))
 -- The overhanging lip: how far (studs) the top row stands out past where it
 -- sat, plus up to LIP_SPREAD more per stone, and how far it is raised so its
@@ -752,7 +758,6 @@ local function buildRocks()
 		-- of the bevel's radius sitting inside both cuts, at normals stepped
 		-- evenly between theirs, so the bevel stays on the stone and the seams
 		-- cut later stay exact.
-		local bevel = math.min(ROUND_RADIUS, ROUND_SHARE * radius)
 		local shared, seenCorner = {}, {}
 		for _, tri in tris do
 			for _, p in tri do
@@ -779,6 +784,8 @@ local function buildRocks()
 			local fold = dot(p, q)
 			if count >= 2 and fold < ROUND_MIN_FOLD and fold > -0.99 then
 				local angle = math.acos(math.clamp(fold, -1, 1))
+				local wear = ROUND_MIN + (ROUND_MAX - ROUND_MIN) * hash(SEED * 241 + i * 13.1 + pair * 0.731) ^ ROUND_SKEW
+				local bevel = math.min(ROUND_RADIUS * wear, ROUND_SHARE * radius * math.max(wear, 1), ROUND_STONE_SHARE * radius)
 				for s = 1, ROUND_SEGMENTS do
 					local t = (s - 0.5) / ROUND_SEGMENTS
 					local a, b = math.sin((1 - t) * angle) / math.sin(angle), math.sin(t * angle) / math.sin(angle)
