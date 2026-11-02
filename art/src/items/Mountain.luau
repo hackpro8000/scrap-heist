@@ -24,6 +24,8 @@ local GAP = 0.12
 -- the stone's size.
 local MAX_CUTS = 3
 local CUT_DEPTH = { 0.2, 0.55 }
+-- How far a cut's heading may swing from straight out, in radians.
+local CUT_SPREAD = math.rad(55)
 
 local STONE = { 0.46, 0.45, 0.5 }
 
@@ -238,9 +240,12 @@ part("Columns", nil, STONE, function(mesh)
 		-- Chisel cuts: each faces out and up at its own angle, from a low
 		-- slant (shaving a side edge) to steep (bevelling the top), and
 		-- bites a set depth in from the farthest point along it. None is
-		-- near level, which would open holes down between columns.
+		-- near level, which would open holes down between columns. Every cut
+		-- faces away from the island's centre, within CUT_SPREAD either side,
+		-- so the carving shows on the outside and never faces inward.
+		local outward = math.atan2(column.peak[2], column.peak[1])
 		for k = 1, 1 + math.floor(hash(index, 40) * MAX_CUTS) do
-			local heading = hash(index, 40 + k) * TAU
+			local heading = outward + (hash(index, 40 + k) - 0.5) * 2 * CUT_SPREAD
 			local lift = 0.35 + hash(index, 50 + k) * 0.85
 			local n = { math.cos(heading) * math.cos(lift), math.sin(heading) * math.cos(lift), math.sin(lift) }
 			local farthest = -math.huge
