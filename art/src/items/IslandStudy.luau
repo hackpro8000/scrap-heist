@@ -665,6 +665,8 @@ end
 
 -- Builds every stone and returns each one's visible faces as polygons, with
 -- their area. The faces nobody sees go into hiddenRocks.
+-- Each stone's lowest and highest z after its cuts, for its own gradient.
+local stoneSpan = {}
 local function buildRocks()
 	local stones = {}
 	for i, seed in seeds do
@@ -849,6 +851,13 @@ local function buildRocks()
 	local visible = {}
 	for i, stone in stones do
 		visible[i] = { polygons = {}, area = 0, seams = stone.seams }
+		local low, high = math.huge, -math.huge
+		for _, tri in stone.tris do
+			for _, p in tri do
+				low, high = math.min(low, p[3]), math.max(high, p[3])
+			end
+		end
+		stoneSpan[i] = { low, high }
 		for k, tri in stone.tris do
 			local pieces = { tri }
 			local seam = stone.seamOf[k]
@@ -936,6 +945,12 @@ end
 local STONE_BRIGHTNESS, STONE_WARMTH = 0.08, 0.4
 -- How far the light's colour shifts each channel: warm on tops, cool below.
 local SKY_TINT = 0.1
+-- Each stone's own gradient: STONE_GRADIENT lighter at its top than at its
+-- bottom, centred on 1, so every stone reads as its own bulging form.
+-- STONE_GRADIENT_EASE bends the ramp: 1 is straight, above 1 holds the dark
+-- lower and brightens late near the top.
+local STONE_GRADIENT = 0.25
+local STONE_GRADIENT_EASE = 1
 -- Rock patches over the stone faces: faceted cells about SPLOTCH_SIZE studs
 -- across (jittered Voronoi), each one a stepped shade up to SPLOTCH_STRENGTH
 -- lighter or darker, quantized to SPLOTCH_STEPS levels, so patches meet on
@@ -1060,7 +1075,14 @@ local function stonePaint(base, members)
 		end
 		local grey = (colour[1] + colour[2] + colour[3]) / 3
 		local mix = math.min(math.abs(shade) / SPLOTCH_STRENGTH, 1) * SPLOTCH_GREY
-		local light = 1 + shade
+		-- Stone gradient: lighter toward this stone's top, darker toward its bottom.
+		local gradient = 1
+		local span = stoneSpan[last]
+		if span and span[2] > span[1] then
+			local height = math.clamp((z - span[1]) / (span[2] - span[1]), 0, 1) ^ STONE_GRADIENT_EASE
+			gradient = 1 + (height - 0.5) * STONE_GRADIENT
+		end
+		local light = (1 + shade) * gradient
 		colour = {
 			(colour[1] + (grey - colour[1]) * mix) * light,
 			(colour[2] + (grey - colour[2]) * mix) * light,
