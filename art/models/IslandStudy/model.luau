@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-31dd73cd2c90fc1a"
+local CACHE_KEY = "IslandStudy-961c90b8382a3e4c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1698,6 +1698,7 @@ local baked = model.cached(CACHE_KEY, function()
 		end, nil, 0)
 		parts[#parts].group = "Rocks"
 		parts[#parts].heightRange = islandRange
+		parts[#parts].wide = 2
 	end
 	-- The hidden faces join the rocks' group, so the stones still shade with
 	-- them as their own surfaces and the body still takes their shadows. Marked
