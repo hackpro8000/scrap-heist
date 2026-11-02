@@ -162,6 +162,6 @@ part("Columns", nil, STONE, function(mesh)
 			})
 		end
 	end
-end, false, 0.1, nil, nil, true)
+end, false, 0.1, 1024, nil, true)
 
 finishParts()
