@@ -388,6 +388,68 @@ local function uncovered(face, neighbour)
 	return shown
 end
 
+-- The island's flat top as one outline: the stones' feet (faces lying on
+-- z = 0) laid together, with every edge two stones share cancelled out,
+-- chained into a loop wound like the feet (clockwise seen from above) and
+-- stripped of corners that sit in a straight line.
+local function topOutline()
+	local function key(p)
+		return `{math.round(p[1] * 1e4)},{math.round(p[2] * 1e4)}`
+	end
+	local edges, points = {}, {}
+	for _, column in columns do
+		for _, face in column.faces do
+			local foot = true
+			for _, p in face do
+				foot = foot and p[3] == 0
+			end
+			if foot then
+				for i, a in face do
+					local b = face[i % #face + 1]
+					local from, to = key(a), key(b)
+					points[from], points[to] = a, b
+					if edges[`{to}>{from}`] then
+						edges[`{to}>{from}`] = nil
+					else
+						edges[`{from}>{to}`] = { from, to }
+					end
+				end
+			end
+		end
+	end
+	local nextOf, first, count = {}, nil, 0
+	for _, edge in edges do
+		assert(nextOf[edge[1]] == nil, "Mountain: the top outline branches")
+		nextOf[edge[1]] = edge[2]
+		first = first or edge[1]
+		count += 1
+	end
+	local loop, at = {}, first
+	repeat
+		table.insert(loop, points[at])
+		at = nextOf[at]
+	until at == first or at == nil
+	assert(#loop == count, "Mountain: the top is not one outline")
+	local outline = {}
+	for i, b in loop do
+		local a, c = loop[(i - 2) % #loop + 1], loop[i % #loop + 1]
+		if math.abs((b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])) > 1e-6 then
+			table.insert(outline, { b[1], b[2] })
+		end
+	end
+	return outline
+end
+
+-- Flipped upside down as it is written out: z mirrors, and the winding
+-- reverses so faces still point outward. The foot becomes the island's top.
+local function addFlipped(mesh, face)
+	local verts = {}
+	for i, p in face do
+		verts[#face + 1 - i] = mesh:vertex(p[1], p[2], -p[3])
+	end
+	mesh:face(verts)
+end
+
 -- The island is split into cubic chunks, each with its own texture, so the
 -- stone reads sharp at one density everywhere.
 useTexelDensity(TEXEL_DENSITY)
@@ -401,6 +463,14 @@ chunkedPart("Columns", nil, STONE, function(mesh)
 			end
 		end
 		for _, face in column.faces do
+			-- The feet are built below as one merged top.
+			local foot = true
+			for _, p in face do
+				foot = foot and p[3] == 0
+			end
+			if foot then
+				continue
+			end
 			-- Only what no neighbour covers is built, so nothing lies buried
 			-- inside the island.
 			local pieces = { face }
@@ -414,15 +484,20 @@ chunkedPart("Columns", nil, STONE, function(mesh)
 				pieces = kept
 			end
 			for _, piece in pieces do
-				-- Flipped upside down: z mirrors, and the winding reverses so
-				-- faces still point outward. The foot becomes the island's top.
-				local verts = {}
-				for i, p in piece do
-					verts[#piece + 1 - i] = mesh:vertex(p[1], p[2], -p[3])
-				end
-				mesh:face(verts)
+				addFlipped(mesh, piece)
 			end
 		end
+	end
+
+	-- The top's triangles share their corners, so it unwraps as one piece.
+	local outline = topOutline()
+	local corners = {}
+	for i, p in outline do
+		corners[i] = mesh:vertex(p[1], p[2], 0)
+	end
+	-- Facing up once flipped, so wound the other way from the feet.
+	for _, t in earClip(outline) do
+		mesh:face({ corners[t[3]], corners[t[2]], corners[t[1]] })
 	end
 end, false, 0.1, true)
 
