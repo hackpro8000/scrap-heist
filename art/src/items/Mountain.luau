@@ -18,6 +18,8 @@ local SMALLEST, LARGEST = 0.7, 4.5
 -- Stones are scattered a stone's width past the rim, so rim cells close
 -- on real neighbours before the ones outside are dropped.
 local SCATTER = RADIUS + LARGEST
+-- Shortest a column hangs, so the rim stones read as a thick slab.
+local MIN_LENGTH = 4
 -- Groove left between neighbouring columns.
 local GAP = 0.12
 -- Chisel cuts per column, at most, and how deep one bites as a share of
@@ -132,7 +134,7 @@ for index, stone in stones do
 	for _, corner in outline do
 		cx, cy = cx + corner[1] / #outline, cy + corner[2] / #outline
 	end
-	local rise = math.max(0.8, heightAt(cx, cy) + (hash(index, 1) - 0.5) * (1 + stone[3]))
+	local rise = math.max(MIN_LENGTH * (0.8 + 0.4 * hash(index, 5)), heightAt(cx, cy) + (hash(index, 1) - 0.5) * (1 + stone[3]))
 	local tiltX, tiltY = (hash(index, 2) - 0.5) * 0.45, (hash(index, 3) - 0.5) * 0.45
 	local corners = {}
 	for i, corner in outline do
