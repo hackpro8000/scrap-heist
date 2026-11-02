@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-5efbcf00e60a4aac"
+local CACHE_KEY = "IslandStudy-48bca2dc16315957"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1758,18 +1758,18 @@ local VEIN_STRENGTH = 0.08
 -- island's height (used by the soil below and by the stain on the stones).
 local SOIL_COLOUR = { 0.24, 0.17, 0.12 }
 local SOIL_HANG = 0.05
--- Soil stain: dried dirt bleeding onto the stones under the soil's lip, at
+-- Soil stain: earthy dirt, warmer than the soil so it reads on shaded sides, bleeding onto the stones under the soil's lip, at
 -- most SOIL_STAIN_STRENGTH, fading out over SOIL_STAIN_DEPTH studs with a
 -- ragged edge SOIL_STAIN_RAGGED studs either way, and washed-down streaks
 -- reaching SOIL_STAIN_STREAK studs further. Tops take it more than sides.
 -- It holds full strength SOIL_STAIN_START studs below the lip's shallowest
 -- point first, past the soil's usual droop, so the fade shows under it.
-local SOIL_STAIN_STRENGTH = 0.85
+local SOIL_STAIN_STRENGTH = 1
 local SOIL_STAIN_DEPTH = 7
 local SOIL_STAIN_START = 2.5
 local SOIL_STAIN_RAGGED = 2
 local SOIL_STAIN_STREAK = 4
-local SOIL_STAIN_COLOUR = { 0.2, 0.14, 0.1 }
+local SOIL_STAIN_COLOUR = { 0.34, 0.22, 0.13 }
 local stoneNeighbours, stoneColour = {}, {}
 for i, seed in seeds do
 	stoneNeighbours[i] = {}
