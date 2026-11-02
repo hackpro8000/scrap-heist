@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-e2a6f14dc35ca9c3"
+local CACHE_KEY = "IslandStudy-c43e79deefcfbb4c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -607,8 +607,8 @@ end
 -- shadows reach from an edge, in studs: bigger surfaces take a wider band.
 -- `shade` multiplies the contact shadow strength, for parts that should sit in
 -- heavier shadow than the standard wear. `lit` scales the highlight strength
--- and `wide` the width of the highlight brush strokes. Set `crisp` on an entry
--- to paint its highlights as solid hard-edged bands instead of brush strokes.
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones.
 local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
@@ -797,7 +797,7 @@ local function finishParts()
 			rubber = entry.rubber,
 			reach = entry.edge,
 			highlightWidth = entry.wide,
-			crispHighlights = entry.crisp,
+			paintedHighlights = entry.painted,
 			heightRange = entry.heightRange,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
@@ -1702,7 +1702,7 @@ local baked = model.cached(CACHE_KEY, function()
 		parts[#parts].heightRange = islandRange
 		parts[#parts].wide = 4
 		parts[#parts].edge = 1
-		parts[#parts].crisp = true
+		parts[#parts].painted = true
 	end
 	-- The hidden faces join the rocks' group, so the stones still shade with
 	-- them as their own surfaces and the body still takes their shadows. Marked
