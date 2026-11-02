@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-276ce2c3aaab8467"
+local CACHE_KEY = "IslandStudy-05fee31c265cb47a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1730,7 +1730,7 @@ end
 -- Each stone's own coat: the rock colour shifted a little per stone, some
 -- warmer and browner, some cooler and greyer, up to 8% lighter or darker, flat
 -- across the stone so neighbours read apart without any noise.
-local STONE_BRIGHTNESS, STONE_WARMTH = 0.08, 1
+local STONE_BRIGHTNESS, STONE_WARMTH = 0.08, 0.4
 -- How far the light's colour shifts each channel: warm on tops, cool below.
 local SKY_TINT = 0.1
 -- Rock patches over the stone faces: faceted cells about SPLOTCH_SIZE studs
@@ -1880,7 +1880,7 @@ local SOIL_HANG = 0.05
 -- whole lip drips unevenly rather than at one depth.
 local SOIL_DRIP_VARIANCE = 0.25
 local SOIL_DRIPS, SOIL_DRIP_WIDTH = 10, 0.09
-local SOIL_COLOUR = { 0.34, 0.235, 0.15 }
+local SOIL_COLOUR = { 0.24, 0.17, 0.12 }
 local BEAD_STEPS = 8
 local UNDER_RINGS = { 0.5, 1.2, 2.2, 3.5 }
 
@@ -2040,7 +2040,7 @@ local baked = model.cached(CACHE_KEY, function()
 	end
 	for g, members in rockGroups(visible) do
 		-- Flat, since a paint fn would otherwise bring back the warp rust 0 skips.
-		local rock = { 0.37, 0.34, 0.29 }
+		local rock = { 0.33, 0.34, 0.36 }
 		part(`Rocks_{g}`, nil, rock, function(mesh)
 			stonesMesh(mesh, visible, members)
 		end, nil, stonePaint(rock, members), nil, nil, true)
