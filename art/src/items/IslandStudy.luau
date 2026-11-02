@@ -952,15 +952,18 @@ local VEIN_STRENGTH = 0.08
 -- island's height (used by the soil below and by the stain on the stones).
 local SOIL_COLOUR = { 0.24, 0.17, 0.12 }
 local SOIL_HANG = 0.05
--- Soil stain: dried dirt bleeding onto the stones under the soil's lip, at
+-- Soil stain: earthy dirt, warmer than the soil so it reads on shaded sides, bleeding onto the stones under the soil's lip, at
 -- most SOIL_STAIN_STRENGTH, fading out over SOIL_STAIN_DEPTH studs with a
 -- ragged edge SOIL_STAIN_RAGGED studs either way, and washed-down streaks
 -- reaching SOIL_STAIN_STREAK studs further. Tops take it more than sides.
-local SOIL_STAIN_STRENGTH = 0.6
-local SOIL_STAIN_DEPTH = 3.5
-local SOIL_STAIN_RAGGED = 1.2
+-- It holds full strength SOIL_STAIN_START studs below the lip's shallowest
+-- point first, past the soil's usual droop, so the fade shows under it.
+local SOIL_STAIN_STRENGTH = 1
+local SOIL_STAIN_DEPTH = 7
+local SOIL_STAIN_START = 2.5
+local SOIL_STAIN_RAGGED = 2
 local SOIL_STAIN_STREAK = 4
-local SOIL_STAIN_COLOUR = { 0.36, 0.3, 0.25 }
+local SOIL_STAIN_COLOUR = { 0.34, 0.22, 0.13 }
 local stoneNeighbours, stoneColour = {}, {}
 for i, seed in seeds do
 	stoneNeighbours[i] = {}
@@ -1056,7 +1059,7 @@ local function stonePaint(base, members)
 		}
 		-- Soil stain: full just under the soil's lip, fading downward past a
 		-- slow-noise ragged edge, with thin streaks running further down.
-		local below = CAP_TOP - SOIL_HANG * DEPTH - z
+		local below = math.max(CAP_TOP - SOIL_HANG * DEPTH - SOIL_STAIN_START - z, 0)
 		local ragged = SOIL_STAIN_RAGGED * math.noise(x / 3, y / 3, 331)
 		local fade = math.clamp(1 - (below + ragged) / SOIL_STAIN_DEPTH, 0, 1)
 		local streakLine = math.clamp(math.noise(x / 0.6, y / 0.6, 337) * 2.5 - 0.6, 0, 1)
