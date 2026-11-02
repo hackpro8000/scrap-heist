@@ -34,6 +34,9 @@ local STONE = { 0.46, 0.45, 0.5 }
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
 local ROCK_GRADIENT = { 1.1, 0.6 }
+-- Splotches in the stone: how far broad patches and small blotches swing
+-- its brightness, their sizes in studs, and how far they tint it warm or cool.
+local SPLOTCH = { broad = 0.12, broadSize = 6, small = 0.07, smallSize = 1.5, tint = 0.04 }
 -- Texture pixels per stud; chunks are 1024 texels across at this density.
 local TEXEL_DENSITY = 16
 
@@ -467,7 +470,11 @@ local paintRock = rusting(0.1, function(x, y, z)
 		then math.clamp((-z - rock.shownFrom) / math.max(rock.peak[3] - rock.shownFrom, 0.5), 0, 1)
 		else 0
 	local shade = ROCK_GRADIENT[1] + (ROCK_GRADIENT[2] - ROCK_GRADIENT[1]) * depth ^ 0.8
-	return STONE[1] * shade, STONE[2] * shade, STONE[3] * shade
+	local broad = math.noise(x / SPLOTCH.broadSize, y / SPLOTCH.broadSize, z / SPLOTCH.broadSize)
+	local small = math.noise(x / SPLOTCH.smallSize + 31, y / SPLOTCH.smallSize, z / SPLOTCH.smallSize)
+	shade *= 1 + broad * SPLOTCH.broad * 2 + small * SPLOTCH.small * 2
+	local warm = math.noise(x / SPLOTCH.broadSize + 57, y / SPLOTCH.broadSize, z / SPLOTCH.broadSize) * SPLOTCH.tint * 2
+	return STONE[1] * shade * (1 + warm), STONE[2] * shade, STONE[3] * shade * (1 - warm)
 end)
 
 -- The island's flat top as one outline: the stones' feet (faces lying on
