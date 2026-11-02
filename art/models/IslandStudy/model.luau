@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-b8483f0bd4689359"
+local CACHE_KEY = "IslandStudy-276ce2c3aaab8467"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -852,6 +852,14 @@ local ROCK_SUBDIVISIONS = 1
 -- this deep, as a share of the stone's radius.
 local CHIP_SHARPNESS = 0.3
 local CHIP_EDGE, CHIP_CORNER = 0.05, 0.09
+-- The worn edges: every edge two cuts (facets and chips) make is rounded off
+-- with a bevel ROUND_RADIUS studs in radius (at most ROUND_SHARE of the
+-- stone's radius, so small stones keep their facets) in ROUND_SEGMENTS
+-- flat steps, each gentle enough to shade smooth. Edges gentler than
+-- ROUND_MIN_FOLD (dot of the two normals above it) are left alone.
+local ROUND_RADIUS, ROUND_SHARE = 0.3, 0.08
+local ROUND_SEGMENTS = 3
+local ROUND_MIN_FOLD = math.cos(math.rad(10))
 -- The overhanging lip: how far (studs) the top row stands out past where it
 -- sat, plus up to LIP_SPREAD more per stone, and how far it is raised so its
 -- tops reach the flat-top cut just under the cap.
@@ -1474,7 +1482,7 @@ local function buildRocks()
 			table.insert(tris, { points[f[1]], points[f[2]], points[f[3]] })
 		end
 		-- The flat spots, cut while the stone is still free-standing.
-		local facets = {}
+		local facets, cuts = {}, {}
 		for k = 1, ROCK_FACETS do
 			local angle = hash(SEED * 31 + i * 13 + k * 7.1) * TAU
 			local z = 2 * hash(SEED * 17 + i * 13 + k * 3.3) - 1
@@ -1483,6 +1491,7 @@ local function buildRocks()
 			local reach = 0.68 + 0.27 * hash(SEED * 5 + i * 13 + k * 11.7)
 			local facet = { n[1], n[2], n[3], dot(n, seed) + reach * radius }
 			table.insert(facets, facet)
+			table.insert(cuts, facet)
 			tris = clip(tris, facet)
 		end
 		-- The chips: a small cut along every sharp edge two facets make, and
@@ -1497,7 +1506,9 @@ local function buildRocks()
 					local length = math.sqrt(dot(m, m))
 					if length > 0.5 then
 						local edge = (p[4] + q[4]) / length
-						tris = clip(tris, { m[1] / length, m[2] / length, m[3] / length, edge - CHIP_EDGE * radius })
+						local chip = { m[1] / length, m[2] / length, m[3] / length, edge - CHIP_EDGE * radius }
+						table.insert(cuts, chip)
+						tris = clip(tris, chip)
 					end
 				end
 			end
@@ -1523,9 +1534,55 @@ local function buildRocks()
 						local length = math.sqrt(dot(m, m))
 						if length > 0.5 then
 							m = { m[1] / length, m[2] / length, m[3] / length }
-							tris = clip(tris, { m[1], m[2], m[3], dot(m, corner) - CHIP_CORNER * radius })
+							local chip = { m[1], m[2], m[3], dot(m, corner) - CHIP_CORNER * radius }
+							table.insert(cuts, chip)
+							tris = clip(tris, chip)
 						end
 					end
+				end
+			end
+		end
+		-- The worn edges. An edge exists where two cuts share at least two of
+		-- the stone's corners. Each is rounded by planes tangent to a cylinder
+		-- of the bevel's radius sitting inside both cuts, at normals stepped
+		-- evenly between theirs, so the bevel stays on the stone and the seams
+		-- cut later stay exact.
+		local bevel = math.min(ROUND_RADIUS, ROUND_SHARE * radius)
+		local shared, seenCorner = {}, {}
+		for _, tri in tris do
+			for _, p in tri do
+				local cornerKey = string.format("%.5f:%.5f:%.5f", p[1], p[2], p[3])
+				if not seenCorner[cornerKey] then
+					seenCorner[cornerKey] = true
+					local on = {}
+					for c, cut in cuts do
+						if math.abs(planeDistance(cut, p)) < 1e-5 then
+							table.insert(on, c)
+						end
+					end
+					for x = 1, #on do
+						for y = x + 1, #on do
+							local pair = on[x] * 1000 + on[y]
+							shared[pair] = (shared[pair] or 0) + 1
+						end
+					end
+				end
+			end
+		end
+		for pair, count in shared do
+			local p, q = cuts[pair // 1000], cuts[pair % 1000]
+			local fold = dot(p, q)
+			if count >= 2 and fold < ROUND_MIN_FOLD and fold > -0.99 then
+				local angle = math.acos(math.clamp(fold, -1, 1))
+				for s = 1, ROUND_SEGMENTS do
+					local t = (s - 0.5) / ROUND_SEGMENTS
+					local a, b = math.sin((1 - t) * angle) / math.sin(angle), math.sin(t * angle) / math.sin(angle)
+					tris = clip(tris, {
+						a * p[1] + b * q[1],
+						a * p[2] + b * q[2],
+						a * p[3] + b * q[3],
+						a * (p[4] - bevel) + b * (q[4] - bevel) + bevel,
+					})
 				end
 			end
 		end
