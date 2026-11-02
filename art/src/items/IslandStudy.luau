@@ -951,6 +951,20 @@ local SKY_TINT = 0.1
 -- lower and brightens late near the top.
 local STONE_GRADIENT = 0.25
 local STONE_GRADIENT_EASE = 1
+-- Flat value planes: each face takes one of FACET_BANDS values from the way
+-- it faces (mostly up or down, nudged toward FACET_KEY's light), spread
+-- FACET_CONTRAST from darkest to lightest, blended over FACET_SOFT of the
+-- facing range so bevels pick up the tone between.
+local FACET_BANDS = 3
+local FACET_CONTRAST = 0.18
+local FACET_SOFT = 0.08
+-- The key light's direction (normalized below), and its share of the facing.
+local FACET_KEY = { 0.4, 0.3, 0.85 }
+local FACET_KEY_SHARE = 0.25
+do
+	local length = math.sqrt(FACET_KEY[1] ^ 2 + FACET_KEY[2] ^ 2 + FACET_KEY[3] ^ 2)
+	FACET_KEY = { FACET_KEY[1] / length, FACET_KEY[2] / length, FACET_KEY[3] / length }
+end
 -- Rock patches over the stone faces: faceted cells about SPLOTCH_SIZE studs
 -- across (jittered Voronoi), each one a stepped shade up to SPLOTCH_STRENGTH
 -- lighter or darker, quantized to SPLOTCH_STEPS levels, so patches meet on
@@ -1021,7 +1035,7 @@ local function stonePaint(base, members)
 		local s = seeds[i]
 		return (x - s[1]) ^ 2 + (y - s[2]) ^ 2 + (z - s[3]) ^ 2 - s.weight
 	end
-	return rusting(0, function(x, y, z, _nx, _ny, nz)
+	return rusting(0, function(x, y, z, nx, ny, nz)
 		local best = power(last, x, y, z)
 		while true do
 			local step = nil
@@ -1082,6 +1096,20 @@ local function stonePaint(base, members)
 			local height = math.clamp((z - span[1]) / (span[2] - span[1]), 0, 1) ^ STONE_GRADIENT_EASE
 			gradient = 1 + (height - 0.5) * STONE_GRADIENT
 		end
+		-- Value planes: the facing picks a band; near a band's edge it ramps to
+		-- the next over FACET_SOFT, so only bevels and folds land between.
+		local key = nx * FACET_KEY[1] + ny * FACET_KEY[2] + nz * FACET_KEY[3]
+		local facing = (1 - FACET_KEY_SHARE) * nz + FACET_KEY_SHARE * key
+		local q = math.clamp((facing + 1) / 2, 0, 0.9999) * FACET_BANDS
+		local band, within = math.floor(q), q - math.floor(q)
+		local soft = FACET_SOFT * FACET_BANDS
+		local level = band
+		if within < soft / 2 and band > 0 then
+			level = band - 1 + math.clamp(0.5 + within / soft, 0, 1)
+		elseif within > 1 - soft / 2 and band < FACET_BANDS - 1 then
+			level = band + math.clamp((within - 1 + soft / 2) / soft, 0, 1)
+		end
+		gradient *= 1 + (level / (FACET_BANDS - 1) - 0.5) * FACET_CONTRAST
 		local light = (1 + shade) * gradient
 		colour = {
 			(colour[1] + (grey - colour[1]) * mix) * light,
