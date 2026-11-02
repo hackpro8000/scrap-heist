@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-c43e79deefcfbb4c"
+local CACHE_KEY = "IslandStudy-ffd7142df5460cb0"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -608,7 +608,8 @@ end
 -- `shade` multiplies the contact shadow strength, for parts that should sit in
 -- heavier shadow than the standard wear. `lit` scales the highlight strength
 -- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
--- to paint its highlights as bold, fully loaded strokes instead of dry ones.
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
 local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
@@ -785,7 +786,7 @@ local function finishParts()
 			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
 			shadow = CONTACT_SHADOW * (entry.shade or 1),
 			gradient = GRADIENT,
-			blend = EDGE_BLEND,
+			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
 			name = entry.name,
@@ -1703,6 +1704,7 @@ local baked = model.cached(CACHE_KEY, function()
 		parts[#parts].wide = 4
 		parts[#parts].edge = 1
 		parts[#parts].painted = true
+		parts[#parts].blend = 1
 	end
 	-- The hidden faces join the rocks' group, so the stones still shade with
 	-- them as their own surfaces and the body still takes their shadows. Marked
