@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-f808041264c7eed3"
+local CACHE_KEY = "Mountain-d1908c048d1f3f2d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -804,18 +804,19 @@ local function finishParts()
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
--- Mountain: a stylized peak built entirely from hexagonal basalt columns
--- packed on a grid, each standing as tall as the slope at its centre with
--- its top cut on a slant, so the terrain climbs in uneven steps to the
--- summit and a lower shoulder. Only the faces that show are built: a side
--- wall runs down just past its neighbour's lowest top corner. Centered on
--- the origin, base at z = 0.
+-- Mountain: a stylized peak built entirely from stone columns of every size
+-- and shape, packed edge to edge like cracked basalt. Each column stands as
+-- tall as the slope at its centre with a low faceted top, so the terrain
+-- climbs in uneven steps to the summit and a lower shoulder. The columns are
+-- the cells of a weighted Voronoi diagram (a power diagram) over scattered
+-- stones, so big stones claim big cells. Only the faces that show are
+-- built: a side wall runs down just past its neighbour's lowest top corner.
+-- Centered on the origin, base at z = 0.
 local RADIUS = 20
 local PEAK = 28
--- Corner radius of a column and the grid it packs on, a hair wider so a
--- groove shows between neighbours.
-local COLUMN = 1.5
-local SPACING = COLUMN * 1.04 * math.sqrt(3)
+local SMALLEST, LARGEST = 0.9, 2.8
+-- Groove left between neighbouring columns.
+local GAP = 0.12
 
 local STONE = { 0.46, 0.45, 0.5 }
 
@@ -823,6 +824,12 @@ local STONE = { 0.46, 0.45, 0.5 }
 local function hash(i: number, j: number): number
 	local n = math.sin(i * 127.1 + j * 311.7) * 43758.5453
 	return n - math.floor(n)
+end
+
+local seed = 11
+local function random(): number
+	seed = (seed * 16807) % 2147483647
+	return seed / 2147483647
 end
 
 -- Height of the slope at a point: the main cone, ridges running down from
@@ -837,54 +844,126 @@ local function heightAt(x: number, y: number): number
 	return math.max(main, shoulder)
 end
 
--- The six neighbours on the grid, one per side: side i faces 30 + 60i degrees.
-local NEIGHBOURS = { { 1, 0 }, { 0, 1 }, { -1, 1 }, { -1, 0 }, { 0, -1 }, { 1, -1 } }
-
--- Every column's centre and top corners, keyed by its grid cell.
-local columns = {}
-local REACH = math.ceil(RADIUS / SPACING) + 1
-for q = -REACH * 2, REACH * 2 do
-	for r = -REACH * 2, REACH * 2 do
-		local cx = q * SPACING * math.cos(math.pi / 6)
-		local cy = q * SPACING * 0.5 + r * SPACING
-		if cx * cx + cy * cy > RADIUS * RADIUS then
-			continue
+-- Stones scattered over the disc by dart throwing, mostly small with a few
+-- big ones, none crowding another: x, y and size.
+local stones = {}
+for _ = 1, 6000 do
+	local angle, reach = random() * TAU, math.sqrt(random()) * RADIUS
+	local x, y = reach * math.cos(angle), reach * math.sin(angle)
+	local size = SMALLEST + (LARGEST - SMALLEST) * random() ^ 2
+	local clear = true
+	for _, other in stones do
+		local dx, dy = x - other[1], y - other[2]
+		if dx * dx + dy * dy < ((size + other[3]) * 0.72) ^ 2 then
+			clear = false
+			break
 		end
-		local rise = math.max(0.8, heightAt(cx, cy) + (hash(q, r) - 0.5) * 2.4)
-		local tiltX, tiltY = (hash(q + 5, r) - 0.5) * 0.4, (hash(r + 5, q) - 0.5) * 0.4
-		local corners = {}
-		for i = 0, 5 do
-			local angle = i / 6 * TAU
-			local x, y = cx + COLUMN * math.cos(angle), cy + COLUMN * math.sin(angle)
-			corners[i + 1] = { x, y, rise + (x - cx) * tiltX + (y - cy) * tiltY }
-		end
-		local lowest = math.huge
-		for _, corner in corners do
-			lowest = math.min(lowest, corner[3])
-		end
-		columns[`{q},{r}`] = { q = q, r = r, corners = corners, lowest = lowest }
 	end
+	if clear then
+		table.insert(stones, { x, y, size })
+	end
+end
+
+-- Cuts a cell outline down to the side of stone q's boundary nearer stone
+-- p. Each corner carries the stone across the edge that starts there (nil
+-- on the outer rim), so walls can find their neighbour.
+local function clip(outline, p, q, neighbour)
+	local nx, ny = q[1] - p[1], q[2] - p[2]
+	local limit = (q[1] ^ 2 + q[2] ^ 2 - p[1] ^ 2 - p[2] ^ 2 - q[3] ^ 2 + p[3] ^ 2) / 2
+	local function side(point)
+		return point[1] * nx + point[2] * ny - limit
+	end
+	local kept = {}
+	for i, a in outline do
+		local b = outline[i % #outline + 1]
+		local sa, sb = side(a), side(b)
+		local crossing = if (sa <= 0) ~= (sb <= 0)
+			then { a[1] + (b[1] - a[1]) * sa / (sa - sb), a[2] + (b[2] - a[2]) * sa / (sa - sb) }
+			else nil
+		if sa <= 0 then
+			table.insert(kept, { a[1], a[2], a[3] })
+			if crossing then
+				table.insert(kept, { crossing[1], crossing[2], neighbour })
+			end
+		elseif crossing then
+			table.insert(kept, { crossing[1], crossing[2], a[3] })
+		end
+	end
+	return kept
+end
+
+-- Each stone's column: its outline pulled in by the groove, and its top
+-- corners on a slanted plane.
+local columns = {}
+for index, stone in stones do
+	local outline = {}
+	for i = 0, 31 do
+		local angle = i / 32 * TAU
+		table.insert(outline, { RADIUS * math.cos(angle), RADIUS * math.sin(angle), nil })
+	end
+	for other, neighbour in stones do
+		if other ~= index and #outline >= 3 then
+			local dx, dy = neighbour[1] - stone[1], neighbour[2] - stone[2]
+			if dx * dx + dy * dy < (LARGEST * 3) ^ 2 then
+				outline = clip(outline, stone, neighbour, other)
+			end
+		end
+	end
+	-- Cells cut by the outer rim are dropped, so the foot ends ragged
+	-- instead of on a clean circle.
+	local onRim = false
+	for _, corner in outline do
+		onRim = onRim or corner[3] == nil
+	end
+	if #outline < 3 or onRim then
+		continue
+	end
+	local cx, cy = 0, 0
+	for _, corner in outline do
+		cx, cy = cx + corner[1] / #outline, cy + corner[2] / #outline
+	end
+	local rise = math.max(0.8, heightAt(cx, cy) + (hash(index, 1) - 0.5) * (1 + stone[3]))
+	local tiltX, tiltY = (hash(index, 2) - 0.5) * 0.45, (hash(index, 3) - 0.5) * 0.45
+	local corners, lowest = {}, math.huge
+	for i, corner in outline do
+		local ox, oy = corner[1] - cx, corner[2] - cy
+		local pull = math.max(0, 1 - GAP / math.max(math.sqrt(ox * ox + oy * oy), 1e-3))
+		local x, y = cx + ox * pull, cy + oy * pull
+		local z = rise + ox * tiltX + oy * tiltY
+		corners[i] = { x, y, z, corner[3] }
+		lowest = math.min(lowest, z)
+	end
+	columns[index] = {
+		corners = corners,
+		lowest = lowest,
+		-- The top rises to a low ridge point, so it reads as broken stone.
+		peak = { cx, cy, rise + 0.15 * stone[3] * (0.5 + hash(index, 4)) },
+	}
 end
 
 part("Columns", nil, STONE, function(mesh)
 	for _, column in columns do
+		local corners = column.corners
+		local count = #corners
 		local top = {}
-		for i, corner in column.corners do
+		for i, corner in corners do
 			top[i] = mesh:vertex(corner[1], corner[2], corner[3])
 		end
-		mesh:face(top)
-		for i = 1, 6 do
-			local offset = NEIGHBOURS[i]
-			local neighbour = columns[`{column.q + offset[1]},{column.r + offset[2]}`]
+		local peak = mesh:vertex(column.peak[1], column.peak[2], column.peak[3])
+		for i = 1, count do
+			mesh:face({ peak, top[i], top[i % count + 1] })
+		end
+		for i = 1, count do
+			local a, b = corners[i], corners[i % count + 1]
+			local neighbour = a[4] and columns[a[4]]
 			local floor = if neighbour then math.max(0, neighbour.lowest - 0.6) else 0
-			local a, b = column.corners[i], column.corners[i % 6 + 1]
 			if math.max(a[3], b[3]) <= floor then
 				continue
 			end
 			mesh:face({
 				mesh:vertex(a[1], a[2], math.min(floor, a[3])),
 				mesh:vertex(b[1], b[2], math.min(floor, b[3])),
-				top[i % 6 + 1],
+				top[i % count + 1],
 				top[i],
 			})
 		end
