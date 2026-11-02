@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-fc8957d1a838cb8d"
+local CACHE_KEY = "Mountain-bebe7375ff652eca"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -847,6 +847,10 @@ local ROCK_GRADIENT = { 1.1, 0.6 }
 local SPLOTCH = { cell = 1.8, chance = 1, radius = { 1, 2 }, tone = 0.1, tint = 0.02 }
 -- Texture pixels per stud; chunks are 1024 texels across at this density.
 local TEXEL_DENSITY = 16
+-- Edge highlights: how far edge paint reaches from an edge, in studs, and how
+-- many times wider than the default the highlight strokes are.
+local EDGE_REACH = 0.5
+local HIGHLIGHT_WIDTH = 2.5
 
 -- Fixed per-column jitter, so the columns look uneven but every build matches.
 local function hash(i: number, j: number): number
@@ -1425,6 +1429,12 @@ chunkedPart("Columns", nil, STONE, function(mesh)
 	for _, t in earClip(outline) do
 		mesh:face({ corners[t[3]], corners[t[2]], corners[t[1]] })
 	end
-end, false, paintRock, true)
+end, false, paintRock, true, EDGE_REACH)
+-- chunkedPart takes no stroke width, so its chunks get it here.
+for _, entry in parts do
+	if entry.group == "Columns" then
+		entry.wide = HIGHLIGHT_WIDTH
+	end
+end
 
 finishParts()
