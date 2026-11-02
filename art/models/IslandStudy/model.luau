@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-ffd7142df5460cb0"
+local CACHE_KEY = "IslandStudy-35d9c9534427eaec"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1682,6 +1682,63 @@ local function rockGroups(visible)
 	end
 end
 
+-- Each stone's own coat: the rock colour shifted a little per stone, some
+-- warmer and browner, some cooler and greyer, up to 8% lighter or darker, flat
+-- across the stone so neighbours read apart without any noise.
+local STONE_BRIGHTNESS, STONE_WARMTH = 0.08, 1
+local stoneNeighbours, stoneColour = {}, {}
+for i, seed in seeds do
+	stoneNeighbours[i] = {}
+	for j, other in seeds do
+		local dx, dy, dz = other[1] - seed[1], other[2] - seed[2], other[3] - seed[3]
+		if j ~= i and dx * dx + dy * dy + dz * dz < REACH * REACH then
+			table.insert(stoneNeighbours[i], j)
+		end
+	end
+end
+
+-- Paints stones in their own colours. A point belongs to the stone whose
+-- power cell holds it, since the stones were cut on those planes; the walk
+-- starts from the last stone found, so it rarely takes more than one step.
+local function stonePaint(base, members)
+	for _, i in members do
+		local light = 1 + (2 * hash(SEED * 211 + i * 7.3) - 1) * STONE_BRIGHTNESS
+		local warmth = (2 * hash(SEED * 223 + i * 5.9) - 1) * STONE_WARMTH
+		local r, g, b = base[1], base[2], base[3]
+		if warmth > 0 then
+			r, g, b = r * (1 + 0.07 * warmth), g * (1 + 0.015 * warmth), b * (1 - 0.1 * warmth)
+		else
+			local grey = (r + g + b) / 3
+			local mix = -warmth * 0.55
+			r, g, b = r + (grey - r) * mix, g + (grey - g) * mix, b + (grey * 1.04 - b) * mix
+		end
+		stoneColour[i] = { r * light, g * light, b * light }
+	end
+	local last = members[1]
+	local function power(i, x, y, z): number
+		local s = seeds[i]
+		return (x - s[1]) ^ 2 + (y - s[2]) ^ 2 + (z - s[3]) ^ 2 - s.weight
+	end
+	return rusting(0, function(x, y, z)
+		local best = power(last, x, y, z)
+		while true do
+			local step = nil
+			for _, j in stoneNeighbours[last] do
+				local p = power(j, x, y, z)
+				if p < best then
+					best, step = p, j
+				end
+			end
+			if not step then
+				break
+			end
+			last = step
+		end
+		local colour = stoneColour[last] or base
+		return colour[1], colour[2], colour[3]
+	end)
+end
+
 -- The parts and their shading are cached under a key hashing every line above
 -- "-- cached above", so an unchanged rebuild loads them instead of baking.
 -- finishParts() adds parts straight to the model, so model.part is swapped
@@ -1696,9 +1753,11 @@ local baked = model.cached(CACHE_KEY, function()
 	-- they shade each other as one surface.
 	local visible = buildRocks()
 	for g, members in rockGroups(visible) do
-		part(`Rocks_{g}`, nil, { 0.37, 0.34, 0.29 }, function(mesh)
+		-- Flat, since a paint fn would otherwise bring back the warp rust 0 skips.
+		local rock = { 0.37, 0.34, 0.29 }
+		part(`Rocks_{g}`, nil, rock, function(mesh)
 			stonesMesh(mesh, visible, members)
-		end, nil, 0)
+		end, nil, stonePaint(rock, members), nil, nil, true)
 		parts[#parts].group = "Rocks"
 		parts[#parts].heightRange = islandRange
 		parts[#parts].wide = 4
