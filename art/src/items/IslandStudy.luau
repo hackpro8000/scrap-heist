@@ -1009,8 +1009,10 @@ local SOIL_THICKNESS = 1.15
 local SOIL_RIDGE, SOIL_RIDGE_SPACING = 0.17, 5.5
 local SOIL_LUMP = 0.14
 -- How far the bead's outer edge sits past the stones' top edge, on average,
--- and how far either way it wanders; then the drips.
-local SOIL_OVERHANG, SOIL_OVERHANG_SPREAD = 0.9, 2
+-- and how far either way it wanders; then the drips. It hangs past and down
+-- by at least SOIL_HANG of the island's height everywhere.
+local SOIL_OVERHANG, SOIL_OVERHANG_SPREAD = 2, 1.6
+local SOIL_HANG = 0.02
 local SOIL_DRIPS, SOIL_DRIP_WIDTH = 10, 0.09
 local SOIL_COLOUR = { 0.34, 0.235, 0.15 }
 local BEAD_STEPS = 8
@@ -1087,10 +1089,10 @@ local function buildSoil(mesh, visible)
 			local gap = (angle - d.angle + math.pi) % TAU - math.pi
 			drip = math.max(drip, d.size * math.exp(-((gap / SOIL_DRIP_WIDTH) ^ 2)))
 		end
-		over += 0.8 * drip
+		over = math.max(over, SOIL_HANG * DEPTH) + 0.8 * drip
 		local outer = stoneEdge[j] + over
 		-- The bead hangs lower where it is past the stones, and lowest at a drip.
-		local droop = 1 * math.clamp(over / 2.5, 0, 1) + 1.6 * drip
+		local droop = math.max(SOIL_HANG * DEPTH, math.clamp(over / 2.5, 0, 1)) + 1.6 * drip
 		local bottom = SOIL_BASE - droop
 		-- The bead: its top meets the surface level, its round runs out to `outer`.
 		local probe = outer - 1
