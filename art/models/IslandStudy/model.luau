@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-898c565b31f3e912"
+local CACHE_KEY = "IslandStudy-63a8fe31a9896aa0"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1992,17 +1992,19 @@ local SOIL_STAIN_COLOUR = { 0.34, 0.22, 0.13 }
 -- Edge highlight: a cream rim along every rounded edge, where a point lies
 -- within EDGE_WIDTH studs of a second cut plane, up to EDGE_STRENGTH, a little
 -- weaker on faces turned down.
-local EDGE_WIDTH = 0.9
-local EDGE_STRENGTH = 0.95
+local EDGE_WIDTH = 0.45
+local EDGE_STRENGTH = 0.5
 local EDGE_COLOUR = { 0.93, 0.89, 0.8 }
--- The highlight gathers at corners: full where a third cut comes within
--- EDGE_CORNER_REACH studs, widening there by up to EDGE_CORNER_WIDEN times.
--- Along the rest of an edge it shows only in patches, up to EDGE_ALONG
--- strong, where slow noise EDGE_BREAK_SIZE studs across rises past
--- EDGE_BREAK_GAP, fading in and out over EDGE_BREAK_SOFT.
+-- The highlight is a stroke that thins rather than fades: EDGE_CORNER_WIDEN
+-- times EDGE_WIDTH wide where a third cut comes within EDGE_CORNER_REACH
+-- studs, and along the rest of an edge up to EDGE_ALONG times EDGE_WIDTH in
+-- patches where slow noise EDGE_BREAK_SIZE studs across rises past
+-- EDGE_BREAK_GAP, thinning to nothing over EDGE_BREAK_SOFT. Its border is
+-- EDGE_SOFT studs soft.
 local EDGE_CORNER_REACH, EDGE_CORNER_WIDEN = 2, 1.8
 local EDGE_ALONG = 0.4
 local EDGE_BREAK_SIZE, EDGE_BREAK_GAP, EDGE_BREAK_SOFT = 1.8, 0.1, 0.25
+local EDGE_SOFT = 0.35
 local stoneNeighbours, stoneColour = {}, {}
 for i, seed in seeds do
 	stoneNeighbours[i] = {}
@@ -2206,8 +2208,8 @@ local function stonePaint(base, members)
 				end
 			end
 		end
-		-- A third cut close by means a corner: the rim is full and wider there,
-		-- and elsewhere along the edge only in soft patches.
+		-- A third cut close by means a corner: the stroke is widest there, and
+		-- elsewhere along the edge thins in and out in patches.
 		local corner = math.clamp(1 - third / EDGE_CORNER_REACH, 0, 1)
 		corner = corner * corner * (3 - 2 * corner)
 		local patch = math.clamp(
@@ -2217,9 +2219,9 @@ local function stonePaint(base, members)
 			1
 		)
 		patch = patch * patch * (3 - 2 * patch)
-		local strength = math.min(corner + EDGE_ALONG * patch, 1)
-		local rim = math.clamp(1 - second / (EDGE_WIDTH * (1 + (EDGE_CORNER_WIDEN - 1) * corner)), 0, 1)
-		rim = rim * rim * (3 - 2 * rim) * strength * EDGE_STRENGTH * (0.65 + 0.35 * math.max(nz, 0)) * (1 - ink)
+		local width = EDGE_WIDTH * math.min(EDGE_CORNER_WIDEN * corner + EDGE_ALONG * patch, EDGE_CORNER_WIDEN)
+		local rim = math.clamp((width - second) / EDGE_SOFT, 0, 1)
+		rim = rim * rim * (3 - 2 * rim) * EDGE_STRENGTH * (0.65 + 0.35 * math.max(nz, 0)) * (1 - ink)
 		colour = {
 			colour[1] + (EDGE_COLOUR[1] - colour[1]) * rim,
 			colour[2] + (EDGE_COLOUR[2] - colour[2]) * rim,
@@ -2533,6 +2535,8 @@ local baked = model.cached(CACHE_KEY, function()
 		parts[#parts].heightRange = islandRange
 		parts[#parts].wide = 4
 		parts[#parts].edge = 1
+		-- No baked edge highlight: the paint's own thinning stroke is the only one.
+		parts[#parts].lit = 0
 		parts[#parts].painted = true
 		parts[#parts].blend = 1
 	end
