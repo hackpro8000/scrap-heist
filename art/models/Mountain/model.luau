@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-9cd69142ef15bb73"
+local CACHE_KEY = "Mountain-d88e175f76f8d6b6"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -839,6 +839,8 @@ local CHIP_DEPTH = { 0.15, 0.45 }
 local CUT_SPREAD = math.rad(55)
 
 local STONE = { 0.46, 0.45, 0.5 }
+-- Texture pixels per stud; chunks are 1024 texels across at this density.
+local TEXEL_DENSITY = 16
 
 -- Fixed per-column jitter, so the columns look uneven but every build matches.
 local function hash(i: number, j: number): number
@@ -1043,8 +1045,9 @@ local function carve(faces, n, d)
 	return kept
 end
 
-part("Columns", nil, STONE, function(mesh)
-	for _, column in columns do
+-- Carve every column first, so walls can be trimmed against their
+-- neighbours' finished shapes.
+for _, column in columns do
 		local corners, index = column.corners, column.index
 		local faces = solidOf(column)
 
@@ -1093,9 +1096,94 @@ part("Columns", nil, STONE, function(mesh)
 			end
 		end
 
-		-- Flipped upside down: z mirrors, and the winding reverses so faces
-		-- still point outward. The foot becomes the island's flat top.
-		for _, face in faces do
+		column.faces = faces
+	-- How high the column stays whole: below its lowest top or cut corner,
+	-- its full outline is solid.
+	column.solidTo = math.huge
+	for _, face in faces do
+		local flat = true
+		for _, p in face do
+			flat = flat and p[3] == 0
+		end
+		local nz = 0
+		for i, a in face do
+			local b = face[i % #face + 1]
+			nz += (a[1] - b[1]) * (a[2] + b[2])
+		end
+		if not flat and math.abs(nz) > 1e-3 then
+			for _, p in face do
+				column.solidTo = math.min(column.solidTo, p[3])
+			end
+		end
+	end
+end
+
+local function inside(column, x: number, y: number): boolean
+	local corners = column.corners
+	for i, a in corners do
+		local b = corners[i % #corners + 1]
+		if (b[1] - a[1]) * (y - a[2]) - (b[2] - a[2]) * (x - a[1]) < 0 then
+			return false
+		end
+	end
+	return true
+end
+
+-- Keeps the part of a face above `height`.
+local function above(face, height: number)
+	local kept = {}
+	for i, a in face do
+		local b = face[i % #face + 1]
+		if a[3] >= height then
+			table.insert(kept, a)
+		end
+		if (a[3] >= height) ~= (b[3] >= height) then
+			local t = (height - a[3]) / (b[3] - a[3])
+			table.insert(kept, { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, height })
+		end
+	end
+	return kept
+end
+
+-- The island is split into cubic chunks, each with its own texture, so the
+-- stone reads sharp at one density everywhere.
+useTexelDensity(TEXEL_DENSITY)
+
+chunkedPart("Columns", nil, STONE, function(mesh)
+	for _, column in columns do
+		local neighbours = {}
+		for _, corner in column.corners do
+			if corner[4] and columns[corner[4]] then
+				table.insert(neighbours, columns[corner[4]])
+			end
+		end
+		for _, face in column.faces do
+			-- A side wall is trimmed to what shows above the neighbour it
+			-- faces; the buried rest only wastes texture.
+			local nx, ny, nz = 0, 0, 0
+			local cx, cy = 0, 0
+			for i, a in face do
+				local b = face[i % #face + 1]
+				nx += (a[2] - b[2]) * (a[3] + b[3])
+				ny += (a[3] - b[3]) * (a[1] + b[1])
+				nz += (a[1] - b[1]) * (a[2] + b[2])
+				cx, cy = cx + a[1] / #face, cy + a[2] / #face
+			end
+			local across = math.sqrt(nx * nx + ny * ny)
+			if across > 1e-6 and math.abs(nz) < 0.05 * across then
+				local px, py = cx + nx / across * GAP * 3, cy + ny / across * GAP * 3
+				for _, neighbour in neighbours do
+					if inside(neighbour, px, py) then
+						face = above(face, neighbour.solidTo - 0.4)
+						break
+					end
+				end
+			end
+			if #face < 3 then
+				continue
+			end
+			-- Flipped upside down: z mirrors, and the winding reverses so
+			-- faces still point outward. The foot becomes the island's top.
 			local verts = {}
 			for i, p in face do
 				verts[#face + 1 - i] = mesh:vertex(p[1], p[2], -p[3])
@@ -1103,6 +1191,6 @@ part("Columns", nil, STONE, function(mesh)
 			mesh:face(verts)
 		end
 	end
-end, false, 0.1, 1024, nil, true)
+end, false, 0.1, true)
 
 finishParts()
