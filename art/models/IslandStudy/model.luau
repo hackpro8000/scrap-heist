@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-d640078875c8f251"
+local CACHE_KEY = "IslandStudy-83fd454e6fa89927"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -839,7 +839,18 @@ local ROCK_ROWS = 5
 local STUDY_STONES: number? = 3
 -- The study's block shape, as shares of the stone's half-width: how tall and
 -- how deep, and how far (as a slope) each side tilts off square.
-local BLOCK_HEIGHT, BLOCK_DEPTH, BLOCK_TILT = 0.6, 1.3, 0.12
+local BLOCK_HEIGHT, BLOCK_DEPTH, BLOCK_TILT = 1, 1.3, 0.12
+-- The point: each block's bottom narrows to a tip POINT_LENGTH times its
+-- half-height further down, set POINT_BACK of the block's depth back toward
+-- the wall and up to POINT_SHIFT of its half-width off to one side.
+local POINT_LENGTH, POINT_BACK, POINT_SHIFT = 1.2, 0.45, 0.35
+-- Cracks: CRACK_SHARE of the study's stones split in two, CRACK_LEVEL_SHARE
+-- of those level (plates parting into slabs) and the rest upright. The crack
+-- falls up to CRACK_SHIFT of the block's half-size off its middle, sloping by
+-- up to CRACK_TILT, and its rims round CRACK_BEVEL as wide as a seam's.
+local CRACK_SHARE, CRACK_LEVEL_SHARE = 0, 0.65
+local CRACK_SHIFT, CRACK_TILT = 0.35, 0.25
+local CRACK_BEVEL = 0.35
 local ROWS_FROM, ROWS_TO = 0.1, 0.86
 local ROW_GROWTH = 1.45
 local ROCK_WIDTH_TOP, ROCK_WIDTH_BOTTOM = 10, 4.5
@@ -1231,6 +1242,52 @@ if STUDY_STONES then
 	for i = #seeds, STUDY_STONES + 1, -1 do
 		seeds[i] = nil
 	end
+	-- Study stones stand upright: the face turns level, keeping its distance
+	-- from the seed, so the blocks hang straight and point down.
+	for _, seed in seeds do
+		local face = seed.face
+		local n = normalize({ face[1], face[2], 0 })
+		local proud = face[4] - dot(face, seed)
+		seed.face = { n[1], n[2], n[3], dot(n, seed) + proud }
+	end
+end
+
+-- The cracks: a cracked stone becomes two seeds either side of where the
+-- crack falls, both keeping the parent's block, so the plane between them is
+-- the crack.
+if STUDY_STONES then
+	local whole = seeds
+	seeds = {}
+	for i, seed in whole do
+		if hash(SEED * 97 + i * 5.1) >= CRACK_SHARE then
+			table.insert(seeds, seed)
+			continue
+		end
+		local face = seed.face
+		local across = normalize(cross(face, { 0, 0, 1 }))
+		local up = cross(across, face)
+		local level = hash(SEED * 101 + i * 3.7) < CRACK_LEVEL_SHARE
+		local dir, other = if level then up else across, if level then across else up
+		local size = if level then seed.width / 2 * BLOCK_HEIGHT else seed.width / 2
+		local shift = (2 * hash(SEED * 103 + i * 2.9) - 1) * CRACK_SHIFT * size
+		local slope = (2 * hash(SEED * 107 + i * 4.3) - 1) * CRACK_TILT * size / 2
+		for side = -1, 1, 2 do
+			local along = shift + side * size / 2
+			table.insert(seeds, {
+				seed[1] + dir[1] * along + other[1] * slope * side,
+				seed[2] + dir[2] * along + other[2] * slope * side,
+				seed[3] + dir[3] * along + other[3] * slope * side,
+				t = seed.t,
+				row = seed.row,
+				angle = seed.angle,
+				width = seed.width,
+				face = face,
+				weight = seed.weight,
+				block = { seed[1], seed[2], seed[3] },
+				parent = i,
+			})
+		end
+	end
 end
 
 local REACH = math.max(ROCK_WIDTH_TOP, tallest) * 2.2
@@ -1520,7 +1577,7 @@ local function buildRocks()
 		tris = clip(tris, face)
 		tris = clip(tris, { 0, 0, 1, CAP_TOP - 0.2 })
 		-- The fit: cut against every nearby seed, so neighbours share planes.
-		local seams = {}
+		local seams, crackCut = {}, {}
 		for j, other in seeds do
 			if j ~= i then
 				local dx, dy, dz = other[1] - seed[1], other[2] - seed[2], other[3] - seed[3]
@@ -1536,6 +1593,9 @@ local function buildRocks()
 					tris = clip(tris, plane)
 					table.insert(seams, { other = j, plane = plane })
 					table.insert(cuts, plane)
+					if seed.parent and other.parent == seed.parent then
+						crackCut[#cuts] = true
+					end
 				end
 			end
 		end
@@ -1543,9 +1603,10 @@ local function buildRocks()
 		-- a slanted bite out of the face towards one edge.
 		local half = seed.width / 2
 		local across = normalize(cross(face, { 0, 0, 1 }))
-		local up = cross(face, across)
-		local middle = planeDistance(face, seed)
-		local centre = { seed[1] - face[1] * middle, seed[2] - face[2] * middle, seed[3] - face[3] * middle }
+		local up = cross(across, face)
+		local anchor = seed.block or seed
+		local middle = planeDistance(face, anchor)
+		local centre = { anchor[1] - face[1] * middle, anchor[2] - face[2] * middle, anchor[3] - face[3] * middle }
 		for k = 1, ROCK_FACETS do
 			local turn = hash(SEED * 31 + i * 13 + k * 7.1) * TAU
 			local tilt = math.rad(FACET_TILT_MIN + (FACET_TILT_MAX - FACET_TILT_MIN) * hash(SEED * 17 + i * 13 + k * 3.3))
@@ -1580,7 +1641,26 @@ local function buildRocks()
 			side(across, half, 2)
 			side({ -across[1], -across[2], -across[3] }, half, 3)
 			side(up, tall, 4)
-			side({ -up[1], -up[2], -up[3] }, tall, 5)
+			-- The point: three planes from the bottom's edges to one tip.
+			local drop, back = tall * POINT_LENGTH, half * BLOCK_DEPTH * POINT_BACK
+			local shift = (2 * hash(SEED * 109 + i * 3.1) - 1) * POINT_SHIFT * half
+			local tip = {
+				centre[1] - up[1] * (tall + drop) - face[1] * back + across[1] * shift,
+				centre[2] - up[2] * (tall + drop) - face[2] * back + across[2] * shift,
+				centre[3] - up[3] * (tall + drop) - face[3] * back + across[3] * shift,
+			}
+			local function toward(sideways, reach, k)
+				-- Normal square to the slope from the bottom edge (reach out) to the tip.
+				local n = normalize({
+					sideways[1] * drop - up[1] * reach,
+					sideways[2] * drop - up[2] * reach,
+					sideways[3] * drop - up[3] * reach,
+				})
+				side(n, dot(n, tip) - dot(n, centre), k)
+			end
+			toward(across, half - shift, 5)
+			toward({ -across[1], -across[2], -across[3] }, half + shift, 6)
+			toward(face, back, 7)
 		end
 		-- The worn edges. An edge exists where two cuts share at least two of
 		-- the stone's corners. Each is rounded by planes tangent to a cylinder
@@ -1615,6 +1695,9 @@ local function buildRocks()
 				local angle = math.acos(math.clamp(fold, -1, 1))
 				local wear = ROUND_MIN + (ROUND_MAX - ROUND_MIN) * hash(SEED * 241 + i * 13.1 + pair * 0.731) ^ ROUND_SKEW
 				local bevel = math.min(ROUND_RADIUS * wear, ROUND_SHARE * half * math.max(wear, 1), ROUND_STONE_SHARE * half)
+				if crackCut[pair // 1000] or crackCut[pair % 1000] then
+					bevel *= CRACK_BEVEL
+				end
 				for s = 1, ROUND_SEGMENTS do
 					local t = (s - 0.5) / ROUND_SEGMENTS
 					local a, b = math.sin((1 - t) * angle) / math.sin(angle), math.sin(t * angle) / math.sin(angle)
