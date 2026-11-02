@@ -1,15 +1,16 @@
--- Mountain: a stylized peak built entirely from stone columns of every size
--- and shape, packed edge to edge like cracked basalt. Each column stands as
--- tall as the slope at its centre with a low faceted top, so the terrain
--- climbs in uneven steps to the summit and a lower shoulder. The columns are
--- the cells of a weighted Voronoi diagram (a power diagram) over scattered
--- stones, so big stones claim big cells. Stones grow from small near the
--- summit to big at the foot, and the big foot stones give the rim its
--- lobed outline. Only the faces that show are
--- built: a column starts just below its lowest neighbour's top. Each column
--- is then carved, a few angled planes chiselling chunks off its corners
--- and edges.
--- Centered on the origin, base at z = 0.
+-- Mountain (now a floating island): a mountain of stone columns turned
+-- upside down, so a flat paved top hangs over a rocky cone that tapers to
+-- a point below. The columns, of every size and shape, are packed edge to
+-- edge like cracked basalt; each hangs as deep as the cone at its centre
+-- with a low faceted tip, so the underside steps down in uneven tiers to
+-- the lowest point and a shallower shoulder. The columns are the cells of
+-- a weighted Voronoi diagram (a power diagram) over scattered stones, so
+-- big stones claim big cells. Stones grow from small near the tip to big
+-- at the rim, and the big rim stones give the top its lobed outline. Each
+-- column is carved, a few angled planes chiselling chunks off its lower
+-- corners and edges. The model is built the mountain way up (heights,
+-- summit, foot) and flipped as it is written out. Centered on the origin,
+-- top at z = 0.
 local RADIUS = 20
 local PEAK = 28
 -- Stone sizes at the summit and at the foot.
@@ -131,28 +132,27 @@ for index, stone in stones do
 	end
 	local rise = math.max(0.8, heightAt(cx, cy) + (hash(index, 1) - 0.5) * (1 + stone[3]))
 	local tiltX, tiltY = (hash(index, 2) - 0.5) * 0.45, (hash(index, 3) - 0.5) * 0.45
-	local corners, lowest = {}, math.huge
+	local corners = {}
 	for i, corner in outline do
 		local ox, oy = corner[1] - cx, corner[2] - cy
 		local pull = math.max(0, 1 - GAP / math.max(math.sqrt(ox * ox + oy * oy), 1e-3))
 		local x, y = cx + ox * pull, cy + oy * pull
 		local z = rise + ox * tiltX + oy * tiltY
 		corners[i] = { x, y, z, corner[3] }
-		lowest = math.min(lowest, z)
 	end
 	columns[index] = {
 		index = index,
 		size = stone[3],
 		corners = corners,
-		lowest = lowest,
 		-- The top rises to a low ridge point, so it reads as broken stone.
 		peak = { cx, cy, rise + 0.15 * stone[3] * (0.5 + hash(index, 4)) },
 	}
 end
 
 -- A column as a closed solid: faces as lists of points, wound outward,
--- from `bottom` up to its slanted top and the low point above it.
-local function solidOf(column, bottom: number)
+-- from the foot (z = 0) up to its slanted top and the low point above it.
+local function solidOf(column)
+	local bottom = 0
 	local corners, peak = column.corners, column.peak
 	local count = #corners
 	local faces = {}
@@ -233,13 +233,7 @@ end
 part("Columns", nil, STONE, function(mesh)
 	for _, column in columns do
 		local corners, index = column.corners, column.index
-		-- The column starts just below the lowest of its neighbours' tops.
-		local bottom = math.huge
-		for _, corner in corners do
-			local neighbour = corner[4] and columns[corner[4]]
-			bottom = math.min(bottom, if neighbour then math.max(0, neighbour.lowest - 0.6) else 0)
-		end
-		local faces = solidOf(column, bottom)
+		local faces = solidOf(column)
 
 		-- Chisel cuts: each faces out and up at its own angle, from a low
 		-- slant (shaving a side edge) to steep (bevelling the top), and
@@ -259,14 +253,12 @@ part("Columns", nil, STONE, function(mesh)
 			faces = carve(faces, n, farthest - depth)
 		end
 
-		for f, face in faces do
-			-- The base is buried, so it is left out.
-			if f == 1 and #face == #corners and face[1][3] == bottom and face[2][3] == bottom then
-				continue
-			end
+		-- Flipped upside down: z mirrors, and the winding reverses so faces
+		-- still point outward. The foot becomes the island's flat top.
+		for _, face in faces do
 			local verts = {}
 			for i, p in face do
-				verts[i] = mesh:vertex(p[1], p[2], p[3])
+				verts[#face + 1 - i] = mesh:vertex(p[1], p[2], -p[3])
 			end
 			mesh:face(verts)
 		end
