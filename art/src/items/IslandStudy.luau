@@ -882,15 +882,27 @@ end
 local STONE_BRIGHTNESS, STONE_WARMTH = 0.08, 1
 -- How far the light's colour shifts each channel: warm on tops, cool below.
 local SKY_TINT = 0.1
--- Colour splotches over the stone faces: soft blotches about SPLOTCH_SIZE
--- studs across (noise scale), up to SPLOTCH_STRENGTH lighter and warmer or
--- darker and cooler. SPLOTCH_GAP leaves plain stone between them,
--- SPLOTCH_SOFT feathers their edges and SPLOTCH_WARP (studs) wobbles them.
-local SPLOTCH_SIZE = 3
-local SPLOTCH_STRENGTH = 0.12
-local SPLOTCH_GAP = 0.1
-local SPLOTCH_SOFT = 0.15
-local SPLOTCH_WARP = 0.8
+-- Rock patches over the stone faces: faceted cells about SPLOTCH_SIZE studs
+-- across (jittered Voronoi), each one a stepped shade up to SPLOTCH_STRENGTH
+-- lighter or darker, quantized to SPLOTCH_STEPS levels, so patches meet on
+-- straight edges like broken facets. SPLOTCH_GREY pulls a patch's colour
+-- toward grey by that share at full strength, so the shift is mostly value.
+local SPLOTCH_SIZE = 4.5
+local SPLOTCH_STRENGTH = 0.07
+local SPLOTCH_STEPS = 5
+local SPLOTCH_GREY = 0.35
+-- Fine grain: small light and dark flecks GRAIN_SIZE studs across, the ones
+-- past GRAIN_FLECK in a fast noise, up to GRAIN_STRENGTH lighter or darker.
+local GRAIN_SIZE = 0.22
+local GRAIN_FLECK = 0.28
+local GRAIN_STRENGTH = 0.05
+-- Mineral veins: on VEIN_SHARE of the stones, faint thin light streaks
+-- VEIN_WIDTH studs wide, VEIN_SPACING apart, slanted across the stone and
+-- broken up along their length, VEIN_STRENGTH lighter at most.
+local VEIN_SHARE = 0.35
+local VEIN_WIDTH = 0.12
+local VEIN_SPACING = 3.5
+local VEIN_STRENGTH = 0.08
 -- Moss on the stones' upward faces near the rim: solid painted patches with
 -- a ragged edge, a muted green, thinning out over MOSS_FADE studs below the
 -- top. MOSS_UP is the normal z a face needs; MOSS_COVER is the share of
@@ -951,19 +963,50 @@ local function stonePaint(base, members)
 			last = step
 		end
 		local colour = stoneColour[last] or base
-		-- Splotches: the point is pushed around by a mid noise so the blotch
-		-- edges wander, then a slow 3D noise picks lighter-warm or darker-cool
-		-- patches, ramped over SPLOTCH_SOFT so their edges stay soft.
-		local wx = x + SPLOTCH_WARP * math.noise(x / 1.5, y / 1.5, z / 1.5 + 173)
-		local wy = y + SPLOTCH_WARP * math.noise(x / 1.5 + 37, y / 1.5, z / 1.5 + 181)
-		local wz = z + SPLOTCH_WARP * math.noise(x / 1.5, y / 1.5 + 41, z / 1.5 + 191)
-		local blot = math.noise(wx / SPLOTCH_SIZE, wy / SPLOTCH_SIZE, wz / SPLOTCH_SIZE + 163)
-		local amount = math.clamp((math.abs(blot) - SPLOTCH_GAP) / SPLOTCH_SOFT, 0, 1) * SPLOTCH_STRENGTH
-		if blot > 0 then
-			colour = { colour[1] * (1 + amount), colour[2] * (1 + 0.8 * amount), colour[3] * (1 + 0.35 * amount) }
-		else
-			colour = { colour[1] * (1 - amount), colour[2] * (1 - 0.9 * amount), colour[3] * (1 - 0.7 * amount) }
+		-- Rock patches: the nearest jittered cell point picks the patch, and its
+		-- hash a stepped shade, lighter or darker and greyer the further it goes.
+		local cx, cy, cz = math.floor(x / SPLOTCH_SIZE), math.floor(y / SPLOTCH_SIZE), math.floor(z / SPLOTCH_SIZE)
+		local nearest, cell = math.huge, 0
+		for ix = cx - 1, cx + 1 do
+			for iy = cy - 1, cy + 1 do
+				for iz = cz - 1, cz + 1 do
+					local key = ix * 157.1 + iy * 311.7 + iz * 74.3
+					local px = (ix + hash(key + 1.7)) * SPLOTCH_SIZE - x
+					local py = (iy + hash(key + 5.3)) * SPLOTCH_SIZE - y
+					local pz = (iz + hash(key + 9.1)) * SPLOTCH_SIZE - z
+					local d = px * px + py * py + pz * pz
+					if d < nearest then
+						nearest, cell = d, key
+					end
+				end
+			end
 		end
+		local step = math.floor(hash(cell + SEED * 13.7) * SPLOTCH_STEPS)
+		local shade = (2 * step / (SPLOTCH_STEPS - 1) - 1) * SPLOTCH_STRENGTH
+		-- Grain: flecks where a fast noise passes GRAIN_FLECK either way.
+		local grain = math.noise(x / GRAIN_SIZE, y / GRAIN_SIZE, z / GRAIN_SIZE + 211)
+		local fleck = math.clamp((math.abs(grain) - GRAIN_FLECK) / 0.12, 0, 1)
+		shade += (if grain > 0 then fleck else -fleck) * GRAIN_STRENGTH
+		-- Veins: bands across a slanted direction per stone, thin and broken up
+		-- by a slow noise so only stretches of them show.
+		if hash(SEED * 241 + last * 3.1) < VEIN_SHARE then
+			local turn = hash(SEED * 251 + last * 4.7) * TAU
+			local tilt = 0.5 + 0.4 * hash(SEED * 263 + last * 6.1)
+			local along = x * math.cos(turn) * tilt + y * math.sin(turn) * tilt + z * (1 - tilt)
+				+ 0.3 * math.noise(x / 1.3, y / 1.3, z / 1.3 + 271)
+			local band = math.abs(along / VEIN_SPACING - math.floor(along / VEIN_SPACING + 0.5)) * VEIN_SPACING
+			local line = math.clamp(1 - band / VEIN_WIDTH, 0, 1)
+			local show = math.clamp(math.noise(x / 2, y / 2, z / 2 + 281) * 3 + 0.3, 0, 1)
+			shade += line * show * VEIN_STRENGTH
+		end
+		local grey = (colour[1] + colour[2] + colour[3]) / 3
+		local mix = math.min(math.abs(shade) / SPLOTCH_STRENGTH, 1) * SPLOTCH_GREY
+		local light = 1 + shade
+		colour = {
+			(colour[1] + (grey - colour[1]) * mix) * light,
+			(colour[2] + (grey - colour[2]) * mix) * light,
+			(colour[3] + (grey - colour[3]) * mix) * light,
+		}
 		-- Sunlit tops warm toward yellow-orange, undersides cool toward a
 		-- blue-purple bounce, the sides blending between.
 		local up = math.clamp(nz, -1, 1)
