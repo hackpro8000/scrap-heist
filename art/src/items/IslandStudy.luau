@@ -882,6 +882,15 @@ end
 local STONE_BRIGHTNESS, STONE_WARMTH = 0.08, 1
 -- How far the light's colour shifts each channel: warm on tops, cool below.
 local SKY_TINT = 0.1
+-- Colour splotches over the stone faces: soft blotches about SPLOTCH_SIZE
+-- studs across (noise scale), up to SPLOTCH_STRENGTH lighter and warmer or
+-- darker and cooler. SPLOTCH_GAP leaves plain stone between them,
+-- SPLOTCH_SOFT feathers their edges and SPLOTCH_WARP (studs) wobbles them.
+local SPLOTCH_SIZE = 3
+local SPLOTCH_STRENGTH = 0.12
+local SPLOTCH_GAP = 0.1
+local SPLOTCH_SOFT = 0.15
+local SPLOTCH_WARP = 0.8
 -- Moss on the stones' upward faces near the rim: solid painted patches with
 -- a ragged edge, a muted green, thinning out over MOSS_FADE studs below the
 -- top. MOSS_UP is the normal z a face needs; MOSS_COVER is the share of
@@ -942,6 +951,19 @@ local function stonePaint(base, members)
 			last = step
 		end
 		local colour = stoneColour[last] or base
+		-- Splotches: the point is pushed around by a mid noise so the blotch
+		-- edges wander, then a slow 3D noise picks lighter-warm or darker-cool
+		-- patches, ramped over SPLOTCH_SOFT so their edges stay soft.
+		local wx = x + SPLOTCH_WARP * math.noise(x / 1.5, y / 1.5, z / 1.5 + 173)
+		local wy = y + SPLOTCH_WARP * math.noise(x / 1.5 + 37, y / 1.5, z / 1.5 + 181)
+		local wz = z + SPLOTCH_WARP * math.noise(x / 1.5, y / 1.5 + 41, z / 1.5 + 191)
+		local blot = math.noise(wx / SPLOTCH_SIZE, wy / SPLOTCH_SIZE, wz / SPLOTCH_SIZE + 163)
+		local amount = math.clamp((math.abs(blot) - SPLOTCH_GAP) / SPLOTCH_SOFT, 0, 1) * SPLOTCH_STRENGTH
+		if blot > 0 then
+			colour = { colour[1] * (1 + amount), colour[2] * (1 + 0.8 * amount), colour[3] * (1 + 0.35 * amount) }
+		else
+			colour = { colour[1] * (1 - amount), colour[2] * (1 - 0.9 * amount), colour[3] * (1 - 0.7 * amount) }
+		end
 		-- Sunlit tops warm toward yellow-orange, undersides cool toward a
 		-- blue-purple bounce, the sides blending between.
 		local up = math.clamp(nz, -1, 1)
