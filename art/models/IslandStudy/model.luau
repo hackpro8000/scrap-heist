@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-a43ce050a23de6e7"
+local CACHE_KEY = "IslandStudy-b846daed9dcbb997"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1788,11 +1788,17 @@ local SPLOTCH_SIZE = 4.5
 local SPLOTCH_STRENGTH = 0.07
 local SPLOTCH_STEPS = 5
 local SPLOTCH_GREY = 0.35
--- Fine grain: small light and dark flecks GRAIN_SIZE studs across, the ones
--- past GRAIN_FLECK in a fast noise, up to GRAIN_STRENGTH lighter or darker.
-local GRAIN_SIZE = 0.22
-local GRAIN_FLECK = 0.28
-local GRAIN_STRENGTH = 0.05
+-- Paint strokes: flat dabs laid along each facet, STROKE_LENGTH studs long and
+-- STROKE_WIDTH across, running in a per-stone direction slanted STROKE_SLANT
+-- down-slope and flattened onto the facet. Each dab is one of STROKE_STEPS
+-- values, up to STROKE_STRENGTH lighter or darker, edges blended over
+-- STROKE_SOFT of a step.
+local STROKE_LENGTH = 1.6
+local STROKE_WIDTH = 0.35
+local STROKE_SLANT = 0.6
+local STROKE_STEPS = 3
+local STROKE_STRENGTH = 0.06
+local STROKE_SOFT = 0.15
 -- Mineral veins: on VEIN_SHARE of the stones, faint thin light streaks
 -- VEIN_WIDTH studs wide, VEIN_SPACING apart, slanted across the stone and
 -- broken up along their length, VEIN_STRENGTH lighter at most.
@@ -1885,10 +1891,29 @@ local function stonePaint(base, members)
 		end
 		local step = math.floor(hash(cell + SEED * 13.7) * SPLOTCH_STEPS)
 		local shade = (2 * step / (SPLOTCH_STEPS - 1) - 1) * SPLOTCH_STRENGTH
-		-- Grain: flecks where a fast noise passes GRAIN_FLECK either way.
-		local grain = math.noise(x / GRAIN_SIZE, y / GRAIN_SIZE, z / GRAIN_SIZE + 211)
-		local fleck = math.clamp((math.abs(grain) - GRAIN_FLECK) / 0.12, 0, 1)
-		shade += (if grain > 0 then fleck else -fleck) * GRAIN_STRENGTH
+		-- Strokes: the stone's direction flattened onto the facet gives u along
+		-- the stroke and v across it; noise stretched that way, stepped softly.
+		local turn = hash(SEED * 229 + last * 3.7) * 2 * math.pi
+		local dx, dy, dz = math.cos(turn), math.sin(turn), -STROKE_SLANT
+		local along = dx * nx + dy * ny + dz * nz
+		dx, dy, dz = dx - along * nx, dy - along * ny, dz - along * nz
+		local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+		if length < 1e-3 then
+			dx, dy, dz, length = 1, 0, 0, 1
+		end
+		dx, dy, dz = dx / length, dy / length, dz / length
+		local ax, ay, az = ny * dz - nz * dy, nz * dx - nx * dz, nx * dy - ny * dx
+		local u = x * dx + y * dy + z * dz
+		local v = x * ax + y * ay + z * az
+		local dab = math.clamp((math.noise(u / STROKE_LENGTH, v / STROKE_WIDTH, last * 1.37 + 211) + 0.6) / 1.2, 0, 0.9999)
+			* STROKE_STEPS
+		local dabStep = math.floor(dab)
+		local dabWithin = dab - dabStep
+		local dabLevel = dabStep
+		if dabWithin > 1 - STROKE_SOFT and dabStep < STROKE_STEPS - 1 then
+			dabLevel += (dabWithin - (1 - STROKE_SOFT)) / STROKE_SOFT
+		end
+		shade += (2 * dabLevel / (STROKE_STEPS - 1) - 1) * STROKE_STRENGTH
 		-- Veins: bands across a slanted direction per stone, thin and broken up
 		-- by a slow noise so only stretches of them show.
 		if hash(SEED * 241 + last * 3.1) < VEIN_SHARE then
