@@ -34,9 +34,11 @@ local STONE = { 0.46, 0.45, 0.5 }
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
 local ROCK_GRADIENT = { 1.1, 0.6 }
--- Splotches in the stone: how far broad patches and small blotches swing
--- its brightness, their sizes in studs, and how far they tint it warm or cool.
-local SPLOTCH = { broad = 0.12, broadSize = 6, small = 0.07, smallSize = 1.5, tint = 0.04 }
+-- Brush splotches in the stone: one may sit in each cell of a 3D grid
+-- (`cell` studs, with `chance`), a lobed blot `radius` studs across that
+-- shifts the stone's tone by up to `tone` and its tint by up to `tint`. The
+-- coat's brush strokes lay them on as dabs.
+local SPLOTCH = { cell = 1.8, chance = 1, radius = { 1, 2 }, tone = 0.1, tint = 0.02 }
 -- Texture pixels per stud; chunks are 1024 texels across at this density.
 local TEXEL_DENSITY = 16
 
@@ -461,6 +463,37 @@ local function rockAt(x: number, y: number)
 	return found
 end
 
+-- The splotch on top at a point, as its tone and warmth shifts (0, 0 where
+-- none reaches). Of the splotches covering a point, the one laid last wins.
+local function splotchAt(x: number, y: number, z: number): (number, number)
+	local size = SPLOTCH.cell
+	local gx, gy, gz = math.floor(x / size), math.floor(y / size), math.floor(z / size)
+	local tone, warm, order = 0, 0, -1
+	for i = gx - 1, gx + 1 do
+		for j = gy - 1, gy + 1 do
+			for k = gz - 1, gz + 1 do
+				local seed = i * 7.31 + k * 3.17
+				if hash(seed, j + 101) < SPLOTCH.chance then
+					local cx = (i + hash(seed, j + 201)) * size
+					local cy = (j + hash(seed, j + 301)) * size
+					local cz = (k + hash(seed, j + 401)) * size
+					local radius = SPLOTCH.radius[1] + (SPLOTCH.radius[2] - SPLOTCH.radius[1]) * hash(seed, j + 501)
+					local dx, dy, dz = x - cx, y - cy, z - cz
+					-- Lobed rim, so a blot isn't a clean circle.
+					local lobes = 1 + 0.25 * math.noise(dx / radius * 1.5 + i, dy / radius * 1.5 + j, dz / radius * 1.5 + k)
+					local laid = hash(seed, j + 601)
+					if dx * dx + dy * dy + dz * dz < (radius * lobes) ^ 2 and laid > order then
+						order = laid
+						tone = (hash(seed, j + 701) - 0.5) * 2 * SPLOTCH.tone
+						warm = (hash(seed, j + 801) - 0.5) * 2 * SPLOTCH.tint
+					end
+				end
+			end
+		end
+	end
+	return tone, warm
+end
+
 -- Per-rock gradient over the part of a rock that shows: light where it
 -- comes out from behind the tier around it, darkening toward its tip. The
 -- island hangs below z = 0, so depth is -z.
@@ -470,10 +503,8 @@ local paintRock = rusting(0.1, function(x, y, z)
 		then math.clamp((-z - rock.shownFrom) / math.max(rock.peak[3] - rock.shownFrom, 0.5), 0, 1)
 		else 0
 	local shade = ROCK_GRADIENT[1] + (ROCK_GRADIENT[2] - ROCK_GRADIENT[1]) * depth ^ 0.8
-	local broad = math.noise(x / SPLOTCH.broadSize, y / SPLOTCH.broadSize, z / SPLOTCH.broadSize)
-	local small = math.noise(x / SPLOTCH.smallSize + 31, y / SPLOTCH.smallSize, z / SPLOTCH.smallSize)
-	shade *= 1 + broad * SPLOTCH.broad * 2 + small * SPLOTCH.small * 2
-	local warm = math.noise(x / SPLOTCH.broadSize + 57, y / SPLOTCH.broadSize, z / SPLOTCH.broadSize) * SPLOTCH.tint * 2
+	local tone, warm = splotchAt(x, y, z)
+	shade *= 1 + tone
 	return STONE[1] * shade * (1 + warm), STONE[2] * shade, STONE[3] * shade * (1 - warm)
 end)
 
