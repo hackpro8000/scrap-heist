@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-bebe7375ff652eca"
+local CACHE_KEY = "Mountain-bc9f63c270260ef2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -849,8 +849,10 @@ local SPLOTCH = { cell = 1.8, chance = 1, radius = { 1, 2 }, tone = 0.1, tint = 
 local TEXEL_DENSITY = 16
 -- Edge highlights: how far edge paint reaches from an edge, in studs, and how
 -- many times wider than the default the highlight strokes are.
-local EDGE_REACH = 0.5
-local HIGHLIGHT_WIDTH = 2.5
+local EDGE_REACH = 1
+local HIGHLIGHT_WIDTH = 4
+-- Studs over which a highlight thins from full width at a corner.
+local CORNER_TAPER = 0.5
 
 -- Fixed per-column jitter, so the columns look uneven but every build matches.
 local function hash(i: number, j: number): number
@@ -1430,11 +1432,38 @@ chunkedPart("Columns", nil, STONE, function(mesh)
 		mesh:face({ corners[t[3]], corners[t[2]], corners[t[1]] })
 	end
 end, false, paintRock, true, EDGE_REACH)
--- chunkedPart takes no stroke width, so its chunks get it here.
-for _, entry in parts do
-	if entry.group == "Columns" then
-		entry.wide = HIGHLIGHT_WIDTH
-	end
-end
 
-finishParts()
+-- The chunks are shaded here rather than by finishParts, which has no corner
+-- taper: highlights run full width at a corner and thin toward the middle of
+-- an edge, as finishParts would otherwise shade them. Chunks of the island
+-- count as one surface, so their seams shade like any other edge.
+local chunks = {}
+for _, entry in parts do
+	table.insert(chunks, entry.mesh)
+end
+for _, entry in parts do
+	local group = {}
+	for _, other in parts do
+		if other ~= entry then
+			table.insert(group, other.mesh)
+		end
+	end
+	entry.mesh:paintShading(entry.image, {
+		highlight = EDGE_HIGHLIGHT,
+		shadow = CONTACT_SHADOW,
+		gradient = GRADIENT,
+		blend = EDGE_BLEND,
+		group = group,
+		name = entry.name,
+		paint = entry.paint,
+		-- The rock paint is cached under the item's key, since its code is not hashed.
+		custom = entry.custom,
+		salt = CACHE_KEY,
+		rust = entry.rust * WEAR,
+		reach = EDGE_REACH,
+		highlightWidth = HIGHLIGHT_WIDTH,
+		cornerTaper = CORNER_TAPER,
+		heightRange = entry.heightRange,
+	})
+	model.part(entry.name, entry.mesh, entry.image, { preview = true })
+end
