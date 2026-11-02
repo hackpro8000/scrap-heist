@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-b5da354b01f80916"
+local CACHE_KEY = "IslandStudy-b0cd42572a0e76ea"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1762,8 +1762,11 @@ local SOIL_HANG = 0.05
 -- most SOIL_STAIN_STRENGTH, fading out over SOIL_STAIN_DEPTH studs with a
 -- ragged edge SOIL_STAIN_RAGGED studs either way, and washed-down streaks
 -- reaching SOIL_STAIN_STREAK studs further. Tops take it more than sides.
+-- It holds full strength SOIL_STAIN_START studs below the lip's shallowest
+-- point first, past the soil's usual droop, so the fade shows under it.
 local SOIL_STAIN_STRENGTH = 0.85
 local SOIL_STAIN_DEPTH = 7
+local SOIL_STAIN_START = 2.5
 local SOIL_STAIN_RAGGED = 2
 local SOIL_STAIN_STREAK = 4
 local SOIL_STAIN_COLOUR = { 0.3, 0.22, 0.16 }
@@ -1862,7 +1865,7 @@ local function stonePaint(base, members)
 		}
 		-- Soil stain: full just under the soil's lip, fading downward past a
 		-- slow-noise ragged edge, with thin streaks running further down.
-		local below = CAP_TOP - SOIL_HANG * DEPTH - z
+		local below = math.max(CAP_TOP - SOIL_HANG * DEPTH - SOIL_STAIN_START - z, 0)
 		local ragged = SOIL_STAIN_RAGGED * math.noise(x / 3, y / 3, 331)
 		local fade = math.clamp(1 - (below + ragged) / SOIL_STAIN_DEPTH, 0, 1)
 		local streakLine = math.clamp(math.noise(x / 0.6, y / 0.6, 337) * 2.5 - 0.6, 0, 1)
