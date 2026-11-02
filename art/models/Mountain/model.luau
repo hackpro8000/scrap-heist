@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-6c2cc9e3c89c5ff2"
+local CACHE_KEY = "Mountain-ed38b3e25fa580a4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1041,104 +1041,157 @@ local function carve(faces, n, d)
 	return kept
 end
 
--- Carve every column first, so walls can be trimmed against their
+-- Carve every column first, so walls can be cut against their
 -- neighbours' finished shapes.
 for _, column in columns do
-		local corners, index = column.corners, column.index
-		local faces = solidOf(column)
+	local corners, index = column.corners, column.index
+	local faces = solidOf(column)
 
-		-- Chisel cuts: each faces out and up at its own angle, from a low
-		-- slant (shaving a side edge) to steep (bevelling the top), and
-		-- bites a set depth in from the farthest point along it. None is
-		-- near level, which would open holes down between columns. Every cut
-		-- faces away from the island's centre, within CUT_SPREAD either side,
-		-- so the carving shows on the outside and never faces inward.
-		local outward = math.atan2(column.peak[2], column.peak[1])
-		-- The cuts to make: heading, lift and depth. The big chisel cuts come
-		-- first, then fine chips that knock small corners off what is left.
-		local cuts = {}
-		for k = 1, 1 + math.floor(hash(index, 40) * MAX_CUTS) do
-			table.insert(cuts, {
-				outward + (hash(index, 40 + k) - 0.5) * 2 * CUT_SPREAD,
-				0.35 + hash(index, 50 + k) * 0.85,
-				column.size * (CUT_DEPTH[1] + (CUT_DEPTH[2] - CUT_DEPTH[1]) * hash(index, 60 + k)),
-			})
-		end
-		for k = 1, CHIPS[1] + math.floor(hash(index, 70) * (CHIPS[2] - CHIPS[1] + 1)) do
-			table.insert(cuts, {
-				outward + (hash(index, 70 + k) - 0.5) * 2 * CUT_SPREAD,
-				0.35 + hash(index, 80 + k) * 1.05,
-				CHIP_DEPTH[1] + (CHIP_DEPTH[2] - CHIP_DEPTH[1]) * hash(index, 90 + k),
-			})
-		end
-		for _, cut in cuts do
-			local heading, lift, depth = cut[1], cut[2], cut[3]
-			local n = { math.cos(heading) * math.cos(lift), math.sin(heading) * math.cos(lift), math.sin(lift) }
-			local farthest = -math.huge
-			for _, face in faces do
-				for _, p in face do
-					farthest = math.max(farthest, p[1] * n[1] + p[2] * n[2] + p[3] * n[3])
-				end
-			end
-			-- A cut stops short of the foot, which becomes the island's top,
-			-- so shallow stones are never carved through into the surface.
-			local footmost = -math.huge
-			for _, corner in corners do
-				footmost = math.max(footmost, corner[1] * n[1] + corner[2] * n[2])
-			end
-			local plane = math.max(farthest - depth, footmost + 0.3)
-			if plane < farthest then
-				faces = carve(faces, n, plane)
-			end
-		end
-
-		column.faces = faces
-	-- How high the column stays whole: below its lowest top or cut corner,
-	-- its full outline is solid.
-	column.solidTo = math.huge
-	for _, face in faces do
-		local flat = true
-		for _, p in face do
-			flat = flat and p[3] == 0
-		end
-		local nz = 0
-		for i, a in face do
-			local b = face[i % #face + 1]
-			nz += (a[1] - b[1]) * (a[2] + b[2])
-		end
-		if not flat and math.abs(nz) > 1e-3 then
+	-- Chisel cuts: each faces out and up at its own angle, from a low
+	-- slant (shaving a side edge) to steep (bevelling the top), and
+	-- bites a set depth in from the farthest point along it. None is
+	-- near level, which would open holes down between columns. Every cut
+	-- faces away from the island's centre, within CUT_SPREAD either side,
+	-- so the carving shows on the outside and never faces inward.
+	local outward = math.atan2(column.peak[2], column.peak[1])
+	-- The cuts to make: heading, lift and depth. The big chisel cuts come
+	-- first, then fine chips that knock small corners off what is left.
+	local cuts = {}
+	for k = 1, 1 + math.floor(hash(index, 40) * MAX_CUTS) do
+		table.insert(cuts, {
+			outward + (hash(index, 40 + k) - 0.5) * 2 * CUT_SPREAD,
+			0.35 + hash(index, 50 + k) * 0.85,
+			column.size * (CUT_DEPTH[1] + (CUT_DEPTH[2] - CUT_DEPTH[1]) * hash(index, 60 + k)),
+		})
+	end
+	for k = 1, CHIPS[1] + math.floor(hash(index, 70) * (CHIPS[2] - CHIPS[1] + 1)) do
+		table.insert(cuts, {
+			outward + (hash(index, 70 + k) - 0.5) * 2 * CUT_SPREAD,
+			0.35 + hash(index, 80 + k) * 1.05,
+			CHIP_DEPTH[1] + (CHIP_DEPTH[2] - CHIP_DEPTH[1]) * hash(index, 90 + k),
+		})
+	end
+	for _, cut in cuts do
+		local heading, lift, depth = cut[1], cut[2], cut[3]
+		local n = { math.cos(heading) * math.cos(lift), math.sin(heading) * math.cos(lift), math.sin(lift) }
+		local farthest = -math.huge
+		for _, face in faces do
 			for _, p in face do
-				column.solidTo = math.min(column.solidTo, p[3])
+				farthest = math.max(farthest, p[1] * n[1] + p[2] * n[2] + p[3] * n[3])
 			end
 		end
-	end
-end
-
-local function inside(column, x: number, y: number): boolean
-	local corners = column.corners
-	for i, a in corners do
-		local b = corners[i % #corners + 1]
-		if (b[1] - a[1]) * (y - a[2]) - (b[2] - a[2]) * (x - a[1]) < 0 then
-			return false
+		-- A cut stops short of the foot, which becomes the island's top,
+		-- so shallow stones are never carved through into the surface.
+		local footmost = -math.huge
+		for _, corner in corners do
+			footmost = math.max(footmost, corner[1] * n[1] + corner[2] * n[2])
+		end
+		local plane = math.max(farthest - depth, footmost + 0.3)
+		if plane < farthest then
+			faces = carve(faces, n, plane)
 		end
 	end
-	return true
+
+	column.faces = faces
 end
 
--- Keeps the part of a face above `height`.
-local function above(face, height: number)
-	local kept = {}
+-- Each face's plane, as a unit normal pointing out and its distance.
+local function planeOf(face)
+	local nx, ny, nz = 0, 0, 0
 	for i, a in face do
 		local b = face[i % #face + 1]
-		if a[3] >= height then
-			table.insert(kept, a)
+		nx += (a[2] - b[2]) * (a[3] + b[3])
+		ny += (a[3] - b[3]) * (a[1] + b[1])
+		nz += (a[1] - b[1]) * (a[2] + b[2])
+	end
+	local length = math.sqrt(nx * nx + ny * ny + nz * nz)
+	if length < 1e-9 then
+		return nil
+	end
+	nx, ny, nz = nx / length, ny / length, nz / length
+	local p = face[1]
+	return { nx, ny, nz, nx * p[1] + ny * p[2] + nz * p[3] }
+end
+
+-- Splits a face by a plane into the part outside it and the part inside.
+local EPSILON = 1e-5
+local function split(face, plane)
+	local outside, inside = {}, {}
+	local function side(p)
+		local s = plane[1] * p[1] + plane[2] * p[2] + plane[3] * p[3] - plane[4]
+		return if math.abs(s) < EPSILON then 0 else s
+	end
+	for i, a in face do
+		local b = face[i % #face + 1]
+		local sa, sb = side(a), side(b)
+		if sa >= 0 then
+			table.insert(outside, a)
 		end
-		if (a[3] >= height) ~= (b[3] >= height) then
-			local t = (height - a[3]) / (b[3] - a[3])
-			table.insert(kept, { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, height })
+		if sa <= 0 then
+			table.insert(inside, a)
+		end
+		if (sa > 0 and sb < 0) or (sa < 0 and sb > 0) then
+			local t = sa / (sa - sb)
+			local p = { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t }
+			table.insert(outside, p)
+			table.insert(inside, p)
 		end
 	end
-	return kept
+	return outside, inside
+end
+
+local function area(face): number
+	local plane = planeOf(face)
+	if not plane or #face < 3 then
+		return 0
+	end
+	local total = 0
+	for i = 2, #face - 1 do
+		local a, b, c = face[1], face[i], face[i + 1]
+		local ux, uy, uz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local vx, vy, vz = c[1] - a[1], c[2] - a[2], c[3] - a[3]
+		total += ((uy * vz - uz * vy) * plane[1] + (uz * vx - ux * vz) * plane[2] + (ux * vy - uy * vx) * plane[3]) / 2
+	end
+	return total
+end
+
+-- The parts of a face that don't lie inside a neighbour. Only a face lying
+-- against one of the neighbour's own faces can touch it; that face's plane
+-- is skipped, and the face is carved by the rest, every piece that falls
+-- outside one of them showing.
+local function uncovered(face, neighbour)
+	local own = planeOf(face)
+	if not own then
+		return {}
+	end
+	local touching, planes = false, {}
+	for _, other in neighbour.faces do
+		local plane = planeOf(other)
+		if plane then
+			local facing = own[1] * plane[1] + own[2] * plane[2] + own[3] * plane[3] < -0.9999
+			local p = face[1]
+			if facing and math.abs(plane[1] * p[1] + plane[2] * p[2] + plane[3] * p[3] - plane[4]) < 1e-4 then
+				touching = true
+			else
+				table.insert(planes, plane)
+			end
+		end
+	end
+	if not touching then
+		return { face }
+	end
+	local shown, rest = {}, face
+	for _, plane in planes do
+		local outside, inside = split(rest, plane)
+		if #outside >= 3 and area(outside) > 1e-4 then
+			table.insert(shown, outside)
+		end
+		rest = inside
+		if #rest < 3 or area(rest) <= 1e-4 then
+			break
+		end
+	end
+	return shown
 end
 
 -- The island is split into cubic chunks, each with its own texture, so the
@@ -1154,37 +1207,27 @@ chunkedPart("Columns", nil, STONE, function(mesh)
 			end
 		end
 		for _, face in column.faces do
-			-- A side wall is trimmed to what shows above the neighbour it
-			-- faces; the buried rest only wastes texture.
-			local nx, ny, nz = 0, 0, 0
-			local cx, cy = 0, 0
-			for i, a in face do
-				local b = face[i % #face + 1]
-				nx += (a[2] - b[2]) * (a[3] + b[3])
-				ny += (a[3] - b[3]) * (a[1] + b[1])
-				nz += (a[1] - b[1]) * (a[2] + b[2])
-				cx, cy = cx + a[1] / #face, cy + a[2] / #face
-			end
-			local across = math.sqrt(nx * nx + ny * ny)
-			if across > 1e-6 and math.abs(nz) < 0.05 * across then
-				local px, py = cx + nx / across * 0.3, cy + ny / across * 0.3
-				for _, neighbour in neighbours do
-					if inside(neighbour, px, py) then
-						face = above(face, neighbour.solidTo)
-						break
+			-- Only what no neighbour covers is built, so nothing lies buried
+			-- inside the island.
+			local pieces = { face }
+			for _, neighbour in neighbours do
+				local kept = {}
+				for _, piece in pieces do
+					for _, part in uncovered(piece, neighbour) do
+						table.insert(kept, part)
 					end
 				end
+				pieces = kept
 			end
-			if #face < 3 then
-				continue
+			for _, piece in pieces do
+				-- Flipped upside down: z mirrors, and the winding reverses so
+				-- faces still point outward. The foot becomes the island's top.
+				local verts = {}
+				for i, p in piece do
+					verts[#piece + 1 - i] = mesh:vertex(p[1], p[2], -p[3])
+				end
+				mesh:face(verts)
 			end
-			-- Flipped upside down: z mirrors, and the winding reverses so
-			-- faces still point outward. The foot becomes the island's top.
-			local verts = {}
-			for i, p in face do
-				verts[#face + 1 - i] = mesh:vertex(p[1], p[2], -p[3])
-			end
-			mesh:face(verts)
 		end
 	end
 end, false, 0.1, true)
