@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-b0cd42572a0e76ea"
+local CACHE_KEY = "IslandStudy-5efbcf00e60a4aac"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1769,7 +1769,7 @@ local SOIL_STAIN_DEPTH = 7
 local SOIL_STAIN_START = 2.5
 local SOIL_STAIN_RAGGED = 2
 local SOIL_STAIN_STREAK = 4
-local SOIL_STAIN_COLOUR = { 0.3, 0.22, 0.16 }
+local SOIL_STAIN_COLOUR = { 0.2, 0.14, 0.1 }
 local stoneNeighbours, stoneColour = {}, {}
 for i, seed in seeds do
 	stoneNeighbours[i] = {}
