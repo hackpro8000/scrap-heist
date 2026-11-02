@@ -1,4 +1,4 @@
-local CACHE_KEY = "IslandStudy-05fee31c265cb47a"
+local CACHE_KEY = "IslandStudy-25ca946d68f740aa"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1754,6 +1754,19 @@ local VEIN_SHARE = 0.35
 local VEIN_WIDTH = 0.12
 local VEIN_SPACING = 3.5
 local VEIN_STRENGTH = 0.08
+-- The soil's colour, and how far its lip hangs below the top as a share of the
+-- island's height (used by the soil below and by the stain on the stones).
+local SOIL_COLOUR = { 0.24, 0.17, 0.12 }
+local SOIL_HANG = 0.05
+-- Soil stain: dried dirt bleeding onto the stones under the soil's lip, at
+-- most SOIL_STAIN_STRENGTH, fading out over SOIL_STAIN_DEPTH studs with a
+-- ragged edge SOIL_STAIN_RAGGED studs either way, and washed-down streaks
+-- reaching SOIL_STAIN_STREAK studs further. Tops take it more than sides.
+local SOIL_STAIN_STRENGTH = 0.6
+local SOIL_STAIN_DEPTH = 3.5
+local SOIL_STAIN_RAGGED = 1.2
+local SOIL_STAIN_STREAK = 4
+local SOIL_STAIN_COLOUR = { 0.36, 0.3, 0.25 }
 local stoneNeighbours, stoneColour = {}, {}
 for i, seed in seeds do
 	stoneNeighbours[i] = {}
@@ -1847,6 +1860,20 @@ local function stonePaint(base, members)
 			(colour[2] + (grey - colour[2]) * mix) * light,
 			(colour[3] + (grey - colour[3]) * mix) * light,
 		}
+		-- Soil stain: full just under the soil's lip, fading downward past a
+		-- slow-noise ragged edge, with thin streaks running further down.
+		local below = CAP_TOP - SOIL_HANG * DEPTH - z
+		local ragged = SOIL_STAIN_RAGGED * math.noise(x / 3, y / 3, 331)
+		local fade = math.clamp(1 - (below + ragged) / SOIL_STAIN_DEPTH, 0, 1)
+		local streakLine = math.clamp(math.noise(x / 0.6, y / 0.6, 337) * 2.5 - 0.6, 0, 1)
+		local streakFade = math.clamp(1 - (below + ragged) / (SOIL_STAIN_DEPTH + SOIL_STAIN_STREAK), 0, 1)
+		local stain = math.max(fade * fade, streakLine * streakFade * 0.7)
+		stain *= SOIL_STAIN_STRENGTH * (0.55 + 0.45 * math.max(nz, 0))
+		colour = {
+			colour[1] + (SOIL_STAIN_COLOUR[1] - colour[1]) * stain,
+			colour[2] + (SOIL_STAIN_COLOUR[2] - colour[2]) * stain,
+			colour[3] + (SOIL_STAIN_COLOUR[3] - colour[3]) * stain,
+		}
 		-- Sunlit tops warm toward yellow-orange, undersides cool toward a
 		-- blue-purple bounce, the sides blending between.
 		local up = math.clamp(nz, -1, 1)
@@ -1875,12 +1902,10 @@ local SOIL_LUMP = 0.14
 -- and how far either way it wanders; then the drips. It hangs past and down
 -- by at least SOIL_HANG of the island's height everywhere.
 local SOIL_OVERHANG, SOIL_OVERHANG_SPREAD = 3, 1.8
-local SOIL_HANG = 0.05
 -- How much more the hang varies round the edge, as a share of it, so the
 -- whole lip drips unevenly rather than at one depth.
 local SOIL_DRIP_VARIANCE = 0.25
 local SOIL_DRIPS, SOIL_DRIP_WIDTH = 10, 0.09
-local SOIL_COLOUR = { 0.24, 0.17, 0.12 }
 local BEAD_STEPS = 8
 local UNDER_RINGS = { 0.5, 1.2, 2.2, 3.5 }
 
