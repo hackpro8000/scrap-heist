@@ -31,6 +31,9 @@ local TAPER_POWER = 1.35
 local ROCK_ROWS = 5
 -- How many stones to keep while studying the stone shape; nil keeps them all.
 local STUDY_STONES: number? = 3
+-- The study's block shape, as shares of the stone's half-width: how tall and
+-- how deep, and how far (as a slope) each side tilts off square.
+local BLOCK_HEIGHT, BLOCK_DEPTH, BLOCK_TILT = 0.6, 1.3, 0.12
 local ROWS_FROM, ROWS_TO = 0.1, 0.86
 local ROW_GROWTH = 1.45
 local ROCK_WIDTH_TOP, ROCK_WIDTH_BOTTOM = 10, 4.5
@@ -689,7 +692,7 @@ local stoneSpan = {}
 local function buildRocks()
 	local stones = {}
 	for i, seed in seeds do
-		local radius = cellRadius[i]
+		local radius = if STUDY_STONES then math.max(cellRadius[i], seeds[i].width * 1.5) else cellRadius[i]
 		local points = {}
 		for v, p in unitVertices do
 			local r = 1 + 0.12 * wave(p, 2.3, SEED + i)
@@ -748,6 +751,28 @@ local function buildRocks()
 			local facet = { n[1], n[2], n[3], dot(n, centre) + reach * sn }
 			table.insert(cuts, facet)
 			tris = clip(tris, facet)
+		end
+		-- The study's stones are blocks: a back and four sides round the face,
+		-- each tilted a little off square, so every side is flat.
+		if STUDY_STONES then
+			local function side(normal, distance, k)
+				local a = (2 * hash(SEED * 43 + i * 13 + k * 5.3) - 1) * BLOCK_TILT
+				local b = (2 * hash(SEED * 47 + i * 13 + k * 6.1) - 1) * BLOCK_TILT
+				local n = normalize({
+					normal[1] + (across[1] * a + up[1] * b),
+					normal[2] + (across[2] * a + up[2] * b),
+					normal[3] + (across[3] * a + up[3] * b),
+				})
+				local plane = { n[1], n[2], n[3], dot(n, centre) + distance }
+				table.insert(cuts, plane)
+				tris = clip(tris, plane)
+			end
+			local tall = half * BLOCK_HEIGHT
+			side({ -face[1], -face[2], -face[3] }, half * BLOCK_DEPTH, 1)
+			side(across, half, 2)
+			side({ -across[1], -across[2], -across[3] }, half, 3)
+			side(up, tall, 4)
+			side({ -up[1], -up[2], -up[3] }, tall, 5)
 		end
 		-- The worn edges. An edge exists where two cuts share at least two of
 		-- the stone's corners. Each is rounded by planes tangent to a cylinder
@@ -838,6 +863,12 @@ local function buildRocks()
 		for k, tri in stone.tris do
 			local pieces = { tri }
 			local seam = stone.seamOf[k]
+			-- The study shows the stones whole, on their own.
+			if STUDY_STONES then
+				table.insert(visible[i].polygons, tri)
+				visible[i].area += polygonArea(tri)
+				continue
+			end
 			if seam then
 				local other = stones[seam.other]
 				other.covers = other.covers or {}
@@ -1441,10 +1472,12 @@ local baked = model.cached(CACHE_KEY, function()
 	local visible = buildRocks()
 	-- The soil replaces the flat top, which it hides completely. Fully smooth,
 	-- with the stones' bold painted highlights.
-	chunkedPart("Soil", nil, SOIL_COLOUR, function(mesh)
-		buildSoil(mesh, visible)
-		buildSeamSoil(mesh, visible)
-	end, true, soilPaint, true, 1, nil, nil, islandRange)
+	if not STUDY_STONES then
+		chunkedPart("Soil", nil, SOIL_COLOUR, function(mesh)
+			buildSoil(mesh, visible)
+			buildSeamSoil(mesh, visible)
+		end, true, soilPaint, true, 1, nil, nil, islandRange)
+	end
 	for _, entry in parts do
 		if entry.group == "Soil" then
 			entry.wide = 4
@@ -1471,9 +1504,11 @@ local baked = model.cached(CACHE_KEY, function()
 	table.insert(parts, { name = "HiddenRocks", mesh = hiddenRocks, emissive = 1, group = "Rocks" })
 	-- The body's wall stays for the bake the same way, in the top's group as
 	-- it was when they were one part, so the stones still take its shadows.
-	local wall = Mesh.new()
-	buildWall(wall)
-	table.insert(parts, { name = "BodyWall", mesh = wall, emissive = 1, group = "Top" })
+	if not STUDY_STONES then
+		local wall = Mesh.new()
+		buildWall(wall)
+		table.insert(parts, { name = "BodyWall", mesh = wall, emissive = 1, group = "Top" })
+	end
 	local addPart, collected = model.part, {}
 	model.part = function(name, mesh, image, options)
 		if name == "HiddenRocks" or name == "BodyWall" then
