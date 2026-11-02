@@ -598,7 +598,8 @@ end
 -- `shade` multiplies the contact shadow strength, for parts that should sit in
 -- heavier shadow than the standard wear. `lit` scales the highlight strength
 -- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
--- to paint its highlights as bold, fully loaded strokes instead of dry ones.
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
 local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
@@ -775,7 +776,7 @@ local function finishParts()
 			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
 			shadow = CONTACT_SHADOW * (entry.shade or 1),
 			gradient = GRADIENT,
-			blend = EDGE_BLEND,
+			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
 			name = entry.name,
