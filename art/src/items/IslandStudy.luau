@@ -96,7 +96,8 @@ local FACET_REACH_MIN, FACET_REACH_MAX = 0.45, 0.95
 -- flat steps, each gentle enough to shade smooth. Edges gentler than
 -- ROUND_MIN_FOLD (dot of the two normals above it) are left alone.
 local ROUND_RADIUS, ROUND_SHARE = 1.2, 0.25
-local ROUND_SEGMENTS = 4
+-- 0 leaves every edge sharp.
+local ROUND_SEGMENTS = 0
 -- Uneven wear: each edge's bevel is ROUND_RADIUS scaled between ROUND_MIN
 -- (crisp) and ROUND_MAX (worn broad), skewed by ROUND_SKEW so most edges sit
 -- near crisp and a few go wide. Wide ones may pass the ROUND_SHARE cap by up
