@@ -31,6 +31,9 @@ local CHIP_DEPTH = { 0.15, 0.45 }
 local CUT_SPREAD = math.rad(55)
 
 local STONE = { 0.46, 0.45, 0.5 }
+-- Each rock shades from STONE times the first where it meets the top to
+-- STONE times the second at its tip.
+local ROCK_GRADIENT = { 1.1, 0.6 }
 -- Texture pixels per stud; chunks are 1024 texels across at this density.
 local TEXEL_DENSITY = 16
 
@@ -388,6 +391,54 @@ local function uncovered(face, neighbour)
 	return shown
 end
 
+-- Columns bucketed by the 2-stud cells their outlines cover, so paint can
+-- find the rock under a point without testing them all.
+local CELL = 2
+local cells = {}
+for _, column in columns do
+	local x0, y0, x1, y1 = math.huge, math.huge, -math.huge, -math.huge
+	for _, corner in column.corners do
+		x0, y0 = math.min(x0, corner[1]), math.min(y0, corner[2])
+		x1, y1 = math.max(x1, corner[1]), math.max(y1, corner[2])
+	end
+	for cx = math.floor(x0 / CELL), math.floor(x1 / CELL) do
+		for cy = math.floor(y0 / CELL), math.floor(y1 / CELL) do
+			local cellKey = `{cx},{cy}`
+			cells[cellKey] = cells[cellKey] or {}
+			table.insert(cells[cellKey], column)
+		end
+	end
+end
+
+-- The rock a point on the island belongs to. On a wall two rocks share,
+-- the deeper one owns it, since only its wall shows there.
+local function rockAt(x: number, y: number)
+	local found = nil
+	for _, column in cells[`{math.floor(x / CELL)},{math.floor(y / CELL)}`] or {} do
+		local corners, within = column.corners, true
+		for i, a in corners do
+			local b = corners[i % #corners + 1]
+			if (b[1] - a[1]) * (y - a[2]) - (b[2] - a[2]) * (x - a[1]) < -1e-3 then
+				within = false
+				break
+			end
+		end
+		if within and (found == nil or column.peak[3] > found.peak[3]) then
+			found = column
+		end
+	end
+	return found
+end
+
+-- Per-rock gradient: light where a rock meets the top, darkening toward
+-- its tip. The island hangs below z = 0, so depth is -z.
+local paintRock = rusting(0.1, function(x, y, z)
+	local rock = rockAt(x, y)
+	local depth = if rock then math.clamp(-z / rock.peak[3], 0, 1) else 0
+	local shade = ROCK_GRADIENT[1] + (ROCK_GRADIENT[2] - ROCK_GRADIENT[1]) * depth ^ 0.8
+	return STONE[1] * shade, STONE[2] * shade, STONE[3] * shade
+end)
+
 -- The island's flat top as one outline: the stones' feet (faces lying on
 -- z = 0) laid together, with every edge two stones share cancelled out,
 -- chained into a loop wound like the feet (clockwise seen from above) and
@@ -499,6 +550,6 @@ chunkedPart("Columns", nil, STONE, function(mesh)
 	for _, t in earClip(outline) do
 		mesh:face({ corners[t[3]], corners[t[2]], corners[t[1]] })
 	end
-end, false, 0.1, true)
+end, false, paintRock, true)
 
 finishParts()
