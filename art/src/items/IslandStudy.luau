@@ -958,6 +958,14 @@ local STONE_GRADIENT_EASE = 1
 local FACET_BANDS = 3
 local FACET_CONTRAST = 0.18
 local FACET_SOFT = 0.08
+-- Ink lines: a thin dark line just inside each seam, SEAM_LINE_WIDTH studs
+-- from the seam plane at a stone's top and SEAM_LINE_BOTTOM times that at its
+-- bottom, SEAM_LINE_DARK value at the very edge and fading out, its width
+-- wavering by SEAM_LINE_WOBBLE either way so it reads inked, not ruled.
+local SEAM_LINE_WIDTH = 0.18
+local SEAM_LINE_BOTTOM = 1.5
+local SEAM_LINE_DARK = 0.45
+local SEAM_LINE_WOBBLE = 0.35
 -- The key light's direction (normalized below), and its share of the facing.
 local FACET_KEY = { 0.4, 0.3, 0.85 }
 local FACET_KEY_SHARE = 0.25
@@ -1110,6 +1118,22 @@ local function stonePaint(base, members)
 			level = band + math.clamp((within - 1 + soft / 2) / soft, 0, 1)
 		end
 		gradient *= 1 + (level / (FACET_BANDS - 1) - 0.5) * FACET_CONTRAST
+		-- Ink line: the distance to the nearest neighbour's power plane is the
+		-- power difference over twice the seeds' gap; dark at the plane, fading
+		-- out over a width that wavers and grows toward the stone's bottom.
+		local s, seam = seeds[last], math.huge
+		for _, j in stoneNeighbours[last] do
+			local o = seeds[j]
+			local gap = math.sqrt((o[1] - s[1]) ^ 2 + (o[2] - s[2]) ^ 2 + (o[3] - s[3]) ^ 2)
+			seam = math.min(seam, (power(j, x, y, z) - best) / (2 * gap))
+		end
+		local lowness = if span and span[2] > span[1]
+			then 1 - math.clamp((z - span[1]) / (span[2] - span[1]), 0, 1)
+			else 0.5
+		local width = SEAM_LINE_WIDTH * (1 + (SEAM_LINE_BOTTOM - 1) * lowness)
+			* (1 + SEAM_LINE_WOBBLE * math.noise(x / 0.8, y / 0.8, z / 0.8 + 347))
+		local ink = math.clamp(1 - seam / math.max(width, 1e-3), 0, 1)
+		gradient *= 1 - (1 - SEAM_LINE_DARK) * ink * ink * (3 - 2 * ink)
 		local light = (1 + shade) * gradient
 		colour = {
 			(colour[1] + (grey - colour[1]) * mix) * light,
