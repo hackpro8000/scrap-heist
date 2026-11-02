@@ -689,6 +689,8 @@ end
 -- their area. The faces nobody sees go into hiddenRocks.
 -- Each stone's lowest and highest z after its cuts, for its own gradient.
 local stoneSpan = {}
+-- Each stone's cut planes, kept for the edge highlight in the paint.
+local stoneCuts = {}
 local function buildRocks()
 	local stones = {}
 	for i, seed in seeds do
@@ -830,6 +832,7 @@ local function buildRocks()
 			end
 		end
 		stones[i] = { tris = tris, seams = seams }
+		stoneCuts[i] = cuts
 	end
 	-- Only the faces anyone can see are kept. A seam face loses the part its
 	-- neighbour's matching face covers, and anything left wholly inside the
@@ -1018,12 +1021,18 @@ local SOIL_HANG = 0.05
 -- reaching SOIL_STAIN_STREAK studs further. Tops take it more than sides.
 -- It holds full strength SOIL_STAIN_START studs below the lip's shallowest
 -- point first, past the soil's usual droop, so the fade shows under it.
-local SOIL_STAIN_STRENGTH = 1
+local SOIL_STAIN_STRENGTH = 0.25
 local SOIL_STAIN_DEPTH = 7
 local SOIL_STAIN_START = 2.5
 local SOIL_STAIN_RAGGED = 2
 local SOIL_STAIN_STREAK = 4
 local SOIL_STAIN_COLOUR = { 0.34, 0.22, 0.13 }
+-- Edge highlight: a cream rim along every rounded edge, where a point lies
+-- within EDGE_WIDTH studs of a second cut plane, up to EDGE_STRENGTH, a little
+-- weaker on faces turned down.
+local EDGE_WIDTH = 0.9
+local EDGE_STRENGTH = 0.75
+local EDGE_COLOUR = { 0.93, 0.89, 0.8 }
 local stoneNeighbours, stoneColour = {}, {}
 for i, seed in seeds do
 	stoneNeighbours[i] = {}
@@ -1186,6 +1195,24 @@ local function stonePaint(base, members)
 			colour[1] + (SOIL_STAIN_COLOUR[1] - colour[1]) * stain,
 			colour[2] + (SOIL_STAIN_COLOUR[2] - colour[2]) * stain,
 			colour[3] + (SOIL_STAIN_COLOUR[3] - colour[3]) * stain,
+		}
+		-- Edge highlight: on a flat face only one cut is near; on a rounded
+		-- edge two are, so the second-nearest cut's distance finds the rims.
+		local nearest, second = math.huge, math.huge
+		for _, cut in stoneCuts[last] or {} do
+			local d = math.abs(cut[1] * x + cut[2] * y + cut[3] * z - cut[4])
+			if d < nearest then
+				nearest, second = d, nearest
+			elseif d < second then
+				second = d
+			end
+		end
+		local rim = math.clamp(1 - second / EDGE_WIDTH, 0, 1)
+		rim = rim * rim * (3 - 2 * rim) * EDGE_STRENGTH * (0.65 + 0.35 * math.max(nz, 0)) * (1 - ink)
+		colour = {
+			colour[1] + (EDGE_COLOUR[1] - colour[1]) * rim,
+			colour[2] + (EDGE_COLOUR[2] - colour[2]) * rim,
+			colour[3] + (EDGE_COLOUR[3] - colour[3]) * rim,
 		}
 		-- Sunlit tops warm toward yellow-orange, undersides cool toward a
 		-- blue-purple bounce, the sides blending between.
@@ -1487,7 +1514,7 @@ local baked = model.cached(CACHE_KEY, function()
 	end
 	for g, members in rockGroups(visible) do
 		-- Flat, since a paint fn would otherwise bring back the warp rust 0 skips.
-		local rock = { 0.33, 0.34, 0.36 }
+		local rock = { 0.44, 0.43, 0.41 }
 		part(`Rocks_{g}`, nil, rock, function(mesh)
 			stonesMesh(mesh, visible, members)
 		end, nil, stonePaint(rock, members), nil, nil, true)
