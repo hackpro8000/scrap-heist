@@ -249,8 +249,17 @@ part("Columns", nil, STONE, function(mesh)
 					farthest = math.max(farthest, p[1] * n[1] + p[2] * n[2] + p[3] * n[3])
 				end
 			end
+			-- A cut stops short of the foot, which becomes the island's top,
+			-- so shallow stones are never carved through into the surface.
+			local footmost = -math.huge
+			for _, corner in corners do
+				footmost = math.max(footmost, corner[1] * n[1] + corner[2] * n[2])
+			end
 			local depth = column.size * (CUT_DEPTH[1] + (CUT_DEPTH[2] - CUT_DEPTH[1]) * hash(index, 60 + k))
-			faces = carve(faces, n, farthest - depth)
+			local plane = math.max(farthest - depth, footmost + 0.3)
+			if plane < farthest then
+				faces = carve(faces, n, plane)
+			end
 		end
 
 		-- Flipped upside down: z mirrors, and the winding reverses so faces
