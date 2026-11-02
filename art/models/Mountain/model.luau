@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-5eb7ed913b330971"
+local CACHE_KEY = "Mountain-37f97a00acceafef"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -812,7 +812,9 @@ end
 -- stones, so big stones claim big cells. Stones grow from small near the
 -- summit to big at the foot, and the big foot stones give the rim its
 -- lobed outline. Only the faces that show are
--- built: a side wall runs down just past its neighbour's lowest top corner.
+-- built: a column starts just below its lowest neighbour's top. Each column
+-- is then carved, a few angled planes chiselling chunks off its corners
+-- and edges.
 -- Centered on the origin, base at z = 0.
 local RADIUS = 20
 local PEAK = 28
@@ -823,9 +825,10 @@ local SMALLEST, LARGEST = 0.7, 4.5
 local SCATTER = RADIUS + LARGEST
 -- Groove left between neighbouring columns.
 local GAP = 0.12
--- Crack where a column is sliced through, and the steepest a slice leans.
-local SLICE_GAP = 0.16
-local SLICE_TILT = 0.4
+-- Chisel cuts per column, at most, and how deep one bites as a share of
+-- the stone's size.
+local MAX_CUTS = 3
+local CUT_DEPTH = { 0.2, 0.55 }
 
 local STONE = { 0.46, 0.45, 0.5 }
 
@@ -945,7 +948,7 @@ for index, stone in stones do
 	end
 	columns[index] = {
 		index = index,
-		centre = { cx, cy },
+		size = stone[3],
 		corners = corners,
 		lowest = lowest,
 		-- The top rises to a low ridge point, so it reads as broken stone.
@@ -953,103 +956,125 @@ for index, stone in stones do
 	}
 end
 
--- Planes slicing a column through its exposed height at irregular spacing
--- and lean, each kept clear of the one below and of the top at every corner:
--- a plane is its height at the centre and its lean along x and y.
-local function slicesOf(column, exposedFrom: number)
-	local corners, index = column.corners, column.index
-	local cx, cy = column.centre[1], column.centre[2]
-	local function heightOn(plane, corner)
-		return plane[1] + (corner[1] - cx) * plane[2] + (corner[2] - cy) * plane[3]
+-- A column as a closed solid: faces as lists of points, wound outward,
+-- from `bottom` up to its slanted top and the low point above it.
+local function solidOf(column, bottom: number)
+	local corners, peak = column.corners, column.peak
+	local count = #corners
+	local faces = {}
+	local base = {}
+	for i = count, 1, -1 do
+		table.insert(base, { corners[i][1], corners[i][2], bottom })
 	end
-	local slices = {}
-	local below = { exposedFrom, 0, 0 }
-	for k = 1, 3 do
-		local plane = {
-			below[1] + 1.4 + 2.6 * hash(index, 10 + k),
-			(hash(index, 20 + k) - 0.5) * 2 * SLICE_TILT,
-			(hash(index, 30 + k) - 0.5) * 2 * SLICE_TILT,
-		}
-		local clear = true
-		for _, corner in corners do
-			local z = heightOn(plane, corner)
-			clear = clear and z > heightOn(below, corner) + 0.6 and z < corner[3] - 0.6
-		end
-		if not clear then
-			break
-		end
-		table.insert(slices, plane)
-		below = plane
+	table.insert(faces, base)
+	for i = 1, count do
+		local a, b = corners[i], corners[i % count + 1]
+		table.insert(faces, { { a[1], a[2], bottom }, { b[1], b[2], bottom }, { b[1], b[2], b[3] }, { a[1], a[2], a[3] } })
+		table.insert(faces, { { peak[1], peak[2], peak[3] }, { a[1], a[2], a[3] }, { b[1], b[2], b[3] } })
 	end
-	return slices, heightOn
+	return faces
+end
+
+-- Cuts away everything on the far side of the plane n . p = d, closing the
+-- wound with a cap facing along n.
+local function carve(faces, n, d)
+	local kept, cut = {}, {}
+	for _, face in faces do
+		local out = {}
+		for i, a in face do
+			local b = face[i % #face + 1]
+			local sa = a[1] * n[1] + a[2] * n[2] + a[3] * n[3] - d
+			local sb = b[1] * n[1] + b[2] * n[2] + b[3] * n[3] - d
+			if sa <= 0 then
+				table.insert(out, a)
+			end
+			if (sa <= 0) ~= (sb <= 0) then
+				local t = sa / (sa - sb)
+				local p = { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t }
+				table.insert(out, p)
+				table.insert(cut, p)
+			end
+		end
+		if #out >= 3 then
+			table.insert(kept, out)
+		end
+	end
+	if #cut < 3 then
+		return kept
+	end
+	-- The cap's corners, sorted round their centre in the plane.
+	local mx, my, mz = 0, 0, 0
+	for _, p in cut do
+		mx, my, mz = mx + p[1] / #cut, my + p[2] / #cut, mz + p[3] / #cut
+	end
+	local ux, uy, uz = if math.abs(n[3]) < 0.9 then -n[2] else 0, if math.abs(n[3]) < 0.9 then n[1] else -n[3], if math.abs(n[3]) < 0.9 then 0 else n[2]
+	local length = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / length, uy / length, uz / length
+	local vx, vy, vz = n[2] * uz - n[3] * uy, n[3] * ux - n[1] * uz, n[1] * uy - n[2] * ux
+	local cap = {}
+	for _, p in cut do
+		local ox, oy, oz = p[1] - mx, p[2] - my, p[3] - mz
+		local angle = math.atan2(ox * vx + oy * vy + oz * vz, ox * ux + oy * uy + oz * uz)
+		local duplicate = false
+		for _, other in cap do
+			duplicate = duplicate or math.abs(other[2] - angle) < 1e-4
+		end
+		if not duplicate then
+			table.insert(cap, { p, angle })
+		end
+	end
+	table.sort(cap, function(a, b)
+		return a[2] < b[2]
+	end)
+	if #cap >= 3 then
+		local face = {}
+		for i, entry in cap do
+			face[i] = entry[1]
+		end
+		table.insert(kept, face)
+	end
+	return kept
 end
 
 part("Columns", nil, STONE, function(mesh)
 	for _, column in columns do
-		local corners = column.corners
-		local count = #corners
-		local top = {}
-		for i, corner in corners do
-			top[i] = mesh:vertex(corner[1], corner[2], corner[3])
-		end
-		local peak = mesh:vertex(column.peak[1], column.peak[2], column.peak[3])
-		for i = 1, count do
-			mesh:face({ peak, top[i], top[i % count + 1] })
-		end
-
-		-- How far down each side shows above its neighbour.
-		local floors, exposedFrom = {}, math.huge
-		for i, corner in corners do
+		local corners, index = column.corners, column.index
+		-- The column starts just below the lowest of its neighbours' tops.
+		local bottom = math.huge
+		for _, corner in corners do
 			local neighbour = corner[4] and columns[corner[4]]
-			floors[i] = if neighbour then math.max(0, neighbour.lowest - 0.6) else 0
-			exposedFrom = math.min(exposedFrom, floors[i])
+			bottom = math.min(bottom, if neighbour then math.max(0, neighbour.lowest - 0.6) else 0)
 		end
+		local faces = solidOf(column, bottom)
 
-		-- The column as stacked segments, split by the slices with a crack
-		-- between, each with caps facing into the crack.
-		local slices, heightOn = slicesOf(column, exposedFrom)
-		local bounds = { function(_corner)
-			return -math.huge
-		end }
-		for _, plane in slices do
-			local function lower(corner)
-				return heightOn(plane, corner) - SLICE_GAP / 2
-			end
-			local function upper(corner)
-				return heightOn(plane, corner) + SLICE_GAP / 2
-			end
-			table.insert(bounds, lower)
-			table.insert(bounds, upper)
-			local up, down = {}, {}
-			for i, corner in corners do
-				up[i] = mesh:vertex(corner[1], corner[2], lower(corner))
-				down[count + 1 - i] = mesh:vertex(corner[1], corner[2], upper(corner))
-			end
-			mesh:face(up)
-			mesh:face(down)
-		end
-		table.insert(bounds, function(corner)
-			return corner[3]
-		end)
-
-		for segment = 1, #bounds, 2 do
-			local bottomAt, topAt = bounds[segment], bounds[segment + 1]
-			for i = 1, count do
-				local j = i % count + 1
-				local a, b = corners[i], corners[j]
-				local aTop, bTop = topAt(a), topAt(b)
-				if math.max(aTop, bTop) <= floors[i] then
-					continue
+		-- Chisel cuts: each faces out and up at its own angle, from a low
+		-- slant (shaving a side edge) to steep (bevelling the top), and
+		-- bites a set depth in from the farthest point along it. None is
+		-- near level, which would open holes down between columns.
+		for k = 1, 1 + math.floor(hash(index, 40) * MAX_CUTS) do
+			local heading = hash(index, 40 + k) * TAU
+			local lift = 0.35 + hash(index, 50 + k) * 0.85
+			local n = { math.cos(heading) * math.cos(lift), math.sin(heading) * math.cos(lift), math.sin(lift) }
+			local farthest = -math.huge
+			for _, face in faces do
+				for _, p in face do
+					farthest = math.max(farthest, p[1] * n[1] + p[2] * n[2] + p[3] * n[3])
 				end
-				local aBottom = math.min(math.max(bottomAt(a), floors[i]), aTop)
-				local bBottom = math.min(math.max(bottomAt(b), floors[i]), bTop)
-				mesh:face({
-					mesh:vertex(a[1], a[2], aBottom),
-					mesh:vertex(b[1], b[2], bBottom),
-					if segment == #bounds - 1 then top[j] else mesh:vertex(b[1], b[2], bTop),
-					if segment == #bounds - 1 then top[i] else mesh:vertex(a[1], a[2], aTop),
-				})
 			end
+			local depth = column.size * (CUT_DEPTH[1] + (CUT_DEPTH[2] - CUT_DEPTH[1]) * hash(index, 60 + k))
+			faces = carve(faces, n, farthest - depth)
+		end
+
+		for f, face in faces do
+			-- The base is buried, so it is left out.
+			if f == 1 and #face == #corners and face[1][3] == bottom and face[2][3] == bottom then
+				continue
+			end
+			local verts = {}
+			for i, p in face do
+				verts[i] = mesh:vertex(p[1], p[2], p[3])
+			end
+			mesh:face(verts)
 		end
 	end
 end, false, 0.1, 1024, nil, true)
