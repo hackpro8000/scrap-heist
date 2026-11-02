@@ -59,7 +59,7 @@ local ROW_STEP_IN = 0.35
 -- The chips: ROCK_FACETS planes per stone, each tilted FACET_TILT_MIN to
 -- FACET_TILT_MAX degrees off the face, meeting it FACET_REACH_MIN to
 -- FACET_REACH_MAX of the stone's half-width from its middle.
-local ROCK_FACETS = 4
+local ROCK_FACETS = 0
 local FACET_TILT_MIN, FACET_TILT_MAX = 14, 32
 local FACET_REACH_MIN, FACET_REACH_MAX = 0.45, 0.95
 -- The worn edges: every edge two cuts (facets and chips) make is rounded off
@@ -67,14 +67,14 @@ local FACET_REACH_MIN, FACET_REACH_MAX = 0.45, 0.95
 -- stone's radius, so small stones keep their facets) in ROUND_SEGMENTS
 -- flat steps, each gentle enough to shade smooth. Edges gentler than
 -- ROUND_MIN_FOLD (dot of the two normals above it) are left alone.
-local ROUND_RADIUS, ROUND_SHARE = 0.3, 0.08
-local ROUND_SEGMENTS = 3
+local ROUND_RADIUS, ROUND_SHARE = 1.2, 0.25
+local ROUND_SEGMENTS = 4
 -- Uneven wear: each edge's bevel is ROUND_RADIUS scaled between ROUND_MIN
 -- (crisp) and ROUND_MAX (worn broad), skewed by ROUND_SKEW so most edges sit
 -- near crisp and a few go wide. Wide ones may pass the ROUND_SHARE cap by up
 -- to ROUND_MAX times, but never past ROUND_STONE_SHARE of the stone's radius.
-local ROUND_MIN, ROUND_MAX, ROUND_SKEW = 0.3, 2.5, 2
-local ROUND_STONE_SHARE = 0.18
+local ROUND_MIN, ROUND_MAX, ROUND_SKEW = 0.8, 1.2, 1
+local ROUND_STONE_SHARE = 0.25
 local ROUND_MIN_FOLD = math.cos(math.rad(10))
 -- The overhanging lip: how far (studs) the top row stands out past where it
 -- sat, plus up to LIP_SPREAD more per stone, and how far it is raised so its
