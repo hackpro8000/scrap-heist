@@ -1,4 +1,4 @@
--- uses: ArenaIsland PadIsland MarketIsland ColumnIsland ShopConceptContainer ScrapTreeLamppost VendingMachine ParkBench ScrapPalm ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
+-- uses: ArenaIsland PadIsland MarketIsland ColumnIsland ShopConceptContainer ScrapTreeLamppost VendingMachine ParkBench ScrapPalm ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardFooting YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
 -- around its bowl. An avenue of four plaza islands runs east from the road to
@@ -1271,10 +1271,10 @@ end
 -- shows empty, as in the template.
 local function yardTemplate(index: number, x: number, y: number, turn: number)
 	local c, s = math.cos(math.rad(turn)), math.sin(math.rad(turn))
-	local function piece(name: string, build: () -> (), px: number, py: number, pz: number?, pturn: number?)
+	local function piece(name: string, build: () -> (), px: number, py: number, pz: number?, pturn: number?, stretch: number?)
 		px, py = px * YARD_SCALE, py * YARD_SCALE
 		local pieceZ = (pz or 0) * YARD_SCALE + YARD_TIER
-		place(`Yard{index}_{name}`, build, x + px * c - py * s, y + px * s + py * c, pieceZ, turn + (pturn or 0), nil, nil, YARD_SCALE)
+		place(`Yard{index}_{name}`, build, x + px * c - py * s, y + px * s + py * c, pieceZ, turn + (pturn or 0), stretch, nil, YARD_SCALE)
 	end
 	for i, tx in { -12, -4, 4, 12 } do
 		for j, ty in { -12, -4, 4, 12 } do
@@ -1296,10 +1296,15 @@ local function yardTemplate(index: number, x: number, y: number, turn: number)
 		piece(`FenceBack{i}`, buildYardFence, f, 16)
 		piece(`FenceLeft{i}`, buildYardFence, -16, f, 0, 90)
 		piece(`FenceRight{i}`, buildYardFence, 16, f, 0, 90)
+		piece(`FootingBack{i}`, buildYardFooting, f, 16)
+		piece(`FootingLeft{i}`, buildYardFooting, -16, f, 0, 90)
+		piece(`FootingRight{i}`, buildYardFooting, 16, f, 0, 90)
 	end
 	for i, side in { -1, 1 } do
 		piece(`FenceFront{i}`, buildYardFence, side * 8, -16)
 		piece(`FenceFrontHalf{i}`, buildYardFenceHalf, side * 14, -16)
+		piece(`FootingFront{i}`, buildYardFooting, side * 8, -16)
+		piece(`FootingFrontHalf{i}`, buildYardFooting, side * 14, -16, 0, 0, 0.5)
 	end
 	piece("Gate", buildYardGate, 0, -16)
 	piece("PlotMarker", buildPlotMarker, 6, -17.5)
