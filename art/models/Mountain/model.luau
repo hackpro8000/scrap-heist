@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-9a67fd5e14bcd868"
+local CACHE_KEY = "Mountain-84c32c7aa959b7d6"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -987,13 +987,11 @@ local GRASS_BOTTOM_ROUND = 0.2
 -- How much the grass darkens toward the tip of the deepest drip.
 local DRIP_SHADE = 0.35
 -- The grass is dead: straw GRASS drifting into a dull olive where a little
--- life hangs on (GRASS_OLIVE_COVER of it), burnt black in scorch patches
--- (SCORCH_COVER of it) and worn through to the dirt in bald ones
--- (BALD_COVER). Each patch kind is soft noise this many studs across.
+-- life hangs on (GRASS_OLIVE_COVER of it) and worn through to the dirt in
+-- bald patches (BALD_COVER). Each patch kind is soft noise this many studs
+-- across.
 local GRASS_OLIVE = { 0.42, 0.42, 0.22 }
 local GRASS_OLIVE_COVER = 0.3
-local SCORCH = { 0.15, 0.12, 0.09 }
-local SCORCH_COVER = 0.18
 local BALD_COVER = 0.12
 local GRASS_PATCH_SIZE = 6
 
@@ -2250,7 +2248,7 @@ end
 -- How deep the deepest drip hangs, for the grass's shading.
 local GRASS_DEEPEST = GRASS_LIP[1] + DRIP_LENGTH[2]
 
--- Grass is dead straw with olive, scorched and bald patches, darkening down
+-- Grass is dead straw with olive and bald patches, darkening down
 -- the hanging edge toward the drip tips, and splotched like the stone.
 local paintGrass = rusting(0, function(x, y, z)
 	local shade = 1 - DRIP_SHADE * math.clamp(-z / GRASS_DEEPEST, 0, 1)
@@ -2268,7 +2266,6 @@ local paintGrass = rusting(0, function(x, y, z)
 	end
 	local r, g, b = toward(GRASS[1], GRASS[2], GRASS[3], GRASS_OLIVE, patch(GRASS_OLIVE_COVER, 11.3))
 	r, g, b = toward(r, g, b, DIRT, patch(BALD_COVER, 47.9))
-	r, g, b = toward(r, g, b, SCORCH, patch(SCORCH_COVER, 83.1))
 	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
 end)
 
