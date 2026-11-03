@@ -102,8 +102,10 @@ pub fn write(parts: &[Part], bones: &[Bone], clips: &[Clip]) -> Vec<u8> {
 		let glow = if part.emissive > 0.0 {
 			format!(",\"emissiveTexture\":{{\"index\":{texture}}},\"emissiveFactor\":[1,1,1],\"extensions\":{{\"KHR_materials_emissive_strength\":{{\"emissiveStrength\":{}}}}}", part.emissive)
 		} else { String::new() };
+		// A see-through part blends its texture's alpha and shows both sides.
+		let see_through = if part.image.borrow().alpha.is_some() { ",\"alphaMode\":\"BLEND\",\"doubleSided\":true" } else { "" };
 		materials.push(format!(
-			"{{\"name\":\"{}\",\"pbrMetallicRoughness\":{{\"baseColorTexture\":{{\"index\":{texture}}},\"metallicFactor\":0,\"roughnessFactor\":1}}{glow}}}",
+			"{{\"name\":\"{}\",\"pbrMetallicRoughness\":{{\"baseColorTexture\":{{\"index\":{texture}}},\"metallicFactor\":0,\"roughnessFactor\":1}}{glow}{see_through}}}",
 			part.name
 		));
 		meshes.push(format!(

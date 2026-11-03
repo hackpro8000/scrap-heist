@@ -85,6 +85,19 @@ impl Mips {
 		let far = at(low + 1);
 		[0, 1, 2].map(|a| near[a] + (far[a] - near[a]) * t)
 	}
+
+	// Opacity, blended between levels the same way.
+	fn sample_alpha(&self, full: &Image, u: f64, v: f64, level: f64) -> f32 {
+		let at = |l: usize| if l == 0 { full.sample_alpha(u, v) } else { self.0[(l - 1).min(self.0.len() - 1)].sample_alpha(u, v) };
+		let level = level.clamp(0.0, self.0.len() as f64);
+		let low = level.floor() as usize;
+		let t = (level - low as f64) as f32;
+		let near = at(low);
+		if t == 0.0 {
+			return near;
+		}
+		near + (at(low + 1) - near) * t
+	}
 }
 // Corners closer than this to the eye are culled with their triangle.
 const NEAR: f64 = 0.05;
@@ -177,8 +190,12 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 	// multiplies it by the distance ahead.
 	let pixel_studs = if view.eye.is_some() { spread / size as f64 } else { width / size as f64 };
 
-	for (list, part) in &triangles {
+	// Solid parts first; see-through parts then blend over them, tested
+	// against the depth but not writing it.
+	let layered = [false, true].map(|see_through| triangles.iter().filter(move |(_, part)| part.image.borrow().alpha.is_some() == see_through));
+	for (list, part) in layered.into_iter().flatten() {
 		let image = part.image.borrow();
+		let see_through = image.alpha.is_some();
 		let key = Rc::as_ptr(&part.image);
 		let mips = &chains.iter().find(|(k, _)| *k == key).unwrap().1;
 		for triangle in list {
@@ -227,7 +244,9 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 					if z >= depth[at] {
 						continue;
 					}
-					depth[at] = z;
+					if !see_through {
+						depth[at] = z;
+					}
 					let blend = |f: &dyn Fn(usize) -> f64| w0 * f(0) + w1 * f(1) + w2 * f(2);
 					let u = blend(&|k| triangle[k].uv[0]);
 					let v = blend(&|k| triangle[k].uv[1]);
@@ -241,6 +260,12 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 					// SurfaceAppearance does, and spills into a bloom.
 					let footprint = if view.eye.is_some() { texels_per_pixel * z } else { texels_per_pixel };
 					let albedo = mips.sample(&image, u, v, footprint.max(1.0).log2());
+					if see_through {
+						let opacity = mips.sample_alpha(&image, u, v, footprint.max(1.0).log2());
+						let under = color[at];
+						color[at] = [0, 1, 2].map(|a| under[a] + (albedo[a] * shade - under[a]) * opacity);
+						continue;
+					}
 					color[at] = albedo.map(|c| c * (shade + part.emissive));
 					glow[at] = albedo.map(|c| c * part.emissive);
 				}

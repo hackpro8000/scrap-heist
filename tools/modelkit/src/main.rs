@@ -155,23 +155,34 @@ impl UserData for MeshHandle {
 				(image.width, image.height)
 			};
 			let samples = bake::samples(&this.0.borrow(), width, height, 2);
-			let mut sums = vec![[0.0f32; 4]; width * height];
+			// `color` may return a fourth value, an opacity, which gives the
+			// image an alpha channel for a see-through part.
+			let mut sums = vec![[0.0f32; 5]; width * height];
+			let mut has_alpha = false;
 			for t in &samples {
 				let [x, y, z] = t.position;
 				let [nx, ny, nz] = t.normal;
-				let (r, g, b) = color.call::<(f32, f32, f32)>((x, y, z, nx, ny, nz))?;
+				let (r, g, b, a) = color.call::<(f32, f32, f32, Option<f32>)>((x, y, z, nx, ny, nz))?;
+				has_alpha |= a.is_some();
 				let sum = &mut sums[t.pixel];
-				*sum = [sum[0] + r, sum[1] + g, sum[2] + b, sum[3] + 1.0];
+				*sum = [sum[0] + r, sum[1] + g, sum[2] + b, sum[3] + a.unwrap_or(1.0), sum[4] + 1.0];
 			}
 			let mut image = image.borrow_mut();
 			let mut covered = vec![false; width * height];
-			for (pixel, [r, g, b, n]) in sums.into_iter().enumerate() {
+			let mut opacity = vec![[1.0f32; 3]; width * height];
+			for (pixel, [r, g, b, a, n]) in sums.into_iter().enumerate() {
 				if n > 0.0 {
 					image.pixels[pixel] = [r / n, g / n, b / n];
+					opacity[pixel] = [a / n; 3];
 					covered[pixel] = true;
 				}
 			}
+			let mut alpha_covered = covered.clone();
 			bake::dilate(&mut image.pixels, &mut covered, width, height, 8);
+			if has_alpha {
+				bake::dilate(&mut opacity, &mut alpha_covered, width, height, 8);
+				image.alpha = Some(opacity.into_iter().map(|a| a[0]).collect());
+			}
 			Ok(())
 		});
 		// Paints the part stroke by stroke (a coat in the colors `paint`

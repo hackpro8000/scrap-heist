@@ -59,6 +59,16 @@ pub fn save(path: &Path, parts: &[(String, bool, f32, &Mesh, &Image)]) -> std::i
 			pixel.iter().for_each(|&c| out.extend(c.to_le_bytes()));
 		}
 	}
+	// Alpha follows all the parts, and only when some part has it, so files
+	// for solid parts stay as they were and older caches still load.
+	if parts.iter().any(|(_, _, _, _, image)| image.alpha.is_some()) {
+		for (_, _, _, _, image) in parts {
+			out.push(image.alpha.is_some() as u8);
+			for &a in image.alpha.iter().flatten() {
+				out.extend(a.to_le_bytes());
+			}
+		}
+	}
 	std::fs::create_dir_all(path.parent().expect("cache folder"))?;
 	std::fs::write(path, out)
 }
@@ -94,6 +104,15 @@ pub fn load(path: &Path) -> Option<Vec<CachedPart>> {
 			*pixel = std::array::from_fn(|k| f32::from_le_bytes(bytes[k * 4..k * 4 + 4].try_into().unwrap()));
 		}
 		parts.push(CachedPart { name, preview, emissive, mesh, image });
+	}
+	if r.at < bytes.len() {
+		for part in &mut parts {
+			if r.take(1)?[0] != 0 {
+				let count = part.image.width * part.image.height;
+				let raw = r.take(count * 4)?;
+				part.image.alpha = Some(raw.chunks_exact(4).map(|b| f32::from_le_bytes(b.try_into().unwrap())).collect());
+			}
+		}
 	}
 	(r.at == bytes.len()).then_some(parts)
 }
