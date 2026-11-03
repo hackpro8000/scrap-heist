@@ -11,7 +11,7 @@
 -- corners and edges. The model is built the mountain way up (heights,
 -- summit, foot) and flipped as it is written out. Centered on the origin,
 -- top at z = 0.
-local RADIUS = 38
+local RADIUS = 42
 local PEAK = 53
 -- Stone sizes at the summit and at the foot, as shares of the radius, so
 -- a bigger island has bigger stones rather than more of them.
