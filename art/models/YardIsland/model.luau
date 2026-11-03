@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-6de65ede22604325"
+local CACHE_KEY = "YardIsland-5f7b3448d11b52ff"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -876,6 +876,14 @@ local ROCK_GRADIENT = { 1.1, 0.6 }
 -- shifts the stone's tone by up to `tone` and its tint by up to `tint`. The
 -- coat's brush strokes lay them on as dabs.
 local SPLOTCH = { cell = 1.8 * DETAIL, chance = 1, radius = { DETAIL, 2 * DETAIL }, tone = 0.1, tint = 0.02 }
+-- The splotches are laid in octaves, each a layer of its own: `scale` times
+-- the size above, its tone and tint at `strength` of it. Broad washes under
+-- the base blots, fine flecks over them.
+local SPLOTCH_OCTAVES = {
+	{ scale = 3.2, strength = 0.8 },
+	{ scale = 1, strength = 1 },
+	{ scale = 0.4, strength = 0.55 },
+}
 -- Texture pixels per stud; chunks are 1024 texels across at this density.
 local TEXEL_DENSITY = 16
 -- Edge highlights: how far edge paint reaches from an edge, in studs, and how
@@ -1391,33 +1399,46 @@ local function rockAt(x: number, y: number)
 	return found
 end
 
--- The splotch on top at a point, as its tone and warmth shifts (0, 0 where
--- none reaches). Of the splotches covering a point, the one laid last wins.
-local function splotchAt(x: number, y: number, z: number): (number, number)
-	local size = SPLOTCH.cell
+-- The splotch on top at a point in one octave, as its tone and warmth
+-- shifts (0, 0 where none reaches). Of the splotches covering a point, the
+-- one laid last wins.
+local function octaveAt(x: number, y: number, z: number, octave: number): (number, number)
+	local scale, strength = SPLOTCH_OCTAVES[octave].scale, SPLOTCH_OCTAVES[octave].strength
+	local size = SPLOTCH.cell * scale
 	local gx, gy, gz = math.floor(x / size), math.floor(y / size), math.floor(z / size)
 	local tone, warm, order = 0, 0, -1
 	for i = gx - 1, gx + 1 do
 		for j = gy - 1, gy + 1 do
 			for k = gz - 1, gz + 1 do
-				local seed = i * 7.31 + k * 3.17
+				local seed = i * 7.31 + k * 3.17 + octave * 91.7
 				if hash(seed, j + 101) < SPLOTCH.chance then
 					local cx = (i + hash(seed, j + 201)) * size
 					local cy = (j + hash(seed, j + 301)) * size
 					local cz = (k + hash(seed, j + 401)) * size
-					local radius = SPLOTCH.radius[1] + (SPLOTCH.radius[2] - SPLOTCH.radius[1]) * hash(seed, j + 501)
+					local radius = scale * (SPLOTCH.radius[1] + (SPLOTCH.radius[2] - SPLOTCH.radius[1]) * hash(seed, j + 501))
 					local dx, dy, dz = x - cx, y - cy, z - cz
 					-- Lobed rim, so a blot isn't a clean circle.
 					local lobes = 1 + 0.25 * math.noise(dx / radius * 1.5 + i, dy / radius * 1.5 + j, dz / radius * 1.5 + k)
 					local laid = hash(seed, j + 601)
 					if dx * dx + dy * dy + dz * dz < (radius * lobes) ^ 2 and laid > order then
 						order = laid
-						tone = (hash(seed, j + 701) - 0.5) * 2 * SPLOTCH.tone
-						warm = (hash(seed, j + 801) - 0.5) * 2 * SPLOTCH.tint
+						tone = (hash(seed, j + 701) - 0.5) * 2 * SPLOTCH.tone * strength
+						warm = (hash(seed, j + 801) - 0.5) * 2 * SPLOTCH.tint * strength
 					end
 				end
 			end
 		end
+	end
+	return tone, warm
+end
+
+-- Every octave's splotch at a point, added up.
+local function splotchAt(x: number, y: number, z: number): (number, number)
+	local tone, warm = 0, 0
+	for octave in SPLOTCH_OCTAVES do
+		local t, w = octaveAt(x, y, z, octave)
+		tone += t
+		warm += w
 	end
 	return tone, warm
 end
