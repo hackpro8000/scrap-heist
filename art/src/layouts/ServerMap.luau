@@ -41,8 +41,8 @@ local ARENA_ISLAND = 61
 -- How far the yard island's grass reaches in front of the gate, where the
 -- bridge lands, and how its island is turned under the yard (as in
 -- YardLayout.luau) so the fence corners stand on its lobes. Its turf
--- stands 1.29 studs above its origin.
-local YARD_ISLAND, YARD_ISLAND_TURN = 40, 305
+-- stands 1.43 studs above its origin.
+local YARD_ISLAND, YARD_ISLAND_TURN = 46, 305
 -- The yard's pieces are laid out on a 32-stud plan and built this many
 -- times their own size, as in YardLayout.luau.
 local YARD_SCALE = 1.5
@@ -51,11 +51,11 @@ local YARD_SCALE = 1.5
 local DECK = 2
 local YARD_TIER = 6
 -- The avenue's plaza pads, east of the road, and the yards either side.
-local PAD_XS = { 100, 184, 268, 352 }
+local PAD_XS = { 100, 194, 288, 382 }
 local PAD_ISLAND, PAD_PLAZA = 14, 11
-local YARD_OFFSET = 70
+local YARD_OFFSET = 74
 -- The market island closes the avenue's east end.
-local MARKET_X = 424
+local MARKET_X = 454
 local MARKET_ISLAND, MARKET_PLAZA = 38, 30
 
 local GROUND = { 0.3, 0.27, 0.22 }
@@ -1359,7 +1359,7 @@ for i = 1, 2 * #PAD_XS do
 	local side = if i % 2 == 1 then 1 else -1
 	local degrees = 180 - side * 90
 	local x, y = PAD_XS[(i + 1) // 2], side * YARD_OFFSET
-	place(`Island{i}`, buildColumnIsland, x, y, YARD_TIER - 1.29, degrees - 90 + YARD_ISLAND_TURN)
+	place(`Island{i}`, buildColumnIsland, x, y, YARD_TIER - 1.43, degrees - 90 + YARD_ISLAND_TURN)
 	slab(`Plot{i}`, function()
 		part("Slab", nil, PLOT, function(mesh)
 			box(mesh, 0, 0, YARD_TIER, 32 * YARD_SCALE, 32 * YARD_SCALE, 0.05)
