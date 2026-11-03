@@ -8,8 +8,10 @@
 -- back), PlotMarker, plus Tile, Path and Fence pieces.
 
 -- The yard stands on a Column Island, its grass top level with the yard
--- floor.
-place("Island", buildColumnIsland, 0, 0, -0.45)
+-- floor, turned so the island's lobes sit under the fence corners and its
+-- bays fall between them.
+local ISLAND_TURN = 305
+place("Island", buildColumnIsland, 0, 0, -0.45, ISLAND_TURN)
 
 -- The yard's pieces are laid out on a 32-stud plan and built YARD_SCALE
 -- times their own size, so the avatar clears the gate.
