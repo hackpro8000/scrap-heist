@@ -7,11 +7,11 @@
 -- Labels: Gate, Crate, Pad1-Pad4 (left front, left back, right front, right
 -- back), PlotMarker, plus Tile, Path and Fence pieces.
 
--- The yard stands on a Yard Island, its stone top level with the yard
--- floor, turned so the island's wider reaches sit under the fence corners.
--- Its top is its origin.
+-- The yard stands on a Yard Island, its grass top level with the yard
+-- floor, turned so the island's lobes sit under the fence corners and its
+-- bays fall between them. Its turf stands 1.43 studs above its origin.
 local ISLAND_TURN = 305
-place("Island", buildYardIsland, 0, 0, 0, ISLAND_TURN)
+place("Island", buildYardIsland, 0, 0, -1.43, ISLAND_TURN)
 
 -- The yard's pieces are laid out on a 32-stud plan and built YARD_SCALE
 -- times their own size, so the avatar clears the gate.
