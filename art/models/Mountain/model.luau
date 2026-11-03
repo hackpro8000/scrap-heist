@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-6b2acaa7d6214535"
+local CACHE_KEY = "Mountain-d3edf9fb9e3fbb72"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -897,7 +897,7 @@ local PEBBLE = { 0.47, 0.46, 0.49 }
 local STONE_BITS = { 0.025, 0.12 }
 local STONE_BIT_SIZE = { 0.45, 1.9 }
 local STONE_BIT_SKEW = 2
-local STONE_BIT_RISE = { 0.35, 0.65 }
+local STONE_BIT_RISE = { 0.3, 0.4 }
 local STONE_BIT_CLEAR = 1.2
 -- The stones are stained with dirt: solid where they come out of it,
 -- breaking into blotches up to STONE_BIT_STAIN of their height.
