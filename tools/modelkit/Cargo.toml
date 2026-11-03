@@ -6,6 +6,11 @@ edition = "2021"
 [dependencies]
 mlua = { version = "0.12", features = ["luau", "luau-jit"] }
 png = "0.17"
+# The shading bake runs its per-texel passes as compute shaders when a GPU is
+# present (see src/gpu.rs). No GL: a GL-only machine bakes on the CPU instead.
+wgpu = { version = "=29.0.4", default-features = false, features = ["std", "parking_lot", "vulkan", "metal", "dx12", "wgsl"] }
+pollster = "0.4"
+bytemuck = { version = "1.25", features = ["derive"] }
 
 # Dependencies (Luau's C++ included) build optimized once; our own code stays
 # quick to rebuild but still fast enough to bake textures.

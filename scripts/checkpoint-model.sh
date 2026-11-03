@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Checkpoints a model after every change: rebuilds it (saving the .glb,
 # textures and preview), copies the preview to screenshot.png, then commits
-# and pushes the model source on the models branch (outputs are gitignored). It also
+# and pushes the model source on the current branch (outputs are gitignored). It also
 # writes views.png, four turns round the model on one sheet. Send the printed
 # screenshot and views to the user.
 #
@@ -16,8 +16,8 @@ dir="${root}/art/models/${name}"
 shot="${dir}/screenshot.png"
 
 branch="$(git -C "${root}" branch --show-current)"
-if [ "${branch}" != "models" ]; then
-	echo "checkpoint must run on the models branch (on ${branch})" >&2
+if [ -z "${branch}" ]; then
+	echo "checkpoint must run on a branch, not a detached HEAD" >&2
 	exit 1
 fi
 
@@ -32,7 +32,7 @@ git -C "${root}" add "${dir}"
 git -C "${root}" diff --cached --quiet || git -C "${root}" commit -q -m "${message}"
 for delay in 0 2 4 8 16; do
 	sleep "${delay}"
-	git -C "${root}" push -q -u origin models && break
+	git -C "${root}" push -q -u origin "${branch}" && break
 done
 
 echo "screenshot: ${shot}"

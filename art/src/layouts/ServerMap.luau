@@ -1,4 +1,4 @@
--- uses: ArenaIsland PadIsland MarketIsland YardIsland ShopConceptContainer ScrapTreeLamppost VendingMachine ParkBench ScrapPalm ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
+-- uses: ArenaIsland PadIsland MarketIsland YardIsland ShopConceptContainer ScrapTreeLamppost VendingMachine ParkBench ScrapPalm ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardFooting YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
 -- around its bowl. An avenue of four plaza islands runs east from the road to
@@ -8,7 +8,7 @@
 -- with no steps, and new players spawn round its crusher.
 -- Each plot slab carries the Yard Layout template, placed piece by piece the
 -- same way YardLayout.luau places it, so the map shows every yard set up.
--- Labels: ArenaIsland (carrying the arena, ramps, spawn, beacon and road), Pad1-Pad4,
+-- Labels: ArenaIsland, Arena, Spawn, Beacon, Road, Ramps, ArenaWall, Pad1-Pad4,
 -- Avenue1-Avenue5, MarketIsland, Shop, Island1-Island8, Plot1-Plot8,
 -- Yard1_<piece>-Yard8_<piece>, Spoke1-Spoke8, Bridge1-Bridge8,
 -- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4 and Cones1-Cones8.
@@ -19,24 +19,44 @@ end
 
 -- Every map part is textured at one density so nothing reads sharper or
 -- blurrier than its neighbours. Props keep their own texture sizes.
-useTexelDensity(16)
+local MAP_DENSITY = 16
+useTexelDensity(MAP_DENSITY)
+
+-- A placed model can set its own texel density while it builds, and it only
+-- builds when it isn't cached, so the map's density is set again after each
+-- one. Otherwise everything after it bakes at the model's density, or not,
+-- depending on what happens to be cached.
+local function placeModel(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?)
+	place(label, build, x, y, z, turn)
+	useTexelDensity(MAP_DENSITY)
+end
 
 local ROAD_INNER, ROAD_OUTER = 50, 58
 local ARENA_FLOOR, ARENA_DEPTH = 36, 3.5
 -- Width of the hazard stripes inlaid round the floor edge and up each ramp.
 local HAZARD_WIDTH = 1.8
-local ARENA_ISLAND, YARD_ISLAND = 61, 36
+-- Length of each yellow or black block in the bridges' hazard strips.
+local HAZARD_BLOCK = 0.6
+local ARENA_ISLAND = 61
+-- How far the yard island's grass reaches in front of the gate, where the
+-- bridge lands, and how its island is turned under the yard (as in
+-- YardLayout.luau) so the fence corners stand on its lobes. Its turf
+-- stands 1.43 studs above its origin.
+local YARD_ISLAND, YARD_ISLAND_TURN = 41, 305
+-- The yard's pieces are laid out on a 32-stud plan and built this many
+-- times their own size, as in YardLayout.luau.
+local YARD_SCALE = 1.5
 -- The ring road runs a little above the ground, the arena banking down to
 -- the floor inside it and the bridges sloping up to the yards outside it.
 local DECK = 2
 local YARD_TIER = 6
 -- The avenue's plaza pads, east of the road, and the yards either side.
-local PAD_XS = { 100, 184, 268, 352 }
-local PAD_ISLAND, PAD_PLAZA = 14, 11
-local YARD_OFFSET = 63
+local PAD_XS = { 110, 222, 334, 446 }
+local PAD_PLAZA = 11
+local YARD_OFFSET = 84
 -- The market island closes the avenue's east end.
-local MARKET_X = 424
-local MARKET_ISLAND, MARKET_PLAZA = 38, 30
+local MARKET_X = 543
+local MARKET_PLAZA = 30
 
 local GROUND = { 0.3, 0.27, 0.22 }
 local ROAD = { 0.42, 0.41, 0.4 }
@@ -531,7 +551,7 @@ local ROAD_SINK = 0.15
 
 -- The arena island is its own model, its rim level with the road deck and
 -- its top sinking into the arena bowl.
-place("ArenaIsland", buildArenaIsland, 0, 0, DECK - 0.7)
+placeModel("ArenaIsland", buildArenaIsland, 0, 0, DECK - 0.7)
 -- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
 local function fbm(x: number, y: number, z: number): number
 	local total, amplitude = 0, 0.5
@@ -614,11 +634,11 @@ local function arenaConcrete(x: number, y: number, _z: number)
 	return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * (k - math.max(0, stain) * 0.04)
 end
 -- Bridge deck: riveted steel tread plates laid across the span, with dark
--- seams, raised diamond treads worn smooth down the two wheel paths, hazard
--- chevrons painted along both outer plates, and grime and rust bleeding in
--- from the edges. Painted in the bridge's own frame so every bridge wears
--- the same way along its length. `flareAt` says how far the railings have
--- flared at each point along it, and the edges and chevrons flare with them.
+-- seams, raised diamond treads worn smooth down the two wheel paths, and
+-- grime and rust bleeding in from the edges. (The hazard strips are parts of
+-- their own, laid on top; see bridge().) Painted in the bridge's own frame so
+-- every bridge wears the same way along its length. `flareAt` says how far the
+-- railings have flared at each point along it, and the edges flare with them.
 local function bridgeDeck(degrees: number, cx: number, cy: number, flareAt: (number) -> number)
 	local angle = math.rad(degrees - 90)
 	local c, s = math.cos(angle), math.sin(angle)
@@ -627,9 +647,6 @@ local function bridgeDeck(degrees: number, cx: number, cy: number, flareAt: (num
 		local v = (y - cy) * c - (x - cx) * s
 		local flare = flareAt(v)
 		local edge = 3 + 0.5 * flare - math.abs(u)
-		-- Distance from the centre line with the flare taken out, so the
-		-- chevrons keep their place against the railing.
-		local stripe = math.abs(u) - 0.6 * flare
 		local wheel = math.exp(-((math.abs(u) - 1.4) / 0.5) ^ 2)
 		local k = 0.72 + fbm(u / 2, v / 2, 31) * 0.1
 		-- Diamond treads alternate direction, flattened where tyres run.
@@ -652,14 +669,6 @@ local function bridgeDeck(degrees: number, cx: number, cy: number, flareAt: (num
 		k -= grime * 0.3 + math.max(0, warpedFbm(u / 3, v / 3, 43)) * 0.25
 		local rust = math.clamp(grime + math.max(0, fbm(u, v / 1.2, 47)) - 0.35, 0, 1)
 		local r, g, b = STEEL[1], STEEL[2], STEEL[3]
-		-- Hazard chevrons painted onto the outer plates, leaning toward the
-		-- arena and worn through to bare steel on the raised treads.
-		if math.abs(stripe - 2.45) < 0.25 then
-			local paint = if math.floor((v + stripe * 1.2) / 0.45) % 2 == 0 then MARK else { 0.1, 0.1, 0.1 }
-			local wear = math.clamp(fbm(u * 4, v, 53) * 0.8 + (if tread then 0.35 else 0), 0, 1)
-			r, g, b = paint[1] + (r - paint[1]) * wear, paint[2] + (g - paint[2]) * wear, paint[3] + (b - paint[3]) * wear
-			k = 0.75 + (k - 0.75) * 0.5
-		end
 		return r * k + rust * 0.12, g * k + rust * 0.02, b * k - rust * 0.06
 	end
 end
@@ -744,19 +753,23 @@ end
 -- A plaza: an asphalt octagon at deck level on its own floating island,
 -- kerbed round the edge except where a bridge lands on one of its sides.
 -- The dirt dips just under the asphalt, as it does under the ring road.
-local function plazaIsland(label: string, x: number, y: number, buildIsland: () -> (), plaza: number, seed: number, openings: { number })
-	-- The rock top sits 0.2 under the plaza so the floor never z-fights it.
-	place(`{label}Rock`, buildIsland, x, y, DECK - 0.9)
+-- `turf` is how far the island's grass stands above its origin, and `turn`
+-- turns its lobes under the plaza's corners.
+local function plazaIsland(label: string, x: number, y: number, buildIsland: () -> (), turf: number, turn: number, plaza: number, seed: number, openings: { number })
+	-- The grass sits 0.2 under the plaza so the floor never z-fights it.
+	place(`{label}Rock`, buildIsland, x, y, DECK - 0.2 - turf, turn)
 	slab(label, function()
-		part("Plaza", nil, ROAD, function(mesh)
+		-- Chunked, so the market's wide plaza and its long kerb ring keep the
+		-- map's texel density instead of stretching one capped texture.
+		chunkedPart("Plaza", nil, ROAD, function(mesh)
 			arc(mesh, 0, plaza, DECK - 0.6, DECK, 0, 360, true)
 		end, nil, function(px, py)
 			return asphalt(px - x, py - y, 40, seed + 50)
-		end, nil, nil, true)
+		end, true)
 		-- Each run ends inside a bridge end post, 3.5 off the bridge's middle
 		-- halfway across the kerb, on the octagon's flat side.
 		local gap = math.deg(math.atan(3.5 / (plaza + 0.2)))
-		part("Kerb", nil, CONCRETE, function(mesh)
+		chunkedPart("Kerb", nil, CONCRETE, function(mesh)
 			for k, opening in openings do
 				local after = openings[k % #openings + 1] + (if k == #openings then 360 else 0)
 				arc(mesh, plaza - 0.1, plaza + 0.5, DECK - 0.6, DECK + 0.3, opening + gap, after - gap, true)
@@ -812,6 +825,165 @@ local STRIP_BREAKS = { ARENA_FLOOR - HAZARD_WIDTH }
 for k = 0, 6 do
 	table.insert(STRIP_BREAKS, ARENA_FLOOR + k * (ROAD_INNER - ARENA_FLOOR) / 6)
 end
+
+-- The arena: built here on top of the arena island, whose top carries the
+-- bowl these sit in. The fight floor inside the hazard ring.
+slab("Arena", function()
+	chunkedPart("Floor", nil, CONCRETE, function(mesh)
+		arc(mesh, 0, ARENA_FLOOR - HAZARD_WIDTH, -ARENA_DEPTH - 0.1, 0.1 - ARENA_DEPTH, 0, 360, true)
+	end, nil, arenaConcrete)
+end, 0, 0)
+-- New players start on a ring round the crusher.
+slab("Spawn", function()
+	part("Pad", nil, MARK, function(mesh)
+		ring(mesh, 0, 0, 0.2 - ARENA_DEPTH, 6.5, 8.5, 0.1, "z", 32)
+	end, nil, 0)
+end, 0, 0)
+
+-- The storm beacon: a mast with a glowing core that lights up when a storm
+-- round starts, visible from every yard.
+local MAST_TOP = 24
+local STORM_GLOW = { 0.35, 0.85, 1 }
+slab("Beacon", function()
+	local floor = 0.1 - ARENA_DEPTH
+	part("Plinth", nil, CONCRETE, function(mesh)
+		cylinder(mesh, 0, 0, floor + 0.6, 4.5, 1.2, "z", 8)
+		cylinder(mesh, 0, 0, floor + 1.5, 3.4, 0.6, "z", 8)
+	end, nil, 0.5)
+	part("PlinthStripe", nil, MARK, function(mesh)
+		ring(mesh, 0, 0, floor + 1.15, 4.4, 4.55, 0.25, "z", 8)
+	end, nil, 0.3)
+	-- Four straight legs leaning in towards the top, tied together with braces.
+	part("Mast", nil, DARK_STEEL, function(mesh)
+		local bottom, top = floor + 1.8, floor + MAST_TOP
+		for _, sx in { -1, 1 } do
+			for _, sy in { -1, 1 } do
+				leg(mesh, sx * 2.2, sy * 2.2, bottom, sx * 0.8, sy * 0.8, top, 0.45)
+			end
+		end
+		local braces = 6
+		for i = 1, braces do
+			local t = i / braces
+			local z = bottom + t * (top - bottom) - 0.25
+			local half = 2.2 - t * 1.4
+			box(mesh, 0, half, z, half * 2, 0.25, 0.25)
+			box(mesh, 0, -half, z, half * 2, 0.25, 0.25)
+			box(mesh, half, 0, z, 0.25, half * 2, 0.25)
+			box(mesh, -half, 0, z, 0.25, half * 2, 0.25)
+		end
+	end, nil, 0.6)
+	part("CoreMount", nil, STEEL, function(mesh)
+		cylinder(mesh, 0, 0, floor + MAST_TOP + 0.3, 1.9, 0.6, "z", 16)
+		cylinder(mesh, 0, 0, floor + MAST_TOP + 4.25, 1.9, 0.5, "z", 16)
+		cylinder(mesh, 0, 0, floor + MAST_TOP + 6.5, 0.15, 4, "z", 8)
+	end, nil, 0.2)
+	-- The core sits on top of the mast and is the part that glows during a storm.
+	part("Core", nil, STORM_GLOW, function(mesh)
+		cylinder(mesh, 0, 0, floor + MAST_TOP + 2.3, 1.4, 3.4, "z", 16)
+	end, nil, 0, nil, 1)
+	part("CoreCage", nil, DARK_STEEL, function(mesh)
+		for k = 0, 5 do
+			local angle = math.rad(k * 60)
+			box(mesh, math.cos(angle) * 1.65, math.sin(angle) * 1.65, floor + MAST_TOP + 0.6, 0.2, 0.2, 3.4)
+		end
+	end, nil, 0.3)
+end, 0, 0)
+
+-- The ring road, with a concrete kerb along its outer edge broken only where
+-- the avenue leaves it to the east. The inner edge stays open onto the arena rim.
+slab("Road", function()
+	local middle = (ROAD_INNER + ROAD_OUTER) / 2
+	chunkedPart("Ring", nil, ROAD, function(mesh)
+		arc(mesh, ROAD_INNER, ROAD_OUTER, DECK - 0.6, DECK, 0, 360, true)
+	end, nil, function(x, y)
+		local radius = octagonRadius(x, y)
+		return asphalt(radius - middle, math.atan2(y, x) * middle, (ROAD_OUTER - ROAD_INNER) / 2, 61)
+	end)
+	-- Like the plaza kerbs, it ends inside the avenue bridge's end posts, 3.5
+	-- off the bridge's middle halfway across the kerb. Chunked, as a long ring
+	-- would stretch one texture.
+	local bridgeGap = math.deg(math.atan(3.5 / (ROAD_OUTER + 0.2)))
+	chunkedPart("Kerb", nil, CONCRETE, function(mesh)
+		arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, DECK - 0.6, DECK + 0.3, bridgeGap, 360 - bridgeGap, true)
+	end, nil, 0.5)
+end, 0, 0)
+
+-- Entry ramps down the bank at every spoke, with hazard stripes either side
+-- and round the mouth of each. Each part spans all eight spokes, so it is
+-- chunked rather than stretching one texture across the arena.
+slab("Ramps", function()
+	chunkedPart("Deck", nil, CONCRETE, function(mesh)
+		for i = 1, 8 do
+			rampBlock(mesh, (i - 1) * 45, { ARENA_FLOOR - HAZARD_WIDTH, ARENA_FLOOR, ROAD_INNER }, -LANE_HALF, LANE_HALF, 0)
+		end
+	end, nil, 0.25)
+	for k, color in { MARK, { 0.08, 0.08, 0.08 } } do
+		chunkedPart(if k == 1 then "RampStripeYellow" else "RampStripeBlack", nil, color, function(mesh)
+			for i = 1, 8 do
+				for s = k, #STRIP_BREAKS - 1, 2 do
+					local radii = { STRIP_BREAKS[s], STRIP_BREAKS[s + 1] }
+					rampBlock(mesh, (i - 1) * 45, radii, -RAMP_HALF, -LANE_HALF, 0)
+					rampBlock(mesh, (i - 1) * 45, radii, LANE_HALF, RAMP_HALF, 0)
+				end
+				-- Ring pieces, black-yellow-black from the mouth to the corner.
+				local ring = { ARENA_FLOOR - HAZARD_WIDTH, ARENA_FLOOR }
+				local cuts = { RAMP_HALF, RAMP_HALF + 3.2, RAMP_HALF + 6.4, 99 }
+				for s = 3 - k, 3, 2 do
+					rampBlock(mesh, (i - 1) * 45, ring, cuts[s], cuts[s + 1], 0)
+					rampBlock(mesh, (i - 1) * 45, ring, -cuts[s + 1], -cuts[s], 0)
+				end
+			end
+		end, nil, 0.2)
+	end
+end, 0, 0)
+
+-- The arena wall runs along each octagon side in two halves, one each side
+-- of the spoke, along the top of the bank just inside the road. A half
+-- starts square at `near` across the spoke, where it meets the ramp's hazard
+-- strip, and ends mitred at the octagon corner.
+local WALL_INNER, WALL_OUTER = ROAD_INNER - 1.2, ROAD_INNER - 0.4
+-- Its foot sinks into the bank; its top stands 1.25 over the road deck.
+local WALL_BOTTOM, WALL_TOP = DECK - 0.5, DECK + 1.25
+local function wallRun(mesh, degrees: number, side: number, inner: number, outer: number, near: number, bottom: number, top: number)
+	local angle = math.rad(degrees)
+	local c, n = math.cos(angle), math.sin(angle)
+	local corner = math.tan(math.rad(22.5))
+	-- Footprint counter-clockwise seen from above.
+	local footprint = { { inner, near }, { outer, near }, { outer, outer * corner }, { inner, inner * corner } }
+	if side < 0 then
+		footprint = { { inner, -inner * corner }, { outer, -outer * corner }, { outer, -near }, { inner, -near } }
+	end
+	local low, high = {}, {}
+	for k, p in footprint do
+		local x, y = c * p[1] - n * p[2], n * p[1] + c * p[2]
+		low[k] = mesh:vertex(x, y, bottom)
+		high[k] = mesh:vertex(x, y, top)
+	end
+	mesh:face({ high[1], high[2], high[3], high[4] })
+	mesh:face({ low[4], low[3], low[2], low[1] })
+	for k = 1, 4 do
+		local l = k % 4 + 1
+		mesh:face({ low[k], low[l], high[l], high[k] })
+	end
+end
+-- A low concrete wall with a yellow cap round the top of the bowl, broken
+-- where each ramp comes in. Chunked, as it rings the whole arena.
+slab("ArenaWall", function()
+	chunkedPart("Wall", nil, CONCRETE, function(mesh)
+		for i = 1, 8 do
+			for _, side in { -1, 1 } do
+				wallRun(mesh, (i - 1) * 45, side, WALL_INNER, WALL_OUTER, RAMP_HALF, WALL_BOTTOM, WALL_TOP)
+			end
+		end
+	end, nil, 0.4)
+	chunkedPart("WallCap", nil, MARK, function(mesh)
+		for i = 1, 8 do
+			for _, side in { -1, 1 } do
+				wallRun(mesh, (i - 1) * 45, side, WALL_INNER - 0.1, WALL_OUTER + 0.1, RAMP_HALF - 0.1, WALL_TOP, WALL_TOP + 0.15)
+			end
+		end
+	end, nil, 0.3)
+end, 0, 0)
 -- A straight block `width` wide from (ax, ay) to (bx, by), its bottom and
 -- top heights at each end given as { bottom, top }, so it can slope.
 local function upstand(mesh, ax: number, ay: number, bx: number, by: number, width: number, aHeights: { number }, bHeights: { number })
@@ -880,6 +1052,12 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 		end
 		return math.max(amount, math.clamp((py - flareFrom) / (endPostAt(from, -1) - flareFrom), 0, 1))
 	end
+	-- The deck's top at `py`, above the bridge's line: level along the span,
+	-- ramping down over the last stud at a kerb end.
+	local function topAt(py: number): number
+		local inFromEdge = if yardEnd then py - to else math.min(py - to, from - py)
+		return 0.1 * math.clamp(inFromEdge, -0.4, 1)
+	end
 	slab(label, function()
 		-- Steel decking that widens with the railings where they flare, so it
 		-- runs under the upstands out to the kerb ends. At a kerb end its top
@@ -888,10 +1066,6 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 		-- walking surface and its seam with the plaza stay true. Built as
 		-- rows of vertices across the deck at each station along it.
 		bridgePart("Deck", STEEL, function(mesh)
-			local function topAt(py: number): number
-				local inFromEdge = if yardEnd then py - to else math.min(py - to, from - py)
-				return 0.1 * math.clamp(inFromEdge, -0.4, 1)
-			end
 			local stations = { to - 0.4, to, endPostAt(to, 1), to + 1 }
 			for n = 0, 8 do
 				table.insert(stations, flareTo + (flareFrom - flareTo) * n / 8)
@@ -927,6 +1101,49 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 				mesh:face({ bottom[last][i], top[last][i], top[last][i + 1], bottom[last][i + 1] })
 			end
 		end, bridgeDeck(degrees, x, y, flareAt), true)
+		-- Hazard strips along both outer plates: blocks of yellow and black laid
+		-- just proud of the deck, each colour its own part so the blocks stay
+		-- crisp and even. They run from end post to end post and step out with
+		-- the railings where they flare.
+		local first = endPostAt(to, 1)
+		local last = if yardEnd then from - 0.1 else endPostAt(from, -1)
+		local blocks = math.max(1, math.round((last - first) / HAZARD_BLOCK))
+		for k, colour in { MARK, { 0.08, 0.08, 0.08 } } do
+			bridgePart(if k == 1 then "HazardYellow" else "HazardBlack", colour, function(mesh)
+				for n = k - 1, blocks - 1, 2 do
+					local a = first + (last - first) * n / blocks
+					local b = first + (last - first) * (n + 1) / blocks
+					for _, side in { -1, 1 } do
+						local corners = {}
+						for i, py in { a, b } do
+							local out = 0.6 * flareAt(py)
+							local z = topAt(py) + 0.015
+							corners[i] = { side * (2.2 + out), side * (2.7 + out), py, z }
+						end
+						-- A thin block: its top, and the four sides down to the deck.
+						local top, base = {}, {}
+						for i, corner in { corners[1], corners[2] } do
+							local inner, outer, py, z = corner[1], corner[2], corner[3], corner[4]
+							top[i * 2 - 1] = mesh:vertex(inner, py, z)
+							top[i * 2] = mesh:vertex(outer, py, z)
+							base[i * 2 - 1] = mesh:vertex(inner, py, z - 0.03)
+							base[i * 2] = mesh:vertex(outer, py, z - 0.03)
+						end
+						local quads = {
+							{ top[1], top[2], top[4], top[3] },
+							{ base[1], base[2], top[2], top[1] },
+							{ base[4], base[3], top[3], top[4] },
+							{ base[2], base[4], top[4], top[2] },
+							{ base[3], base[1], top[1], top[3] },
+						}
+						for _, quad in quads do
+							-- The left side mirrors the right, so it winds the other way.
+							mesh:face(if side > 0 then quad else { quad[4], quad[3], quad[2], quad[1] })
+						end
+					end
+				end
+			end, 0.1, true)
+		end
 		bridgePart("Girders", DARK_STEEL, function(mesh)
 			-- I-beams: a web between two flanges, ribbed on the outside, with
 			-- bolted splice plates where the beam sections join.
@@ -1040,7 +1257,7 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 	end, x, y, degrees - 90)
 end
 
--- Lumpy yard outlines that never cut into the plot's corners (0.9 * 26
+-- Lumpy outlines that never cut into a 32-stud plot's corners (0.9 * 26
 -- clears its 22.6 half-diagonal) and stay full where the bridge lands.
 local function yardOutline(seed: number): (number) -> number
 	return function(angle)
@@ -1056,8 +1273,10 @@ end
 -- shows empty, as in the template.
 local function yardTemplate(index: number, x: number, y: number, turn: number)
 	local c, s = math.cos(math.rad(turn)), math.sin(math.rad(turn))
-	local function piece(name: string, build: () -> (), px: number, py: number, pz: number?, pturn: number?)
-		place(`Yard{index}_{name}`, build, x + px * c - py * s, y + px * s + py * c, (pz or 0) + YARD_TIER, turn + (pturn or 0))
+	local function piece(name: string, build: () -> (), px: number, py: number, pz: number?, pturn: number?, stretch: number?)
+		px, py = px * YARD_SCALE, py * YARD_SCALE
+		local pieceZ = (pz or 0) * YARD_SCALE + YARD_TIER
+		place(`Yard{index}_{name}`, build, x + px * c - py * s, y + px * s + py * c, pieceZ, turn + (pturn or 0), stretch, nil, YARD_SCALE)
 	end
 	for i, tx in { -12, -4, 4, 12 } do
 		for j, ty in { -12, -4, 4, 12 } do
@@ -1079,10 +1298,15 @@ local function yardTemplate(index: number, x: number, y: number, turn: number)
 		piece(`FenceBack{i}`, buildYardFence, f, 16)
 		piece(`FenceLeft{i}`, buildYardFence, -16, f, 0, 90)
 		piece(`FenceRight{i}`, buildYardFence, 16, f, 0, 90)
+		piece(`FootingBack{i}`, buildYardFooting, f, 16)
+		piece(`FootingLeft{i}`, buildYardFooting, -16, f, 0, 90)
+		piece(`FootingRight{i}`, buildYardFooting, 16, f, 0, 90)
 	end
 	for i, side in { -1, 1 } do
 		piece(`FenceFront{i}`, buildYardFence, side * 8, -16)
 		piece(`FenceFrontHalf{i}`, buildYardFenceHalf, side * 14, -16)
+		piece(`FootingFront{i}`, buildYardFooting, side * 8, -16)
+		piece(`FootingFrontHalf{i}`, buildYardFooting, side * 14, -16, 0, 0, 0.5)
 	end
 	piece("Gate", buildYardGate, 0, -16)
 	piece("PlotMarker", buildPlotMarker, 6, -17.5)
@@ -1092,18 +1316,18 @@ end
 -- a yard off either side, joined to the ring road, to each other and to the
 -- market at the far end by flat bridges.
 for k, padX in PAD_XS do
-	plazaIsland(`Pad{k}`, padX, 0, buildPadIsland, PAD_PLAZA, 40 + k, { 0, 90, 180, 270 })
+	plazaIsland(`Pad{k}`, padX, 0, buildPadIsland, 0.71, 340, PAD_PLAZA, 40 + k, { 0, 90, 180, 270 })
 	local from = if k == 1 then ROAD_OUTER else PAD_XS[k - 1] + PAD_PLAZA
 	bridge(`Avenue{k}`, from, 0, 0, padX - PAD_PLAZA - from, 0, DECK, false)
 end
-plazaIsland("MarketIsland", MARKET_X, 0, buildMarketIsland, MARKET_PLAZA, 60, { 180 })
+plazaIsland("MarketIsland", MARKET_X, 0, buildMarketIsland, 1.7, 335, MARKET_PLAZA, 60, { 180 })
 local lastPad = PAD_XS[#PAD_XS] + PAD_PLAZA
 bridge(`Avenue{#PAD_XS + 1}`, lastPad, 0, 0, MARKET_X - MARKET_PLAZA - lastPad, 0, DECK, false)
 
 -- The market's shop on the plaza's east side, its front (local -y) toward the
 -- middle. Local +y points away from the middle.
 local shopX, shopY = polar(MARKET_PLAZA - 6, 0)
-place("Shop", buildShopConceptContainer, MARKET_X + shopX, shopY, DECK, -90)
+placeModel("Shop", buildShopConceptContainer, MARKET_X + shopX, shopY, DECK, -90)
 -- Trees stand in concrete planters full of soil, their roots down in the soil.
 local PLANTER_TOP = DECK + 1
 local DIRT = { 0.22, 0.16, 0.1 }
@@ -1137,17 +1361,17 @@ for i = 1, 2 * #PAD_XS do
 	local side = if i % 2 == 1 then 1 else -1
 	local degrees = 180 - side * 90
 	local x, y = PAD_XS[(i + 1) // 2], side * YARD_OFFSET
-	place(`Island{i}`, buildYardIsland, x, y, YARD_TIER - 0.7, degrees - 90)
+	place(`Island{i}`, buildYardIsland, x, y, YARD_TIER - 1.43, degrees - 90 + YARD_ISLAND_TURN)
 	slab(`Plot{i}`, function()
 		part("Slab", nil, PLOT, function(mesh)
-			box(mesh, 0, 0, YARD_TIER, 32, 32, 0.05)
+			box(mesh, 0, 0, YARD_TIER, 32 * YARD_SCALE, 32 * YARD_SCALE, 0.05)
 		end, nil, 0)
 	end, x, y, degrees - 90)
 	yardTemplate(i, x, y, degrees - 90)
 	local c, s = math.cos(math.rad(degrees - 90)), math.sin(math.rad(degrees - 90))
 	slab(`Spoke{i}`, function()
 		part("Road", nil, ROAD, function(mesh)
-			box(mesh, 0, -18, YARD_TIER, 6, 6, 0.1)
+			box(mesh, 0, -(16 * YARD_SCALE + YARD_ISLAND) / 2, YARD_TIER, 6, YARD_ISLAND - 16 * YARD_SCALE, 0.1)
 		end, nil, function(px, py)
 			local u = (px - x) * c + (py - y) * s
 			local v = (py - y) * c - (px - x) * s
@@ -1166,7 +1390,7 @@ end
 for i, build in { buildShippingContainer, buildCarStack, buildCrushedCar, buildBarrels, buildTyreStack, buildJunkWall, buildDumpster, buildPallets } do
 	local degrees = (i - 0.5) * 45
 	local x, y = polar(26, degrees)
-	place(`Cover{i}`, build, x, y, 0.2 - ARENA_DEPTH, degrees + 90)
+	placeModel(`Cover{i}`, build, x, y, 0.2 - ARENA_DEPTH, degrees + 90)
 end
 -- Bot spawn hatches in the arena floor, inside the cover ring between the spokes.
 -- Storm bots climb out of these; the hazard rim marks where they emerge.

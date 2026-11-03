@@ -19,6 +19,7 @@ mod cache;
 mod coat;
 mod detail;
 mod glb;
+mod gpu;
 mod image;
 mod mesh;
 mod progress;
@@ -187,6 +188,43 @@ impl UserData for MeshHandle {
 				bands: get("bands", 0.0)? as usize,
 				blend: get("blend", 0.0)?.clamp(0.0, 1.0),
 				highlight_ramp: get("highlightRamp", 0.0)?.max(0.0),
+				reach: get("reach", bake::CONTACT_REACH)?.clamp(0.02, 4.0),
+				highlight_width: get("highlightWidth", 1.0)?.clamp(0.1, 8.0),
+				painted_highlights: options.as_ref().map(|o| o.get::<Option<bool>>("paintedHighlights")).transpose()?.flatten().unwrap_or(false),
+				corner_taper: get("cornerTaper", 0.0)?.clamp(0.0, 16.0),
+				// heightRange = {bottom, top}: share one gradient across chunks.
+				height_range: match options.as_ref().map(|o| o.get::<Option<Vec<f64>>>("heightRange")).transpose()?.flatten().as_deref() {
+					Some(&[bottom, top]) if top > bottom => Some([bottom, top]),
+					_ => None,
+				},
+				// strokes = {{start, along, normal, length, width, tail, color}, ...}:
+				// lines drawn over the coat with the Taper brush, color in sRGB.
+				strokes: match options.as_ref().map(|o| o.get::<Option<Vec<Table>>>("strokes")).transpose()?.flatten() {
+					Some(list) => list
+						.iter()
+						.enumerate()
+						.map(|(index, stroke)| -> mlua::Result<brush::Stroke> {
+							let along: mesh::Vec3 = stroke.get::<[f64; 3]>("along")?;
+							let normal: mesh::Vec3 = stroke.get::<[f64; 3]>("normal")?;
+							let across = mesh::cross(normal, along);
+							let length = dot(across, across).sqrt().max(1e-9);
+							Ok(brush::Stroke {
+								brush: brush::Brush::Taper,
+								start: stroke.get::<[f64; 3]>("start")?,
+								along,
+								across: scale(across, 1.0 / length),
+								normal,
+								length: stroke.get("length")?,
+								width: stroke.get("width")?,
+								color: stroke.get::<[f32; 3]>("color")?.map(bake::to_linear),
+								opacity: 1.0,
+								seed: index as u32,
+								tail: stroke.get::<Option<f64>>("tail")?.unwrap_or(0.0).clamp(0.0, 1.0),
+							})
+						})
+						.collect::<mlua::Result<Vec<_>>>()?,
+					None => Vec::new(),
+				},
 			};
 			let image = image.borrow::<ImageHandle>()?.0.clone();
 			let mesh = this.0.borrow();
