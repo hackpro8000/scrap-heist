@@ -11,7 +11,7 @@ use crate::mesh::{add, dot, scale, sub, Vec3};
 // with a warped panel but stops short of a bolt or lip standing off it.
 const PLANE: f64 = 0.025;
 // Lightness variation between bristles, per brush in the order of `Brush`.
-const BRISTLE_TONE: [f64; 5] = [0.35, 0.25, 0.15, 0.2, 0.3];
+const BRISTLE_TONE: [f64; 6] = [0.35, 0.25, 0.15, 0.2, 0.3, 0.0];
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum Brush {
@@ -25,8 +25,12 @@ pub enum Brush {
 	Sponge,
 	// Nearly dry flat brush dragged lightly, so its bristles skip.
 	Dry,
+	// Pointed liner for drawn lines such as cracks: full width at its start,
+	// thinning evenly to `tail` of that at its end, and never running dry.
+	Taper,
 }
 
+#[derive(Clone)]
 pub struct Stroke {
 	pub brush: Brush,
 	// Where the stroke starts, and unit directions along it and across it on
@@ -41,6 +45,8 @@ pub struct Stroke {
 	pub color: [f64; 3],
 	pub opacity: f64,
 	pub seed: u32,
+	// The width left at the stroke's end, as a share of `width` (Taper only).
+	pub tail: f64,
 }
 
 // How many bristles each brush has, and how far each may run dry early.
@@ -51,6 +57,7 @@ fn bristles(brush: Brush) -> (f64, f64) {
 		Brush::Liner => (3.0, 0.15),
 		Brush::Sponge => (1.0, 0.0),
 		Brush::Dry => (10.0, 0.5),
+		Brush::Taper => (1.0, 0.0),
 	}
 }
 
@@ -98,6 +105,7 @@ impl Stroke {
 			* match self.brush {
 				Brush::Flat | Brush::Dry => 0.85 + 0.15 * (std::f64::consts::PI * u).sin(),
 				Brush::Round => (std::f64::consts::PI * u.powf(0.7)).sin().max(0.0).sqrt(),
+				Brush::Taper => 1.0 - (1.0 - self.tail) * u,
 				_ => (1.0 - 0.6 * u) * (u * 6.0).min(1.0).sqrt(),
 			};
 		let s = side / half.max(1e-6);
@@ -109,7 +117,7 @@ impl Stroke {
 		let b = |k: u32| hash(self.seed.wrapping_mul(97).wrapping_add(bristle * 13 + k));
 		// Each bristle runs dry at its own point toward the tail.
 		let dry = 1.0 - early * b(0) - 0.1 * r(0);
-		let breakup = ((dry - u) / 0.08).clamp(0.0, 1.0);
+		let breakup = if self.brush == Brush::Taper { 1.0 } else { ((dry - u) / 0.08).clamp(0.0, 1.0) };
 		if breakup <= 0.0 {
 			return 0.0;
 		}
@@ -159,6 +167,20 @@ impl Canvas {
 	// A canvas for strokes `brush` times their usual size.
 	pub fn new(brush: f64) -> Canvas {
 		Canvas { cell_size: CELL * brush, strokes: Vec::new(), grid: HashMap::new() }
+	}
+
+	// What the GPU bake uploads: the cell size, the strokes in the order they
+	// were added, and the strokes listed under each cell.
+	pub fn cell_size(&self) -> f64 {
+		self.cell_size
+	}
+
+	pub fn strokes(&self) -> &[Stroke] {
+		&self.strokes
+	}
+
+	pub fn grid(&self) -> &HashMap<[i64; 3], Vec<usize>> {
+		&self.grid
 	}
 
 	fn cell(&self, p: Vec3) -> [i64; 3] {

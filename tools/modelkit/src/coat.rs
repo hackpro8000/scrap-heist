@@ -99,6 +99,7 @@ impl Spot {
 			color,
 			opacity,
 			seed,
+			tail: 1.0,
 		}
 	}
 }

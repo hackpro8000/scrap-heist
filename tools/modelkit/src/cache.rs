@@ -3,6 +3,7 @@
 // <model folder>/.cache, one per key, and a build deletes the ones it didn't
 // use.
 
+use crate::bake::CONTACT_REACH;
 use std::cell::RefCell;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
@@ -173,7 +174,7 @@ pub fn layer_path(kind: &str, mesh: &Mesh, occluders: &[&Mesh], reach: bool, num
 		kind.hash(&mut hasher);
 		hash_mesh(&mut hasher, mesh);
 		if reach {
-			for other in occluders.iter().filter(|other| crate::bake::within_reach(mesh, other)) {
+			for other in occluders.iter().filter(|other| crate::bake::within_reach(mesh, other, CONTACT_REACH)) {
 				hash_mesh(&mut hasher, other);
 			}
 		}
