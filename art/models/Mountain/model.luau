@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-cceecf2657b3f40f"
+local CACHE_KEY = "Mountain-1ec1df0a4ac6976f"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -873,8 +873,12 @@ local GRASS_LIP = { 0.3, 0.6 }
 local DRIP_WIDTH = { 1.6, 4 }
 local DRIP_LENGTH = { 0.6, 2.2 }
 local DRIP_OVERLAP = 0.35
+-- A finer octave of wobble over the wave: how far it moves the edge up or
+-- down, in studs, and how fast it changes along the rim.
+local DRIP_DETAIL = 0.6
+local DRIP_DETAIL_FREQUENCY = 1.1
 -- Spacing of the points the rim is walked in, in studs.
-local GRASS_STEP = 0.35
+local GRASS_STEP = 0.25
 -- How much the grass darkens toward the tip of the deepest drip.
 local DRIP_SHADE = 0.35
 
@@ -1508,6 +1512,8 @@ local function grassRim()
 				depth = math.max(depth, GRASS_LIP[1] + drip[3] * math.sqrt(1 - (gap / drip[2]) ^ 2))
 			end
 		end
+		-- The finer octave never lifts the edge above the stone's top.
+		depth = math.max(depth + DRIP_DETAIL * math.noise(s * DRIP_DETAIL_FREQUENCY, 8.1), 0.15)
 		table.insert(rim, {
 			outer = { p[1] + ox * GRASS_OUTSET, p[2] + oy * GRASS_OUTSET },
 			inner = { p[1] + ox * 0.02, p[2] + oy * 0.02 },
