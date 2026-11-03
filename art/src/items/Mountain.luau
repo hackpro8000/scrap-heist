@@ -79,6 +79,18 @@ local DIRT_DUSTING = 0.35
 local MOSS = { 0.28, 0.4, 0.17 }
 local MOSS_REACH = 0.8
 local MOSS_COVER = 0.45
+
+-- Small whole stones half sunk in the dirt, like crushed cookie in ice
+-- cream: STONE_BITS of them per square stud of dirt near the top, rising to
+-- the second number where the dirt gives way to rock. Each is STONE_BIT_SIZE
+-- studs across, a chipped box, and stands out of the dirt by STONE_BIT_RISE
+-- of its size. None sit within STONE_BIT_CLEAR studs of the top, under the
+-- grass's lip.
+local PEBBLE = { 0.47, 0.46, 0.49 }
+local STONE_BITS = { 0.08, 0.5 }
+local STONE_BIT_SIZE = { 0.3, 0.8 }
+local STONE_BIT_RISE = { 0.35, 0.65 }
+local STONE_BIT_CLEAR = 1.2
 local DIRT_BEVEL = { 0.3, 0.6 }
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
@@ -806,28 +818,31 @@ end
 -- stone reads sharp at one density everywhere.
 useTexelDensity(TEXEL_DENSITY)
 
--- The dirt or the stone of every column. Only what no other solid covers is
--- built, its own column's other half or a neighbour's, so nothing lies
--- buried inside the island. The flat top is left open: the grass covers it.
-local function buildRock(mesh, dirt: boolean)
+-- The faces of every column's dirt or stone that show. Only what no other
+-- solid covers is kept, another piece of its own column or a neighbour's,
+-- so nothing lies buried inside the island. The flat top is left open: the
+-- grass covers it.
+local function visibleRock(dirt: boolean)
+	local shown = {}
 	for _, column in columns do
-		local others = {}
-		for _, solid in column.solids do
-			if solid.dirt ~= dirt then
-				table.insert(others, solid)
-			end
-		end
+		local nearby = {}
 		for _, corner in column.corners do
 			local neighbour = corner[4] and columns[corner[4]]
 			if neighbour then
 				for _, solid in neighbour.solids do
-					table.insert(others, solid)
+					table.insert(nearby, solid)
 				end
 			end
 		end
 		for _, solid in column.solids do
 			if solid.dirt ~= dirt then
 				continue
+			end
+			local others = table.clone(nearby)
+			for _, other in column.solids do
+				if other ~= solid then
+					table.insert(others, other)
+				end
 			end
 			for _, face in solid.faces do
 				local foot = true
@@ -848,20 +863,148 @@ local function buildRock(mesh, dirt: boolean)
 					pieces = kept
 				end
 				for _, piece in pieces do
-					addFlipped(mesh, piece)
+					table.insert(shown, piece)
+				end
+			end
+		end
+	end
+	return shown
+end
+
+local dirtFaces = visibleRock(true)
+
+-- A box around a centre, `r` from it each way, its faces wound outward.
+local function boxAround(c, r)
+	local x0, x1, y0, y1, z0, z1 = c[1] - r, c[1] + r, c[2] - r, c[2] + r, c[3] - r, c[3] + r
+	return {
+		{ { x0, y0, z0 }, { x0, y1, z0 }, { x1, y1, z0 }, { x1, y0, z0 } },
+		{ { x0, y0, z1 }, { x1, y0, z1 }, { x1, y1, z1 }, { x0, y1, z1 } },
+		{ { x0, y0, z0 }, { x1, y0, z0 }, { x1, y0, z1 }, { x0, y0, z1 } },
+		{ { x0, y1, z0 }, { x0, y1, z1 }, { x1, y1, z1 }, { x1, y1, z0 } },
+		{ { x0, y0, z0 }, { x0, y0, z1 }, { x0, y1, z1 }, { x0, y1, z0 } },
+		{ { x1, y0, z0 }, { x1, y1, z0 }, { x1, y1, z1 }, { x1, y0, z1 } },
+	}
+end
+
+-- The stones in the dirt, each as the faces that stand out of it. A stone
+-- is a box turned at random and chipped at its corners, sunk into a dirt
+-- face, and cut off at that face so nothing of it lies buried.
+local pebbleSeed = 7
+local function pebbleRandom(): number
+	pebbleSeed = (pebbleSeed * 16807) % 2147483647
+	return pebbleSeed / 2147483647
+end
+local function unit(x: number, y: number, z: number)
+	local length = math.max(math.sqrt(x * x + y * y + z * z), 1e-9)
+	return { x / length, y / length, z / length }
+end
+local function cross(a, b)
+	return { a[2] * b[3] - a[3] * b[2], a[3] * b[1] - a[1] * b[3], a[1] * b[2] - a[2] * b[1] }
+end
+-- How far a point lies from the nearest edge of a face.
+local function edgeDistance(face, p): number
+	local nearest = math.huge
+	for i, a in face do
+		local b = face[i % #face + 1]
+		local ab = { b[1] - a[1], b[2] - a[2], b[3] - a[3] }
+		local length = ab[1] ^ 2 + ab[2] ^ 2 + ab[3] ^ 2
+		local t = if length > 0 then math.clamp(((p[1] - a[1]) * ab[1] + (p[2] - a[2]) * ab[2] + (p[3] - a[3]) * ab[3]) / length, 0, 1) else 0
+		local dx, dy, dz = p[1] - a[1] - ab[1] * t, p[2] - a[2] - ab[2] * t, p[3] - a[3] - ab[3] * t
+		nearest = math.min(nearest, math.sqrt(dx * dx + dy * dy + dz * dz))
+	end
+	return nearest
+end
+
+local pebbles = {}
+for _, face in dirtFaces do
+	local plane = planeOf(face)
+	if not plane then
+		continue
+	end
+	local n = { plane[1], plane[2], plane[3] }
+	for i = 2, #face - 1 do
+		local a, b, c = face[1], face[i], face[i + 1]
+		local triangle = area({ a, b, c })
+		local depth = (a[3] + b[3] + c[3]) / 3
+		local toward = math.clamp(depth / (islandDepth * DIRT_TRANSITION[1]), 0, 1)
+		local density = STONE_BITS[1] + (STONE_BITS[2] - STONE_BITS[1]) * toward
+		local count = math.floor(triangle * density + pebbleRandom())
+		for _ = 1, count do
+			local u, v = pebbleRandom(), pebbleRandom()
+			if u + v > 1 then
+				u, v = 1 - u, 1 - v
+			end
+			local p = {
+				a[1] + (b[1] - a[1]) * u + (c[1] - a[1]) * v,
+				a[2] + (b[2] - a[2]) * u + (c[2] - a[2]) * v,
+				a[3] + (b[3] - a[3]) * u + (c[3] - a[3]) * v,
+			}
+			local size = STONE_BIT_SIZE[1] + (STONE_BIT_SIZE[2] - STONE_BIT_SIZE[1]) * pebbleRandom()
+			local r = size / 2
+			if p[3] < STONE_BIT_CLEAR or edgeDistance(face, p) < r then
+				continue
+			end
+			local rise = STONE_BIT_RISE[1] + (STONE_BIT_RISE[2] - STONE_BIT_RISE[1]) * pebbleRandom()
+			local centre = { p[1] + n[1] * r * (2 * rise - 1), p[2] + n[2] * r * (2 * rise - 1), p[3] + n[3] * r * (2 * rise - 1) }
+			-- A box turned at random: start big, and cut each side in to r.
+			local x = unit(pebbleRandom() - 0.5, pebbleRandom() - 0.5, pebbleRandom() - 0.5)
+			local y = cross(x, unit(pebbleRandom() - 0.5, pebbleRandom() - 0.5, pebbleRandom() - 0.5))
+			y = unit(y[1], y[2], y[3])
+			local z = cross(x, y)
+			local stone = boxAround(centre, size * 2)
+			for _, axis in { x, y, z } do
+				for _, sign in { 1, -1 } do
+					local d = { axis[1] * sign, axis[2] * sign, axis[3] * sign }
+					local reach = r * (0.75 + 0.35 * pebbleRandom())
+					stone = carve(stone, d, d[1] * centre[1] + d[2] * centre[2] + d[3] * centre[3] + reach)
+				end
+			end
+			-- Chips knock its corners off.
+			for _ = 1, 9 do
+				local d = unit(pebbleRandom() - 0.5, pebbleRandom() - 0.5, pebbleRandom() - 0.5)
+				stone = carve(stone, d, d[1] * centre[1] + d[2] * centre[2] + d[3] * centre[3] + r * (0.65 + 0.25 * pebbleRandom()))
+			end
+			-- Cut off at the dirt: only what stands out of it is kept, and the
+			-- cap the cut leaves lies against the dirt, so it goes too.
+			local level = n[1] * p[1] + n[2] * p[2] + n[3] * p[3]
+			stone = carve(stone, { -n[1], -n[2], -n[3] }, -level)
+			for _, piece in stone do
+				local onDirt = true
+				for _, q in piece do
+					onDirt = onDirt and math.abs(n[1] * q[1] + n[2] * q[2] + n[3] * q[3] - level) < 1e-6
+				end
+				if not onDirt then
+					table.insert(pebbles, piece)
 				end
 			end
 		end
 	end
 end
 
+-- The stones are a pale grey, splotched like the rest.
+local paintPebble = rusting(0.1, function(x, y, z)
+	local tone, warm = splotchAt(x, y, z)
+	local shade = 1 + tone * 1.5
+	return PEBBLE[1] * shade * (1 + warm), PEBBLE[2] * shade, PEBBLE[3] * shade * (1 - warm)
+end)
+
 chunkedPart("Columns", nil, STONE, function(mesh)
-	buildRock(mesh, false)
+	for _, piece in visibleRock(false) do
+		addFlipped(mesh, piece)
+	end
 end, false, paintRock, true, EDGE_REACH)
 
 chunkedPart("Dirt", nil, DIRT, function(mesh)
-	buildRock(mesh, true)
+	for _, piece in dirtFaces do
+		addFlipped(mesh, piece)
+	end
 end, false, paintDirt, true, EDGE_REACH)
+
+chunkedPart("Pebbles", nil, PEBBLE, function(mesh)
+	for _, piece in pebbles do
+		addFlipped(mesh, piece)
+	end
+end, false, paintPebble, true, EDGE_REACH)
 
 -- The rim walked in even steps, each point pushed out from the stone by the
 -- grass's outset (outer) and a hair's width (inner), with how deep the grass
