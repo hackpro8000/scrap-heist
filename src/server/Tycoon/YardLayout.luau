@@ -6,7 +6,7 @@
 	is placed by an origin (the centre of its floor's top surface) and a yaw
 	(turn around the vertical axis). Offsets inside a yard are in yard
 	space: +X right, +Z toward the gate, matching the Yard Layout art
-	(32 x 32 studs, gate at the front, crate at the back, two pads a side).
+	(48 x 48 studs, gate at the front, crate at the back, two pads a side).
 
 	Placeholder yards stand in a ring around the arena at the map centre,
 	gates facing in. Rotation maths is done on Vector3s here, so it's the
@@ -23,7 +23,10 @@
 
 local YardLayout = {}
 
-YardLayout.SIZE = 32
+-- The art lays a yard out on a 32-stud plan and builds every piece SCALE
+-- times its own size; offsets here are given on that plan and scaled.
+local SCALE = 1.5
+YardLayout.SIZE = 32 * SCALE
 -- How high above the floor still counts as "in the yard" (jumping, ladders).
 YardLayout.HEIGHT = 30
 -- How far below the floor still counts (standing on the floor puts the
@@ -31,15 +34,16 @@ YardLayout.HEIGHT = 30
 YardLayout.DEPTH = 5
 
 YardLayout.PAD_OFFSETS = {
-	Pad1 = Vector3.new(-9, 0, -2),
-	Pad2 = Vector3.new(-9, 0, -10),
-	Pad3 = Vector3.new(9, 0, -2),
-	Pad4 = Vector3.new(9, 0, -10),
+	Pad1 = Vector3.new(-9, 0, -2) * SCALE,
+	Pad2 = Vector3.new(-9, 0, -10) * SCALE,
+	Pad3 = Vector3.new(9, 0, -2) * SCALE,
+	Pad4 = Vector3.new(9, 0, -10) * SCALE,
 } :: { [string]: Vector3 }
-YardLayout.CRATE_OFFSET = Vector3.new(0, 0, -12)
-YardLayout.GATE_OFFSET = Vector3.new(0, 0, 16)
-YardLayout.SPAWN_OFFSET = Vector3.new(0, 3, 8)
-YardLayout.MARKER_OFFSET = Vector3.new(6, 0, 17.5)
+YardLayout.CRATE_OFFSET = Vector3.new(0, 0, -12) * SCALE
+YardLayout.GATE_OFFSET = Vector3.new(0, 0, 16) * SCALE
+-- Spawn height stays 3 studs above the floor whatever the yard's scale.
+YardLayout.SPAWN_OFFSET = Vector3.new(0, 3, 8 * SCALE)
+YardLayout.MARKER_OFFSET = Vector3.new(6, 0, 17.5) * SCALE
 
 -- Ring of placeholder yards around the arena, floors raised a stud so they
 -- sit just above a default baseplate.
