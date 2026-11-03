@@ -73,12 +73,13 @@ local DIRT_LEAD = 0.45
 -- breaking through above the line keeps DIRT_DUSTING of them.
 local DIRT_TRACE = 4
 local DIRT_DUSTING = 0.35
--- Moss grows on the stone in patches, thickest where the dirt gives way to
--- rock and thinning out to nothing by MOSS_REACH of the island's depth.
--- MOSS_COVER is the most of the stone it covers.
-local MOSS = { 0.28, 0.4, 0.17 }
-local MOSS_REACH = 0.8
-local MOSS_COVER = 0.45
+-- Grime and dead grey lichen crust the stone in patches, thickest where
+-- the dirt gives way to rock and thinning out to nothing by GRIME_REACH of
+-- the island's depth.
+-- GRIME_COVER is the most of the stone it covers.
+local GRIME = { 0.21, 0.22, 0.19 }
+local GRIME_REACH = 0.8
+local GRIME_COVER = 0.45
 -- Rust runs down the stone from the dirt line, as if bled from scrap buried
 -- in the dirt: thin streaks RUST_COVER of the stone wide at the line,
 -- shrinking to nothing RUST_LENGTH studs below it, RUST_WIDTH studs across.
@@ -805,12 +806,12 @@ local paintRock = rusting(0.1, function(x, y, z)
 		local soot = 0.85 * math.clamp((blot - (1 - SOOT_COVER * sooting)) / 0.2, 0, 1)
 		r, g, b = r + (SOOT[1] - r) * soot, g + (SOOT[2] - g) * soot, b + (SOOT[3] - b) * soot
 	end
-	-- Moss: soft-edged patches, less of them deeper down.
-	local growth = math.clamp((MOSS_REACH - share) / (MOSS_REACH - DIRT_TRANSITION[1]), 0, 1)
+	-- Grime: soft-edged patches, less of them deeper down.
+	local growth = math.clamp((GRIME_REACH - share) / (GRIME_REACH - DIRT_TRANSITION[1]), 0, 1)
 	if growth > 0 then
 		local patch = 0.5 + 0.5 * math.noise(x * 0.45 + 31, y * 0.45, z * 0.45) + 0.2 * math.noise(x * 1.6, y * 1.6 + 17, z * 1.6)
-		local moss = math.clamp((patch - (1 - MOSS_COVER * growth)) / 0.1, 0, 1)
-		r, g, b = r + (MOSS[1] - r) * moss, g + (MOSS[2] - g) * moss, b + (MOSS[3] - b) * moss
+		local grime = math.clamp((patch - (1 - GRIME_COVER * growth)) / 0.1, 0, 1)
+		r, g, b = r + (GRIME[1] - r) * grime, g + (GRIME[2] - g) * grime, b + (GRIME[3] - b) * grime
 	end
 	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
 end)
