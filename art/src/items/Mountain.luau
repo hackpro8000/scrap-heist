@@ -39,6 +39,13 @@ local STONE = { 0.46, 0.45, 0.5 }
 -- the rock it sits on stands proud.
 local DIRT = { 0.45, 0.33, 0.23 }
 local DIRT_TRANSITION = { 0.33, 0.5 }
+-- The colours blend too, over a wider share of the depth: dirt greys toward
+-- stone and stone keeps a dirty tint across COLOR_TRANSITION, the line
+-- wandering by COLOR_WOBBLE of the depth. At any depth the dirt stays
+-- DIRT_LEAD further toward dirt than the stone, so the two still read apart.
+local COLOR_TRANSITION = { 0.08, 0.55 }
+local COLOR_WOBBLE = 0.06
+local DIRT_LEAD = 0.2
 local DIRT_BEVEL = { 0.3, 0.6 }
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
@@ -575,6 +582,18 @@ end
 -- comes out from behind the tier around it, darkening toward its tip. The
 -- island hangs below z = 0, so depth is -z. Near the top the rock is dirt,
 -- fading to stone further down.
+-- How far from dirt toward stone the colour has blended at a point, 0 to 1.
+local function stoneAt(x: number, y: number, z: number): number
+	local share = -z / islandDepth + COLOR_WOBBLE * math.noise(x * 0.15, y * 0.15, z * 0.15)
+	local t = math.clamp((share - COLOR_TRANSITION[1]) / (COLOR_TRANSITION[2] - COLOR_TRANSITION[1]), 0, 1)
+	return t * t * (3 - 2 * t)
+end
+
+-- A colour between dirt and stone, `t` of the way to stone.
+local function soil(t: number): (number, number, number)
+	return DIRT[1] + (STONE[1] - DIRT[1]) * t, DIRT[2] + (STONE[2] - DIRT[2]) * t, DIRT[3] + (STONE[3] - DIRT[3]) * t
+end
+
 local paintRock = rusting(0.1, function(x, y, z)
 	local rock = rockAt(x, y)
 	local depth = if rock
@@ -583,15 +602,18 @@ local paintRock = rusting(0.1, function(x, y, z)
 	local shade = ROCK_GRADIENT[1] + (ROCK_GRADIENT[2] - ROCK_GRADIENT[1]) * depth ^ 0.8
 	local tone, warm = splotchAt(x, y, z)
 	shade *= 1 + tone
-	return STONE[1] * shade * (1 + warm), STONE[2] * shade, STONE[3] * shade * (1 - warm)
+	local r, g, b = soil(DIRT_LEAD + (1 - DIRT_LEAD) * stoneAt(x, y, z))
+	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
 end)
 
--- Dirt darkens a little with depth, and is splotched like the stone.
+-- Dirt darkens a little with depth, greys toward stone, and is splotched
+-- like the stone.
 local paintDirt = rusting(0.05, function(x, y, z)
 	local shade = 1.05 - 0.3 * math.clamp(-z / (islandDepth * DIRT_TRANSITION[2]), 0, 1)
 	local tone, warm = splotchAt(x, y, z)
 	shade *= 1 + tone
-	return DIRT[1] * shade * (1 + warm), DIRT[2] * shade, DIRT[3] * shade * (1 - warm)
+	local r, g, b = soil((1 - DIRT_LEAD) * stoneAt(x, y, z))
+	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
 end)
 
 -- The island's flat top as one outline: the stones' feet (faces lying on
