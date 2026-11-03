@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-9d5cf5d10fb165db"
+local CACHE_KEY = "Mountain-e40fcaec437a7f8c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -849,12 +849,18 @@ local DIRT_TRANSITION = { 0.33, 0.5 }
 -- under dirt may have up to PATCHES slabs of its faces bare below tilted
 -- lines, each facing out from the island's centre within PATCH_SPREAD
 -- radians. The chance of each rises from nothing at PATCH_FROM of the depth
--- to certain at PATCH_FULL. A slab is PATCH_THICKNESS studs deep.
+-- to certain at PATCH_FULL. A slab is PATCH_THICKNESS studs deep, its back
+-- leaning in or out by up to PATCH_LEAN, and its top line tilted by up to
+-- PATCH_TILT; PATCH_PEAKED of the slabs have a second top line, so the bare
+-- rock comes up to a point through the dirt.
 local PATCHES = 2
 local PATCH_FROM = 0.04
 local PATCH_FULL = 0.25
 local PATCH_SPREAD = math.rad(45)
-local PATCH_THICKNESS = { 0.6, 1.1 }
+local PATCH_THICKNESS = { 0.4, 1.4 }
+local PATCH_LEAN = 0.5
+local PATCH_TILT = 0.8
+local PATCH_PEAKED = 0.6
 -- The colours blend too, over a wider share of the depth: dirt greys toward
 -- stone and stone keeps a dirty tint across COLOR_TRANSITION, the line
 -- wandering by COLOR_WOBBLE of the depth. At any depth the dirt stays
@@ -1250,19 +1256,33 @@ for _, column in columns do
 			continue
 		end
 		local heading = outward + (hash(index, 205 + k * 10) - 0.5) * 2 * PATCH_SPREAD
-		local across = { math.cos(heading), math.sin(heading), 0 }
+		local lean = (hash(index, 300 + k * 10) - 0.5) * 2 * PATCH_LEAN
+		local size = math.sqrt(1 + lean * lean)
+		local across = { math.cos(heading) / size, math.sin(heading) / size, lean / size }
 		local thickness = PATCH_THICKNESS[1] + (PATCH_THICKNESS[2] - PATCH_THICKNESS[1]) * hash(index, 206 + k * 10)
 		local face = farthestAlong(rest, across) - thickness
-		local slab = carve(rest, { -across[1], -across[2], 0 }, -face)
+		local slab = carve(rest, { -across[1], -across[2], -across[3] }, -face)
 		rest = carve(rest, across, face)
-		-- The slab's top line, tilted, somewhere down what shows of the rock.
-		local top = shown + (dirtLine - shown) * (0.15 + 0.6 * hash(index, 207 + k * 10))
-		local tx, ty = (hash(index, 208 + k * 10) - 0.5) * 0.6, (hash(index, 209 + k * 10) - 0.5) * 0.6
-		local length = math.sqrt(tx * tx + ty * ty + 1)
-		local down = { tx / length, ty / length, 1 / length }
-		local line = down[1] * column.peak[1] + down[2] * column.peak[2] + down[3] * top
+		-- The slab's top line, tilted, somewhere down what shows of the rock:
+		-- above it dirt, below it bare rock.
+		local function topLine(seed: number)
+			local top = shown + (dirtLine - shown) * (0.05 + 0.45 * hash(index, seed))
+			local tx = (hash(index, seed + 1) - 0.5) * 2 * PATCH_TILT
+			local ty = (hash(index, seed + 2) - 0.5) * 2 * PATCH_TILT
+			local length = math.sqrt(tx * tx + ty * ty + 1)
+			local down = { tx / length, ty / length, 1 / length }
+			return down, down[1] * column.peak[1] + down[2] * column.peak[2] + down[3] * top
+		end
+		local down, line = topLine(207 + k * 10)
 		table.insert(solids, { faces = bevelled(carve(slab, down, line), heading, bevel * 0.7), dirt = true })
-		table.insert(solids, { faces = carve(slab, { -down[1], -down[2], -down[3] }, -line), dirt = false })
+		local bare = carve(slab, { -down[1], -down[2], -down[3] }, -line)
+		-- A second line peaks the rock: the dirt it cuts off stays dirt.
+		if hash(index, 320 + k * 10) < PATCH_PEAKED then
+			local second, secondLine = topLine(330 + k * 10)
+			table.insert(solids, { faces = bevelled(carve(bare, second, secondLine), heading, bevel * 0.7), dirt = true })
+			bare = carve(bare, { -second[1], -second[2], -second[3] }, -secondLine)
+		end
+		table.insert(solids, { faces = bare, dirt = false })
 	end
 	table.insert(solids, { faces = rest, dirt = true })
 	column.solids = solids
