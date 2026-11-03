@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-cfaeb97f84195cd0"
+local CACHE_KEY = "Mountain-cceecf2657b3f40f"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -870,7 +870,7 @@ local GRASS = { 0.36, 0.58, 0.25 }
 local GRASS_HEIGHT = 0.35
 local GRASS_OUTSET = 0.25
 local GRASS_LIP = { 0.3, 0.6 }
-local DRIP_WIDTH = { 0.8, 2 }
+local DRIP_WIDTH = { 1.6, 4 }
 local DRIP_LENGTH = { 0.6, 2.2 }
 local DRIP_OVERLAP = 0.35
 -- Spacing of the points the rim is walked in, in studs.
@@ -1498,7 +1498,7 @@ local function grassRim()
 		local length = math.max(math.sqrt(dx * dx + dy * dy), 1e-9)
 		local ox, oy = -dy / length, dx / length
 		local s = along[i]
-		local depth = GRASS_LIP[1] + (GRASS_LIP[2] - GRASS_LIP[1]) * (0.5 + 0.5 * math.noise(s * 0.6, 3.7))
+		local depth = GRASS_LIP[1] + (GRASS_LIP[2] - GRASS_LIP[1]) * (0.5 + 0.5 * math.noise(s * 0.3, 3.7))
 		for _, drip in drips do
 			-- The distance round the rim either way, so drips near the
 			-- start also reach the end.
