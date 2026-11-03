@@ -56,16 +56,17 @@ local CORNER_TAPER = 0.5
 
 -- Grass over the top: a turf slab GRASS_HEIGHT thick, pushed GRASS_OUTSET
 -- past the rim, whose edge hangs down as a lip (shallowest and deepest, in
--- studs) broken by tongues of grass dripping further down. Drips start
--- DRIP_GAP apart along the rim, each DRIP_WIDTH across and DRIP_LENGTH
--- below the lip.
+-- studs) hung all along with tongues of grass dripping further down, each
+-- DRIP_WIDTH across and DRIP_LENGTH below the lip. Neighbouring drips
+-- overlap by DRIP_OVERLAP of their widths, so the edge runs as one
+-- unbroken wave with no flat stretch between drips.
 local GRASS = { 0.36, 0.58, 0.25 }
 local GRASS_HEIGHT = 0.35
 local GRASS_OUTSET = 0.25
 local GRASS_LIP = { 0.3, 0.6 }
-local DRIP_GAP = { 0.8, 2.6 }
 local DRIP_WIDTH = { 0.8, 2 }
 local DRIP_LENGTH = { 0.6, 2.2 }
+local DRIP_OVERLAP = 0.35
 -- Spacing of the points the rim is walked in, in studs.
 local GRASS_STEP = 0.35
 -- How much the grass darkens toward the tip of the deepest drip.
@@ -665,22 +666,21 @@ local function grassRim()
 	local count = #points
 
 	-- The lip wanders between its shallowest and deepest, and drips hang
-	-- from it as rounded tongues.
+	-- from it as rounded tongues, each overlapping the next.
 	local along, travelled = {}, 0
 	for i, p in points do
 		along[i] = travelled
 		local q = points[i % count + 1]
 		travelled += math.sqrt((q[1] - p[1]) ^ 2 + (q[2] - p[2]) ^ 2)
 	end
+	local function halfWidth(n)
+		return (DRIP_WIDTH[1] + (DRIP_WIDTH[2] - DRIP_WIDTH[1]) * hash(n, 21)) / 2
+	end
 	local drips, at, n = {}, 0, 0
 	while at < travelled do
 		n += 1
-		table.insert(drips, {
-			at,
-			(DRIP_WIDTH[1] + (DRIP_WIDTH[2] - DRIP_WIDTH[1]) * hash(n, 21)) / 2,
-			DRIP_LENGTH[1] + (DRIP_LENGTH[2] - DRIP_LENGTH[1]) * hash(n, 22),
-		})
-		at += DRIP_GAP[1] + (DRIP_GAP[2] - DRIP_GAP[1]) * hash(n, 23)
+		table.insert(drips, { at, halfWidth(n), DRIP_LENGTH[1] + (DRIP_LENGTH[2] - DRIP_LENGTH[1]) * hash(n, 22) })
+		at += (halfWidth(n) + halfWidth(n + 1)) * (1 - DRIP_OVERLAP)
 	end
 
 	-- The outline is wound clockwise seen from above, so out is to the left
