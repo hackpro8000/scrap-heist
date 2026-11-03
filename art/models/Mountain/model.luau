@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-b6879ee10adabc5c"
+local CACHE_KEY = "Mountain-d1ba48bfbc2f950d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -886,13 +886,6 @@ local DIRT_DUSTING = 0.35
 local GRIME = { 0.21, 0.22, 0.19 }
 local GRIME_REACH = 0.8
 local GRIME_COVER = 0.45
--- Rust runs down the stone from the dirt line, as if bled from scrap buried
--- in the dirt: thin streaks RUST_COVER of the stone wide at the line,
--- shrinking to nothing RUST_LENGTH studs below it, RUST_WIDTH studs across.
-local RUST = { 0.5, 0.24, 0.1 }
-local RUST_COVER = 0.35
-local RUST_LENGTH = 9
-local RUST_WIDTH = 0.8
 -- Soot blackens the lower stone in soft blotches, from SOOT_FROM of the
 -- island's depth down to the tip, where it covers SOOT_COVER of it.
 local SOOT = { 0.1, 0.09, 0.09 }
@@ -1589,17 +1582,6 @@ local paintRock = rusting(0.1, function(x, y, z)
 		if trace > 0 then
 			local dr, dg, db = soil(0.25 * blend)
 			r, g, b = r + (dr - r) * trace, g + (dg - g) * trace, b + (db - b) * trace
-		end
-	end
-	-- Rust: streaks stretched down the stone, thinning out below the line.
-	if rock then
-		local below = -z - rock.dirtLine
-		local reach = math.clamp(1 - below / RUST_LENGTH, 0, 1)
-		if below > -0.5 and reach > 0 then
-			local h = 1 / RUST_WIDTH
-			local streak = 0.5 + math.noise(x * h, y * h, z * 0.06 + 7.7) + 0.3 * math.noise(x * h * 2.5, y * h * 2.5, z * 0.3)
-			local rust = math.clamp((streak - (1 - RUST_COVER * reach)) / 0.1, 0, 1)
-			r, g, b = r + (RUST[1] - r) * rust, g + (RUST[2] - g) * rust, b + (RUST[3] - b) * rust
 		end
 	end
 	local share = -z / islandDepth
