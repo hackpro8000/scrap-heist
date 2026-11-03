@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-1ec1df0a4ac6976f"
+local CACHE_KEY = "Mountain-9bd2f5af39a1fe3d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -879,6 +879,10 @@ local DRIP_DETAIL = 0.6
 local DRIP_DETAIL_FREQUENCY = 1.1
 -- Spacing of the points the rim is walked in, in studs.
 local GRASS_STEP = 0.25
+-- The turf's top rolls over into its hanging edge on a quarter circle this
+-- many studs across, in this many facets.
+local GRASS_ROUND = 0.3
+local GRASS_ROUND_STEPS = 4
 -- How much the grass darkens toward the tip of the deepest drip.
 local DRIP_SHADE = 0.35
 
@@ -1516,6 +1520,7 @@ local function grassRim()
 		depth = math.max(depth + DRIP_DETAIL * math.noise(s * DRIP_DETAIL_FREQUENCY, 8.1), 0.15)
 		table.insert(rim, {
 			outer = { p[1] + ox * GRASS_OUTSET, p[2] + oy * GRASS_OUTSET },
+			out = { ox, oy },
 			inner = { p[1] + ox * 0.02, p[2] + oy * 0.02 },
 			depth = depth,
 		})
@@ -1549,7 +1554,7 @@ local function grassRim()
 				for _ = i + 1, j do
 					table.remove(rim, i + 1)
 				end
-				table.insert(rim, i + 1, { outer = hit, inner = kept.inner, depth = kept.depth })
+				table.insert(rim, i + 1, { outer = hit, out = kept.out, inner = kept.inner, depth = kept.depth })
 				break
 			end
 		end
@@ -1573,22 +1578,40 @@ end)
 chunkedPart("Grass", nil, GRASS, function(mesh)
 	local rim = grassRim()
 	local count = #rim
-	-- Corners of the turf: its top edge, the outer and inner bottom of the
+	-- Corners of the turf: rings rounding over from its top edge (the first)
+	-- down to its hanging edge (the last), the outer and inner bottom of the
 	-- hanging edge, and the inner edge where it meets the stone's top.
-	local top, outerBottom, innerBottom, innerTop = {}, {}, {}, {}
+	local rings, outerBottom, innerBottom, innerTop = {}, {}, {}, {}
+	for k = 0, GRASS_ROUND_STEPS do
+		rings[k] = {}
+	end
 	local outline = {}
 	for i, point in rim do
-		top[i] = mesh:vertex(point.outer[1], point.outer[2], GRASS_HEIGHT)
+		for k = 0, GRASS_ROUND_STEPS do
+			local angle = k / GRASS_ROUND_STEPS * math.pi / 2
+			local back = GRASS_ROUND * (1 - math.sin(angle))
+			local x, y = point.outer[1] - point.out[1] * back, point.outer[2] - point.out[2] * back
+			rings[k][i] = mesh:vertex(x, y, GRASS_HEIGHT - GRASS_ROUND * (1 - math.cos(angle)))
+			if k == 0 then
+				outline[i] = { x, y }
+			end
+		end
 		outerBottom[i] = mesh:vertex(point.outer[1], point.outer[2], -point.depth)
 		innerBottom[i] = mesh:vertex(point.inner[1], point.inner[2], -point.depth)
 		innerTop[i] = mesh:vertex(point.inner[1], point.inner[2], 0)
-		outline[i] = point.outer
 	end
+	local top, edge = rings[0], rings[GRASS_ROUND_STEPS]
 	for i = 1, count do
 		local j = i % count + 1
+		-- The rounded rim, ring by ring, facing out and up.
+		for k = 1, GRASS_ROUND_STEPS do
+			local upper, lower = rings[k - 1], rings[k]
+			mesh:face({ lower[j], lower[i], upper[i] })
+			mesh:face({ lower[j], upper[i], upper[j] })
+		end
 		-- Outside, facing out.
-		mesh:face({ outerBottom[j], outerBottom[i], top[i] })
-		mesh:face({ outerBottom[j], top[i], top[j] })
+		mesh:face({ outerBottom[j], outerBottom[i], edge[i] })
+		mesh:face({ outerBottom[j], edge[i], edge[j] })
 		-- Underside, facing down.
 		mesh:face({ outerBottom[i], outerBottom[j], innerBottom[j] })
 		mesh:face({ outerBottom[i], innerBottom[j], innerBottom[i] })
@@ -1600,7 +1623,7 @@ chunkedPart("Grass", nil, GRASS, function(mesh)
 	for _, t in earClip(outline) do
 		mesh:face({ top[t[3]], top[t[2]], top[t[1]] })
 	end
-end, false, paintGrass, true, EDGE_REACH)
+end, nil, paintGrass, true, EDGE_REACH)
 
 -- The chunks are shaded here rather than by finishParts, which has no corner
 -- taper: highlights run full width at a corner and thin toward the middle of
