@@ -10,6 +10,19 @@
 useTexelDensity(16)
 
 local GIRDER = { 0.5, 0.24, 0.15 }
+local HAZARD_YELLOW = { 0.9, 0.72, 0.15 }
+local HAZARD_BLACK = { 0.11, 0.11, 0.12 }
+
+-- The truss (ring girder and arms) is painted in yellow and black hazard
+-- bands. The bands are planes across the model, tilted so no strut runs
+-- along them: every member, whichever way it runs, shows stripes.
+local HAZARD_BAND = 4
+local HAZARD_AXIS = { 1, 0.41, 0.57 }
+local paintHazard = rusting(0.6, function(x, y, z)
+	local along = x * HAZARD_AXIS[1] + y * HAZARD_AXIS[2] + z * HAZARD_AXIS[3]
+	local colour = if math.floor(along / HAZARD_BAND) % 2 == 0 then HAZARD_YELLOW else HAZARD_BLACK
+	return colour[1], colour[2], colour[3]
+end)
 local PLATING = { 0.47, 0.47, 0.46 }
 
 -- Octagon sizes, as the distance to the middle of a flat side. A flat side
@@ -182,7 +195,7 @@ for k = 0, 7 do
 				strut(mesh, ax, ay, top, bx, by, bottom, WEB)
 			end
 		end
-	end, nil, 0.6, GIRDER_TEXTURE, nil, nil, 1)
+	end, nil, paintHazard, GIRDER_TEXTURE, nil, nil, 1)
 end
 
 -- Radial beams from the ring's inner wall to the middle, holding the
@@ -249,7 +262,6 @@ local PROP_RADIUS, PROP_HUB = 50, 3
 local PROP_TIP = 6
 local PROP_SECTIONS = 16
 local PROP_TEXTURE = 512
-local HAZARD_YELLOW = { 0.9, 0.72, 0.15 }
 local function bladeChord(s: number): number
 	local t = (s - PROP_HUB) / (PROP_RADIUS - PROP_HUB)
 	return if t < 0.3 then lerp(4.5, 7, t / 0.3) else lerp(7, 3, (t - 0.3) / 0.7)
@@ -349,7 +361,7 @@ for i, degrees in ARM_DIRECTIONS do
 		-- The mount plate the motor stands on.
 		local mx, my = ux * MOTOR_OUT, uy * MOTOR_OUT
 		box(mesh, mx, my, 3, 15, 15, CHORD)
-	end, nil, 0.6, ARM_TEXTURE, nil, nil, 1)
+	end, nil, paintHazard, ARM_TEXTURE, nil, nil, 1)
 
 	-- The motor: a flanged base, a finned stator and a spinning bell on
 	-- top, leaning in towards the middle.
