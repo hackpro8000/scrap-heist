@@ -196,6 +196,17 @@ local DRIP_SHADE = 0.35
 local GRASS_OLIVE = { 0.6, 0.57, 0.35 }
 local GRASS_OLIVE_COVER = 0.3
 local GRASS_PATCH_SIZE = 6 * DETAIL
+-- The yard stands on the island (YardLayout.luau), its YARD_HALF-stud half
+-- square turned YARD_TURN degrees against the island with its gate toward
+-- -y. Within about APRON_WIDTH studs of it the grass is worn down to
+-- TRODDEN dirt and gravel, in patches toward the outside, and a track
+-- TRACK_HALF studs either side of the middle runs from the gate to the rim.
+-- These follow the yard, not the stones, so DETAIL leaves them alone.
+local YARD_HALF = 24
+local YARD_TURN = 305
+local APRON_WIDTH = 6
+local TRACK_HALF = 4
+local TRODDEN = { 0.47, 0.4, 0.31 }
 
 -- Fixed per-column jitter, so the columns look uneven but every build matches.
 local function hash(i: number, j: number): number
@@ -1518,6 +1529,23 @@ local paintGrass = rusting(0, function(x, y, z)
 		return r + (c[1] - r) * t, g + (c[2] - g) * t, b + (c[3] - b) * t
 	end
 	local r, g, b = toward(GRASS[1], GRASS[2], GRASS[3], GRASS_OLIVE, patch(GRASS_OLIVE_COVER, 11.3))
+	-- The worn apron: how far the point is outside the yard's square (with
+	-- rounded corners) or the gate's track, in the yard's own frame.
+	local c, sn = math.cos(math.rad(YARD_TURN)), math.sin(math.rad(YARD_TURN))
+	local u, v = x * c - y * sn, x * sn + y * c
+	local du, dv = math.abs(u) - YARD_HALF, math.abs(v) - YARD_HALF
+	local outside = if du > 0 and dv > 0 then math.sqrt(du * du + dv * dv) else math.max(du, dv)
+	if v < 0 then
+		outside = math.min(outside, math.max(math.abs(u) - TRACK_HALF, 0))
+	end
+	local wobble = 0.4 * APRON_WIDTH * math.noise(x * 0.3, y * 0.3, 71.3)
+	local wear = math.clamp(1 - (outside + wobble) / APRON_WIDTH, 0, 1)
+	if wear > 0 then
+		local patchy = 0.5 + 0.6 * math.noise(x * 0.55, y * 0.55, 93.1)
+		local worn = math.clamp((wear - 0.75 * (1 - patchy)) / 0.2, 0, 1)
+		local grit = 0.9 + 0.2 * math.noise(x * 1.7, y * 1.7, 17.9)
+		r, g, b = toward(r, g, b, { TRODDEN[1] * grit, TRODDEN[2] * grit, TRODDEN[3] * grit }, worn)
+	end
 	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
 end)
 
