@@ -11,8 +11,8 @@
 -- corners and edges. The model is built the mountain way up (heights,
 -- summit, foot) and flipped as it is written out. Centered on the origin,
 -- top at z = 0.
-local RADIUS = 20
-local PEAK = 28
+local RADIUS = 38
+local PEAK = 53
 -- Stone sizes at the summit and at the foot.
 local SMALLEST, LARGEST = 0.7, 4.5
 -- Stones are scattered a stone's width past the rim, so rim cells close
@@ -135,7 +135,7 @@ local ROCK_GRADIENT = { 1.1, 0.6 }
 -- coat's brush strokes lay them on as dabs.
 local SPLOTCH = { cell = 1.8, chance = 1, radius = { 1, 2 }, tone = 0.1, tint = 0.02 }
 -- Texture pixels per stud; chunks are 1024 texels across at this density.
-local TEXEL_DENSITY = 24
+local TEXEL_DENSITY = 16
 -- Edge highlights: how far edge paint reaches from an edge, in studs, and how
 -- many times wider than the default the highlight strokes are.
 local EDGE_REACH = 1
@@ -178,6 +178,8 @@ local GRASS_BOTTOM_ROUND = 0.2
 -- than sharp notches.
 local GRASS_CORNER_BLUR = 1
 local GRASS_DEPTH_BLUR = 0.3
+-- The turf's flat top is cut into squares this many studs across.
+local GRASS_TOP_CELL = 8
 -- How much the grass darkens toward the tip of the deepest drip.
 local DRIP_SHADE = 0.35
 -- The grass is dead: straw GRASS drifting into a dull olive where a little
@@ -1564,9 +1566,52 @@ chunkedPart("Grass", nil, GRASS, function(mesh)
 		mesh:face({ innerBottom[i], innerBottom[j], innerTop[j] })
 		mesh:face({ innerBottom[i], innerTop[j], innerTop[i] })
 	end
-	-- The turf's top, one piece facing up.
-	for _, t in earClip(outline) do
-		mesh:face({ top[t[3]], top[t[2]], top[t[1]] })
+	-- The turf's top, facing up, cut into GRASS_TOP_CELL squares so no
+	-- piece spans the island and the chunker can keep each texture small:
+	-- the outline clipped to each square in turn, one edge at a time.
+	local function clipped(points, axis: number, at: number, below: boolean)
+		local kept = {}
+		for i, a in points do
+			local b = points[i % #points + 1]
+			local aIn, bIn = (a[axis] <= at) == below, (b[axis] <= at) == below
+			if aIn then
+				table.insert(kept, a)
+			end
+			if aIn ~= bIn then
+				local t = (at - a[axis]) / (b[axis] - a[axis])
+				table.insert(kept, { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t })
+			end
+		end
+		return kept
+	end
+	-- Outline corners keep their ring vertex, so the top meets the rounded
+	-- edge without a seam.
+	local cornerOf = {}
+	for i, p in outline do
+		cornerOf[p] = top[i]
+	end
+	local low, high = { math.huge, math.huge }, { -math.huge, -math.huge }
+	for _, p in outline do
+		for axis = 1, 2 do
+			low[axis], high[axis] = math.min(low[axis], p[axis]), math.max(high[axis], p[axis])
+		end
+	end
+	for cx = math.floor(low[1] / GRASS_TOP_CELL), math.floor(high[1] / GRASS_TOP_CELL) do
+		for cy = math.floor(low[2] / GRASS_TOP_CELL), math.floor(high[2] / GRASS_TOP_CELL) do
+			local piece = clipped(outline, 1, cx * GRASS_TOP_CELL, false)
+			piece = clipped(piece, 1, (cx + 1) * GRASS_TOP_CELL, true)
+			piece = clipped(piece, 2, cy * GRASS_TOP_CELL, false)
+			piece = clipped(piece, 2, (cy + 1) * GRASS_TOP_CELL, true)
+			if #piece >= 3 then
+				local corners = {}
+				for i, p in piece do
+					corners[i] = cornerOf[p] or mesh:vertex(p[1], p[2], GRASS_HEIGHT)
+				end
+				for _, t in earClip(piece) do
+					mesh:face({ corners[t[3]], corners[t[2]], corners[t[1]] })
+				end
+			end
+		end
 	end
 end, nil, paintGrass, true, EDGE_REACH)
 
