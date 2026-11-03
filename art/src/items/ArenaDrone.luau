@@ -312,6 +312,69 @@ local function blade(mesh, hx: number, hy: number, hz: number, heading: number, 
 	mesh:face(sections[count])
 end
 
+-- Blur discs: what a propeller looks like spinning, for the game to show in
+-- place of the blades once they're up to speed. A thin see-through disc in
+-- the blades' plane, painted with alpha: two faint smears trailing the
+-- blades, circular streaks, and a yellow ring where the tips pass. It is
+-- painted flat, with no shading or wear.
+local DISC_RINGS, DISC_SECTORS = 24, 64
+local DISC_TEXTURE = 512
+local DISC_SMEAR = 1.1
+local DISC_TINT = { 0.2, 0.2, 0.22 }
+local function blurDisc(name: string, mx: number, my: number, base: number, ux: number, uy: number, hubZ: number, phase: number)
+	local mesh = Mesh.new()
+	local lean = leaning(mesh, mx, my, base, ux, uy, MOTOR_TILT)
+	local rows = {}
+	for j = 0, DISC_RINGS do
+		local r = lerp(PROP_HUB, PROP_RADIUS, j / DISC_RINGS)
+		rows[j] = {}
+		for k = 0, DISC_SECTORS - 1 do
+			local a = k / DISC_SECTORS * TAU
+			rows[j][k] = lean:vertex(mx + math.cos(a) * r, my + math.sin(a) * r, hubZ)
+		end
+	end
+	for j = 0, DISC_RINGS - 1 do
+		for k = 0, DISC_SECTORS - 1 do
+			local l = (k + 1) % DISC_SECTORS
+			mesh:face({ rows[j][k], rows[j][l], rows[j + 1][l], rows[j + 1][k] })
+		end
+	end
+	mesh:setSmooth(true)
+	mesh:unwrap()
+	local image = Image.new(DISC_TEXTURE, DISC_TEXTURE, DISC_TINT[1], DISC_TINT[2], DISC_TINT[3])
+	-- Back from world space into the disc's own plane (see leaning()).
+	local c, s = math.cos(MOTOR_TILT), math.sin(MOTOR_TILT)
+	mesh:paint(image, function(x, y, z)
+		local wx, wy, wz = x - mx, y - my, z - base
+		local out = wx * ux * c + wy * uy * c + wz * s
+		local across = -wx * uy + wy * ux
+		local r = math.sqrt(out * out + across * across)
+		-- Angle measured in the same frame the blades were placed in.
+		local angle = math.atan2(ux * across + uy * out, ux * out - uy * across)
+		-- Each blade smears back against the spin (anticlockwise from above).
+		local smear = 0
+		for b = 0, 1 do
+			local behind = (phase + b * math.pi - angle) % TAU
+			smear = math.max(smear, math.exp(-behind / DISC_SMEAR))
+		end
+		local span = math.clamp((r - PROP_HUB) / (PROP_RADIUS - PROP_HUB), 0, 1)
+		-- Wider blades near the root leave a denser smear there.
+		local body = bladeChord(math.clamp(r, PROP_HUB, PROP_RADIUS)) / 7
+		local streak = 0.85 + 0.15 * math.sin(r * 2.3) * math.sin(r * 0.37 + 1.1)
+		local opacity = (0.08 + 0.32 * smear) * body * streak
+		local colour = DISC_TINT
+		if r > PROP_RADIUS - PROP_TIP then
+			colour = HAZARD_YELLOW
+			opacity = 0.3 + 0.35 * smear
+		end
+		-- Soft at the rim, and clear over the hub.
+		opacity *= math.clamp((PROP_RADIUS - r) / 1.2, 0, 1) * math.clamp((r - PROP_HUB) / 1.5, 0, 1)
+		local k = streak * (0.9 + 0.2 * span)
+		return colour[1] * k, colour[2] * k, colour[3] * k, opacity
+	end)
+	model.part(name, mesh, image, { preview = true })
+end
+
 for i, degrees in ARM_DIRECTIONS do
 	local angle = math.rad(degrees)
 	local ux, uy = math.cos(angle), math.sin(angle)
@@ -401,6 +464,7 @@ for i, degrees in ARM_DIRECTIONS do
 			blade(lean, mx, my, hubZ, phase + b * math.pi, PROP_RADIUS - PROP_TIP, PROP_RADIUS)
 		end
 	end, 30, 0.35, 128)
+	blurDisc(`PropDisc{i}`, mx, my, base, ux, uy, hubZ, phase)
 	part(`PropHub{i}`, nil, STEEL, function(mesh)
 		local lean = leaning(mesh, mx, my, base, ux, uy, MOTOR_TILT)
 		cylinder(lean, mx, my, hubZ, PROP_HUB + 0.6, 2.4, "z", 16)
