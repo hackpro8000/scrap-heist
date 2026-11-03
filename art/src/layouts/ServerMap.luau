@@ -1,4 +1,4 @@
--- uses: ArenaIsland PadIsland MarketIsland ColumnIsland ShopConceptContainer ScrapTreeLamppost VendingMachine ParkBench ScrapPalm ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardFooting YardGate PlotMarker StorageCrate YardPath YardPathStub
+-- uses: ArenaIsland PadIsland MarketIsland YardIsland ShopConceptContainer ScrapTreeLamppost VendingMachine ParkBench ScrapPalm ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardFooting YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
 -- around its bowl. An avenue of four plaza islands runs east from the road to
@@ -51,12 +51,12 @@ local YARD_SCALE = 1.5
 local DECK = 2
 local YARD_TIER = 6
 -- The avenue's plaza pads, east of the road, and the yards either side.
-local PAD_XS = { 100, 194, 288, 382 }
-local PAD_ISLAND, PAD_PLAZA = 14, 11
-local YARD_OFFSET = 74
+local PAD_XS = { 110, 204, 298, 392 }
+local PAD_PLAZA = 11
+local YARD_OFFSET = 84
 -- The market island closes the avenue's east end.
-local MARKET_X = 454
-local MARKET_ISLAND, MARKET_PLAZA = 38, 30
+local MARKET_X = 484
+local MARKET_PLAZA = 30
 
 local GROUND = { 0.3, 0.27, 0.22 }
 local ROAD = { 0.42, 0.41, 0.4 }
@@ -753,9 +753,11 @@ end
 -- A plaza: an asphalt octagon at deck level on its own floating island,
 -- kerbed round the edge except where a bridge lands on one of its sides.
 -- The dirt dips just under the asphalt, as it does under the ring road.
-local function plazaIsland(label: string, x: number, y: number, buildIsland: () -> (), plaza: number, seed: number, openings: { number })
-	-- The rock top sits 0.2 under the plaza so the floor never z-fights it.
-	place(`{label}Rock`, buildIsland, x, y, DECK - 0.9)
+-- `turf` is how far the island's grass stands above its origin, and `turn`
+-- turns its lobes under the plaza's corners.
+local function plazaIsland(label: string, x: number, y: number, buildIsland: () -> (), turf: number, turn: number, plaza: number, seed: number, openings: { number })
+	-- The grass sits 0.2 under the plaza so the floor never z-fights it.
+	place(`{label}Rock`, buildIsland, x, y, DECK - 0.2 - turf, turn)
 	slab(label, function()
 		-- Chunked, so the market's wide plaza and its long kerb ring keep the
 		-- map's texel density instead of stretching one capped texture.
@@ -1314,11 +1316,11 @@ end
 -- a yard off either side, joined to the ring road, to each other and to the
 -- market at the far end by flat bridges.
 for k, padX in PAD_XS do
-	plazaIsland(`Pad{k}`, padX, 0, buildPadIsland, PAD_PLAZA, 40 + k, { 0, 90, 180, 270 })
+	plazaIsland(`Pad{k}`, padX, 0, buildPadIsland, 0.71, 340, PAD_PLAZA, 40 + k, { 0, 90, 180, 270 })
 	local from = if k == 1 then ROAD_OUTER else PAD_XS[k - 1] + PAD_PLAZA
 	bridge(`Avenue{k}`, from, 0, 0, padX - PAD_PLAZA - from, 0, DECK, false)
 end
-plazaIsland("MarketIsland", MARKET_X, 0, buildMarketIsland, MARKET_PLAZA, 60, { 180 })
+plazaIsland("MarketIsland", MARKET_X, 0, buildMarketIsland, 1.7, 335, MARKET_PLAZA, 60, { 180 })
 local lastPad = PAD_XS[#PAD_XS] + PAD_PLAZA
 bridge(`Avenue{#PAD_XS + 1}`, lastPad, 0, 0, MARKET_X - MARKET_PLAZA - lastPad, 0, DECK, false)
 
@@ -1359,7 +1361,7 @@ for i = 1, 2 * #PAD_XS do
 	local side = if i % 2 == 1 then 1 else -1
 	local degrees = 180 - side * 90
 	local x, y = PAD_XS[(i + 1) // 2], side * YARD_OFFSET
-	place(`Island{i}`, buildColumnIsland, x, y, YARD_TIER - 1.43, degrees - 90 + YARD_ISLAND_TURN)
+	place(`Island{i}`, buildYardIsland, x, y, YARD_TIER - 1.43, degrees - 90 + YARD_ISLAND_TURN)
 	slab(`Plot{i}`, function()
 		part("Slab", nil, PLOT, function(mesh)
 			box(mesh, 0, 0, YARD_TIER, 32 * YARD_SCALE, 32 * YARD_SCALE, 0.05)
