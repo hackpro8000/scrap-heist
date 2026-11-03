@@ -97,11 +97,11 @@ local STONE_BIT_CLEAR = 1.2
 -- breaking into blotches up to STONE_BIT_STAIN of their height.
 local STONE_BIT_STAIN = 1.6
 
--- Drawn cracks in the dirt, running in from its sharp corners (sharper
--- than CRACK_CORNER radians inside a face): CRACK_CHANCE of the corners have
--- one, CRACK_LENGTH studs long in CRACK_SEGMENTS jagged steps, CRACK_WIDTH
--- wide at the corner and thinning steadily to nothing at its end. CRACK_BRANCH
--- of the cracks fork once.
+-- Drawn cracks in the dirt, running out from the stones sunk in it, as if
+-- pushing them in split it: CRACK_CHANCE of the stones have them, up to
+-- CRACKS each, CRACK_LENGTH studs long in CRACK_SEGMENTS jagged steps,
+-- CRACK_WIDTH wide at the stone and thinning steadily to nothing at its end.
+-- CRACK_BRANCH of the cracks fork once.
 local CRACK = { 0.17, 0.12, 0.08 }
 -- Each crack is drawn in depth: a pale lip where light catches its lower
 -- edge (CRACK_LIP), the crack over it, and a darker core down its middle
@@ -109,8 +109,8 @@ local CRACK = { 0.17, 0.12, 0.08 }
 local CRACK_LIP = { 0.66, 0.53, 0.4 }
 local CRACK_CORE = { 0.06, 0.04, 0.03 }
 local CRACK_CORE_WIDTH = 0.45
-local CRACK_CORNER = math.rad(150)
-local CRACK_CHANCE = 0.5
+local CRACK_CHANCE = 1
+local CRACKS = 3
 local CRACK_LENGTH = { 0.6, 1.8 }
 local CRACK_SEGMENTS = 4
 local CRACK_WIDTH = { 0.1, 0.18 }
@@ -940,6 +940,9 @@ local function edgeDistance(face, p): number
 end
 
 local pebbles = {}
+-- Where cracks start: each stone's face, normal, centre on the dirt and how
+-- far its rim reaches.
+local crackOrigins = {}
 -- Each stone as where it meets the dirt (point and outward normal, already
 -- flipped) and how far it stands out, bucketed by 2-stud cell for its paint.
 local pebbleCells = {}
@@ -978,6 +981,7 @@ for _, face in dirtFaces do
 				continue
 			end
 			local rise = STONE_BIT_RISE[1] + (STONE_BIT_RISE[2] - STONE_BIT_RISE[1]) * pebbleRandom()
+			table.insert(crackOrigins, { face = face, normal = n, at = p, rim = r * 1.0 })
 			local centre = { p[1] + n[1] * r * (2 * rise - 1), p[2] + n[2] * r * (2 * rise - 1), p[3] + n[3] * r * (2 * rise - 1) }
 			-- A box turned at random: start big, and cut each side in to r.
 			local x = unit(pebbleRandom() - 0.5, pebbleRandom() - 0.5, pebbleRandom() - 0.5)
@@ -1101,24 +1105,20 @@ local function addCrack(points, normal, width: number)
 	end
 end
 
-for _, face in dirtFaces do
-	local plane = planeOf(face)
-	if not plane then
+for _, origin in crackOrigins do
+	if crackRandom() >= CRACK_CHANCE then
 		continue
 	end
-	local n = { plane[1], plane[2], plane[3] }
-	for i, corner in face do
-		local before, after = face[(i - 2) % #face + 1], face[i % #face + 1]
-		local toBefore = unit(before[1] - corner[1], before[2] - corner[2], before[3] - corner[3])
-		local toAfter = unit(after[1] - corner[1], after[2] - corner[2], after[3] - corner[3])
-		local angle = math.acos(math.clamp(toBefore[1] * toAfter[1] + toBefore[2] * toAfter[2] + toBefore[3] * toAfter[3], -1, 1))
-		if angle > CRACK_CORNER or crackRandom() >= CRACK_CHANCE then
+	local face, n, at = origin.face, origin.normal, origin.at
+	-- Some way across the face, to turn into each crack's heading.
+	local first = face[1]
+	local outward = unit(first[1] - at[1], first[2] - at[2], first[3] - at[3])
+	for _ = 1, 1 + math.floor(crackRandom() * CRACKS) do
+		local heading = turned(outward, n, crackRandom() * TAU)
+		local start = { at[1] + heading[1] * origin.rim, at[2] + heading[2] * origin.rim, at[3] + heading[3] * origin.rim }
+		if not insideFace(face, n, start, 0.04) then
 			continue
 		end
-		-- Into the face, halfway between its two edges, give or take.
-		local heading = unit(toBefore[1] + toAfter[1], toBefore[2] + toAfter[2], toBefore[3] + toAfter[3])
-		heading = turned(heading, n, (crackRandom() - 0.5) * angle * 0.6)
-		local start = { corner[1] + heading[1] * 0.03, corner[2] + heading[2] * 0.03, corner[3] + heading[3] * 0.03 }
 		local length = CRACK_LENGTH[1] + (CRACK_LENGTH[2] - CRACK_LENGTH[1]) * crackRandom()
 		local width = CRACK_WIDTH[1] + (CRACK_WIDTH[2] - CRACK_WIDTH[1]) * crackRandom()
 		local line = crackLine(face, n, start, heading, length)
