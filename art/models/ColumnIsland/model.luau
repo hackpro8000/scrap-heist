@@ -1,4 +1,4 @@
-local CACHE_KEY = "ColumnIsland-33f14087aa72368c"
+local CACHE_KEY = "ColumnIsland-eb54a58843124dac"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -900,10 +900,13 @@ local SOOT_COVER = 0.5
 -- studs across, most of them small and a few big (STONE_BIT_SKEW over 1), a
 -- chipped box, and stands out of the dirt by STONE_BIT_RISE
 -- of its size. None sit within STONE_BIT_CLEAR studs of the top, under the
--- grass's lip.
+-- grass's lip. Sizes and counts are for columns up to 4.5 studs across and
+-- scale with the columns (STONE_BIT_SCALE), so bigger columns carry bigger,
+-- sparser stones.
 local PEBBLE = { 0.47, 0.46, 0.49 }
-local STONE_BITS = { 0.035, 0.17 }
-local STONE_BIT_SIZE = { 0.45, 1.9 }
+local STONE_BIT_SCALE = LARGEST / 4.5
+local STONE_BITS = { 0.035 / STONE_BIT_SCALE ^ 2, 0.17 / STONE_BIT_SCALE ^ 2 }
+local STONE_BIT_SIZE = { 0.45 * STONE_BIT_SCALE, 1.9 * STONE_BIT_SCALE }
 local STONE_BIT_SKEW = 2
 local STONE_BIT_RISE = { 0.3, 0.4 }
 local STONE_BIT_CLEAR = 1.2
@@ -2111,7 +2114,8 @@ local paintPebble = rusting(0.1, function(x, y, z)
 		end
 	end
 	if height < STONE_BIT_STAIN then
-		local blot = 0.5 + 0.5 * math.noise(x * 2.2, y * 2.2, z * 2.2)
+		local f = 2.2 / STONE_BIT_SCALE
+		local blot = 0.5 + 0.5 * math.noise(x * f, y * f, z * f)
 		local stain = math.clamp((blot - height / STONE_BIT_STAIN) / 0.12, 0, 1)
 		local dr, dg, db = soil(0.15 * stoneAt(x, y, z))
 		r, g, b = r + (dr - r) * stain, g + (dg - g) * stain, b + (db - b) * stain
