@@ -1,12 +1,15 @@
 -- Yard Gate: the 8-stud fence panel players walk through, two barred doors
 -- in a frame with a padlocked hasp where they meet. Matches YardFence so it
--- tiles into a fence line, centered on the origin.
+-- tiles into a fence line, centered on the origin. The crossbar stands
+-- higher than the fence, so in the yard (built 1.5 times its size) it clears
+-- a player (5.5 studs) by 4 studs.
+local CROSSBAR = 6.5
 part("Frame", nil, DARK_STEEL, function(mesh)
 	for _, x in { -4, 4 } do
-		box(mesh, x, 0, 0, 0.4, 0.4, 5.2)
-		box(mesh, x, 0, 5.2, 0.5, 0.5, 0.1)
+		box(mesh, x, 0, 0, 0.4, 0.4, CROSSBAR + 0.2)
+		box(mesh, x, 0, CROSSBAR + 0.2, 0.5, 0.5, 0.1)
 	end
-	box(mesh, 0, 0, 5, 8.4, 0.3, 0.3)
+	box(mesh, 0, 0, CROSSBAR, 8.4, 0.3, 0.3)
 end, nil, 0.5)
 part("Doors", nil, STEEL, function(mesh)
 	for _, side in { -1, 1 } do
