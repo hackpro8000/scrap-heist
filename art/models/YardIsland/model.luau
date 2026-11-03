@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-3f566275deb1cf20"
+local CACHE_KEY = "YardIsland-fb5fcc464bc0aaca"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -895,7 +895,7 @@ local STONE = { 0.46, 0.45, 0.5 }
 -- dirt's bottom edge is bevelled back DIRT_BEVEL studs on its outer side, so
 -- the rock it sits on stands proud.
 local DIRT = { 0.33, 0.24, 0.18 }
-local DIRT_TRANSITION = { 0.33, 0.5 }
+local DIRT_TRANSITION = { 0.2, 0.65 }
 -- Where a rock comes through, the line between its dirt and its stone tilts
 -- by up to DIRT_TILT radians, each rock its own way, so the line wanders
 -- round the island instead of stepping level.
