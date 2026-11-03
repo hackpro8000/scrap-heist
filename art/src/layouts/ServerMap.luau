@@ -40,7 +40,8 @@ local HAZARD_BLOCK = 0.6
 local ARENA_ISLAND = 61
 -- How far the yard island's grass reaches in front of the gate, where the
 -- bridge lands, and how its island is turned under the yard (as in
--- YardLayout.luau) so the fence corners stand on its lobes.
+-- YardLayout.luau) so the fence corners stand on its lobes. Its turf
+-- stands 1.29 studs above its origin.
 local YARD_ISLAND, YARD_ISLAND_TURN = 40, 305
 -- The yard's pieces are laid out on a 32-stud plan and built this many
 -- times their own size, as in YardLayout.luau.
@@ -1353,7 +1354,7 @@ for i = 1, 2 * #PAD_XS do
 	local side = if i % 2 == 1 then 1 else -1
 	local degrees = 180 - side * 90
 	local x, y = PAD_XS[(i + 1) // 2], side * YARD_OFFSET
-	place(`Island{i}`, buildColumnIsland, x, y, YARD_TIER - 0.45, degrees - 90 + YARD_ISLAND_TURN)
+	place(`Island{i}`, buildColumnIsland, x, y, YARD_TIER - 1.29, degrees - 90 + YARD_ISLAND_TURN)
 	slab(`Plot{i}`, function()
 		part("Slab", nil, PLOT, function(mesh)
 			box(mesh, 0, 0, YARD_TIER, 32 * YARD_SCALE, 32 * YARD_SCALE, 0.05)
