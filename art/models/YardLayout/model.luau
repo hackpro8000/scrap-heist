@@ -971,7 +971,7 @@ local function finishParts()
 	end
 end
 local function buildColumnIsland()
-local CACHE_KEY = "ColumnIsland-33f14087aa72368c"
+local CACHE_KEY = "ColumnIsland-5b6d2df5788ffe0a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1795,6 +1795,11 @@ local PEAK = 53
 -- Stone sizes at the summit and at the foot, as shares of the radius, so
 -- a bigger island has bigger stones rather than more of them.
 local SMALLEST, LARGEST = 0.055 * RADIUS, 0.34 * RADIUS
+-- Every other size in studs below was tuned on stones up to 4.5 studs
+-- across and is multiplied by DETAIL, so an island with bigger stones looks
+-- the same, only bigger: chips, slabs, cookie stones, cracks, rounding,
+-- grass and the paint's blotches all grow with the stones.
+local DETAIL = LARGEST / 4.5
 -- Stones are scattered a stone's width past the rim, so rim cells close
 -- on real neighbours before the ones outside are dropped.
 local SCATTER = RADIUS + LARGEST
@@ -1807,7 +1812,7 @@ local MAX_CUTS = 3
 local CUT_DEPTH = { 0.2, 0.55 }
 -- Fine chips per column (fewest, most) and how deep one bites, in studs.
 local CHIPS = { 3, 6 }
-local CHIP_DEPTH = { 0.15, 0.45 }
+local CHIP_DEPTH = { 0.15 * DETAIL, 0.45 * DETAIL }
 -- How far a cut's heading may swing from straight out, in radians.
 local CUT_SPREAD = math.rad(55)
 
@@ -1832,7 +1837,7 @@ local PATCHES = 2
 local PATCH_FROM = 0.04
 local PATCH_FULL = 0.25
 local PATCH_SPREAD = math.rad(45)
-local PATCH_THICKNESS = { 0.4, 1.4 }
+local PATCH_THICKNESS = { 0.4 * DETAIL, 1.4 * DETAIL }
 local PATCH_LEAN = 0.5
 local PATCH_TILT = 0.8
 local PATCH_PEAKED = 0.6
@@ -1840,7 +1845,7 @@ local PATCH_PEAKED = 0.6
 -- (fewest, most), each biting this deep (studs) off its outer side at its
 -- own angle, up to PATCH_CHIP_SPREAD radians off straight out.
 local PATCH_CHIPS = { 4, 8 }
-local PATCH_CHIP_DEPTH = { 0.3, 0.8 }
+local PATCH_CHIP_DEPTH = { 0.3 * DETAIL, 0.8 * DETAIL }
 local PATCH_CHIP_SPREAD = math.rad(65)
 -- The colours blend too, over a wider share of the depth: dirt greys toward
 -- stone and stone keeps a dirty tint across COLOR_TRANSITION, the line
@@ -1852,7 +1857,7 @@ local DIRT_LEAD = 0.45
 -- Traces of dirt stay on the stone just under each rock's dirt line, as
 -- patchy blotches thinning out over DIRT_TRACE studs below it. Bare rock
 -- breaking through above the line keeps DIRT_DUSTING of them.
-local DIRT_TRACE = 4
+local DIRT_TRACE = 4 * DETAIL
 local DIRT_DUSTING = 0.35
 -- Grime and dead grey lichen crust the stone in patches, thickest where
 -- the dirt gives way to rock and thinning out to nothing by GRIME_REACH of
@@ -1873,13 +1878,13 @@ local SOOT_COVER = 0.5
 -- studs across, most of them small and a few big (STONE_BIT_SKEW over 1), a
 -- chipped box, and stands out of the dirt by STONE_BIT_RISE
 -- of its size. None sit within STONE_BIT_CLEAR studs of the top, under the
--- grass's lip.
+-- grass's lip. With bigger stones (DETAIL) they are bigger and sparser.
 local PEBBLE = { 0.47, 0.46, 0.49 }
-local STONE_BITS = { 0.035, 0.17 }
-local STONE_BIT_SIZE = { 0.45, 1.9 }
+local STONE_BITS = { 0.035 / DETAIL ^ 2, 0.17 / DETAIL ^ 2 }
+local STONE_BIT_SIZE = { 0.45 * DETAIL, 1.9 * DETAIL }
 local STONE_BIT_SKEW = 2
 local STONE_BIT_RISE = { 0.3, 0.4 }
-local STONE_BIT_CLEAR = 1.2
+local STONE_BIT_CLEAR = 1.2 * DETAIL
 -- The stones are stained with dirt: solid where they come out of it,
 -- breaking into blotches up to STONE_BIT_STAIN of their height.
 local STONE_BIT_STAIN = 1.6
@@ -1898,15 +1903,14 @@ local CRACK_CORE = { 0.06, 0.04, 0.03 }
 local CRACK_CORE_WIDTH = 0.45
 local CRACK_CHANCE = 1
 local CRACKS = 3
-local CRACK_LENGTH = { 0.6, 1.8 }
+local CRACK_LENGTH = { 0.6 * DETAIL, 1.8 * DETAIL }
 local CRACK_SEGMENTS = 4
-local CRACK_WIDTH = { 0.1, 0.18 }
+local CRACK_WIDTH = { 0.1 * DETAIL, 0.18 * DETAIL }
 local CRACK_BRANCH = 0.4
-local DIRT_BEVEL = { 0.07 * LARGEST, 0.13 * LARGEST }
--- The dirt's outer edges and corners are rounded off on this radius, a
--- share of the largest stone so bigger stones round off as softly, each
+local DIRT_BEVEL = { 0.3 * DETAIL, 0.6 * DETAIL }
+-- The dirt's outer edges and corners are rounded off on this radius, each
 -- edge in this many facets, so it reads soft rather than jagged.
-local DIRT_ROUND = 0.13 * LARGEST
+local DIRT_ROUND = 0.6 * DETAIL
 local DIRT_ROUND_STEPS = 4
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
@@ -1915,15 +1919,15 @@ local ROCK_GRADIENT = { 1.1, 0.6 }
 -- (`cell` studs, with `chance`), a lobed blot `radius` studs across that
 -- shifts the stone's tone by up to `tone` and its tint by up to `tint`. The
 -- coat's brush strokes lay them on as dabs.
-local SPLOTCH = { cell = 1.8, chance = 1, radius = { 1, 2 }, tone = 0.1, tint = 0.02 }
+local SPLOTCH = { cell = 1.8 * DETAIL, chance = 1, radius = { DETAIL, 2 * DETAIL }, tone = 0.1, tint = 0.02 }
 -- Texture pixels per stud; chunks are 1024 texels across at this density.
 local TEXEL_DENSITY = 16
 -- Edge highlights: how far edge paint reaches from an edge, in studs, and how
 -- many times wider than the default the highlight strokes are.
-local EDGE_REACH = 1
+local EDGE_REACH = DETAIL
 local HIGHLIGHT_WIDTH = 4
 -- Studs over which a highlight thins from full width at a corner.
-local CORNER_TAPER = 0.5
+local CORNER_TAPER = 0.5 * DETAIL
 -- Grass and dirt are soft, so their edge highlights and contact shadows run
 -- at this share of the stone's.
 local SOFT_SHADING = 0.12
@@ -1935,33 +1939,33 @@ local SOFT_SHADING = 0.12
 -- overlap by DRIP_OVERLAP of their widths, so the edge runs as one
 -- unbroken wave with no flat stretch between drips.
 local GRASS = { 0.74, 0.63, 0.4 }
-local GRASS_HEIGHT = 0.45
-local GRASS_OUTSET = 0.25
-local GRASS_LIP = { 0.3, 0.6 }
-local DRIP_WIDTH = { 1.6, 4 }
-local DRIP_LENGTH = { 0.6, 2.2 }
+local GRASS_HEIGHT = 0.45 * DETAIL
+local GRASS_OUTSET = 0.25 * DETAIL
+local GRASS_LIP = { 0.3 * DETAIL, 0.6 * DETAIL }
+local DRIP_WIDTH = { 1.6 * DETAIL, 4 * DETAIL }
+local DRIP_LENGTH = { 0.6 * DETAIL, 2.2 * DETAIL }
 local DRIP_OVERLAP = 0.35
 -- A finer octave of wobble over the wave: how far it moves the edge up or
 -- down, in studs, and how fast it changes along the rim.
-local DRIP_DETAIL = 0.6
-local DRIP_DETAIL_FREQUENCY = 1.1
+local DRIP_DETAIL = 0.6 * DETAIL
+local DRIP_DETAIL_FREQUENCY = 1.1 / DETAIL
 -- Spacing of the points the rim is walked in, in studs.
-local GRASS_STEP = 0.25
+local GRASS_STEP = 0.25 * DETAIL
 -- The turf's top rolls over into its hanging edge on a quarter circle this
 -- many studs across, in this many facets.
-local GRASS_ROUND = 0.42
+local GRASS_ROUND = 0.42 * DETAIL
 local GRASS_ROUND_STEPS = 4
 -- The hanging edge's bottom curls under into its underside on this radius.
-local GRASS_BOTTOM_ROUND = 0.2
+local GRASS_BOTTOM_ROUND = 0.2 * DETAIL
 -- The rim's corners in plan are rounded off by blurring its outline over
--- about this many studs, a share of the largest stone so the rounding keeps
--- up with the stones' corners; the stone's own rounded edges keep the cut-in
+-- about this many studs; the stone's own rounded edges keep the cut-in
 -- corners covered. The drips' depth is blurred the same way over
 -- GRASS_DEPTH_BLUR studs, so neighbouring tongues meet in soft dips rather
 -- than sharp notches.
-local GRASS_CORNER_BLUR = 0.22 * LARGEST
-local GRASS_DEPTH_BLUR = 0.3
--- The turf's flat top is cut into squares this many studs across.
+local GRASS_CORNER_BLUR = DETAIL
+local GRASS_DEPTH_BLUR = 0.3 * DETAIL
+-- The turf's flat top is cut into squares this many studs across, to keep
+-- its texture chunks small; this one doesn't grow with DETAIL.
 local GRASS_TOP_CELL = 8
 -- How much the grass darkens toward the tip of the deepest drip.
 local DRIP_SHADE = 0.35
@@ -1970,7 +1974,7 @@ local DRIP_SHADE = 0.35
 -- studs across.
 local GRASS_OLIVE = { 0.6, 0.57, 0.35 }
 local GRASS_OLIVE_COVER = 0.3
-local GRASS_PATCH_SIZE = 6
+local GRASS_PATCH_SIZE = 6 * DETAIL
 
 -- Fixed per-column jitter, so the columns look uneven but every build matches.
 local function hash(i: number, j: number): number
@@ -2537,7 +2541,7 @@ end
 -- fading to stone further down.
 -- How far from dirt toward stone the colour has blended at a point, 0 to 1.
 local function stoneAt(x: number, y: number, z: number): number
-	local share = -z / islandDepth + COLOR_WOBBLE * math.noise(x * 0.15, y * 0.15, z * 0.15)
+	local share = -z / islandDepth + COLOR_WOBBLE * math.noise(x * 0.15 / DETAIL, y * 0.15 / DETAIL, z * 0.15 / DETAIL)
 	local t = math.clamp((share - COLOR_TRANSITION[1]) / (COLOR_TRANSITION[2] - COLOR_TRANSITION[1]), 0, 1)
 	return t * t * (3 - 2 * t)
 end
@@ -2561,7 +2565,8 @@ local paintRock = rusting(0.1, function(x, y, z)
 	if rock then
 		local below = -z - rock.dirtLine
 		local amount = if below < 0 then DIRT_DUSTING else math.max(0, 1 - below / DIRT_TRACE) ^ 1.5
-		local blot = 0.5 + 0.5 * math.noise(x * 0.7, y * 0.7, z * 0.7) + 0.25 * math.noise(x * 2.1, y * 2.1, z * 2.1)
+		local f = 0.7 / DETAIL
+		local blot = 0.5 + 0.5 * math.noise(x * f, y * f, z * f) + 0.25 * math.noise(x * f * 3, y * f * 3, z * f * 3)
 		local trace = math.clamp((blot - (1 - 0.7 * amount)) / 0.08, 0, 1)
 		if trace > 0 then
 			local dr, dg, db = soil(0.25 * blend)
@@ -2572,14 +2577,16 @@ local paintRock = rusting(0.1, function(x, y, z)
 	-- Soot: dark blotches spreading over the lower stone.
 	local sooting = math.clamp((share - SOOT_FROM) / (1 - SOOT_FROM), 0, 1)
 	if sooting > 0 then
-		local blot = 0.5 + math.noise(x * 0.3 + 53, y * 0.3, z * 0.3) + 0.3 * math.noise(x * 1.1, y * 1.1, z * 1.1 + 29)
+		local f = 0.3 / DETAIL
+		local blot = 0.5 + math.noise(x * f + 53, y * f, z * f) + 0.3 * math.noise(x * f * 3.7, y * f * 3.7, z * f * 3.7 + 29)
 		local soot = 0.85 * math.clamp((blot - (1 - SOOT_COVER * sooting)) / 0.2, 0, 1)
 		r, g, b = r + (SOOT[1] - r) * soot, g + (SOOT[2] - g) * soot, b + (SOOT[3] - b) * soot
 	end
 	-- Grime: soft-edged patches, less of them deeper down.
 	local growth = math.clamp((GRIME_REACH - share) / (GRIME_REACH - DIRT_TRANSITION[1]), 0, 1)
 	if growth > 0 then
-		local patch = 0.5 + 0.5 * math.noise(x * 0.45 + 31, y * 0.45, z * 0.45) + 0.2 * math.noise(x * 1.6, y * 1.6 + 17, z * 1.6)
+		local f = 0.45 / DETAIL
+		local patch = 0.5 + 0.5 * math.noise(x * f + 31, y * f, z * f) + 0.2 * math.noise(x * f * 3.6, y * f * 3.6 + 17, z * f * 3.6)
 		local grime = math.clamp((patch - (1 - GRIME_COVER * growth)) / 0.1, 0, 1)
 		r, g, b = r + (GRIME[1] - r) * grime, g + (GRIME[2] - g) * grime, b + (GRIME[3] - b) * grime
 	end
@@ -2994,7 +3001,7 @@ local function crackLine(face, n, start, heading, length: number)
 	for _ = 1, CRACK_SEGMENTS do
 		way = turned(way, n, (crackRandom() - 0.5) * 1.1)
 		local nextAt = { at[1] + way[1] * step, at[2] + way[2] * step, at[3] + way[3] * step }
-		if not insideFace(face, n, nextAt, 0.04) then
+		if not insideFace(face, n, nextAt, 0.04 * DETAIL) then
 			break
 		end
 		table.insert(points, nextAt)
@@ -3047,7 +3054,7 @@ for _, origin in crackOrigins do
 	for _ = 1, 1 + math.floor(crackRandom() * CRACKS) do
 		local heading = turned(outward, n, crackRandom() * TAU)
 		local start = { at[1] + heading[1] * origin.rim, at[2] + heading[2] * origin.rim, at[3] + heading[3] * origin.rim }
-		if not insideFace(face, n, start, 0.04) then
+		if not insideFace(face, n, start, 0.04 * DETAIL) then
 			continue
 		end
 		local length = CRACK_LENGTH[1] + (CRACK_LENGTH[2] - CRACK_LENGTH[1]) * crackRandom()
@@ -3084,7 +3091,8 @@ local paintPebble = rusting(0.1, function(x, y, z)
 		end
 	end
 	if height < STONE_BIT_STAIN then
-		local blot = 0.5 + 0.5 * math.noise(x * 2.2, y * 2.2, z * 2.2)
+		local f = 2.2 / DETAIL
+		local blot = 0.5 + 0.5 * math.noise(x * f, y * f, z * f)
 		local stain = math.clamp((blot - height / STONE_BIT_STAIN) / 0.12, 0, 1)
 		local dr, dg, db = soil(0.15 * stoneAt(x, y, z))
 		r, g, b = r + (dr - r) * stain, g + (dg - g) * stain, b + (db - b) * stain
@@ -3203,7 +3211,7 @@ local function grassRim()
 		local length = math.max(math.sqrt(dx * dx + dy * dy), 1e-9)
 		local ox, oy = -dy / length, dx / length
 		local s = along[i]
-		local depth = GRASS_LIP[1] + (GRASS_LIP[2] - GRASS_LIP[1]) * (0.5 + 0.5 * math.noise(s * 0.3, 3.7))
+		local depth = GRASS_LIP[1] + (GRASS_LIP[2] - GRASS_LIP[1]) * (0.5 + 0.5 * math.noise(s * 0.3 / DETAIL, 3.7))
 		for _, drip in drips do
 			-- The distance round the rim either way, so drips near the
 			-- start also reach the end.
@@ -3214,11 +3222,11 @@ local function grassRim()
 			end
 		end
 		-- The finer octave never lifts the edge above the stone's top.
-		depth = math.max(depth + DRIP_DETAIL * math.noise(s * DRIP_DETAIL_FREQUENCY, 8.1), 0.15)
+		depth = math.max(depth + DRIP_DETAIL * math.noise(s * DRIP_DETAIL_FREQUENCY, 8.1), 0.15 * DETAIL)
 		table.insert(rim, {
 			outer = { p[1] + ox * GRASS_OUTSET, p[2] + oy * GRASS_OUTSET },
 			out = { ox, oy },
-			inner = { p[1] + ox * 0.02, p[2] + oy * 0.02 },
+			inner = { p[1] + ox * 0.02 * DETAIL, p[2] + oy * 0.02 * DETAIL },
 			depth = depth,
 		})
 	end
@@ -3436,7 +3444,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildColumnIsland] = "ColumnIsland-d08e0d50d8f5fddc"
+buildKeys[buildColumnIsland] = "ColumnIsland-fdcf102ff9b583b3"
 local function buildGroundTile()
 local CACHE_KEY = "GroundTile-06e115bba8685577"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -10764,9 +10772,9 @@ buildKeys[buildYardPathStub] = "YardPathStub-ec7805c51c55b33e"
 
 -- The yard stands on a Column Island, its grass top level with the yard
 -- floor, turned so the island's lobes sit under the fence corners and its
--- bays fall between them.
+-- bays fall between them. Its turf stands 1.29 studs above its origin.
 local ISLAND_TURN = 305
-place("Island", buildColumnIsland, 0, 0, -0.45, ISLAND_TURN)
+place("Island", buildColumnIsland, 0, 0, -1.29, ISLAND_TURN)
 
 -- The yard's pieces are laid out on a 32-stud plan and built YARD_SCALE
 -- times their own size, so the avatar clears the gate.
