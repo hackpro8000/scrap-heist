@@ -526,6 +526,11 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 	let used = Rc::new(RefCell::new(Vec::new()));
 	cache::enable_paint_cache(dir, used.clone());
 	install_api(&lua, dir, parts.clone(), bones.clone(), clips.clone(), used.clone(), vec![dir.to_path_buf(), library], texel_scale, detail_eyes, size).map_err(|e| e.to_string())?;
+	// Marks the globals safe once the API is in: Luau then caches lookups like
+	// math.noise, takes its fast paths for builtins and runs the JIT's native
+	// code. Without it a paint fn runs several times slower. Globals a script
+	// sets go into its own table over these.
+	lua.sandbox(true).map_err(|e| e.to_string())?;
 	progress::say(&format!("running {name}/model.luau"));
 	lua.load(source).set_name(format!("@{}", script.display())).exec().map_err(|e| e.to_string())?;
 	cache::prune(dir, &used.borrow());

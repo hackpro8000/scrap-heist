@@ -6,6 +6,7 @@
 use std::collections::HashMap;
 use std::hash::{BuildHasherDefault, Hasher};
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 use crate::cache;
 use crate::coat;
@@ -462,13 +463,33 @@ fn to_srgb(c: f64) -> f32 {
 	(if c <= 0.003_130_8 { c * 12.92 } else { 1.055 * c.powf(1.0 / 2.4) - 0.055 }) as f32
 }
 
+// Texels a bake thread takes at a time. Threads take the next batch as they
+// finish one, so a thread that drew slow texels (along creases) doesn't leave
+// the others idle while it catches up.
+const BATCH: usize = 1024;
+
 fn parallel<T: Send, F: Fn(&Texel) -> T + Sync>(texels: &[Texel], work: F) -> Vec<T> {
 	let threads = std::thread::available_parallelism().map_or(4, |n| n.get());
-	let chunk = texels.len().div_ceil(threads).max(1);
-	std::thread::scope(|scope| {
-		let handles: Vec<_> = texels.chunks(chunk).map(|part| scope.spawn(|| part.iter().map(&work).collect::<Vec<T>>())).collect();
+	let batches: Vec<&[Texel]> = texels.chunks(BATCH).collect();
+	let next = AtomicUsize::new(0);
+	let mut done: Vec<(usize, Vec<T>)> = std::thread::scope(|scope| {
+		let handles: Vec<_> = (0..threads.min(batches.len()))
+			.map(|_| {
+				scope.spawn(|| {
+					let mut mine = Vec::new();
+					loop {
+						let at = next.fetch_add(1, Ordering::Relaxed);
+						let Some(batch) = batches.get(at) else { break };
+						mine.push((at, batch.iter().map(&work).collect::<Vec<T>>()));
+					}
+					mine
+				})
+			})
+			.collect();
 		handles.into_iter().flat_map(|h| h.join().expect("bake thread")).collect()
-	})
+	});
+	done.sort_unstable_by_key(|(at, _)| *at);
+	done.into_iter().flat_map(|(_, values)| values).collect()
 }
 
 pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &mut Image, shading: &Shading, look: &coat::Look, base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3], source: &cache::Source) {
@@ -630,26 +651,6 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 	// it keys the layers; without one the keys stay as they were.
 	let range_key: Vec<f64> = shading.height_range.map_or_else(Vec::new, |r| r.to_vec());
 	let drawn_key: Vec<f64> = if shading.strokes.is_empty() { Vec::new() } else { vec![shading.strokes.len() as f64] };
-	let coat_numbers = [&[look.gradient, look.brush][..], &range_key, &drawn_key].concat();
-	let coat_layer = cached_layer(cache::layer_path("coat", mesh, &neighbours, false, &coat_numbers, Some(&*image), source), || {
-		let mut canvas = coat::coat(mesh, look, &wear, base);
-		for stroke in &shading.strokes {
-			canvas.add(stroke.clone());
-		}
-		let colours = match gpu::canvas(&canvas, &full, false) {
-			Some(painted) => painted.into_iter().map(|(c, _)| to_f32(c)).collect(),
-			None => parallel(&full, |t| to_f32(canvas.paint(t.position, t.face_normal))),
-		};
-		vec![layer_image(width, height, &full, &colours)]
-	});
-	let wear_numbers = [&[look.rust, f64::from(u8::from(look.rubber)), look.gradient, look.brush][..], &range_key].concat();
-	let wear_layer = cached_layer(cache::layer_path("wear", mesh, &neighbours, true, &wear_numbers, Some(&*image), source), || {
-		let canvas = coat::wear(mesh, look, &wear, base);
-		let over = gpu::canvas(&canvas, &full, true).unwrap_or_else(|| parallel(&full, |t| canvas.over(t.position, t.face_normal)));
-		let colour: Vec<[f32; 3]> = over.iter().map(|(c, _)| to_f32(*c)).collect();
-		let cover: Vec<[f32; 3]> = over.iter().map(|(_, a)| [*a as f32, 0.0, 0.0]).collect();
-		vec![layer_image(width, height, &full, &colour), layer_image(width, height, &full, &cover)]
-	});
 	// No colour goes in, so the texture size keys the layer instead, with the
 	// reach and highlight width that shape the strokes.
 	let shade_size: Vec<f64> = [width as f64, height as f64, reach, width_scale]
@@ -657,10 +658,38 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 		.chain(shading.painted_highlights.then_some(2.0))
 		.chain((shading.corner_taper > 0.0).then_some(shading.corner_taper + 4.0))
 		.collect();
-	let shade_layer = cached_layer(cache::layer_path("shade", mesh, &neighbours, true, &shade_size, None, source), || {
+	// The shade layer reads no colour, so it bakes on the other threads while
+	// this one runs the coat, whose `base` calls back into Lua and so can only
+	// run here. Its cache path is found here too: the paint cache is per thread.
+	let shade_path = cache::layer_path("shade", mesh, &neighbours, true, &shade_size, None, source);
+	let bake_shade = || cached_layer(shade_path, || {
 		let creases = gpu::crease(&full, &surfaces, &contact_grid, min_cos, reach, width_scale, shading.painted_highlights, shading.corner_taper).unwrap_or_else(|| parallel(&full, |t| crease_paint(t.position, t.face_normal)));
 		let values: Vec<[f32; 3]> = creases.into_iter().map(|(shade, outward)| [shade as f32, outward as f32, 0.0]).collect();
 		vec![layer_image(width, height, &full, &values)]
+	});
+	let (coat_layer, wear_layer, shade_layer) = std::thread::scope(|scope| {
+		let shade = scope.spawn(bake_shade);
+		let coat_numbers = [&[look.gradient, look.brush][..], &range_key, &drawn_key].concat();
+		let coat_layer = cached_layer(cache::layer_path("coat", mesh, &neighbours, false, &coat_numbers, Some(&*image), source), || {
+			let mut canvas = coat::coat(mesh, look, &wear, base);
+			for stroke in &shading.strokes {
+				canvas.add(stroke.clone());
+			}
+			let colours = match gpu::canvas(&canvas, &full, false) {
+				Some(painted) => painted.into_iter().map(|(c, _)| to_f32(c)).collect(),
+				None => parallel(&full, |t| to_f32(canvas.paint(t.position, t.face_normal))),
+			};
+			vec![layer_image(width, height, &full, &colours)]
+		});
+		let wear_numbers = [&[look.rust, f64::from(u8::from(look.rubber)), look.gradient, look.brush][..], &range_key].concat();
+		let wear_layer = cached_layer(cache::layer_path("wear", mesh, &neighbours, true, &wear_numbers, Some(&*image), source), || {
+			let canvas = coat::wear(mesh, look, &wear, base);
+			let over = gpu::canvas(&canvas, &full, true).unwrap_or_else(|| parallel(&full, |t| canvas.over(t.position, t.face_normal)));
+			let colour: Vec<[f32; 3]> = over.iter().map(|(c, _)| to_f32(*c)).collect();
+			let cover: Vec<[f32; 3]> = over.iter().map(|(_, a)| [*a as f32, 0.0, 0.0]).collect();
+			vec![layer_image(width, height, &full, &colour), layer_image(width, height, &full, &cover)]
+		});
+		(coat_layer, wear_layer, shade.join().expect("shade thread"))
 	});
 
 	// Combine the layers per texel: the wear over the coat, then the lit and
