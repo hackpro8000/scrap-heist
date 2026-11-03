@@ -160,6 +160,8 @@ local GRASS_STEP = 0.25
 -- many studs across, in this many facets.
 local GRASS_ROUND = 0.3
 local GRASS_ROUND_STEPS = 4
+-- The hanging edge's bottom curls under into its underside on this radius.
+local GRASS_BOTTOM_ROUND = 0.12
 -- How much the grass darkens toward the tip of the deepest drip.
 local DRIP_SHADE = 0.35
 
@@ -1411,11 +1413,12 @@ chunkedPart("Grass", nil, GRASS, function(mesh)
 	local rim = grassRim()
 	local count = #rim
 	-- Corners of the turf: rings rounding over from its top edge (the first)
-	-- down to its hanging edge (the last), the outer and inner bottom of the
-	-- hanging edge, and the inner edge where it meets the stone's top.
-	local rings, outerBottom, innerBottom, innerTop = {}, {}, {}, {}
+	-- down to its hanging edge (the last), rings curling the hanging edge's
+	-- bottom under, the inner bottom of the hanging edge, and the inner edge
+	-- where it meets the stone's top.
+	local rings, curl, innerBottom, innerTop = {}, {}, {}, {}
 	for k = 0, GRASS_ROUND_STEPS do
-		rings[k] = {}
+		rings[k], curl[k] = {}, {}
 	end
 	local outline = {}
 	for i, point in rim do
@@ -1428,7 +1431,12 @@ chunkedPart("Grass", nil, GRASS, function(mesh)
 				outline[i] = { x, y }
 			end
 		end
-		outerBottom[i] = mesh:vertex(point.outer[1], point.outer[2], -point.depth)
+		for k = 0, GRASS_ROUND_STEPS do
+			local angle = k / GRASS_ROUND_STEPS * math.pi / 2
+			local back = GRASS_BOTTOM_ROUND * (1 - math.cos(angle))
+			local x, y = point.outer[1] - point.out[1] * back, point.outer[2] - point.out[2] * back
+			curl[k][i] = mesh:vertex(x, y, -point.depth + GRASS_BOTTOM_ROUND * (1 - math.sin(angle)))
+		end
 		innerBottom[i] = mesh:vertex(point.inner[1], point.inner[2], -point.depth)
 		innerTop[i] = mesh:vertex(point.inner[1], point.inner[2], 0)
 	end
@@ -1442,11 +1450,18 @@ chunkedPart("Grass", nil, GRASS, function(mesh)
 			mesh:face({ lower[j], upper[i], upper[j] })
 		end
 		-- Outside, facing out.
-		mesh:face({ outerBottom[j], outerBottom[i], edge[i] })
-		mesh:face({ outerBottom[j], edge[i], edge[j] })
+		local wallBottom, underEdge = curl[0], curl[GRASS_ROUND_STEPS]
+		mesh:face({ wallBottom[j], wallBottom[i], edge[i] })
+		mesh:face({ wallBottom[j], edge[i], edge[j] })
+		-- The curl under, ring by ring, facing out and down.
+		for k = 1, GRASS_ROUND_STEPS do
+			local upper, lower = curl[k - 1], curl[k]
+			mesh:face({ lower[j], lower[i], upper[i] })
+			mesh:face({ lower[j], upper[i], upper[j] })
+		end
 		-- Underside, facing down.
-		mesh:face({ outerBottom[i], outerBottom[j], innerBottom[j] })
-		mesh:face({ outerBottom[i], innerBottom[j], innerBottom[i] })
+		mesh:face({ underEdge[i], underEdge[j], innerBottom[j] })
+		mesh:face({ underEdge[i], innerBottom[j], innerBottom[i] })
 		-- Inside, facing the stone.
 		mesh:face({ innerBottom[i], innerBottom[j], innerTop[j] })
 		mesh:face({ innerBottom[i], innerTop[j], innerTop[i] })
