@@ -111,7 +111,7 @@ local function buildPlaceholderYard(origin: Vector3, yaw: number): Model
 		place(padName, Vector3.new(6, 0.4, 6), PAD_COLOR, offset)
 	end
 	place("Crate", Vector3.new(5, 4, 5), CRATE_COLOR, YardLayout.CRATE_OFFSET)
-	place("PlotMarker", Vector3.new(1, 6, 1), MARKER_COLOR, YardLayout.MARKER_OFFSET)
+	place("PlotMarker", Vector3.new(2.3, 3.3, 1.1), MARKER_COLOR, YardLayout.MARKER_OFFSET)
 
 	return model
 end
