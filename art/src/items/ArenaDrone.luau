@@ -612,4 +612,24 @@ part("Skids", nil, DARK_STEEL, function(mesh)
 	end
 end, 40, 0.5, 256)
 
+-- Navigation lights at the outer edge of each motor mount, as on an
+-- aircraft facing west (away from the gangway): green on the north
+-- (starboard) motors, red on the south (port) ones.
+local NAV_GREEN = { 0.25, 1, 0.4 }
+local NAV_RED = { 1, 0.2, 0.15 }
+local NAV_GLOW = 3
+for i, degrees in ARM_DIRECTIONS do
+	local angle = math.rad(degrees)
+	local ux, uy = math.cos(angle), math.sin(angle)
+	local lx, ly = ux * (MOTOR_OUT + 8.5), uy * (MOTOR_OUT + 8.5)
+	local lz = 3 + CHORD / 2
+	part(`NavHousing{i}`, nil, DARK_STEEL, function(mesh)
+		cylinder(mesh, lx, ly, lz + 0.4, 1.9, 0.8, "z", 12)
+		box(mesh, ux * (MOTOR_OUT + 7.4), uy * (MOTOR_OUT + 7.4), lz - 0.6, 2.4, 2.4, 1)
+	end, nil, 0.4, 64)
+	part(`NavLight{i}`, nil, if uy > 0 then NAV_GREEN else NAV_RED, function(mesh)
+		sphere(mesh, lx, ly, lz + 0.8, 1.4, 1.4, 1.2, 6, 12)
+	end, true, 0, 32, NAV_GLOW)
+end
+
 finishParts()
