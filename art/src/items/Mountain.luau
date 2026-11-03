@@ -103,6 +103,12 @@ local STONE_BIT_STAIN = 1.6
 -- wide at the corner and thinning steadily to nothing at its end. CRACK_BRANCH
 -- of the cracks fork once.
 local CRACK = { 0.17, 0.12, 0.08 }
+-- Each crack is drawn in depth: a pale lip where light catches its lower
+-- edge (CRACK_LIP), the crack over it, and a darker core down its middle
+-- (CRACK_CORE, CRACK_CORE_WIDTH of the crack's width).
+local CRACK_LIP = { 0.66, 0.53, 0.4 }
+local CRACK_CORE = { 0.06, 0.04, 0.03 }
+local CRACK_CORE_WIDTH = 0.45
 local CRACK_CORNER = math.rad(150)
 local CRACK_CHANCE = 0.5
 local CRACK_LENGTH = { 0.6, 1.8 }
@@ -1079,15 +1085,19 @@ local function addCrack(points, normal, width: number)
 		local widthA = width * (1 - travelled / total)
 		local widthB = width * (1 - (travelled + length) / total)
 		travelled += length
-		table.insert(crackStrokes, {
-			start = { a[1], a[2], -a[3] },
-			along = { (b[1] - a[1]) / length, (b[2] - a[2]) / length, -(b[3] - a[3]) / length },
-			normal = { normal[1], normal[2], -normal[3] },
-			length = length,
-			width = widthA,
-			tail = widthB / widthA,
-			color = CRACK,
-		})
+		local start = { a[1], a[2], -a[3] }
+		local along = { (b[1] - a[1]) / length, (b[2] - a[2]) / length, -(b[3] - a[3]) / length }
+		local facing = { normal[1], normal[2], -normal[3] }
+		local function stroke(at, width: number, color)
+			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color })
+		end
+		-- The lip sits on the crack's lower side, half a crack's width over.
+		local across = cross(facing, along)
+		local side = if across[3] > 0 then -1 else 1
+		local shift = widthA * 0.5 * side
+		stroke({ start[1] + across[1] * shift, start[2] + across[2] * shift, start[3] + across[3] * shift }, widthA * 0.8, CRACK_LIP)
+		stroke(start, widthA, CRACK)
+		stroke(start, widthA * CRACK_CORE_WIDTH, CRACK_CORE)
 	end
 end
 
