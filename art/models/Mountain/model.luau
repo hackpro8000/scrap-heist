@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-086a08ee8b2c45a9"
+local CACHE_KEY = "Mountain-21184301e5b8a41c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -894,7 +894,7 @@ local MOSS_COVER = 0.45
 -- of its size. None sit within STONE_BIT_CLEAR studs of the top, under the
 -- grass's lip.
 local PEBBLE = { 0.47, 0.46, 0.49 }
-local STONE_BITS = { 0.025, 0.12 }
+local STONE_BITS = { 0.035, 0.17 }
 local STONE_BIT_SIZE = { 0.45, 1.9 }
 local STONE_BIT_SKEW = 2
 local STONE_BIT_RISE = { 0.3, 0.4 }
@@ -922,6 +922,10 @@ local CRACK_SEGMENTS = 4
 local CRACK_WIDTH = { 0.1, 0.18 }
 local CRACK_BRANCH = 0.4
 local DIRT_BEVEL = { 0.3, 0.6 }
+-- The dirt's outer edges and corners are rounded off on this radius (studs),
+-- each edge in this many facets, so it reads soft rather than jagged.
+local DIRT_ROUND = 0.35
+local DIRT_ROUND_STEPS = 3
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
 local ROCK_GRADIENT = { 1.1, 0.6 }
@@ -1648,6 +1652,152 @@ end
 -- stone reads sharp at one density everywhere.
 useTexelDensity(TEXEL_DENSITY)
 
+-- A unit vector along x, y, z, and the cross product of two vectors.
+local function unit(x: number, y: number, z: number)
+	local length = math.max(math.sqrt(x * x + y * y + z * z), 1e-9)
+	return { x / length, y / length, z / length }
+end
+local function cross(a, b)
+	return { a[2] * b[3] - a[3] * b[2], a[3] * b[1] - a[1] * b[3], a[1] * b[2] - a[2] * b[1] }
+end
+
+-- The solids that may cover a solid of a column: the column's other pieces
+-- and its neighbours'.
+local function coverersOf(column, solid)
+	local others = {}
+	for _, other in column.solids do
+		if other ~= solid then
+			table.insert(others, other)
+		end
+	end
+	for _, corner in column.corners do
+		local neighbour = corner[4] and columns[corner[4]]
+		if neighbour then
+			for _, other in neighbour.solids do
+				table.insert(others, other)
+			end
+		end
+	end
+	return others
+end
+
+-- What of a face no other solid covers.
+local function exposed(face, others)
+	local pieces = { face }
+	for _, other in others do
+		local kept = {}
+		for _, piece in pieces do
+			for _, part in uncovered(piece, other) do
+				table.insert(kept, part)
+			end
+		end
+		pieces = kept
+	end
+	return pieces
+end
+
+local function isFoot(face): boolean
+	for _, p in face do
+		if p[3] ~= 0 then
+			return false
+		end
+	end
+	return true
+end
+
+-- Rounds a convex solid's edges and corners where faces that show meet, on
+-- DIRT_ROUND. Each such edge is cut by planes turning from one face to the
+-- other, each touching a cylinder of that radius set in from both faces;
+-- each such corner by one plane facing out between its faces.
+local function rounded(faces, shows)
+	local planes = {}
+	for i, face in faces do
+		planes[i] = planeOf(face)
+	end
+	local function key(p)
+		return `{math.round(p[1] * 1e4)},{math.round(p[2] * 1e4)},{math.round(p[3] * 1e4)}`
+	end
+	local edgeFaces, cornerFaces, points = {}, {}, {}
+	for i, face in faces do
+		if not planes[i] or not shows[i] then
+			continue
+		end
+		for k, a in face do
+			local b = face[k % #face + 1]
+			local ka, kb = key(a), key(b)
+			points[ka] = a
+			local edge = if ka < kb then `{ka}|{kb}` else `{kb}|{ka}`
+			edgeFaces[edge] = edgeFaces[edge] or { a = a }
+			table.insert(edgeFaces[edge], i)
+			cornerFaces[ka] = cornerFaces[ka] or {}
+			cornerFaces[ka][i] = true
+		end
+	end
+	local cuts = {}
+	for _, edge in edgeFaces do
+		if #edge ~= 2 then
+			continue
+		end
+		local n1, n2 = planes[edge[1]], planes[edge[2]]
+		local cosine = n1[1] * n2[1] + n1[2] * n2[2] + n1[3] * n2[3]
+		if cosine > 0.985 then
+			continue
+		end
+		local p = edge.a
+		local inset = DIRT_ROUND / (1 + cosine)
+		local centre = { p[1] - (n1[1] + n2[1]) * inset, p[2] - (n1[2] + n2[2]) * inset, p[3] - (n1[3] + n2[3]) * inset }
+		for k = 1, DIRT_ROUND_STEPS do
+			local t = k / (DIRT_ROUND_STEPS + 1)
+			local m = unit(n1[1] + (n2[1] - n1[1]) * t, n1[2] + (n2[2] - n1[2]) * t, n1[3] + (n2[3] - n1[3]) * t)
+			table.insert(cuts, { m, m[1] * centre[1] + m[2] * centre[2] + m[3] * centre[3] + DIRT_ROUND })
+		end
+	end
+	for corner, touching in cornerFaces do
+		local sum, count = { 0, 0, 0 }, 0
+		for i in touching do
+			sum = { sum[1] + planes[i][1], sum[2] + planes[i][2], sum[3] + planes[i][3] }
+			count += 1
+		end
+		if count >= 3 then
+			local m = unit(sum[1], sum[2], sum[3])
+			local v = points[corner]
+			table.insert(cuts, { m, m[1] * v[1] + m[2] * v[2] + m[3] * v[3] - DIRT_ROUND * 0.6 })
+		end
+	end
+	for _, cut in cuts do
+		faces = carve(faces, cut[1], cut[2])
+	end
+	return faces
+end
+
+-- Round the dirt where it shows: which faces show is settled for every
+-- solid first, so rounding one doesn't change what its neighbours see.
+do
+	local plans = {}
+	for _, column in columns do
+		for _, solid in column.solids do
+			if not solid.dirt then
+				continue
+			end
+			local others, shows = coverersOf(column, solid), {}
+			for i, face in solid.faces do
+				local whole = area(face)
+				if whole > 1e-4 and not isFoot(face) then
+					local open = 0
+					for _, piece in exposed(face, others) do
+						open += area(piece)
+					end
+					shows[i] = open > whole * 0.5
+				end
+			end
+			table.insert(plans, { solid = solid, shows = shows })
+		end
+	end
+	for _, plan in plans do
+		plan.solid.faces = rounded(plan.solid.faces, plan.shows)
+	end
+end
+
 -- The faces of every column's dirt or stone that show. Only what no other
 -- solid covers is kept, another piece of its own column or a neighbour's,
 -- so nothing lies buried inside the island. The flat top is left open: the
@@ -1655,44 +1805,16 @@ useTexelDensity(TEXEL_DENSITY)
 local function visibleRock(dirt: boolean)
 	local shown = {}
 	for _, column in columns do
-		local nearby = {}
-		for _, corner in column.corners do
-			local neighbour = corner[4] and columns[corner[4]]
-			if neighbour then
-				for _, solid in neighbour.solids do
-					table.insert(nearby, solid)
-				end
-			end
-		end
 		for _, solid in column.solids do
 			if solid.dirt ~= dirt then
 				continue
 			end
-			local others = table.clone(nearby)
-			for _, other in column.solids do
-				if other ~= solid then
-					table.insert(others, other)
-				end
-			end
+			local others = coverersOf(column, solid)
 			for _, face in solid.faces do
-				local foot = true
-				for _, p in face do
-					foot = foot and p[3] == 0
-				end
-				if foot then
+				if isFoot(face) then
 					continue
 				end
-				local pieces = { face }
-				for _, other in others do
-					local kept = {}
-					for _, piece in pieces do
-						for _, part in uncovered(piece, other) do
-							table.insert(kept, part)
-						end
-					end
-					pieces = kept
-				end
-				for _, piece in pieces do
+				for _, piece in exposed(face, others) do
 					table.insert(shown, piece)
 				end
 			end
@@ -1723,13 +1845,6 @@ local pebbleSeed = 7
 local function pebbleRandom(): number
 	pebbleSeed = (pebbleSeed * 16807) % 2147483647
 	return pebbleSeed / 2147483647
-end
-local function unit(x: number, y: number, z: number)
-	local length = math.max(math.sqrt(x * x + y * y + z * z), 1e-9)
-	return { x / length, y / length, z / length }
-end
-local function cross(a, b)
-	return { a[2] * b[3] - a[3] * b[2], a[3] * b[1] - a[1] * b[3], a[1] * b[2] - a[2] * b[1] }
 end
 -- How far a point lies from the nearest edge of a face.
 local function edgeDistance(face, p): number
@@ -1977,7 +2092,7 @@ chunkedPart("Dirt", nil, DIRT, function(mesh)
 	for _, piece in dirtFaces do
 		addFlipped(mesh, piece)
 	end
-end, false, paintDirt, true, EDGE_REACH)
+end, nil, paintDirt, true, EDGE_REACH)
 
 chunkedPart("Pebbles", nil, PEBBLE, function(mesh)
 	for _, piece in pebbles do
