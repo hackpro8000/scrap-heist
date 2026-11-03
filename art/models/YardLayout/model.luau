@@ -971,7 +971,7 @@ local function finishParts()
 	end
 end
 local function buildYardIsland()
-local CACHE_KEY = "YardIsland-400e04aff104c12b"
+local CACHE_KEY = "YardIsland-3f71c8c3e03aa0c7"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1910,11 +1910,6 @@ local DIRT_DUSTING = 0.35
 local GRIME = { 0.21, 0.22, 0.19 }
 local GRIME_REACH = 0.8
 local GRIME_COVER = 0.45
--- Soot blackens the lower stone in soft blotches, from SOOT_FROM of the
--- island's depth down to the tip, where it covers SOOT_COVER of it.
-local SOOT = { 0.1, 0.09, 0.09 }
-local SOOT_FROM = 0.55
-local SOOT_COVER = 0.5
 
 -- Small whole stones half sunk in the dirt, like crushed cookie in ice
 -- cream: STONE_BITS of them per square stud of dirt near the top, rising to
@@ -2703,14 +2698,6 @@ local paintRock = rusting(0.1, function(x, y, z)
 		end
 	end
 	local share = -z / islandDepth
-	-- Soot: dark blotches spreading over the lower stone.
-	local sooting = math.clamp((share - SOOT_FROM) / (1 - SOOT_FROM), 0, 1)
-	if sooting > 0 then
-		local f = 0.3 / DETAIL
-		local blot = 0.5 + math.noise(x * f + 53, y * f, z * f) + 0.3 * math.noise(x * f * 3.7, y * f * 3.7, z * f * 3.7 + 29)
-		local soot = 0.85 * math.clamp((blot - (1 - SOOT_COVER * sooting)) / 0.2, 0, 1)
-		r, g, b = r + (SOOT[1] - r) * soot, g + (SOOT[2] - g) * soot, b + (SOOT[3] - b) * soot
-	end
 	-- Grime: soft-edged patches, less of them deeper down.
 	local growth = math.clamp((GRIME_REACH - share) / (GRIME_REACH - DIRT_TRANSITION[1]), 0, 1)
 	if growth > 0 then
@@ -3529,7 +3516,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildYardIsland] = "YardIsland-7bde9a2c88bb032c"
+buildKeys[buildYardIsland] = "YardIsland-156958d32a153173"
 local function buildGroundTile()
 local CACHE_KEY = "GroundTile-06e115bba8685577"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
