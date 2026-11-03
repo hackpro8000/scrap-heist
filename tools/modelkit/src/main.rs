@@ -1,0 +1,620 @@
+// modelkit: builds a Scrap Heist model from its Luau script.
+//
+//   modelkit art/models/StarterWeapon            build <Name>.glb and preview.png
+//   modelkit art/models/StarterWeapon --turntable 48
+//                                                also write turntable frames
+//   modelkit art/models/StarterWeapon --size 2048
+//                                                render previews at 2048px square
+//   modelkit art/models/Scrapper --clip Idle
+//                                                also write the clip's frames
+//
+// The script (model.luau) builds meshes and paints textures through the API
+// below; this engine does the heavy, generic work (triangulating, export,
+// rendering) so scripts change without a recompile.
+
+mod anim;
+mod bake;
+mod brush;
+mod cache;
+mod coat;
+mod detail;
+mod glb;
+mod image;
+mod mesh;
+mod progress;
+mod render;
+
+use std::cell::{Cell, RefCell};
+use std::collections::HashMap;
+use std::path::{Path, PathBuf};
+use std::rc::Rc;
+use std::time::Instant;
+
+use mlua::{AnyUserData, Lua, Table, UserData, UserDataMethods, Value};
+
+use image::Image;
+use mesh::{dot, scale, sub, Face, Mesh};
+
+const DEFAULT_PREVIEW_SIZE: usize = 768;
+
+#[derive(Clone)]
+struct MeshHandle(Rc<RefCell<Mesh>>);
+
+#[derive(Clone)]
+struct ImageHandle(Rc<RefCell<Image>>);
+
+pub struct Part {
+	pub name: String,
+	pub group: Option<String>,
+	pub preview: bool,
+	// Glow strength, like SurfaceAppearance.EmissiveStrength; 0 doesn't glow.
+	pub emissive: f32,
+	pub mesh: Rc<RefCell<Mesh>>,
+	pub image: Rc<RefCell<Image>>,
+	pub bone: Option<usize>,
+}
+
+// A rig joint. Parts follow exactly one bone each (rigid skin), so moving a
+// bone in Studio moves its parts whole.
+pub struct Bone {
+	pub name: String,
+	pub parent: Option<usize>,
+	pub head: [f64; 3],
+}
+
+impl UserData for MeshHandle {
+	fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {
+		// Adds a vertex and returns its 1-based index.
+		methods.add_method("vertex", |_, this, (x, y, z): (f64, f64, f64)| {
+			let mut mesh = this.0.borrow_mut();
+			mesh.positions.push([x, y, z]);
+			Ok(mesh.positions.len())
+		});
+		// Adds a polygon from 1-based vertex indices, with optional UVs given
+		// flat as {u1, v1, u2, v2, ...}.
+		methods.add_method("face", |_, this, (verts, uvs): (Vec<usize>, Option<Vec<f64>>)| {
+			let mut mesh = this.0.borrow_mut();
+			let count = mesh.positions.len();
+			if verts.len() < 3 || verts.iter().any(|&v| v == 0 || v > count) {
+				return Err(mlua::Error::runtime(format!("face needs 3+ valid vertex indices (mesh has {count})")));
+			}
+			let uvs = match uvs {
+				None => None,
+				Some(flat) if flat.len() == verts.len() * 2 => Some(flat.chunks(2).map(|c| [c[0], c[1]]).collect()),
+				Some(_) => return Err(mlua::Error::runtime("face uvs need one (u, v) pair per vertex")),
+			};
+			mesh.faces.push(Face { verts: verts.iter().map(|v| v - 1).collect(), uvs });
+			Ok(())
+		});
+		methods.add_method("weld", |_, this, distance: Option<f64>| {
+			this.0.borrow_mut().weld(distance.unwrap_or(1e-5));
+			Ok(())
+		});
+		// true smooths everything, false is flat, a number smooths only across
+		// edges sharper than that many degrees (auto smooth).
+		methods.add_method("setSmooth", |_, this, smooth: mlua::Value| {
+			let angle = match smooth {
+				mlua::Value::Boolean(on) => if on { 180.0 } else { 0.0 },
+				mlua::Value::Number(n) => n,
+				mlua::Value::Integer(n) => n as f64,
+				_ => return Err(mlua::Error::runtime("setSmooth takes a bool or an angle in degrees")),
+			};
+			this.0.borrow_mut().smooth_angle = angle;
+			Ok(())
+		});
+		// Thickens an open surface; negative thickness grows inward.
+		methods.add_method("solidify", |_, this, thickness: f64| {
+			this.0.borrow_mut().solidify(thickness);
+			Ok(())
+		});
+		// Returns a copy turned about z by `turn` radians, then moved by (x, y, z),
+		// so a cached build can be placed anywhere without rebuilding it.
+		methods.add_method("moved", |_, this, (turn, x, y, z): (f64, f64, f64, f64)| {
+			let mesh = this.0.borrow();
+			let (c, s) = (turn.cos(), turn.sin());
+			let positions = mesh.positions.iter().map(|p| [p[0] * c - p[1] * s + x, p[0] * s + p[1] * c + y, p[2] + z]).collect();
+			let moved = Mesh { positions, faces: mesh.faces.clone(), smooth_angle: mesh.smooth_angle };
+			Ok(MeshHandle(Rc::new(RefCell::new(moved))))
+		});
+		methods.add_method("vertexCount", |_, this, ()| Ok(this.0.borrow().positions.len()));
+		// The centre of the box around every vertex, and the radius of the
+		// ball around that box: cx, cy, cz, radius.
+		methods.add_method("bounds", |_, this, ()| {
+			let mesh = this.0.borrow();
+			let mut low = [f64::MAX; 3];
+			let mut high = [f64::MIN; 3];
+			for p in &mesh.positions {
+				for axis in 0..3 {
+					low[axis] = low[axis].min(p[axis]);
+					high[axis] = high[axis].max(p[axis]);
+				}
+			}
+			if mesh.positions.is_empty() {
+				return Ok((0.0, 0.0, 0.0, 0.0));
+			}
+			let half = scale(sub(high, low), 0.5);
+			let centre = scale([low[0] + high[0], low[1] + high[1], low[2] + high[2]], 0.5);
+			Ok((centre[0], centre[1], centre[2], dot(half, half).sqrt()))
+		});
+		// Lays every face out in UV space, packed with a margin between charts.
+		methods.add_method("unwrap", |_, this, margin: Option<f64>| {
+			Ok(bake::unwrap(&mut this.0.borrow_mut(), margin.unwrap_or(0.01)))
+		});
+		// Paints each texel the color fn(x, y, z, nx, ny, nz) returns for the
+		// surface point behind it, averaged over a 2×2 grid of points per texel
+		// so stripes and edges come out anti-aliased.
+		methods.add_method("paint", |lua, this, (image, color): (AnyUserData, mlua::Function)| {
+			let image = image.borrow::<ImageHandle>()?.0.clone();
+			// Shrunk before painting too, so a far part calls `color` less.
+			if let Some(detail) = lua.app_data_ref::<detail::PreviewDetail>() {
+				detail.shrink(&this.0.borrow(), &mut image.borrow_mut());
+			}
+			let (width, height) = {
+				let image = image.borrow();
+				(image.width, image.height)
+			};
+			let samples = bake::samples(&this.0.borrow(), width, height, 2);
+			let mut sums = vec![[0.0f32; 4]; width * height];
+			for t in &samples {
+				let [x, y, z] = t.position;
+				let [nx, ny, nz] = t.normal;
+				let (r, g, b) = color.call::<(f32, f32, f32)>((x, y, z, nx, ny, nz))?;
+				let sum = &mut sums[t.pixel];
+				*sum = [sum[0] + r, sum[1] + g, sum[2] + b, sum[3] + 1.0];
+			}
+			let mut image = image.borrow_mut();
+			let mut covered = vec![false; width * height];
+			for (pixel, [r, g, b, n]) in sums.into_iter().enumerate() {
+				if n > 0.0 {
+					image.pixels[pixel] = [r / n, g / n, b / n];
+					covered[pixel] = true;
+				}
+			}
+			bake::dilate(&mut image.pixels, &mut covered, width, height, 8);
+			Ok(())
+		});
+		// Paints the part stroke by stroke (a coat in the colors `paint`
+		// returns, then grime, rust or dust, and scratches), then edge
+		// highlights and contact shadows over it. Without `paint` the coat takes
+		// the colors already in the image.
+		methods.add_method("paintShading", |lua, this, (image, options): (AnyUserData, Option<Table>)| {
+			let get = |key: &str, default: f64| -> mlua::Result<f64> {
+				Ok(options.as_ref().map(|o| o.get::<Option<f64>>(key)).transpose()?.flatten().unwrap_or(default))
+			};
+			let shading = bake::Shading {
+				highlight: get("highlight", 0.7)?,
+				shadow: get("shadow", 0.75)?,
+				bands: get("bands", 0.0)? as usize,
+				blend: get("blend", 0.0)?.clamp(0.0, 1.0),
+				highlight_ramp: get("highlightRamp", 0.0)?.max(0.0),
+			};
+			let image = image.borrow::<ImageHandle>()?.0.clone();
+			let mesh = this.0.borrow();
+			let brush = match lua.app_data_ref::<detail::PreviewDetail>() {
+				Some(detail) => detail.shrink(&mesh, &mut image.borrow_mut()),
+				None => 1.0,
+			};
+			let look = coat::Look {
+				rust: get("rust", 0.0)?.clamp(0.0, 1.0),
+				rubber: options.as_ref().map(|o| o.get::<Option<bool>>("rubber")).transpose()?.flatten().unwrap_or(false),
+				gradient: get("gradient", 0.0)?.clamp(0.0, 1.0),
+				brush,
+			};
+			let paint = options.as_ref().map(|o| o.get::<Option<mlua::Function>>("paint")).transpose()?.flatten();
+			// A custom paint fn is keyed by `salt`, the item's source key, since its code can't be hashed.
+			let custom = options.as_ref().map(|o| o.get::<Option<bool>>("custom")).transpose()?.flatten().unwrap_or(false);
+			let salt = options.as_ref().map(|o| o.get::<Option<String>>("salt")).transpose()?.flatten();
+			let mut occluders = Vec::new();
+			if let Some(list) = options.as_ref().map(|o| o.get::<Option<Vec<AnyUserData>>>("occluders")).transpose()?.flatten() {
+				for handle in list {
+					occluders.push(handle.borrow::<MeshHandle>()?.0.clone());
+				}
+			}
+			// Other chunks of this part: their edges count as this part's own.
+			let mut group = Vec::new();
+			if let Some(list) = options.as_ref().map(|o| o.get::<Option<Vec<AnyUserData>>>("group")).transpose()?.flatten() {
+				for handle in list {
+					group.push(handle.borrow::<MeshHandle>()?.0.clone());
+				}
+			}
+			let borrowed: Vec<_> = occluders.iter().map(|m| m.borrow()).collect();
+			let refs: Vec<&Mesh> = borrowed.iter().map(|m| &**m).collect();
+			let borrowed_group: Vec<_> = group.iter().map(|m| m.borrow()).collect();
+			let group_refs: Vec<&Mesh> = borrowed_group.iter().map(|m| &**m).collect();
+			let painted = bake::ImageSampler::new(&mesh, &image.borrow());
+			let mut failed = None;
+			let mut base = |p: mesh::Vec3, n: mesh::Vec3| -> [f64; 3] {
+				let Some(paint) = &paint else {
+					return painted.color(p, n);
+				};
+				match paint.call::<(f64, f64, f64)>((p[0], p[1], p[2], n[0], n[1], n[2])) {
+					Ok((r, g, b)) => [r, g, b],
+					Err(error) => {
+						failed.get_or_insert(error);
+						[1.0, 0.0, 1.0]
+					}
+				}
+			};
+			let source = cache::Source { custom, salt };
+			let started = Instant::now();
+			bake::paint_shading(&mesh, &group_refs, &refs, &mut image.borrow_mut(), &shading, &look, &mut base, &source);
+			let name = options.as_ref().map(|o| o.get::<Option<String>>("name")).transpose()?.flatten().unwrap_or_default();
+			let (width, height) = (image.borrow().width, image.borrow().height);
+			progress::say(&format!("shaded {name} {width}×{height} in {:.2}s", started.elapsed().as_secs_f64()));
+			match failed {
+				Some(error) => Err(error),
+				None => Ok(()),
+			}
+		});
+	}
+}
+
+impl UserData for ImageHandle {
+	fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {
+		// Pixels are 0-based with y = 0 at the bottom, matching UV v.
+		methods.add_method("set", |_, this, (x, y, r, g, b): (usize, usize, f32, f32, f32)| {
+			let mut image = this.0.borrow_mut();
+			if x >= image.width || y >= image.height {
+				return Err(mlua::Error::runtime(format!("pixel ({x}, {y}) outside {}x{}", image.width, image.height)));
+			}
+			let width = image.width;
+			image.pixels[y * width + x] = [r, g, b];
+			Ok(())
+		});
+		methods.add_method("get", |_, this, (x, y): (usize, usize)| {
+			let image = this.0.borrow();
+			let [r, g, b] = image.pixels[y.min(image.height - 1) * image.width + x.min(image.width - 1)];
+			Ok((r, g, b))
+		});
+		methods.add_method("size", |_, this, ()| {
+			let image = this.0.borrow();
+			Ok((image.width, image.height))
+		});
+	}
+}
+
+fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<RefCell<Vec<Bone>>>, clips: Rc<RefCell<Vec<anim::Clip>>>, used: Rc<RefCell<Vec<PathBuf>>>, search: Vec<PathBuf>, texel_scale: f64, detail_eyes: &[(mesh::Vec3, mesh::Vec3)], size: usize) -> mlua::Result<()> {
+	let globals = lua.globals();
+	// Scales every texel density a layout asks for: 1 for final builds, less for previews.
+	globals.set("TEXEL_SCALE", texel_scale)?;
+	// Eye previews shrink each texture before shading it (see detail.rs).
+	// previewBand(x, y, z) names a placement's distance band, and
+	// previewPlacing(x, y, z, turn) tells the shrinking where place() puts the
+	// model it is building at the origin; previewPlacing() clears it. Both are
+	// absent outside eye previews.
+	if !detail_eyes.is_empty() {
+		lua.set_app_data(detail::PreviewDetail { eyes: detail_eyes.to_vec(), size, placing: Cell::new(None) });
+		globals.set(
+			"previewBand",
+			lua.create_function(|lua, (x, y, z): (f64, f64, f64)| {
+				Ok(lua.app_data_ref::<detail::PreviewDetail>().map(|detail| detail.band([x, y, z])))
+			})?,
+		)?;
+		globals.set(
+			"previewPlacing",
+			lua.create_function(|lua, (x, y, z, turn): (Option<f64>, Option<f64>, Option<f64>, Option<f64>)| {
+				if let Some(detail) = lua.app_data_ref::<detail::PreviewDetail>() {
+					let placing = x.map(|x| ([x, y.unwrap_or(0.0), z.unwrap_or(0.0)], turn.unwrap_or(0.0)));
+					detail.placing.set(placing);
+				}
+				Ok(())
+			})?,
+		)?;
+	}
+	// Eye previews size textures by where the eyes stand, so the eyes key the cache.
+	let eye_key: String = detail_eyes.iter().map(|(e, t)| format!(" {},{},{}>{},{},{}", e[0], e[1], e[2], t[0], t[1], t[2])).collect();
+	let eye_key = if detail_eyes.is_empty() { String::new() } else { format!(" eyes{eye_key} {size}") };
+
+	let mesh_api = lua.create_table()?;
+	mesh_api.set("new", lua.create_function(|_, ()| Ok(MeshHandle(Rc::new(RefCell::new(Mesh::new())))))?)?;
+	globals.set("Mesh", mesh_api)?;
+
+	let image_api = lua.create_table()?;
+	image_api.set(
+		"new",
+		lua.create_function(|_, (width, height, r, g, b): (usize, usize, Option<f32>, Option<f32>, Option<f32>)| {
+			if width == 0 || height == 0 {
+				return Err(mlua::Error::runtime("image needs a nonzero size"));
+			}
+			let color = [r.unwrap_or(1.0), g.unwrap_or(1.0), b.unwrap_or(1.0)];
+			Ok(ImageHandle(Rc::new(RefCell::new(Image::new(width, height, color)))))
+		})?,
+	)?;
+	globals.set("Image", image_api)?;
+
+	let model_api = lua.create_table()?;
+	// model.bone(name, {at = {x, y, z}, parent = "Name"?}) adds a joint whose
+	// pivot sits at `at`; bones without a parent are roots.
+	// model.clip(name, {length = seconds, keys = {Bone = {{t = 0, rot = {x, y, z}?,
+	// pos = {x, y, z}?}, ...}}}) adds an animation; see anim.rs.
+	let rig = bones.clone();
+	model_api.set(
+		"clip",
+		lua.create_function(move |_, (name, options): (String, Table)| {
+			let length: f64 = options.get("length")?;
+			let rig = rig.borrow();
+			let mut tracks = Vec::new();
+			for pair in options.get::<Table>("keys")?.pairs::<String, Table>() {
+				let (bone, list) = pair?;
+				let index = rig.iter().position(|b| b.name == bone).ok_or_else(|| mlua::Error::runtime(format!("clip {name}: no bone {bone}")))?;
+				let mut keys = Vec::new();
+				for key in list.sequence_values::<Table>() {
+					let key = key?;
+					let vector = |field: &str| -> mlua::Result<[f64; 3]> {
+						Ok(match key.get::<Option<Vec<f64>>>(field)? {
+							None => [0.0; 3],
+							Some(v) if v.len() == 3 => [v[0], v[1], v[2]],
+							Some(_) => return Err(mlua::Error::runtime(format!("clip {name}: {field} needs {{x, y, z}}"))),
+						})
+					};
+					keys.push(anim::Key { time: key.get("t")?, rotation: vector("rot")?, offset: vector("pos")? });
+				}
+				keys.sort_by(|a, b| a.time.total_cmp(&b.time));
+				tracks.push((index, keys));
+			}
+			clips.borrow_mut().push(anim::Clip { name: name.clone(), length, tracks });
+			Ok(name)
+		})?,
+	)?;
+	let rig = bones.clone();
+	model_api.set(
+		"bone",
+		lua.create_function(move |_, (name, options): (String, Table)| {
+			let at: Vec<f64> = options.get("at")?;
+			if at.len() != 3 {
+				return Err(mlua::Error::runtime("bone at needs {x, y, z}"));
+			}
+			let mut rig = rig.borrow_mut();
+			if rig.iter().any(|b| b.name == name) {
+				return Err(mlua::Error::runtime(format!("bone {name} already exists")));
+			}
+			let parent = match options.get::<Option<String>>("parent")? {
+				None => None,
+				Some(p) => Some(rig.iter().position(|b| b.name == p).ok_or_else(|| mlua::Error::runtime(format!("no bone {p}")))?),
+			};
+			rig.push(Bone { name: name.clone(), parent, head: [at[0], at[1], at[2]] });
+			Ok(name)
+		})?,
+	)?;
+	model_api.set(
+		"part",
+		lua.create_function(move |_, (name, mesh, image, options): (String, AnyUserData, AnyUserData, Option<Table>)| {
+			let group = options.as_ref().map(|o| o.get::<Option<String>>("group")).transpose()?.flatten();
+			let preview = options.as_ref().map(|o| o.get::<Option<bool>>("preview")).transpose()?.flatten().unwrap_or(true);
+			let emissive = options.as_ref().map(|o| o.get::<Option<f32>>("emissive")).transpose()?.flatten().unwrap_or(0.0);
+			let bone = match options.as_ref().map(|o| o.get::<Option<String>>("bone")).transpose()?.flatten() {
+				None => None,
+				Some(b) => Some(bones.borrow().iter().position(|x| x.name == b).ok_or_else(|| mlua::Error::runtime(format!("no bone {b} (add it before its parts)")))?),
+			};
+			parts.borrow_mut().push(Part {
+				bone,
+				name,
+				group,
+				preview,
+				emissive,
+				mesh: mesh.borrow::<MeshHandle>()?.0.clone(),
+				image: image.borrow::<ImageHandle>()?.0.clone(),
+			});
+			Ok(())
+		})?,
+	)?;
+	// model.cached(key, build) returns the parts build() returns, as a list of
+	// {name, mesh, image, preview, emissive}, loading them from the cache when this key
+	// was built before. The key must change whenever the result would.
+	let folder = dir.to_path_buf();
+	model_api.set(
+		"cached",
+		lua.create_function(move |lua, (key, build): (String, mlua::Function)| {
+			// A preview build is kept apart from the final one, which it differs from.
+			let key = if texel_scale == 1.0 { key } else { format!("{key} @{texel_scale}{eye_key}") };
+			let path = cache::path(&folder, &key);
+			used.borrow_mut().push(path.clone());
+			if let Some(saved) = cache::load(&path) {
+				progress::say(&format!("cached {}", progress::label(&key)));
+				let list = lua.create_table()?;
+				for part in saved {
+					let entry = lua.create_table()?;
+					entry.set("name", part.name)?;
+					entry.set("mesh", MeshHandle(Rc::new(RefCell::new(part.mesh))))?;
+					entry.set("image", ImageHandle(Rc::new(RefCell::new(part.image))))?;
+					entry.set("preview", part.preview)?;
+					entry.set("emissive", part.emissive)?;
+					list.push(entry)?;
+				}
+				return Ok(list);
+			}
+			let label = progress::label(&key);
+			progress::say(&format!("building {label}"));
+			let started = Instant::now();
+			let list: Table = progress::nested(|| build.call(()))?;
+			progress::say(&format!("built {label}: {} parts in {:.1}s", list.raw_len(), started.elapsed().as_secs_f64()));
+			let mut built = Vec::new();
+			for entry in list.sequence_values::<Table>() {
+				let entry = entry?;
+				let mesh = entry.get::<AnyUserData>("mesh")?.borrow::<MeshHandle>()?.0.clone();
+				let image = entry.get::<AnyUserData>("image")?.borrow::<ImageHandle>()?.0.clone();
+				built.push((entry.get::<String>("name")?, entry.get::<Option<bool>>("preview")?.unwrap_or(true), entry.get::<Option<f32>>("emissive")?.unwrap_or(0.0), mesh, image));
+			}
+			let borrowed: Vec<_> = built.iter().map(|(n, p, e, m, i)| (n.clone(), *p, *e, m.borrow(), i.borrow())).collect();
+			let refs: Vec<_> = borrowed.iter().map(|(n, p, e, m, i)| (n.clone(), *p, *e, &**m, &**i)).collect();
+			cache::save(&path, &refs).map_err(mlua::Error::external)?;
+			Ok(list)
+		})?,
+	)?;
+	globals.set("model", model_api)?;
+
+	// require("Name") loads Name.luau from the model's folder, then the shared
+	// library, once per build.
+	let cache: Rc<RefCell<HashMap<String, Value>>> = Rc::new(RefCell::new(HashMap::new()));
+	globals.set(
+		"require",
+		lua.create_function(move |lua, name: String| {
+			if let Some(value) = cache.borrow().get(&name) {
+				return Ok(value.clone());
+			}
+			let path = search
+				.iter()
+				.map(|dir| dir.join(format!("{name}.luau")))
+				.find(|p| p.exists())
+				.ok_or_else(|| mlua::Error::runtime(format!("no module {name}.luau")))?;
+			let source = std::fs::read_to_string(&path).map_err(mlua::Error::external)?;
+			let value: Value = lua.load(source).set_name(format!("@{}", path.display())).eval()?;
+			cache.borrow_mut().insert(name, value.clone());
+			Ok(value)
+		})?,
+	)?;
+	Ok(())
+}
+
+fn write_png(path: &Path, size: usize, data: &[u8]) -> std::io::Result<()> {
+	std::fs::write(path, image::encode_rgb(size, size, data))
+}
+
+// A close-up: focus point x, y, z, framing radius, and camera spin in degrees.
+type Closeup = (f64, f64, f64, f64, f64);
+
+fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[(mesh::Vec3, mesh::Vec3)], shown_clip: Option<&str>, texel_scale: f64, detail_eyes: &[(mesh::Vec3, mesh::Vec3)]) -> Result<(), String> {
+	let started = Instant::now();
+	let name = dir.file_name().and_then(|n| n.to_str()).ok_or("bad model folder")?.to_string();
+	let script = dir.join("model.luau");
+	let source = std::fs::read_to_string(&script).map_err(|e| format!("{}: {e}", script.display()))?;
+	let library = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("lib");
+
+	let lua = Lua::new();
+	lua.enable_jit(true);
+	let parts = Rc::new(RefCell::new(Vec::new()));
+	let bones = Rc::new(RefCell::new(Vec::new()));
+	let clips = Rc::new(RefCell::new(Vec::new()));
+	let used = Rc::new(RefCell::new(Vec::new()));
+	cache::enable_paint_cache(dir, used.clone());
+	install_api(&lua, dir, parts.clone(), bones.clone(), clips.clone(), used.clone(), vec![dir.to_path_buf(), library], texel_scale, detail_eyes, size).map_err(|e| e.to_string())?;
+	progress::say(&format!("running {name}/model.luau"));
+	lua.load(source).set_name(format!("@{}", script.display())).exec().map_err(|e| e.to_string())?;
+	cache::prune(dir, &used.borrow());
+	let scripted = started.elapsed();
+
+	let parts = parts.borrow();
+	if parts.is_empty() {
+		return Err("model.luau added no parts (call model.part)".into());
+	}
+	let bones = bones.borrow();
+	if !bones.is_empty() {
+		if let Some(loose) = parts.iter().find(|p| p.bone.is_none()) {
+			return Err(format!("part {} has no bone; a rigged model needs one on every part", loose.name));
+		}
+	}
+	progress::say(&format!("writing {name}.glb and {} textures", parts.len()));
+	let glb = dir.join(format!("{name}.glb"));
+	std::fs::write(&glb, glb::write(&parts, &bones, &clips.borrow())).map_err(|e| e.to_string())?;
+	for part in parts.iter() {
+		let png = dir.join(format!("{}.png", part.name));
+		std::fs::write(png, part.image.borrow().encode_png()).map_err(|e| e.to_string())?;
+		// Flat maps for the SurfaceAppearance: no metal, fully rough, so
+		// Roblox adds no highlights over the painted shading.
+		for (map, value) in [("Metalness", 0.0), ("Roughness", 1.0)] {
+			let flat = Image::new(4, 4, [value; 3]).encode_png();
+			std::fs::write(dir.join(format!("{}_{map}.png", part.name)), flat).map_err(|e| e.to_string())?;
+		}
+		// Glowing parts glow all over: a white EmissiveMaskContent, with the
+		// strength set on the SurfaceAppearance's EmissiveStrength.
+		if part.emissive > 0.0 {
+			let mask = Image::new(4, 4, [1.0; 3]).encode_png();
+			std::fs::write(dir.join(format!("{}_Emissive.png", part.name)), mask).map_err(|e| e.to_string())?;
+		}
+	}
+	let shown: Vec<&Part> = parts.iter().filter(|p| p.preview).collect();
+	progress::say(&format!("rendering preview of {} parts", shown.len()));
+	let preview = render::render(&shown, &render::View { size, spin: 0.0, focus: None, eye: None });
+	write_png(&dir.join("preview.png"), size, &preview).map_err(|e| e.to_string())?;
+
+	if turntable > 0 {
+		let frames = dir.join("turntable");
+		std::fs::create_dir_all(&frames).map_err(|e| e.to_string())?;
+		for frame in 0..turntable {
+			let spin = frame as f64 / turntable as f64 * std::f64::consts::TAU;
+			let data = render::render(&shown, &render::View { size, spin, focus: None, eye: None });
+			write_png(&frames.join(format!("{frame:04}.png")), size, &data).map_err(|e| e.to_string())?;
+		}
+	}
+	for (n, &(x, y, z, radius, degrees)) in closeups.iter().enumerate() {
+		let focus = Some(([x, y, z], radius));
+		let data = render::render(&shown, &render::View { size, spin: degrees.to_radians(), focus, eye: None });
+		write_png(&dir.join(format!("closeup_{}.png", n + 1)), size, &data).map_err(|e| e.to_string())?;
+	}
+	for (n, &(eye, target)) in eyes.iter().enumerate() {
+		progress::say(&format!("rendering eye {}/{}", n + 1, eyes.len()));
+		let data = render::render(&shown, &render::View { size, spin: 0.0, focus: None, eye: Some((eye, target)) });
+		write_png(&dir.join(format!("eye_{}.png", n + 1)), size, &data).map_err(|e| e.to_string())?;
+	}
+	if let Some(wanted) = shown_clip {
+		let clips = clips.borrow();
+		let clip = clips.iter().find(|c| c.name == wanted).ok_or(format!("no clip {wanted}"))?;
+		// Frame the rest pose once, so the camera holds still while it moves.
+		let mut low = [f64::MAX; 3];
+		let mut high = [f64::MIN; 3];
+		for part in &shown {
+			for corner in part.mesh.borrow().triangles().iter().flatten() {
+				for axis in 0..3 {
+					low[axis] = low[axis].min(corner.position[axis]);
+					high[axis] = high[axis].max(corner.position[axis]);
+				}
+			}
+		}
+		let center = [0, 1, 2].map(|a| (low[a] + high[a]) / 2.0);
+		let radius = (0..3).map(|a| high[a] - low[a]).fold(0.0, f64::max) * 0.6;
+		let frames = dir.join(format!("clip_{wanted}"));
+		std::fs::create_dir_all(&frames).map_err(|e| e.to_string())?;
+		for frame in 0..clip.frames() {
+			let skin = clip.skin(&bones, frame as f64 / anim::FPS);
+			let data = render::render_posed(&shown, &skin, &render::View { size, spin: 0.0, focus: Some((center, radius)), eye: None });
+			write_png(&frames.join(format!("{frame:04}.png")), size, &data).map_err(|e| e.to_string())?;
+		}
+	}
+	eprintln!("{name}: {} parts, script {:.2?}, total {:.2?}", parts.len(), scripted, started.elapsed());
+	Ok(())
+}
+
+fn main() {
+	let args: Vec<String> = std::env::args().skip(1).collect();
+	let Some(dir) = args.first() else {
+		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--eye EX,EY,EZ,TX,TY,TZ]... [--clip NAME]");
+		std::process::exit(2);
+	};
+	let turntable = match args.iter().position(|a| a == "--turntable") {
+		Some(at) => args.get(at + 1).and_then(|n| n.parse().ok()).unwrap_or(48),
+		None => 0,
+	};
+	let size = match args.iter().position(|a| a == "--size") {
+		Some(at) => args.get(at + 1).and_then(|n| n.parse().ok()).unwrap_or(DEFAULT_PREVIEW_SIZE),
+		None => DEFAULT_PREVIEW_SIZE,
+	};
+	let mut closeups = Vec::new();
+	for (at, _) in args.iter().enumerate().filter(|(_, a)| *a == "--closeup") {
+		let numbers: Vec<f64> = args.get(at + 1).map_or(vec![], |list| list.split(',').filter_map(|n| n.parse().ok()).collect());
+		let [x, y, z, radius, spin] = numbers[..] else {
+			eprintln!("--closeup takes X,Y,Z,RADIUS,SPIN");
+			std::process::exit(2);
+		};
+		closeups.push((x, y, z, radius, spin));
+	}
+	let mut eyes = Vec::new();
+	for (at, _) in args.iter().enumerate().filter(|(_, a)| *a == "--eye") {
+		let numbers: Vec<f64> = args.get(at + 1).map_or(vec![], |list| list.split(',').filter_map(|n| n.parse().ok()).collect());
+		let [ex, ey, ez, tx, ty, tz] = numbers[..] else {
+			eprintln!("--eye takes EX,EY,EZ,TX,TY,TZ");
+			std::process::exit(2);
+		};
+		eyes.push(([ex, ey, ez], [tx, ty, tz]));
+	}
+	let clip = args.iter().position(|a| a == "--clip").and_then(|at| args.get(at + 1));
+	// --preview builds texels at half the density, for quick looks, and with
+	// --eye bakes far parts at less detail still.
+	let preview = args.iter().any(|a| a == "--preview");
+	let texel_scale = if preview { 0.5 } else { 1.0 };
+	let detail_eyes = if preview { eyes.clone() } else { Vec::new() };
+	if let Err(error) = run(Path::new(dir), turntable, size, &closeups, &eyes, clip.map(|c| c.as_str()), texel_scale, &detail_eyes) {
+		eprintln!("error: {error}");
+		std::process::exit(1);
+	}
+}
+
