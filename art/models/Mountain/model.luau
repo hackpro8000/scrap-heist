@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-93c25a90bd08f229"
+local CACHE_KEY = "Mountain-360d847db0216d56"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -837,8 +837,12 @@ local CHIP_DEPTH = { 0.15, 0.45 }
 local CUT_SPREAD = math.rad(55)
 
 local STONE = { 0.46, 0.45, 0.5 }
--- The first tier of rocks, those reaching the rim under the grass, is dirt.
+-- Under the grass the rock is dirt, turning to stone between DIRT_FADE
+-- studs down (first and last). The line wanders by up to DIRT_WOBBLE studs, so
+-- it isn't a clean ring.
 local DIRT = { 0.45, 0.33, 0.23 }
+local DIRT_FADE = { 1.5, 5 }
+local DIRT_WOBBLE = 1.2
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
 local ROCK_GRADIENT = { 1.1, 0.6 }
@@ -1327,8 +1331,8 @@ end
 
 -- Per-rock gradient over the part of a rock that shows: light where it
 -- comes out from behind the tier around it, darkening toward its tip. The
--- island hangs below z = 0, so depth is -z. Rocks of the first tier, shown
--- from the top down, are dirt.
+-- island hangs below z = 0, so depth is -z. Near the top the rock is dirt,
+-- fading to stone further down.
 local paintRock = rusting(0.1, function(x, y, z)
 	local rock = rockAt(x, y)
 	local depth = if rock
@@ -1337,8 +1341,13 @@ local paintRock = rusting(0.1, function(x, y, z)
 	local shade = ROCK_GRADIENT[1] + (ROCK_GRADIENT[2] - ROCK_GRADIENT[1]) * depth ^ 0.8
 	local tone, warm = splotchAt(x, y, z)
 	shade *= 1 + tone
-	local base = if rock and rock.shownFrom <= 0 then DIRT else STONE
-	return base[1] * shade * (1 + warm), base[2] * shade, base[3] * shade * (1 - warm)
+	local wobble = DIRT_WOBBLE * math.noise(x * 0.25, y * 0.25, z * 0.25)
+	local dirt = 1 - math.clamp((-z + wobble - DIRT_FADE[1]) / (DIRT_FADE[2] - DIRT_FADE[1]), 0, 1)
+	dirt = dirt * dirt * (3 - 2 * dirt)
+	local r = STONE[1] + (DIRT[1] - STONE[1]) * dirt
+	local g = STONE[2] + (DIRT[2] - STONE[2]) * dirt
+	local b = STONE[3] + (DIRT[3] - STONE[3]) * dirt
+	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
 end)
 
 -- The island's flat top as one outline: the stones' feet (faces lying on
