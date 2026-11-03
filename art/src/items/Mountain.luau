@@ -181,12 +181,10 @@ local GRASS_DEPTH_BLUR = 0.3
 -- How much the grass darkens toward the tip of the deepest drip.
 local DRIP_SHADE = 0.35
 -- The grass is dead: straw GRASS drifting into a dull olive where a little
--- life hangs on (GRASS_OLIVE_COVER of it) and worn through to the dirt in
--- bald patches (BALD_COVER). Each patch kind is soft noise this many studs
--- across.
+-- life hangs on (GRASS_OLIVE_COVER of it), in soft noise patches this many
+-- studs across.
 local GRASS_OLIVE = { 0.6, 0.57, 0.35 }
 local GRASS_OLIVE_COVER = 0.3
-local BALD_COVER = 0.12
 local GRASS_PATCH_SIZE = 6
 
 -- Fixed per-column jitter, so the columns look uneven but every build matches.
@@ -1489,7 +1487,7 @@ end
 -- How deep the deepest drip hangs, for the grass's shading.
 local GRASS_DEEPEST = GRASS_LIP[1] + DRIP_LENGTH[2]
 
--- Grass is dead straw with olive and bald patches, darkening down
+-- Grass is dead straw with olive patches, darkening down
 -- the hanging edge toward the drip tips, and splotched like the stone.
 local paintGrass = rusting(0, function(x, y, z)
 	local shade = 1 - DRIP_SHADE * math.clamp(-z / GRASS_DEEPEST, 0, 1)
@@ -1506,7 +1504,6 @@ local paintGrass = rusting(0, function(x, y, z)
 		return r + (c[1] - r) * t, g + (c[2] - g) * t, b + (c[3] - b) * t
 	end
 	local r, g, b = toward(GRASS[1], GRASS[2], GRASS[3], GRASS_OLIVE, patch(GRASS_OLIVE_COVER, 11.3))
-	r, g, b = toward(r, g, b, DIRT, patch(BALD_COVER, 47.9))
 	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
 end)
 
