@@ -1,4 +1,4 @@
-local CACHE_KEY = "ArenaDrone-be286b85aa4466b4"
+local CACHE_KEY = "ArenaDrone-01070c1c1a88830d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1047,6 +1047,65 @@ local function leaning(mesh, px: number, py: number, pz: number, dx: number, dy:
 	})
 end
 
+-- Propellers: two twisted blades 100 studs tip to tip on a hub over each
+-- motor's shaft, tilted with the motor. Each blade is lofted through
+-- sections that narrow and flatten their pitch towards the tip. The last
+-- stretch of each blade is painted hazard yellow.
+local PROP_RADIUS, PROP_HUB = 50, 3
+local PROP_TIP = 6
+local PROP_SECTIONS = 16
+local PROP_TEXTURE = 512
+local HAZARD_YELLOW = { 0.9, 0.72, 0.15 }
+local function bladeChord(s: number): number
+	local t = (s - PROP_HUB) / (PROP_RADIUS - PROP_HUB)
+	return if t < 0.3 then lerp(4.5, 7, t / 0.3) else lerp(7, 3, (t - 0.3) / 0.7)
+end
+local function bladePitch(s: number): number
+	return math.rad(lerp(24, 8, (s - PROP_HUB) / (PROP_RADIUS - PROP_HUB)))
+end
+-- One blade from `from` to `to` studs out, pointing at `heading`, around
+-- the hub at (hx, hy, hz).
+local function blade(mesh, hx: number, hy: number, hz: number, heading: number, from: number, to: number)
+	local sx, sy = math.cos(heading), math.sin(heading)
+	local cx, cy = -sy, sx
+	local sections = {}
+	local count = math.max(2, math.round(PROP_SECTIONS * (to - from) / (PROP_RADIUS - PROP_HUB)))
+	for j = 0, count do
+		local span = lerp(from, to, j / count)
+		local chord, pitch = bladeChord(span), bladePitch(span)
+		local thick = lerp(1.1, 0.4, (span - PROP_HUB) / (PROP_RADIUS - PROP_HUB))
+		-- A thin wing section, leading edge first, round under then over.
+		local profile = {
+			{ -chord / 2, 0 },
+			{ -chord / 4, -thick * 0.35 },
+			{ chord / 4, -thick * 0.25 },
+			{ chord / 2, 0 },
+			{ chord / 4, thick * 0.35 },
+			{ -chord / 4, thick * 0.5 },
+		}
+		local ring = {}
+		for k, point in profile do
+			local y = point[1] * math.cos(pitch) - point[2] * math.sin(pitch)
+			local z = point[1] * math.sin(pitch) + point[2] * math.cos(pitch)
+			ring[k] = mesh:vertex(hx + sx * span + cx * y, hy + sy * span + cy * y, hz + z)
+		end
+		sections[j] = ring
+	end
+	for j = 0, count - 1 do
+		local a, b = sections[j], sections[j + 1]
+		for k = 1, 6 do
+			local l = k % 6 + 1
+			mesh:face({ a[k], a[l], b[l], b[k] })
+		end
+	end
+	local root = {}
+	for k = 6, 1, -1 do
+		table.insert(root, sections[0][k])
+	end
+	mesh:face(root)
+	mesh:face(sections[count])
+end
+
 for i, degrees in ARM_DIRECTIONS do
 	local angle = math.rad(degrees)
 	local ux, uy = math.cos(angle), math.sin(angle)
@@ -1120,6 +1179,31 @@ for i, degrees in ARM_DIRECTIONS do
 		cylinder(lean, mx, my, base + 8.4, 6, 1.8, "z", 20)
 		cylinder(lean, mx, my, base + 9.8, 1.2, 1.4, "z", 12)
 	end, 30, 0.3, MOTOR_TEXTURE)
+
+	local hubZ = base + 11.3
+	-- Each propeller stopped at its own angle, so the four don't match.
+	local phase = math.rad(degrees + 30 * i)
+	part(`Prop{i}`, nil, DARK_STEEL, function(mesh)
+		local lean = leaning(mesh, mx, my, base, ux, uy, MOTOR_TILT)
+		for b = 0, 1 do
+			blade(lean, mx, my, hubZ, phase + b * math.pi, PROP_HUB, PROP_RADIUS - PROP_TIP)
+		end
+	end, 30, 0.35, PROP_TEXTURE)
+	part(`PropTips{i}`, nil, HAZARD_YELLOW, function(mesh)
+		local lean = leaning(mesh, mx, my, base, ux, uy, MOTOR_TILT)
+		for b = 0, 1 do
+			blade(lean, mx, my, hubZ, phase + b * math.pi, PROP_RADIUS - PROP_TIP, PROP_RADIUS)
+		end
+	end, 30, 0.35, 128)
+	part(`PropHub{i}`, nil, STEEL, function(mesh)
+		local lean = leaning(mesh, mx, my, base, ux, uy, MOTOR_TILT)
+		cylinder(lean, mx, my, hubZ, PROP_HUB + 0.6, 2.4, "z", 16)
+		cylinder(lean, mx, my, hubZ + 1.6, 1.6, 0.8, "z", 12)
+		for b = 0, 3 do
+			local a = phase + b * TAU / 4 + TAU / 8
+			bolt(lean, mx + math.cos(a) * 2.4, my + math.sin(a) * 2.4, hubZ + 1.2, "z", 0.3)
+		end
+	end, 30, 0.3, 128)
 
 	-- Power cable along the underside of the arm, out to the motor.
 	part(`Cable{i}`, nil, RUBBER_BLACK, function(mesh)
