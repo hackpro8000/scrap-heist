@@ -1,8 +1,10 @@
 -- Layout prelude: lets a layout build other models in place. Each model's
 -- script is wrapped as build<Name>(), and place() runs it with every vertex
--- moved, turned about z and optionally stretched along one axis. Parts are
+-- moved, turned about z, optionally scaled up or down as a whole and
+-- optionally stretched along one axis. Parts are
 -- renamed <Label>_<Part> so game code can find each placed piece by label.
 local placeX, placeY, placeZ, placeTurn, placeStretch, placeAxis = 0, 0, 0, 0, 1, "x"
+local placeScale = 1
 local placeLabel = ""
 local RealMesh, realPart = Mesh, model.part
 
@@ -15,13 +17,14 @@ Mesh = {
 		local real = RealMesh.new()
 		local c, s = math.cos(placeTurn), math.sin(placeTurn)
 		local ox, oy, oz = placeX, placeY, placeZ
-		local stretchX = if placeAxis == "x" then placeStretch else 1
-		local stretchY = if placeAxis == "y" then placeStretch else 1
+		local scale = placeScale
+		local stretchX = scale * (if placeAxis == "x" then placeStretch else 1)
+		local stretchY = scale * (if placeAxis == "y" then placeStretch else 1)
 		return setmetatable({
 			_mesh = real,
 			vertex = function(_, x, y, z)
 				x, y = x * stretchX, y * stretchY
-				return real:vertex(x * c - y * s + ox, x * s + y * c + oy, z + oz)
+				return real:vertex(x * c - y * s + ox, x * s + y * c + oy, z * scale + oz)
 			end,
 			paintShading = function(_, image, options)
 				for _, list in { "occluders", "group" } do
@@ -98,19 +101,22 @@ model.part = function(name, mesh, image, options)
 	addPart(name, unwrapMesh(mesh), image, preview, options and options.emissive)
 end
 
-local function place(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, stretch: number?, axis: string?)
+-- `scale` builds the model that many times its own size, so its textures
+-- keep their density instead of being stretched with it.
+local function place(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, stretch: number?, axis: string?, scale: number?)
 	placeLabel = label
 	placeX, placeY, placeZ, placeTurn = x, y, z or 0, math.rad(turn or 0)
-	placeStretch, placeAxis = stretch or 1, axis or "x"
+	placeStretch, placeAxis, placeScale = stretch or 1, axis or "x", scale or 1
 	local key = buildKeys[build]
 	if not key then
 		build()
+		placeScale = 1
 		return
 	end
-	-- Built once at the origin per model and stretch, then moved into place,
-	-- so moving a prop never rebuilds it. Eye previews size textures by
+	-- Built once at the origin per model, scale and stretch, then moved into
+	-- place, so moving a prop never rebuilds it. Eye previews size textures by
 	-- distance, so there placements share a build per distance band.
-	key = `{key} {placeStretch} {placeAxis}`
+	key = if placeScale == 1 then `{key} {placeStretch} {placeAxis}` else `{key} {placeStretch} {placeAxis} x{placeScale}`
 	if previewBand then
 		key = `{key} band {previewBand(x, y, z or 0)}`
 	end
@@ -132,6 +138,7 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 		addPart(part.name, part.mesh:moved(turn0, x0, y0, z0), part.image, part.preview, part.emissive)
 	end
 	placeX, placeY, placeZ, placeTurn = x0, y0, z0, turn0
+	placeScale = 1
 end
 
 -- Places a piece built where it stands. Its paint can depend on where it
@@ -144,7 +151,7 @@ local function placeSlab(label: string, build: () -> (), x: number, y: number, t
 	end
 	placeLabel = label
 	placeX, placeY, placeZ, placeTurn = x, y, 0, math.rad(turn or 0)
-	placeStretch, placeAxis = 1, "x"
+	placeStretch, placeAxis, placeScale = 1, "x", 1
 	for _, part in model.cached(`{key} {label} {x} {y} {turn or 0}`, function()
 		builtParts = {}
 		build()
