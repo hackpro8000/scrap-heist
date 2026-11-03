@@ -135,7 +135,11 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 	let forward = normalize(scale(toward, -1.0));
 	let right = normalize(cross(forward, [0.0, 0.0, 1.0]));
 	let up = cross(right, forward);
-	let light = normalize([toward[0] * 0.3 - right[0], toward[1] * 0.3 - right[1], 1.5]);
+	// `toward` is a length when an eye is given and roughly unit otherwise, so
+	// it is normalized before it tilts the light: an unnormalized one swings
+	// the light toward horizontal at eye distance and flat tops go dark.
+	let tilt = normalize(toward);
+	let light = normalize([tilt[0] * 0.3 - right[0], tilt[1] * 0.3 - right[1], 1.5]);
 	let width = extent * 2.2 / 1.4;
 
 	let size = view.size * SUPERSAMPLE;
