@@ -971,7 +971,7 @@ local function finishParts()
 	end
 end
 local function buildYardIsland()
-local CACHE_KEY = "YardIsland-81d6b6a801b145a8"
+local CACHE_KEY = "YardIsland-400e04aff104c12b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1832,9 +1832,21 @@ local SMALLEST, LARGEST = 0.055 * RADIUS, 0.34 * RADIUS
 -- the same, only bigger: chips, slabs, cookie stones, cracks, rounding,
 -- grass and the paint's blotches all grow with the stones.
 local DETAIL = LARGEST / 4.5
+-- The rim the columns are trimmed to: a circle of RIM_PUSH * RADIUS
+-- swelling and dipping by up to RIM_WOBBLE of it in broad waves, so the top
+-- is a dependable surface rather than sharp lobes and bays. RIM_SIDES flat
+-- facets make it up, so the rim stones end in cut faces.
+local RIM_WOBBLE = 0.16
+local RIM_SIDES = 192
+-- The rim stands RIM_PUSH times RADIUS out.
+local RIM_PUSH = 1.1
+-- The top tier of dirt, this deep under the grass, stays a clean wall
+-- straight down from the rim the grass follows: chisel cuts, chips and bare
+-- rock slabs all start below it.
+local DIRT_CONFORM = 1.5 * DETAIL
 -- Stones are scattered a stone's width past the rim, so rim cells close
--- on real neighbours before the ones outside are dropped.
-local SCATTER = RADIUS + LARGEST
+-- on real neighbours before they are trimmed to it.
+local SCATTER = RIM_PUSH * RADIUS + LARGEST
 -- Shortest a column hangs, so the rim stones read as a thick slab; a
 -- share of the radius like the stone sizes.
 local MIN_LENGTH = 0.2 * RADIUS
@@ -1990,11 +2002,11 @@ local GRASS_ROUND_STEPS = 4
 -- The hanging edge's bottom curls under into its underside on this radius.
 local GRASS_BOTTOM_ROUND = 0.2 * DETAIL
 -- The rim's corners in plan are rounded off by blurring its outline over
--- about this many studs; the stone's own rounded edges keep the cut-in
--- corners covered. The drips' depth is blurred the same way over
--- GRASS_DEPTH_BLUR studs, so neighbouring tongues meet in soft dips rather
--- than sharp notches.
-local GRASS_CORNER_BLUR = DETAIL
+-- about this many studs, just enough to soften each stone's jog while the
+-- grass still follows the stones, pushed out GRASS_OUTSET past them. The drips' depth is
+-- blurred over GRASS_DEPTH_BLUR studs, so neighbouring tongues meet in soft
+-- dips rather than sharp notches.
+local GRASS_CORNER_BLUR = 0.2 * DETAIL
 local GRASS_DEPTH_BLUR = 0.3 * DETAIL
 -- The turf's flat top is cut into squares this many studs across, to keep
 -- its texture chunks small; this one doesn't grow with DETAIL.
@@ -2027,15 +2039,28 @@ local function random(): number
 end
 
 -- Height of the slope at a point: the main cone, ridges running down from
--- the summit, and a lower shoulder peak off to one side.
+-- the summit, and a lower shoulder peak off to one side. The cone is
+-- rounded BOWL of the way toward a dome, so the underside reads as a
+-- shallow bowl rather than a spike under a flat shelf.
+local BOWL = 0.4
 local function heightAt(x: number, y: number): number
 	local r = math.sqrt(x * x + y * y) / RADIUS
 	local angle = math.atan2(y, x)
 	local ridges = 1 + 0.12 * math.cos(angle * 5) * r
-	local main = PEAK * math.max(0, 1 - r * ridges) ^ 1.25
+	local out = math.min(r * ridges, 1)
+	local cone = (1 - out) ^ 1.25
+	local dome = math.sqrt(1 - out * out)
+	local main = PEAK * (cone + (dome - cone) * BOWL)
 	local sx, sy = x - 8, y + 5
 	local shoulder = 19 * math.max(0, 1 - math.sqrt(sx * sx + sy * sy) / 11) ^ 1.1
 	return math.max(main, shoulder)
+end
+
+-- The rim's radius at an angle.
+local function rimAt(angle: number): number
+	local phase = SEED * 1.7
+	local wave = 0.5 * math.sin(2 * angle + phase) + 0.3 * math.sin(3 * angle + 2 * phase) + 0.2 * math.sin(5 * angle + 3 * phase)
+	return RIM_PUSH * RADIUS * (1 + RIM_WOBBLE * wave)
 end
 
 -- Stones scattered by dart throwing, none crowding another, sized by how
@@ -2087,6 +2112,43 @@ local function clip(outline, p, q, neighbour)
 	return kept
 end
 
+-- The rim's corners, then each of its sides as a plane n . p <= limit,
+-- in order round from angle 0.
+local rimSides = {}
+do
+	local rim = {}
+	for i = 0, RIM_SIDES - 1 do
+		local angle = i / RIM_SIDES * TAU
+		local r = rimAt(angle)
+		rim[i + 1] = { r * math.cos(angle), r * math.sin(angle) }
+	end
+	for i, a in rim do
+		local b = rim[i % #rim + 1]
+		-- Counter-clockwise, so out is to the right of each side.
+		local nx, ny = b[2] - a[2], a[1] - b[1]
+		table.insert(rimSides, { nx, ny, nx * a[1] + ny * a[2] })
+	end
+end
+
+-- Cuts a cell outline down to the inside of one rim side; corners where it
+-- crosses carry nil, as on the outer rim.
+local function clipToRim(outline, side)
+	local nx, ny, limit = side[1], side[2], side[3]
+	local kept = {}
+	for i, a in outline do
+		local b = outline[i % #outline + 1]
+		local sa, sb = a[1] * nx + a[2] * ny - limit, b[1] * nx + b[2] * ny - limit
+		if sa <= 0 then
+			table.insert(kept, { a[1], a[2], a[3] })
+		end
+		if (sa <= 0) ~= (sb <= 0) then
+			local t = sa / (sa - sb)
+			table.insert(kept, { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, if sa <= 0 then nil else a[3] })
+		end
+	end
+	return kept
+end
+
 -- Each stone's column: its outline and its top corners on a slanted plane.
 local columns = {}
 for index, stone in stones do
@@ -2103,13 +2165,35 @@ for index, stone in stones do
 			end
 		end
 	end
-	-- Stones outside the rim, and cells cut by the scatter's edge, are
-	-- dropped, so the foot ends on whole stones instead of a clean circle.
-	local onEdge = stone[1] ^ 2 + stone[2] ^ 2 > RADIUS ^ 2
+	-- Every cell is trimmed to the rim sides it faces (the rim isn't convex,
+	-- so the far sides would cut into its swells); those left with nothing
+	-- inside the rim are dropped. A cell's sides are those over the angles
+	-- its corners span, and a few either way so neighbours trim alike.
+	local low, high, farthest = math.huge, -math.huge, 0
+	local heading = math.atan2(stone[2], stone[1])
 	for _, corner in outline do
-		onEdge = onEdge or corner[3] == nil
+		local offset = (math.atan2(corner[2], corner[1]) - heading + math.pi) % TAU - math.pi
+		low, high = math.min(low, offset), math.max(high, offset)
+		farthest = math.max(farthest, math.sqrt(corner[1] ^ 2 + corner[2] ^ 2))
 	end
-	if #outline < 3 or onEdge then
+	if farthest > RIM_PUSH * RADIUS * (1 - RIM_WOBBLE) then
+		local first = math.floor((heading + low) / TAU * RIM_SIDES) - 8
+		local last = math.ceil((heading + high) / TAU * RIM_SIDES) + 8
+		for k = first, last do
+			if #outline < 3 then
+				break
+			end
+			outline = clipToRim(outline, rimSides[k % RIM_SIDES + 1])
+		end
+	end
+	local area = 0
+	for i, a in outline do
+		local b = outline[i % #outline + 1]
+		area += (a[1] * b[2] - b[1] * a[2]) / 2
+	end
+	-- Only cells the rim leaves nothing of are dropped; a small one kept at
+	-- the rim fills its stretch so the edge doesn't notch.
+	if #outline < 3 or math.abs(area) < 1e-3 then
 		continue
 	end
 	local cx, cy = 0, 0
@@ -2220,6 +2304,7 @@ end
 for _, column in columns do
 	local corners, index = column.corners, column.index
 	local faces = solidOf(column)
+	local outward = math.atan2(column.peak[2], column.peak[1])
 
 	-- Chisel cuts: each faces out and up at its own angle, from a low
 	-- slant (shaving a side edge) to steep (bevelling the top), and
@@ -2227,7 +2312,6 @@ for _, column in columns do
 	-- near level, which would open holes down between columns. Every cut
 	-- faces away from the island's centre, within CUT_SPREAD either side,
 	-- so the carving shows on the outside and never faces inward.
-	local outward = math.atan2(column.peak[2], column.peak[1])
 	-- The cuts to make: heading, lift and depth. The big chisel cuts come
 	-- first, then fine chips that knock small corners off what is left.
 	local cuts = {}
@@ -2254,13 +2338,13 @@ for _, column in columns do
 				farthest = math.max(farthest, p[1] * n[1] + p[2] * n[2] + p[3] * n[3])
 			end
 		end
-		-- A cut stops short of the foot, which becomes the island's top,
-		-- so shallow stones are never carved through into the surface.
-		local footmost = -math.huge
+		-- A cut stops short of the top tier, which follows the grass, so
+		-- the wall under the grass is never carved into.
+		local tiermost = -math.huge
 		for _, corner in corners do
-			footmost = math.max(footmost, corner[1] * n[1] + corner[2] * n[2])
+			tiermost = math.max(tiermost, corner[1] * n[1] + corner[2] * n[2] + DIRT_CONFORM * n[3])
 		end
-		local plane = math.max(farthest - depth, footmost + 0.3)
+		local plane = math.max(farthest - depth, tiermost + 0.3)
 		if plane < farthest then
 			faces = carve(faces, n, plane)
 		end
@@ -2374,7 +2458,14 @@ for _, column in columns do
 			local ty = (hash(index, seed + 2) - 0.5) * 2 * PATCH_TILT
 			local length = math.sqrt(tx * tx + ty * ty + 1)
 			local down = { tx / length, ty / length, 1 / length }
-			return down, down[1] * column.peak[1] + down[2] * column.peak[2] + down[3] * top
+			-- Never above the top tier anywhere across the slab.
+			local level = -math.huge
+			for _, f in slab do
+				for _, p in f do
+					level = math.max(level, down[1] * p[1] + down[2] * p[2] + down[3] * DIRT_CONFORM)
+				end
+			end
+			return down, math.max(down[1] * column.peak[1] + down[2] * column.peak[2] + down[3] * top, level)
 		end
 		local down, line = topLine(207 + k * 10)
 		table.insert(solids, { faces = bevelled(carve(slab, down, line), heading, bevel * 0.7), dirt = true })
@@ -2640,58 +2731,6 @@ local paintDirt = rusting(0.05, function(x, y, z)
 	local r, g, b = soil((1 - DIRT_LEAD) * stoneAt(x, y, z))
 	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
 end)
-
--- The island's flat top as one outline: the stones' feet (faces lying on
--- z = 0) laid together, with every edge two stones share cancelled out,
--- chained into a loop wound like the feet (clockwise seen from above) and
--- stripped of corners that sit in a straight line.
-local function topOutline()
-	local function key(p)
-		return `{math.round(p[1] * 1e4)},{math.round(p[2] * 1e4)}`
-	end
-	local edges, points = {}, {}
-	for _, column in columns do
-		for _, face in column.faces do
-			local foot = true
-			for _, p in face do
-				foot = foot and p[3] == 0
-			end
-			if foot then
-				for i, a in face do
-					local b = face[i % #face + 1]
-					local from, to = key(a), key(b)
-					points[from], points[to] = a, b
-					if edges[`{to}>{from}`] then
-						edges[`{to}>{from}`] = nil
-					else
-						edges[`{from}>{to}`] = { from, to }
-					end
-				end
-			end
-		end
-	end
-	local nextOf, first, count = {}, nil, 0
-	for _, edge in edges do
-		assert(nextOf[edge[1]] == nil, "Column Island: the top outline branches")
-		nextOf[edge[1]] = edge[2]
-		first = first or edge[1]
-		count += 1
-	end
-	local loop, at = {}, first
-	repeat
-		table.insert(loop, points[at])
-		at = nextOf[at]
-	until at == first or at == nil
-	assert(#loop == count, "Column Island: the top is not one outline")
-	local outline = {}
-	for i, b in loop do
-		local a, c = loop[(i - 2) % #loop + 1], loop[i % #loop + 1]
-		if math.abs((b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])) > 1e-6 then
-			table.insert(outline, { b[1], b[2] })
-		end
-	end
-	return outline
-end
 
 -- Flipped upside down as it is written out: z mirrors, and the winding
 -- reverses so faces still point outward. The foot becomes the island's top.
@@ -3160,16 +3199,14 @@ end, false, paintPebble, true, EDGE_REACH)
 -- grass's outset (outer) and a hair's width (inner), with how deep the grass
 -- hangs there.
 local function grassRim()
-	local outline = topOutline()
+	-- The rim the stones are trimmed to, walked clockwise seen from above
+	-- in GRASS_STEP strides, so the grass follows it exactly.
 	local points = {}
-	for i, a in outline do
-		local b = outline[i % #outline + 1]
-		local length = math.sqrt((b[1] - a[1]) ^ 2 + (b[2] - a[2]) ^ 2)
-		local steps = math.max(1, math.round(length / GRASS_STEP))
-		for k = 0, steps - 1 do
-			local t = k / steps
-			table.insert(points, { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t })
-		end
+	local steps = math.ceil(TAU * RIM_PUSH * RADIUS * (1 + RIM_WOBBLE) / GRASS_STEP)
+	for k = 0, steps - 1 do
+		local angle = -k / steps * TAU
+		local r = rimAt(angle)
+		table.insert(points, { r * math.cos(angle), r * math.sin(angle) })
 	end
 	local count = #points
 
@@ -3492,7 +3529,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildYardIsland] = "YardIsland-cc4b85f5b7da468a"
+buildKeys[buildYardIsland] = "YardIsland-7bde9a2c88bb032c"
 local function buildGroundTile()
 local CACHE_KEY = "GroundTile-06e115bba8685577"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
