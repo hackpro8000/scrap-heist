@@ -4,9 +4,17 @@
 -- run by a petrol engine with a flywheel, belt and pressure gauge; and an
 -- electric four-roller shredder with a geared drive, a control box with a
 -- status light and a conveyor carrying parts off the chute. Sits on its pad with the base at the origin.
+-- Every tier fits within its pad (MachinePad, 6.06 studs square), so the
+-- yard's walkways stay clear whatever stands on a pad: 3.03 studs from the
+-- tier's centre each way, warp included.
 -- Sketch blockout: tiers stand side by side for review.
 
 local SPACING = 6
+-- Tier 3's conveyor: from and to along x from the tier's centre, its middle
+-- along y (just past the shortened chute's end) and its width.
+local CONVEYOR_X = { -2.1, 0.85 }
+local CONVEYOR_Y = 2.2
+local CONVEYOR_WIDTH = 0.7
 
 local FRAME = { 0.42, 0.46, 0.5 }
 local HOPPER = { 0.86, 0.55, 0.18 }
@@ -56,6 +64,9 @@ local function cylinder(mesh, cx, cy, cz, radius, length, axis)
 		if axis == "x" then
 			a[i + 1] = mesh:vertex(cx - length / 2, cy + u, cz + w)
 			b[i + 1] = mesh:vertex(cx + length / 2, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - length / 2, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + length / 2, cz + u)
 		else
 			a[i + 1] = mesh:vertex(cx + u, cy + w, cz)
 			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + length)
@@ -715,15 +726,16 @@ for tier = 1, 3 do
 		local gearX = cx + 1.1 * scale + 0.08
 		toothedRoller(rollers, gearX, 0, 1.25, 0.2, 0.12, 8, 1)
 		toothedRoller(rollers, gearX, 0, 1.25 + 0.2 + 0.32, 0.36, 0.12, 14, 1)
-		-- Conveyor off the end of the chute: a belt on two end drums.
-		local beltY0, beltY1 = 2.1 * scale, 4.2 * scale
-		box(rollers, cx, (beltY0 + beltY1) / 2, 0.42, 1 * scale, beltY1 - beltY0, 0.06)
-		for _, y in { beltY0, beltY1 } do
-			cylinder(rollers, cx, y, 0.45, 0.1, 1.05 * scale, "x")
+		-- Conveyor under the end of the chute, carrying parts off sideways
+		-- along the pad rather than out past its edge: a belt on two drums.
+		local beltX0, beltX1 = CONVEYOR_X[1], CONVEYOR_X[2]
+		box(rollers, cx + (beltX0 + beltX1) / 2, CONVEYOR_Y, 0.2, beltX1 - beltX0, CONVEYOR_WIDTH, 0.06)
+		for _, x in { beltX0, beltX1 } do
+			cylinder(rollers, cx + x, CONVEYOR_Y, 0.23, 0.1, CONVEYOR_WIDTH + 0.05, "y")
 		end
-		for _, x in { -0.5, 0.5 } do
-			for _, y in { beltY0 + 0.2, beltY1 - 0.2 } do
-				box(rollers, cx + x * scale, y, 0, 0.08, 0.08, 0.42)
+		for _, x in { beltX0 + 0.15, beltX1 - 0.15 } do
+			for _, side in { -1, 1 } do
+				box(rollers, cx + x, CONVEYOR_Y + side * (CONVEYOR_WIDTH / 2 - 0.05), 0, 0.06, 0.06, 0.2)
 			end
 		end
 	end
@@ -751,7 +763,7 @@ for tier = 1, 3 do
 				box(guards, guardX + width / 2, 0, highZ - 0.15 + k * 0.12, 0.04, highR * 1.2, 0.04)
 			end
 			for _, side in { -1, 1 } do
-				box(guards, cx + side * 0.55 * scale, 3.15 * scale, 0.32, 0.05, 2.1 * scale, 0.22)
+				box(guards, cx + (CONVEYOR_X[1] + CONVEYOR_X[2]) / 2, CONVEYOR_Y + side * (CONVEYOR_WIDTH / 2 + 0.03), 0.12, CONVEYOR_X[2] - CONVEYOR_X[1], 0.05, 0.2)
 			end
 		end
 		part(`{group}_Guards`, guards, GUARD[tier - 1], group, SMALL_TEXTURE)
@@ -762,7 +774,12 @@ for tier = 1, 3 do
 	part(`{group}_Hopper`, bin, HOPPER, group, LARGE_TEXTURE, hopperColor(2.1 * scale, 1.1 * scale, wear, tier))
 
 	local chute = warpedMesh(warp)
-	box(chute, cx, 1.3 * scale, 0.3, 1 * scale, 1.4 * scale, 0.15)
+	if tier == 3 then
+		-- Shorter, ending over the conveyor inside the pad.
+		box(chute, cx, 1.62, 0.3, 1 * scale, 1.56, 0.15)
+	else
+		box(chute, cx, 1.3 * scale, 0.3, 1 * scale, 1.4 * scale, 0.15)
+	end
 	part(`{group}_Chute`, chute, CHUTE, group, SMALL_TEXTURE)
 
 	local extras = warpedMesh(warp)
@@ -773,7 +790,7 @@ for tier = 1, 3 do
 	elseif tier == 2 then
 		-- Petrol engine with cooling fins, an exhaust stack, a heavy flywheel
 		-- on its far side and a pressure gauge on top.
-		local motorX = cx + 1.1 * scale + 0.75
+		local motorX = cx + 1.1 * scale + 0.65
 		box(extras, motorX, 0, 0.6, 0.9, 1, 0.9)
 		for _, offset in { -0.35, -0.2, -0.05 } do
 			box(extras, motorX + offset, 0, 1.5, 0.04, 1, 0.1)
@@ -784,14 +801,15 @@ for tier = 1, 3 do
 		cylinder(extras, motorX + 0.2, -0.3, 1.5, 0.05, 0.25, "z")
 		cylinder(extras, motorX + 0.2, -0.3, 1.75, 0.13, 0.06, "z")
 	else
-		-- Electric motor: an upright drum wrapped in cooling rings.
-		local motorX = cx + 1.7 * scale
+		-- Electric motor: a slim upright drum wrapped in cooling rings, between
+		-- the gear guard and the pad's edge.
+		local motorX = cx + 2.17
 		-- Bolted down on a base plate with a bracket arm back to the frame.
-		box(extras, motorX, 0, 0, 1.1, 1.1, 0.2)
+		box(extras, motorX, 0, 0, 0.72, 0.72, 0.2)
 		box(extras, (cx + 1.1 * scale + motorX) / 2, 0, 0.6, motorX - cx - 1.1 * scale + 0.2, 0.5, 0.15)
-		cylinder(extras, motorX, 0, 0.2, 0.45, 1.3, "z")
+		cylinder(extras, motorX, 0, 0.2, 0.3, 1.3, "z")
 		for k = 0, 4 do
-			cylinder(extras, motorX, 0, 0.35 + k * 0.22, 0.52, 0.05, "z")
+			cylinder(extras, motorX, 0, 0.35 + k * 0.22, 0.36, 0.05, "z")
 		end
 		cylinder(extras, motorX, 0, 1.5, 0.2, 0.15, "z")
 	end
