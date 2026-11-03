@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-3f71c8c3e03aa0c7"
+local CACHE_KEY = "YardIsland-3f566275deb1cf20"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -896,6 +896,10 @@ local STONE = { 0.46, 0.45, 0.5 }
 -- the rock it sits on stands proud.
 local DIRT = { 0.33, 0.24, 0.18 }
 local DIRT_TRANSITION = { 0.33, 0.5 }
+-- Where a rock comes through, the line between its dirt and its stone tilts
+-- by up to DIRT_TILT radians, each rock its own way, so the line wanders
+-- round the island instead of stepping level.
+local DIRT_TILT = math.rad(25)
 -- Above that, rock already shows through the dirt in slabs: a rock still
 -- under dirt may have up to PATCHES slabs of its faces bare below tilted
 -- lines, each facing out from the island's centre within PATCH_SPREAD
@@ -1446,8 +1450,12 @@ for _, column in columns do
 	local shown = column.shownFrom
 	local outward = math.atan2(column.peak[2], column.peak[1])
 	local bevel = DIRT_BEVEL[1] + (DIRT_BEVEL[2] - DIRT_BEVEL[1]) * hash(index, 31)
-	local dirt = bevelled(carve(faces, { 0, 0, 1 }, dirtLine), outward, bevel)
-	local stone = carve(faces, { 0, 0, -1 }, -dirtLine)
+	-- The tilted line passes through dirtLine under the rock's tip.
+	local tilt, heading = DIRT_TILT * hash(index, 32), hash(index, 33) * 2 * math.pi
+	local down = { math.sin(tilt) * math.cos(heading), math.sin(tilt) * math.sin(heading), math.cos(tilt) }
+	local line = down[1] * column.peak[1] + down[2] * column.peak[2] + down[3] * dirtLine
+	local dirt = bevelled(carve(faces, down, line), outward, bevel)
+	local stone = carve(faces, { -down[1], -down[2], -down[3] }, -line)
 	column.solids = { { faces = dirt, dirt = true }, { faces = stone, dirt = false } }
 	-- The stone shows from below the dirt.
 	column.shownFrom = math.min(dirtLine, column.peak[3])
