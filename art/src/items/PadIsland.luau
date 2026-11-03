@@ -1,17 +1,17 @@
--- Pad Island: an avenue plaza's octagonal floating island, from the
--- shared rock-wall generator (shared/RockIsland.luau).
-local RADIUS = 14
--- Rocks 4.7 times the generator's base size, as on the yard islands.
-local ROCK_SCALE = 4.7
+-- Pad Island: an avenue plaza's floating island, from the shared column generator
+-- (shared/ColumnIsland.luau).
+local RADIUS = 21
+local PEAK = 27
+local SEED = 37
+-- The avenue plaza (ServerMap.luau): an octagon with a flat side facing
+-- each axis, PLAZA studs to a flat side with its kerb.
+local PLAZA = 11.5
 
--- The island's wobbly outline, as a radius scale per angle.
-local function outlineScale(angle: number): number
-	-- An octagon, faces at 0 and 45 degrees, its corners softened, with a
-	-- gentle wobble.
+-- How far a point lies outside the plaza's octagon.
+local function wornDistance(x: number, y: number): number
+	local angle = math.atan2(y, x)
 	local sector = (angle + math.pi / 8) % (math.pi / 4) - math.pi / 8
-	local wobble = 0.07 * math.sin(3 * angle + 0.6) + 0.05 * math.sin(5 * angle + 2.1) + 0.03 * math.sin(9 * angle)
-	return 1 / math.cos(sector * 0.85) + 0.2 * wobble
+	return math.sqrt(x * x + y * y) * math.cos(sector) - PLAZA
 end
 
--- include: IslandPaint
--- include: RockIsland
+-- include: ColumnIsland
