@@ -34,7 +34,7 @@ end
 for i, pad in { { -9, 2 }, { -9, 10 }, { 9, 2 }, { 9, 10 } } do
 	piece(`Pad{i}`, buildMachinePad, pad[1], pad[2])
 end
-piece("Crate", buildStorageCrate, 0, 12)
+piece("Crate", buildStorageCrate, 0, 12.95)
 
 -- Main path from the gate to the crate, and a branch to each pad.
 for i, y in { -12, -4, 4 } do

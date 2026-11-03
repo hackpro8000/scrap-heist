@@ -39,7 +39,7 @@ YardLayout.PAD_OFFSETS = {
 	Pad3 = Vector3.new(9, 0, -2) * SCALE,
 	Pad4 = Vector3.new(9, 0, -10) * SCALE,
 } :: { [string]: Vector3 }
-YardLayout.CRATE_OFFSET = Vector3.new(0, 0, -12) * SCALE
+YardLayout.CRATE_OFFSET = Vector3.new(0, 0, -12.95) * SCALE
 YardLayout.GATE_OFFSET = Vector3.new(0, 0, 16) * SCALE
 -- Spawn height stays 3 studs above the floor whatever the yard's scale.
 YardLayout.SPAWN_OFFSET = Vector3.new(0, 3, 8 * SCALE)
