@@ -42,7 +42,7 @@ local ARENA_ISLAND = 61
 -- bridge lands, and how its island is turned under the yard (as in
 -- YardLayout.luau) so the fence corners stand on its lobes. Its turf
 -- stands 1.43 studs above its origin.
-local YARD_ISLAND, YARD_ISLAND_TURN = 46, 305
+local YARD_ISLAND, YARD_ISLAND_TURN = 41, 305
 -- The yard's pieces are laid out on a 32-stud plan and built this many
 -- times their own size, as in YardLayout.luau.
 local YARD_SCALE = 1.5
@@ -51,11 +51,11 @@ local YARD_SCALE = 1.5
 local DECK = 2
 local YARD_TIER = 6
 -- The avenue's plaza pads, east of the road, and the yards either side.
-local PAD_XS = { 110, 204, 298, 392 }
+local PAD_XS = { 110, 222, 334, 446 }
 local PAD_PLAZA = 11
 local YARD_OFFSET = 84
 -- The market island closes the avenue's east end.
-local MARKET_X = 484
+local MARKET_X = 543
 local MARKET_PLAZA = 30
 
 local GROUND = { 0.3, 0.27, 0.22 }
