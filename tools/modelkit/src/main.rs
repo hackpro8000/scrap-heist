@@ -528,9 +528,13 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 	install_api(&lua, dir, parts.clone(), bones.clone(), clips.clone(), used.clone(), vec![dir.to_path_buf(), library], texel_scale, detail_eyes, size).map_err(|e| e.to_string())?;
 	// Marks the globals safe once the API is in: Luau then caches lookups like
 	// math.noise, takes its fast paths for builtins and runs the JIT's native
-	// code. Without it a paint fn runs several times slower. Globals a script
-	// sets go into its own table over these.
-	lua.sandbox(true).map_err(|e| e.to_string())?;
+	// code. Without it a paint fn runs several times slower. A safe chunk
+	// resolves a path like model.part once, as it loads, so the API tables
+	// scripts write into (prelude and IslandStudy swap model.part) are
+	// declared mutable and looked up each time instead.
+	lua.set_compiler(mlua::chunk::Compiler::new().set_mutable_globals(["model", "Mesh", "Image"]));
+	// SAFETY: only sets the safe flag on the globals table.
+	unsafe { lua.exec_raw::<()>((), |state| mlua::ffi::lua_setsafeenv(state, mlua::ffi::LUA_GLOBALSINDEX, 1)) }.map_err(|e| e.to_string())?;
 	progress::say(&format!("running {name}/model.luau"));
 	lua.load(source).set_name(format!("@{}", script.display())).exec().map_err(|e| e.to_string())?;
 	cache::prune(dir, &used.borrow());
