@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-646e4ef937912086"
+local CACHE_KEY = "Mountain-f5fb08d6320c422b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -899,6 +899,9 @@ local STONE_BIT_SIZE = { 0.45, 1.9 }
 local STONE_BIT_SKEW = 2
 local STONE_BIT_RISE = { 0.35, 0.65 }
 local STONE_BIT_CLEAR = 1.2
+-- The stones are stained with dirt: solid where they come out of it,
+-- breaking into blotches up to STONE_BIT_STAIN of their height.
+local STONE_BIT_STAIN = 1.6
 local DIRT_BEVEL = { 0.3, 0.6 }
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
@@ -1724,6 +1727,12 @@ local function edgeDistance(face, p): number
 end
 
 local pebbles = {}
+-- Each stone as where it meets the dirt (point and outward normal, already
+-- flipped) and how far it stands out, bucketed by 2-stud cell for its paint.
+local pebbleCells = {}
+local function pebbleCell(x: number, y: number, z: number): string
+	return `{math.floor(x / 2)},{math.floor(y / 2)},{math.floor(z / 2)}`
+end
 for _, face in dirtFaces do
 	local plane = planeOf(face)
 	if not plane then
@@ -1779,6 +1788,16 @@ for _, face in dirtFaces do
 			-- cap the cut leaves lies against the dirt, so it goes too.
 			local level = n[1] * p[1] + n[2] * p[2] + n[3] * p[3]
 			stone = carve(stone, { -n[1], -n[2], -n[3] }, -level)
+			local record = { point = { p[1], p[2], -p[3] }, normal = { n[1], n[2], -n[3] }, height = size * rise, reach = size }
+			for cx = -1, 1 do
+				for cy = -1, 1 do
+					for cz = -1, 1 do
+						local key = pebbleCell(p[1] + cx * 2, p[2] + cy * 2, -p[3] + cz * 2)
+						pebbleCells[key] = pebbleCells[key] or {}
+						table.insert(pebbleCells[key], record)
+					end
+				end
+			end
 			for _, piece in stone do
 				local onDirt = true
 				for _, q in piece do
@@ -1792,11 +1811,30 @@ for _, face in dirtFaces do
 	end
 end
 
--- The stones are a pale grey, splotched like the rest.
+-- The stones are grey, splotched like the rest and stained with the dirt
+-- they sit in: solid at the dirt line, in blotches higher up.
 local paintPebble = rusting(0.1, function(x, y, z)
 	local tone, warm = splotchAt(x, y, z)
 	local shade = 1 + tone * 1.5
-	return PEBBLE[1] * shade * (1 + warm), PEBBLE[2] * shade, PEBBLE[3] * shade * (1 - warm)
+	local r, g, b = PEBBLE[1], PEBBLE[2], PEBBLE[3]
+	-- The stone this point is on: the nearest whose dirt line it sits above.
+	local height, best = math.huge, math.huge
+	for _, record in pebbleCells[pebbleCell(x, y, z)] or {} do
+		local q, n = record.point, record.normal
+		local dx, dy, dz = x - q[1], y - q[2], z - q[3]
+		local distance = dx * dx + dy * dy + dz * dz
+		if distance < record.reach * record.reach and distance < best then
+			best = distance
+			height = (dx * n[1] + dy * n[2] + dz * n[3]) / math.max(record.height, 0.05)
+		end
+	end
+	if height < STONE_BIT_STAIN then
+		local blot = 0.5 + 0.5 * math.noise(x * 2.2, y * 2.2, z * 2.2)
+		local stain = math.clamp((blot - height / STONE_BIT_STAIN) / 0.12, 0, 1)
+		local dr, dg, db = soil(0.15 * stoneAt(x, y, z))
+		r, g, b = r + (dr - r) * stain, g + (dg - g) * stain, b + (db - b) * stain
+	end
+	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
 end)
 
 chunkedPart("Columns", nil, STONE, function(mesh)
