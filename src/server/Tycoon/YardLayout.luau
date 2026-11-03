@@ -34,10 +34,10 @@ YardLayout.HEIGHT = 30
 YardLayout.DEPTH = 5
 
 YardLayout.PAD_OFFSETS = {
-	Pad1 = Vector3.new(-9, 0, -2) * SCALE,
-	Pad2 = Vector3.new(-9, 0, -10) * SCALE,
-	Pad3 = Vector3.new(9, 0, -2) * SCALE,
-	Pad4 = Vector3.new(9, 0, -10) * SCALE,
+	Pad1 = Vector3.new(-8, 0, 8) * SCALE,
+	Pad2 = Vector3.new(-8, 0, -3.5) * SCALE,
+	Pad3 = Vector3.new(8, 0, 8) * SCALE,
+	Pad4 = Vector3.new(8, 0, -3.5) * SCALE,
 } :: { [string]: Vector3 }
 YardLayout.CRATE_OFFSET = Vector3.new(0, 0, -12.95) * SCALE
 YardLayout.GATE_OFFSET = Vector3.new(0, 0, 16) * SCALE
