@@ -1,4 +1,4 @@
-local CACHE_KEY = "PlotMarker-d94ec8affefafd69"
+local CACHE_KEY = "PlotMarker-774d90149afa2f90"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -603,8 +603,14 @@ end
 -- `texture` overrides the texture size for parts that need more detail.
 -- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
 -- glowing parts skip painted shading. `flat` skips the warp, for parts so
--- thin it would visibly bend them.
-local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?)
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
@@ -613,7 +619,7 @@ local function part(name, bone, color, build, smooth, rust, texture: number?, em
 		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
 		else TEXTURE
 	local image = Image.new(size, size, color[1], color[2], color[3])
-	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive }
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
 	setLook(entry, color, rust)
 	-- Glowing parts skip the painted bake, so their colors go on as they are.
 	if emissive then
@@ -628,8 +634,10 @@ end
 -- build runs once into a recorder, then each face goes to the chunk holding
 -- its centre. Cells sit on the origin across, and centred on z = 0 up and
 -- down, so ground near sea level stays in one layer. `flat` skips the warp,
--- as for part().
-local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?)
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
 	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
 	-- Smallest cell a chunk is halved down to while looking for a split.
 	local MIN_CELL = 2
@@ -649,6 +657,13 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end,
 	}
 	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
 
 	local chunks, order = {}, {}
 	for _, f in faces do
@@ -736,11 +751,15 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 				end
 				mesh:face(verts, f.uvs)
 			end
-		end, smooth, 0, texture)
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
 		-- Chunks of one part share a group, so their edges count as its own.
 		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
 		emit(`{name}_{key}`, chunks[key], CHUNK)
@@ -764,10 +783,10 @@ local function finishParts()
 			end
 		end
 		entry.mesh:paintShading(entry.image, {
-			highlight = EDGE_HIGHLIGHT,
-			shadow = CONTACT_SHADOW,
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
 			gradient = GRADIENT,
-			blend = EDGE_BLEND,
+			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
 			name = entry.name,
@@ -777,52 +796,58 @@ local function finishParts()
 			salt = if entry.custom then CACHE_KEY else nil,
 			rust = entry.rust * WEAR,
 			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
--- Plot Marker: the post at a yard entrance naming its owner, about 7.5
--- studs tall. A steel post with an arm, a hanging sign with a blank face
--- for the owner's name, and a warning lamp on top that will flash on a raid.
+-- Plot Marker: the post at a yard entrance naming its owner, about 2.2
+-- studs tall (3.3 in the yard, 60% of a player's height). A short steel
+-- post with a sign board bolted flat to its front, a blank face for the
+-- owner's name, and a warning lamp on top that will flash on a raid.
+-- Nothing reaches out past the post, so there is nothing to walk into.
 local HAZARD_YELLOW = { 0.9, 0.72, 0.15 }
 local LAMP_RED = { 0.85, 0.18, 0.12 }
 
 part("Post", nil, DARK_STEEL, function(mesh)
-	box(mesh, 0, 0, 0, 0.9, 0.9, 0.2)
-	box(mesh, 0, 0, 0.2, 0.35, 0.35, 6.8)
-	box(mesh, 1.2, 0, 6.6, 2.6, 0.2, 0.2)
-	strut(mesh, 0.1, 0, 5.6, 1.1, 0, 6.6, 0.12)
-	for _, x in { 0.6, 2.2 } do
-		cylinder(mesh, x, 0, 6.35, 0.03, 0.5, "z", 6)
-	end
+	box(mesh, 0, 0, 0, 0.7, 0.7, 0.12)
+	box(mesh, 0, 0, 0.12, 0.25, 0.25, 1.68)
+	-- Cap the lamp stands on.
+	box(mesh, 0, 0, 1.8, 0.34, 0.34, 0.04)
 end, nil, 0.5)
 part("Sign", nil, HAZARD_YELLOW, function(mesh)
-	box(mesh, 1.4, 0, 4.1, 2.2, 0.1, 2.0)
-	box(mesh, 1.4, -0.06, 4.3, 1.8, 0.04, 1.6)
+	box(mesh, 0, -0.22, 0.7, 1.5, 0.1, 0.85)
+	box(mesh, 0, -0.28, 0.78, 1.24, 0.04, 0.69)
 end, nil, 0.45)
 part("Lamp", nil, LAMP_RED, function(mesh)
-	cylinder(mesh, 0, 0, 7.2, 0.26, 0.4, "z", 12)
-	sphere(mesh, 0, 0, 7.4, 0.24, 0.24, 0.2, 6, 12)
+	cylinder(mesh, 0, 0, 1.96, 0.16, 0.24, "z", 12)
+	sphere(mesh, 0, 0, 2.08, 0.15, 0.15, 0.12, 6, 12)
 end, nil, 0)
 part("Fittings", nil, STEEL, function(mesh)
-	-- Anchor bolts on the base and a conduit carrying power to the lamp.
-	for _, x in { -0.32, 0.32 } do
-		for _, y in { -0.32, 0.32 } do
-			bolt(mesh, x, y, 0.2, "z", 0.06)
+	-- Anchor bolts on the base, and brackets holding the sign to the post.
+	for _, x in { -0.24, 0.24 } do
+		for _, y in { -0.24, 0.24 } do
+			bolt(mesh, x, y, 0.12, "z", 0.05)
 		end
 	end
-	box(mesh, 0, -0.32, 1.0, 0.4, 0.3, 0.5)
-	tube(mesh, { { 0, -0.27, 1.5 }, { 0, -0.24, 6.8 }, { 0, -0.12, 7.1 } }, 0.05, 6)
+	for _, z in { 0.86, 1.36 } do
+		box(mesh, 0, -0.15, z, 0.4, 0.1, 0.1)
+		for _, x in { -0.5, 0.5 } do
+			bolt(mesh, x, -0.28, z + 0.05, "y", 0.04)
+		end
+	end
+	-- Conduit carrying power up the back of the post to the lamp.
+	box(mesh, 0, 0.2, 0.3, 0.2, 0.15, 0.25)
+	tube(mesh, { { 0, 0.17, 0.55 }, { 0, 0.16, 1.76 }, { 0, 0.08, 1.86 } }, 0.035, 6)
 	-- Wire cage guarding the lamp.
 	for i = 0, 3 do
 		local a = i * TAU / 4 + TAU / 8
-		strut(mesh, math.cos(a) * 0.3, math.sin(a) * 0.3, 7.15, math.cos(a) * 0.3, math.sin(a) * 0.3, 7.6, 0.04)
+		strut(mesh, math.cos(a) * 0.2, math.sin(a) * 0.2, 1.84, math.cos(a) * 0.2, math.sin(a) * 0.2, 2.16, 0.03)
 	end
-	ring(mesh, 0, 0, 7.6, 0.26, 0.32, 0.05, "z", 12)
-	ring(mesh, 0, 0, 7.15, 0.26, 0.34, 0.08, "z", 12)
-	-- Shackles where the sign hangs.
-	for _, x in { 0.6, 2.2 } do
-		ring(mesh, x, 0, 6.15, 0.04, 0.09, 0.04, "y", 8)
-	end
+	ring(mesh, 0, 0, 2.16, 0.17, 0.22, 0.035, "z", 12)
+	ring(mesh, 0, 0, 1.86, 0.17, 0.23, 0.05, "z", 12)
 end, nil, 0.5)
 finishParts()
