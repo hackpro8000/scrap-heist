@@ -39,12 +39,15 @@ local STONE = { 0.46, 0.45, 0.5 }
 -- the rock it sits on stands proud.
 local DIRT = { 0.45, 0.33, 0.23 }
 local DIRT_TRANSITION = { 0.33, 0.5 }
--- Above that, rock already shows through the dirt in patches: a rock still
--- under dirt may have a slab of its outer face bare below a tilted line,
--- the chance rising from nothing at PATCH_FROM of the depth to every rock
--- where whole rocks start coming through. The slab is PATCH_THICKNESS studs
--- deep.
-local PATCH_FROM = 0.12
+-- Above that, rock already shows through the dirt in slabs: a rock still
+-- under dirt may have up to PATCHES slabs of its faces bare below tilted
+-- lines, each facing out from the island's centre within PATCH_SPREAD
+-- radians. The chance of each rises from nothing at PATCH_FROM of the depth
+-- to certain at PATCH_FULL. A slab is PATCH_THICKNESS studs deep.
+local PATCHES = 2
+local PATCH_FROM = 0.04
+local PATCH_FULL = 0.25
+local PATCH_SPREAD = math.rad(45)
 local PATCH_THICKNESS = { 0.6, 1.1 }
 -- The colours blend too, over a wider share of the depth: dirt greys toward
 -- stone and stone keeps a dirty tint across COLOR_TRANSITION, the line
@@ -425,31 +428,38 @@ for _, column in columns do
 	local dirt = bevelled(carve(faces, { 0, 0, 1 }, dirtLine), outward, bevel)
 	local stone = carve(faces, { 0, 0, -1 }, -dirtLine)
 	column.solids = { { faces = dirt, dirt = true }, { faces = stone, dirt = false } }
+	-- The stone shows from below the dirt.
+	column.shownFrom = math.min(dirtLine, column.peak[3])
 
 	local middle = (shown + dirtLine) / 2 / islandDepth
-	local chance = math.clamp((middle - PATCH_FROM) / (DIRT_TRANSITION[1] - PATCH_FROM), 0, 1)
-	if hash(index, 34) < chance and dirtLine - shown > 1 then
-		local heading = outward + (hash(index, 35) - 0.5) * 0.6
+	local chance = math.clamp((middle - PATCH_FROM) / (PATCH_FULL - PATCH_FROM), 0, 1)
+	if dirtLine - shown <= 1 then
+		continue
+	end
+	-- Each slab is cut from the dirt left after the last, so they sit side
+	-- by side round the rock.
+	local rest, solids = dirt, { { faces = stone, dirt = false } }
+	for k = 1, PATCHES do
+		if hash(index, 204 + k * 10) >= chance then
+			continue
+		end
+		local heading = outward + (hash(index, 205 + k * 10) - 0.5) * 2 * PATCH_SPREAD
 		local across = { math.cos(heading), math.sin(heading), 0 }
-		local thickness = PATCH_THICKNESS[1] + (PATCH_THICKNESS[2] - PATCH_THICKNESS[1]) * hash(index, 36)
-		local face = farthestAlong(dirt, across) - thickness
-		local slab = carve(dirt, { -across[1], -across[2], 0 }, -face)
-		local rest = carve(dirt, across, face)
-		-- The patch's top line, tilted, somewhere down what shows of the rock.
-		local top = shown + (dirtLine - shown) * (0.2 + 0.5 * hash(index, 37))
-		local tx, ty = (hash(index, 38) - 0.5) * 0.6, (hash(index, 39) - 0.5) * 0.6
+		local thickness = PATCH_THICKNESS[1] + (PATCH_THICKNESS[2] - PATCH_THICKNESS[1]) * hash(index, 206 + k * 10)
+		local face = farthestAlong(rest, across) - thickness
+		local slab = carve(rest, { -across[1], -across[2], 0 }, -face)
+		rest = carve(rest, across, face)
+		-- The slab's top line, tilted, somewhere down what shows of the rock.
+		local top = shown + (dirtLine - shown) * (0.15 + 0.6 * hash(index, 207 + k * 10))
+		local tx, ty = (hash(index, 208 + k * 10) - 0.5) * 0.6, (hash(index, 209 + k * 10) - 0.5) * 0.6
 		local length = math.sqrt(tx * tx + ty * ty + 1)
 		local down = { tx / length, ty / length, 1 / length }
 		local line = down[1] * column.peak[1] + down[2] * column.peak[2] + down[3] * top
-		column.solids = {
-			{ faces = rest, dirt = true },
-			{ faces = bevelled(carve(slab, down, line), outward, bevel * 0.7), dirt = true },
-			{ faces = carve(slab, { -down[1], -down[2], -down[3] }, -line), dirt = false },
-			{ faces = stone, dirt = false },
-		}
+		table.insert(solids, { faces = bevelled(carve(slab, down, line), heading, bevel * 0.7), dirt = true })
+		table.insert(solids, { faces = carve(slab, { -down[1], -down[2], -down[3] }, -line), dirt = false })
 	end
-	-- The stone shows from below the dirt.
-	column.shownFrom = math.min(dirtLine, column.peak[3])
+	table.insert(solids, { faces = rest, dirt = true })
+	column.solids = solids
 end
 
 -- Each face's plane, as a unit normal pointing out and its distance.
