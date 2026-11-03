@@ -971,7 +971,7 @@ local function finishParts()
 	end
 end
 local function buildYardIsland()
-local CACHE_KEY = "YardIsland-3f71c8c3e03aa0c7"
+local CACHE_KEY = "YardIsland-4e2be22217e2850d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1868,7 +1868,11 @@ local STONE = { 0.46, 0.45, 0.5 }
 -- dirt's bottom edge is bevelled back DIRT_BEVEL studs on its outer side, so
 -- the rock it sits on stands proud.
 local DIRT = { 0.33, 0.24, 0.18 }
-local DIRT_TRANSITION = { 0.33, 0.5 }
+local DIRT_TRANSITION = { 0.2, 0.65 }
+-- Where a rock comes through, the line between its dirt and its stone tilts
+-- by up to DIRT_TILT radians, each rock its own way, so the line wanders
+-- round the island instead of stepping level.
+local DIRT_TILT = math.rad(25)
 -- Above that, rock already shows through the dirt in slabs: a rock still
 -- under dirt may have up to PATCHES slabs of its faces bare below tilted
 -- lines, each facing out from the island's centre within PATCH_SPREAD
@@ -1947,6 +1951,9 @@ local CRACK_SEGMENTS = 4
 local CRACK_WIDTH = { 0.1 * DETAIL, 0.18 * DETAIL }
 local CRACK_BRANCH = 0.4
 local DIRT_BEVEL = { 0.3 * DETAIL, 0.6 * DETAIL }
+-- How steeply each rock's bevel slants, in radians up from flat; each rock
+-- takes its own angle in this range, so the bevels don't all match.
+local DIRT_BEVEL_LIFT = { math.rad(25), math.rad(65) }
 -- The dirt's outer edges and corners are rounded off on this radius, each
 -- edge in this many facets, so it reads soft rather than jagged.
 local DIRT_ROUND = 0.6 * DETAIL
@@ -2394,9 +2401,8 @@ local function farthestAlong(faces, n): number
 end
 
 -- Cuts a solid's outer bottom edge off, `depth` studs in along a slant facing
--- out from the island's centre and down.
-local function bevelled(faces, outward: number, depth: number)
-	local lift = math.rad(45)
+-- out from the island's centre and down, `lift` radians up from flat.
+local function bevelled(faces, outward: number, depth: number, lift: number)
 	local n = { math.cos(outward) * math.cos(lift), math.sin(outward) * math.cos(lift), math.sin(lift) }
 	return carve(faces, n, farthestAlong(faces, n) - depth)
 end
@@ -2419,8 +2425,13 @@ for _, column in columns do
 	local shown = column.shownFrom
 	local outward = math.atan2(column.peak[2], column.peak[1])
 	local bevel = DIRT_BEVEL[1] + (DIRT_BEVEL[2] - DIRT_BEVEL[1]) * hash(index, 31)
-	local dirt = bevelled(carve(faces, { 0, 0, 1 }, dirtLine), outward, bevel)
-	local stone = carve(faces, { 0, 0, -1 }, -dirtLine)
+	local lift = DIRT_BEVEL_LIFT[1] + (DIRT_BEVEL_LIFT[2] - DIRT_BEVEL_LIFT[1]) * hash(index, 34)
+	-- The tilted line passes through dirtLine under the rock's tip.
+	local tilt, heading = DIRT_TILT * hash(index, 32), hash(index, 33) * 2 * math.pi
+	local down = { math.sin(tilt) * math.cos(heading), math.sin(tilt) * math.sin(heading), math.cos(tilt) }
+	local line = down[1] * column.peak[1] + down[2] * column.peak[2] + down[3] * dirtLine
+	local dirt = bevelled(carve(faces, down, line), outward, bevel, lift)
+	local stone = carve(faces, { -down[1], -down[2], -down[3] }, -line)
 	column.solids = { { faces = dirt, dirt = true }, { faces = stone, dirt = false } }
 	-- The stone shows from below the dirt.
 	column.shownFrom = math.min(dirtLine, column.peak[3])
@@ -2463,12 +2474,12 @@ for _, column in columns do
 			return down, math.max(down[1] * column.peak[1] + down[2] * column.peak[2] + down[3] * top, level)
 		end
 		local down, line = topLine(207 + k * 10)
-		table.insert(solids, { faces = bevelled(carve(slab, down, line), heading, bevel * 0.7), dirt = true })
+		table.insert(solids, { faces = bevelled(carve(slab, down, line), heading, bevel * 0.7, lift), dirt = true })
 		local bare = carve(slab, { -down[1], -down[2], -down[3] }, -line)
 		-- A second line peaks the rock: the dirt it cuts off stays dirt.
 		if hash(index, 320 + k * 10) < PATCH_PEAKED then
 			local second, secondLine = topLine(330 + k * 10)
-			table.insert(solids, { faces = bevelled(carve(bare, second, secondLine), heading, bevel * 0.7), dirt = true })
+			table.insert(solids, { faces = bevelled(carve(bare, second, secondLine), heading, bevel * 0.7, lift), dirt = true })
 			bare = carve(bare, { -second[1], -second[2], -second[3] }, -secondLine)
 		end
 		-- Chipped into a rough stone rather than a flat slab.
@@ -3516,7 +3527,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildYardIsland] = "YardIsland-156958d32a153173"
+buildKeys[buildYardIsland] = "YardIsland-cb99ff1d8a284018"
 local function buildGroundTile()
 local CACHE_KEY = "GroundTile-06e115bba8685577"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
