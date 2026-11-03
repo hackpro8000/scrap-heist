@@ -1,4 +1,4 @@
-local CACHE_KEY = "ArenaDrone-e692480500c0aa12"
+local CACHE_KEY = "ArenaDrone-f1043bd1df73d4af"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1293,5 +1293,88 @@ for i, degrees in ARM_DIRECTIONS do
 		tube(mesh, points, 0.45, 8)
 	end, true, RUBBER, 256)
 end
+
+-- The battery pack, slung under the middle of the deck: a row of cell
+-- modules in an olive casing, held in a girder cradle that hangs from the
+-- joists, with copper terminals on top feeding a heavy cable out to each
+-- arm.
+local BATTERY_OLIVE = { 0.33, 0.36, 0.25 }
+local BATTERY_TOP, BATTERY_BOTTOM = -14.5, -28
+local BATTERY_HALF_X, BATTERY_HALF_Y = 28, 20
+local BATTERY_CELLS = 6
+local CELL_GAP = 0.5
+local CRADLE_GAP = 1.2
+local JOIST_BOTTOM = -PLATE_THICK - 1.6 - BOWL_DEPTH
+part("Battery", nil, BATTERY_OLIVE, function(mesh)
+	local cell = (2 * BATTERY_HALF_X - (BATTERY_CELLS - 1) * CELL_GAP) / BATTERY_CELLS
+	for c = 0, BATTERY_CELLS - 1 do
+		local x = -BATTERY_HALF_X + cell / 2 + c * (cell + CELL_GAP)
+		box(mesh, x, 0, BATTERY_BOTTOM, cell, 2 * BATTERY_HALF_Y, BATTERY_TOP - BATTERY_BOTTOM)
+		-- A raised lid on each module.
+		box(mesh, x, 0, BATTERY_TOP, cell - 1, 2 * BATTERY_HALF_Y - 2, 0.6)
+	end
+	-- The spine the modules are bolted to, running underneath.
+	box(mesh, 0, 0, BATTERY_BOTTOM - 0.8, 2 * BATTERY_HALF_X + 1, 6, 0.8)
+end, nil, 0.45, 512, nil, nil, 1.2)
+part("BatteryWarning", nil, HAZARD_YELLOW, function(mesh)
+	-- A warning plate on each long side.
+	for _, side in { -1, 1 } do
+		box(mesh, 0, side * (BATTERY_HALF_Y + 0.1), BATTERY_BOTTOM + 4, 20, 0.3, 5.5)
+	end
+end, nil, 0.35, 128)
+part("BatteryStraps", nil, RUBBER_BLACK, function(mesh)
+	for _, x in { -18, 0, 18 } do
+		local h = BATTERY_HALF_Y + CRADLE_GAP * 0.5
+		box(mesh, x, 0, BATTERY_TOP + 0.6, 2, 2 * h, 0.3)
+		box(mesh, x, 0, BATTERY_BOTTOM - 1.1, 2, 2 * h, 0.3)
+		for _, side in { -1, 1 } do
+			box(mesh, x, side * h, BATTERY_BOTTOM - 1.1, 2, 0.3, BATTERY_TOP - BATTERY_BOTTOM + 2)
+		end
+	end
+end, nil, RUBBER, 256)
+part("Terminals", nil, COPPER, function(mesh)
+	for i, degrees in ARM_DIRECTIONS do
+		local angle = math.rad(degrees)
+		local tx, ty = math.cos(angle) * 13 * math.sqrt(2), math.sin(angle) * 10 * math.sqrt(2)
+		cylinder(mesh, tx, ty, BATTERY_TOP + 1.4, 1.4, 1.6, "z", 10)
+		cylinder(mesh, tx, ty, BATTERY_TOP + 2.4, 0.9, 0.8, "z", 8)
+	end
+end, nil, 0.5, 128)
+part("Cradle", nil, GIRDER, function(mesh)
+	local hx, hy = BATTERY_HALF_X + CRADLE_GAP, BATTERY_HALF_Y + CRADLE_GAP
+	local low, high = BATTERY_BOTTOM - 1.6, BATTERY_TOP - 1
+	local corners = { { -hx, -hy }, { hx, -hy }, { hx, hy }, { -hx, hy } }
+	for k, c in corners do
+		local n = corners[k % 4 + 1]
+		-- A frame round the bottom and one round the top, joined at the corners.
+		strut(mesh, c[1], c[2], low, n[1], n[2], low, CHORD)
+		strut(mesh, c[1], c[2], high, n[1], n[2], high, WEB)
+		strut(mesh, c[1], c[2], low, c[1], c[2], high, CHORD)
+	end
+	-- Cross members under the pack.
+	for _, x in { -18, 0, 18 } do
+		strut(mesh, x, -hy, low, x, hy, low, WEB)
+	end
+	-- Hangers from the top corners up to the joists, splayed so they meet
+	-- the joists running out to the octagon's corners.
+	for k, c in corners do
+		local jx, jy = corner(40, ({ 4, 7, 0, 3 })[k])
+		strut(mesh, c[1], c[2], high, jx, jy, JOIST_BOTTOM, CHORD)
+	end
+end, nil, paintHazard, GIRDER_TEXTURE, nil, nil, 1)
+part("MainCables", nil, RUBBER_BLACK, function(mesh)
+	for _, degrees in ARM_DIRECTIONS do
+		local angle = math.rad(degrees)
+		local ux, uy = math.cos(angle), math.sin(angle)
+		local tx, ty = ux * 13 * math.sqrt(2), uy * 10 * math.sqrt(2)
+		local _, _, zb = armShape(ARM_ROOT)
+		tube(mesh, {
+			{ tx, ty, BATTERY_TOP + 2.8 },
+			{ tx * 1.3, ty * 1.3, BATTERY_TOP + 4.5 },
+			{ ux * 40, uy * 40, JOIST_BOTTOM - 1.5 },
+			{ ux * (ARM_ROOT - 2), uy * (ARM_ROOT - 2), zb - 0.9 },
+		}, 0.7, 8)
+	end
+end, true, RUBBER, 256)
 
 finishParts()
