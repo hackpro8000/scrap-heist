@@ -55,13 +55,19 @@ local PATCH_THICKNESS = { 0.4, 1.4 }
 local PATCH_LEAN = 0.5
 local PATCH_TILT = 0.8
 local PATCH_PEAKED = 0.6
+-- The bare rock of a slab is chiselled into a rough stone: this many chips
+-- (fewest, most), each biting this deep (studs) off its outer side at its
+-- own angle, up to PATCH_CHIP_SPREAD radians off straight out.
+local PATCH_CHIPS = { 4, 8 }
+local PATCH_CHIP_DEPTH = { 0.3, 0.8 }
+local PATCH_CHIP_SPREAD = math.rad(65)
 -- The colours blend too, over a wider share of the depth: dirt greys toward
 -- stone and stone keeps a dirty tint across COLOR_TRANSITION, the line
 -- wandering by COLOR_WOBBLE of the depth. At any depth the dirt stays
 -- DIRT_LEAD further toward dirt than the stone, so the two still read apart.
 local COLOR_TRANSITION = { 0.08, 0.55 }
 local COLOR_WOBBLE = 0.06
-local DIRT_LEAD = 0.2
+local DIRT_LEAD = 0.45
 local DIRT_BEVEL = { 0.3, 0.6 }
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
@@ -475,6 +481,19 @@ for _, column in columns do
 			local second, secondLine = topLine(330 + k * 10)
 			table.insert(solids, { faces = bevelled(carve(bare, second, secondLine), heading, bevel * 0.7), dirt = true })
 			bare = carve(bare, { -second[1], -second[2], -second[3] }, -secondLine)
+		end
+		-- Chipped into a rough stone rather than a flat slab.
+		local chips = PATCH_CHIPS[1] + math.floor(hash(index, 400 + k * 10) * (PATCH_CHIPS[2] - PATCH_CHIPS[1] + 1))
+		for c = 1, chips do
+			local seed = 500 + k * 100 + c * 7
+			local yaw = heading + (hash(index, seed) - 0.5) * 2 * PATCH_CHIP_SPREAD
+			local pitch = (hash(index, seed + 1) - 0.5) * 2 * PATCH_CHIP_SPREAD
+			local n = { math.cos(yaw) * math.cos(pitch), math.sin(yaw) * math.cos(pitch), math.sin(pitch) }
+			local depth = PATCH_CHIP_DEPTH[1] + (PATCH_CHIP_DEPTH[2] - PATCH_CHIP_DEPTH[1]) * hash(index, seed + 2)
+			local plane = farthestAlong(bare, n) - depth
+			if plane > -math.huge then
+				bare = carve(bare, n, plane)
+			end
 		end
 		table.insert(solids, { faces = bare, dirt = false })
 	end
