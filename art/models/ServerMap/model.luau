@@ -5375,7 +5375,7 @@ end
 end
 buildKeys[buildMarketIsland] = "MarketIsland-ef3de9a4b8aec7b6"
 local function buildColumnIsland()
-local CACHE_KEY = "ColumnIsland-a76934292f779ba7"
+local CACHE_KEY = "ColumnIsland-5616253eff036356"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -6194,7 +6194,7 @@ end
 -- corners and edges. The model is built the mountain way up (heights,
 -- summit, foot) and flipped as it is written out. Centered on the origin,
 -- top at z = 0.
-local RADIUS = 38
+local RADIUS = 42
 local PEAK = 53
 -- Stone sizes at the summit and at the foot, as shares of the radius, so
 -- a bigger island has bigger stones rather than more of them.
@@ -7876,7 +7876,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildColumnIsland] = "ColumnIsland-ae29281ebb94add7"
+buildKeys[buildColumnIsland] = "ColumnIsland-68fb3eac17af4d4c"
 local function buildShopConceptContainer()
 local CACHE_KEY = "ShopConceptContainer-6558ebfd0e67d87c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -28956,18 +28956,18 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-ec7805c51c55b33e"
-slabKeys[29729] = "b19edf1d37dcc4ce-03fb9ebc63adf1c5"
-slabKeys[29799] = "b19edf1d37dcc4ce-8f291df974f34236"
-slabKeys[29805] = "b19edf1d37dcc4ce-f8f4f9cdd6dd6cae"
-slabKeys[29815] = "b19edf1d37dcc4ce-cfb837b03ab263ad"
-slabKeys[29862] = "b19edf1d37dcc4ce-ea3f2e07e90ed0f2"
-slabKeys[29882] = "b19edf1d37dcc4ce-895bec6dbbe0aeac"
-slabKeys[29939] = "b19edf1d37dcc4ce-f4f9015cc7a52d81"
-slabKeys[30029] = "b19edf1d37dcc4ce-f0d9fbf42647fd21"
-slabKeys[30303] = "b19edf1d37dcc4ce-2cb59b3b1861b555"
-slabKeys[30333] = "b19edf1d37dcc4ce-886388888fe59ef3"
-slabKeys[30340] = "b19edf1d37dcc4ce-aed925c84ae586a9"
-slabKeys[30368] = "b19edf1d37dcc4ce-5f3dede5e341fed8"
+slabKeys[29729] = "26f0c68f2c0806b0-03fb9ebc63adf1c5"
+slabKeys[29799] = "26f0c68f2c0806b0-8f291df974f34236"
+slabKeys[29805] = "26f0c68f2c0806b0-f8f4f9cdd6dd6cae"
+slabKeys[29815] = "26f0c68f2c0806b0-cfb837b03ab263ad"
+slabKeys[29862] = "26f0c68f2c0806b0-ea3f2e07e90ed0f2"
+slabKeys[29882] = "26f0c68f2c0806b0-895bec6dbbe0aeac"
+slabKeys[29939] = "26f0c68f2c0806b0-f4f9015cc7a52d81"
+slabKeys[30029] = "26f0c68f2c0806b0-f0d9fbf42647fd21"
+slabKeys[30303] = "26f0c68f2c0806b0-2cb59b3b1861b555"
+slabKeys[30333] = "26f0c68f2c0806b0-886388888fe59ef3"
+slabKeys[30340] = "26f0c68f2c0806b0-aed925c84ae586a9"
+slabKeys[30368] = "26f0c68f2c0806b0-5f3dede5e341fed8"
 -- uses: ArenaIsland PadIsland MarketIsland ColumnIsland ShopConceptContainer ScrapTreeLamppost VendingMachine ParkBench ScrapPalm ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardFooting YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
@@ -29011,8 +29011,8 @@ local ARENA_ISLAND = 61
 -- How far the yard island's grass reaches in front of the gate, where the
 -- bridge lands, and how its island is turned under the yard (as in
 -- YardLayout.luau) so the fence corners stand on its lobes. Its turf
--- stands 1.29 studs above its origin.
-local YARD_ISLAND, YARD_ISLAND_TURN = 40, 305
+-- stands 1.43 studs above its origin.
+local YARD_ISLAND, YARD_ISLAND_TURN = 46, 305
 -- The yard's pieces are laid out on a 32-stud plan and built this many
 -- times their own size, as in YardLayout.luau.
 local YARD_SCALE = 1.5
@@ -29021,11 +29021,11 @@ local YARD_SCALE = 1.5
 local DECK = 2
 local YARD_TIER = 6
 -- The avenue's plaza pads, east of the road, and the yards either side.
-local PAD_XS = { 100, 184, 268, 352 }
+local PAD_XS = { 100, 194, 288, 382 }
 local PAD_ISLAND, PAD_PLAZA = 14, 11
-local YARD_OFFSET = 70
+local YARD_OFFSET = 74
 -- The market island closes the avenue's east end.
-local MARKET_X = 424
+local MARKET_X = 454
 local MARKET_ISLAND, MARKET_PLAZA = 38, 30
 
 local GROUND = { 0.3, 0.27, 0.22 }
@@ -30329,7 +30329,7 @@ for i = 1, 2 * #PAD_XS do
 	local side = if i % 2 == 1 then 1 else -1
 	local degrees = 180 - side * 90
 	local x, y = PAD_XS[(i + 1) // 2], side * YARD_OFFSET
-	place(`Island{i}`, buildColumnIsland, x, y, YARD_TIER - 1.29, degrees - 90 + YARD_ISLAND_TURN)
+	place(`Island{i}`, buildColumnIsland, x, y, YARD_TIER - 1.43, degrees - 90 + YARD_ISLAND_TURN)
 	slab(`Plot{i}`, function()
 		part("Slab", nil, PLOT, function(mesh)
 			box(mesh, 0, 0, YARD_TIER, 32 * YARD_SCALE, 32 * YARD_SCALE, 0.05)

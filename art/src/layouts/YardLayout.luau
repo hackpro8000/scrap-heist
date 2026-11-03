@@ -9,9 +9,9 @@
 
 -- The yard stands on a Column Island, its grass top level with the yard
 -- floor, turned so the island's lobes sit under the fence corners and its
--- bays fall between them. Its turf stands 1.29 studs above its origin.
+-- bays fall between them. Its turf stands 1.43 studs above its origin.
 local ISLAND_TURN = 305
-place("Island", buildColumnIsland, 0, 0, -1.29, ISLAND_TURN)
+place("Island", buildColumnIsland, 0, 0, -1.43, ISLAND_TURN)
 
 -- The yard's pieces are laid out on a 32-stud plan and built YARD_SCALE
 -- times their own size, so the avatar clears the gate.
