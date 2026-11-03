@@ -199,4 +199,133 @@ part("Joists", nil, GIRDER, function(mesh)
 	end
 end, nil, 0.6, GIRDER_TEXTURE)
 
+-- Four truss arms in an X, each a box truss of four chords tapering out
+-- from the ring to a motor 175 studs from the middle. Inside the ring the
+-- arm runs level under the grating, tied into the girder; past the ring
+-- it climbs to the motor mount.
+local ARM_DIRECTIONS = { 45, 135, 225, 315 }
+local MOTOR_OUT = 175
+local ARM_ROOT = RING_INNER + 1
+local ARM_PANEL = 8
+local ARM_TEXTURE, MOTOR_TEXTURE = 512, 256
+-- Half width across the arm, and its top and bottom chords' heights, at a
+-- distance out from the middle.
+local function armShape(r: number): (number, number, number)
+	local t = math.clamp((r - ARM_ROOT) / (MOTOR_OUT - ARM_ROOT), 0, 1)
+	local climb = math.clamp((r - RING_OUTER) / (MOTOR_OUT - RING_OUTER), 0, 1)
+	return lerp(7, 3, t), lerp(top, 3, climb), lerp(bottom, 0, climb)
+end
+-- The motors lean in towards the middle, so the propellers on them tilt
+-- that way too.
+local MOTOR_TILT = math.rad(8)
+local MOTOR_MOUNT = 3 + CHORD / 2
+
+-- Builds into a mesh tipped about a level axis through (px, py, pz), so
+-- whatever stands up from the pivot leans `angle` towards (-dx, -dy).
+local function leaning(mesh, px: number, py: number, pz: number, dx: number, dy: number, angle: number)
+	local c, s = math.cos(angle), math.sin(angle)
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local ox, oy, oz = x - px, y - py, z - pz
+			local out = ox * dx + oy * dy
+			local across = -ox * dy + oy * dx
+			out, oz = out * c - oz * s, out * s + oz * c
+			return mesh:vertex(px + out * dx - across * dy, py + out * dy + across * dx, pz + oz)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+for i, degrees in ARM_DIRECTIONS do
+	local angle = math.rad(degrees)
+	local ux, uy = math.cos(angle), math.sin(angle)
+	local function at(r: number, side: number, z: number): (number, number, number)
+		return ux * r - uy * side, uy * r + ux * side, z
+	end
+	-- Panel points along the arm, with one at the ring's outer wall where
+	-- the arm starts to climb.
+	local stations = { ARM_ROOT }
+	local r = ARM_ROOT
+	while r < MOTOR_OUT - 1 do
+		local nextR = math.min(r + ARM_PANEL, MOTOR_OUT)
+		if r < RING_OUTER - 1 and nextR > RING_OUTER - 1 then
+			nextR = RING_OUTER - 1
+		end
+		table.insert(stations, nextR)
+		r = nextR
+	end
+	part(`Arm{i}`, nil, GIRDER, function(mesh)
+		local function corners(r: number)
+			local w, zt, zb = armShape(r)
+			return { { at(r, -w, zt) }, { at(r, w, zt) }, { at(r, w, zb) }, { at(r, -w, zb) } }
+		end
+		local function beam(p, q, thick)
+			strut(mesh, p[1], p[2], p[3], q[1], q[2], q[3], thick)
+		end
+		for n, station in stations do
+			local frame = corners(station)
+			-- A square frame at every panel point.
+			for k = 1, 4 do
+				beam(frame[k], frame[k % 4 + 1], WEB)
+			end
+			if n < #stations then
+				local nextFrame = corners(stations[n + 1])
+				for k = 1, 4 do
+					beam(frame[k], nextFrame[k], CHORD)
+					-- A diagonal on each face, alternating direction.
+					local l = k % 4 + 1
+					if n % 2 == 0 then
+						beam(frame[k], nextFrame[l], WEB)
+					else
+						beam(frame[l], nextFrame[k], WEB)
+					end
+				end
+			end
+		end
+		-- The mount plate the motor stands on.
+		local mx, my = ux * MOTOR_OUT, uy * MOTOR_OUT
+		box(mesh, mx, my, 3, 15, 15, CHORD)
+	end, nil, 0.6, ARM_TEXTURE, nil, nil, 1)
+
+	-- The motor: a flanged base, a finned stator and a spinning bell on
+	-- top, leaning in towards the middle.
+	local mx, my = ux * MOTOR_OUT, uy * MOTOR_OUT
+	local base = MOTOR_MOUNT
+	part(`Motor{i}`, nil, DARK_STEEL, function(mesh)
+		local lean = leaning(mesh, mx, my, base, ux, uy, MOTOR_TILT)
+		cylinder(lean, mx, my, base + 4, 5.2, 7, "z", 20)
+		for f = 0, 4 do
+			ring(lean, mx, my, base + 1.6 + f * 1.25, 5.1, 6, 0.45, "z", 20)
+		end
+	end, 30, 0.45, MOTOR_TEXTURE)
+	part(`MotorTrim{i}`, nil, STEEL, function(mesh)
+		local lean = leaning(mesh, mx, my, base, ux, uy, MOTOR_TILT)
+		cylinder(lean, mx, my, base + 0.5, 7, 1, "z", 20)
+		for b = 0, 7 do
+			local a = b * TAU / 8
+			bolt(lean, mx + math.cos(a) * 6.3, my + math.sin(a) * 6.3, base + 1.05, "z", 0.35)
+		end
+		-- The bell, with the shaft the propeller will sit on.
+		cylinder(lean, mx, my, base + 8.4, 6, 1.8, "z", 20)
+		cylinder(lean, mx, my, base + 9.8, 1.2, 1.4, "z", 12)
+	end, 30, 0.3, MOTOR_TEXTURE)
+
+	-- Power cable along the underside of the arm, out to the motor.
+	part(`Cable{i}`, nil, RUBBER_BLACK, function(mesh)
+		local points = {}
+		for _, station in stations do
+			local _, _, zb = armShape(station)
+			table.insert(points, { at(station, 0, zb - 0.9) })
+		end
+		local last = points[#points]
+		table.insert(points, { last[1] - ux * 2, last[2] - uy * 2, MOTOR_MOUNT + 2 })
+		tube(mesh, points, 0.45, 8)
+	end, true, RUBBER, 256)
+end
+
 finishParts()
