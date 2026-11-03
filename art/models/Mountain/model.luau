@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-f5fb08d6320c422b"
+local CACHE_KEY = "Mountain-6b2acaa7d6214535"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -902,6 +902,19 @@ local STONE_BIT_CLEAR = 1.2
 -- The stones are stained with dirt: solid where they come out of it,
 -- breaking into blotches up to STONE_BIT_STAIN of their height.
 local STONE_BIT_STAIN = 1.6
+
+-- Drawn cracks in the dirt, running in from its sharp corners (sharper
+-- than CRACK_CORNER radians inside a face): CRACK_CHANCE of the corners have
+-- one, CRACK_LENGTH studs long in CRACK_SEGMENTS jagged steps, CRACK_WIDTH
+-- wide at the corner and thinning steadily to nothing at its end. CRACK_BRANCH
+-- of the cracks fork once.
+local CRACK = { 0.17, 0.12, 0.08 }
+local CRACK_CORNER = math.rad(150)
+local CRACK_CHANCE = 0.5
+local CRACK_LENGTH = { 0.6, 1.8 }
+local CRACK_SEGMENTS = 4
+local CRACK_WIDTH = { 0.1, 0.18 }
+local CRACK_BRANCH = 0.4
 local DIRT_BEVEL = { 0.3, 0.6 }
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
@@ -1811,6 +1824,113 @@ for _, face in dirtFaces do
 	end
 end
 
+-- The cracks, drawn over the dirt's coat as tapering brush strokes, one per
+-- step of a crack (already flipped).
+local crackStrokes = {}
+local crackSeed = 3
+local function crackRandom(): number
+	crackSeed = (crackSeed * 16807) % 2147483647
+	return crackSeed / 2147483647
+end
+-- Whether a point lies inside a convex face, `margin` studs in from its edges.
+local function insideFace(face, n, p, margin: number): boolean
+	for i, a in face do
+		local b = face[i % #face + 1]
+		local edge = { b[1] - a[1], b[2] - a[2], b[3] - a[3] }
+		local inward = unit(table.unpack(cross(n, edge)))
+		if (p[1] - a[1]) * inward[1] + (p[2] - a[2]) * inward[2] + (p[3] - a[3]) * inward[3] < margin then
+			return false
+		end
+	end
+	return true
+end
+-- A direction turned by `angle` about the face's normal.
+local function turned(v, n, angle: number)
+	local side = cross(n, v)
+	local c, s = math.cos(angle), math.sin(angle)
+	return { v[1] * c + side[1] * s, v[2] * c + side[2] * s, v[3] * c + side[3] * s }
+end
+-- A jagged line from `start` heading along `heading` in a face, stopping
+-- short of its edges.
+local function crackLine(face, n, start, heading, length: number)
+	local points = { start }
+	local step = length / CRACK_SEGMENTS
+	local at, way = start, heading
+	for _ = 1, CRACK_SEGMENTS do
+		way = turned(way, n, (crackRandom() - 0.5) * 1.1)
+		local nextAt = { at[1] + way[1] * step, at[2] + way[2] * step, at[3] + way[3] * step }
+		if not insideFace(face, n, nextAt, 0.04) then
+			break
+		end
+		table.insert(points, nextAt)
+		at = nextAt
+	end
+	return points
+end
+-- Lays a line down as a crack `width` wide at its start, thinning evenly
+-- along its length to nothing at its end.
+local function addCrack(points, normal, width: number)
+	if #points < 2 then
+		return
+	end
+	local total = 0
+	for i = 2, #points do
+		local a, b = points[i - 1], points[i]
+		total += math.sqrt((b[1] - a[1]) ^ 2 + (b[2] - a[2]) ^ 2 + (b[3] - a[3]) ^ 2)
+	end
+	local travelled = 0
+	for i = 2, #points do
+		local a, b = points[i - 1], points[i]
+		local length = math.sqrt((b[1] - a[1]) ^ 2 + (b[2] - a[2]) ^ 2 + (b[3] - a[3]) ^ 2)
+		local widthA = width * (1 - travelled / total)
+		local widthB = width * (1 - (travelled + length) / total)
+		travelled += length
+		table.insert(crackStrokes, {
+			start = { a[1], a[2], -a[3] },
+			along = { (b[1] - a[1]) / length, (b[2] - a[2]) / length, -(b[3] - a[3]) / length },
+			normal = { normal[1], normal[2], -normal[3] },
+			length = length,
+			width = widthA,
+			tail = widthB / widthA,
+			color = CRACK,
+		})
+	end
+end
+
+for _, face in dirtFaces do
+	local plane = planeOf(face)
+	if not plane then
+		continue
+	end
+	local n = { plane[1], plane[2], plane[3] }
+	for i, corner in face do
+		local before, after = face[(i - 2) % #face + 1], face[i % #face + 1]
+		local toBefore = unit(before[1] - corner[1], before[2] - corner[2], before[3] - corner[3])
+		local toAfter = unit(after[1] - corner[1], after[2] - corner[2], after[3] - corner[3])
+		local angle = math.acos(math.clamp(toBefore[1] * toAfter[1] + toBefore[2] * toAfter[2] + toBefore[3] * toAfter[3], -1, 1))
+		if angle > CRACK_CORNER or crackRandom() >= CRACK_CHANCE then
+			continue
+		end
+		-- Into the face, halfway between its two edges, give or take.
+		local heading = unit(toBefore[1] + toAfter[1], toBefore[2] + toAfter[2], toBefore[3] + toAfter[3])
+		heading = turned(heading, n, (crackRandom() - 0.5) * angle * 0.6)
+		local start = { corner[1] + heading[1] * 0.03, corner[2] + heading[2] * 0.03, corner[3] + heading[3] * 0.03 }
+		local length = CRACK_LENGTH[1] + (CRACK_LENGTH[2] - CRACK_LENGTH[1]) * crackRandom()
+		local width = CRACK_WIDTH[1] + (CRACK_WIDTH[2] - CRACK_WIDTH[1]) * crackRandom()
+		local line = crackLine(face, n, start, heading, length)
+		addCrack(line, n, width)
+		-- A fork off partway along, thinner and shorter.
+		if #line >= 3 and crackRandom() < CRACK_BRANCH then
+			local from = line[2]
+			local share = 1 / (#line - 1)
+			local away = unit(line[3][1] - from[1], line[3][2] - from[2], line[3][3] - from[3])
+			local fork = turned(away, n, (if crackRandom() < 0.5 then -1 else 1) * (0.5 + 0.4 * crackRandom()))
+			addCrack(crackLine(face, n, from, fork, length * 0.5), n, width * (1 - share) * 0.8)
+		end
+	end
+end
+
+
 -- The stones are grey, splotched like the rest and stained with the dirt
 -- they sit in: solid at the dirt line, in blotches higher up.
 local paintPebble = rusting(0.1, function(x, y, z)
@@ -2049,6 +2169,7 @@ for _, entry in parts do
 		highlightWidth = HIGHLIGHT_WIDTH,
 		cornerTaper = CORNER_TAPER,
 		heightRange = entry.heightRange,
+		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then crackStrokes else nil,
 	})
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
