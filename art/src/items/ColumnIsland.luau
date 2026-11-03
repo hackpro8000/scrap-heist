@@ -164,11 +164,11 @@ local GRASS_HEIGHT = 0.45 * DETAIL
 local GRASS_OUTSET = 0.25 * DETAIL
 local GRASS_LIP = { 0.3 * DETAIL, 0.6 * DETAIL }
 local DRIP_WIDTH = { 1.6 * DETAIL, 4 * DETAIL }
-local DRIP_LENGTH = { 0.6 * DETAIL, 2.2 * DETAIL }
+local DRIP_LENGTH = { 0.3 * DETAIL, 1.1 * DETAIL }
 local DRIP_OVERLAP = 0.35
 -- A finer octave of wobble over the wave: how far it moves the edge up or
 -- down, in studs, and how fast it changes along the rim.
-local DRIP_DETAIL = 0.6 * DETAIL
+local DRIP_DETAIL = 0.3 * DETAIL
 local DRIP_DETAIL_FREQUENCY = 1.1 / DETAIL
 -- Spacing of the points the rim is walked in, in studs.
 local GRASS_STEP = 0.25 * DETAIL
