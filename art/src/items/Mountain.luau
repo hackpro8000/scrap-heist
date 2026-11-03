@@ -79,6 +79,18 @@ local DIRT_DUSTING = 0.35
 local MOSS = { 0.28, 0.4, 0.17 }
 local MOSS_REACH = 0.8
 local MOSS_COVER = 0.45
+-- Rust runs down the stone from the dirt line, as if bled from scrap buried
+-- in the dirt: thin streaks RUST_COVER of the stone wide at the line,
+-- shrinking to nothing RUST_LENGTH studs below it, RUST_WIDTH studs across.
+local RUST = { 0.5, 0.24, 0.1 }
+local RUST_COVER = 0.35
+local RUST_LENGTH = 9
+local RUST_WIDTH = 0.8
+-- Soot blackens the lower stone in soft blotches, from SOOT_FROM of the
+-- island's depth down to the tip, where it covers SOOT_COVER of it.
+local SOOT = { 0.1, 0.09, 0.09 }
+local SOOT_FROM = 0.55
+local SOOT_COVER = 0.5
 
 -- Small whole stones half sunk in the dirt, like crushed cookie in ice
 -- cream: STONE_BITS of them per square stud of dirt near the top, rising to
@@ -774,8 +786,26 @@ local paintRock = rusting(0.1, function(x, y, z)
 			r, g, b = r + (dr - r) * trace, g + (dg - g) * trace, b + (db - b) * trace
 		end
 	end
-	-- Moss: soft-edged patches, less of them deeper down.
+	-- Rust: streaks stretched down the stone, thinning out below the line.
+	if rock then
+		local below = -z - rock.dirtLine
+		local reach = math.clamp(1 - below / RUST_LENGTH, 0, 1)
+		if below > -0.5 and reach > 0 then
+			local h = 1 / RUST_WIDTH
+			local streak = 0.5 + math.noise(x * h, y * h, z * 0.06 + 7.7) + 0.3 * math.noise(x * h * 2.5, y * h * 2.5, z * 0.3)
+			local rust = math.clamp((streak - (1 - RUST_COVER * reach)) / 0.1, 0, 1)
+			r, g, b = r + (RUST[1] - r) * rust, g + (RUST[2] - g) * rust, b + (RUST[3] - b) * rust
+		end
+	end
 	local share = -z / islandDepth
+	-- Soot: dark blotches spreading over the lower stone.
+	local sooting = math.clamp((share - SOOT_FROM) / (1 - SOOT_FROM), 0, 1)
+	if sooting > 0 then
+		local blot = 0.5 + math.noise(x * 0.3 + 53, y * 0.3, z * 0.3) + 0.3 * math.noise(x * 1.1, y * 1.1, z * 1.1 + 29)
+		local soot = 0.85 * math.clamp((blot - (1 - SOOT_COVER * sooting)) / 0.2, 0, 1)
+		r, g, b = r + (SOOT[1] - r) * soot, g + (SOOT[2] - g) * soot, b + (SOOT[3] - b) * soot
+	end
+	-- Moss: soft-edged patches, less of them deeper down.
 	local growth = math.clamp((MOSS_REACH - share) / (MOSS_REACH - DIRT_TRANSITION[1]), 0, 1)
 	if growth > 0 then
 		local patch = 0.5 + 0.5 * math.noise(x * 0.45 + 31, y * 0.45, z * 0.45) + 0.2 * math.noise(x * 1.6, y * 1.6 + 17, z * 1.6)
