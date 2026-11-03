@@ -73,6 +73,12 @@ local DIRT_LEAD = 0.45
 -- breaking through above the line keeps DIRT_DUSTING of them.
 local DIRT_TRACE = 4
 local DIRT_DUSTING = 0.35
+-- Moss grows on the stone in patches, thickest where the dirt gives way to
+-- rock and thinning out to nothing by MOSS_REACH of the island's depth.
+-- MOSS_COVER is the most of the stone it covers.
+local MOSS = { 0.28, 0.4, 0.17 }
+local MOSS_REACH = 0.8
+local MOSS_COVER = 0.45
 local DIRT_BEVEL = { 0.3, 0.6 }
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
@@ -712,6 +718,14 @@ local paintRock = rusting(0.1, function(x, y, z)
 			local dr, dg, db = soil(0.25 * blend)
 			r, g, b = r + (dr - r) * trace, g + (dg - g) * trace, b + (db - b) * trace
 		end
+	end
+	-- Moss: soft-edged patches, less of them deeper down.
+	local share = -z / islandDepth
+	local growth = math.clamp((MOSS_REACH - share) / (MOSS_REACH - DIRT_TRANSITION[1]), 0, 1)
+	if growth > 0 then
+		local patch = 0.5 + 0.5 * math.noise(x * 0.45 + 31, y * 0.45, z * 0.45) + 0.2 * math.noise(x * 1.6, y * 1.6 + 17, z * 1.6)
+		local moss = math.clamp((patch - (1 - MOSS_COVER * growth)) / 0.1, 0, 1)
+		r, g, b = r + (MOSS[1] - r) * moss, g + (MOSS[2] - g) * moss, b + (MOSS[3] - b) * moss
 	end
 	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
 end)
