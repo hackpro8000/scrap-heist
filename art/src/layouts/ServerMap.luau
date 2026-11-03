@@ -38,11 +38,11 @@ local HAZARD_WIDTH = 1.8
 -- Length of each yellow or black block in the bridges' hazard strips.
 local HAZARD_BLOCK = 0.6
 local ARENA_ISLAND = 61
--- How far the yard island's top reaches in front of the gate, where the
+-- How far the yard island's grass reaches in front of the gate, where the
 -- bridge lands, and how its island is turned under the yard (as in
--- YardLayout.luau) so the fence corners stand on its wider reaches. Its top
--- is its origin.
-local YARD_ISLAND, YARD_ISLAND_TURN = 39, 305
+-- YardLayout.luau) so the fence corners stand on its lobes. Its turf
+-- stands 1.43 studs above its origin.
+local YARD_ISLAND, YARD_ISLAND_TURN = 41, 305
 -- The yard's pieces are laid out on a 32-stud plan and built this many
 -- times their own size, as in YardLayout.luau.
 local YARD_SCALE = 1.5
@@ -753,10 +753,11 @@ end
 -- A plaza: an asphalt octagon at deck level on its own floating island,
 -- kerbed round the edge except where a bridge lands on one of its sides.
 -- The dirt dips just under the asphalt, as it does under the ring road.
--- `turn` turns the island's wider reaches under the plaza's corners.
-local function plazaIsland(label: string, x: number, y: number, buildIsland: () -> (), turn: number, plaza: number, seed: number, openings: { number })
-	-- The stone top sits 0.2 under the plaza so the floor never z-fights it.
-	place(`{label}Rock`, buildIsland, x, y, DECK - 0.2, turn)
+-- `turf` is how far the island's grass stands above its origin, and `turn`
+-- turns its lobes under the plaza's corners.
+local function plazaIsland(label: string, x: number, y: number, buildIsland: () -> (), turf: number, turn: number, plaza: number, seed: number, openings: { number })
+	-- The grass sits 0.2 under the plaza so the floor never z-fights it.
+	place(`{label}Rock`, buildIsland, x, y, DECK - 0.2 - turf, turn)
 	slab(label, function()
 		-- Chunked, so the market's wide plaza and its long kerb ring keep the
 		-- map's texel density instead of stretching one capped texture.
@@ -1315,11 +1316,11 @@ end
 -- a yard off either side, joined to the ring road, to each other and to the
 -- market at the far end by flat bridges.
 for k, padX in PAD_XS do
-	plazaIsland(`Pad{k}`, padX, 0, buildPadIsland, 340, PAD_PLAZA, 40 + k, { 0, 90, 180, 270 })
+	plazaIsland(`Pad{k}`, padX, 0, buildPadIsland, 0.71, 340, PAD_PLAZA, 40 + k, { 0, 90, 180, 270 })
 	local from = if k == 1 then ROAD_OUTER else PAD_XS[k - 1] + PAD_PLAZA
 	bridge(`Avenue{k}`, from, 0, 0, padX - PAD_PLAZA - from, 0, DECK, false)
 end
-plazaIsland("MarketIsland", MARKET_X, 0, buildMarketIsland, 335, MARKET_PLAZA, 60, { 180 })
+plazaIsland("MarketIsland", MARKET_X, 0, buildMarketIsland, 1.7, 335, MARKET_PLAZA, 60, { 180 })
 local lastPad = PAD_XS[#PAD_XS] + PAD_PLAZA
 bridge(`Avenue{#PAD_XS + 1}`, lastPad, 0, 0, MARKET_X - MARKET_PLAZA - lastPad, 0, DECK, false)
 
@@ -1360,7 +1361,7 @@ for i = 1, 2 * #PAD_XS do
 	local side = if i % 2 == 1 then 1 else -1
 	local degrees = 180 - side * 90
 	local x, y = PAD_XS[(i + 1) // 2], side * YARD_OFFSET
-	place(`Island{i}`, buildYardIsland, x, y, YARD_TIER, degrees - 90 + YARD_ISLAND_TURN)
+	place(`Island{i}`, buildYardIsland, x, y, YARD_TIER - 1.43, degrees - 90 + YARD_ISLAND_TURN)
 	slab(`Plot{i}`, function()
 		part("Slab", nil, PLOT, function(mesh)
 			box(mesh, 0, 0, YARD_TIER, 32 * YARD_SCALE, 32 * YARD_SCALE, 0.05)
