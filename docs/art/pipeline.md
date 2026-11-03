@@ -132,10 +132,10 @@ scripts/checkpoint-model.sh <Name> "phase N: <Name> - <change>"
 The checkpoint also renders four turns round the model into `views.png`, so a
 change needs no separate preview pass.
 
-It rebuilds the model, copies `preview.png` to `screenshot.png`, and commits and pushes the `model.luau` source on the `models` branch. Send that screenshot to the user after each change.
+It rebuilds the model, copies `preview.png` to `screenshot.png`, and commits and pushes the `model.luau` source on the current branch (`main`). Send that screenshot to the user after each change.
 
-### Branches
-Generated files (`.glb`, textures, `preview.png`, `screenshot.png`) are gitignored on every branch; rebuild them with `scripts/build-model.sh <Name>`. Only `model.luau` (and a `sketch.png`, if any) is committed. The code branch keeps the tooling (`modelkit`, build scripts, `model.luau` sources) and these docs. Merge the code branch into `models` to pick up tooling changes.
+### Branch
+Code, tooling and models all live on `main`; there is no separate models branch. Generated files (`.glb`, textures, `preview.png`, `screenshot.png`) are gitignored; rebuild them with `scripts/build-model.sh <Name>`. Only `model.luau` (and a `sketch.png`, if any) is committed.
 
 ## Lessons from past models
 
@@ -161,7 +161,7 @@ Loop for each change:
 1. Get the user to approve a sketch before modeling anything new.
 2. Edit `art/src`, then `scripts/assemble-model.sh <Name>`.
 3. `scripts/view-model.sh <Name> <out.png>` (4 turntable angles). Shrink the render before viewing it to save context.
-4. `scripts/checkpoint-model.sh <n> "<msg>"` on `models`, bring the changed paths onto the code branch with `git checkout origin/models -- <paths>`, commit, push, and send the user the screenshot.
+4. `scripts/checkpoint-model.sh <n> "<msg>"`, which commits and pushes, then send the user the screenshot.
 
 Rules:
 - Batch small models into one pass.
