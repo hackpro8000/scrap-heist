@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-bbcd0a0b3c7367e2"
+local CACHE_KEY = "Mountain-5d1c6805cf4b362b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -978,7 +978,7 @@ local DRIP_SHADE = 0.35
 -- (SCORCH_COVER of it) and worn through to the dirt in bald ones
 -- (BALD_COVER). Each patch kind is soft noise this many studs across.
 local GRASS_OLIVE = { 0.42, 0.42, 0.22 }
-local GRASS_OLIVE_COVER = 0.4
+local GRASS_OLIVE_COVER = 0.3
 local SCORCH = { 0.15, 0.12, 0.09 }
 local SCORCH_COVER = 0.18
 local BALD_COVER = 0.12
@@ -2229,7 +2229,7 @@ local paintGrass = rusting(0, function(x, y, z)
 	-- covering `cover` of the grass.
 	local function patch(cover: number, seed: number): number
 		local u, v = x / GRASS_PATCH_SIZE + seed, y / GRASS_PATCH_SIZE
-		local n = 0.5 + 0.5 * math.noise(u, v, seed) + 0.2 * math.noise(u * 3, v * 3, seed + 5)
+		local n = 0.5 + math.noise(u, v, seed) + 0.3 * math.noise(u * 3, v * 3, seed + 5)
 		return math.clamp((n - (1 - cover)) / 0.12, 0, 1)
 	end
 	local function toward(r, g, b, c, t)
