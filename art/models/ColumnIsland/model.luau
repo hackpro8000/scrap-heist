@@ -1,4 +1,4 @@
-local CACHE_KEY = "ColumnIsland-2b52bad7faca0c56"
+local CACHE_KEY = "ColumnIsland-576cab7e228666ae"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -821,7 +821,7 @@ local RADIUS = 38
 local PEAK = 53
 -- Stone sizes at the summit and at the foot, as shares of the radius, so
 -- a bigger island has bigger stones rather than more of them.
-local SMALLEST, LARGEST = 0.035 * RADIUS, 0.225 * RADIUS
+local SMALLEST, LARGEST = 0.055 * RADIUS, 0.34 * RADIUS
 -- Stones are scattered a stone's width past the rim, so rim cells close
 -- on real neighbours before the ones outside are dropped.
 local SCATTER = RADIUS + LARGEST
