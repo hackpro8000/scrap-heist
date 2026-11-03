@@ -48,6 +48,23 @@ local HIGHLIGHT_WIDTH = 4
 -- Studs over which a highlight thins from full width at a corner.
 local CORNER_TAPER = 0.5
 
+-- Grass over the top: a turf slab GRASS_HEIGHT thick, pushed GRASS_OUTSET
+-- past the rim, whose edge hangs down as a lip (shallowest and deepest, in
+-- studs) broken by tongues of grass dripping further down. Drips start
+-- DRIP_GAP apart along the rim, each DRIP_WIDTH across and DRIP_LENGTH
+-- below the lip.
+local GRASS = { 0.36, 0.58, 0.25 }
+local GRASS_HEIGHT = 0.35
+local GRASS_OUTSET = 0.25
+local GRASS_LIP = { 0.3, 0.6 }
+local DRIP_GAP = { 0.8, 2.6 }
+local DRIP_WIDTH = { 0.8, 2 }
+local DRIP_LENGTH = { 0.6, 2.2 }
+-- Spacing of the points the rim is walked in, in studs.
+local GRASS_STEP = 0.35
+-- How much the grass darkens toward the tip of the deepest drip.
+local DRIP_SHADE = 0.35
+
 -- Fixed per-column jitter, so the columns look uneven but every build matches.
 local function hash(i: number, j: number): number
 	local n = math.sin(i * 127.1 + j * 311.7) * 43758.5453
@@ -614,18 +631,151 @@ chunkedPart("Columns", nil, STONE, function(mesh)
 			end
 		end
 	end
-
-	-- The top's triangles share their corners, so it unwraps as one piece.
-	local outline = topOutline()
-	local corners = {}
-	for i, p in outline do
-		corners[i] = mesh:vertex(p[1], p[2], 0)
-	end
-	-- Facing up once flipped, so wound the other way from the feet.
-	for _, t in earClip(outline) do
-		mesh:face({ corners[t[3]], corners[t[2]], corners[t[1]] })
-	end
+	-- The flat top is left open: the grass covers it.
 end, false, paintRock, true, EDGE_REACH)
+
+-- The rim walked in even steps, each point pushed out from the stone by the
+-- grass's outset (outer) and a hair's width (inner), with how deep the grass
+-- hangs there.
+local function grassRim()
+	local outline = topOutline()
+	local points = {}
+	for i, a in outline do
+		local b = outline[i % #outline + 1]
+		local length = math.sqrt((b[1] - a[1]) ^ 2 + (b[2] - a[2]) ^ 2)
+		local steps = math.max(1, math.round(length / GRASS_STEP))
+		for k = 0, steps - 1 do
+			local t = k / steps
+			table.insert(points, { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t })
+		end
+	end
+	local count = #points
+
+	-- The lip wanders between its shallowest and deepest, and drips hang
+	-- from it as rounded tongues.
+	local along, travelled = {}, 0
+	for i, p in points do
+		along[i] = travelled
+		local q = points[i % count + 1]
+		travelled += math.sqrt((q[1] - p[1]) ^ 2 + (q[2] - p[2]) ^ 2)
+	end
+	local drips, at, n = {}, 0, 0
+	while at < travelled do
+		n += 1
+		table.insert(drips, {
+			at,
+			(DRIP_WIDTH[1] + (DRIP_WIDTH[2] - DRIP_WIDTH[1]) * hash(n, 21)) / 2,
+			DRIP_LENGTH[1] + (DRIP_LENGTH[2] - DRIP_LENGTH[1]) * hash(n, 22),
+		})
+		at += DRIP_GAP[1] + (DRIP_GAP[2] - DRIP_GAP[1]) * hash(n, 23)
+	end
+
+	-- The outline is wound clockwise seen from above, so out is to the left
+	-- of each step. A point's way out averages the steps either side of it.
+	local rim = {}
+	for i, p in points do
+		local a, b = points[(i - 2) % count + 1], points[i % count + 1]
+		local dx, dy = b[1] - a[1], b[2] - a[2]
+		local length = math.max(math.sqrt(dx * dx + dy * dy), 1e-9)
+		local ox, oy = -dy / length, dx / length
+		local s = along[i]
+		local depth = GRASS_LIP[1] + (GRASS_LIP[2] - GRASS_LIP[1]) * (0.5 + 0.5 * math.noise(s * 0.6, 3.7))
+		for _, drip in drips do
+			-- The distance round the rim either way, so drips near the
+			-- start also reach the end.
+			local gap = math.abs(s - drip[1])
+			gap = math.min(gap, travelled - gap)
+			if gap < drip[2] then
+				depth = math.max(depth, GRASS_LIP[1] + drip[3] * math.sqrt(1 - (gap / drip[2]) ^ 2))
+			end
+		end
+		table.insert(rim, {
+			outer = { p[1] + ox * GRASS_OUTSET, p[2] + oy * GRASS_OUTSET },
+			inner = { p[1] + ox * 0.02, p[2] + oy * 0.02 },
+			depth = depth,
+		})
+	end
+
+	-- Pushed out of a sharp inward notch, the outer line crosses itself; the
+	-- loop it makes is cut away at the crossing.
+	local function crossing(a, b, c, d)
+		local rx, ry, sx, sy = b[1] - a[1], b[2] - a[2], d[1] - c[1], d[2] - c[2]
+		local denominator = rx * sy - ry * sx
+		if math.abs(denominator) < 1e-12 then
+			return nil
+		end
+		local t = ((c[1] - a[1]) * sy - (c[2] - a[2]) * sx) / denominator
+		local u = ((c[1] - a[1]) * ry - (c[2] - a[2]) * rx) / denominator
+		if t <= 0 or t >= 1 or u <= 0 or u >= 1 then
+			return nil
+		end
+		return { a[1] + rx * t, a[2] + ry * t }
+	end
+	local i = 1
+	while i < #rim do
+		for k = 2, 12 do
+			local j = i + k
+			if j + 1 > #rim then
+				break
+			end
+			local hit = crossing(rim[i].outer, rim[i + 1].outer, rim[j].outer, rim[j + 1].outer)
+			if hit then
+				local kept = rim[i]
+				for _ = i + 1, j do
+					table.remove(rim, i + 1)
+				end
+				table.insert(rim, i + 1, { outer = hit, inner = kept.inner, depth = kept.depth })
+				break
+			end
+		end
+		i += 1
+	end
+	return rim
+end
+
+-- How deep the deepest drip hangs, for the grass's shading.
+local GRASS_DEEPEST = GRASS_LIP[1] + DRIP_LENGTH[2]
+
+-- Grass is green, darkening down the hanging edge toward the drip tips, and
+-- splotched like the stone.
+local paintGrass = rusting(0, function(x, y, z)
+	local shade = 1 - DRIP_SHADE * math.clamp(-z / GRASS_DEEPEST, 0, 1)
+	local tone, warm = splotchAt(x, y, z)
+	shade *= 1 + tone
+	return GRASS[1] * shade * (1 + warm), GRASS[2] * shade, GRASS[3] * shade * (1 - warm)
+end)
+
+chunkedPart("Grass", nil, GRASS, function(mesh)
+	local rim = grassRim()
+	local count = #rim
+	-- Corners of the turf: its top edge, the outer and inner bottom of the
+	-- hanging edge, and the inner edge where it meets the stone's top.
+	local top, outerBottom, innerBottom, innerTop = {}, {}, {}, {}
+	local outline = {}
+	for i, point in rim do
+		top[i] = mesh:vertex(point.outer[1], point.outer[2], GRASS_HEIGHT)
+		outerBottom[i] = mesh:vertex(point.outer[1], point.outer[2], -point.depth)
+		innerBottom[i] = mesh:vertex(point.inner[1], point.inner[2], -point.depth)
+		innerTop[i] = mesh:vertex(point.inner[1], point.inner[2], 0)
+		outline[i] = point.outer
+	end
+	for i = 1, count do
+		local j = i % count + 1
+		-- Outside, facing out.
+		mesh:face({ outerBottom[j], outerBottom[i], top[i] })
+		mesh:face({ outerBottom[j], top[i], top[j] })
+		-- Underside, facing down.
+		mesh:face({ outerBottom[i], outerBottom[j], innerBottom[j] })
+		mesh:face({ outerBottom[i], innerBottom[j], innerBottom[i] })
+		-- Inside, facing the stone.
+		mesh:face({ innerBottom[i], innerBottom[j], innerTop[j] })
+		mesh:face({ innerBottom[i], innerTop[j], innerTop[i] })
+	end
+	-- The turf's top, one piece facing up.
+	for _, t in earClip(outline) do
+		mesh:face({ top[t[3]], top[t[2]], top[t[1]] })
+	end
+end, false, paintGrass, true, EDGE_REACH)
 
 -- The chunks are shaded here rather than by finishParts, which has no corner
 -- taper: highlights run full width at a corner and thin toward the middle of
