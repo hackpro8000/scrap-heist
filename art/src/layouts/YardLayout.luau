@@ -1,4 +1,4 @@
--- uses: ColumnIsland GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
+-- uses: ColumnIsland GroundTile MachinePad YardFence YardFenceHalf YardFooting YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Yard Layout: the template every player's 48x48 stud yard is built from,
 -- centered on the origin with the gate at the front (-y). The gate is
 -- centered in the front fence, a main path runs from it to the storage crate
@@ -16,8 +16,8 @@ place("Island", buildColumnIsland, 0, 0, -1.29, ISLAND_TURN)
 -- The yard's pieces are laid out on a 32-stud plan and built YARD_SCALE
 -- times their own size, so the avatar clears the gate.
 local YARD_SCALE = 1.5
-local function piece(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?)
-	place(label, build, x * YARD_SCALE, y * YARD_SCALE, (z or 0) * YARD_SCALE, turn, nil, nil, YARD_SCALE)
+local function piece(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, stretch: number?)
+	place(label, build, x * YARD_SCALE, y * YARD_SCALE, (z or 0) * YARD_SCALE, turn, stretch, nil, YARD_SCALE)
 end
 
 -- The crate shows empty in the template.
@@ -49,10 +49,15 @@ for i, c in { -12, -4, 4, 12 } do
 	piece(`FenceBack{i}`, buildYardFence, c, 16)
 	piece(`FenceLeft{i}`, buildYardFence, -16, c, 0, 90)
 	piece(`FenceRight{i}`, buildYardFence, 16, c, 0, 90)
+	piece(`FootingBack{i}`, buildYardFooting, c, 16)
+	piece(`FootingLeft{i}`, buildYardFooting, -16, c, 0, 90)
+	piece(`FootingRight{i}`, buildYardFooting, 16, c, 0, 90)
 end
 for i, side in { -1, 1 } do
 	piece(`FenceFront{i}`, buildYardFence, side * 8, -16)
 	piece(`FenceFrontHalf{i}`, buildYardFenceHalf, side * 14, -16)
+	piece(`FootingFront{i}`, buildYardFooting, side * 8, -16)
+	piece(`FootingFrontHalf{i}`, buildYardFooting, side * 14, -16, 0, 0, 0.5)
 end
 piece("Gate", buildYardGate, 0, -16)
 piece("PlotMarker", buildPlotMarker, 6, -17.5)
