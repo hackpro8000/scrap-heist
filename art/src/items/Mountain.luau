@@ -31,6 +31,8 @@ local CHIP_DEPTH = { 0.15, 0.45 }
 local CUT_SPREAD = math.rad(55)
 
 local STONE = { 0.46, 0.45, 0.5 }
+-- The first tier of rocks, those reaching the rim under the grass, is dirt.
+local DIRT = { 0.45, 0.33, 0.23 }
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
 local ROCK_GRADIENT = { 1.1, 0.6 }
@@ -519,7 +521,8 @@ end
 
 -- Per-rock gradient over the part of a rock that shows: light where it
 -- comes out from behind the tier around it, darkening toward its tip. The
--- island hangs below z = 0, so depth is -z.
+-- island hangs below z = 0, so depth is -z. Rocks of the first tier, shown
+-- from the top down, are dirt.
 local paintRock = rusting(0.1, function(x, y, z)
 	local rock = rockAt(x, y)
 	local depth = if rock
@@ -528,7 +531,8 @@ local paintRock = rusting(0.1, function(x, y, z)
 	local shade = ROCK_GRADIENT[1] + (ROCK_GRADIENT[2] - ROCK_GRADIENT[1]) * depth ^ 0.8
 	local tone, warm = splotchAt(x, y, z)
 	shade *= 1 + tone
-	return STONE[1] * shade * (1 + warm), STONE[2] * shade, STONE[3] * shade * (1 - warm)
+	local base = if rock and rock.shownFrom <= 0 then DIRT else STONE
+	return base[1] * shade * (1 + warm), base[2] * shade, base[3] * shade * (1 - warm)
 end)
 
 -- The island's flat top as one outline: the stones' feet (faces lying on
