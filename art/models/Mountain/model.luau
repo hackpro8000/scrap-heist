@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-6bac596311944923"
+local CACHE_KEY = "Mountain-b9f0789efeabcf82"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -977,6 +977,13 @@ local GRASS_ROUND = 0.42
 local GRASS_ROUND_STEPS = 4
 -- The hanging edge's bottom curls under into its underside on this radius.
 local GRASS_BOTTOM_ROUND = 0.2
+-- The rim's corners in plan are rounded off by blurring its outline over
+-- about this many studs; the stone's own rounded edges keep the cut-in
+-- corners covered. The drips' depth is blurred the same way over
+-- GRASS_DEPTH_BLUR studs, so neighbouring tongues meet in soft dips rather
+-- than sharp notches.
+local GRASS_CORNER_BLUR = 1
+local GRASS_DEPTH_BLUR = 0.3
 -- How much the grass darkens toward the tip of the deepest drip.
 local DRIP_SHADE = 0.35
 -- The grass is dead: straw GRASS drifting into a dull olive where a little
@@ -2143,6 +2150,55 @@ local function grassRim()
 	end
 	local count = #points
 
+	-- Blurs a list of numbers round the loop: repeated passes of a 1-2-1
+	-- average, each spreading it by half a step squared, until it spreads
+	-- `studs`.
+	local function blurLoop(values: { number }, studs: number)
+		for _ = 1, math.round(2 * (studs / GRASS_STEP) ^ 2) do
+			local before = table.clone(values)
+			for i = 1, #values do
+				values[i] = (before[(i - 2) % #values + 1] + 2 * before[i] + before[i % #values + 1]) / 4
+			end
+		end
+	end
+	local raw = table.clone(points)
+	for axis = 1, 2 do
+		local coordinates = {}
+		for i, p in points do
+			coordinates[i] = p[axis]
+		end
+		blurLoop(coordinates, GRASS_CORNER_BLUR)
+		for i = 1, count do
+			points[i] = table.clone(points[i])
+			points[i][axis] = coordinates[i]
+		end
+	end
+	-- Blurring cuts the outside corners in, uncovering the stone there, so
+	-- the rim swells back out round each one: by the most it was cut in
+	-- anywhere near, blurred so the swell has no edge of its own.
+	local cut, outward = {}, {}
+	for i, p in points do
+		local a, b = points[(i - 2) % count + 1], points[i % count + 1]
+		local dx, dy = b[1] - a[1], b[2] - a[2]
+		local length = math.max(math.sqrt(dx * dx + dy * dy), 1e-9)
+		outward[i] = { -dy / length, dx / length }
+		cut[i] = math.max(0, (raw[i][1] - p[1]) * outward[i][1] + (raw[i][2] - p[2]) * outward[i][2])
+	end
+	local reach = math.ceil(2 * GRASS_CORNER_BLUR / GRASS_STEP)
+	local swell = {}
+	for i = 1, count do
+		local most = 0
+		for k = -reach, reach do
+			most = math.max(most, cut[(i + k - 1) % count + 1])
+		end
+		swell[i] = most
+	end
+	blurLoop(swell, GRASS_CORNER_BLUR)
+	for i, p in points do
+		p[1] += outward[i][1] * swell[i]
+		p[2] += outward[i][2] * swell[i]
+	end
+
 	-- The lip wanders between its shallowest and deepest, and drips hang
 	-- from it as rounded tongues, each overlapping the next.
 	local along, travelled = {}, 0
@@ -2188,6 +2244,15 @@ local function grassRim()
 			inner = { p[1] + ox * 0.02, p[2] + oy * 0.02 },
 			depth = depth,
 		})
+	end
+
+	local depths = {}
+	for i, point in rim do
+		depths[i] = point.depth
+	end
+	blurLoop(depths, GRASS_DEPTH_BLUR)
+	for i, point in rim do
+		point.depth = depths[i]
 	end
 
 	-- Pushed out of a sharp inward notch, the outer line crosses itself; the
