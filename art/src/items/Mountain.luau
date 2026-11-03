@@ -68,6 +68,11 @@ local PATCH_CHIP_SPREAD = math.rad(65)
 local COLOR_TRANSITION = { 0.08, 0.55 }
 local COLOR_WOBBLE = 0.06
 local DIRT_LEAD = 0.45
+-- Traces of dirt stay on the stone just under each rock's dirt line, as
+-- patchy blotches thinning out over DIRT_TRACE studs below it. Bare rock
+-- breaking through above the line keeps DIRT_DUSTING of them.
+local DIRT_TRACE = 4
+local DIRT_DUSTING = 0.35
 local DIRT_BEVEL = { 0.3, 0.6 }
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
@@ -430,6 +435,7 @@ for _, column in columns do
 	local index, faces = column.index, column.faces
 	local share = DIRT_TRANSITION[1] + (DIRT_TRANSITION[2] - DIRT_TRANSITION[1]) * hash(index, 30)
 	local dirtLine = islandDepth * share
+	column.dirtLine = dirtLine
 	if dirtLine <= column.shownFrom then
 		column.solids = { { faces = faces, dirt = false } }
 		continue
@@ -694,7 +700,19 @@ local paintRock = rusting(0.1, function(x, y, z)
 	local shade = ROCK_GRADIENT[1] + (ROCK_GRADIENT[2] - ROCK_GRADIENT[1]) * depth ^ 0.8
 	local tone, warm = splotchAt(x, y, z)
 	shade *= 1 + tone
-	local r, g, b = soil(DIRT_LEAD + (1 - DIRT_LEAD) * stoneAt(x, y, z))
+	local blend = stoneAt(x, y, z)
+	local r, g, b = soil(DIRT_LEAD + (1 - DIRT_LEAD) * blend)
+	-- Dirt traces: blotches whose share of the stone shrinks below the line.
+	if rock then
+		local below = -z - rock.dirtLine
+		local amount = if below < 0 then DIRT_DUSTING else math.max(0, 1 - below / DIRT_TRACE) ^ 1.5
+		local blot = 0.5 + 0.5 * math.noise(x * 0.7, y * 0.7, z * 0.7) + 0.25 * math.noise(x * 2.1, y * 2.1, z * 2.1)
+		local trace = math.clamp((blot - (1 - 0.7 * amount)) / 0.08, 0, 1)
+		if trace > 0 then
+			local dr, dg, db = soil(0.25 * blend)
+			r, g, b = r + (dr - r) * trace, g + (dg - g) * trace, b + (db - b) * trace
+		end
+	end
 	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
 end)
 
