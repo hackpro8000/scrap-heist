@@ -970,8 +970,8 @@ local function finishParts()
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
-local function buildColumnIsland()
-local CACHE_KEY = "ColumnIsland-5616253eff036356"
+local function buildYardIsland()
+local CACHE_KEY = "YardIsland-81d6b6a801b145a8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1777,21 +1777,53 @@ local function finishParts()
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
--- Column Island: a floating island, a mountain of stone columns turned
--- upside down, so a flat paved top hangs over a rocky cone that tapers to
--- a point below. The columns, of every size and shape, are packed edge to
--- edge like cracked basalt; each hangs as deep as the cone at its centre
--- with a low faceted tip, so the underside steps down in uneven tiers to
--- the lowest point and a shallower shoulder. The columns are the cells of
--- a weighted Voronoi diagram (a power diagram) over scattered stones, so
--- big stones claim big cells. Stones grow from small near the tip to big
--- at the rim, and the big rim stones give the top its lobed outline. Each
--- column is carved, a few angled planes chiselling chunks off its lower
--- corners and edges. The model is built the mountain way up (heights,
--- summit, foot) and flipped as it is written out. Centered on the origin,
--- top at z = 0.
+-- Yard Island: the floating island a player's yard stands on, from the
+-- shared column generator (shared/ColumnIsland.luau).
 local RADIUS = 42
 local PEAK = 53
+local SEED = 11
+-- The yard (YardLayout.luau) is a YARD_HALF-stud half square on the top,
+-- turned YARD_TURN degrees against the island so the island's lobes sit
+-- under the fence corners, with its gate toward -y and a track TRACK_HALF
+-- studs either side of the middle running from the gate to the rim.
+local YARD_HALF = 24
+local YARD_TURN = 305
+local TRACK_HALF = 4
+
+-- How far a point lies outside the yard's square (with rounded corners) or
+-- the gate's track, in the yard's own frame.
+local function wornDistance(x: number, y: number): number
+	local c, s = math.cos(math.rad(YARD_TURN)), math.sin(math.rad(YARD_TURN))
+	local u, v = x * c - y * s, x * s + y * c
+	local du, dv = math.abs(u) - YARD_HALF, math.abs(v) - YARD_HALF
+	local outside = if du > 0 and dv > 0 then math.sqrt(du * du + dv * dv) else math.max(du, dv)
+	if v < 0 then
+		outside = math.min(outside, math.max(math.abs(u) - TRACK_HALF, 0))
+	end
+	return outside
+end
+
+-- Column Island: the generator for the map's floating islands, a mountain
+-- of stone columns turned upside down, so a flat grassy top hangs over a
+-- rocky cone that tapers to a point below. The columns, of every size and
+-- shape, are packed edge to edge like cracked basalt; each hangs as deep as
+-- the cone at its centre with a low faceted tip, so the underside steps down
+-- in uneven tiers to the lowest point and a shallower shoulder. The columns
+-- are the cells of a weighted Voronoi diagram (a power diagram) over
+-- scattered stones, so big stones claim big cells. Stones grow from small
+-- near the tip to big at the rim, and the big rim stones give the top its
+-- lobed outline. Each column is carved, a few angled planes chiselling
+-- chunks off its lower corners and edges. The model is built the mountain
+-- way up (heights, summit, foot) and flipped as it is written out. Centered
+-- on the origin, stone top at z = 0, turf GRASS_HEIGHT above it.
+--
+-- The item including this sets:
+--   RADIUS        the island's radius;
+--   PEAK          how far the cone hangs below the top;
+--   SEED          which scatter of stones it gets;
+--   wornDistance(x, y)  how far a point on the top lies outside the ground
+--                 worn by what stands on it (math.huge where nothing does);
+--                 the grass wears to dirt within about APRON_WIDTH of it.
 -- Stone sizes at the summit and at the foot, as shares of the radius, so
 -- a bigger island has bigger stones rather than more of them.
 local SMALLEST, LARGEST = 0.055 * RADIUS, 0.34 * RADIUS
@@ -1975,16 +2007,11 @@ local DRIP_SHADE = 0.35
 local GRASS_OLIVE = { 0.6, 0.57, 0.35 }
 local GRASS_OLIVE_COVER = 0.3
 local GRASS_PATCH_SIZE = 6 * DETAIL
--- The yard stands on the island (YardLayout.luau), its YARD_HALF-stud half
--- square turned YARD_TURN degrees against the island with its gate toward
--- -y. Within about APRON_WIDTH studs of it the grass is worn down to
--- TRODDEN dirt and gravel, in patches toward the outside, and a track
--- TRACK_HALF studs either side of the middle runs from the gate to the rim.
--- These follow the yard, not the stones, so DETAIL leaves them alone.
-local YARD_HALF = 24
-local YARD_TURN = 305
+-- Within about APRON_WIDTH studs of what stands on the top (wornDistance)
+-- the grass is worn down to TRODDEN dirt and gravel, in patches toward the
+-- outside. These follow what stands there, not the stones, so DETAIL leaves
+-- them alone.
 local APRON_WIDTH = 6
-local TRACK_HALF = 4
 local TRODDEN = { 0.47, 0.4, 0.31 }
 
 -- Fixed per-column jitter, so the columns look uneven but every build matches.
@@ -1993,7 +2020,7 @@ local function hash(i: number, j: number): number
 	return n - math.floor(n)
 end
 
-local seed = 11
+local seed = SEED
 local function random(): number
 	seed = (seed * 16807) % 2147483647
 	return seed / 2147483647
@@ -2645,7 +2672,7 @@ local function topOutline()
 	end
 	local nextOf, first, count = {}, nil, 0
 	for _, edge in edges do
-		assert(nextOf[edge[1]] == nil, "ColumnIsland: the top outline branches")
+		assert(nextOf[edge[1]] == nil, "Column Island: the top outline branches")
 		nextOf[edge[1]] = edge[2]
 		first = first or edge[1]
 		count += 1
@@ -2655,7 +2682,7 @@ local function topOutline()
 		table.insert(loop, points[at])
 		at = nextOf[at]
 	until at == first or at == nil
-	assert(#loop == count, "ColumnIsland: the top is not one outline")
+	assert(#loop == count, "Column Island: the top is not one outline")
 	local outline = {}
 	for i, b in loop do
 		local a, c = loop[(i - 2) % #loop + 1], loop[i % #loop + 1]
@@ -3308,15 +3335,8 @@ local paintGrass = rusting(0, function(x, y, z)
 		return r + (c[1] - r) * t, g + (c[2] - g) * t, b + (c[3] - b) * t
 	end
 	local r, g, b = toward(GRASS[1], GRASS[2], GRASS[3], GRASS_OLIVE, patch(GRASS_OLIVE_COVER, 11.3))
-	-- The worn apron: how far the point is outside the yard's square (with
-	-- rounded corners) or the gate's track, in the yard's own frame.
-	local c, sn = math.cos(math.rad(YARD_TURN)), math.sin(math.rad(YARD_TURN))
-	local u, v = x * c - y * sn, x * sn + y * c
-	local du, dv = math.abs(u) - YARD_HALF, math.abs(v) - YARD_HALF
-	local outside = if du > 0 and dv > 0 then math.sqrt(du * du + dv * dv) else math.max(du, dv)
-	if v < 0 then
-		outside = math.min(outside, math.max(math.abs(u) - TRACK_HALF, 0))
-	end
+	-- The worn apron round what stands on the top.
+	local outside = wornDistance(x, y)
 	local wobble = 0.4 * APRON_WIDTH * math.noise(x * 0.3, y * 0.3, 71.3)
 	local wear = math.clamp(1 - (outside + wobble) / APRON_WIDTH, 0, 1)
 	if wear > 0 then
@@ -3472,7 +3492,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildColumnIsland] = "ColumnIsland-68fb3eac17af4d4c"
+buildKeys[buildYardIsland] = "YardIsland-cc4b85f5b7da468a"
 local function buildGroundTile()
 local CACHE_KEY = "GroundTile-06e115bba8685577"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -11617,7 +11637,7 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-ec7805c51c55b33e"
--- uses: ColumnIsland GroundTile MachinePad YardFence YardFenceHalf YardFooting YardGate PlotMarker StorageCrate YardPath YardPathStub
+-- uses: YardIsland GroundTile MachinePad YardFence YardFenceHalf YardFooting YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Yard Layout: the template every player's 48x48 stud yard is built from,
 -- centered on the origin with the gate at the front (-y). The gate is
 -- centered in the front fence, a main path runs from it to the storage crate
@@ -11626,11 +11646,11 @@ buildKeys[buildYardPathStub] = "YardPathStub-ec7805c51c55b33e"
 -- Labels: Gate, Crate, Pad1-Pad4 (left front, left back, right front, right
 -- back), PlotMarker, plus Tile, Path and Fence pieces.
 
--- The yard stands on a Column Island, its grass top level with the yard
+-- The yard stands on a Yard Island, its grass top level with the yard
 -- floor, turned so the island's lobes sit under the fence corners and its
 -- bays fall between them. Its turf stands 1.43 studs above its origin.
 local ISLAND_TURN = 305
-place("Island", buildColumnIsland, 0, 0, -1.43, ISLAND_TURN)
+place("Island", buildYardIsland, 0, 0, -1.43, ISLAND_TURN)
 
 -- The yard's pieces are laid out on a 32-stud plan and built YARD_SCALE
 -- times their own size, so the avatar clears the gate.
