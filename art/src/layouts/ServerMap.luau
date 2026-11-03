@@ -1,4 +1,4 @@
--- uses: ArenaIsland PadIsland MarketIsland YardIsland ShopConceptContainer ScrapTreeLamppost VendingMachine ParkBench ScrapPalm ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
+-- uses: ArenaIsland PadIsland MarketIsland ColumnIsland ShopConceptContainer ScrapTreeLamppost VendingMachine ParkBench ScrapPalm ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
 -- around its bowl. An avenue of four plaza islands runs east from the road to
@@ -37,7 +37,14 @@ local ARENA_FLOOR, ARENA_DEPTH = 36, 3.5
 local HAZARD_WIDTH = 1.8
 -- Length of each yellow or black block in the bridges' hazard strips.
 local HAZARD_BLOCK = 0.6
-local ARENA_ISLAND, YARD_ISLAND = 61, 36
+local ARENA_ISLAND = 61
+-- How far the yard island's grass reaches in front of the gate, where the
+-- bridge lands, and how its island is turned under the yard (as in
+-- YardLayout.luau) so the fence corners stand on its lobes.
+local YARD_ISLAND, YARD_ISLAND_TURN = 40, 305
+-- The yard's pieces are laid out on a 32-stud plan and built this many
+-- times their own size, as in YardLayout.luau.
+local YARD_SCALE = 1.5
 -- The ring road runs a little above the ground, the arena banking down to
 -- the floor inside it and the bridges sloping up to the yards outside it.
 local DECK = 2
@@ -45,7 +52,7 @@ local YARD_TIER = 6
 -- The avenue's plaza pads, east of the road, and the yards either side.
 local PAD_XS = { 100, 184, 268, 352 }
 local PAD_ISLAND, PAD_PLAZA = 14, 11
-local YARD_OFFSET = 63
+local YARD_OFFSET = 70
 -- The market island closes the avenue's east end.
 local MARKET_X = 424
 local MARKET_ISLAND, MARKET_PLAZA = 38, 30
@@ -1247,7 +1254,7 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 	end, x, y, degrees - 90)
 end
 
--- Lumpy yard outlines that never cut into the plot's corners (0.9 * 26
+-- Lumpy outlines that never cut into a 32-stud plot's corners (0.9 * 26
 -- clears its 22.6 half-diagonal) and stay full where the bridge lands.
 local function yardOutline(seed: number): (number) -> number
 	return function(angle)
@@ -1264,7 +1271,9 @@ end
 local function yardTemplate(index: number, x: number, y: number, turn: number)
 	local c, s = math.cos(math.rad(turn)), math.sin(math.rad(turn))
 	local function piece(name: string, build: () -> (), px: number, py: number, pz: number?, pturn: number?)
-		place(`Yard{index}_{name}`, build, x + px * c - py * s, y + px * s + py * c, (pz or 0) + YARD_TIER, turn + (pturn or 0))
+		px, py = px * YARD_SCALE, py * YARD_SCALE
+		local pieceZ = (pz or 0) * YARD_SCALE + YARD_TIER
+		place(`Yard{index}_{name}`, build, x + px * c - py * s, y + px * s + py * c, pieceZ, turn + (pturn or 0), nil, nil, YARD_SCALE)
 	end
 	for i, tx in { -12, -4, 4, 12 } do
 		for j, ty in { -12, -4, 4, 12 } do
@@ -1344,17 +1353,17 @@ for i = 1, 2 * #PAD_XS do
 	local side = if i % 2 == 1 then 1 else -1
 	local degrees = 180 - side * 90
 	local x, y = PAD_XS[(i + 1) // 2], side * YARD_OFFSET
-	place(`Island{i}`, buildYardIsland, x, y, YARD_TIER - 0.7, degrees - 90)
+	place(`Island{i}`, buildColumnIsland, x, y, YARD_TIER - 0.45, degrees - 90 + YARD_ISLAND_TURN)
 	slab(`Plot{i}`, function()
 		part("Slab", nil, PLOT, function(mesh)
-			box(mesh, 0, 0, YARD_TIER, 32, 32, 0.05)
+			box(mesh, 0, 0, YARD_TIER, 32 * YARD_SCALE, 32 * YARD_SCALE, 0.05)
 		end, nil, 0)
 	end, x, y, degrees - 90)
 	yardTemplate(i, x, y, degrees - 90)
 	local c, s = math.cos(math.rad(degrees - 90)), math.sin(math.rad(degrees - 90))
 	slab(`Spoke{i}`, function()
 		part("Road", nil, ROAD, function(mesh)
-			box(mesh, 0, -18, YARD_TIER, 6, 6, 0.1)
+			box(mesh, 0, -(16 * YARD_SCALE + YARD_ISLAND) / 2, YARD_TIER, 6, YARD_ISLAND - 16 * YARD_SCALE, 0.1)
 		end, nil, function(px, py)
 			local u = (px - x) * c + (py - y) * s
 			local v = (py - y) * c - (px - x) * s

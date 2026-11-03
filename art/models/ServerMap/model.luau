@@ -1,8 +1,10 @@
 -- Layout prelude: lets a layout build other models in place. Each model's
 -- script is wrapped as build<Name>(), and place() runs it with every vertex
--- moved, turned about z and optionally stretched along one axis. Parts are
+-- moved, turned about z, optionally scaled up or down as a whole and
+-- optionally stretched along one axis. Parts are
 -- renamed <Label>_<Part> so game code can find each placed piece by label.
 local placeX, placeY, placeZ, placeTurn, placeStretch, placeAxis = 0, 0, 0, 0, 1, "x"
+local placeScale = 1
 local placeLabel = ""
 local RealMesh, realPart = Mesh, model.part
 
@@ -15,13 +17,14 @@ Mesh = {
 		local real = RealMesh.new()
 		local c, s = math.cos(placeTurn), math.sin(placeTurn)
 		local ox, oy, oz = placeX, placeY, placeZ
-		local stretchX = if placeAxis == "x" then placeStretch else 1
-		local stretchY = if placeAxis == "y" then placeStretch else 1
+		local scale = placeScale
+		local stretchX = scale * (if placeAxis == "x" then placeStretch else 1)
+		local stretchY = scale * (if placeAxis == "y" then placeStretch else 1)
 		return setmetatable({
 			_mesh = real,
 			vertex = function(_, x, y, z)
 				x, y = x * stretchX, y * stretchY
-				return real:vertex(x * c - y * s + ox, x * s + y * c + oy, z + oz)
+				return real:vertex(x * c - y * s + ox, x * s + y * c + oy, z * scale + oz)
 			end,
 			paintShading = function(_, image, options)
 				for _, list in { "occluders", "group" } do
@@ -98,19 +101,22 @@ model.part = function(name, mesh, image, options)
 	addPart(name, unwrapMesh(mesh), image, preview, options and options.emissive)
 end
 
-local function place(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, stretch: number?, axis: string?)
+-- `scale` builds the model that many times its own size, so its textures
+-- keep their density instead of being stretched with it.
+local function place(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, stretch: number?, axis: string?, scale: number?)
 	placeLabel = label
 	placeX, placeY, placeZ, placeTurn = x, y, z or 0, math.rad(turn or 0)
-	placeStretch, placeAxis = stretch or 1, axis or "x"
+	placeStretch, placeAxis, placeScale = stretch or 1, axis or "x", scale or 1
 	local key = buildKeys[build]
 	if not key then
 		build()
+		placeScale = 1
 		return
 	end
-	-- Built once at the origin per model and stretch, then moved into place,
-	-- so moving a prop never rebuilds it. Eye previews size textures by
+	-- Built once at the origin per model, scale and stretch, then moved into
+	-- place, so moving a prop never rebuilds it. Eye previews size textures by
 	-- distance, so there placements share a build per distance band.
-	key = `{key} {placeStretch} {placeAxis}`
+	key = if placeScale == 1 then `{key} {placeStretch} {placeAxis}` else `{key} {placeStretch} {placeAxis} x{placeScale}`
 	if previewBand then
 		key = `{key} band {previewBand(x, y, z or 0)}`
 	end
@@ -132,6 +138,7 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 		addPart(part.name, part.mesh:moved(turn0, x0, y0, z0), part.image, part.preview, part.emissive)
 	end
 	placeX, placeY, placeZ, placeTurn = x0, y0, z0, turn0
+	placeScale = 1
 end
 
 -- Places a piece built where it stands. Its paint can depend on where it
@@ -144,7 +151,7 @@ local function placeSlab(label: string, build: () -> (), x: number, y: number, t
 	end
 	placeLabel = label
 	placeX, placeY, placeZ, placeTurn = x, y, 0, math.rad(turn or 0)
-	placeStretch, placeAxis = 1, "x"
+	placeStretch, placeAxis, placeScale = 1, "x", 1
 	for _, part in model.cached(`{key} {label} {x} {y} {turn or 0}`, function()
 		builtParts = {}
 		build()
@@ -762,8 +769,14 @@ end
 -- `texture` overrides the texture size for parts that need more detail.
 -- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
 -- glowing parts skip painted shading. `flat` skips the warp, for parts so
--- thin it would visibly bend them.
-local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?)
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
@@ -772,7 +785,7 @@ local function part(name, bone, color, build, smooth, rust, texture: number?, em
 		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
 		else TEXTURE
 	local image = Image.new(size, size, color[1], color[2], color[3])
-	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive }
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
 	setLook(entry, color, rust)
 	-- Glowing parts skip the painted bake, so their colors go on as they are.
 	if emissive then
@@ -787,8 +800,10 @@ end
 -- build runs once into a recorder, then each face goes to the chunk holding
 -- its centre. Cells sit on the origin across, and centred on z = 0 up and
 -- down, so ground near sea level stays in one layer. `flat` skips the warp,
--- as for part().
-local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?)
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
 	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
 	-- Smallest cell a chunk is halved down to while looking for a split.
 	local MIN_CELL = 2
@@ -808,6 +823,13 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end,
 	}
 	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
 
 	local chunks, order = {}, {}
 	for _, f in faces do
@@ -895,11 +917,15 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 				end
 				mesh:face(verts, f.uvs)
 			end
-		end, smooth, 0, texture)
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
 		-- Chunks of one part share a group, so their edges count as its own.
 		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
 		emit(`{name}_{key}`, chunks[key], CHUNK)
@@ -923,10 +949,10 @@ local function finishParts()
 			end
 		end
 		entry.mesh:paintShading(entry.image, {
-			highlight = EDGE_HIGHLIGHT,
-			shadow = CONTACT_SHADOW,
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
 			gradient = GRADIENT,
-			blend = EDGE_BLEND,
+			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
 			name = entry.name,
@@ -936,12 +962,16 @@ local function finishParts()
 			salt = if entry.custom then CACHE_KEY else nil,
 			rust = entry.rust * WEAR,
 			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
 local function buildArenaIsland()
-local CACHE_KEY = "ArenaIsland-f9e2c7afd164641c"
+local CACHE_KEY = "ArenaIsland-39b452237973a0d8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1840,22 +1870,27 @@ local function islandPaint(x: number, y: number, z: number, seed: number?, tint:
 	local gr, gg, gb = grit(r, g, b, x, y, z)
 	return r + (gr - r) * soil, g + (gg - g) * soil, b + (gb - b) * soil
 end
--- Rock Island: the shared generator behind Arena, Yard, Pad and Market Island,
--- the Island Rocks algorithm (items/IslandRocks.luau) sized per island. One
--- set of rocks covers the whole island, from the top rim down the wall, round
--- the bottom rim and in across the underside. The seeds are scattered in 3D on
--- the surface and each rock is the set of points nearer its seed than any
--- other (a power diagram, so bigger rocks claim more), so a rock carries round
--- the rim instead of the pattern restarting there. The surface is meshed as a
--- grid and every triangle is cut by the bisector planes between the seeds its
--- corners belong to, so the seams are exact and both rocks on a seam share it.
+-- Rock Island: the shared generator behind Arena, Yard, Pad and Market Island.
+-- A fractured shell: one continuous dark core, the wall profile (shareAt /
+-- wallAt) set back by CORE_INSET and hanging below the rim, and over it a
+-- shell of separate, chunky Voronoi shards. The seeds are scattered over the
+-- surface and each shard is the set of points nearer its seed than any other
+-- (a power diagram), so a shard carries round the rim instead of the pattern
+-- restarting at a seam. Every cell is inset towards its own centroid by half
+-- a gap, so real seams open down to the core; the shard then gets an outer
+-- surface pushed out along its normals (with varied proudness and a little
+-- lean), an inner surface SHARD_THICKNESS behind it, and a side wall along
+-- every boundary edge. Underside shards hang lower than wall ones. The top is
+-- a separate continuous cap with an overhanging lip, flat or shaped by the
+-- item, so it always covers the core and the shard tops.
 --
 -- The item sets, before including this:
 --   RADIUS        the island's radius;
 --   ROCK_SCALE    how many times the base rock size its rocks are;
 --   outlineScale  the outline as a radius scale per angle;
 --   ROCK_BULGE    optionally, how many times the base bulge its rocks stand
---                 out (ROCK_SCALE if not set; 0 for a smooth body);
+--                 out (ROCK_SCALE if not set); it now sets the shard
+--                 thickness, from 3.5 to 5 studs;
 --   islandTop     optionally, a shaped top instead of a flat one:
 --                 { radii, height, octagon }, rings at octagon radii `radii`
 --                 (outermost first), each at height(radius), measured with
@@ -1868,59 +1903,54 @@ local WALL_REACH = 0.86
 local PROPORTION = RADIUS / 14
 local PROFILE_DEPTH, HALF_DEPTH = 16 * PROPORTION, 4 * PROPORTION
 local UNDERSIDE_SHARE = 0.18
--- Rock spacing, scaled by the item's ROCK_SCALE, and how far a rock of base
--- size bulges out, scaled by its ROCK_BULGE. Rock sizes spread by
--- e^(SIZE_SPREAD * r) for r from -1 to 1, and are bigger near the top:
--- TOP_SIZE times the base size at the rim, easing to BOTTOM_SIZE.
 local RELIEF = if ROCK_BULGE ~= nil then ROCK_BULGE else ROCK_SCALE
-local ROCK, BULGE = 4.6 * ROCK_SCALE, 1.5 * RELIEF
-local SIZE_SPREAD = 0.8
--- A rock's size runs from MIN_SHARE of the largest rock its zone allows up to
--- that largest size, so the smallest rock is always 80% of the biggest.
-local MIN_SHARE = 0.8
+-- The shards' cells: their base size across, how far their sizes spread, and
+-- how small the smallest cell is against the largest one its zone allows.
+local ROCK = 5.0 * ROCK_SCALE
+local SIZE_SPREAD = 0.9
+local MIN_SHARE = 0.65
 local TOP_SIZE, BOTTOM_SIZE = 1.3, 0.8
 -- How sharply the size falls off going down: the size eases from TOP_SIZE to
--- BOTTOM_SIZE along (1 - depth)^SIZE_CURVE, so the top stays near its maximum
--- and the drop comes lower down.
+-- BOTTOM_SIZE along (1 - depth)^SIZE_CURVE.
 local SIZE_CURVE = 3
--- How deep each joint sits (scaling with the bulge, but never under the
--- base joint, so even a smooth body shows its seams), and how far from the
--- top rim the joint takes to reach that depth. The rim itself stays on the
--- profile. The joint's width is set below, from the grid.
-local SEAM_DEPTH, SEAM_FADE = 0.2 * math.max(RELIEF, 1), 2.5
--- Below DOWN_FROM of the way down the wall, a rock pushes straight down rather
--- than out along the wall, so the rocks near the bottom stand off the underside
--- instead of flaring the island's silhouette.
-local DOWN_FROM = 0.55
--- The tip is one rock covering the bottom out to TIP_SHARE of the underside's rim.
+-- The tip is one cell covering the bottom out to TIP_SHARE of the underside's
+-- rim, so the centre of the grid is a single clean shard.
 local TIP_SHARE = 0.5
--- How much of its crest a rock still stands off at its seams.
-local REST = 0.45
--- How far the seams near the top merge: their dip is cut by MERGE_TOP at the
--- rim, easing back to full depth by the middle of the wall.
-local MERGE_TOP = 1.0
--- How much of its bulge a rock keeps at the bottom: BOTTOM_BULGE of it, easing
--- in from the middle of the wall.
-local BOTTOM_BULGE = 0.3
--- How much each rock's texture varies from its neighbours': TOP_SPREAD at the
--- rim, easing to BOTTOM_SPREAD at the bottom.
+-- The fractured shell's tuning. GAP is the width of the seam between two
+-- shards, PUSH how far a shard stands out, and SHARD_THICKNESS how far its
+-- inner surface sits behind its outer one. CORE_INSET sets the dark core back
+-- from the profile, and CORE_DROP how far it hangs below the bottom rim.
+local GAP = math.clamp(0.06 * ROCK, 0.6, 2.2)
+local PUSH = math.clamp(2 + 0.06 * ROCK, 2, 5)
+local SHARD_THICKNESS = math.clamp(3.5 + 0.15 * (RELIEF - 1), 3.5, 5)
+local CORE_INSET = 1.8
+local CORE_DROP = 0.18 * PROFILE_DEPTH
+local CORE_TOP_INSET = 0.35
+-- The top's overhanging lip: how far down it drops, how far it flares out,
+-- and how far it reaches back in under the shard tops for its underside.
+local TOP_SKIRT, TOP_FLARE, TOP_LIP = 1.6, 0.9, 1.5
+-- The shard tops stay on the profile for TOP_FADE studs below the cap, so
+-- they tuck in under the lip instead of poking through it.
+local TOP_FADE = 1.5
+-- Below DOWN_FROM of the way down the wall, a shard pushes straight down
+-- rather than out along the wall, so the shards near the bottom stand off the
+-- underside instead of flaring the island's silhouette.
+local DOWN_FROM = 0.55
+-- How much each shard's texture varies from its neighbours': TOP_SPREAD at
+-- the rim, easing to BOTTOM_SPREAD at the bottom.
 local TOP_SPREAD, BOTTOM_SPREAD = 2.0, 0.5
+-- How far seams wander: two octaves of noise sized to the shards.
+local SEAM_WANDER = 0.09 * ROCK
 -- The surface grid: samples round the island, rows down the wall and rings in
 -- across the underside, finer on bigger islands up to a limit.
 local ANGLES = math.clamp(math.round(96 * PROPORTION), 96, 384)
 local WALL_ROWS = math.clamp(math.round(36 * PROPORTION), 36, 120)
 local UNDER_ROWS = math.clamp(math.round(30 * PROPORTION), 30, 90)
 local ROCK_COLOUR = { 0.36, 0.33, 0.28 }
+local CORE_COLOUR = { 0.1, 0.09, 0.08 }
 
 local R0 = RADIUS * WALL_REACH
 local RIM_Z = CAP_TOP - PROFILE_DEPTH
--- The grid's spacing on the wall: the larger of its step round the island
--- and its step down the steep top of the wall. Each joint is at least
--- JOINT_STEPS of these wide, so the dip into a seam spans several vertices
--- either side and doesn't step where the seam crosses the grid at a slant.
-local GRID_STEP = math.max(TAU * R0 * 1.1 / ANGLES, 2 * PROFILE_DEPTH / WALL_ROWS)
-local JOINT_STEPS = 3
-local JOINT_WIDTH = math.max(0.4 * math.max(RELIEF, 1), JOINT_STEPS * GRID_STEP)
 
 local function random(k: number): number
 	local s = math.sin(k * 12.9898 + 4.1414) * 43758.5453
@@ -1965,7 +1995,7 @@ local function wallNormal(angle: number, depth: number): { number }
 	return n
 end
 
--- Which way a rock at `p` pushes: out along the wall near the top, turning
+-- Which way a shard at `p` pushes: out along the wall near the top, turning
 -- straight down toward the underside, and straight down under the island.
 local function pushAt(p: { number }): { number }
 	if p[3] <= RIM_Z + 1e-6 then return { 0, 0, -1 } end
@@ -1979,7 +2009,7 @@ local function pushAt(p: { number }): { number }
 end
 
 -- The seeds: one set over the whole surface, each a 3D point with a weight (the
--- square of its size), so the cells are a power diagram and bigger rocks claim
+-- square of its size), so the cells are a power diagram and bigger shards claim
 -- more of the surface.
 local seeds = {}
 local function addSeed(p: { number }, key: number, scale: number)
@@ -2020,8 +2050,8 @@ do
 			end
 		end
 	end
-	-- The tip is one rock: a single seed on the axis that claims the whole
-	-- bottom, with the underside's rocks kept only around its edge.
+	-- The tip is one shard: a single seed on the axis that claims the whole
+	-- bottom, with the underside's seeds kept only around its edge.
 	local tipSize = TIP_SHARE * R0 * shareAt(PROFILE_DEPTH)
 	table.insert(seeds, { p = { 0, 0, RIM_Z }, weight = tipSize * tipSize, size = tipSize, key = 999, tint = 1 })
 	for i = #seeds, 1, -1 do
@@ -2032,10 +2062,8 @@ do
 	end
 end
 
--- Seams wander: rocks claim the surface in a gently warped copy of it, so the
--- seam between two rocks bends and wobbles instead of running straight. Two
--- octaves of noise sized to the rocks, SEAM_WANDER studs at most.
-local SEAM_WANDER = 0.09 * ROCK
+-- Seams wander: shards claim the surface in a gently warped copy of it, so the
+-- seam between two shards bends and wobbles instead of running straight.
 local function warp(p: { number }): { number }
 	local s = 3 / ROCK
 	local w = {}
@@ -2048,50 +2076,22 @@ local function warp(p: { number }): { number }
 	return w
 end
 
--- The rock owning `p`, and how far `p` lies from that rock's nearest seam: the
--- distance to the bisector plane with the runner-up, both in the warped space.
+-- The shard owning `p` in the warped space.
 local function ownerAt(point: { number })
 	local p = warp(point)
-	local best, second = seeds[1], seeds[2]
-	local bestPower, secondPower = math.huge, math.huge
+	local best, bestPower = seeds[1], math.huge
 	for _, seed in seeds do
 		local d = sub(p, seed.p)
 		local power = dot(d, d) - seed.weight
 		if power < bestPower then
-			bestPower, secondPower = power, bestPower
-			best, second = seed, best
-		elseif power < secondPower then
-			secondPower, second = power, seed
+			bestPower, best = power, seed
 		end
 	end
-	local span = math.max(math.sqrt(dot(sub(second.p, best.p), sub(second.p, best.p))), 1e-6)
-	return best, (secondPower - bestPower) / (2 * span)
-end
-
--- How far a rock's surface stands off the island at `p`: a crest over the
--- rock's middle falling to a narrow joint at the seam. The top rim keeps its
--- profile, so the top meets the rocks without a lip.
-local function standoff(p: { number }, seed, edge: number): number
-	local depth = CAP_TOP - p[3]
-	local lower = 1 - (1 - BOTTOM_BULGE) * math.clamp((depth / PROFILE_DEPTH - DOWN_FROM) / (1 - DOWN_FROM), 0, 1)
-	local crest = BULGE * math.sqrt(seed.size / (ROCK / 2)) * lower
-	local t = math.clamp(edge / (0.5 * seed.size), 0, 1)
-	-- Eased in, so the joint's sides curve into the rock instead of kinking.
-	local joint = math.clamp(edge / JOINT_WIDTH, 0, 1)
-	joint = joint * joint * (3 - 2 * joint)
-	local fade = math.clamp(depth / SEAM_FADE, 0, 1)
-	-- Every rock stands off by at least REST of its crest, so the seams sit on
-	-- the island's body rather than cutting into it.
-	local merge = 1 - MERGE_TOP * math.clamp(1 - depth / (PROFILE_DEPTH / 2), 0, 1)
-	-- The joint runs deeper and shallower along the seam, 40% to 160% of SEAM_DEPTH.
-	local s = 5 / ROCK
-	local uneven = 1 + 0.6 * math.noise(p[1] * s + 41, p[2] * s, p[3] * s)
-	local h = crest * (REST + (1 - REST) * math.sin(math.pi / 2 * t)) - SEAM_DEPTH * uneven * fade * merge * (1 - joint)
-	return h * math.clamp(depth / 1.5, 0, 1)
+	return best
 end
 
 -- Keeps the part of a polygon on the `keep` side of the bisector between two
--- seeds, tested in the warped space. Both rocks on a seam clip the same edges
+-- seeds, tested in the warped space. Both shards on a seam clip the same edges
 -- at the same points, so the seam is shared.
 local function clipTo(poly: { { number } }, keep, other): { { number } }
 	local n = sub(other.p, keep.p)
@@ -2110,31 +2110,35 @@ local function clipTo(poly: { { number } }, keep, other): { { number } }
 	return out
 end
 
--- Whether the point lies on the top (flat, or the item's shaped top), which
--- paints as even ground with no rock under it.
-local function onTop(x: number, y: number, z: number): boolean
-	if z > CAP_TOP - 0.01 then return true end
-	if not islandTop then return false end
-	local radius = math.sqrt(x * x + y * y) / islandTop.octagon(math.atan2(y, x))
-	-- Between two rings the top runs straight, so allow for the bend at each.
-	return radius < islandTop.radii[1] - 0.1 and math.abs(z - islandTop.height(radius)) < 0.2
+-- The shards' paint: every shard takes its seed's stratum, tint and hue, so a
+-- shard reads as one piece of rock against its neighbours.
+local function shardPaint(seed)
+	return function(x: number, y: number, z: number)
+		local depth = math.clamp(CAP_TOP - z, 0, PROFILE_DEPTH)
+		local spread = TOP_SPREAD + (BOTTOM_SPREAD - TOP_SPREAD) * depth / PROFILE_DEPTH
+		return islandPaint(x, y, -depth, seed.key, seed.tint, spread, true)
+	end
+end
+
+-- The core is the same rock, kept dark: it sits in shadow behind the shell and
+-- is only seen through the seams and around the bottom point.
+local function corePaint(x: number, y: number, z: number)
+	local depth = math.clamp(CAP_TOP - z, 0.5, PROFILE_DEPTH)
+	local r, g, b = islandPaint(x, y, -depth, 991, 0.8, 0.25, true)
+	local k = 0.34 + 0.10 * (1 - depth / PROFILE_DEPTH)
+	return r * k, g * k, b * k
+end
+
+-- The cap is walkable ground: even, topsoil-toned paint with the island's grit.
+local function topPaint(x: number, y: number, _z: number)
+	return islandPaint(x, y, 0)
 end
 
 -- The shell and its shading are cached under a key hashing every line above
 -- "-- cached above", so changes below it skip the rebuild.
 local shell = model.cached(CACHE_KEY, function()
--- The surface is built once into plain lists: every vertex where it ends up,
--- and the triangles of each rock and of the top. Each rock then becomes a part
--- of its own, so every part's edge is a seam, where the surface folds anyway.
--- Cutting a smooth rock face into chunks would split its smoothing there and
--- show as a sawtooth of light and dark along the cut.
-local positions, rockFaces, topFaces = {}, {}, {}
-local function newVertex(q: { number }): number
-	table.insert(positions, q)
-	return #positions
-end
-do
 	-- The surface grid: rows down the wall, then rings in across the underside.
+	-- Every grid point knows its shard, so each triangle can be cut per owner.
 	local ROWS = WALL_ROWS + UNDER_ROWS
 	local grid, owners = {}, {}
 	for k = 0, ROWS do
@@ -2154,28 +2158,37 @@ do
 		end
 	end
 
-	-- Points are shared by position, so a seam is one set of vertices.
-	local indexOf = {}
-	local function vertexAt(p: { number }): number
-		local key = `{math.round(p[1] * 1e4)}_{math.round(p[2] * 1e4)}_{math.round(p[3] * 1e4)}`
-		if not indexOf[key] then
-			local seed, edge = ownerAt(p)
-			local n = pushAt(p)
-			local h = standoff(p, seed, edge)
-			indexOf[key] = newVertex({ p[1] + n[1] * h, p[2] + n[2] * h, p[3] + n[3] * h })
+	-- Each shard's surface is collected as its own little mesh of positions
+	-- and outward-wound triangles. Points are shared inside one shard by
+	-- position, but never between shards: every shard is a separate part.
+	local cells = {}
+	local function cellFor(seed)
+		local cell = cells[seed]
+		if not cell then
+			cell = { seed = seed, pos = {}, byKey = {}, tris = {} }
+			cells[seed] = cell
 		end
-		return indexOf[key]
+		return cell
+	end
+	local function cellPoint(cell, p)
+		local key = `{math.round(p[1] * 1e4)}_{math.round(p[2] * 1e4)}_{math.round(p[3] * 1e4)}`
+		local id = cell.byKey[key]
+		if not id then
+			table.insert(cell.pos, p)
+			id = #cell.pos
+			cell.byKey[key] = id
+		end
+		return id
 	end
 
-	-- Every vertex sitting on the top rim, for the top.
-	local rimVertices = {}
-
-	-- One triangle of the grid: cut into a piece per rock its corners belong to.
+	-- One triangle of the grid: cut into a piece per shard its corners belong
+	-- to, then fan each piece into the owning shard.
 	local function emit(a: { number }, b: { number }, c: { number }, oa, ob, oc)
 		local u, v = sub(b, a), sub(c, a)
 		local face = cross(u, v)
 		if dot(face, face) < 1e-12 then return end
-		local outward = pushAt({ (a[1] + b[1] + c[1]) / 3, (a[2] + b[2] + c[2]) / 3, (a[3] + b[3] + c[3]) / 3 })
+		local centre = { (a[1] + b[1] + c[1]) / 3, (a[2] + b[2] + c[2]) / 3, (a[3] + b[3] + c[3]) / 3 }
+		local outward = pushAt(centre)
 		local present = { oa }
 		if ob ~= oa then table.insert(present, ob) end
 		if oc ~= oa and oc ~= ob then table.insert(present, oc) end
@@ -2185,22 +2198,20 @@ do
 				if other ~= owner then poly = clipTo(poly, owner, other) end
 			end
 			if #poly < 3 then continue end
-			rockFaces[owner] = rockFaces[owner] or {}
-			local faces = rockFaces[owner]
+			local cell = cellFor(owner)
 			local ids = {}
 			for i, p in poly do
-				ids[i] = vertexAt(p)
-				if math.abs(p[3] - CAP_TOP) < 1e-6 then
-					rimVertices[ids[i]] = math.atan2(p[2], p[1]) % TAU
-				end
+				ids[i] = cellPoint(cell, p)
 			end
 			for i = 2, #poly - 1 do
-				local p, q, r = positions[ids[1]], positions[ids[i]], positions[ids[i + 1]]
-				local normal = cross(sub(q, p), sub(r, p))
-				if dot(normal, outward) >= 0 then
-					table.insert(faces, { ids[1], ids[i], ids[i + 1] })
-				else
-					table.insert(faces, { ids[1], ids[i + 1], ids[i] })
+				local ia, ib, ic = ids[1], ids[i], ids[i + 1]
+				if ia ~= ib and ib ~= ic and ia ~= ic then
+					local pa, pb, pc = cell.pos[ia], cell.pos[ib], cell.pos[ic]
+					local normal = cross(sub(pb, pa), sub(pc, pa))
+					if dot(normal, normal) > 1e-12 then
+						if dot(normal, outward) < 0 then ib, ic = ic, ib end
+						table.insert(cell.tris, { ia, ib, ic })
+					end
 				end
 			end
 		end
@@ -2214,127 +2225,407 @@ do
 		end
 	end
 
-	-- The top, wound to face up: every top vertex in order round the rim.
-	local function upFace(a: number, b: number, c: number)
-		local normal = cross(sub(positions[b], positions[a]), sub(positions[c], positions[a]))
-		table.insert(topFaces, if normal[3] >= 0 then { a, b, c } else { a, c, b })
+	-- The dark core: the profile set back CORE_INSET, from just under the cap
+	-- down past the bottom rim to a jagged point. It is one continuous body,
+	-- painted dark, and every seam between the shards opens onto it.
+	local CORE_ANGLES = math.clamp(math.round(64 * PROPORTION), 64, 192)
+	local CORE_ROWS = 28
+	local corePositions, coreFaces = {}, {}
+	local function coreVertex(x: number, y: number, z: number)
+		table.insert(corePositions, { x, y, z })
+		return #corePositions
 	end
-	local outer = {}
-	for index, angle in rimVertices do
-		table.insert(outer, { index = index, angle = angle })
+	local function coreTri(a: number, b: number, c: number, rx: number, ry: number, rz: number)
+		local pa, pb, pc = corePositions[a], corePositions[b], corePositions[c]
+		local ux, uy, uz = pb[1] - pa[1], pb[2] - pa[2], pb[3] - pa[3]
+		local vx, vy, vz = pc[1] - pa[1], pc[2] - pa[2], pc[3] - pa[3]
+		local nx, ny, nz = uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx
+		if nx * rx + ny * ry + nz * rz < 0 then b, c = c, b end
+		table.insert(coreFaces, { a, b, c })
 	end
-	table.sort(outer, function(p, q) return p.angle < q.angle end)
-
-	if islandTop then
-		-- A shaped top: octagonal rings in from the rim, each at its own
-		-- height. The rim's vertices fall wherever the seams cut it, so it is
-		-- zipped to the first ring by angle; the rings after share their
-		-- angles. A ring never reaches past the rim, so the two can't cross.
-		local function ring(radius: number)
-			local points = {}
-			for j = 0, ANGLES - 1 do
-				local angle = TAU * j / ANGLES
-				local r = math.min(radius * islandTop.octagon(angle), R0 * outlineScale(angle) - 0.3)
-				local index = newVertex({ r * math.cos(angle), r * math.sin(angle), islandTop.height(radius) })
-				points[j + 1] = { index = index, angle = angle }
+	do
+		local rings = {}
+		for k = 0, CORE_ROWS do
+			local depth = CORE_TOP_INSET + (PROFILE_DEPTH - CORE_TOP_INSET) * k / CORE_ROWS
+			local ring = {}
+			for j = 0, CORE_ANGLES - 1 do
+				local angle = TAU * j / CORE_ANGLES
+				local r = R0 * outlineScale(angle) * shareAt(depth) - CORE_INSET
+				ring[j + 1] = coreVertex(r * math.cos(angle), r * math.sin(angle), CAP_TOP - depth)
 			end
-			return points
+			rings[k + 1] = ring
 		end
-		local inner = ring(islandTop.radii[1])
-		local i, j = 1, 1
-		while i <= #outer or j <= #inner do
-			local a, b = outer[(i - 1) % #outer + 1], inner[(j - 1) % #inner + 1]
-			local nextOuter, nextInner = outer[i % #outer + 1], inner[j % #inner + 1]
-			-- Angles past the last vertex wrap round to the first plus a turn.
-			local outerAngle = if i < #outer then nextOuter.angle else nextOuter.angle + TAU
-			local innerAngle = if j < #inner then nextInner.angle else nextInner.angle + TAU
-			if j > #inner or (i <= #outer and outerAngle <= innerAngle) then
-				upFace(a.index, nextOuter.index, b.index)
-				i += 1
-			else
-				upFace(a.index, nextInner.index, b.index)
-				j += 1
+		for k = 1, CORE_ROWS do
+			local upper, lower = rings[k], rings[k + 1]
+			for j = 1, CORE_ANGLES do
+				local l = j % CORE_ANGLES + 1
+				local angle = TAU * (j - 0.5) / CORE_ANGLES
+				local rx, ry = math.cos(angle), math.sin(angle)
+				coreTri(upper[j], upper[l], lower[l], rx, ry, 0)
+				coreTri(upper[j], lower[l], lower[j], rx, ry, 0)
 			end
 		end
-		for n = 2, #islandTop.radii do
-			local next = ring(islandTop.radii[n])
-			for k = 1, ANGLES do
-				local l = k % ANGLES + 1
-				upFace(inner[k].index, inner[l].index, next[l].index)
-				upFace(inner[k].index, next[l].index, next[k].index)
+		-- The bottom: two jagged rings in from the lower rim, then a point.
+		local bottom = rings[CORE_ROWS + 1]
+		local function bottomRing(scale: number, drop: number, jag: number)
+			local ring = {}
+			for j = 0, CORE_ANGLES - 1 do
+				local angle = TAU * j / CORE_ANGLES
+				local p = corePositions[bottom[j + 1]]
+				local r = math.sqrt(p[1] * p[1] + p[2] * p[2])
+				local wobble = 1 + jag * (0.6 * math.noise(angle * 2.3 + 9, 0.5, 0.5) + 0.4 * math.noise(angle * 5.7 + 31, 1.5, 2.5))
+				local z = RIM_Z - drop * (1 + 0.12 * math.noise(angle * 3.1 + 5, 0.5, 1.5))
+				ring[j + 1] = coreVertex(r * scale * wobble * math.cos(angle), r * scale * wobble * math.sin(angle), z)
 			end
-			inner = next
+			return ring
 		end
-		outer = inner
+		local lowA = bottomRing(0.62, 0.10 * PROFILE_DEPTH, 0.12)
+		local lowB = bottomRing(0.30, 0.15 * PROFILE_DEPTH, 0.18)
+		local apex = coreVertex(0.02 * R0 * math.cos(2.1), 0.02 * R0 * math.sin(2.1), RIM_Z - CORE_DROP)
+		for j = 1, CORE_ANGLES do
+			local l = j % CORE_ANGLES + 1
+			coreTri(bottom[j], lowA[j], lowA[l], 0, 0, -1)
+			coreTri(bottom[j], lowA[l], bottom[l], 0, 0, -1)
+			coreTri(lowA[j], lowB[j], lowB[l], 0, 0, -1)
+			coreTri(lowA[j], lowB[l], lowA[l], 0, 0, -1)
+			coreTri(lowB[j], apex, lowB[l], 0, 0, -1)
+		end
 	end
-	-- The middle: a fan from the axis out to the innermost ring, or to the
-	-- rim itself on a flat top.
-	local centre = newVertex({ 0, 0, if islandTop then islandTop.height(0) else CAP_TOP })
-	for i, p in outer do
-		upFace(centre, p.index, outer[i % #outer + 1].index)
-	end
-end
-
-local function paint(x: number, y: number, z: number)
-	if onTop(x, y, z) then return islandPaint(x, y, 0) end
-	-- Every other texel takes its rock's seed and tint, and paints as one
-	-- material: a single stratum and pebble colour for the whole rock.
-	local seed = (ownerAt({ x, y, z }))
-	local depth = math.clamp(CAP_TOP - z, 0, PROFILE_DEPTH)
-	local spread = TOP_SPREAD + (BOTTOM_SPREAD - TOP_SPREAD) * depth / PROFILE_DEPTH
-	return islandPaint(x, y, -depth, seed.key, seed.tint, spread, true)
-end
-
--- Builds a list of faces into a part's mesh, unwarped.
-local function facesInto(faces)
-	return function(mesh)
+	chunkedPart("Core", nil, CORE_COLOUR, function(mesh)
 		local handles = {}
-		for _, face in faces do
+		for _, face in coreFaces do
 			local verts = {}
 			for i, v in face do
 				if not handles[v] then
-					local q = positions[v]
-					handles[v] = mesh:vertex(q[1], q[2], q[3])
+					local p = corePositions[v]
+					handles[v] = mesh:vertex(p[1], p[2], p[3])
 				end
 				verts[i] = handles[v]
 			end
 			mesh:face(verts)
 		end
-	end
-end
--- A part per rock, sized to it at the layout's texel density. The top is flat
--- or gently curved, so it can be chunked without its cuts showing.
-for n, seed in seeds do
-	if rockFaces[seed] then
-		part(`Rock{n}`, nil, ROCK_COLOUR, facesInto(rockFaces[seed]), 30, paint, nil, nil, true)
-	end
-end
-chunkedPart("Top", nil, ROCK_COLOUR, facesInto(topFaces), 30, paint, true)
+	end, 30, corePaint, true)
 
--- Stronger highlights along the rock edges, and deeper contact shadows in the
--- seams, than the default: each rock shades against every other rock.
-local entries = table.clone(parts)
-local meshes = {}
-for _, entry in entries do
-	table.insert(meshes, entry.mesh)
-end
-for _, entry in entries do
-	entry.mesh:paintShading(entry.image, {
-		highlight = 1.2,
-		highlightRamp = 0.3,
-		shadow = 0.9,
-		gradient = GRADIENT,
-		blend = 1,
-		brushed = true,
-		occluders = meshes,
-		-- The island paint, cached under the item's key since its code is not hashed.
-		paint = entry.paint,
-		custom = entry.custom,
-		salt = CACHE_KEY,
-	})
-end
-table.clear(parts)
-return entries
+	-- One part per cell: inset towards its centre, outer surface pushed out,
+	-- inner surface set back, and a side quad on every boundary edge.
+	local function shardGeometry(cell)
+		local count = #cell.pos
+		if count == 0 or #cell.tris == 0 then return nil end
+		-- Count undirected edges and remember each vertex's neighbours.
+		local edgeCount, neighbours = {}, {}
+		for i = 1, count do
+			neighbours[i] = {}
+		end
+		for _, tri in cell.tris do
+			for k = 1, 3 do
+				local i, j = tri[k], tri[k % 3 + 1]
+				local a, b = i, j
+				if a > b then a, b = b, a end
+				local key = a * 1048576 + b
+				edgeCount[key] = (edgeCount[key] or 0) + 1
+				table.insert(neighbours[i], j)
+				table.insert(neighbours[j], i)
+			end
+		end
+		-- Boundary vertices move the full half-gap; the rings behind them move
+		-- part of the way, so the shard edge eases in instead of folding over.
+		local weight = {}
+		for i = 1, count do
+			weight[i] = 0
+		end
+		for _, tri in cell.tris do
+			for k = 1, 3 do
+				local i, j = tri[k], tri[k % 3 + 1]
+				local a, b = i, j
+				if a > b then a, b = b, a end
+				if edgeCount[a * 1048576 + b] == 1 then
+					weight[i] = 1
+					weight[j] = 1
+				end
+			end
+		end
+		for _ = 1, 2 do
+			local next = table.clone(weight)
+			for i = 1, count do
+				local best = weight[i]
+				for _, j in neighbours[i] do
+					local w = weight[j] * 0.6
+					if w > best then best = w end
+				end
+				next[i] = best
+			end
+			weight = next
+		end
+		-- The cell's centre, weighted by triangle area.
+		local cx, cy, cz, total = 0, 0, 0, 0
+		for _, tri in cell.tris do
+			local a, b, c = cell.pos[tri[1]], cell.pos[tri[2]], cell.pos[tri[3]]
+			local ux, uy, uz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+			local vx, vy, vz = c[1] - a[1], c[2] - a[2], c[3] - a[3]
+			local nx, ny, nz = uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx
+			local area = math.sqrt(nx * nx + ny * ny + nz * nz) * 0.5
+			if area > 0 then
+				cx += (a[1] + b[1] + c[1]) / 3 * area
+				cy += (a[2] + b[2] + c[2]) / 3 * area
+				cz += (a[3] + b[3] + c[3]) / 3 * area
+				total += area
+			end
+		end
+		if total <= 0 then return nil end
+		local centre = { cx / total, cy / total, cz / total }
+		local inset = {}
+		for i = 1, count do
+			local p = cell.pos[i]
+			local dx, dy, dz = centre[1] - p[1], centre[2] - p[2], centre[3] - p[3]
+			local distance = math.sqrt(dx * dx + dy * dy + dz * dz)
+			local move = math.min(GAP * 0.5 * weight[i], 0.45 * distance)
+			local t = if distance > 1e-9 then move / distance else 0
+			inset[i] = { p[1] + dx * t, p[2] + dy * t, p[3] + dz * t }
+		end
+		-- Smooth vertex normals on the inset surface, used to offset both sides.
+		local normals = {}
+		for i = 1, count do
+			normals[i] = { 0, 0, 0 }
+		end
+		for _, tri in cell.tris do
+			local a, b, c = inset[tri[1]], inset[tri[2]], inset[tri[3]]
+			local ux, uy, uz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+			local vx, vy, vz = c[1] - a[1], c[2] - a[2], c[3] - a[3]
+			local nx, ny, nz = uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx
+			for k = 1, 3 do
+				local n = normals[tri[k]]
+				n[1] += nx
+				n[2] += ny
+				n[3] += nz
+			end
+		end
+		for i = 1, count do
+			local n = normals[i]
+			local length = math.sqrt(n[1] * n[1] + n[2] * n[2] + n[3] * n[3])
+			if length < 1e-9 then
+				local fallback = pushAt(inset[i])
+				normals[i] = { fallback[1], fallback[2], fallback[3] }
+			else
+				n[1], n[2], n[3] = n[1] / length, n[2] / length, n[3] / length
+			end
+		end
+		-- Varied proudness, a little sideways lean towards the bottom, and a
+		-- hang for the shards under the island.
+		local zMin, zMax = math.huge, -math.huge
+		for i = 1, count do
+			zMin = math.min(zMin, inset[i][3])
+			zMax = math.max(zMax, inset[i][3])
+		end
+		local span = math.max(zMax - zMin, 0.5)
+		local proud = 0.75 + 0.5 * random(cell.seed.key + 41)
+		local leanAngle = TAU * random(cell.seed.key + 42)
+		local lean = (0.08 + 0.20 * random(cell.seed.key + 43)) * PUSH * proud
+		local leanX, leanY = math.cos(leanAngle) * lean, math.sin(leanAngle) * lean
+		local under = centre[3] <= RIM_Z + 0.5
+		local hang = if under then PROFILE_DEPTH * (0.04 + 0.10 * random(cell.seed.key + 44)) else 0
+		local outer, inner = {}, {}
+		for i = 1, count do
+			local p, n = inset[i], normals[i]
+			local depth = CAP_TOP - p[3]
+			local topFade = math.clamp(depth / TOP_FADE, 0, 1)
+			local rel = math.clamp((zMax - p[3]) / span, 0, 1)
+			local push = PUSH * proud * (0.78 + 0.22 * rel) * topFade
+			outer[i] = {
+				p[1] + n[1] * push + leanX * rel,
+				p[2] + n[2] * push + leanY * rel,
+				p[3] + n[3] * push - hang,
+			}
+			inner[i] = {
+				p[1] - n[1] * SHARD_THICKNESS,
+				p[2] - n[2] * SHARD_THICKNESS,
+				p[3] - n[3] * SHARD_THICKNESS,
+			}
+		end
+		-- Every edge with only one face in the shard is a seam edge: close it
+		-- with a side wall from the outer surface down to the inner one.
+		local sides = {}
+		for _, tri in cell.tris do
+			for k = 1, 3 do
+				local i, j = tri[k], tri[k % 3 + 1]
+				local a, b = i, j
+				if a > b then a, b = b, a end
+				if edgeCount[a * 1048576 + b] == 1 then
+					table.insert(sides, { i, j })
+				end
+			end
+		end
+		return { outer = outer, inner = inner, sides = sides }
+	end
+
+	for n, seed in seeds do
+		local cell = cells[seed]
+		if cell then
+			local geometry = shardGeometry(cell)
+			if geometry then
+				part(`Rock{n}`, nil, ROCK_COLOUR, function(mesh)
+					local outerHandles, innerHandles = {}, {}
+					for i, p in geometry.outer do
+						outerHandles[i] = mesh:vertex(p[1], p[2], p[3])
+					end
+					for i, p in geometry.inner do
+						innerHandles[i] = mesh:vertex(p[1], p[2], p[3])
+					end
+					for _, tri in cell.tris do
+						mesh:face({ outerHandles[tri[1]], outerHandles[tri[2]], outerHandles[tri[3]] })
+					end
+					for _, tri in cell.tris do
+						mesh:face({ innerHandles[tri[3]], innerHandles[tri[2]], innerHandles[tri[1]] })
+					end
+					for _, side in geometry.sides do
+						local i, j = side[1], side[2]
+						mesh:face({ outerHandles[i], innerHandles[i], innerHandles[j], outerHandles[j] })
+					end
+				end, 30, shardPaint(seed), nil, nil, true)
+			end
+		end
+	end
+
+	-- The top: one continuous walkable cap at CAP_TOP, following islandTop
+	-- when the item shapes it, with a short flared skirt and a lip underside
+	-- that overhang the shard tops all the way round.
+	local TOP_ANGLES = math.clamp(math.round(96 * PROPORTION), 96, 384)
+	local topPositions, topFaces = {}, {}
+	local function topVertex(x: number, y: number, z: number)
+		table.insert(topPositions, { x, y, z })
+		return #topPositions
+	end
+	local function upFace(a: number, b: number, c: number)
+		local pa, pb, pc = topPositions[a], topPositions[b], topPositions[c]
+		local ux, uy, uz = pb[1] - pa[1], pb[2] - pa[2], pb[3] - pa[3]
+		local vx, vy, vz = pc[1] - pa[1], pc[2] - pa[2], pc[3] - pa[3]
+		local nz = ux * vy - uy * vx
+		table.insert(topFaces, if nz >= 0 then { a, b, c } else { a, c, b })
+	end
+	local function downFace(a: number, b: number, c: number)
+		local pa, pb, pc = topPositions[a], topPositions[b], topPositions[c]
+		local ux, uy, uz = pb[1] - pa[1], pb[2] - pa[2], pb[3] - pa[3]
+		local vx, vy, vz = pc[1] - pa[1], pc[2] - pa[2], pc[3] - pa[3]
+		local nz = ux * vy - uy * vx
+		table.insert(topFaces, if nz <= 0 then { a, b, c } else { a, c, b })
+	end
+	local function radialFace(a: number, b: number, c: number)
+		local pa, pb, pc = topPositions[a], topPositions[b], topPositions[c]
+		local ux, uy, uz = pb[1] - pa[1], pb[2] - pa[2], pb[3] - pa[3]
+		local vx, vy, vz = pc[1] - pa[1], pc[2] - pa[2], pc[3] - pa[3]
+		local nx, ny = uy * vz - uz * vy, uz * vx - ux * vz
+		local mx, my = (pa[1] + pb[1] + pc[1]) / 3, (pa[2] + pb[2] + pc[2]) / 3
+		table.insert(topFaces, if nx * mx + ny * my >= 0 then { a, b, c } else { a, c, b })
+	end
+	do
+		local outer = {}
+		for j = 0, TOP_ANGLES - 1 do
+			local angle = TAU * j / TOP_ANGLES
+			local r = R0 * outlineScale(angle)
+			outer[j + 1] = topVertex(r * math.cos(angle), r * math.sin(angle), CAP_TOP)
+		end
+		local rings = { outer }
+		if islandTop then
+			for n = 1, #islandTop.radii do
+				local radius = islandTop.radii[n]
+				local height = islandTop.height(radius)
+				local ring = {}
+				for j = 0, TOP_ANGLES - 1 do
+					local angle = TAU * j / TOP_ANGLES
+					local r = math.min(radius * islandTop.octagon(angle), R0 * outlineScale(angle) - 0.3)
+					ring[j + 1] = topVertex(r * math.cos(angle), r * math.sin(angle), height)
+				end
+				table.insert(rings, ring)
+			end
+		else
+			for _, share in { 0.8, 0.6, 0.4, 0.2 } do
+				local ring = {}
+				for j = 0, TOP_ANGLES - 1 do
+					local angle = TAU * j / TOP_ANGLES
+					local r = R0 * outlineScale(angle) * share
+					ring[j + 1] = topVertex(r * math.cos(angle), r * math.sin(angle), CAP_TOP)
+				end
+				table.insert(rings, ring)
+			end
+		end
+		local centre = topVertex(0, 0, if islandTop then islandTop.height(0) else CAP_TOP)
+		for r = 1, #rings - 1 do
+			local a, b = rings[r], rings[r + 1]
+			for j = 1, TOP_ANGLES do
+				local l = j % TOP_ANGLES + 1
+				upFace(a[j], a[l], b[l])
+				upFace(a[j], b[l], b[j])
+			end
+		end
+		local last = rings[#rings]
+		for j = 1, TOP_ANGLES do
+			local l = j % TOP_ANGLES + 1
+			upFace(last[j], last[l], centre)
+		end
+		-- The skirt: from the cap's rim down and out to the flared bottom.
+		local skirt = {}
+		for j = 0, TOP_ANGLES - 1 do
+			local angle = TAU * j / TOP_ANGLES
+			local r = R0 * outlineScale(angle) + TOP_FLARE
+			skirt[j + 1] = topVertex(r * math.cos(angle), r * math.sin(angle), CAP_TOP - TOP_SKIRT)
+		end
+		for j = 1, TOP_ANGLES do
+			local l = j % TOP_ANGLES + 1
+			radialFace(outer[j], skirt[j], skirt[l])
+			radialFace(outer[j], skirt[l], outer[l])
+		end
+		-- The lip's underside, reaching back under the shard tops so no gap
+		-- between cap and shell is open to the sky.
+		local lip = {}
+		for j = 0, TOP_ANGLES - 1 do
+			local angle = TAU * j / TOP_ANGLES
+			local r = math.max(R0 * outlineScale(angle) - TOP_LIP, 0)
+			lip[j + 1] = topVertex(r * math.cos(angle), r * math.sin(angle), CAP_TOP - TOP_SKIRT)
+		end
+		for j = 1, TOP_ANGLES do
+			local l = j % TOP_ANGLES + 1
+			downFace(skirt[j], lip[j], lip[l])
+			downFace(skirt[j], lip[l], skirt[l])
+		end
+	end
+	chunkedPart("Top", nil, ROCK_COLOUR, function(mesh)
+		local handles = {}
+		for _, face in topFaces do
+			local verts = {}
+			for i, v in face do
+				if not handles[v] then
+					local p = topPositions[v]
+					handles[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = handles[v]
+			end
+			mesh:face(verts)
+		end
+	end, 30, topPaint, true)
+
+	-- Stronger highlights along the shard edges, and deeper contact shadows in
+	-- the seams, than the default: every shard shades against every other one.
+	local entries = table.clone(parts)
+	local meshes = {}
+	for _, entry in entries do
+		table.insert(meshes, entry.mesh)
+	end
+	for _, entry in entries do
+		entry.mesh:paintShading(entry.image, {
+			highlight = 1.2,
+			highlightRamp = 0.3,
+			shadow = 0.9,
+			gradient = GRADIENT,
+			blend = 1,
+			brushed = true,
+			occluders = meshes,
+			-- The island paint, cached under the item's key since its code is not hashed.
+			paint = entry.paint,
+			custom = entry.custom,
+			salt = CACHE_KEY,
+		})
+	end
+	table.clear(parts)
+	return entries
 end)
 -- cached above
 
@@ -2342,7 +2633,7 @@ for _, entry in shell do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildArenaIsland] = "ArenaIsland-c6d7d56b76c76243"
+buildKeys[buildArenaIsland] = "ArenaIsland-99cb656d5f78943b"
 local function buildPadIsland()
 local CACHE_KEY = "PadIsland-e9af68a1c123b156"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -3712,7 +4003,7 @@ for _, entry in shell do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildPadIsland] = "PadIsland-607d579f8bdd1d04"
+buildKeys[buildPadIsland] = "PadIsland-0ae4c2986bdcc996"
 local function buildMarketIsland()
 local CACHE_KEY = "MarketIsland-aa6d247bde2cdba3"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -5082,9 +5373,9 @@ for _, entry in shell do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildMarketIsland] = "MarketIsland-845bad38b8fe713a"
-local function buildYardIsland()
-local CACHE_KEY = "YardIsland-cc6fe22b41842f13"
+buildKeys[buildMarketIsland] = "MarketIsland-ef3de9a4b8aec7b6"
+local function buildColumnIsland()
+local CACHE_KEY = "ColumnIsland-33f14087aa72368c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -5689,8 +5980,14 @@ end
 -- `texture` overrides the texture size for parts that need more detail.
 -- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
 -- glowing parts skip painted shading. `flat` skips the warp, for parts so
--- thin it would visibly bend them.
-local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?)
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
 	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
@@ -5699,7 +5996,7 @@ local function part(name, bone, color, build, smooth, rust, texture: number?, em
 		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
 		else TEXTURE
 	local image = Image.new(size, size, color[1], color[2], color[3])
-	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive }
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
 	setLook(entry, color, rust)
 	-- Glowing parts skip the painted bake, so their colors go on as they are.
 	if emissive then
@@ -5714,8 +6011,10 @@ end
 -- build runs once into a recorder, then each face goes to the chunk holding
 -- its centre. Cells sit on the origin across, and centred on z = 0 up and
 -- down, so ground near sea level stays in one layer. `flat` skips the warp,
--- as for part().
-local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?)
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
 	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
 	-- Smallest cell a chunk is halved down to while looking for a split.
 	local MIN_CELL = 2
@@ -5735,6 +6034,13 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end,
 	}
 	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
 
 	local chunks, order = {}, {}
 	for _, f in faces do
@@ -5822,11 +6128,15 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 				end
 				mesh:face(verts, f.uvs)
 			end
-		end, smooth, 0, texture)
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
 		-- Chunks of one part share a group, so their edges count as its own.
 		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
 		emit(`{name}_{key}`, chunks[key], CHUNK)
@@ -5850,10 +6160,10 @@ local function finishParts()
 			end
 		end
 		entry.mesh:paintShading(entry.image, {
-			highlight = EDGE_HIGHLIGHT,
-			shadow = CONTACT_SHADOW,
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
 			gradient = GRADIENT,
-			blend = EDGE_BLEND,
+			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
 			name = entry.name,
@@ -5863,592 +6173,1674 @@ local function finishParts()
 			salt = if entry.custom then CACHE_KEY else nil,
 			rust = entry.rust * WEAR,
 			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
--- Yard Island: a floating yard island, from the shared rock-wall
--- generator (shared/RockIsland.luau).
-local RADIUS = 36
--- Rocks 4.7 times the generator's base size.
-local ROCK_SCALE = 4.7
+-- Column Island: a floating island, a mountain of stone columns turned
+-- upside down, so a flat paved top hangs over a rocky cone that tapers to
+-- a point below. The columns, of every size and shape, are packed edge to
+-- edge like cracked basalt; each hangs as deep as the cone at its centre
+-- with a low faceted tip, so the underside steps down in uneven tiers to
+-- the lowest point and a shallower shoulder. The columns are the cells of
+-- a weighted Voronoi diagram (a power diagram) over scattered stones, so
+-- big stones claim big cells. Stones grow from small near the tip to big
+-- at the rim, and the big rim stones give the top its lobed outline. Each
+-- column is carved, a few angled planes chiselling chunks off its lower
+-- corners and edges. The model is built the mountain way up (heights,
+-- summit, foot) and flipped as it is written out. Centered on the origin,
+-- top at z = 0.
+local RADIUS = 38
+local PEAK = 53
+-- Stone sizes at the summit and at the foot, as shares of the radius, so
+-- a bigger island has bigger stones rather than more of them.
+local SMALLEST, LARGEST = 0.055 * RADIUS, 0.34 * RADIUS
+-- Stones are scattered a stone's width past the rim, so rim cells close
+-- on real neighbours before the ones outside are dropped.
+local SCATTER = RADIUS + LARGEST
+-- Shortest a column hangs, so the rim stones read as a thick slab; a
+-- share of the radius like the stone sizes.
+local MIN_LENGTH = 0.2 * RADIUS
+-- Chisel cuts per column, at most, and how deep one bites as a share of
+-- the stone's size.
+local MAX_CUTS = 3
+local CUT_DEPTH = { 0.2, 0.55 }
+-- Fine chips per column (fewest, most) and how deep one bites, in studs.
+local CHIPS = { 3, 6 }
+local CHIP_DEPTH = { 0.15, 0.45 }
+-- How far a cut's heading may swing from straight out, in radians.
+local CUT_SPREAD = math.rad(55)
 
--- The island's wobbly outline, as a radius scale per angle.
-local function outlineScale(angle: number): number
-	return 1 + 0.07 * math.sin(3 * angle + 0.6) + 0.05 * math.sin(5 * angle + 2.1) + 0.03 * math.sin(9 * angle)
+local STONE = { 0.46, 0.45, 0.5 }
+-- Under the grass the island is all dirt, until rocks start breaking
+-- through it at the first share of the island's depth in DIRT_TRANSITION,
+-- more and more of them going down, until from the second share it is all
+-- rock. Each rock comes through the dirt at its own depth in that range. The
+-- dirt's bottom edge is bevelled back DIRT_BEVEL studs on its outer side, so
+-- the rock it sits on stands proud.
+local DIRT = { 0.33, 0.24, 0.18 }
+local DIRT_TRANSITION = { 0.33, 0.5 }
+-- Above that, rock already shows through the dirt in slabs: a rock still
+-- under dirt may have up to PATCHES slabs of its faces bare below tilted
+-- lines, each facing out from the island's centre within PATCH_SPREAD
+-- radians. The chance of each rises from nothing at PATCH_FROM of the depth
+-- to certain at PATCH_FULL. A slab is PATCH_THICKNESS studs deep, its back
+-- leaning in or out by up to PATCH_LEAN, and its top line tilted by up to
+-- PATCH_TILT; PATCH_PEAKED of the slabs have a second top line, so the bare
+-- rock comes up to a point through the dirt.
+local PATCHES = 2
+local PATCH_FROM = 0.04
+local PATCH_FULL = 0.25
+local PATCH_SPREAD = math.rad(45)
+local PATCH_THICKNESS = { 0.4, 1.4 }
+local PATCH_LEAN = 0.5
+local PATCH_TILT = 0.8
+local PATCH_PEAKED = 0.6
+-- The bare rock of a slab is chiselled into a rough stone: this many chips
+-- (fewest, most), each biting this deep (studs) off its outer side at its
+-- own angle, up to PATCH_CHIP_SPREAD radians off straight out.
+local PATCH_CHIPS = { 4, 8 }
+local PATCH_CHIP_DEPTH = { 0.3, 0.8 }
+local PATCH_CHIP_SPREAD = math.rad(65)
+-- The colours blend too, over a wider share of the depth: dirt greys toward
+-- stone and stone keeps a dirty tint across COLOR_TRANSITION, the line
+-- wandering by COLOR_WOBBLE of the depth. At any depth the dirt stays
+-- DIRT_LEAD further toward dirt than the stone, so the two still read apart.
+local COLOR_TRANSITION = { 0.08, 0.55 }
+local COLOR_WOBBLE = 0.06
+local DIRT_LEAD = 0.45
+-- Traces of dirt stay on the stone just under each rock's dirt line, as
+-- patchy blotches thinning out over DIRT_TRACE studs below it. Bare rock
+-- breaking through above the line keeps DIRT_DUSTING of them.
+local DIRT_TRACE = 4
+local DIRT_DUSTING = 0.35
+-- Grime and dead grey lichen crust the stone in patches, thickest where
+-- the dirt gives way to rock and thinning out to nothing by GRIME_REACH of
+-- the island's depth.
+-- GRIME_COVER is the most of the stone it covers.
+local GRIME = { 0.21, 0.22, 0.19 }
+local GRIME_REACH = 0.8
+local GRIME_COVER = 0.45
+-- Soot blackens the lower stone in soft blotches, from SOOT_FROM of the
+-- island's depth down to the tip, where it covers SOOT_COVER of it.
+local SOOT = { 0.1, 0.09, 0.09 }
+local SOOT_FROM = 0.55
+local SOOT_COVER = 0.5
+
+-- Small whole stones half sunk in the dirt, like crushed cookie in ice
+-- cream: STONE_BITS of them per square stud of dirt near the top, rising to
+-- the second number where the dirt gives way to rock. Each is STONE_BIT_SIZE
+-- studs across, most of them small and a few big (STONE_BIT_SKEW over 1), a
+-- chipped box, and stands out of the dirt by STONE_BIT_RISE
+-- of its size. None sit within STONE_BIT_CLEAR studs of the top, under the
+-- grass's lip.
+local PEBBLE = { 0.47, 0.46, 0.49 }
+local STONE_BITS = { 0.035, 0.17 }
+local STONE_BIT_SIZE = { 0.45, 1.9 }
+local STONE_BIT_SKEW = 2
+local STONE_BIT_RISE = { 0.3, 0.4 }
+local STONE_BIT_CLEAR = 1.2
+-- The stones are stained with dirt: solid where they come out of it,
+-- breaking into blotches up to STONE_BIT_STAIN of their height.
+local STONE_BIT_STAIN = 1.6
+
+-- Drawn cracks in the dirt, running out from the stones sunk in it, as if
+-- pushing them in split it: CRACK_CHANCE of the stones have them, up to
+-- CRACKS each, CRACK_LENGTH studs long in CRACK_SEGMENTS jagged steps,
+-- CRACK_WIDTH wide at the stone and thinning steadily to nothing at its end.
+-- CRACK_BRANCH of the cracks fork once.
+local CRACK = { 0.17, 0.12, 0.08 }
+-- Each crack is drawn in depth: a pale lip where light catches its lower
+-- edge (CRACK_LIP), the crack over it, and a darker core down its middle
+-- (CRACK_CORE, CRACK_CORE_WIDTH of the crack's width).
+local CRACK_LIP = { 0.66, 0.53, 0.4 }
+local CRACK_CORE = { 0.06, 0.04, 0.03 }
+local CRACK_CORE_WIDTH = 0.45
+local CRACK_CHANCE = 1
+local CRACKS = 3
+local CRACK_LENGTH = { 0.6, 1.8 }
+local CRACK_SEGMENTS = 4
+local CRACK_WIDTH = { 0.1, 0.18 }
+local CRACK_BRANCH = 0.4
+local DIRT_BEVEL = { 0.07 * LARGEST, 0.13 * LARGEST }
+-- The dirt's outer edges and corners are rounded off on this radius, a
+-- share of the largest stone so bigger stones round off as softly, each
+-- edge in this many facets, so it reads soft rather than jagged.
+local DIRT_ROUND = 0.13 * LARGEST
+local DIRT_ROUND_STEPS = 4
+-- Each rock shades from STONE times the first where it meets the top to
+-- STONE times the second at its tip.
+local ROCK_GRADIENT = { 1.1, 0.6 }
+-- Brush splotches in the stone: one may sit in each cell of a 3D grid
+-- (`cell` studs, with `chance`), a lobed blot `radius` studs across that
+-- shifts the stone's tone by up to `tone` and its tint by up to `tint`. The
+-- coat's brush strokes lay them on as dabs.
+local SPLOTCH = { cell = 1.8, chance = 1, radius = { 1, 2 }, tone = 0.1, tint = 0.02 }
+-- Texture pixels per stud; chunks are 1024 texels across at this density.
+local TEXEL_DENSITY = 16
+-- Edge highlights: how far edge paint reaches from an edge, in studs, and how
+-- many times wider than the default the highlight strokes are.
+local EDGE_REACH = 1
+local HIGHLIGHT_WIDTH = 4
+-- Studs over which a highlight thins from full width at a corner.
+local CORNER_TAPER = 0.5
+-- Grass and dirt are soft, so their edge highlights and contact shadows run
+-- at this share of the stone's.
+local SOFT_SHADING = 0.12
+
+-- Grass over the top: a turf slab GRASS_HEIGHT thick, pushed GRASS_OUTSET
+-- past the rim, whose edge hangs down as a lip (shallowest and deepest, in
+-- studs) hung all along with tongues of grass dripping further down, each
+-- DRIP_WIDTH across and DRIP_LENGTH below the lip. Neighbouring drips
+-- overlap by DRIP_OVERLAP of their widths, so the edge runs as one
+-- unbroken wave with no flat stretch between drips.
+local GRASS = { 0.74, 0.63, 0.4 }
+local GRASS_HEIGHT = 0.45
+local GRASS_OUTSET = 0.25
+local GRASS_LIP = { 0.3, 0.6 }
+local DRIP_WIDTH = { 1.6, 4 }
+local DRIP_LENGTH = { 0.6, 2.2 }
+local DRIP_OVERLAP = 0.35
+-- A finer octave of wobble over the wave: how far it moves the edge up or
+-- down, in studs, and how fast it changes along the rim.
+local DRIP_DETAIL = 0.6
+local DRIP_DETAIL_FREQUENCY = 1.1
+-- Spacing of the points the rim is walked in, in studs.
+local GRASS_STEP = 0.25
+-- The turf's top rolls over into its hanging edge on a quarter circle this
+-- many studs across, in this many facets.
+local GRASS_ROUND = 0.42
+local GRASS_ROUND_STEPS = 4
+-- The hanging edge's bottom curls under into its underside on this radius.
+local GRASS_BOTTOM_ROUND = 0.2
+-- The rim's corners in plan are rounded off by blurring its outline over
+-- about this many studs, a share of the largest stone so the rounding keeps
+-- up with the stones' corners; the stone's own rounded edges keep the cut-in
+-- corners covered. The drips' depth is blurred the same way over
+-- GRASS_DEPTH_BLUR studs, so neighbouring tongues meet in soft dips rather
+-- than sharp notches.
+local GRASS_CORNER_BLUR = 0.22 * LARGEST
+local GRASS_DEPTH_BLUR = 0.3
+-- The turf's flat top is cut into squares this many studs across.
+local GRASS_TOP_CELL = 8
+-- How much the grass darkens toward the tip of the deepest drip.
+local DRIP_SHADE = 0.35
+-- The grass is dead: straw GRASS drifting into a dull olive where a little
+-- life hangs on (GRASS_OLIVE_COVER of it), in soft noise patches this many
+-- studs across.
+local GRASS_OLIVE = { 0.6, 0.57, 0.35 }
+local GRASS_OLIVE_COVER = 0.3
+local GRASS_PATCH_SIZE = 6
+
+-- Fixed per-column jitter, so the columns look uneven but every build matches.
+local function hash(i: number, j: number): number
+	local n = math.sin(i * 127.1 + j * 311.7) * 43758.5453
+	return n - math.floor(n)
 end
 
--- Island paint: the rock islands' texture (strata, pebbles, grit and topsoil),
--- shared by the rock-wall items and the rock-cell items.
-local GROUND = { 0.3, 0.27, 0.22 }
-local STRATA = { { 0.5, 0.4, 0.27 }, { 0.36, 0.35, 0.34 }, { 0.48, 0.3, 0.22 } }
-local TOPSOIL = { 0.24, 0.19, 0.14 }
--- Grit flecks in the ground and topsoil, and the pebbles set in the strata.
-local GRIT_LIGHT, GRIT_DARK = { 0.58, 0.54, 0.46 }, { 0.11, 0.09, 0.07 }
-local PEBBLES = { { 0.6, 0.57, 0.52 }, { 0.27, 0.26, 0.25 }, { 0.55, 0.38, 0.26 } }
--- How far a bed's colour drifts warmer or cooler.
-local HUE_SHIFT = 0.07
-
-local function random(k: number): number
-	local s = math.sin(k * 12.9898 + 4.1414) * 43758.5453
-	return s - math.floor(s)
+local seed = 11
+local function random(): number
+	seed = (seed * 16807) % 2147483647
+	return seed / 2147483647
 end
 
-local function mix(r: number, g: number, b: number, colour, f: number): (number, number, number)
-	return r + (colour[1] - r) * f, g + (colour[2] - g) * f, b + (colour[3] - b) * f
+-- Height of the slope at a point: the main cone, ridges running down from
+-- the summit, and a lower shoulder peak off to one side.
+local function heightAt(x: number, y: number): number
+	local r = math.sqrt(x * x + y * y) / RADIUS
+	local angle = math.atan2(y, x)
+	local ridges = 1 + 0.12 * math.cos(angle * 5) * r
+	local main = PEAK * math.max(0, 1 - r * ridges) ^ 1.25
+	local sx, sy = x - 8, y + 5
+	local shoulder = 19 * math.max(0, 1 - math.sqrt(sx * sx + sy * sy) / 11) ^ 1.1
+	return math.max(main, shoulder)
 end
 
--- Grit: sparse light and dark flecks a texel or two across, blended in.
-local function grit(r: number, g: number, b: number, x: number, y: number, z: number): (number, number, number)
-	local n = math.noise(x * 9, y * 9, z * 9 + 61)
-	if math.abs(n) < 0.5 then return r, g, b end
-	return mix(r, g, b, if n > 0 then GRIT_LIGHT else GRIT_DARK, math.min((math.abs(n) - 0.5) * 6, 0.7))
-end
-
--- The island's texture: gritty ground on top, then topsoil fading into wavy
--- rock strata that darken with depth, with pebbles packed into some beds
--- like a conglomerate. A rock's `seed` shifts its strata, grain and hue
--- so neighbours don't match, and each rock has its own `tint`.
--- `spread` scales how far a rock's tint and hue wander from its neighbours' (1
--- by default). `single` holds the whole rock to one stratum and one pebble
--- colour, so a rock reads as cut from a single material.
-local function islandPaint(x: number, y: number, z: number, seed: number?, tint: number?, spread: number?, single: boolean?)
-	local below = -z
-	if below < 0.3 then
-		local k = 1 + 0.12 * math.noise(x / 4, y / 4, 31) + 0.05 * math.noise(x * 3, y * 3, 37)
-		return grit(GROUND[1] * k, GROUND[2] * k, GROUND[3] * k, x, y, z)
+-- Stones scattered by dart throwing, none crowding another, sized by how
+-- high on the slope they sit: x, y and size.
+local stones = {}
+for _ = 1, 8000 do
+	local angle, reach = random() * TAU, math.sqrt(random()) * SCATTER
+	local x, y = reach * math.cos(angle), reach * math.sin(angle)
+	local height = math.clamp(heightAt(x, y) / PEAK, 0, 1)
+	local size = (LARGEST + (SMALLEST - LARGEST) * height ^ 0.5) * (0.8 + 0.4 * random())
+	local clear = true
+	for _, other in stones do
+		local dx, dy = x - other[1], y - other[2]
+		if dx * dx + dy * dy < ((size + other[3]) * 0.72) ^ 2 then
+			clear = false
+			break
+		end
 	end
-	local s = seed or 0
-	local band = math.noise(x / 9 + s, y / 9, z / 2) * 0.6 + z * (0.8 + 0.2 * random(s + 1)) + random(s + 2) * 3
-	local wave = math.sin(band * 2.4)
-	local layer = STRATA[if single then math.floor(random(s + 4) * 3) + 1 else math.floor(band * 2.4 / (2 * math.pi)) % 3 + 1]
-	local k = (1 + ((tint or 1) - 1) * (spread or 1)) * (1 + 0.1 * wave + 0.06 * math.noise(x * 2 + s, y * 2, z * 2))
-	if wave > 0.93 then k -= 0.25 end
-	k *= 1 - 0.6 * math.clamp((below - 3) / 20, 0, 1)
-	local r, g, b = layer[1], layer[2], layer[3]
-	-- Pebbles: rounded clasts, packed denser in some beds than others, each
-	-- picked from PEBBLES by a slower noise and ringed by a dark seam.
-	local threshold = 0.42 - 0.2 * math.noise(x / 6, y / 6, z / 1.5 + 79)
-	local p = math.noise(x * 1.7 + s, y * 1.7, z * 1.7 + 71) - threshold
-	if p > 0 then
-		local c = if single then random(s + 5) * 0.6 - 0.3 else math.noise(x * 0.9, y * 0.9, z * 0.9 + 83)
-		local pebble = PEBBLES[if c < -0.12 then 1 elseif c < 0.12 then 2 else 3]
-		local seam = 1 - 0.3 * math.max(0, 1 - p / 0.05)
-		r, g, b = pebble[1] * seam, pebble[2] * seam, pebble[3] * seam
+	if clear then
+		table.insert(stones, { x, y, size })
 	end
-	-- The rock's hue drifts warmer or cooler, keeping its brightness.
-	local hue = HUE_SHIFT * (spread or 1) * (2 * random(s + 3) - 1)
-	r, g, b = r * k * (1 + hue), g * k * (1 + 0.2 * hue), b * k * (1 - hue)
-	local soil = 1 - math.clamp((below - 0.5) / 4 + 0.3 * math.noise(x / 2, y / 2, 41), 0, 1)
-	r, g, b = mix(r, g, b, TOPSOIL, soil)
-	if soil <= 0 then return r, g, b end
-	-- Grit only shows where the soil does.
-	local gr, gg, gb = grit(r, g, b, x, y, z)
-	return r + (gr - r) * soil, g + (gg - g) * soil, b + (gb - b) * soil
-end
--- Rock Island: the shared generator behind Arena, Yard, Pad and Market Island,
--- the Island Rocks algorithm (items/IslandRocks.luau) sized per island. One
--- set of rocks covers the whole island, from the top rim down the wall, round
--- the bottom rim and in across the underside. The seeds are scattered in 3D on
--- the surface and each rock is the set of points nearer its seed than any
--- other (a power diagram, so bigger rocks claim more), so a rock carries round
--- the rim instead of the pattern restarting there. The surface is meshed as a
--- grid and every triangle is cut by the bisector planes between the seeds its
--- corners belong to, so the seams are exact and both rocks on a seam share it.
---
--- The item sets, before including this:
---   RADIUS        the island's radius;
---   ROCK_SCALE    how many times the base rock size its rocks are;
---   outlineScale  the outline as a radius scale per angle;
---   ROCK_BULGE    optionally, how many times the base bulge its rocks stand
---                 out (ROCK_SCALE if not set; 0 for a smooth body);
---   islandTop     optionally, a shaped top instead of a flat one:
---                 { radii, height, octagon }, rings at octagon radii `radii`
---                 (outermost first), each at height(radius), measured with
---                 octagon(angle) as the radius scale.
-useTexelDensity(16)
-local CAP_TOP = 0.7
-local WALL_REACH = 0.86
--- The body keeps the Island Rocks test island's proportions (16 deep at
--- radius 14), so a big island is as deep for its size as a small one.
-local PROPORTION = RADIUS / 14
-local PROFILE_DEPTH, HALF_DEPTH = 16 * PROPORTION, 4 * PROPORTION
-local UNDERSIDE_SHARE = 0.18
--- Rock spacing, scaled by the item's ROCK_SCALE, and how far a rock of base
--- size bulges out, scaled by its ROCK_BULGE. Rock sizes spread by
--- e^(SIZE_SPREAD * r) for r from -1 to 1, and are bigger near the top:
--- TOP_SIZE times the base size at the rim, easing to BOTTOM_SIZE.
-local RELIEF = if ROCK_BULGE ~= nil then ROCK_BULGE else ROCK_SCALE
-local ROCK, BULGE = 4.6 * ROCK_SCALE, 1.5 * RELIEF
-local SIZE_SPREAD = 0.8
--- A rock's size runs from MIN_SHARE of the largest rock its zone allows up to
--- that largest size, so the smallest rock is always 80% of the biggest.
-local MIN_SHARE = 0.8
-local TOP_SIZE, BOTTOM_SIZE = 1.3, 0.8
--- How sharply the size falls off going down: the size eases from TOP_SIZE to
--- BOTTOM_SIZE along (1 - depth)^SIZE_CURVE, so the top stays near its maximum
--- and the drop comes lower down.
-local SIZE_CURVE = 3
--- How deep each joint sits (scaling with the bulge, but never under the
--- base joint, so even a smooth body shows its seams), and how far from the
--- top rim the joint takes to reach that depth. The rim itself stays on the
--- profile. The joint's width is set below, from the grid.
-local SEAM_DEPTH, SEAM_FADE = 0.2 * math.max(RELIEF, 1), 2.5
--- Below DOWN_FROM of the way down the wall, a rock pushes straight down rather
--- than out along the wall, so the rocks near the bottom stand off the underside
--- instead of flaring the island's silhouette.
-local DOWN_FROM = 0.55
--- The tip is one rock covering the bottom out to TIP_SHARE of the underside's rim.
-local TIP_SHARE = 0.5
--- How much of its crest a rock still stands off at its seams.
-local REST = 0.45
--- How far the seams near the top merge: their dip is cut by MERGE_TOP at the
--- rim, easing back to full depth by the middle of the wall.
-local MERGE_TOP = 1.0
--- How much of its bulge a rock keeps at the bottom: BOTTOM_BULGE of it, easing
--- in from the middle of the wall.
-local BOTTOM_BULGE = 0.3
--- How much each rock's texture varies from its neighbours': TOP_SPREAD at the
--- rim, easing to BOTTOM_SPREAD at the bottom.
-local TOP_SPREAD, BOTTOM_SPREAD = 2.0, 0.5
--- The surface grid: samples round the island, rows down the wall and rings in
--- across the underside, finer on bigger islands up to a limit.
-local ANGLES = math.clamp(math.round(96 * PROPORTION), 96, 384)
-local WALL_ROWS = math.clamp(math.round(36 * PROPORTION), 36, 120)
-local UNDER_ROWS = math.clamp(math.round(30 * PROPORTION), 30, 90)
-local ROCK_COLOUR = { 0.36, 0.33, 0.28 }
-
-local R0 = RADIUS * WALL_REACH
-local RIM_Z = CAP_TOP - PROFILE_DEPTH
--- The grid's spacing on the wall: the larger of its step round the island
--- and its step down the steep top of the wall. Each joint is at least
--- JOINT_STEPS of these wide, so the dip into a seam spans several vertices
--- either side and doesn't step where the seam crosses the grid at a slant.
-local GRID_STEP = math.max(TAU * R0 * 1.1 / ANGLES, 2 * PROFILE_DEPTH / WALL_ROWS)
-local JOINT_STEPS = 3
-local JOINT_WIDTH = math.max(0.4 * math.max(RELIEF, 1), JOINT_STEPS * GRID_STEP)
-
-local function random(k: number): number
-	local s = math.sin(k * 12.9898 + 4.1414) * 43758.5453
-	return s - math.floor(s)
 end
 
-local function sub(a: { number }, b: { number }): { number }
-	return { a[1] - b[1], a[2] - b[2], a[3] - b[3] }
+-- Cuts a cell outline down to the side of stone q's boundary nearer stone
+-- p. Each corner carries the stone across the edge that starts there (nil
+-- on the outer rim), so walls can find their neighbour.
+local function clip(outline, p, q, neighbour)
+	local nx, ny = q[1] - p[1], q[2] - p[2]
+	local limit = (q[1] ^ 2 + q[2] ^ 2 - p[1] ^ 2 - p[2] ^ 2 - q[3] ^ 2 + p[3] ^ 2) / 2
+	local function side(point)
+		return point[1] * nx + point[2] * ny - limit
+	end
+	local kept = {}
+	for i, a in outline do
+		local b = outline[i % #outline + 1]
+		local sa, sb = side(a), side(b)
+		local crossing = if (sa <= 0) ~= (sb <= 0)
+			then { a[1] + (b[1] - a[1]) * sa / (sa - sb), a[2] + (b[2] - a[2]) * sa / (sa - sb) }
+			else nil
+		if sa <= 0 then
+			table.insert(kept, { a[1], a[2], a[3] })
+			if crossing then
+				table.insert(kept, { crossing[1], crossing[2], neighbour })
+			end
+		elseif crossing then
+			table.insert(kept, { crossing[1], crossing[2], a[3] })
+		end
+	end
+	return kept
 end
 
-local function dot(a: { number }, b: { number }): number
-	return a[1] * b[1] + a[2] * b[2] + a[3] * b[3]
+-- Each stone's column: its outline and its top corners on a slanted plane.
+local columns = {}
+for index, stone in stones do
+	local outline = {}
+	for i = 0, 31 do
+		local angle = i / 32 * TAU
+		table.insert(outline, { SCATTER * math.cos(angle), SCATTER * math.sin(angle), nil })
+	end
+	for other, neighbour in stones do
+		if other ~= index and #outline >= 3 then
+			local dx, dy = neighbour[1] - stone[1], neighbour[2] - stone[2]
+			if dx * dx + dy * dy < (LARGEST * 3) ^ 2 then
+				outline = clip(outline, stone, neighbour, other)
+			end
+		end
+	end
+	-- Stones outside the rim, and cells cut by the scatter's edge, are
+	-- dropped, so the foot ends on whole stones instead of a clean circle.
+	local onEdge = stone[1] ^ 2 + stone[2] ^ 2 > RADIUS ^ 2
+	for _, corner in outline do
+		onEdge = onEdge or corner[3] == nil
+	end
+	if #outline < 3 or onEdge then
+		continue
+	end
+	local cx, cy = 0, 0
+	for _, corner in outline do
+		cx, cy = cx + corner[1] / #outline, cy + corner[2] / #outline
+	end
+	local rise = math.max(MIN_LENGTH * (0.8 + 0.4 * hash(index, 5)), heightAt(cx, cy) + (hash(index, 1) - 0.5) * (1 + stone[3]))
+	local tiltX, tiltY = (hash(index, 2) - 0.5) * 0.45, (hash(index, 3) - 0.5) * 0.45
+	local corners = {}
+	-- Neighbouring columns share their edges exactly, so no gap opens
+	-- between them.
+	for i, corner in outline do
+		local z = rise + (corner[1] - cx) * tiltX + (corner[2] - cy) * tiltY
+		corners[i] = { corner[1], corner[2], z, corner[3] }
+	end
+	columns[index] = {
+		index = index,
+		size = stone[3],
+		corners = corners,
+		-- The top rises to a low ridge point, so it reads as broken stone.
+		peak = { cx, cy, rise + 0.15 * stone[3] * (0.5 + hash(index, 4)) },
+	}
 end
 
-local function cross(a: { number }, b: { number }): { number }
+-- A column as a closed solid: faces as lists of points, wound outward,
+-- from the foot (z = 0) up to its slanted top and the low point above it.
+local function solidOf(column)
+	local bottom = 0
+	local corners, peak = column.corners, column.peak
+	local count = #corners
+	local faces = {}
+	local base = {}
+	for i = count, 1, -1 do
+		table.insert(base, { corners[i][1], corners[i][2], bottom })
+	end
+	table.insert(faces, base)
+	for i = 1, count do
+		local a, b = corners[i], corners[i % count + 1]
+		table.insert(faces, { { a[1], a[2], bottom }, { b[1], b[2], bottom }, { b[1], b[2], b[3] }, { a[1], a[2], a[3] } })
+		table.insert(faces, { { peak[1], peak[2], peak[3] }, { a[1], a[2], a[3] }, { b[1], b[2], b[3] } })
+	end
+	return faces
+end
+
+-- Cuts away everything on the far side of the plane n . p = d, closing the
+-- wound with a cap facing along n.
+local function carve(faces, n, d)
+	local kept, cut = {}, {}
+	for _, face in faces do
+		local out = {}
+		for i, a in face do
+			local b = face[i % #face + 1]
+			local sa = a[1] * n[1] + a[2] * n[2] + a[3] * n[3] - d
+			local sb = b[1] * n[1] + b[2] * n[2] + b[3] * n[3] - d
+			if sa <= 0 then
+				table.insert(out, a)
+			end
+			if (sa <= 0) ~= (sb <= 0) then
+				local t = sa / (sa - sb)
+				local p = { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t }
+				table.insert(out, p)
+				table.insert(cut, p)
+			end
+		end
+		if #out >= 3 then
+			table.insert(kept, out)
+		end
+	end
+	if #cut < 3 then
+		return kept
+	end
+	-- The cap's corners, sorted round their centre in the plane.
+	local mx, my, mz = 0, 0, 0
+	for _, p in cut do
+		mx, my, mz = mx + p[1] / #cut, my + p[2] / #cut, mz + p[3] / #cut
+	end
+	local ux, uy, uz = if math.abs(n[3]) < 0.9 then -n[2] else 0, if math.abs(n[3]) < 0.9 then n[1] else -n[3], if math.abs(n[3]) < 0.9 then 0 else n[2]
+	local length = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / length, uy / length, uz / length
+	local vx, vy, vz = n[2] * uz - n[3] * uy, n[3] * ux - n[1] * uz, n[1] * uy - n[2] * ux
+	local cap = {}
+	for _, p in cut do
+		local ox, oy, oz = p[1] - mx, p[2] - my, p[3] - mz
+		local angle = math.atan2(ox * vx + oy * vy + oz * vz, ox * ux + oy * uy + oz * uz)
+		local duplicate = false
+		for _, other in cap do
+			duplicate = duplicate or math.abs(other[2] - angle) < 1e-4
+		end
+		if not duplicate then
+			table.insert(cap, { p, angle })
+		end
+	end
+	table.sort(cap, function(a, b)
+		return a[2] < b[2]
+	end)
+	if #cap >= 3 then
+		local face = {}
+		for i, entry in cap do
+			face[i] = entry[1]
+		end
+		table.insert(kept, face)
+	end
+	return kept
+end
+
+-- Carve every column first, so walls can be cut against their
+-- neighbours' finished shapes.
+for _, column in columns do
+	local corners, index = column.corners, column.index
+	local faces = solidOf(column)
+
+	-- Chisel cuts: each faces out and up at its own angle, from a low
+	-- slant (shaving a side edge) to steep (bevelling the top), and
+	-- bites a set depth in from the farthest point along it. None is
+	-- near level, which would open holes down between columns. Every cut
+	-- faces away from the island's centre, within CUT_SPREAD either side,
+	-- so the carving shows on the outside and never faces inward.
+	local outward = math.atan2(column.peak[2], column.peak[1])
+	-- The cuts to make: heading, lift and depth. The big chisel cuts come
+	-- first, then fine chips that knock small corners off what is left.
+	local cuts = {}
+	for k = 1, 1 + math.floor(hash(index, 40) * MAX_CUTS) do
+		table.insert(cuts, {
+			outward + (hash(index, 40 + k) - 0.5) * 2 * CUT_SPREAD,
+			0.35 + hash(index, 50 + k) * 0.85,
+			column.size * (CUT_DEPTH[1] + (CUT_DEPTH[2] - CUT_DEPTH[1]) * hash(index, 60 + k)),
+		})
+	end
+	for k = 1, CHIPS[1] + math.floor(hash(index, 70) * (CHIPS[2] - CHIPS[1] + 1)) do
+		table.insert(cuts, {
+			outward + (hash(index, 70 + k) - 0.5) * 2 * CUT_SPREAD,
+			0.35 + hash(index, 80 + k) * 1.05,
+			CHIP_DEPTH[1] + (CHIP_DEPTH[2] - CHIP_DEPTH[1]) * hash(index, 90 + k),
+		})
+	end
+	for _, cut in cuts do
+		local heading, lift, depth = cut[1], cut[2], cut[3]
+		local n = { math.cos(heading) * math.cos(lift), math.sin(heading) * math.cos(lift), math.sin(lift) }
+		local farthest = -math.huge
+		for _, face in faces do
+			for _, p in face do
+				farthest = math.max(farthest, p[1] * n[1] + p[2] * n[2] + p[3] * n[3])
+			end
+		end
+		-- A cut stops short of the foot, which becomes the island's top,
+		-- so shallow stones are never carved through into the surface.
+		local footmost = -math.huge
+		for _, corner in corners do
+			footmost = math.max(footmost, corner[1] * n[1] + corner[2] * n[2])
+		end
+		local plane = math.max(farthest - depth, footmost + 0.3)
+		if plane < farthest then
+			faces = carve(faces, n, plane)
+		end
+	end
+
+	column.faces = faces
+
+	-- Where the column's carved underside begins: the shallowest point of
+	-- any face that isn't a side wall or its foot.
+	column.surfaceFrom = math.huge
+	for _, face in faces do
+		local foot, nz = true, 0
+		for i, p in face do
+			local q = face[i % #face + 1]
+			foot = foot and p[3] == 0
+			nz += (p[1] - q[1]) * (p[2] + q[2])
+		end
+		if not foot and math.abs(nz) > 1e-3 then
+			for _, p in face do
+				column.surfaceFrom = math.min(column.surfaceFrom, p[3])
+			end
+		end
+	end
+end
+
+-- How deep each column hides behind the tier around it: it comes into view
+-- where its shallowest neighbour's underside begins, or at the top if it
+-- faces the open edge.
+for _, column in columns do
+	column.shownFrom = math.huge
+	for _, corner in column.corners do
+		local neighbour = corner[4] and columns[corner[4]]
+		column.shownFrom = math.min(column.shownFrom, if neighbour then neighbour.surfaceFrom else 0)
+	end
+end
+
+-- How deep the island hangs at its lowest point.
+local islandDepth = 0
+for _, column in columns do
+	islandDepth = math.max(islandDepth, column.peak[3])
+end
+
+-- How far a solid reaches along a direction.
+local function farthestAlong(faces, n): number
+	local farthest = -math.huge
+	for _, face in faces do
+		for _, p in face do
+			farthest = math.max(farthest, p[1] * n[1] + p[2] * n[2] + p[3] * n[3])
+		end
+	end
+	return farthest
+end
+
+-- Cuts a solid's outer bottom edge off, `depth` studs in along a slant facing
+-- out from the island's centre and down.
+local function bevelled(faces, outward: number, depth: number)
+	local lift = math.rad(45)
+	local n = { math.cos(outward) * math.cos(lift), math.sin(outward) * math.cos(lift), math.sin(lift) }
+	return carve(faces, n, farthestAlong(faces, n) - depth)
+end
+
+-- Each rock is dirt down to where it comes through, and stone below, split
+-- into a dirt solid and a stone one. The dirt's outer bottom edge is
+-- bevelled off, so the stone under it stands proud. Higher up, a patch of a
+-- rock's outer face may already show through: the dirt is split into the
+-- slab on its outer face and the rest, and the slab into bare stone below a
+-- tilted line and dirt above, bevelled like the rest.
+for _, column in columns do
+	local index, faces = column.index, column.faces
+	local share = DIRT_TRANSITION[1] + (DIRT_TRANSITION[2] - DIRT_TRANSITION[1]) * hash(index, 30)
+	local dirtLine = islandDepth * share
+	column.dirtLine = dirtLine
+	if dirtLine <= column.shownFrom then
+		column.solids = { { faces = faces, dirt = false } }
+		continue
+	end
+	local shown = column.shownFrom
+	local outward = math.atan2(column.peak[2], column.peak[1])
+	local bevel = DIRT_BEVEL[1] + (DIRT_BEVEL[2] - DIRT_BEVEL[1]) * hash(index, 31)
+	local dirt = bevelled(carve(faces, { 0, 0, 1 }, dirtLine), outward, bevel)
+	local stone = carve(faces, { 0, 0, -1 }, -dirtLine)
+	column.solids = { { faces = dirt, dirt = true }, { faces = stone, dirt = false } }
+	-- The stone shows from below the dirt.
+	column.shownFrom = math.min(dirtLine, column.peak[3])
+
+	local middle = (shown + dirtLine) / 2 / islandDepth
+	local chance = math.clamp((middle - PATCH_FROM) / (PATCH_FULL - PATCH_FROM), 0, 1)
+	if dirtLine - shown <= 1 then
+		continue
+	end
+	-- Each slab is cut from the dirt left after the last, so they sit side
+	-- by side round the rock.
+	local rest, solids = dirt, { { faces = stone, dirt = false } }
+	for k = 1, PATCHES do
+		if hash(index, 204 + k * 10) >= chance then
+			continue
+		end
+		local heading = outward + (hash(index, 205 + k * 10) - 0.5) * 2 * PATCH_SPREAD
+		local lean = (hash(index, 300 + k * 10) - 0.5) * 2 * PATCH_LEAN
+		local size = math.sqrt(1 + lean * lean)
+		local across = { math.cos(heading) / size, math.sin(heading) / size, lean / size }
+		local thickness = PATCH_THICKNESS[1] + (PATCH_THICKNESS[2] - PATCH_THICKNESS[1]) * hash(index, 206 + k * 10)
+		local face = farthestAlong(rest, across) - thickness
+		local slab = carve(rest, { -across[1], -across[2], -across[3] }, -face)
+		rest = carve(rest, across, face)
+		-- The slab's top line, tilted, somewhere down what shows of the rock:
+		-- above it dirt, below it bare rock.
+		local function topLine(seed: number)
+			local top = shown + (dirtLine - shown) * (0.05 + 0.45 * hash(index, seed))
+			local tx = (hash(index, seed + 1) - 0.5) * 2 * PATCH_TILT
+			local ty = (hash(index, seed + 2) - 0.5) * 2 * PATCH_TILT
+			local length = math.sqrt(tx * tx + ty * ty + 1)
+			local down = { tx / length, ty / length, 1 / length }
+			return down, down[1] * column.peak[1] + down[2] * column.peak[2] + down[3] * top
+		end
+		local down, line = topLine(207 + k * 10)
+		table.insert(solids, { faces = bevelled(carve(slab, down, line), heading, bevel * 0.7), dirt = true })
+		local bare = carve(slab, { -down[1], -down[2], -down[3] }, -line)
+		-- A second line peaks the rock: the dirt it cuts off stays dirt.
+		if hash(index, 320 + k * 10) < PATCH_PEAKED then
+			local second, secondLine = topLine(330 + k * 10)
+			table.insert(solids, { faces = bevelled(carve(bare, second, secondLine), heading, bevel * 0.7), dirt = true })
+			bare = carve(bare, { -second[1], -second[2], -second[3] }, -secondLine)
+		end
+		-- Chipped into a rough stone rather than a flat slab.
+		local chips = PATCH_CHIPS[1] + math.floor(hash(index, 400 + k * 10) * (PATCH_CHIPS[2] - PATCH_CHIPS[1] + 1))
+		for c = 1, chips do
+			local seed = 500 + k * 100 + c * 7
+			local yaw = heading + (hash(index, seed) - 0.5) * 2 * PATCH_CHIP_SPREAD
+			local pitch = (hash(index, seed + 1) - 0.5) * 2 * PATCH_CHIP_SPREAD
+			local n = { math.cos(yaw) * math.cos(pitch), math.sin(yaw) * math.cos(pitch), math.sin(pitch) }
+			local depth = PATCH_CHIP_DEPTH[1] + (PATCH_CHIP_DEPTH[2] - PATCH_CHIP_DEPTH[1]) * hash(index, seed + 2)
+			local plane = farthestAlong(bare, n) - depth
+			if plane > -math.huge then
+				bare = carve(bare, n, plane)
+			end
+		end
+		table.insert(solids, { faces = bare, dirt = false })
+	end
+	table.insert(solids, { faces = rest, dirt = true })
+	column.solids = solids
+end
+
+-- Each face's plane, as a unit normal pointing out and its distance.
+local function planeOf(face)
+	local nx, ny, nz = 0, 0, 0
+	for i, a in face do
+		local b = face[i % #face + 1]
+		nx += (a[2] - b[2]) * (a[3] + b[3])
+		ny += (a[3] - b[3]) * (a[1] + b[1])
+		nz += (a[1] - b[1]) * (a[2] + b[2])
+	end
+	local length = math.sqrt(nx * nx + ny * ny + nz * nz)
+	if length < 1e-9 then
+		return nil
+	end
+	nx, ny, nz = nx / length, ny / length, nz / length
+	local p = face[1]
+	return { nx, ny, nz, nx * p[1] + ny * p[2] + nz * p[3] }
+end
+
+-- Splits a face by a plane into the part outside it and the part inside.
+local EPSILON = 1e-5
+local function split(face, plane)
+	local outside, inside = {}, {}
+	local function side(p)
+		local s = plane[1] * p[1] + plane[2] * p[2] + plane[3] * p[3] - plane[4]
+		return if math.abs(s) < EPSILON then 0 else s
+	end
+	for i, a in face do
+		local b = face[i % #face + 1]
+		local sa, sb = side(a), side(b)
+		if sa >= 0 then
+			table.insert(outside, a)
+		end
+		if sa <= 0 then
+			table.insert(inside, a)
+		end
+		if (sa > 0 and sb < 0) or (sa < 0 and sb > 0) then
+			local t = sa / (sa - sb)
+			local p = { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t }
+			table.insert(outside, p)
+			table.insert(inside, p)
+		end
+	end
+	return outside, inside
+end
+
+local function area(face): number
+	local plane = planeOf(face)
+	if not plane or #face < 3 then
+		return 0
+	end
+	local total = 0
+	for i = 2, #face - 1 do
+		local a, b, c = face[1], face[i], face[i + 1]
+		local ux, uy, uz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local vx, vy, vz = c[1] - a[1], c[2] - a[2], c[3] - a[3]
+		total += ((uy * vz - uz * vy) * plane[1] + (uz * vx - ux * vz) * plane[2] + (ux * vy - uy * vx) * plane[3]) / 2
+	end
+	return total
+end
+
+-- The parts of a face that don't lie inside a neighbour. Only a face lying
+-- against one of the neighbour's own faces can touch it; that face's plane
+-- is skipped, and the face is carved by the rest, every piece that falls
+-- outside one of them showing.
+local function uncovered(face, neighbour)
+	local own = planeOf(face)
+	if not own then
+		return {}
+	end
+	local touching, planes = false, {}
+	for _, other in neighbour.faces do
+		local plane = planeOf(other)
+		if plane then
+			local facing = own[1] * plane[1] + own[2] * plane[2] + own[3] * plane[3] < -0.9999
+			local p = face[1]
+			if facing and math.abs(plane[1] * p[1] + plane[2] * p[2] + plane[3] * p[3] - plane[4]) < 1e-4 then
+				touching = true
+			else
+				table.insert(planes, plane)
+			end
+		end
+	end
+	if not touching then
+		return { face }
+	end
+	local shown, rest = {}, face
+	for _, plane in planes do
+		local outside, inside = split(rest, plane)
+		if #outside >= 3 and area(outside) > 1e-4 then
+			table.insert(shown, outside)
+		end
+		rest = inside
+		if #rest < 3 or area(rest) <= 1e-4 then
+			break
+		end
+	end
+	return shown
+end
+
+-- Columns bucketed by the 2-stud cells their outlines cover, so paint can
+-- find the rock under a point without testing them all.
+local CELL = 2
+local cells = {}
+for _, column in columns do
+	local x0, y0, x1, y1 = math.huge, math.huge, -math.huge, -math.huge
+	for _, corner in column.corners do
+		x0, y0 = math.min(x0, corner[1]), math.min(y0, corner[2])
+		x1, y1 = math.max(x1, corner[1]), math.max(y1, corner[2])
+	end
+	for cx = math.floor(x0 / CELL), math.floor(x1 / CELL) do
+		for cy = math.floor(y0 / CELL), math.floor(y1 / CELL) do
+			local cellKey = `{cx},{cy}`
+			cells[cellKey] = cells[cellKey] or {}
+			table.insert(cells[cellKey], column)
+		end
+	end
+end
+
+-- The rock a point on the island belongs to. On a wall two rocks share,
+-- the deeper one owns it, since only its wall shows there.
+local function rockAt(x: number, y: number)
+	local found = nil
+	for _, column in cells[`{math.floor(x / CELL)},{math.floor(y / CELL)}`] or {} do
+		local corners, within = column.corners, true
+		for i, a in corners do
+			local b = corners[i % #corners + 1]
+			if (b[1] - a[1]) * (y - a[2]) - (b[2] - a[2]) * (x - a[1]) < -1e-3 then
+				within = false
+				break
+			end
+		end
+		if within and (found == nil or column.peak[3] > found.peak[3]) then
+			found = column
+		end
+	end
+	return found
+end
+
+-- The splotch on top at a point, as its tone and warmth shifts (0, 0 where
+-- none reaches). Of the splotches covering a point, the one laid last wins.
+local function splotchAt(x: number, y: number, z: number): (number, number)
+	local size = SPLOTCH.cell
+	local gx, gy, gz = math.floor(x / size), math.floor(y / size), math.floor(z / size)
+	local tone, warm, order = 0, 0, -1
+	for i = gx - 1, gx + 1 do
+		for j = gy - 1, gy + 1 do
+			for k = gz - 1, gz + 1 do
+				local seed = i * 7.31 + k * 3.17
+				if hash(seed, j + 101) < SPLOTCH.chance then
+					local cx = (i + hash(seed, j + 201)) * size
+					local cy = (j + hash(seed, j + 301)) * size
+					local cz = (k + hash(seed, j + 401)) * size
+					local radius = SPLOTCH.radius[1] + (SPLOTCH.radius[2] - SPLOTCH.radius[1]) * hash(seed, j + 501)
+					local dx, dy, dz = x - cx, y - cy, z - cz
+					-- Lobed rim, so a blot isn't a clean circle.
+					local lobes = 1 + 0.25 * math.noise(dx / radius * 1.5 + i, dy / radius * 1.5 + j, dz / radius * 1.5 + k)
+					local laid = hash(seed, j + 601)
+					if dx * dx + dy * dy + dz * dz < (radius * lobes) ^ 2 and laid > order then
+						order = laid
+						tone = (hash(seed, j + 701) - 0.5) * 2 * SPLOTCH.tone
+						warm = (hash(seed, j + 801) - 0.5) * 2 * SPLOTCH.tint
+					end
+				end
+			end
+		end
+	end
+	return tone, warm
+end
+
+-- Per-rock gradient over the part of a rock that shows: light where it
+-- comes out from behind the tier around it, darkening toward its tip. The
+-- island hangs below z = 0, so depth is -z. Near the top the rock is dirt,
+-- fading to stone further down.
+-- How far from dirt toward stone the colour has blended at a point, 0 to 1.
+local function stoneAt(x: number, y: number, z: number): number
+	local share = -z / islandDepth + COLOR_WOBBLE * math.noise(x * 0.15, y * 0.15, z * 0.15)
+	local t = math.clamp((share - COLOR_TRANSITION[1]) / (COLOR_TRANSITION[2] - COLOR_TRANSITION[1]), 0, 1)
+	return t * t * (3 - 2 * t)
+end
+
+-- A colour between dirt and stone, `t` of the way to stone.
+local function soil(t: number): (number, number, number)
+	return DIRT[1] + (STONE[1] - DIRT[1]) * t, DIRT[2] + (STONE[2] - DIRT[2]) * t, DIRT[3] + (STONE[3] - DIRT[3]) * t
+end
+
+local paintRock = rusting(0.1, function(x, y, z)
+	local rock = rockAt(x, y)
+	local depth = if rock
+		then math.clamp((-z - rock.shownFrom) / math.max(rock.peak[3] - rock.shownFrom, 0.5), 0, 1)
+		else 0
+	local shade = ROCK_GRADIENT[1] + (ROCK_GRADIENT[2] - ROCK_GRADIENT[1]) * depth ^ 0.8
+	local tone, warm = splotchAt(x, y, z)
+	shade *= 1 + tone
+	local blend = stoneAt(x, y, z)
+	local r, g, b = soil(DIRT_LEAD + (1 - DIRT_LEAD) * blend)
+	-- Dirt traces: blotches whose share of the stone shrinks below the line.
+	if rock then
+		local below = -z - rock.dirtLine
+		local amount = if below < 0 then DIRT_DUSTING else math.max(0, 1 - below / DIRT_TRACE) ^ 1.5
+		local blot = 0.5 + 0.5 * math.noise(x * 0.7, y * 0.7, z * 0.7) + 0.25 * math.noise(x * 2.1, y * 2.1, z * 2.1)
+		local trace = math.clamp((blot - (1 - 0.7 * amount)) / 0.08, 0, 1)
+		if trace > 0 then
+			local dr, dg, db = soil(0.25 * blend)
+			r, g, b = r + (dr - r) * trace, g + (dg - g) * trace, b + (db - b) * trace
+		end
+	end
+	local share = -z / islandDepth
+	-- Soot: dark blotches spreading over the lower stone.
+	local sooting = math.clamp((share - SOOT_FROM) / (1 - SOOT_FROM), 0, 1)
+	if sooting > 0 then
+		local blot = 0.5 + math.noise(x * 0.3 + 53, y * 0.3, z * 0.3) + 0.3 * math.noise(x * 1.1, y * 1.1, z * 1.1 + 29)
+		local soot = 0.85 * math.clamp((blot - (1 - SOOT_COVER * sooting)) / 0.2, 0, 1)
+		r, g, b = r + (SOOT[1] - r) * soot, g + (SOOT[2] - g) * soot, b + (SOOT[3] - b) * soot
+	end
+	-- Grime: soft-edged patches, less of them deeper down.
+	local growth = math.clamp((GRIME_REACH - share) / (GRIME_REACH - DIRT_TRANSITION[1]), 0, 1)
+	if growth > 0 then
+		local patch = 0.5 + 0.5 * math.noise(x * 0.45 + 31, y * 0.45, z * 0.45) + 0.2 * math.noise(x * 1.6, y * 1.6 + 17, z * 1.6)
+		local grime = math.clamp((patch - (1 - GRIME_COVER * growth)) / 0.1, 0, 1)
+		r, g, b = r + (GRIME[1] - r) * grime, g + (GRIME[2] - g) * grime, b + (GRIME[3] - b) * grime
+	end
+	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
+end)
+
+-- Dirt darkens a little with depth, greys toward stone, and is splotched
+-- like the stone.
+local paintDirt = rusting(0.05, function(x, y, z)
+	local shade = 1.05 - 0.3 * math.clamp(-z / (islandDepth * DIRT_TRANSITION[2]), 0, 1)
+	local tone, warm = splotchAt(x, y, z)
+	shade *= 1 + tone
+	local r, g, b = soil((1 - DIRT_LEAD) * stoneAt(x, y, z))
+	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
+end)
+
+-- The island's flat top as one outline: the stones' feet (faces lying on
+-- z = 0) laid together, with every edge two stones share cancelled out,
+-- chained into a loop wound like the feet (clockwise seen from above) and
+-- stripped of corners that sit in a straight line.
+local function topOutline()
+	local function key(p)
+		return `{math.round(p[1] * 1e4)},{math.round(p[2] * 1e4)}`
+	end
+	local edges, points = {}, {}
+	for _, column in columns do
+		for _, face in column.faces do
+			local foot = true
+			for _, p in face do
+				foot = foot and p[3] == 0
+			end
+			if foot then
+				for i, a in face do
+					local b = face[i % #face + 1]
+					local from, to = key(a), key(b)
+					points[from], points[to] = a, b
+					if edges[`{to}>{from}`] then
+						edges[`{to}>{from}`] = nil
+					else
+						edges[`{from}>{to}`] = { from, to }
+					end
+				end
+			end
+		end
+	end
+	local nextOf, first, count = {}, nil, 0
+	for _, edge in edges do
+		assert(nextOf[edge[1]] == nil, "ColumnIsland: the top outline branches")
+		nextOf[edge[1]] = edge[2]
+		first = first or edge[1]
+		count += 1
+	end
+	local loop, at = {}, first
+	repeat
+		table.insert(loop, points[at])
+		at = nextOf[at]
+	until at == first or at == nil
+	assert(#loop == count, "ColumnIsland: the top is not one outline")
+	local outline = {}
+	for i, b in loop do
+		local a, c = loop[(i - 2) % #loop + 1], loop[i % #loop + 1]
+		if math.abs((b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])) > 1e-6 then
+			table.insert(outline, { b[1], b[2] })
+		end
+	end
+	return outline
+end
+
+-- Flipped upside down as it is written out: z mirrors, and the winding
+-- reverses so faces still point outward. The foot becomes the island's top.
+local function addFlipped(mesh, face)
+	local verts = {}
+	for i, p in face do
+		verts[#face + 1 - i] = mesh:vertex(p[1], p[2], -p[3])
+	end
+	mesh:face(verts)
+end
+
+-- The island is split into cubic chunks, each with its own texture, so the
+-- stone reads sharp at one density everywhere.
+useTexelDensity(TEXEL_DENSITY)
+
+-- A unit vector along x, y, z, and the cross product of two vectors.
+local function unit(x: number, y: number, z: number)
+	local length = math.max(math.sqrt(x * x + y * y + z * z), 1e-9)
+	return { x / length, y / length, z / length }
+end
+local function cross(a, b)
 	return { a[2] * b[3] - a[3] * b[2], a[3] * b[1] - a[1] * b[3], a[1] * b[2] - a[2] * b[1] }
 end
 
--- The profile's share of the reach, `depth` studs below the top rim: it halves
--- every HALF_DEPTH studs and levels out at UNDERSIDE_SHARE.
-local function shareAt(depth: number): number
-	return UNDERSIDE_SHARE + (1 - UNDERSIDE_SHARE) * 2 ^ (-depth / HALF_DEPTH)
-end
-
--- The profile's point at `angle` and `depth`.
-local function wallAt(angle: number, depth: number): { number }
-	local r = R0 * outlineScale(angle) * shareAt(depth)
-	return { r * math.cos(angle), r * math.sin(angle), CAP_TOP - depth }
-end
-
--- The outward normal of the profile at `angle` and `depth`, from its tangents.
-local function wallNormal(angle: number, depth: number): { number }
-	local e = 1e-3
-	local along = sub(wallAt(angle + e, depth), wallAt(angle - e, depth))
-	local down = sub(wallAt(angle, depth + e), wallAt(angle, depth - e))
-	local n = cross(along, down)
-	local length = math.sqrt(dot(n, n))
-	n = { n[1] / length, n[2] / length, n[3] / length }
-	if dot(n, { math.cos(angle), math.sin(angle), 0 }) < 0 then
-		n = { -n[1], -n[2], -n[3] }
-	end
-	return n
-end
-
--- Which way a rock at `p` pushes: out along the wall near the top, turning
--- straight down toward the underside, and straight down under the island.
-local function pushAt(p: { number }): { number }
-	if p[3] <= RIM_Z + 1e-6 then return { 0, 0, -1 } end
-	local angle = math.atan2(p[2], p[1])
-	local depth = math.clamp(CAP_TOP - p[3], 0, PROFILE_DEPTH)
-	local n = wallNormal(angle, depth)
-	local t = math.clamp((depth / PROFILE_DEPTH - DOWN_FROM) / (1 - DOWN_FROM), 0, 1)
-	local d = { n[1] * (1 - t), n[2] * (1 - t), n[3] * (1 - t) - t }
-	local length = math.max(math.sqrt(dot(d, d)), 1e-6)
-	return { d[1] / length, d[2] / length, d[3] / length }
-end
-
--- The seeds: one set over the whole surface, each a 3D point with a weight (the
--- square of its size), so the cells are a power diagram and bigger rocks claim
--- more of the surface.
-local seeds = {}
-local function addSeed(p: { number }, key: number, scale: number)
-	local largest = scale * ROCK / 2 * math.exp(SIZE_SPREAD)
-	local size = largest * (MIN_SHARE + (1 - MIN_SHARE) * random(key))
-	table.insert(seeds, {
-		p = p,
-		weight = size * size,
-		size = size,
-		key = key,
-		tint = 0.88 + 0.24 * random(key + 9),
-	})
-end
-do
-	-- Down the wall: a jittered grid in angle and depth.
-	local cols = math.max(3, math.round(TAU * R0 / ROCK))
-	local rows = math.max(1, math.round(PROFILE_DEPTH / ROCK))
-	for row = 0, rows - 1 do
-		for col = 0, cols - 1 do
-			local key = (row * cols + col) * 7 + 1
-			local angle = (col + 0.5 * (row % 2) + 0.38 * (2 * random(key + 1) - 1)) / cols * TAU
-			local depth = (row + 0.5 + 0.3 * (2 * random(key + 2) - 1)) * PROFILE_DEPTH / rows
-			depth = math.clamp(depth, 0.2, PROFILE_DEPTH - 0.2)
-			addSeed(wallAt(angle, depth), key + 3, BOTTOM_SIZE + (TOP_SIZE - BOTTOM_SIZE) * (1 - depth / PROFILE_DEPTH) ^ SIZE_CURVE)
+-- The solids that may cover a solid of a column: the column's other pieces
+-- and its neighbours'.
+local function coverersOf(column, solid)
+	local others = {}
+	for _, other in column.solids do
+		if other ~= solid then
+			table.insert(others, other)
 		end
 	end
-	-- Across the underside: a jittered grid in its plane, kept inside the rim.
-	local reach = R0 * 1.2
-	local n = 0
-	for gx = -reach, reach, ROCK * 0.8 do
-		for gy = -reach, reach, ROCK * 0.8 do
-			n += 1
-			local x = gx + 0.35 * ROCK * (2 * random(n * 2 + 11) - 1)
-			local y = gy + 0.35 * ROCK * (2 * random(n * 2 + 12) - 1)
-			local rim = R0 * outlineScale(math.atan2(y, x)) * shareAt(PROFILE_DEPTH)
-			if math.sqrt(x * x + y * y) < 0.9 * rim then
-				addSeed({ x, y, RIM_Z }, n * 3 + 17, BOTTOM_SIZE)
+	for _, corner in column.corners do
+		local neighbour = corner[4] and columns[corner[4]]
+		if neighbour then
+			for _, other in neighbour.solids do
+				table.insert(others, other)
 			end
 		end
 	end
-	-- The tip is one rock: a single seed on the axis that claims the whole
-	-- bottom, with the underside's rocks kept only around its edge.
-	local tipSize = TIP_SHARE * R0 * shareAt(PROFILE_DEPTH)
-	table.insert(seeds, { p = { 0, 0, RIM_Z }, weight = tipSize * tipSize, size = tipSize, key = 999, tint = 1 })
-	for i = #seeds, 1, -1 do
-		local seed = seeds[i]
-		if seed.key ~= 999 and seed.p[3] <= RIM_Z + 1e-6 and math.sqrt(seed.p[1] ^ 2 + seed.p[2] ^ 2) < TIP_SHARE * R0 * shareAt(PROFILE_DEPTH) then
-			table.remove(seeds, i)
+	return others
+end
+
+-- What of a face no other solid covers.
+local function exposed(face, others)
+	local pieces = { face }
+	for _, other in others do
+		local kept = {}
+		for _, piece in pieces do
+			for _, part in uncovered(piece, other) do
+				table.insert(kept, part)
+			end
+		end
+		pieces = kept
+	end
+	return pieces
+end
+
+local function isFoot(face): boolean
+	for _, p in face do
+		if p[3] ~= 0 then
+			return false
+		end
+	end
+	return true
+end
+
+-- Rounds a convex solid's edges and corners where faces that show meet, on
+-- DIRT_ROUND. Each such edge is cut by planes turning from one face to the
+-- other, each touching a cylinder of that radius set in from both faces;
+-- each such corner by one plane facing out between its faces.
+local function rounded(faces, shows)
+	local planes = {}
+	for i, face in faces do
+		planes[i] = planeOf(face)
+	end
+	local function key(p)
+		return `{math.round(p[1] * 1e4)},{math.round(p[2] * 1e4)},{math.round(p[3] * 1e4)}`
+	end
+	local edgeFaces, cornerFaces, points = {}, {}, {}
+	for i, face in faces do
+		if not planes[i] or not shows[i] then
+			continue
+		end
+		for k, a in face do
+			local b = face[k % #face + 1]
+			local ka, kb = key(a), key(b)
+			points[ka] = a
+			local edge = if ka < kb then `{ka}|{kb}` else `{kb}|{ka}`
+			edgeFaces[edge] = edgeFaces[edge] or { a = a }
+			table.insert(edgeFaces[edge], i)
+			cornerFaces[ka] = cornerFaces[ka] or {}
+			cornerFaces[ka][i] = true
+		end
+	end
+	local cuts = {}
+	for _, edge in edgeFaces do
+		if #edge ~= 2 then
+			continue
+		end
+		local n1, n2 = planes[edge[1]], planes[edge[2]]
+		local cosine = n1[1] * n2[1] + n1[2] * n2[2] + n1[3] * n2[3]
+		if cosine > 0.985 then
+			continue
+		end
+		local p = edge.a
+		local inset = DIRT_ROUND / (1 + cosine)
+		local centre = { p[1] - (n1[1] + n2[1]) * inset, p[2] - (n1[2] + n2[2]) * inset, p[3] - (n1[3] + n2[3]) * inset }
+		for k = 1, DIRT_ROUND_STEPS do
+			local t = k / (DIRT_ROUND_STEPS + 1)
+			local m = unit(n1[1] + (n2[1] - n1[1]) * t, n1[2] + (n2[2] - n1[2]) * t, n1[3] + (n2[3] - n1[3]) * t)
+			table.insert(cuts, { m, m[1] * centre[1] + m[2] * centre[2] + m[3] * centre[3] + DIRT_ROUND })
+		end
+	end
+	for corner, touching in cornerFaces do
+		local sum, count = { 0, 0, 0 }, 0
+		for i in touching do
+			sum = { sum[1] + planes[i][1], sum[2] + planes[i][2], sum[3] + planes[i][3] }
+			count += 1
+		end
+		if count >= 3 then
+			local m = unit(sum[1], sum[2], sum[3])
+			local v = points[corner]
+			table.insert(cuts, { m, m[1] * v[1] + m[2] * v[2] + m[3] * v[3] - DIRT_ROUND * 0.6 })
+		end
+	end
+	for _, cut in cuts do
+		faces = carve(faces, cut[1], cut[2])
+	end
+	return faces
+end
+
+-- Round the dirt where it shows: which faces show is settled for every
+-- solid first, so rounding one doesn't change what its neighbours see.
+do
+	local plans = {}
+	for _, column in columns do
+		for _, solid in column.solids do
+			if not solid.dirt then
+				continue
+			end
+			local others, shows = coverersOf(column, solid), {}
+			for i, face in solid.faces do
+				local whole = area(face)
+				if whole > 1e-4 and not isFoot(face) then
+					local open = 0
+					for _, piece in exposed(face, others) do
+						open += area(piece)
+					end
+					shows[i] = open > whole * 0.5
+				end
+			end
+			table.insert(plans, { solid = solid, shows = shows })
+		end
+	end
+	for _, plan in plans do
+		plan.solid.faces = rounded(plan.solid.faces, plan.shows)
+	end
+end
+
+-- The faces of every column's dirt or stone that show. Only what no other
+-- solid covers is kept, another piece of its own column or a neighbour's,
+-- so nothing lies buried inside the island. The flat top is left open: the
+-- grass covers it.
+local function visibleRock(dirt: boolean)
+	local shown = {}
+	for _, column in columns do
+		for _, solid in column.solids do
+			if solid.dirt ~= dirt then
+				continue
+			end
+			local others = coverersOf(column, solid)
+			for _, face in solid.faces do
+				if isFoot(face) then
+					continue
+				end
+				for _, piece in exposed(face, others) do
+					table.insert(shown, piece)
+				end
+			end
+		end
+	end
+	return shown
+end
+
+local dirtFaces = visibleRock(true)
+
+-- A box around a centre, `r` from it each way, its faces wound outward.
+local function boxAround(c, r)
+	local x0, x1, y0, y1, z0, z1 = c[1] - r, c[1] + r, c[2] - r, c[2] + r, c[3] - r, c[3] + r
+	return {
+		{ { x0, y0, z0 }, { x0, y1, z0 }, { x1, y1, z0 }, { x1, y0, z0 } },
+		{ { x0, y0, z1 }, { x1, y0, z1 }, { x1, y1, z1 }, { x0, y1, z1 } },
+		{ { x0, y0, z0 }, { x1, y0, z0 }, { x1, y0, z1 }, { x0, y0, z1 } },
+		{ { x0, y1, z0 }, { x0, y1, z1 }, { x1, y1, z1 }, { x1, y1, z0 } },
+		{ { x0, y0, z0 }, { x0, y0, z1 }, { x0, y1, z1 }, { x0, y1, z0 } },
+		{ { x1, y0, z0 }, { x1, y1, z0 }, { x1, y1, z1 }, { x1, y0, z1 } },
+	}
+end
+
+-- The stones in the dirt, each as the faces that stand out of it. A stone
+-- is a box turned at random and chipped at its corners, sunk into a dirt
+-- face, and cut off at that face so nothing of it lies buried.
+local pebbleSeed = 7
+local function pebbleRandom(): number
+	pebbleSeed = (pebbleSeed * 16807) % 2147483647
+	return pebbleSeed / 2147483647
+end
+-- How far a point lies from the nearest edge of a face.
+local function edgeDistance(face, p): number
+	local nearest = math.huge
+	for i, a in face do
+		local b = face[i % #face + 1]
+		local ab = { b[1] - a[1], b[2] - a[2], b[3] - a[3] }
+		local length = ab[1] ^ 2 + ab[2] ^ 2 + ab[3] ^ 2
+		local t = if length > 0 then math.clamp(((p[1] - a[1]) * ab[1] + (p[2] - a[2]) * ab[2] + (p[3] - a[3]) * ab[3]) / length, 0, 1) else 0
+		local dx, dy, dz = p[1] - a[1] - ab[1] * t, p[2] - a[2] - ab[2] * t, p[3] - a[3] - ab[3] * t
+		nearest = math.min(nearest, math.sqrt(dx * dx + dy * dy + dz * dz))
+	end
+	return nearest
+end
+
+local pebbles = {}
+-- Where cracks start: each stone's face, normal, centre on the dirt and how
+-- far its rim reaches.
+local crackOrigins = {}
+-- Each stone as where it meets the dirt (point and outward normal, already
+-- flipped) and how far it stands out, bucketed by 2-stud cell for its paint.
+local pebbleCells = {}
+local function pebbleCell(x: number, y: number, z: number): string
+	return `{math.floor(x / 2)},{math.floor(y / 2)},{math.floor(z / 2)}`
+end
+for _, face in dirtFaces do
+	local plane = planeOf(face)
+	if not plane then
+		continue
+	end
+	local n = { plane[1], plane[2], plane[3] }
+	for i = 2, #face - 1 do
+		local a, b, c = face[1], face[i], face[i + 1]
+		local triangle = area({ a, b, c })
+		local depth = (a[3] + b[3] + c[3]) / 3
+		local toward = math.clamp(depth / (islandDepth * DIRT_TRANSITION[1]), 0, 1)
+		local density = STONE_BITS[1] + (STONE_BITS[2] - STONE_BITS[1]) * toward
+		local count = math.floor(triangle * density + pebbleRandom())
+		for _ = 1, count do
+			local u, v = pebbleRandom(), pebbleRandom()
+			if u + v > 1 then
+				u, v = 1 - u, 1 - v
+			end
+			local p = {
+				a[1] + (b[1] - a[1]) * u + (c[1] - a[1]) * v,
+				a[2] + (b[2] - a[2]) * u + (c[2] - a[2]) * v,
+				a[3] + (b[3] - a[3]) * u + (c[3] - a[3]) * v,
+			}
+			local size = STONE_BIT_SIZE[1] + (STONE_BIT_SIZE[2] - STONE_BIT_SIZE[1]) * pebbleRandom() ^ STONE_BIT_SKEW
+			-- A stone too big for the room it has on its face is made smaller,
+			-- so it never hangs off an edge.
+			size = math.min(size, edgeDistance(face, p) * 2.2)
+			local r = size / 2
+			if p[3] < STONE_BIT_CLEAR or size < STONE_BIT_SIZE[1] * 0.8 then
+				continue
+			end
+			local rise = STONE_BIT_RISE[1] + (STONE_BIT_RISE[2] - STONE_BIT_RISE[1]) * pebbleRandom()
+			table.insert(crackOrigins, { face = face, normal = n, at = p, rim = r * 1.0 })
+			local centre = { p[1] + n[1] * r * (2 * rise - 1), p[2] + n[2] * r * (2 * rise - 1), p[3] + n[3] * r * (2 * rise - 1) }
+			-- A box turned at random: start big, and cut each side in to r.
+			local x = unit(pebbleRandom() - 0.5, pebbleRandom() - 0.5, pebbleRandom() - 0.5)
+			local y = cross(x, unit(pebbleRandom() - 0.5, pebbleRandom() - 0.5, pebbleRandom() - 0.5))
+			y = unit(y[1], y[2], y[3])
+			local z = cross(x, y)
+			local stone = boxAround(centre, size * 2)
+			for _, axis in { x, y, z } do
+				for _, sign in { 1, -1 } do
+					local d = { axis[1] * sign, axis[2] * sign, axis[3] * sign }
+					local reach = r * (0.75 + 0.35 * pebbleRandom())
+					stone = carve(stone, d, d[1] * centre[1] + d[2] * centre[2] + d[3] * centre[3] + reach)
+				end
+			end
+			-- Chips knock its corners off.
+			for _ = 1, 9 do
+				local d = unit(pebbleRandom() - 0.5, pebbleRandom() - 0.5, pebbleRandom() - 0.5)
+				stone = carve(stone, d, d[1] * centre[1] + d[2] * centre[2] + d[3] * centre[3] + r * (0.65 + 0.25 * pebbleRandom()))
+			end
+			-- Cut off at the dirt: only what stands out of it is kept, and the
+			-- cap the cut leaves lies against the dirt, so it goes too.
+			local level = n[1] * p[1] + n[2] * p[2] + n[3] * p[3]
+			stone = carve(stone, { -n[1], -n[2], -n[3] }, -level)
+			local record = { point = { p[1], p[2], -p[3] }, normal = { n[1], n[2], -n[3] }, height = size * rise, reach = size }
+			for cx = -1, 1 do
+				for cy = -1, 1 do
+					for cz = -1, 1 do
+						local key = pebbleCell(p[1] + cx * 2, p[2] + cy * 2, -p[3] + cz * 2)
+						pebbleCells[key] = pebbleCells[key] or {}
+						table.insert(pebbleCells[key], record)
+					end
+				end
+			end
+			for _, piece in stone do
+				local onDirt = true
+				for _, q in piece do
+					onDirt = onDirt and math.abs(n[1] * q[1] + n[2] * q[2] + n[3] * q[3] - level) < 1e-6
+				end
+				if not onDirt then
+					table.insert(pebbles, piece)
+				end
+			end
 		end
 	end
 end
 
--- Seams wander: rocks claim the surface in a gently warped copy of it, so the
--- seam between two rocks bends and wobbles instead of running straight. Two
--- octaves of noise sized to the rocks, SEAM_WANDER studs at most.
-local SEAM_WANDER = 0.09 * ROCK
-local function warp(p: { number }): { number }
-	local s = 3 / ROCK
-	local w = {}
-	for k = 1, 3 do
-		local o = k * 17.3
-		local broad = math.noise(p[1] * s + o, p[2] * s, p[3] * s)
-		local fine = math.noise(p[1] * s * 3, p[2] * s * 3 + o, p[3] * s * 3)
-		w[k] = p[k] + SEAM_WANDER * (broad + 0.4 * fine)
-	end
-	return w
+-- The cracks, drawn over the dirt's coat as tapering brush strokes, one per
+-- step of a crack (already flipped).
+local crackStrokes = {}
+local crackSeed = 3
+local function crackRandom(): number
+	crackSeed = (crackSeed * 16807) % 2147483647
+	return crackSeed / 2147483647
 end
-
--- The rock owning `p`, and how far `p` lies from that rock's nearest seam: the
--- distance to the bisector plane with the runner-up, both in the warped space.
-local function ownerAt(point: { number })
-	local p = warp(point)
-	local best, second = seeds[1], seeds[2]
-	local bestPower, secondPower = math.huge, math.huge
-	for _, seed in seeds do
-		local d = sub(p, seed.p)
-		local power = dot(d, d) - seed.weight
-		if power < bestPower then
-			bestPower, secondPower = power, bestPower
-			best, second = seed, best
-		elseif power < secondPower then
-			secondPower, second = power, seed
+-- Whether a point lies inside a convex face, `margin` studs in from its edges.
+local function insideFace(face, n, p, margin: number): boolean
+	for i, a in face do
+		local b = face[i % #face + 1]
+		local edge = { b[1] - a[1], b[2] - a[2], b[3] - a[3] }
+		local inward = unit(table.unpack(cross(n, edge)))
+		if (p[1] - a[1]) * inward[1] + (p[2] - a[2]) * inward[2] + (p[3] - a[3]) * inward[3] < margin then
+			return false
 		end
 	end
-	local span = math.max(math.sqrt(dot(sub(second.p, best.p), sub(second.p, best.p))), 1e-6)
-	return best, (secondPower - bestPower) / (2 * span)
+	return true
+end
+-- A direction turned by `angle` about the face's normal.
+local function turned(v, n, angle: number)
+	local side = cross(n, v)
+	local c, s = math.cos(angle), math.sin(angle)
+	return { v[1] * c + side[1] * s, v[2] * c + side[2] * s, v[3] * c + side[3] * s }
+end
+-- A jagged line from `start` heading along `heading` in a face, stopping
+-- short of its edges.
+local function crackLine(face, n, start, heading, length: number)
+	local points = { start }
+	local step = length / CRACK_SEGMENTS
+	local at, way = start, heading
+	for _ = 1, CRACK_SEGMENTS do
+		way = turned(way, n, (crackRandom() - 0.5) * 1.1)
+		local nextAt = { at[1] + way[1] * step, at[2] + way[2] * step, at[3] + way[3] * step }
+		if not insideFace(face, n, nextAt, 0.04) then
+			break
+		end
+		table.insert(points, nextAt)
+		at = nextAt
+	end
+	return points
+end
+-- Lays a line down as a crack `width` wide at its start, thinning evenly
+-- along its length to nothing at its end.
+local function addCrack(points, normal, width: number)
+	if #points < 2 then
+		return
+	end
+	local total = 0
+	for i = 2, #points do
+		local a, b = points[i - 1], points[i]
+		total += math.sqrt((b[1] - a[1]) ^ 2 + (b[2] - a[2]) ^ 2 + (b[3] - a[3]) ^ 2)
+	end
+	local travelled = 0
+	for i = 2, #points do
+		local a, b = points[i - 1], points[i]
+		local length = math.sqrt((b[1] - a[1]) ^ 2 + (b[2] - a[2]) ^ 2 + (b[3] - a[3]) ^ 2)
+		local widthA = width * (1 - travelled / total)
+		local widthB = width * (1 - (travelled + length) / total)
+		travelled += length
+		local start = { a[1], a[2], -a[3] }
+		local along = { (b[1] - a[1]) / length, (b[2] - a[2]) / length, -(b[3] - a[3]) / length }
+		local facing = { normal[1], normal[2], -normal[3] }
+		local function stroke(at, width: number, color)
+			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color })
+		end
+		-- The lip sits on the crack's lower side, half a crack's width over.
+		local across = cross(facing, along)
+		local side = if across[3] > 0 then -1 else 1
+		local shift = widthA * 0.5 * side
+		stroke({ start[1] + across[1] * shift, start[2] + across[2] * shift, start[3] + across[3] * shift }, widthA * 0.8, CRACK_LIP)
+		stroke(start, widthA, CRACK)
+		stroke(start, widthA * CRACK_CORE_WIDTH, CRACK_CORE)
+	end
 end
 
--- How far a rock's surface stands off the island at `p`: a crest over the
--- rock's middle falling to a narrow joint at the seam. The top rim keeps its
--- profile, so the top meets the rocks without a lip.
-local function standoff(p: { number }, seed, edge: number): number
-	local depth = CAP_TOP - p[3]
-	local lower = 1 - (1 - BOTTOM_BULGE) * math.clamp((depth / PROFILE_DEPTH - DOWN_FROM) / (1 - DOWN_FROM), 0, 1)
-	local crest = BULGE * math.sqrt(seed.size / (ROCK / 2)) * lower
-	local t = math.clamp(edge / (0.5 * seed.size), 0, 1)
-	-- Eased in, so the joint's sides curve into the rock instead of kinking.
-	local joint = math.clamp(edge / JOINT_WIDTH, 0, 1)
-	joint = joint * joint * (3 - 2 * joint)
-	local fade = math.clamp(depth / SEAM_FADE, 0, 1)
-	-- Every rock stands off by at least REST of its crest, so the seams sit on
-	-- the island's body rather than cutting into it.
-	local merge = 1 - MERGE_TOP * math.clamp(1 - depth / (PROFILE_DEPTH / 2), 0, 1)
-	-- The joint runs deeper and shallower along the seam, 40% to 160% of SEAM_DEPTH.
-	local s = 5 / ROCK
-	local uneven = 1 + 0.6 * math.noise(p[1] * s + 41, p[2] * s, p[3] * s)
-	local h = crest * (REST + (1 - REST) * math.sin(math.pi / 2 * t)) - SEAM_DEPTH * uneven * fade * merge * (1 - joint)
-	return h * math.clamp(depth / 1.5, 0, 1)
+for _, origin in crackOrigins do
+	if crackRandom() >= CRACK_CHANCE then
+		continue
+	end
+	local face, n, at = origin.face, origin.normal, origin.at
+	-- Some way across the face, to turn into each crack's heading.
+	local first = face[1]
+	local outward = unit(first[1] - at[1], first[2] - at[2], first[3] - at[3])
+	for _ = 1, 1 + math.floor(crackRandom() * CRACKS) do
+		local heading = turned(outward, n, crackRandom() * TAU)
+		local start = { at[1] + heading[1] * origin.rim, at[2] + heading[2] * origin.rim, at[3] + heading[3] * origin.rim }
+		if not insideFace(face, n, start, 0.04) then
+			continue
+		end
+		local length = CRACK_LENGTH[1] + (CRACK_LENGTH[2] - CRACK_LENGTH[1]) * crackRandom()
+		local width = CRACK_WIDTH[1] + (CRACK_WIDTH[2] - CRACK_WIDTH[1]) * crackRandom()
+		local line = crackLine(face, n, start, heading, length)
+		addCrack(line, n, width)
+		-- A fork off partway along, thinner and shorter.
+		if #line >= 3 and crackRandom() < CRACK_BRANCH then
+			local from = line[2]
+			local share = 1 / (#line - 1)
+			local away = unit(line[3][1] - from[1], line[3][2] - from[2], line[3][3] - from[3])
+			local fork = turned(away, n, (if crackRandom() < 0.5 then -1 else 1) * (0.5 + 0.4 * crackRandom()))
+			addCrack(crackLine(face, n, from, fork, length * 0.5), n, width * (1 - share) * 0.8)
+		end
+	end
 end
 
--- Keeps the part of a polygon on the `keep` side of the bisector between two
--- seeds, tested in the warped space. Both rocks on a seam clip the same edges
--- at the same points, so the seam is shared.
-local function clipTo(poly: { { number } }, keep, other): { { number } }
-	local n = sub(other.p, keep.p)
-	local c = (dot(other.p, other.p) - other.weight - dot(keep.p, keep.p) + keep.weight) / 2
-	local out = {}
-	local count = #poly
+
+-- The stones are grey, splotched like the rest and stained with the dirt
+-- they sit in: solid at the dirt line, in blotches higher up.
+local paintPebble = rusting(0.1, function(x, y, z)
+	local tone, warm = splotchAt(x, y, z)
+	local shade = 1 + tone * 1.5
+	local r, g, b = PEBBLE[1], PEBBLE[2], PEBBLE[3]
+	-- The stone this point is on: the nearest whose dirt line it sits above.
+	local height, best = math.huge, math.huge
+	for _, record in pebbleCells[pebbleCell(x, y, z)] or {} do
+		local q, n = record.point, record.normal
+		local dx, dy, dz = x - q[1], y - q[2], z - q[3]
+		local distance = dx * dx + dy * dy + dz * dz
+		if distance < record.reach * record.reach and distance < best then
+			best = distance
+			height = (dx * n[1] + dy * n[2] + dz * n[3]) / math.max(record.height, 0.05)
+		end
+	end
+	if height < STONE_BIT_STAIN then
+		local blot = 0.5 + 0.5 * math.noise(x * 2.2, y * 2.2, z * 2.2)
+		local stain = math.clamp((blot - height / STONE_BIT_STAIN) / 0.12, 0, 1)
+		local dr, dg, db = soil(0.15 * stoneAt(x, y, z))
+		r, g, b = r + (dr - r) * stain, g + (dg - g) * stain, b + (db - b) * stain
+	end
+	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
+end)
+
+chunkedPart("Columns", nil, STONE, function(mesh)
+	for _, piece in visibleRock(false) do
+		addFlipped(mesh, piece)
+	end
+end, false, paintRock, true, EDGE_REACH)
+
+chunkedPart("Dirt", nil, DIRT, function(mesh)
+	for _, piece in dirtFaces do
+		addFlipped(mesh, piece)
+	end
+end, nil, paintDirt, true, EDGE_REACH)
+
+chunkedPart("Pebbles", nil, PEBBLE, function(mesh)
+	for _, piece in pebbles do
+		addFlipped(mesh, piece)
+	end
+end, false, paintPebble, true, EDGE_REACH)
+
+-- The rim walked in even steps, each point pushed out from the stone by the
+-- grass's outset (outer) and a hair's width (inner), with how deep the grass
+-- hangs there.
+local function grassRim()
+	local outline = topOutline()
+	local points = {}
+	for i, a in outline do
+		local b = outline[i % #outline + 1]
+		local length = math.sqrt((b[1] - a[1]) ^ 2 + (b[2] - a[2]) ^ 2)
+		local steps = math.max(1, math.round(length / GRASS_STEP))
+		for k = 0, steps - 1 do
+			local t = k / steps
+			table.insert(points, { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t })
+		end
+	end
+	local count = #points
+
+	-- Blurs a list of numbers round the loop: repeated passes of a 1-2-1
+	-- average, each spreading it by half a step squared, until it spreads
+	-- `studs`.
+	local function blurLoop(values: { number }, studs: number)
+		for _ = 1, math.round(2 * (studs / GRASS_STEP) ^ 2) do
+			local before = table.clone(values)
+			for i = 1, #values do
+				values[i] = (before[(i - 2) % #values + 1] + 2 * before[i] + before[i % #values + 1]) / 4
+			end
+		end
+	end
+	local raw = table.clone(points)
+	for axis = 1, 2 do
+		local coordinates = {}
+		for i, p in points do
+			coordinates[i] = p[axis]
+		end
+		blurLoop(coordinates, GRASS_CORNER_BLUR)
+		for i = 1, count do
+			points[i] = table.clone(points[i])
+			points[i][axis] = coordinates[i]
+		end
+	end
+	-- Blurring cuts the outside corners in, uncovering the stone there, so
+	-- the rim swells back out round each one: by the most it was cut in
+	-- anywhere near, blurred so the swell has no edge of its own.
+	local cut, outward = {}, {}
+	for i, p in points do
+		local a, b = points[(i - 2) % count + 1], points[i % count + 1]
+		local dx, dy = b[1] - a[1], b[2] - a[2]
+		local length = math.max(math.sqrt(dx * dx + dy * dy), 1e-9)
+		outward[i] = { -dy / length, dx / length }
+		cut[i] = math.max(0, (raw[i][1] - p[1]) * outward[i][1] + (raw[i][2] - p[2]) * outward[i][2])
+	end
+	local reach = math.ceil(2 * GRASS_CORNER_BLUR / GRASS_STEP)
+	local swell = {}
 	for i = 1, count do
-		local a, b = poly[i], poly[i % count + 1]
-		local da, db = dot(n, warp(a)) - c, dot(n, warp(b)) - c
-		if da <= 0 then table.insert(out, a) end
-		if (da < 0 and db > 0) or (da > 0 and db < 0) then
-			local t = da / (da - db)
-			table.insert(out, { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t })
+		local most = 0
+		for k = -reach, reach do
+			most = math.max(most, cut[(i + k - 1) % count + 1])
 		end
+		swell[i] = most
 	end
-	return out
-end
+	blurLoop(swell, GRASS_CORNER_BLUR)
+	for i, p in points do
+		p[1] += outward[i][1] * swell[i]
+		p[2] += outward[i][2] * swell[i]
+	end
 
--- Whether the point lies on the top (flat, or the item's shaped top), which
--- paints as even ground with no rock under it.
-local function onTop(x: number, y: number, z: number): boolean
-	if z > CAP_TOP - 0.01 then return true end
-	if not islandTop then return false end
-	local radius = math.sqrt(x * x + y * y) / islandTop.octagon(math.atan2(y, x))
-	-- Between two rings the top runs straight, so allow for the bend at each.
-	return radius < islandTop.radii[1] - 0.1 and math.abs(z - islandTop.height(radius)) < 0.2
-end
+	-- The lip wanders between its shallowest and deepest, and drips hang
+	-- from it as rounded tongues, each overlapping the next.
+	local along, travelled = {}, 0
+	for i, p in points do
+		along[i] = travelled
+		local q = points[i % count + 1]
+		travelled += math.sqrt((q[1] - p[1]) ^ 2 + (q[2] - p[2]) ^ 2)
+	end
+	local function halfWidth(n)
+		return (DRIP_WIDTH[1] + (DRIP_WIDTH[2] - DRIP_WIDTH[1]) * hash(n, 21)) / 2
+	end
+	local drips, at, n = {}, 0, 0
+	while at < travelled do
+		n += 1
+		table.insert(drips, { at, halfWidth(n), DRIP_LENGTH[1] + (DRIP_LENGTH[2] - DRIP_LENGTH[1]) * hash(n, 22) })
+		at += (halfWidth(n) + halfWidth(n + 1)) * (1 - DRIP_OVERLAP)
+	end
 
--- The shell and its shading are cached under a key hashing every line above
--- "-- cached above", so changes below it skip the rebuild.
-local shell = model.cached(CACHE_KEY, function()
--- The surface is built once into plain lists: every vertex where it ends up,
--- and the triangles of each rock and of the top. Each rock then becomes a part
--- of its own, so every part's edge is a seam, where the surface folds anyway.
--- Cutting a smooth rock face into chunks would split its smoothing there and
--- show as a sawtooth of light and dark along the cut.
-local positions, rockFaces, topFaces = {}, {}, {}
-local function newVertex(q: { number }): number
-	table.insert(positions, q)
-	return #positions
-end
-do
-	-- The surface grid: rows down the wall, then rings in across the underside.
-	local ROWS = WALL_ROWS + UNDER_ROWS
-	local grid, owners = {}, {}
-	for k = 0, ROWS do
-		grid[k], owners[k] = {}, {}
-		for j = 0, ANGLES - 1 do
-			local angle = TAU * j / ANGLES
-			local p
-			if k <= WALL_ROWS then
-				p = wallAt(angle, PROFILE_DEPTH * k / WALL_ROWS)
-			else
-				local rim = R0 * outlineScale(angle) * shareAt(PROFILE_DEPTH)
-				local r = rim * (1 - (k - WALL_ROWS) / UNDER_ROWS)
-				p = { r * math.cos(angle), r * math.sin(angle), RIM_Z }
+	-- The outline is wound clockwise seen from above, so out is to the left
+	-- of each step. A point's way out averages the steps either side of it.
+	local rim = {}
+	for i, p in points do
+		local a, b = points[(i - 2) % count + 1], points[i % count + 1]
+		local dx, dy = b[1] - a[1], b[2] - a[2]
+		local length = math.max(math.sqrt(dx * dx + dy * dy), 1e-9)
+		local ox, oy = -dy / length, dx / length
+		local s = along[i]
+		local depth = GRASS_LIP[1] + (GRASS_LIP[2] - GRASS_LIP[1]) * (0.5 + 0.5 * math.noise(s * 0.3, 3.7))
+		for _, drip in drips do
+			-- The distance round the rim either way, so drips near the
+			-- start also reach the end.
+			local gap = math.abs(s - drip[1])
+			gap = math.min(gap, travelled - gap)
+			if gap < drip[2] then
+				depth = math.max(depth, GRASS_LIP[1] + drip[3] * math.sqrt(1 - (gap / drip[2]) ^ 2))
 			end
-			grid[k][j] = p
-			owners[k][j] = (ownerAt(p))
 		end
+		-- The finer octave never lifts the edge above the stone's top.
+		depth = math.max(depth + DRIP_DETAIL * math.noise(s * DRIP_DETAIL_FREQUENCY, 8.1), 0.15)
+		table.insert(rim, {
+			outer = { p[1] + ox * GRASS_OUTSET, p[2] + oy * GRASS_OUTSET },
+			out = { ox, oy },
+			inner = { p[1] + ox * 0.02, p[2] + oy * 0.02 },
+			depth = depth,
+		})
 	end
 
-	-- Points are shared by position, so a seam is one set of vertices.
-	local indexOf = {}
-	local function vertexAt(p: { number }): number
-		local key = `{math.round(p[1] * 1e4)}_{math.round(p[2] * 1e4)}_{math.round(p[3] * 1e4)}`
-		if not indexOf[key] then
-			local seed, edge = ownerAt(p)
-			local n = pushAt(p)
-			local h = standoff(p, seed, edge)
-			indexOf[key] = newVertex({ p[1] + n[1] * h, p[2] + n[2] * h, p[3] + n[3] * h })
-		end
-		return indexOf[key]
+	local depths = {}
+	for i, point in rim do
+		depths[i] = point.depth
+	end
+	blurLoop(depths, GRASS_DEPTH_BLUR)
+	for i, point in rim do
+		point.depth = depths[i]
 	end
 
-	-- Every vertex sitting on the top rim, for the top.
-	local rimVertices = {}
-
-	-- One triangle of the grid: cut into a piece per rock its corners belong to.
-	local function emit(a: { number }, b: { number }, c: { number }, oa, ob, oc)
-		local u, v = sub(b, a), sub(c, a)
-		local face = cross(u, v)
-		if dot(face, face) < 1e-12 then return end
-		local outward = pushAt({ (a[1] + b[1] + c[1]) / 3, (a[2] + b[2] + c[2]) / 3, (a[3] + b[3] + c[3]) / 3 })
-		local present = { oa }
-		if ob ~= oa then table.insert(present, ob) end
-		if oc ~= oa and oc ~= ob then table.insert(present, oc) end
-		for _, owner in present do
-			local poly = { a, b, c }
-			for _, other in present do
-				if other ~= owner then poly = clipTo(poly, owner, other) end
+	-- Pushed out of a sharp inward notch, the outer line crosses itself; the
+	-- loop it makes is cut away at the crossing.
+	local function crossing(a, b, c, d)
+		local rx, ry, sx, sy = b[1] - a[1], b[2] - a[2], d[1] - c[1], d[2] - c[2]
+		local denominator = rx * sy - ry * sx
+		if math.abs(denominator) < 1e-12 then
+			return nil
+		end
+		local t = ((c[1] - a[1]) * sy - (c[2] - a[2]) * sx) / denominator
+		local u = ((c[1] - a[1]) * ry - (c[2] - a[2]) * rx) / denominator
+		if t <= 0 or t >= 1 or u <= 0 or u >= 1 then
+			return nil
+		end
+		return { a[1] + rx * t, a[2] + ry * t }
+	end
+	local i = 1
+	while i < #rim do
+		for k = 2, 12 do
+			local j = i + k
+			if j + 1 > #rim then
+				break
 			end
-			if #poly < 3 then continue end
-			rockFaces[owner] = rockFaces[owner] or {}
-			local faces = rockFaces[owner]
-			local ids = {}
-			for i, p in poly do
-				ids[i] = vertexAt(p)
-				if math.abs(p[3] - CAP_TOP) < 1e-6 then
-					rimVertices[ids[i]] = math.atan2(p[2], p[1]) % TAU
+			local hit = crossing(rim[i].outer, rim[i + 1].outer, rim[j].outer, rim[j + 1].outer)
+			if hit then
+				local kept = rim[i]
+				for _ = i + 1, j do
+					table.remove(rim, i + 1)
+				end
+				table.insert(rim, i + 1, { outer = hit, out = kept.out, inner = kept.inner, depth = kept.depth })
+				break
+			end
+		end
+		i += 1
+	end
+	return rim
+end
+
+-- How deep the deepest drip hangs, for the grass's shading.
+local GRASS_DEEPEST = GRASS_LIP[1] + DRIP_LENGTH[2]
+
+-- Grass is dead straw with olive patches, darkening down
+-- the hanging edge toward the drip tips, and splotched like the stone.
+local paintGrass = rusting(0, function(x, y, z)
+	local shade = 1 - DRIP_SHADE * math.clamp(-z / GRASS_DEEPEST, 0, 1)
+	local tone, warm = splotchAt(x, y, z)
+	shade *= 1 + tone
+	-- Patch strength from soft noise: 0 outside, 1 well inside a patch
+	-- covering `cover` of the grass.
+	local function patch(cover: number, seed: number): number
+		local u, v = x / GRASS_PATCH_SIZE + seed, y / GRASS_PATCH_SIZE
+		local n = 0.5 + math.noise(u, v, seed) + 0.3 * math.noise(u * 3, v * 3, seed + 5)
+		return math.clamp((n - (1 - cover)) / 0.12, 0, 1)
+	end
+	local function toward(r, g, b, c, t)
+		return r + (c[1] - r) * t, g + (c[2] - g) * t, b + (c[3] - b) * t
+	end
+	local r, g, b = toward(GRASS[1], GRASS[2], GRASS[3], GRASS_OLIVE, patch(GRASS_OLIVE_COVER, 11.3))
+	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
+end)
+
+chunkedPart("Grass", nil, GRASS, function(mesh)
+	local rim = grassRim()
+	local count = #rim
+	-- Corners of the turf: rings rounding over from its top edge (the first)
+	-- down to its hanging edge (the last), rings curling the hanging edge's
+	-- bottom under, the inner bottom of the hanging edge, and the inner edge
+	-- where it meets the stone's top.
+	local rings, curl, innerBottom, innerTop = {}, {}, {}, {}
+	for k = 0, GRASS_ROUND_STEPS do
+		rings[k], curl[k] = {}, {}
+	end
+	local outline = {}
+	for i, point in rim do
+		for k = 0, GRASS_ROUND_STEPS do
+			local angle = k / GRASS_ROUND_STEPS * math.pi / 2
+			local back = GRASS_ROUND * (1 - math.sin(angle))
+			local x, y = point.outer[1] - point.out[1] * back, point.outer[2] - point.out[2] * back
+			rings[k][i] = mesh:vertex(x, y, GRASS_HEIGHT - GRASS_ROUND * (1 - math.cos(angle)))
+			if k == 0 then
+				outline[i] = { x, y }
+			end
+		end
+		for k = 0, GRASS_ROUND_STEPS do
+			local angle = k / GRASS_ROUND_STEPS * math.pi / 2
+			local back = GRASS_BOTTOM_ROUND * (1 - math.cos(angle))
+			local x, y = point.outer[1] - point.out[1] * back, point.outer[2] - point.out[2] * back
+			curl[k][i] = mesh:vertex(x, y, -point.depth + GRASS_BOTTOM_ROUND * (1 - math.sin(angle)))
+		end
+		innerBottom[i] = mesh:vertex(point.inner[1], point.inner[2], -point.depth)
+		innerTop[i] = mesh:vertex(point.inner[1], point.inner[2], 0)
+	end
+	local top, edge = rings[0], rings[GRASS_ROUND_STEPS]
+	for i = 1, count do
+		local j = i % count + 1
+		-- The rounded rim, ring by ring, facing out and up.
+		for k = 1, GRASS_ROUND_STEPS do
+			local upper, lower = rings[k - 1], rings[k]
+			mesh:face({ lower[j], lower[i], upper[i] })
+			mesh:face({ lower[j], upper[i], upper[j] })
+		end
+		-- Outside, facing out.
+		local wallBottom, underEdge = curl[0], curl[GRASS_ROUND_STEPS]
+		mesh:face({ wallBottom[j], wallBottom[i], edge[i] })
+		mesh:face({ wallBottom[j], edge[i], edge[j] })
+		-- The curl under, ring by ring, facing out and down.
+		for k = 1, GRASS_ROUND_STEPS do
+			local upper, lower = curl[k - 1], curl[k]
+			mesh:face({ lower[j], lower[i], upper[i] })
+			mesh:face({ lower[j], upper[i], upper[j] })
+		end
+		-- Underside, facing down.
+		mesh:face({ underEdge[i], underEdge[j], innerBottom[j] })
+		mesh:face({ underEdge[i], innerBottom[j], innerBottom[i] })
+		-- Inside, facing the stone.
+		mesh:face({ innerBottom[i], innerBottom[j], innerTop[j] })
+		mesh:face({ innerBottom[i], innerTop[j], innerTop[i] })
+	end
+	-- The turf's top, facing up, cut into GRASS_TOP_CELL squares so no
+	-- piece spans the island and the chunker can keep each texture small:
+	-- the outline clipped to each square in turn, one edge at a time.
+	local function clipped(points, axis: number, at: number, below: boolean)
+		local kept = {}
+		for i, a in points do
+			local b = points[i % #points + 1]
+			local aIn, bIn = (a[axis] <= at) == below, (b[axis] <= at) == below
+			if aIn then
+				table.insert(kept, a)
+			end
+			if aIn ~= bIn then
+				local t = (at - a[axis]) / (b[axis] - a[axis])
+				table.insert(kept, { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t })
+			end
+		end
+		return kept
+	end
+	-- Outline corners keep their ring vertex, so the top meets the rounded
+	-- edge without a seam.
+	local cornerOf = {}
+	for i, p in outline do
+		cornerOf[p] = top[i]
+	end
+	local low, high = { math.huge, math.huge }, { -math.huge, -math.huge }
+	for _, p in outline do
+		for axis = 1, 2 do
+			low[axis], high[axis] = math.min(low[axis], p[axis]), math.max(high[axis], p[axis])
+		end
+	end
+	for cx = math.floor(low[1] / GRASS_TOP_CELL), math.floor(high[1] / GRASS_TOP_CELL) do
+		for cy = math.floor(low[2] / GRASS_TOP_CELL), math.floor(high[2] / GRASS_TOP_CELL) do
+			local piece = clipped(outline, 1, cx * GRASS_TOP_CELL, false)
+			piece = clipped(piece, 1, (cx + 1) * GRASS_TOP_CELL, true)
+			piece = clipped(piece, 2, cy * GRASS_TOP_CELL, false)
+			piece = clipped(piece, 2, (cy + 1) * GRASS_TOP_CELL, true)
+			if #piece >= 3 then
+				local corners = {}
+				for i, p in piece do
+					corners[i] = cornerOf[p] or mesh:vertex(p[1], p[2], GRASS_HEIGHT)
+				end
+				for _, t in earClip(piece) do
+					mesh:face({ corners[t[3]], corners[t[2]], corners[t[1]] })
 				end
 			end
-			for i = 2, #poly - 1 do
-				local p, q, r = positions[ids[1]], positions[ids[i]], positions[ids[i + 1]]
-				local normal = cross(sub(q, p), sub(r, p))
-				if dot(normal, outward) >= 0 then
-					table.insert(faces, { ids[1], ids[i], ids[i + 1] })
-				else
-					table.insert(faces, { ids[1], ids[i + 1], ids[i] })
-				end
-			end
 		end
 	end
+end, nil, paintGrass, true, EDGE_REACH)
 
-	for k = 0, ROWS - 1 do
-		for j = 0, ANGLES - 1 do
-			local l = (j + 1) % ANGLES
-			emit(grid[k][j], grid[k + 1][j], grid[k + 1][l], owners[k][j], owners[k + 1][j], owners[k + 1][l])
-			emit(grid[k][j], grid[k + 1][l], grid[k][l], owners[k][j], owners[k + 1][l], owners[k][l])
-		end
-	end
-
-	-- The top, wound to face up: every top vertex in order round the rim.
-	local function upFace(a: number, b: number, c: number)
-		local normal = cross(sub(positions[b], positions[a]), sub(positions[c], positions[a]))
-		table.insert(topFaces, if normal[3] >= 0 then { a, b, c } else { a, c, b })
-	end
-	local outer = {}
-	for index, angle in rimVertices do
-		table.insert(outer, { index = index, angle = angle })
-	end
-	table.sort(outer, function(p, q) return p.angle < q.angle end)
-
-	if islandTop then
-		-- A shaped top: octagonal rings in from the rim, each at its own
-		-- height. The rim's vertices fall wherever the seams cut it, so it is
-		-- zipped to the first ring by angle; the rings after share their
-		-- angles. A ring never reaches past the rim, so the two can't cross.
-		local function ring(radius: number)
-			local points = {}
-			for j = 0, ANGLES - 1 do
-				local angle = TAU * j / ANGLES
-				local r = math.min(radius * islandTop.octagon(angle), R0 * outlineScale(angle) - 0.3)
-				local index = newVertex({ r * math.cos(angle), r * math.sin(angle), islandTop.height(radius) })
-				points[j + 1] = { index = index, angle = angle }
-			end
-			return points
-		end
-		local inner = ring(islandTop.radii[1])
-		local i, j = 1, 1
-		while i <= #outer or j <= #inner do
-			local a, b = outer[(i - 1) % #outer + 1], inner[(j - 1) % #inner + 1]
-			local nextOuter, nextInner = outer[i % #outer + 1], inner[j % #inner + 1]
-			-- Angles past the last vertex wrap round to the first plus a turn.
-			local outerAngle = if i < #outer then nextOuter.angle else nextOuter.angle + TAU
-			local innerAngle = if j < #inner then nextInner.angle else nextInner.angle + TAU
-			if j > #inner or (i <= #outer and outerAngle <= innerAngle) then
-				upFace(a.index, nextOuter.index, b.index)
-				i += 1
-			else
-				upFace(a.index, nextInner.index, b.index)
-				j += 1
-			end
-		end
-		for n = 2, #islandTop.radii do
-			local next = ring(islandTop.radii[n])
-			for k = 1, ANGLES do
-				local l = k % ANGLES + 1
-				upFace(inner[k].index, inner[l].index, next[l].index)
-				upFace(inner[k].index, next[l].index, next[k].index)
-			end
-			inner = next
-		end
-		outer = inner
-	end
-	-- The middle: a fan from the axis out to the innermost ring, or to the
-	-- rim itself on a flat top.
-	local centre = newVertex({ 0, 0, if islandTop then islandTop.height(0) else CAP_TOP })
-	for i, p in outer do
-		upFace(centre, p.index, outer[i % #outer + 1].index)
-	end
+-- The chunks are shaded here rather than by finishParts, which has no corner
+-- taper: highlights run full width at a corner and thin toward the middle of
+-- an edge, as finishParts would otherwise shade them. Chunks of the island
+-- count as one surface, so their seams shade like any other edge.
+local chunks = {}
+for _, entry in parts do
+	table.insert(chunks, entry.mesh)
 end
-
-local function paint(x: number, y: number, z: number)
-	if onTop(x, y, z) then return islandPaint(x, y, 0) end
-	-- Every other texel takes its rock's seed and tint, and paints as one
-	-- material: a single stratum and pebble colour for the whole rock.
-	local seed = (ownerAt({ x, y, z }))
-	local depth = math.clamp(CAP_TOP - z, 0, PROFILE_DEPTH)
-	local spread = TOP_SPREAD + (BOTTOM_SPREAD - TOP_SPREAD) * depth / PROFILE_DEPTH
-	return islandPaint(x, y, -depth, seed.key, seed.tint, spread, true)
-end
-
--- Builds a list of faces into a part's mesh, unwarped.
-local function facesInto(faces)
-	return function(mesh)
-		local handles = {}
-		for _, face in faces do
-			local verts = {}
-			for i, v in face do
-				if not handles[v] then
-					local q = positions[v]
-					handles[v] = mesh:vertex(q[1], q[2], q[3])
-				end
-				verts[i] = handles[v]
-			end
-			mesh:face(verts)
+for _, entry in parts do
+	local group = {}
+	for _, other in parts do
+		if other ~= entry then
+			table.insert(group, other.mesh)
 		end
 	end
-end
--- A part per rock, sized to it at the layout's texel density. The top is flat
--- or gently curved, so it can be chunked without its cuts showing.
-for n, seed in seeds do
-	if rockFaces[seed] then
-		part(`Rock{n}`, nil, ROCK_COLOUR, facesInto(rockFaces[seed]), 30, paint, nil, nil, true)
-	end
-end
-chunkedPart("Top", nil, ROCK_COLOUR, facesInto(topFaces), 30, paint, true)
-
--- Stronger highlights along the rock edges, and deeper contact shadows in the
--- seams, than the default: each rock shades against every other rock.
-local entries = table.clone(parts)
-local meshes = {}
-for _, entry in entries do
-	table.insert(meshes, entry.mesh)
-end
-for _, entry in entries do
+	local kind = string.match(entry.name, "^%a+")
+	local soft = kind == "Grass" or kind == "Dirt"
 	entry.mesh:paintShading(entry.image, {
-		highlight = 1.2,
-		highlightRamp = 0.3,
-		shadow = 0.9,
+		highlight = if soft then EDGE_HIGHLIGHT * SOFT_SHADING else EDGE_HIGHLIGHT,
+		shadow = if soft then CONTACT_SHADOW * SOFT_SHADING else CONTACT_SHADOW,
 		gradient = GRADIENT,
-		blend = 1,
-		brushed = true,
-		occluders = meshes,
-		-- The island paint, cached under the item's key since its code is not hashed.
+		blend = EDGE_BLEND,
+		group = group,
+		name = entry.name,
 		paint = entry.paint,
+		-- The rock paint is cached under the item's key, since its code is not hashed.
 		custom = entry.custom,
 		salt = CACHE_KEY,
+		rust = entry.rust * WEAR,
+		reach = EDGE_REACH,
+		highlightWidth = HIGHLIGHT_WIDTH,
+		cornerTaper = CORNER_TAPER,
+		heightRange = entry.heightRange,
+		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then crackStrokes else nil,
 	})
-end
-table.clear(parts)
-return entries
-end)
--- cached above
-
-for _, entry in shell do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildYardIsland] = "YardIsland-07337704f95c9f12"
+buildKeys[buildColumnIsland] = "ColumnIsland-d08e0d50d8f5fddc"
 local function buildShopConceptContainer()
 local CACHE_KEY = "ShopConceptContainer-6558ebfd0e67d87c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -7941,7 +9333,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildShopConceptContainer] = "ShopConceptContainer-a2508b1104592301"
+buildKeys[buildShopConceptContainer] = "ShopConceptContainer-61411a32ba148070"
 local function buildScrapTreeLamppost()
 local CACHE_KEY = "ScrapTreeLamppost-7dda4efc58babb67"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -8765,7 +10157,7 @@ end, nil, 0.2)
 
 finishParts()
 end
-buildKeys[buildScrapTreeLamppost] = "ScrapTreeLamppost-8faef87f7a374bc2"
+buildKeys[buildScrapTreeLamppost] = "ScrapTreeLamppost-cb1b5d87c5084cda"
 local function buildVendingMachine()
 local CACHE_KEY = "VendingMachine-6fa3daa50d527eab"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -9582,7 +10974,7 @@ end, true, 0)
 
 finishParts()
 end
-buildKeys[buildVendingMachine] = "VendingMachine-60f2bb0f0e947213"
+buildKeys[buildVendingMachine] = "VendingMachine-edcf5161db1ecb95"
 local function buildParkBench()
 local CACHE_KEY = "ParkBench-363d90ccbbf5b421"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -10394,7 +11786,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildParkBench] = "ParkBench-06e01e92738e7214"
+buildKeys[buildParkBench] = "ParkBench-4ba883a552fd2e43"
 local function buildScrapPalm()
 local CACHE_KEY = "ScrapPalm-b064d49a62274473"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -11226,7 +12618,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildScrapPalm] = "ScrapPalm-cc8d2dacc5c69ce8"
+buildKeys[buildScrapPalm] = "ScrapPalm-21dacf2c15a703b9"
 local function buildShippingContainer()
 local CACHE_KEY = "ShippingContainer-bbbb81d7d8c9a284"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -12044,7 +13436,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildShippingContainer] = "ShippingContainer-bea5d36cbe5c7562"
+buildKeys[buildShippingContainer] = "ShippingContainer-bfa01c98188e0997"
 local function buildCarStack()
 local CACHE_KEY = "CarStack-4477c34e70c629a8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -12861,7 +14253,7 @@ end, nil, 0.3)
 
 finishParts()
 end
-buildKeys[buildCarStack] = "CarStack-2ba42ae0225fbf7c"
+buildKeys[buildCarStack] = "CarStack-bbbc8f2c2d0b95fc"
 local function buildCrushedCar()
 local CACHE_KEY = "CrushedCar-5975815478d90f0b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -13678,7 +15070,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildCrushedCar] = "CrushedCar-4695b015de014104"
+buildKeys[buildCrushedCar] = "CrushedCar-01fbde00cc480051"
 local function buildBarrels()
 local CACHE_KEY = "Barrels-2285cb5b02b1be23"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -14495,7 +15887,7 @@ end, nil, 0)
 
 finishParts()
 end
-buildKeys[buildBarrels] = "Barrels-95f4b13d664ec63e"
+buildKeys[buildBarrels] = "Barrels-d46176fef21e13ce"
 local function buildTyreStack()
 local CACHE_KEY = "TyreStack-19f3532338710b6b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -15297,7 +16689,7 @@ end, nil, 0.8)
 
 finishParts()
 end
-buildKeys[buildTyreStack] = "TyreStack-0f1ca7c706bb0097"
+buildKeys[buildTyreStack] = "TyreStack-f8d049b9de3d2b36"
 local function buildJunkWall()
 local CACHE_KEY = "JunkWall-6053d8e423ee4d87"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -16112,7 +17504,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildJunkWall] = "JunkWall-bfbda12486c1caed"
+buildKeys[buildJunkWall] = "JunkWall-b5bff1af502d0051"
 local function buildDumpster()
 local CACHE_KEY = "Dumpster-6517681a9ae30045"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -16941,7 +18333,7 @@ end, nil, RUBBER)
 
 finishParts()
 end
-buildKeys[buildDumpster] = "Dumpster-1fa767f4231ff1bb"
+buildKeys[buildDumpster] = "Dumpster-6b5dfea1eb7cdff6"
 local function buildPallets()
 local CACHE_KEY = "Pallets-a21bc20428684cc6"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -17756,7 +19148,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildPallets] = "Pallets-d2bb876c8e328a29"
+buildKeys[buildPallets] = "Pallets-36b83680c009da11"
 local function buildStreetlightBroken()
 local CACHE_KEY = "StreetlightBroken-218c9c695c8aabc9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -18565,7 +19957,7 @@ end, nil, 0.3)
 
 finishParts()
 end
-buildKeys[buildStreetlightBroken] = "StreetlightBroken-f84ca73a9a780fac"
+buildKeys[buildStreetlightBroken] = "StreetlightBroken-2ab4ac035154dc5e"
 local function buildTrafficCones()
 local CACHE_KEY = "TrafficCones-76f2e5f67d838576"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -19383,7 +20775,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildTrafficCones] = "TrafficCones-fd221d691fc5d9ea"
+buildKeys[buildTrafficCones] = "TrafficCones-71942122b0980b23"
 local function buildGroundTile()
 local CACHE_KEY = "GroundTile-06e115bba8685577"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -20191,7 +21583,7 @@ part("Scrap", nil, DARK_STEEL, function(mesh)
 end, nil, 0.7)
 finishParts()
 end
-buildKeys[buildGroundTile] = "GroundTile-0da9415e637ad2e2"
+buildKeys[buildGroundTile] = "GroundTile-5a7128ab31f35e93"
 local function buildMachinePad()
 local CACHE_KEY = "MachinePad-f370f638b01b1c2e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -21014,7 +22406,7 @@ part("Hardware", nil, STEEL, function(mesh)
 end, nil, 0.45)
 finishParts()
 end
-buildKeys[buildMachinePad] = "MachinePad-68e273f1cdb0d39a"
+buildKeys[buildMachinePad] = "MachinePad-2e7cb60988e559d9"
 local function buildYardFence()
 local CACHE_KEY = "YardFence-79638c833401e47a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -21838,7 +23230,7 @@ part("Fittings", nil, DARK_STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildYardFence] = "YardFence-b43ef247430a4e72"
+buildKeys[buildYardFence] = "YardFence-3cf960b06ac7cad2"
 local function buildYardFenceHalf()
 local CACHE_KEY = "YardFenceHalf-f2ca6d6436d118d5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -22662,7 +24054,7 @@ part("Fittings", nil, DARK_STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildYardFenceHalf] = "YardFenceHalf-1fc2854df1375801"
+buildKeys[buildYardFenceHalf] = "YardFenceHalf-758d2d2abb1b6d60"
 local function buildYardGate()
 local CACHE_KEY = "YardGate-b636931dfae76978"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -23499,7 +24891,7 @@ part("Hardware", nil, DARK_STEEL, function(mesh)
 end, nil, 0.55)
 finishParts()
 end
-buildKeys[buildYardGate] = "YardGate-f725ec83aa7af88a"
+buildKeys[buildYardGate] = "YardGate-db075f45d6f4f0e7"
 local function buildPlotMarker()
 local CACHE_KEY = "PlotMarker-d94ec8affefafd69"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -24330,7 +25722,7 @@ part("Fittings", nil, STEEL, function(mesh)
 end, nil, 0.5)
 finishParts()
 end
-buildKeys[buildPlotMarker] = "PlotMarker-c02bd624d4befb36"
+buildKeys[buildPlotMarker] = "PlotMarker-ae4de7ccc968ba94"
 local function buildStorageCrate()
 -- Storage crate: a lopsided green scrap bin that flares toward its wobbly rim,
 -- leaning and twisting as it rises. Bolted patch plates cover its sides, a
@@ -25051,7 +26443,7 @@ for number, level in FILL_LEVELS do
 	end
 end
 end
-buildKeys[buildStorageCrate] = "StorageCrate-c2025038901f30d5"
+buildKeys[buildStorageCrate] = "StorageCrate-89818cbbab0af5ae"
 local function buildYardPath()
 local CACHE_KEY = "YardPath-d70f4e9db93f8ba1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -25879,7 +27271,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildYardPath] = "YardPath-65d7717456cbca96"
+buildKeys[buildYardPath] = "YardPath-188f30590041d9c8"
 local function buildYardPathStub()
 local CACHE_KEY = "YardPathStub-dd7f0fd4959c81cf"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -26699,20 +28091,20 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildYardPathStub] = "YardPathStub-326031bdba922a65"
-slabKeys[27465] = "c4f74f610ca027b9-03fb9ebc63adf1c5"
-slabKeys[27535] = "c4f74f610ca027b9-8f291df974f34236"
-slabKeys[27541] = "c4f74f610ca027b9-f8f4f9cdd6dd6cae"
-slabKeys[27551] = "c4f74f610ca027b9-cfb837b03ab263ad"
-slabKeys[27598] = "c4f74f610ca027b9-ea3f2e07e90ed0f2"
-slabKeys[27618] = "c4f74f610ca027b9-895bec6dbbe0aeac"
-slabKeys[27675] = "c4f74f610ca027b9-f4f9015cc7a52d81"
-slabKeys[27765] = "c4f74f610ca027b9-f0d9fbf42647fd21"
-slabKeys[28032] = "c4f74f610ca027b9-2cb59b3b1861b555"
-slabKeys[28062] = "c4f74f610ca027b9-22233dc81161c674"
-slabKeys[28069] = "c4f74f610ca027b9-92736dc11ff1f899"
-slabKeys[28097] = "c4f74f610ca027b9-5f3dede5e341fed8"
--- uses: ArenaIsland PadIsland MarketIsland YardIsland ShopConceptContainer ScrapTreeLamppost VendingMachine ParkBench ScrapPalm ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
+buildKeys[buildYardPathStub] = "YardPathStub-ec7805c51c55b33e"
+slabKeys[28864] = "f31252151cd7ca8c-03fb9ebc63adf1c5"
+slabKeys[28934] = "f31252151cd7ca8c-8f291df974f34236"
+slabKeys[28940] = "f31252151cd7ca8c-f8f4f9cdd6dd6cae"
+slabKeys[28950] = "f31252151cd7ca8c-cfb837b03ab263ad"
+slabKeys[28997] = "f31252151cd7ca8c-ea3f2e07e90ed0f2"
+slabKeys[29017] = "f31252151cd7ca8c-895bec6dbbe0aeac"
+slabKeys[29074] = "f31252151cd7ca8c-f4f9015cc7a52d81"
+slabKeys[29164] = "f31252151cd7ca8c-f0d9fbf42647fd21"
+slabKeys[29433] = "f31252151cd7ca8c-2cb59b3b1861b555"
+slabKeys[29463] = "f31252151cd7ca8c-886388888fe59ef3"
+slabKeys[29470] = "f31252151cd7ca8c-aed925c84ae586a9"
+slabKeys[29498] = "f31252151cd7ca8c-5f3dede5e341fed8"
+-- uses: ArenaIsland PadIsland MarketIsland ColumnIsland ShopConceptContainer ScrapTreeLamppost VendingMachine ParkBench ScrapPalm ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena island sits in the middle with a ring road
 -- around its bowl. An avenue of four plaza islands runs east from the road to
@@ -26751,7 +28143,14 @@ local ARENA_FLOOR, ARENA_DEPTH = 36, 3.5
 local HAZARD_WIDTH = 1.8
 -- Length of each yellow or black block in the bridges' hazard strips.
 local HAZARD_BLOCK = 0.6
-local ARENA_ISLAND, YARD_ISLAND = 61, 36
+local ARENA_ISLAND = 61
+-- How far the yard island's grass reaches in front of the gate, where the
+-- bridge lands, and how its island is turned under the yard (as in
+-- YardLayout.luau) so the fence corners stand on its lobes.
+local YARD_ISLAND, YARD_ISLAND_TURN = 40, 305
+-- The yard's pieces are laid out on a 32-stud plan and built this many
+-- times their own size, as in YardLayout.luau.
+local YARD_SCALE = 1.5
 -- The ring road runs a little above the ground, the arena banking down to
 -- the floor inside it and the bridges sloping up to the yards outside it.
 local DECK = 2
@@ -26759,7 +28158,7 @@ local YARD_TIER = 6
 -- The avenue's plaza pads, east of the road, and the yards either side.
 local PAD_XS = { 100, 184, 268, 352 }
 local PAD_ISLAND, PAD_PLAZA = 14, 11
-local YARD_OFFSET = 63
+local YARD_OFFSET = 70
 -- The market island closes the avenue's east end.
 local MARKET_X = 424
 local MARKET_ISLAND, MARKET_PLAZA = 38, 30
@@ -27961,7 +29360,7 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 	end, x, y, degrees - 90)
 end
 
--- Lumpy yard outlines that never cut into the plot's corners (0.9 * 26
+-- Lumpy outlines that never cut into a 32-stud plot's corners (0.9 * 26
 -- clears its 22.6 half-diagonal) and stay full where the bridge lands.
 local function yardOutline(seed: number): (number) -> number
 	return function(angle)
@@ -27978,7 +29377,9 @@ end
 local function yardTemplate(index: number, x: number, y: number, turn: number)
 	local c, s = math.cos(math.rad(turn)), math.sin(math.rad(turn))
 	local function piece(name: string, build: () -> (), px: number, py: number, pz: number?, pturn: number?)
-		place(`Yard{index}_{name}`, build, x + px * c - py * s, y + px * s + py * c, (pz or 0) + YARD_TIER, turn + (pturn or 0))
+		px, py = px * YARD_SCALE, py * YARD_SCALE
+		local pieceZ = (pz or 0) * YARD_SCALE + YARD_TIER
+		place(`Yard{index}_{name}`, build, x + px * c - py * s, y + px * s + py * c, pieceZ, turn + (pturn or 0), nil, nil, YARD_SCALE)
 	end
 	for i, tx in { -12, -4, 4, 12 } do
 		for j, ty in { -12, -4, 4, 12 } do
@@ -28058,17 +29459,17 @@ for i = 1, 2 * #PAD_XS do
 	local side = if i % 2 == 1 then 1 else -1
 	local degrees = 180 - side * 90
 	local x, y = PAD_XS[(i + 1) // 2], side * YARD_OFFSET
-	place(`Island{i}`, buildYardIsland, x, y, YARD_TIER - 0.7, degrees - 90)
+	place(`Island{i}`, buildColumnIsland, x, y, YARD_TIER - 0.45, degrees - 90 + YARD_ISLAND_TURN)
 	slab(`Plot{i}`, function()
 		part("Slab", nil, PLOT, function(mesh)
-			box(mesh, 0, 0, YARD_TIER, 32, 32, 0.05)
+			box(mesh, 0, 0, YARD_TIER, 32 * YARD_SCALE, 32 * YARD_SCALE, 0.05)
 		end, nil, 0)
 	end, x, y, degrees - 90)
 	yardTemplate(i, x, y, degrees - 90)
 	local c, s = math.cos(math.rad(degrees - 90)), math.sin(math.rad(degrees - 90))
 	slab(`Spoke{i}`, function()
 		part("Road", nil, ROAD, function(mesh)
-			box(mesh, 0, -18, YARD_TIER, 6, 6, 0.1)
+			box(mesh, 0, -(16 * YARD_SCALE + YARD_ISLAND) / 2, YARD_TIER, 6, YARD_ISLAND - 16 * YARD_SCALE, 0.1)
 		end, nil, function(px, py)
 			local u = (px - x) * c + (py - y) * s
 			local v = (py - y) * c - (px - x) * s
