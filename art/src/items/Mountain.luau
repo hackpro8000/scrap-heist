@@ -40,7 +40,7 @@ local ROCK_GRADIENT = { 1.1, 0.6 }
 -- coat's brush strokes lay them on as dabs.
 local SPLOTCH = { cell = 1.8, chance = 1, radius = { 1, 2 }, tone = 0.1, tint = 0.02 }
 -- Texture pixels per stud; chunks are 1024 texels across at this density.
-local TEXEL_DENSITY = 16
+local TEXEL_DENSITY = 32
 -- Edge highlights: how far edge paint reaches from an edge, in studs, and how
 -- many times wider than the default the highlight strokes are.
 local EDGE_REACH = 1
