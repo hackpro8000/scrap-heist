@@ -37,7 +37,7 @@ local STONE = { 0.46, 0.45, 0.5 }
 -- rock. Each rock comes through the dirt at its own depth in that range. The
 -- dirt's bottom edge is bevelled back DIRT_BEVEL studs on its outer side, so
 -- the rock it sits on stands proud.
-local DIRT = { 0.45, 0.33, 0.23 }
+local DIRT = { 0.42, 0.32, 0.24 }
 local DIRT_TRANSITION = { 0.33, 0.5 }
 -- Above that, rock already shows through the dirt in slabs: a rock still
 -- under dirt may have up to PATCHES slabs of its faces bare below tilted
@@ -159,7 +159,7 @@ local SOFT_SHADING = 0.12
 -- DRIP_WIDTH across and DRIP_LENGTH below the lip. Neighbouring drips
 -- overlap by DRIP_OVERLAP of their widths, so the edge runs as one
 -- unbroken wave with no flat stretch between drips.
-local GRASS = { 0.56, 0.5, 0.27 }
+local GRASS = { 0.62, 0.52, 0.34 }
 local GRASS_HEIGHT = 0.45
 local GRASS_OUTSET = 0.25
 local GRASS_LIP = { 0.3, 0.6 }
@@ -184,7 +184,7 @@ local DRIP_SHADE = 0.35
 -- life hangs on (GRASS_OLIVE_COVER of it) and worn through to the dirt in
 -- bald patches (BALD_COVER). Each patch kind is soft noise this many studs
 -- across.
-local GRASS_OLIVE = { 0.42, 0.42, 0.22 }
+local GRASS_OLIVE = { 0.5, 0.46, 0.3 }
 local GRASS_OLIVE_COVER = 0.3
 local BALD_COVER = 0.12
 local GRASS_PATCH_SIZE = 6
