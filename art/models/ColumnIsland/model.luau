@@ -1,4 +1,4 @@
-local CACHE_KEY = "ColumnIsland-576cab7e228666ae"
+local CACHE_KEY = "ColumnIsland-33f14087aa72368c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -929,10 +929,11 @@ local CRACK_LENGTH = { 0.6, 1.8 }
 local CRACK_SEGMENTS = 4
 local CRACK_WIDTH = { 0.1, 0.18 }
 local CRACK_BRANCH = 0.4
-local DIRT_BEVEL = { 0.3, 0.6 }
--- The dirt's outer edges and corners are rounded off on this radius (studs),
--- each edge in this many facets, so it reads soft rather than jagged.
-local DIRT_ROUND = 0.6
+local DIRT_BEVEL = { 0.07 * LARGEST, 0.13 * LARGEST }
+-- The dirt's outer edges and corners are rounded off on this radius, a
+-- share of the largest stone so bigger stones round off as softly, each
+-- edge in this many facets, so it reads soft rather than jagged.
+local DIRT_ROUND = 0.13 * LARGEST
 local DIRT_ROUND_STEPS = 4
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
@@ -980,11 +981,12 @@ local GRASS_ROUND_STEPS = 4
 -- The hanging edge's bottom curls under into its underside on this radius.
 local GRASS_BOTTOM_ROUND = 0.2
 -- The rim's corners in plan are rounded off by blurring its outline over
--- about this many studs; the stone's own rounded edges keep the cut-in
+-- about this many studs, a share of the largest stone so the rounding keeps
+-- up with the stones' corners; the stone's own rounded edges keep the cut-in
 -- corners covered. The drips' depth is blurred the same way over
 -- GRASS_DEPTH_BLUR studs, so neighbouring tongues meet in soft dips rather
 -- than sharp notches.
-local GRASS_CORNER_BLUR = 1
+local GRASS_CORNER_BLUR = 0.22 * LARGEST
 local GRASS_DEPTH_BLUR = 0.3
 -- The turf's flat top is cut into squares this many studs across.
 local GRASS_TOP_CELL = 8
