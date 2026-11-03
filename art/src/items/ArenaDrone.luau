@@ -571,4 +571,45 @@ part("MainCables", nil, RUBBER_BLACK, function(mesh)
 	end
 end, true, RUBBER, 256)
 
+-- Landing skids: a steel rail under the north and south sides of the ring,
+-- each on two legs that splay out from the ring girder's bottom chord,
+-- low enough to clear the battery cradle. The rails turn up at both ends.
+local SKID_Z = BATTERY_BOTTOM - 6
+local SKID_Y = RING_INNER + 9
+local SKID_HALF = 72
+local SKID_LEGS = { -42, 42 }
+local LEG_THICK = 1.8
+local CHORD_BOTTOM = GIRDER_BOTTOM + CHORD / 2
+part("SkidLegs", nil, GIRDER, function(mesh)
+	for _, side in { -1, 1 } do
+		for _, x in SKID_LEGS do
+			strut(mesh, x, side * (RING_INNER + 1), CHORD_BOTTOM, x, side * SKID_Y, SKID_Z + 1, LEG_THICK)
+			-- A brace from the outer wall down to the leg's middle.
+			local midY, midZ = lerp(RING_INNER + 1, SKID_Y, 0.5), lerp(CHORD_BOTTOM, SKID_Z + 1, 0.5)
+			strut(mesh, x - math.sign(x) * 10, side * (RING_OUTER - 1), CHORD_BOTTOM, x, side * midY, midZ, WEB)
+		end
+		-- A tie between the two legs, so each skid stands as one frame.
+		local tieY, tieZ = lerp(RING_INNER + 1, SKID_Y, 0.7), lerp(CHORD_BOTTOM, SKID_Z + 1, 0.7)
+		strut(mesh, SKID_LEGS[1], side * tieY, tieZ, SKID_LEGS[2], side * tieY, tieZ, WEB)
+	end
+end, nil, paintHazard, GIRDER_TEXTURE, nil, nil, 1)
+part("Skids", nil, DARK_STEEL, function(mesh)
+	for _, side in { -1, 1 } do
+		local points = {}
+		for j = 0, 4 do
+			local a = j / 4 * math.pi / 2
+			table.insert(points, 1, { -SKID_HALF - math.sin(a) * 6, side * SKID_Y, SKID_Z + (1 - math.cos(a)) * 6 })
+		end
+		for j = 1, 4 do
+			local a = j / 4 * math.pi / 2
+			table.insert(points, { SKID_HALF + math.sin(a) * 6, side * SKID_Y, SKID_Z + (1 - math.cos(a)) * 6 })
+		end
+		tube(mesh, points, 1.3, 12)
+		-- Clamps where the legs meet the rail.
+		for _, x in SKID_LEGS do
+			cylinder(mesh, x, side * SKID_Y, SKID_Z, 1.7, 3, "x", 12)
+		end
+	end
+end, 40, 0.5, 256)
+
 finishParts()
