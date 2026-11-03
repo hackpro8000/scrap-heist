@@ -1,4 +1,4 @@
--- Mountain (now a floating island): a mountain of stone columns turned
+-- Column Island: a floating island, a mountain of stone columns turned
 -- upside down, so a flat paved top hangs over a rocky cone that tapers to
 -- a point below. The columns, of every size and shape, are packed edge to
 -- edge like cracked basalt; each hangs as deep as the cone at its centre
@@ -842,7 +842,7 @@ local function topOutline()
 	end
 	local nextOf, first, count = {}, nil, 0
 	for _, edge in edges do
-		assert(nextOf[edge[1]] == nil, "Mountain: the top outline branches")
+		assert(nextOf[edge[1]] == nil, "ColumnIsland: the top outline branches")
 		nextOf[edge[1]] = edge[2]
 		first = first or edge[1]
 		count += 1
@@ -852,7 +852,7 @@ local function topOutline()
 		table.insert(loop, points[at])
 		at = nextOf[at]
 	until at == first or at == nil
-	assert(#loop == count, "Mountain: the top is not one outline")
+	assert(#loop == count, "ColumnIsland: the top is not one outline")
 	local outline = {}
 	for i, b in loop do
 		local a, c = loop[(i - 2) % #loop + 1], loop[i % #loop + 1]
