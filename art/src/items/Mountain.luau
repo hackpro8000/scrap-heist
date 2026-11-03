@@ -31,12 +31,14 @@ local CHIP_DEPTH = { 0.15, 0.45 }
 local CUT_SPREAD = math.rad(55)
 
 local STONE = { 0.46, 0.45, 0.5 }
--- Under the grass the rock is dirt, turning to stone between DIRT_FADE
--- studs down (first and last). The line wanders by up to DIRT_WOBBLE studs, so
--- it isn't a clean ring.
+-- Under the grass each column is dirt down to its own depth (shallowest and
+-- deepest, in studs), wandering across the island so the line steps from
+-- column to column, and stone below. The dirt's bottom edge is bevelled back
+-- DIRT_BEVEL studs on its outer side, leaving a ledge where it sits on the
+-- stone.
 local DIRT = { 0.45, 0.33, 0.23 }
-local DIRT_FADE = { 1.5, 5 }
-local DIRT_WOBBLE = 1.2
+local DIRT_DEPTH = { 1.5, 4.5 }
+local DIRT_BEVEL = { 0.3, 0.6 }
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
 local ROCK_GRADIENT = { 1.1, 0.6 }
@@ -333,6 +335,26 @@ for _, column in columns do
 	end
 
 	column.faces = faces
+
+	-- Dirt above the column's dirt line, stone below it. The dirt's outer
+	-- bottom edge is bevelled off, so a ledge of stone shows under it.
+	local wander = 0.5 + 0.5 * math.noise(column.peak[1] * 0.12, column.peak[2] * 0.12, 5.3)
+	local dirtLine = DIRT_DEPTH[1] + (DIRT_DEPTH[2] - DIRT_DEPTH[1]) * math.clamp(wander + (hash(index, 30) - 0.5) * 0.9, 0, 1)
+	column.dirtLine = dirtLine
+	local dirt = carve(faces, { 0, 0, 1 }, dirtLine)
+	local lift = math.rad(45)
+	local n = { math.cos(outward) * math.cos(lift), math.sin(outward) * math.cos(lift), math.sin(lift) }
+	local farthest = -math.huge
+	for _, face in dirt do
+		for _, p in face do
+			farthest = math.max(farthest, p[1] * n[1] + p[2] * n[2] + p[3] * n[3])
+		end
+	end
+	local bevel = DIRT_BEVEL[1] + (DIRT_BEVEL[2] - DIRT_BEVEL[1]) * hash(index, 31)
+	column.solids = {
+		{ faces = carve(dirt, n, farthest - bevel), dirt = true },
+		{ faces = carve(faces, { 0, 0, -1 }, -dirtLine), dirt = false },
+	}
 	-- Where the column's carved underside begins: the shallowest point of
 	-- any face that isn't a side wall or its foot.
 	column.surfaceFrom = math.huge
@@ -360,7 +382,8 @@ for _, column in columns do
 		local neighbour = corner[4] and columns[corner[4]]
 		column.shownFrom = math.min(column.shownFrom, if neighbour then neighbour.surfaceFrom else 0)
 	end
-	column.shownFrom = math.min(column.shownFrom, column.peak[3])
+	-- The stone shows from below the dirt.
+	column.shownFrom = math.min(math.max(column.shownFrom, column.dirtLine), column.peak[3])
 end
 
 -- Each face's plane, as a unit normal pointing out and its distance.
@@ -544,13 +567,15 @@ local paintRock = rusting(0.1, function(x, y, z)
 	local shade = ROCK_GRADIENT[1] + (ROCK_GRADIENT[2] - ROCK_GRADIENT[1]) * depth ^ 0.8
 	local tone, warm = splotchAt(x, y, z)
 	shade *= 1 + tone
-	local wobble = DIRT_WOBBLE * math.noise(x * 0.25, y * 0.25, z * 0.25)
-	local dirt = 1 - math.clamp((-z + wobble - DIRT_FADE[1]) / (DIRT_FADE[2] - DIRT_FADE[1]), 0, 1)
-	dirt = dirt * dirt * (3 - 2 * dirt)
-	local r = STONE[1] + (DIRT[1] - STONE[1]) * dirt
-	local g = STONE[2] + (DIRT[2] - STONE[2]) * dirt
-	local b = STONE[3] + (DIRT[3] - STONE[3]) * dirt
-	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
+	return STONE[1] * shade * (1 + warm), STONE[2] * shade, STONE[3] * shade * (1 - warm)
+end)
+
+-- Dirt darkens a little with depth, and is splotched like the stone.
+local paintDirt = rusting(0.05, function(x, y, z)
+	local shade = 1.05 - 0.3 * math.clamp(-z / DIRT_DEPTH[2], 0, 1)
+	local tone, warm = splotchAt(x, y, z)
+	shade *= 1 + tone
+	return DIRT[1] * shade * (1 + warm), DIRT[2] * shade, DIRT[3] * shade * (1 - warm)
 end)
 
 -- The island's flat top as one outline: the stones' feet (faces lying on
@@ -619,42 +644,62 @@ end
 -- stone reads sharp at one density everywhere.
 useTexelDensity(TEXEL_DENSITY)
 
-chunkedPart("Columns", nil, STONE, function(mesh)
+-- The dirt or the stone of every column. Only what no other solid covers is
+-- built, its own column's other half or a neighbour's, so nothing lies
+-- buried inside the island. The flat top is left open: the grass covers it.
+local function buildRock(mesh, dirt: boolean)
 	for _, column in columns do
-		local neighbours = {}
-		for _, corner in column.corners do
-			if corner[4] and columns[corner[4]] then
-				table.insert(neighbours, columns[corner[4]])
+		local others = {}
+		for _, solid in column.solids do
+			if solid.dirt ~= dirt then
+				table.insert(others, solid)
 			end
 		end
-		for _, face in column.faces do
-			-- The feet are built below as one merged top.
-			local foot = true
-			for _, p in face do
-				foot = foot and p[3] == 0
+		for _, corner in column.corners do
+			local neighbour = corner[4] and columns[corner[4]]
+			if neighbour then
+				for _, solid in neighbour.solids do
+					table.insert(others, solid)
+				end
 			end
-			if foot then
+		end
+		for _, solid in column.solids do
+			if solid.dirt ~= dirt then
 				continue
 			end
-			-- Only what no neighbour covers is built, so nothing lies buried
-			-- inside the island.
-			local pieces = { face }
-			for _, neighbour in neighbours do
-				local kept = {}
-				for _, piece in pieces do
-					for _, part in uncovered(piece, neighbour) do
-						table.insert(kept, part)
-					end
+			for _, face in solid.faces do
+				local foot = true
+				for _, p in face do
+					foot = foot and p[3] == 0
 				end
-				pieces = kept
-			end
-			for _, piece in pieces do
-				addFlipped(mesh, piece)
+				if foot then
+					continue
+				end
+				local pieces = { face }
+				for _, other in others do
+					local kept = {}
+					for _, piece in pieces do
+						for _, part in uncovered(piece, other) do
+							table.insert(kept, part)
+						end
+					end
+					pieces = kept
+				end
+				for _, piece in pieces do
+					addFlipped(mesh, piece)
+				end
 			end
 		end
 	end
-	-- The flat top is left open: the grass covers it.
+end
+
+chunkedPart("Columns", nil, STONE, function(mesh)
+	buildRock(mesh, false)
 end, false, paintRock, true, EDGE_REACH)
+
+chunkedPart("Dirt", nil, DIRT, function(mesh)
+	buildRock(mesh, true)
+end, false, paintDirt, true, EDGE_REACH)
 
 -- The rim walked in even steps, each point pushed out from the stone by the
 -- grass's outset (outer) and a hair's width (inner), with how deep the grass
