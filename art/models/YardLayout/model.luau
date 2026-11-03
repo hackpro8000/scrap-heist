@@ -971,7 +971,7 @@ local function finishParts()
 	end
 end
 local function buildColumnIsland()
-local CACHE_KEY = "ColumnIsland-a76934292f779ba7"
+local CACHE_KEY = "ColumnIsland-5616253eff036356"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1790,7 +1790,7 @@ end
 -- corners and edges. The model is built the mountain way up (heights,
 -- summit, foot) and flipped as it is written out. Centered on the origin,
 -- top at z = 0.
-local RADIUS = 38
+local RADIUS = 42
 local PEAK = 53
 -- Stone sizes at the summit and at the foot, as shares of the radius, so
 -- a bigger island has bigger stones rather than more of them.
@@ -3472,7 +3472,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildColumnIsland] = "ColumnIsland-ae29281ebb94add7"
+buildKeys[buildColumnIsland] = "ColumnIsland-68fb3eac17af4d4c"
 local function buildGroundTile()
 local CACHE_KEY = "GroundTile-06e115bba8685577"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -11628,9 +11628,9 @@ buildKeys[buildYardPathStub] = "YardPathStub-ec7805c51c55b33e"
 
 -- The yard stands on a Column Island, its grass top level with the yard
 -- floor, turned so the island's lobes sit under the fence corners and its
--- bays fall between them. Its turf stands 1.29 studs above its origin.
+-- bays fall between them. Its turf stands 1.43 studs above its origin.
 local ISLAND_TURN = 305
-place("Island", buildColumnIsland, 0, 0, -1.29, ISLAND_TURN)
+place("Island", buildColumnIsland, 0, 0, -1.43, ISLAND_TURN)
 
 -- The yard's pieces are laid out on a 32-stud plan and built YARD_SCALE
 -- times their own size, so the avatar clears the gate.
