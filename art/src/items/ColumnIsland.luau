@@ -13,13 +13,15 @@
 -- top at z = 0.
 local RADIUS = 38
 local PEAK = 53
--- Stone sizes at the summit and at the foot.
-local SMALLEST, LARGEST = 0.7, 4.5
+-- Stone sizes at the summit and at the foot, as shares of the radius, so
+-- a bigger island has bigger stones rather than more of them.
+local SMALLEST, LARGEST = 0.035 * RADIUS, 0.225 * RADIUS
 -- Stones are scattered a stone's width past the rim, so rim cells close
 -- on real neighbours before the ones outside are dropped.
 local SCATTER = RADIUS + LARGEST
--- Shortest a column hangs, so the rim stones read as a thick slab.
-local MIN_LENGTH = 4
+-- Shortest a column hangs, so the rim stones read as a thick slab; a
+-- share of the radius like the stone sizes.
+local MIN_LENGTH = 0.2 * RADIUS
 -- Chisel cuts per column, at most, and how deep one bites as a share of
 -- the stone's size.
 local MAX_CUTS = 3
