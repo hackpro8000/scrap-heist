@@ -136,6 +136,9 @@ local EDGE_REACH = 1
 local HIGHLIGHT_WIDTH = 4
 -- Studs over which a highlight thins from full width at a corner.
 local CORNER_TAPER = 0.5
+-- Grass and dirt are soft, so their edge highlights and contact shadows run
+-- at this share of the stone's.
+local SOFT_SHADING = 0.45
 
 -- Grass over the top: a turf slab GRASS_HEIGHT thick, pushed GRASS_OUTSET
 -- past the rim, whose edge hangs down as a lip (shallowest and deepest, in
@@ -1487,9 +1490,11 @@ for _, entry in parts do
 			table.insert(group, other.mesh)
 		end
 	end
+	local kind = string.match(entry.name, "^%a+")
+	local soft = kind == "Grass" or kind == "Dirt"
 	entry.mesh:paintShading(entry.image, {
-		highlight = EDGE_HIGHLIGHT,
-		shadow = CONTACT_SHADOW,
+		highlight = if soft then EDGE_HIGHLIGHT * SOFT_SHADING else EDGE_HIGHLIGHT,
+		shadow = if soft then CONTACT_SHADOW * SOFT_SHADING else CONTACT_SHADOW,
 		gradient = GRADIENT,
 		blend = EDGE_BLEND,
 		group = group,
