@@ -146,6 +146,9 @@ local CRACK_SEGMENTS = 4
 local CRACK_WIDTH = { 0.1 * DETAIL, 0.18 * DETAIL }
 local CRACK_BRANCH = 0.4
 local DIRT_BEVEL = { 0.3 * DETAIL, 0.6 * DETAIL }
+-- How steeply each rock's bevel slants, in radians up from flat; each rock
+-- takes its own angle in this range, so the bevels don't all match.
+local DIRT_BEVEL_LIFT = { math.rad(25), math.rad(65) }
 -- The dirt's outer edges and corners are rounded off on this radius, each
 -- edge in this many facets, so it reads soft rather than jagged.
 local DIRT_ROUND = 0.6 * DETAIL
@@ -593,9 +596,8 @@ local function farthestAlong(faces, n): number
 end
 
 -- Cuts a solid's outer bottom edge off, `depth` studs in along a slant facing
--- out from the island's centre and down.
-local function bevelled(faces, outward: number, depth: number)
-	local lift = math.rad(45)
+-- out from the island's centre and down, `lift` radians up from flat.
+local function bevelled(faces, outward: number, depth: number, lift: number)
 	local n = { math.cos(outward) * math.cos(lift), math.sin(outward) * math.cos(lift), math.sin(lift) }
 	return carve(faces, n, farthestAlong(faces, n) - depth)
 end
@@ -618,11 +620,12 @@ for _, column in columns do
 	local shown = column.shownFrom
 	local outward = math.atan2(column.peak[2], column.peak[1])
 	local bevel = DIRT_BEVEL[1] + (DIRT_BEVEL[2] - DIRT_BEVEL[1]) * hash(index, 31)
+	local lift = DIRT_BEVEL_LIFT[1] + (DIRT_BEVEL_LIFT[2] - DIRT_BEVEL_LIFT[1]) * hash(index, 34)
 	-- The tilted line passes through dirtLine under the rock's tip.
 	local tilt, heading = DIRT_TILT * hash(index, 32), hash(index, 33) * 2 * math.pi
 	local down = { math.sin(tilt) * math.cos(heading), math.sin(tilt) * math.sin(heading), math.cos(tilt) }
 	local line = down[1] * column.peak[1] + down[2] * column.peak[2] + down[3] * dirtLine
-	local dirt = bevelled(carve(faces, down, line), outward, bevel)
+	local dirt = bevelled(carve(faces, down, line), outward, bevel, lift)
 	local stone = carve(faces, { -down[1], -down[2], -down[3] }, -line)
 	column.solids = { { faces = dirt, dirt = true }, { faces = stone, dirt = false } }
 	-- The stone shows from below the dirt.
@@ -666,12 +669,12 @@ for _, column in columns do
 			return down, math.max(down[1] * column.peak[1] + down[2] * column.peak[2] + down[3] * top, level)
 		end
 		local down, line = topLine(207 + k * 10)
-		table.insert(solids, { faces = bevelled(carve(slab, down, line), heading, bevel * 0.7), dirt = true })
+		table.insert(solids, { faces = bevelled(carve(slab, down, line), heading, bevel * 0.7, lift), dirt = true })
 		local bare = carve(slab, { -down[1], -down[2], -down[3] }, -line)
 		-- A second line peaks the rock: the dirt it cuts off stays dirt.
 		if hash(index, 320 + k * 10) < PATCH_PEAKED then
 			local second, secondLine = topLine(330 + k * 10)
-			table.insert(solids, { faces = bevelled(carve(bare, second, secondLine), heading, bevel * 0.7), dirt = true })
+			table.insert(solids, { faces = bevelled(carve(bare, second, secondLine), heading, bevel * 0.7, lift), dirt = true })
 			bare = carve(bare, { -second[1], -second[2], -second[3] }, -secondLine)
 		end
 		-- Chipped into a rough stone rather than a flat slab.
