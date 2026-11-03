@@ -83,12 +83,14 @@ local MOSS_COVER = 0.45
 -- Small whole stones half sunk in the dirt, like crushed cookie in ice
 -- cream: STONE_BITS of them per square stud of dirt near the top, rising to
 -- the second number where the dirt gives way to rock. Each is STONE_BIT_SIZE
--- studs across, a chipped box, and stands out of the dirt by STONE_BIT_RISE
+-- studs across, most of them small and a few big (STONE_BIT_SKEW over 1), a
+-- chipped box, and stands out of the dirt by STONE_BIT_RISE
 -- of its size. None sit within STONE_BIT_CLEAR studs of the top, under the
 -- grass's lip.
 local PEBBLE = { 0.47, 0.46, 0.49 }
-local STONE_BITS = { 0.08, 0.5 }
-local STONE_BIT_SIZE = { 0.3, 0.8 }
+local STONE_BITS = { 0.025, 0.12 }
+local STONE_BIT_SIZE = { 0.45, 1.9 }
+local STONE_BIT_SKEW = 2
 local STONE_BIT_RISE = { 0.35, 0.65 }
 local STONE_BIT_CLEAR = 1.2
 local DIRT_BEVEL = { 0.3, 0.6 }
@@ -939,9 +941,12 @@ for _, face in dirtFaces do
 				a[2] + (b[2] - a[2]) * u + (c[2] - a[2]) * v,
 				a[3] + (b[3] - a[3]) * u + (c[3] - a[3]) * v,
 			}
-			local size = STONE_BIT_SIZE[1] + (STONE_BIT_SIZE[2] - STONE_BIT_SIZE[1]) * pebbleRandom()
+			local size = STONE_BIT_SIZE[1] + (STONE_BIT_SIZE[2] - STONE_BIT_SIZE[1]) * pebbleRandom() ^ STONE_BIT_SKEW
+			-- A stone too big for the room it has on its face is made smaller,
+			-- so it never hangs off an edge.
+			size = math.min(size, edgeDistance(face, p) * 2.2)
 			local r = size / 2
-			if p[3] < STONE_BIT_CLEAR or edgeDistance(face, p) < r then
+			if p[3] < STONE_BIT_CLEAR or size < STONE_BIT_SIZE[1] * 0.8 then
 				continue
 			end
 			local rise = STONE_BIT_RISE[1] + (STONE_BIT_RISE[2] - STONE_BIT_RISE[1]) * pebbleRandom()
