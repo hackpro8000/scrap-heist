@@ -146,7 +146,7 @@ local SOFT_SHADING = 0.45
 -- DRIP_WIDTH across and DRIP_LENGTH below the lip. Neighbouring drips
 -- overlap by DRIP_OVERLAP of their widths, so the edge runs as one
 -- unbroken wave with no flat stretch between drips.
-local GRASS = { 0.36, 0.58, 0.25 }
+local GRASS = { 0.56, 0.5, 0.27 }
 local GRASS_HEIGHT = 0.45
 local GRASS_OUTSET = 0.25
 local GRASS_LIP = { 0.3, 0.6 }
@@ -167,6 +167,16 @@ local GRASS_ROUND_STEPS = 4
 local GRASS_BOTTOM_ROUND = 0.2
 -- How much the grass darkens toward the tip of the deepest drip.
 local DRIP_SHADE = 0.35
+-- The grass is dead: straw GRASS drifting into a dull olive where a little
+-- life hangs on (GRASS_OLIVE_COVER of it), burnt black in scorch patches
+-- (SCORCH_COVER of it) and worn through to the dirt in bald ones
+-- (BALD_COVER). Each patch kind is soft noise this many studs across.
+local GRASS_OLIVE = { 0.42, 0.42, 0.22 }
+local GRASS_OLIVE_COVER = 0.3
+local SCORCH = { 0.15, 0.12, 0.09 }
+local SCORCH_COVER = 0.18
+local BALD_COVER = 0.12
+local GRASS_PATCH_SIZE = 6
 
 -- Fixed per-column jitter, so the columns look uneven but every build matches.
 local function hash(i: number, j: number): number
@@ -1403,13 +1413,26 @@ end
 -- How deep the deepest drip hangs, for the grass's shading.
 local GRASS_DEEPEST = GRASS_LIP[1] + DRIP_LENGTH[2]
 
--- Grass is green, darkening down the hanging edge toward the drip tips, and
--- splotched like the stone.
+-- Grass is dead straw with olive, scorched and bald patches, darkening down
+-- the hanging edge toward the drip tips, and splotched like the stone.
 local paintGrass = rusting(0, function(x, y, z)
 	local shade = 1 - DRIP_SHADE * math.clamp(-z / GRASS_DEEPEST, 0, 1)
 	local tone, warm = splotchAt(x, y, z)
 	shade *= 1 + tone
-	return GRASS[1] * shade * (1 + warm), GRASS[2] * shade, GRASS[3] * shade * (1 - warm)
+	-- Patch strength from soft noise: 0 outside, 1 well inside a patch
+	-- covering `cover` of the grass.
+	local function patch(cover: number, seed: number): number
+		local u, v = x / GRASS_PATCH_SIZE + seed, y / GRASS_PATCH_SIZE
+		local n = 0.5 + math.noise(u, v, seed) + 0.3 * math.noise(u * 3, v * 3, seed + 5)
+		return math.clamp((n - (1 - cover)) / 0.12, 0, 1)
+	end
+	local function toward(r, g, b, c, t)
+		return r + (c[1] - r) * t, g + (c[2] - g) * t, b + (c[3] - b) * t
+	end
+	local r, g, b = toward(GRASS[1], GRASS[2], GRASS[3], GRASS_OLIVE, patch(GRASS_OLIVE_COVER, 11.3))
+	r, g, b = toward(r, g, b, DIRT, patch(BALD_COVER, 47.9))
+	r, g, b = toward(r, g, b, SCORCH, patch(SCORCH_COVER, 83.1))
+	return r * shade * (1 + warm), g * shade, b * shade * (1 - warm)
 end)
 
 chunkedPart("Grass", nil, GRASS, function(mesh)
