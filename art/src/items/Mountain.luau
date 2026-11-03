@@ -151,7 +151,7 @@ local HIGHLIGHT_WIDTH = 4
 local CORNER_TAPER = 0.5
 -- Grass and dirt are soft, so their edge highlights and contact shadows run
 -- at this share of the stone's.
-local SOFT_SHADING = 0.45
+local SOFT_SHADING = 0.12
 
 -- Grass over the top: a turf slab GRASS_HEIGHT thick, pushed GRASS_OUTSET
 -- past the rim, whose edge hangs down as a lip (shallowest and deepest, in
