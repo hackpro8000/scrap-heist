@@ -27,9 +27,21 @@ local SMALLEST, LARGEST = 0.055 * RADIUS, 0.34 * RADIUS
 -- the same, only bigger: chips, slabs, cookie stones, cracks, rounding,
 -- grass and the paint's blotches all grow with the stones.
 local DETAIL = LARGEST / 4.5
+-- The rim the columns are trimmed to: a circle of RIM_PUSH * RADIUS
+-- swelling and dipping by up to RIM_WOBBLE of it in broad waves, so the top
+-- is a dependable surface rather than sharp lobes and bays. RIM_SIDES flat
+-- facets make it up, so the rim stones end in cut faces.
+local RIM_WOBBLE = 0.16
+local RIM_SIDES = 96
+-- The rim stands RIM_PUSH times RADIUS out, carried by a ring of extra
+-- stones laid along it before the rest are scattered, each RIM_STONE of the
+-- largest stone's size, so the edge is many even cells rather than a few
+-- big ones sliced flat.
+local RIM_PUSH = 1.1
+local RIM_STONE = 0.55
 -- Stones are scattered a stone's width past the rim, so rim cells close
--- on real neighbours before the ones outside are dropped.
-local SCATTER = RADIUS + LARGEST
+-- on real neighbours before they are trimmed to it.
+local SCATTER = RIM_PUSH * RADIUS + LARGEST
 -- Shortest a column hangs, so the rim stones read as a thick slab; a
 -- share of the radius like the stone sizes.
 local MIN_LENGTH = 0.2 * RADIUS
@@ -233,9 +245,27 @@ local function heightAt(x: number, y: number): number
 	return math.max(main, shoulder)
 end
 
+-- The rim's radius at an angle.
+local function rimAt(angle: number): number
+	local phase = SEED * 1.7
+	local wave = 0.5 * math.sin(2 * angle + phase) + 0.3 * math.sin(3 * angle + 2 * phase) + 0.2 * math.sin(5 * angle + 3 * phase)
+	return RIM_PUSH * RADIUS * (1 + RIM_WOBBLE * wave)
+end
+
 -- Stones scattered by dart throwing, none crowding another, sized by how
--- high on the slope they sit: x, y and size.
+-- high on the slope they sit: x, y and size. The rim's ring of stones goes
+-- down first, half a stone inside the rim and spaced so neighbours just
+-- clear each other.
 local stones = {}
+do
+	local size = RIM_STONE * LARGEST
+	local count = math.floor(TAU * RIM_PUSH * RADIUS / (1.5 * size))
+	for k = 1, count do
+		local angle = (k + 0.3 * (random() - 0.5)) / count * TAU
+		local reach = rimAt(angle) - 0.5 * size
+		table.insert(stones, { reach * math.cos(angle), reach * math.sin(angle), size * (0.75 + 0.5 * random()) })
+	end
+end
 for _ = 1, 8000 do
 	local angle, reach = random() * TAU, math.sqrt(random()) * SCATTER
 	local x, y = reach * math.cos(angle), reach * math.sin(angle)
@@ -282,6 +312,43 @@ local function clip(outline, p, q, neighbour)
 	return kept
 end
 
+-- The rim's corners, then each of its sides as a plane n . p <= limit,
+-- in order round from angle 0.
+local rimSides = {}
+do
+	local rim = {}
+	for i = 0, RIM_SIDES - 1 do
+		local angle = i / RIM_SIDES * TAU
+		local r = rimAt(angle)
+		rim[i + 1] = { r * math.cos(angle), r * math.sin(angle) }
+	end
+	for i, a in rim do
+		local b = rim[i % #rim + 1]
+		-- Counter-clockwise, so out is to the right of each side.
+		local nx, ny = b[2] - a[2], a[1] - b[1]
+		table.insert(rimSides, { nx, ny, nx * a[1] + ny * a[2] })
+	end
+end
+
+-- Cuts a cell outline down to the inside of one rim side; corners where it
+-- crosses carry nil, as on the outer rim.
+local function clipToRim(outline, side)
+	local nx, ny, limit = side[1], side[2], side[3]
+	local kept = {}
+	for i, a in outline do
+		local b = outline[i % #outline + 1]
+		local sa, sb = a[1] * nx + a[2] * ny - limit, b[1] * nx + b[2] * ny - limit
+		if sa <= 0 then
+			table.insert(kept, { a[1], a[2], a[3] })
+		end
+		if (sa <= 0) ~= (sb <= 0) then
+			local t = sa / (sa - sb)
+			table.insert(kept, { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, if sa <= 0 then nil else a[3] })
+		end
+	end
+	return kept
+end
+
 -- Each stone's column: its outline and its top corners on a slanted plane.
 local columns = {}
 for index, stone in stones do
@@ -298,13 +365,34 @@ for index, stone in stones do
 			end
 		end
 	end
-	-- Stones outside the rim, and cells cut by the scatter's edge, are
-	-- dropped, so the foot ends on whole stones instead of a clean circle.
-	local onEdge = stone[1] ^ 2 + stone[2] ^ 2 > RADIUS ^ 2
+	-- Every cell is trimmed to the rim sides it faces (the rim isn't convex,
+	-- so the far sides would cut into its swells); those left with nothing
+	-- inside the rim are dropped. A cell's sides are those over the angles
+	-- its corners span, and one either way.
+	local low, high, farthest = math.huge, -math.huge, 0
+	local heading = math.atan2(stone[2], stone[1])
 	for _, corner in outline do
-		onEdge = onEdge or corner[3] == nil
+		local offset = (math.atan2(corner[2], corner[1]) - heading + math.pi) % TAU - math.pi
+		low, high = math.min(low, offset), math.max(high, offset)
+		farthest = math.max(farthest, math.sqrt(corner[1] ^ 2 + corner[2] ^ 2))
 	end
-	if #outline < 3 or onEdge then
+	if farthest > RIM_PUSH * RADIUS * (1 - RIM_WOBBLE) then
+		local first = math.floor((heading + low) / TAU * RIM_SIDES) - 1
+		local last = math.ceil((heading + high) / TAU * RIM_SIDES) + 1
+		for k = first, last do
+			if #outline < 3 then
+				break
+			end
+			outline = clipToRim(outline, rimSides[k % RIM_SIDES + 1])
+		end
+	end
+	local area = 0
+	for i, a in outline do
+		local b = outline[i % #outline + 1]
+		area += (a[1] * b[2] - b[1] * a[2]) / 2
+	end
+	-- Slivers the rim leaves of a cell would only make splinters.
+	if #outline < 3 or math.abs(area) < (0.3 * SMALLEST) ^ 2 then
 		continue
 	end
 	local cx, cy = 0, 0
