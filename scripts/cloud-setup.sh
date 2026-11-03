@@ -7,11 +7,12 @@
 
 set -euo pipefail
 
-# ffmpeg for MP4 turntables, and a virtual desktop (Xvfb + Openbox) for GUI
-# apps (see scripts/desktop.sh).
+# ripgrep and sd for searching and editing (CLAUDE.md asks for them over grep
+# and sed), ffmpeg for MP4 turntables, and a virtual desktop (Xvfb + Openbox)
+# for GUI apps (see scripts/desktop.sh).
 apt-get update -qq
 DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
-	ca-certificates curl \
+	ca-certificates curl ripgrep sd \
 	xvfb x11-utils xdotool imagemagick openbox mesa-utils ffmpeg \
 	>/dev/null
 
