@@ -118,8 +118,8 @@ local CRACK_BRANCH = 0.4
 local DIRT_BEVEL = { 0.3, 0.6 }
 -- The dirt's outer edges and corners are rounded off on this radius (studs),
 -- each edge in this many facets, so it reads soft rather than jagged.
-local DIRT_ROUND = 0.35
-local DIRT_ROUND_STEPS = 3
+local DIRT_ROUND = 0.6
+local DIRT_ROUND_STEPS = 4
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
 local ROCK_GRADIENT = { 1.1, 0.6 }
@@ -144,7 +144,7 @@ local CORNER_TAPER = 0.5
 -- overlap by DRIP_OVERLAP of their widths, so the edge runs as one
 -- unbroken wave with no flat stretch between drips.
 local GRASS = { 0.36, 0.58, 0.25 }
-local GRASS_HEIGHT = 0.35
+local GRASS_HEIGHT = 0.45
 local GRASS_OUTSET = 0.25
 local GRASS_LIP = { 0.3, 0.6 }
 local DRIP_WIDTH = { 1.6, 4 }
@@ -158,10 +158,10 @@ local DRIP_DETAIL_FREQUENCY = 1.1
 local GRASS_STEP = 0.25
 -- The turf's top rolls over into its hanging edge on a quarter circle this
 -- many studs across, in this many facets.
-local GRASS_ROUND = 0.3
+local GRASS_ROUND = 0.42
 local GRASS_ROUND_STEPS = 4
 -- The hanging edge's bottom curls under into its underside on this radius.
-local GRASS_BOTTOM_ROUND = 0.12
+local GRASS_BOTTOM_ROUND = 0.2
 -- How much the grass darkens toward the tip of the deepest drip.
 local DRIP_SHADE = 0.35
 
