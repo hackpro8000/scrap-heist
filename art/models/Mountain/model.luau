@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-30dcfa31558d70e7"
+local CACHE_KEY = "Mountain-08fa05b8794d981b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -837,13 +837,16 @@ local CHIP_DEPTH = { 0.15, 0.45 }
 local CUT_SPREAD = math.rad(55)
 
 local STONE = { 0.46, 0.45, 0.5 }
--- Under the grass each column is dirt down to its own depth (shallowest and
--- deepest, in studs), wandering across the island so the line steps from
--- column to column, and stone below. The dirt's bottom edge is bevelled back
--- DIRT_BEVEL studs on its outer side, leaving a ledge where it sits on the
--- stone.
+-- Under the grass the island is dirt with rocks breaking through it, more
+-- of them the deeper a tier hangs: DIRT_BREAK of the rim tier's rocks are
+-- bare, rising to all of them DIRT_GONE studs down, below which there is no
+-- dirt at all. A rock still in dirt is dirt over part of what shows of it
+-- (DIRT_COVER, least and most), with its tip coming through below. The dirt's bottom edge is bevelled back
+-- DIRT_BEVEL studs on its outer side, so the rock it sits on stands proud.
 local DIRT = { 0.45, 0.33, 0.23 }
-local DIRT_DEPTH = { 1.5, 4.5 }
+local DIRT_BREAK = 0.2
+local DIRT_GONE = 5
+local DIRT_COVER = { 0.4, 1 }
 local DIRT_BEVEL = { 0.3, 0.6 }
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
@@ -1142,25 +1145,6 @@ for _, column in columns do
 
 	column.faces = faces
 
-	-- Dirt above the column's dirt line, stone below it. The dirt's outer
-	-- bottom edge is bevelled off, so a ledge of stone shows under it.
-	local wander = 0.5 + 0.5 * math.noise(column.peak[1] * 0.12, column.peak[2] * 0.12, 5.3)
-	local dirtLine = DIRT_DEPTH[1] + (DIRT_DEPTH[2] - DIRT_DEPTH[1]) * math.clamp(wander + (hash(index, 30) - 0.5) * 0.9, 0, 1)
-	column.dirtLine = dirtLine
-	local dirt = carve(faces, { 0, 0, 1 }, dirtLine)
-	local lift = math.rad(45)
-	local n = { math.cos(outward) * math.cos(lift), math.sin(outward) * math.cos(lift), math.sin(lift) }
-	local farthest = -math.huge
-	for _, face in dirt do
-		for _, p in face do
-			farthest = math.max(farthest, p[1] * n[1] + p[2] * n[2] + p[3] * n[3])
-		end
-	end
-	local bevel = DIRT_BEVEL[1] + (DIRT_BEVEL[2] - DIRT_BEVEL[1]) * hash(index, 31)
-	column.solids = {
-		{ faces = carve(dirt, n, farthest - bevel), dirt = true },
-		{ faces = carve(faces, { 0, 0, -1 }, -dirtLine), dirt = false },
-	}
 	-- Where the column's carved underside begins: the shallowest point of
 	-- any face that isn't a side wall or its foot.
 	column.surfaceFrom = math.huge
@@ -1188,8 +1172,41 @@ for _, column in columns do
 		local neighbour = corner[4] and columns[corner[4]]
 		column.shownFrom = math.min(column.shownFrom, if neighbour then neighbour.surfaceFrom else 0)
 	end
+end
+
+-- Each rock either breaks bare through the dirt or is dirt over the top of
+-- what shows of it, split into a dirt solid and a stone one. The dirt's outer
+-- bottom edge is bevelled off, so the stone under it stands proud.
+for _, column in columns do
+	local index, faces, shown = column.index, column.faces, column.shownFrom
+	local bare = math.clamp(DIRT_BREAK + (1 - DIRT_BREAK) * shown / DIRT_GONE, 0, 1)
+	if hash(index, 30) < bare then
+		column.solids = { { faces = faces, dirt = false } }
+		continue
+	end
+	local cover = DIRT_COVER[1] + (DIRT_COVER[2] - DIRT_COVER[1]) * hash(index, 32)
+	local dirtLine = math.min(shown + (column.peak[3] - shown) * cover, DIRT_GONE * (0.7 + 0.3 * hash(index, 33)))
+	if dirtLine <= shown then
+		column.solids = { { faces = faces, dirt = false } }
+		continue
+	end
+	local dirt = carve(faces, { 0, 0, 1 }, dirtLine)
+	local outward = math.atan2(column.peak[2], column.peak[1])
+	local lift = math.rad(45)
+	local n = { math.cos(outward) * math.cos(lift), math.sin(outward) * math.cos(lift), math.sin(lift) }
+	local farthest = -math.huge
+	for _, face in dirt do
+		for _, p in face do
+			farthest = math.max(farthest, p[1] * n[1] + p[2] * n[2] + p[3] * n[3])
+		end
+	end
+	local bevel = DIRT_BEVEL[1] + (DIRT_BEVEL[2] - DIRT_BEVEL[1]) * hash(index, 31)
+	column.solids = {
+		{ faces = carve(dirt, n, farthest - bevel), dirt = true },
+		{ faces = carve(faces, { 0, 0, -1 }, -dirtLine), dirt = false },
+	}
 	-- The stone shows from below the dirt.
-	column.shownFrom = math.min(math.max(column.shownFrom, column.dirtLine), column.peak[3])
+	column.shownFrom = math.min(dirtLine, column.peak[3])
 end
 
 -- Each face's plane, as a unit normal pointing out and its distance.
@@ -1378,7 +1395,7 @@ end)
 
 -- Dirt darkens a little with depth, and is splotched like the stone.
 local paintDirt = rusting(0.05, function(x, y, z)
-	local shade = 1.05 - 0.3 * math.clamp(-z / DIRT_DEPTH[2], 0, 1)
+	local shade = 1.05 - 0.3 * math.clamp(-z / DIRT_GONE, 0, 1)
 	local tone, warm = splotchAt(x, y, z)
 	shade *= 1 + tone
 	return DIRT[1] * shade * (1 + warm), DIRT[2] * shade, DIRT[3] * shade * (1 - warm)
