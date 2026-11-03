@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-08fa05b8794d981b"
+local CACHE_KEY = "Mountain-7428f7a4506eae8b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -837,16 +837,14 @@ local CHIP_DEPTH = { 0.15, 0.45 }
 local CUT_SPREAD = math.rad(55)
 
 local STONE = { 0.46, 0.45, 0.5 }
--- Under the grass the island is dirt with rocks breaking through it, more
--- of them the deeper a tier hangs: DIRT_BREAK of the rim tier's rocks are
--- bare, rising to all of them DIRT_GONE studs down, below which there is no
--- dirt at all. A rock still in dirt is dirt over part of what shows of it
--- (DIRT_COVER, least and most), with its tip coming through below. The dirt's bottom edge is bevelled back
--- DIRT_BEVEL studs on its outer side, so the rock it sits on stands proud.
+-- Under the grass the island is all dirt, until rocks start breaking
+-- through it at the first share of the island's depth in DIRT_TRANSITION,
+-- more and more of them going down, until from the second share it is all
+-- rock. Each rock comes through the dirt at its own depth in that range. The
+-- dirt's bottom edge is bevelled back DIRT_BEVEL studs on its outer side, so
+-- the rock it sits on stands proud.
 local DIRT = { 0.45, 0.33, 0.23 }
-local DIRT_BREAK = 0.2
-local DIRT_GONE = 5
-local DIRT_COVER = { 0.4, 1 }
+local DIRT_TRANSITION = { 0.33, 0.5 }
 local DIRT_BEVEL = { 0.3, 0.6 }
 -- Each rock shades from STONE times the first where it meets the top to
 -- STONE times the second at its tip.
@@ -1174,19 +1172,20 @@ for _, column in columns do
 	end
 end
 
--- Each rock either breaks bare through the dirt or is dirt over the top of
--- what shows of it, split into a dirt solid and a stone one. The dirt's outer
--- bottom edge is bevelled off, so the stone under it stands proud.
+-- How deep the island hangs at its lowest point.
+local islandDepth = 0
 for _, column in columns do
-	local index, faces, shown = column.index, column.faces, column.shownFrom
-	local bare = math.clamp(DIRT_BREAK + (1 - DIRT_BREAK) * shown / DIRT_GONE, 0, 1)
-	if hash(index, 30) < bare then
-		column.solids = { { faces = faces, dirt = false } }
-		continue
-	end
-	local cover = DIRT_COVER[1] + (DIRT_COVER[2] - DIRT_COVER[1]) * hash(index, 32)
-	local dirtLine = math.min(shown + (column.peak[3] - shown) * cover, DIRT_GONE * (0.7 + 0.3 * hash(index, 33)))
-	if dirtLine <= shown then
+	islandDepth = math.max(islandDepth, column.peak[3])
+end
+
+-- Each rock is dirt down to where it comes through, and stone below, split
+-- into a dirt solid and a stone one. The dirt's outer bottom edge is
+-- bevelled off, so the stone under it stands proud.
+for _, column in columns do
+	local index, faces = column.index, column.faces
+	local share = DIRT_TRANSITION[1] + (DIRT_TRANSITION[2] - DIRT_TRANSITION[1]) * hash(index, 30)
+	local dirtLine = islandDepth * share
+	if dirtLine <= column.shownFrom then
 		column.solids = { { faces = faces, dirt = false } }
 		continue
 	end
@@ -1395,7 +1394,7 @@ end)
 
 -- Dirt darkens a little with depth, and is splotched like the stone.
 local paintDirt = rusting(0.05, function(x, y, z)
-	local shade = 1.05 - 0.3 * math.clamp(-z / DIRT_GONE, 0, 1)
+	local shade = 1.05 - 0.3 * math.clamp(-z / (islandDepth * DIRT_TRANSITION[2]), 0, 1)
 	local tone, warm = splotchAt(x, y, z)
 	shade *= 1 + tone
 	return DIRT[1] * shade * (1 + warm), DIRT[2] * shade, DIRT[3] * shade * (1 - warm)
