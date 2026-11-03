@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-20b03d862bb9f2a2"
+local CACHE_KEY = "YardIsland-a88369b9e1d99c4e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -806,9 +806,9 @@ local function finishParts()
 end
 -- Yard Island: a floating yard island, from the shared rock-wall
 -- generator (shared/RockIsland.luau).
-local RADIUS = 54
--- Rocks 7.05 times the generator's base size.
-local ROCK_SCALE = 7.05
+local RADIUS = 36
+-- Rocks 4.7 times the generator's base size.
+local ROCK_SCALE = 4.7
 
 -- The island's wobbly outline, as a radius scale per angle.
 local function outlineScale(angle: number): number
