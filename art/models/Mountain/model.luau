@@ -1,4 +1,4 @@
-local CACHE_KEY = "Mountain-52f37039a0769e32"
+local CACHE_KEY = "Mountain-588b6ccfb7a42890"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -845,6 +845,13 @@ local STONE = { 0.46, 0.45, 0.5 }
 -- the rock it sits on stands proud.
 local DIRT = { 0.45, 0.33, 0.23 }
 local DIRT_TRANSITION = { 0.33, 0.5 }
+-- Above that, rock already shows through the dirt in patches: a rock still
+-- under dirt may have a slab of its outer face bare below a tilted line,
+-- the chance rising from nothing at PATCH_FROM of the depth to every rock
+-- where whole rocks start coming through. The slab is PATCH_THICKNESS studs
+-- deep.
+local PATCH_FROM = 0.12
+local PATCH_THICKNESS = { 0.6, 1.1 }
 -- The colours blend too, over a wider share of the depth: dirt greys toward
 -- stone and stone keeps a dirty tint across COLOR_TRANSITION, the line
 -- wandering by COLOR_WOBBLE of the depth. At any depth the dirt stays
@@ -1185,9 +1192,31 @@ for _, column in columns do
 	islandDepth = math.max(islandDepth, column.peak[3])
 end
 
+-- How far a solid reaches along a direction.
+local function farthestAlong(faces, n): number
+	local farthest = -math.huge
+	for _, face in faces do
+		for _, p in face do
+			farthest = math.max(farthest, p[1] * n[1] + p[2] * n[2] + p[3] * n[3])
+		end
+	end
+	return farthest
+end
+
+-- Cuts a solid's outer bottom edge off, `depth` studs in along a slant facing
+-- out from the island's centre and down.
+local function bevelled(faces, outward: number, depth: number)
+	local lift = math.rad(45)
+	local n = { math.cos(outward) * math.cos(lift), math.sin(outward) * math.cos(lift), math.sin(lift) }
+	return carve(faces, n, farthestAlong(faces, n) - depth)
+end
+
 -- Each rock is dirt down to where it comes through, and stone below, split
 -- into a dirt solid and a stone one. The dirt's outer bottom edge is
--- bevelled off, so the stone under it stands proud.
+-- bevelled off, so the stone under it stands proud. Higher up, a patch of a
+-- rock's outer face may already show through: the dirt is split into the
+-- slab on its outer face and the rest, and the slab into bare stone below a
+-- tilted line and dirt above, bevelled like the rest.
 for _, column in columns do
 	local index, faces = column.index, column.faces
 	local share = DIRT_TRANSITION[1] + (DIRT_TRANSITION[2] - DIRT_TRANSITION[1]) * hash(index, 30)
@@ -1196,21 +1225,35 @@ for _, column in columns do
 		column.solids = { { faces = faces, dirt = false } }
 		continue
 	end
-	local dirt = carve(faces, { 0, 0, 1 }, dirtLine)
+	local shown = column.shownFrom
 	local outward = math.atan2(column.peak[2], column.peak[1])
-	local lift = math.rad(45)
-	local n = { math.cos(outward) * math.cos(lift), math.sin(outward) * math.cos(lift), math.sin(lift) }
-	local farthest = -math.huge
-	for _, face in dirt do
-		for _, p in face do
-			farthest = math.max(farthest, p[1] * n[1] + p[2] * n[2] + p[3] * n[3])
-		end
-	end
 	local bevel = DIRT_BEVEL[1] + (DIRT_BEVEL[2] - DIRT_BEVEL[1]) * hash(index, 31)
-	column.solids = {
-		{ faces = carve(dirt, n, farthest - bevel), dirt = true },
-		{ faces = carve(faces, { 0, 0, -1 }, -dirtLine), dirt = false },
-	}
+	local dirt = bevelled(carve(faces, { 0, 0, 1 }, dirtLine), outward, bevel)
+	local stone = carve(faces, { 0, 0, -1 }, -dirtLine)
+	column.solids = { { faces = dirt, dirt = true }, { faces = stone, dirt = false } }
+
+	local middle = (shown + dirtLine) / 2 / islandDepth
+	local chance = math.clamp((middle - PATCH_FROM) / (DIRT_TRANSITION[1] - PATCH_FROM), 0, 1)
+	if hash(index, 34) < chance and dirtLine - shown > 1 then
+		local heading = outward + (hash(index, 35) - 0.5) * 0.6
+		local across = { math.cos(heading), math.sin(heading), 0 }
+		local thickness = PATCH_THICKNESS[1] + (PATCH_THICKNESS[2] - PATCH_THICKNESS[1]) * hash(index, 36)
+		local face = farthestAlong(dirt, across) - thickness
+		local slab = carve(dirt, { -across[1], -across[2], 0 }, -face)
+		local rest = carve(dirt, across, face)
+		-- The patch's top line, tilted, somewhere down what shows of the rock.
+		local top = shown + (dirtLine - shown) * (0.2 + 0.5 * hash(index, 37))
+		local tx, ty = (hash(index, 38) - 0.5) * 0.6, (hash(index, 39) - 0.5) * 0.6
+		local length = math.sqrt(tx * tx + ty * ty + 1)
+		local down = { tx / length, ty / length, 1 / length }
+		local line = down[1] * column.peak[1] + down[2] * column.peak[2] + down[3] * top
+		column.solids = {
+			{ faces = rest, dirt = true },
+			{ faces = bevelled(carve(slab, down, line), outward, bevel * 0.7), dirt = true },
+			{ faces = carve(slab, { -down[1], -down[2], -down[3] }, -line), dirt = false },
+			{ faces = stone, dirt = false },
+		}
+	end
 	-- The stone shows from below the dirt.
 	column.shownFrom = math.min(dirtLine, column.peak[3])
 end
