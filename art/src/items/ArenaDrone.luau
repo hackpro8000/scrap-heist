@@ -644,27 +644,4 @@ part("Skids", nil, DARK_STEEL, function(mesh)
 	end
 end, 40, 0.5, 256)
 
--- Navigation lights on top of each motor collar's clamp lugs, as on an
--- aircraft facing west (away from the gangway): green on the north
--- (starboard) motors, red on the south (port) ones.
-local NAV_GREEN = { 0.25, 1, 0.4 }
-local NAV_RED = { 1, 0.2, 0.15 }
-local NAV_GLOW = 3
-for i, degrees in ARM_DIRECTIONS do
-	local angle = math.rad(degrees)
-	local ux, uy = math.cos(angle), math.sin(angle)
-	local mx, my = ux * MOTOR_OUT, uy * MOTOR_OUT
-	local px, py = mx - ux * MOTOR_PIVOT, my - uy * MOTOR_PIVOT
-	local lx, ly = ux * (MOTOR_OUT + COLLAR_OUTER + 1.8), uy * (MOTOR_OUT + COLLAR_OUTER + 1.8)
-	local lz = MOTOR_PIVOT_Z + 0.6
-	part(`NavHousing{i}`, nil, DARK_STEEL, function(mesh)
-		local lean = leaning(mesh, px, py, MOTOR_PIVOT_Z, ux, uy, MOTOR_TILT)
-		cylinder(lean, lx, ly, lz + 0.3, 1.5, 0.6, "z", 12)
-	end, nil, 0.4, 64)
-	part(`NavLight{i}`, nil, if uy > 0 then NAV_GREEN else NAV_RED, function(mesh)
-		local lean = leaning(mesh, px, py, MOTOR_PIVOT_Z, ux, uy, MOTOR_TILT)
-		sphere(lean, lx, ly, lz + 0.6, 1.1, 1.1, 1, 6, 12)
-	end, true, 0, 32, NAV_GLOW)
-end
-
 finishParts()
