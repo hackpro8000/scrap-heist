@@ -971,7 +971,7 @@ local function finishParts()
 	end
 end
 local function buildArenaDrone()
-local CACHE_KEY = "ArenaDrone-699480bf7e3c2cde"
+local CACHE_KEY = "ArenaDrone-010ea7792eb45337"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1938,6 +1938,29 @@ for k = 0, 7 do
 	end, nil, 0.5, GRATE_TEXTURE, nil, true)
 end
 
+-- The grating's rim: a hazard-striped steel channel round the ring's outer
+-- edge, its top flush with the grating so the deck walks straight onto it,
+-- and deep enough to hide the bar ends and cap the girder below. Mitred at
+-- each corner into one closed band; a part per side keeps its stripes sharp.
+local RIM_IN, RIM_OUT = RING_OUTER - 0.3, RING_OUTER + 0.4
+local RIM_TOP, RIM_BOTTOM = 0, -1.2
+local RIM_TEXTURE = 256
+for k = 0, 7 do
+	part(`GratingRim{k + 1}`, nil, GIRDER, function(mesh)
+		local ix0, iy0 = corner(RIM_IN, k)
+		local ix1, iy1 = corner(RIM_IN, k + 1)
+		local ox0, oy0 = corner(RIM_OUT, k)
+		local ox1, oy1 = corner(RIM_OUT, k + 1)
+		local along = cells(2 * RIM_OUT * math.tan(math.pi / 8))
+		-- Top, outer face, underside and inner face, each anticlockwise seen
+		-- from outside.
+		patch(mesh, { ix0, iy0, RIM_TOP }, { ox0, oy0, RIM_TOP }, { ox1, oy1, RIM_TOP }, { ix1, iy1, RIM_TOP }, 1, along)
+		patch(mesh, { ox0, oy0, RIM_BOTTOM }, { ox1, oy1, RIM_BOTTOM }, { ox1, oy1, RIM_TOP }, { ox0, oy0, RIM_TOP }, along, 1)
+		patch(mesh, { ix0, iy0, RIM_BOTTOM }, { ix1, iy1, RIM_BOTTOM }, { ox1, oy1, RIM_BOTTOM }, { ox0, oy0, RIM_BOTTOM }, along, 1)
+		patch(mesh, { ix1, iy1, RIM_BOTTOM }, { ix0, iy0, RIM_BOTTOM }, { ix0, iy0, RIM_TOP }, { ix1, iy1, RIM_TOP }, along, 1)
+	end, nil, paintHazard, RIM_TEXTURE, nil, nil, 1)
+end
+
 -- The ring girder: an inner and an outer truss wall round the octagon,
 -- top and bottom chords with a zigzag web between, tied across the ring
 -- at every panel point.
@@ -2427,7 +2450,7 @@ end, 40, 0.5, 256)
 
 finishParts()
 end
-buildKeys[buildArenaDrone] = "ArenaDrone-b131479466183742"
+buildKeys[buildArenaDrone] = "ArenaDrone-a995fda8f7996adc"
 local function buildPadIsland()
 local CACHE_KEY = "PadIsland-f783d7e207cc4ce2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -31212,16 +31235,16 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildYardPathStub] = "YardPathStub-ec7805c51c55b33e"
-slabKeys[31963] = "e8cd22ddc27a3973-03fb9ebc63adf1c5"
-slabKeys[32049] = "e8cd22ddc27a3973-13efa5a1845e203d"
-slabKeys[32060] = "e8cd22ddc27a3973-041aab4d823cacfb"
-slabKeys[32114] = "e8cd22ddc27a3973-895bec6dbbe0aeac"
-slabKeys[32171] = "e8cd22ddc27a3973-f4f9015cc7a52d81"
-slabKeys[32261] = "e8cd22ddc27a3973-f0d9fbf42647fd21"
-slabKeys[32535] = "e8cd22ddc27a3973-2cb59b3b1861b555"
-slabKeys[32565] = "e8cd22ddc27a3973-886388888fe59ef3"
-slabKeys[32572] = "e8cd22ddc27a3973-aed925c84ae586a9"
-slabKeys[32600] = "e8cd22ddc27a3973-5f3dede5e341fed8"
+slabKeys[31986] = "15b5c364b78983f1-03fb9ebc63adf1c5"
+slabKeys[32072] = "15b5c364b78983f1-13efa5a1845e203d"
+slabKeys[32083] = "15b5c364b78983f1-041aab4d823cacfb"
+slabKeys[32137] = "15b5c364b78983f1-895bec6dbbe0aeac"
+slabKeys[32194] = "15b5c364b78983f1-f4f9015cc7a52d81"
+slabKeys[32284] = "15b5c364b78983f1-f0d9fbf42647fd21"
+slabKeys[32558] = "15b5c364b78983f1-2cb59b3b1861b555"
+slabKeys[32588] = "15b5c364b78983f1-886388888fe59ef3"
+slabKeys[32595] = "15b5c364b78983f1-aed925c84ae586a9"
+slabKeys[32623] = "15b5c364b78983f1-5f3dede5e341fed8"
 -- uses: ArenaDrone PadIsland MarketIsland YardIsland ShopConceptContainer ScrapTreeLamppost VendingMachine ParkBench ScrapPalm ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardFooting YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena rides a hovering quadcopter in the middle, its
