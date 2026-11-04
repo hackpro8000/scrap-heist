@@ -989,7 +989,9 @@ end
 -- up along its length, so posts stay upright and the end pieces sit level at
 -- their own tier. A yard end lands on an apron under a gate frame; at any
 -- other end the railings flare out to the kerb ends and stop at end posts.
-local function bridge(label: string, x: number, y: number, degrees: number, from: number, to: number, highZ: number, yardEnd: boolean)
+-- `droneEnd` says the low end lands on the arena drone's rim, which carries
+-- it, so that end needs no concrete seat.
+local function bridge(label: string, x: number, y: number, degrees: number, from: number, to: number, highZ: number, yardEnd: boolean, droneEnd: boolean?)
 	local middle, length = (from + to) / 2, from - to
 	local function lift(py: number): number
 		return DECK + (highZ - DECK) * math.clamp((py - to) / length, 0, 1)
@@ -1201,13 +1203,16 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 				end
 			end
 		end, 0.4)
-		-- Each end rests on a concrete seat set into the island edge, its top
-		-- clear of the island's rock top (0.2 under the deck) so the rock
-		-- never shows through. A yard end adds a low wing wall either side
+		-- Each island end rests on a concrete seat set into the island edge,
+		-- its top clear of the island's rock top (0.2 under the deck) so the
+		-- rock never shows through. A yard end adds a low wing wall either side
 		-- for the yard edge to end against; a kerb ends inside an end post.
 		bridgePart("Abutments", CONCRETE, function(mesh)
 			for _, ends in { { to, -1 }, { from, 1 } } do
 				local edge, land = ends[1], ends[2]
+				if land == -1 and droneEnd then
+					continue
+				end
 				box(mesh, 0, edge + land * 0.75, -3, 7.3, 3.5, 2.92)
 				if land == 1 and yardEnd then
 					for _, side in { -3.4, 3.4 } do
@@ -1294,7 +1299,7 @@ end
 for k, padX in PAD_XS do
 	plazaIsland(`Pad{k}`, padX, 0, buildPadIsland, 0.71, 340, PAD_PLAZA, 40 + k, { 0, 90, 180, 270 })
 	local from = if k == 1 then ROAD_OUTER else PAD_XS[k - 1] + PAD_PLAZA
-	bridge(`Avenue{k}`, from, 0, 0, padX - PAD_PLAZA - from, 0, DECK, false)
+	bridge(`Avenue{k}`, from, 0, 0, padX - PAD_PLAZA - from, 0, DECK, false, k == 1)
 end
 plazaIsland("MarketIsland", MARKET_X, 0, buildMarketIsland, 1.7, 335, MARKET_PLAZA, 60, { 180 })
 local lastPad = PAD_XS[#PAD_XS] + PAD_PLAZA
