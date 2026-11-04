@@ -1,4 +1,4 @@
-local CACHE_KEY = "ArenaDrone-016a4b9cedd3a8dc"
+local CACHE_KEY = "ArenaDrone-5b150792760e270b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1037,7 +1037,13 @@ end
 -- The motors lean in towards the middle, so the propellers on them tilt
 -- that way too.
 local MOTOR_TILT = math.rad(8)
-local MOTOR_MOUNT = 3 + CHORD / 2
+-- The motor stands on the mount plate's top (the plate is CHORD thick from
+-- z = 3). It leans about the inner edge of its base flange, so the base
+-- never dips into the plate, and a wedge shim fills the gap under the
+-- raised outer edge.
+local MOTOR_MOUNT = 3 + CHORD
+local MOTOR_FLANGE = 7
+local MOTOR_PIVOT = MOTOR_FLANGE
 
 -- Builds into a mesh tipped about a level axis through (px, py, pz), so
 -- whatever stands up from the pivot leans `angle` towards (-dx, -dy).
@@ -1129,7 +1135,7 @@ local DISC_SMEAR = 1.1
 local DISC_TINT = { 0.2, 0.2, 0.22 }
 local function blurDisc(name: string, mx: number, my: number, base: number, ux: number, uy: number, hubZ: number, phase: number)
 	local mesh = Mesh.new()
-	local lean = leaning(mesh, mx, my, base, ux, uy, MOTOR_TILT)
+	local lean = leaning(mesh, mx - ux * MOTOR_PIVOT, my - uy * MOTOR_PIVOT, base, ux, uy, MOTOR_TILT)
 	local rows = {}
 	for j = 0, DISC_RINGS do
 		local r = lerp(PROP_HUB, PROP_RADIUS, j / DISC_RINGS)
@@ -1151,8 +1157,8 @@ local function blurDisc(name: string, mx: number, my: number, base: number, ux: 
 	-- Back from world space into the disc's own plane (see leaning()).
 	local c, s = math.cos(MOTOR_TILT), math.sin(MOTOR_TILT)
 	mesh:paint(image, function(x, y, z)
-		local wx, wy, wz = x - mx, y - my, z - base
-		local out = wx * ux * c + wy * uy * c + wz * s
+		local wx, wy, wz = x - (mx - ux * MOTOR_PIVOT), y - (my - uy * MOTOR_PIVOT), z - base
+		local out = wx * ux * c + wy * uy * c + wz * s - MOTOR_PIVOT
 		local across = -wx * uy + wy * ux
 		local r = math.sqrt(out * out + across * across)
 		-- Angle measured in the same frame the blades were placed in.
@@ -1236,15 +1242,39 @@ for i, degrees in ARM_DIRECTIONS do
 	-- top, leaning in towards the middle.
 	local mx, my = ux * MOTOR_OUT, uy * MOTOR_OUT
 	local base = MOTOR_MOUNT
+	local px, py = mx - ux * MOTOR_PIVOT, my - uy * MOTOR_PIVOT
+	-- The shim: a wedge on the plate, its top following the motor's lean.
+	part(`MotorShim{i}`, nil, DARK_STEEL, function(mesh)
+		local slope = math.tan(MOTOR_TILT)
+		local bottom, top = {}, {}
+		local sides = 20
+		for k = 0, sides - 1 do
+			local a = k / sides * TAU
+			local x, y = mx + math.cos(a) * MOTOR_FLANGE, my + math.sin(a) * MOTOR_FLANGE
+			local out = (x - px) * ux + (y - py) * uy
+			bottom[k + 1] = mesh:vertex(x, y, base)
+			top[k + 1] = mesh:vertex(x, y, base + out * slope)
+		end
+		for k = 1, sides do
+			local l = k % sides + 1
+			mesh:face({ bottom[k], bottom[l], top[l], top[k] })
+		end
+		local under = {}
+		for k = sides, 1, -1 do
+			table.insert(under, bottom[k])
+		end
+		mesh:face(under)
+		mesh:face(top)
+	end, nil, 0.45, 128, nil, true)
 	part(`Motor{i}`, nil, DARK_STEEL, function(mesh)
-		local lean = leaning(mesh, mx, my, base, ux, uy, MOTOR_TILT)
+		local lean = leaning(mesh, px, py, base, ux, uy, MOTOR_TILT)
 		cylinder(lean, mx, my, base + 4, 5.2, 7, "z", 20)
 		for f = 0, 4 do
 			ring(lean, mx, my, base + 1.6 + f * 1.25, 5.1, 6, 0.45, "z", 20)
 		end
 	end, 30, 0.45, MOTOR_TEXTURE)
 	part(`MotorTrim{i}`, nil, STEEL, function(mesh)
-		local lean = leaning(mesh, mx, my, base, ux, uy, MOTOR_TILT)
+		local lean = leaning(mesh, px, py, base, ux, uy, MOTOR_TILT)
 		cylinder(lean, mx, my, base + 0.5, 7, 1, "z", 20)
 		for b = 0, 7 do
 			local a = b * TAU / 8
@@ -1259,20 +1289,20 @@ for i, degrees in ARM_DIRECTIONS do
 	-- Each propeller stopped at its own angle, so the four don't match.
 	local phase = math.rad(degrees + 30 * i)
 	part(`Prop{i}`, nil, DARK_STEEL, function(mesh)
-		local lean = leaning(mesh, mx, my, base, ux, uy, MOTOR_TILT)
+		local lean = leaning(mesh, px, py, base, ux, uy, MOTOR_TILT)
 		for b = 0, 1 do
 			blade(lean, mx, my, hubZ, phase + b * math.pi, PROP_HUB, PROP_RADIUS - PROP_TIP)
 		end
 	end, 30, 0.35, PROP_TEXTURE)
 	part(`PropTips{i}`, nil, HAZARD_YELLOW, function(mesh)
-		local lean = leaning(mesh, mx, my, base, ux, uy, MOTOR_TILT)
+		local lean = leaning(mesh, px, py, base, ux, uy, MOTOR_TILT)
 		for b = 0, 1 do
 			blade(lean, mx, my, hubZ, phase + b * math.pi, PROP_RADIUS - PROP_TIP, PROP_RADIUS)
 		end
 	end, 30, 0.35, 128)
 	blurDisc(`PropDisc{i}`, mx, my, base, ux, uy, hubZ, phase)
 	part(`PropHub{i}`, nil, STEEL, function(mesh)
-		local lean = leaning(mesh, mx, my, base, ux, uy, MOTOR_TILT)
+		local lean = leaning(mesh, px, py, base, ux, uy, MOTOR_TILT)
 		cylinder(lean, mx, my, hubZ, PROP_HUB + 0.6, 2.4, "z", 16)
 		cylinder(lean, mx, my, hubZ + 1.6, 1.6, 0.8, "z", 12)
 		for b = 0, 3 do
