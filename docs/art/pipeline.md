@@ -103,7 +103,9 @@ reference.
 - `model.bone(name, {at = {x, y, z}, parent = "Name"?})` adds a rig joint
   pivoting at `at`. Add bones before the parts that use them. Once a model
   has bones, every part needs one: each part follows its bone rigidly, and
-  Studio imports the joints as Bones for the Animation Editor.
+  Studio imports the joints as Bones for the Animation Editor, each named
+  `<name>Bone`: Studio turns a bone that shares a part's name into a Motor6D
+  and drops the parts skinned to it.
 
 ## Importing into Studio
 

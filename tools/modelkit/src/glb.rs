@@ -3,7 +3,8 @@
 // Stud. glTF is Y up, so our Z-up positions turn (x, y, z) into (x, z, -y).
 // Parts sharing a group sit under one parent node, so the game can show one
 // group (like a fill level) at a time. With bones, every part is skinned
-// rigidly to its one bone and the joints come in as Studio Bones.
+// rigidly to its one bone and the joints come in as Studio Bones, each named
+// <Name>Bone after the script's model.bone(name).
 
 use crate::anim::{self, Clip};
 use crate::{Bone, Part};
@@ -141,7 +142,9 @@ pub fn write(parts: &[Part], bones: &[Bone], clips: &[Clip]) -> Vec<u8> {
 			let local = to_y_up([bone.head[0] - parent_head[0], bone.head[1] - parent_head[1], bone.head[2] - parent_head[2]]);
 			let children: Vec<String> = (0..bones.len()).filter(|&c| bones[c].parent == Some(index)).map(|c| (first + c).to_string()).collect();
 			let children = if children.is_empty() { String::new() } else { format!(",\"children\":[{}]", children.join(",")) };
-			nodes.push(format!("{{\"name\":\"{}\",\"translation\":[{},{},{}]{children}}}", bone.name, local[0], local[1], local[2]));
+			// Studio turns a bone that shares a mesh's name into a Motor6D and
+			// drops the meshes skinned to it, so bones carry a suffix.
+			nodes.push(format!("{{\"name\":\"{}Bone\",\"translation\":[{},{},{}]{children}}}", bone.name, local[0], local[1], local[2]));
 			if bone.parent.is_none() {
 				roots.push(first + index);
 			}
@@ -152,6 +155,7 @@ pub fn write(parts: &[Part], bones: &[Bone], clips: &[Clip]) -> Vec<u8> {
 		}
 		let view = push_view(&mut bin, &inverse_binds, None);
 		accessors.push(format!("{{\"bufferView\":{view},\"componentType\":5126,\"count\":{},\"type\":\"MAT4\"}}", bones.len()));
+		let inverse_binds_at = accessors.len() - 1;
 		let joints: Vec<String> = (0..bones.len()).map(|b| (first + b).to_string()).collect();
 		let skeleton = first + bones.iter().position(|b| b.parent.is_none()).unwrap_or(0);
 		// Clips sample every frame: a time accessor shared by each clip's
@@ -194,7 +198,7 @@ pub fn write(parts: &[Part], bones: &[Bone], clips: &[Clip]) -> Vec<u8> {
 		if !animations.is_empty() {
 			animation_list = format!(",\"animations\":[{}]", animations.join(","));
 		}
-		skins = format!(",\"skins\":[{{\"inverseBindMatrices\":{},\"skeleton\":{skeleton},\"joints\":[{}]}}]", accessors.len() - 1, joints.join(","));
+		skins = format!(",\"skins\":[{{\"inverseBindMatrices\":{inverse_binds_at},\"skeleton\":{skeleton},\"joints\":[{}]}}]", joints.join(","));
 	}
 	let extensions = if parts.iter().any(|p| p.emissive > 0.0) { ",\"extensionsUsed\":[\"KHR_materials_emissive_strength\"]" } else { "" };
 	let root_list: Vec<String> = roots.iter().map(|r| r.to_string()).collect();
