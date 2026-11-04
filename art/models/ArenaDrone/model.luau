@@ -1,4 +1,4 @@
-local CACHE_KEY = "ArenaDrone-eb06b0b3723716e6"
+local CACHE_KEY = "ArenaDrone-699480bf7e3c2cde"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1248,7 +1248,7 @@ for i, degrees in ARM_DIRECTIONS do
 	end, nil, paintHazard, ARM_TEXTURE, nil, nil, 1)
 
 	-- The motor: finned copper coils, gripped by a hazard-striped collar,
-	-- with a spinning bell on top, leaning in towards the middle.
+	-- with a striped spinning bell on top, leaning in towards the middle.
 	local mx, my = ux * MOTOR_OUT, uy * MOTOR_OUT
 	local base = MOTOR_BASE
 	local px, py, pz = mx - ux * MOTOR_PIVOT, my - uy * MOTOR_PIVOT, MOTOR_PIVOT_Z
@@ -1283,10 +1283,10 @@ for i, degrees in ARM_DIRECTIONS do
 	end, 30, 0.3, MOTOR_TEXTURE)
 	part(`MotorTrim{i}`, nil, STEEL, function(mesh)
 		local lean = leaning(mesh, px, py, pz, ux, uy, MOTOR_TILT)
-		-- The bell, with the shaft the propeller will sit on.
+		-- The bell in hazard stripes, with the shaft the propeller will sit on.
 		cylinder(lean, mx, my, base + 9.9, 6, 1.8, "z", 20)
 		cylinder(lean, mx, my, base + 11.3, 1.2, 1.4, "z", 12)
-	end, 30, 0.3, MOTOR_TEXTURE)
+	end, 30, paintHazard, MOTOR_TEXTURE)
 
 	local hubZ = base + 12.8
 	-- Each propeller stopped at its own angle, so the four don't match.
