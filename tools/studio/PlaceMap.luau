@@ -272,7 +272,12 @@ local function buildArena(map: Instance): Part?
 		return nil
 	end
 	local floor = Vector3.new(centre.X, hit.Position.Y, centre.Z)
-	return hookPart("Arena", Vector3.new(ARENA_FLOOR_RADIUS * 2, 1, ARENA_FLOOR_RADIUS * 2), CFrame.new(floor - Vector3.new(0, 0.5, 0)), workspace)
+	return hookPart(
+		"Arena",
+		Vector3.new(ARENA_FLOOR_RADIUS * 2, 1, ARENA_FLOOR_RADIUS * 2),
+		CFrame.new(floor - Vector3.new(0, 0.5, 0)),
+		workspace
+	)
 end
 
 -- A neutral SpawnLocation on the spawn pad, beside the beacon.
@@ -340,6 +345,16 @@ for _, chunk in MapChunks do
 	model:Destroy()
 end
 print(`PlaceMap: {placed} chunks placed, {failed} need attention`)
+
+-- Pin every object's pivot to its middle. Left unset, a model works its
+-- pivot out from whatever parts it has, which on a streaming client is
+-- only the ones streamed in (PropellerController turns propellers about
+-- the drone's).
+for _, descendant in folder:GetDescendants() do
+	if descendant:IsA("Model") then
+		descendant.WorldPivot = descendant:GetBoundingBox()
+	end
+end
 
 local spots = buildYardSpots(folder)
 replace(workspace, spots)
