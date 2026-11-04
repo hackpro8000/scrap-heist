@@ -1,14 +1,15 @@
--- uses: ArenaIsland PadIsland MarketIsland YardIsland ShopConceptContainer ScrapTreeLamppost VendingMachine ParkBench ScrapPalm ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardFooting YardGate PlotMarker StorageCrate YardPath YardPathStub
+-- uses: ArenaDrone PadIsland MarketIsland YardIsland ShopConceptContainer ScrapTreeLamppost VendingMachine ParkBench ScrapPalm ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardFooting YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
--- floating islands. The arena island sits in the middle with a ring road
--- around its bowl. An avenue of four plaza islands runs east from the road to
--- the market island at the far end, and each plaza has a yard island off
+-- floating islands. The arena rides a hovering quadcopter in the middle, its
+-- grating ring serving as the ring road round the bowl. A long gangway runs
+-- east from the ring, clear of the propellers, to an avenue of four plaza
+-- islands ending at the market island, and each plaza has a yard island off
 -- either side, a tier higher, joined to it by a steel bridge sloping up to
 -- the yard gate. The arena is the storm fight ground, banking up to the road
 -- with no steps, and new players spawn round its crusher.
 -- Each plot slab carries the Yard Layout template, placed piece by piece the
 -- same way YardLayout.luau places it, so the map shows every yard set up.
--- Labels: ArenaIsland, Arena, Spawn, Beacon, Road, Ramps, ArenaWall, Pad1-Pad4,
+-- Labels: ArenaDrone, Spawn, Beacon, Ramps, ArenaWall, Pad1-Pad4,
 -- Avenue1-Avenue5, MarketIsland, Shop, Island1-Island8, Plot1-Plot8,
 -- Yard1_<piece>-Yard8_<piece>, Spoke1-Spoke8, Bridge1-Bridge8,
 -- Cover1-Cover8, Hatch1-Hatch4, Light1-Light4 and Cones1-Cones8.
@@ -31,13 +32,16 @@ local function placeModel(label: string, build: () -> (), x: number, y: number, 
 	useTexelDensity(MAP_DENSITY)
 end
 
-local ROAD_INNER, ROAD_OUTER = 50, 58
-local ARENA_FLOOR, ARENA_DEPTH = 36, 3.5
+-- The arena is built 1.5 times the old island arena's size, as the yards
+-- are, to match the drone's deck: the ring road is the drone's grating ring,
+-- and the bowl its plating, from its rim at the road deck down to the floor.
+local ARENA_SCALE = 1.5
+local ROAD_INNER, ROAD_OUTER = 75, 90
+local ARENA_FLOOR, ARENA_DEPTH = 54, 6.25
 -- Width of the hazard stripes inlaid round the floor edge and up each ramp.
-local HAZARD_WIDTH = 1.8
+local HAZARD_WIDTH = 1.8 * ARENA_SCALE
 -- Length of each yellow or black block in the bridges' hazard strips.
 local HAZARD_BLOCK = 0.6
-local ARENA_ISLAND = 61
 -- How far the yard island's grass reaches in front of the gate, where the
 -- bridge lands, and how its island is turned under the yard (as in
 -- YardLayout.luau) so the fence corners stand on its lobes. Its turf
@@ -50,12 +54,13 @@ local YARD_SCALE = 1.5
 -- the floor inside it and the bridges sloping up to the yards outside it.
 local DECK = 2
 local YARD_TIER = 6
--- The avenue's plaza pads, east of the road, and the yards either side.
-local PAD_XS = { 110, 222, 334, 446 }
+-- The avenue's plaza pads, east of the road, and the yards either side. The
+-- first stands far enough out that its yards clear the drone's propellers.
+local PAD_XS = { 220, 332, 444, 556 }
 local PAD_PLAZA = 11
 local YARD_OFFSET = 84
 -- The market island closes the avenue's east end.
-local MARKET_X = 543
+local MARKET_X = 653
 local MARKET_PLAZA = 30
 
 local GROUND = { 0.3, 0.27, 0.22 }
@@ -549,9 +554,8 @@ end
 -- than the surface wobble and the dirt would otherwise poke through it.
 local ROAD_SINK = 0.15
 
--- The arena island is its own model, its rim level with the road deck and
--- its top sinking into the arena bowl.
-placeModel("ArenaIsland", buildArenaIsland, 0, 0, DECK - 0.7)
+-- The arena drone is its own model, its deck's rim level with the road deck.
+placeModel("ArenaDrone", buildArenaDrone, 0, 0, DECK)
 -- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
 local function fbm(x: number, y: number, z: number): number
 	local total, amplitude = 0, 0.5
@@ -607,32 +611,6 @@ local function arc(mesh, inner: number, outer: number, bottom: number, top: numb
 	mesh:face(rows[steps])
 end
 
--- Arena concrete: broad warped stains from oil and fights, mottled patches
--- of differing cure, fine aggregate showing through the worn top, and
--- scuffs: short streaks scraped by bots, running one way per patch of floor.
-local function scuff(x: number, y: number): number
-	local angle = math.noise(x / 12, y / 12, 17) * math.pi * 2
-	local u = x * math.cos(angle) + y * math.sin(angle)
-	local v = y * math.cos(angle) - x * math.sin(angle)
-	local streak = math.noise(u / 1.6, v * 7, 19)
-	local patch = fbm(x / 6, y / 6, 23) + 0.02
-	if patch <= 0 then return 0 end
-	return math.clamp(math.abs(streak) - 0.12, 0, 1) * math.sign(streak) * math.min(1, patch * 8)
-end
-local function arenaConcrete(x: number, y: number, _z: number)
-	local stain = warpedFbm(x / 14, y / 14, 3)
-	local mottle = fbm(x / 3, y / 3, 7)
-	local grain = math.noise(x * 6, y * 6, 11) * 0.5 + math.noise(x * 19, y * 19, 13) * 0.5
-	local k = 1 + mottle * 0.12 + grain * 0.05 - math.max(0, stain) * 0.35
-	if grain > 0.42 then
-		k += 0.1
-	elseif grain < -0.45 then
-		k -= 0.08
-	end
-	local mark = scuff(x, y)
-	k += if mark > 0 then mark * 0.4 else mark * 0.5
-	return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * (k - math.max(0, stain) * 0.04)
-end
 -- Bridge deck: riveted steel tread plates laid across the span, with dark
 -- seams, raised diamond treads worn smooth down the two wheel paths, and
 -- grime and rust bleeding in from the edges. (The hazard strips are parts of
@@ -720,7 +698,7 @@ end
 -- fight floor, and a low concrete wall with yellow caps tops the bowl,
 -- broken where each spoke comes in.
 -- The ramp lane, with a hazard strip outside it on each side.
-local LANE_HALF = 3.6
+local LANE_HALF = 3.6 * ARENA_SCALE
 local RAMP_HALF = LANE_HALF + HAZARD_WIDTH
 -- Asphalt at u studs across and v along a road: fine aggregate, darker
 -- repair patches, polished tyre lanes, oil drips between them, a web of
@@ -826,35 +804,49 @@ for k = 0, 6 do
 	table.insert(STRIP_BREAKS, ARENA_FLOOR + k * (ROAD_INNER - ARENA_FLOOR) / 6)
 end
 
--- The arena: built here on top of the arena island, whose top carries the
--- bowl these sit in. The fight floor inside the hazard ring.
-slab("Arena", function()
-	chunkedPart("Floor", nil, CONCRETE, function(mesh)
-		arc(mesh, 0, ARENA_FLOOR - HAZARD_WIDTH, -ARENA_DEPTH - 0.1, 0.1 - ARENA_DEPTH, 0, 360, true)
-	end, nil, arenaConcrete)
-end, 0, 0)
--- New players start on a ring round the crusher.
+-- Builds into a mesh grown `scale` times about the point (0, 0, z0), so a
+-- piece of the old island arena can be built at the drone arena's size.
+local function grown(mesh, scale: number, z0: number)
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			return mesh:vertex(x * scale, y * scale, z0 + (z - z0) * scale)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+-- The arena's pieces stand on the drone's floor plating. New players start
+-- on a ring round the crusher.
 slab("Spawn", function()
 	part("Pad", nil, MARK, function(mesh)
-		ring(mesh, 0, 0, 0.2 - ARENA_DEPTH, 6.5, 8.5, 0.1, "z", 32)
+		ring(mesh, 0, 0, 0.2 - ARENA_DEPTH, 6.5 * ARENA_SCALE, 8.5 * ARENA_SCALE, 0.1, "z", 32)
 	end, nil, 0)
 end, 0, 0)
 
 -- The storm beacon: a mast with a glowing core that lights up when a storm
--- round starts, visible from every yard.
+-- round starts, visible from every yard. Built at the old arena's size and
+-- grown to the drone arena's.
 local MAST_TOP = 24
 local STORM_GLOW = { 0.35, 0.85, 1 }
 slab("Beacon", function()
 	local floor = 0.1 - ARENA_DEPTH
-	part("Plinth", nil, CONCRETE, function(mesh)
+	part("Plinth", nil, CONCRETE, function(base)
+		local mesh = grown(base, ARENA_SCALE, floor)
 		cylinder(mesh, 0, 0, floor + 0.6, 4.5, 1.2, "z", 8)
 		cylinder(mesh, 0, 0, floor + 1.5, 3.4, 0.6, "z", 8)
 	end, nil, 0.5)
-	part("PlinthStripe", nil, MARK, function(mesh)
+	part("PlinthStripe", nil, MARK, function(base)
+		local mesh = grown(base, ARENA_SCALE, floor)
 		ring(mesh, 0, 0, floor + 1.15, 4.4, 4.55, 0.25, "z", 8)
 	end, nil, 0.3)
 	-- Four straight legs leaning in towards the top, tied together with braces.
-	part("Mast", nil, DARK_STEEL, function(mesh)
+	part("Mast", nil, DARK_STEEL, function(base)
+		local mesh = grown(base, ARENA_SCALE, floor)
 		local bottom, top = floor + 1.8, floor + MAST_TOP
 		for _, sx in { -1, 1 } do
 			for _, sy in { -1, 1 } do
@@ -872,40 +864,24 @@ slab("Beacon", function()
 			box(mesh, -half, 0, z, 0.25, half * 2, 0.25)
 		end
 	end, nil, 0.6)
-	part("CoreMount", nil, STEEL, function(mesh)
+	part("CoreMount", nil, STEEL, function(base)
+		local mesh = grown(base, ARENA_SCALE, floor)
 		cylinder(mesh, 0, 0, floor + MAST_TOP + 0.3, 1.9, 0.6, "z", 16)
 		cylinder(mesh, 0, 0, floor + MAST_TOP + 4.25, 1.9, 0.5, "z", 16)
 		cylinder(mesh, 0, 0, floor + MAST_TOP + 6.5, 0.15, 4, "z", 8)
 	end, nil, 0.2)
 	-- The core sits on top of the mast and is the part that glows during a storm.
-	part("Core", nil, STORM_GLOW, function(mesh)
+	part("Core", nil, STORM_GLOW, function(base)
+		local mesh = grown(base, ARENA_SCALE, floor)
 		cylinder(mesh, 0, 0, floor + MAST_TOP + 2.3, 1.4, 3.4, "z", 16)
 	end, nil, 0, nil, 1)
-	part("CoreCage", nil, DARK_STEEL, function(mesh)
+	part("CoreCage", nil, DARK_STEEL, function(base)
+		local mesh = grown(base, ARENA_SCALE, floor)
 		for k = 0, 5 do
 			local angle = math.rad(k * 60)
 			box(mesh, math.cos(angle) * 1.65, math.sin(angle) * 1.65, floor + MAST_TOP + 0.6, 0.2, 0.2, 3.4)
 		end
 	end, nil, 0.3)
-end, 0, 0)
-
--- The ring road, with a concrete kerb along its outer edge broken only where
--- the avenue leaves it to the east. The inner edge stays open onto the arena rim.
-slab("Road", function()
-	local middle = (ROAD_INNER + ROAD_OUTER) / 2
-	chunkedPart("Ring", nil, ROAD, function(mesh)
-		arc(mesh, ROAD_INNER, ROAD_OUTER, DECK - 0.6, DECK, 0, 360, true)
-	end, nil, function(x, y)
-		local radius = octagonRadius(x, y)
-		return asphalt(radius - middle, math.atan2(y, x) * middle, (ROAD_OUTER - ROAD_INNER) / 2, 61)
-	end)
-	-- Like the plaza kerbs, it ends inside the avenue bridge's end posts, 3.5
-	-- off the bridge's middle halfway across the kerb. Chunked, as a long ring
-	-- would stretch one texture.
-	local bridgeGap = math.deg(math.atan(3.5 / (ROAD_OUTER + 0.2)))
-	chunkedPart("Kerb", nil, CONCRETE, function(mesh)
-		arc(mesh, ROAD_OUTER - 0.1, ROAD_OUTER + 0.5, DECK - 0.6, DECK + 0.3, bridgeGap, 360 - bridgeGap, true)
-	end, nil, 0.5)
 end, 0, 0)
 
 -- Entry ramps down the bank at every spoke, with hazard stripes either side
@@ -1389,14 +1365,14 @@ end
 -- Cover for the storm fights, offset from the spokes so paths stay open.
 for i, build in { buildShippingContainer, buildCarStack, buildCrushedCar, buildBarrels, buildTyreStack, buildJunkWall, buildDumpster, buildPallets } do
 	local degrees = (i - 0.5) * 45
-	local x, y = polar(26, degrees)
+	local x, y = polar(26 * ARENA_SCALE, degrees)
 	placeModel(`Cover{i}`, build, x, y, 0.2 - ARENA_DEPTH, degrees + 90)
 end
 -- Bot spawn hatches in the arena floor, inside the cover ring between the spokes.
 -- Storm bots climb out of these; the hazard rim marks where they emerge.
 for i = 1, 4 do
 	local degrees = (i - 0.75) * 90
-	local x, y = polar(17, degrees)
+	local x, y = polar(17 * ARENA_SCALE, degrees)
 	slab(`Hatch{i}`, function()
 		local floor = 0.1 - ARENA_DEPTH
 		part("Rim", nil, MARK, function(mesh)
