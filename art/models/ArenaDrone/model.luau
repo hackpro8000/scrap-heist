@@ -1,4 +1,4 @@
-local CACHE_KEY = "ArenaDrone-699480bf7e3c2cde"
+local CACHE_KEY = "ArenaDrone-010ea7792eb45337"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -963,6 +963,29 @@ for k = 0, 7 do
 			strut(mesh, ax, ay, z + GRATE_HEIGHT * 0.15, bx, by, z + GRATE_HEIGHT * 0.15, GRATE_BAR * 0.6)
 		end
 	end, nil, 0.5, GRATE_TEXTURE, nil, true)
+end
+
+-- The grating's rim: a hazard-striped steel channel round the ring's outer
+-- edge, its top flush with the grating so the deck walks straight onto it,
+-- and deep enough to hide the bar ends and cap the girder below. Mitred at
+-- each corner into one closed band; a part per side keeps its stripes sharp.
+local RIM_IN, RIM_OUT = RING_OUTER - 0.3, RING_OUTER + 0.4
+local RIM_TOP, RIM_BOTTOM = 0, -1.2
+local RIM_TEXTURE = 256
+for k = 0, 7 do
+	part(`GratingRim{k + 1}`, nil, GIRDER, function(mesh)
+		local ix0, iy0 = corner(RIM_IN, k)
+		local ix1, iy1 = corner(RIM_IN, k + 1)
+		local ox0, oy0 = corner(RIM_OUT, k)
+		local ox1, oy1 = corner(RIM_OUT, k + 1)
+		local along = cells(2 * RIM_OUT * math.tan(math.pi / 8))
+		-- Top, outer face, underside and inner face, each anticlockwise seen
+		-- from outside.
+		patch(mesh, { ix0, iy0, RIM_TOP }, { ox0, oy0, RIM_TOP }, { ox1, oy1, RIM_TOP }, { ix1, iy1, RIM_TOP }, 1, along)
+		patch(mesh, { ox0, oy0, RIM_BOTTOM }, { ox1, oy1, RIM_BOTTOM }, { ox1, oy1, RIM_TOP }, { ox0, oy0, RIM_TOP }, along, 1)
+		patch(mesh, { ix0, iy0, RIM_BOTTOM }, { ix1, iy1, RIM_BOTTOM }, { ox1, oy1, RIM_BOTTOM }, { ox0, oy0, RIM_BOTTOM }, along, 1)
+		patch(mesh, { ix1, iy1, RIM_BOTTOM }, { ix0, iy0, RIM_BOTTOM }, { ix0, iy0, RIM_TOP }, { ix1, iy1, RIM_TOP }, along, 1)
+	end, nil, paintHazard, RIM_TEXTURE, nil, nil, 1)
 end
 
 -- The ring girder: an inner and an outer truss wall round the octagon,
