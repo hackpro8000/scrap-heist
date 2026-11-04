@@ -439,8 +439,8 @@ for i, degrees in ARM_DIRECTIONS do
 		end
 	end, nil, paintHazard, ARM_TEXTURE, nil, nil, 1)
 
-	-- The motor: a finned stator gripped by its collar, with a spinning
-	-- bell on top, leaning in towards the middle.
+	-- The motor: a finned stator in hazard stripes, gripped by its collar,
+	-- with a spinning bell on top, leaning in towards the middle.
 	local mx, my = ux * MOTOR_OUT, uy * MOTOR_OUT
 	local base = MOTOR_BASE
 	local px, py, pz = mx - ux * MOTOR_PIVOT, my - uy * MOTOR_PIVOT, MOTOR_PIVOT_Z
@@ -472,7 +472,7 @@ for i, degrees in ARM_DIRECTIONS do
 		for f = 0, 2 do
 			ring(lean, mx, my, base + 5.6 + f * 1.2, 5.1, 6, 0.45, "z", 20)
 		end
-	end, 30, 0.45, MOTOR_TEXTURE)
+	end, 30, paintHazard, MOTOR_TEXTURE)
 	part(`MotorTrim{i}`, nil, STEEL, function(mesh)
 		local lean = leaning(mesh, px, py, pz, ux, uy, MOTOR_TILT)
 		-- The bell, with the shaft the propeller will sit on.
