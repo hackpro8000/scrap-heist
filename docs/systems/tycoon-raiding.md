@@ -66,5 +66,11 @@ enough scrap.
   `Pad1`-`Pad4`, `Crate`, `PlotMarker`
 - `workspace.YardSpots`: parts named `Yard1`..`Yard8` to place yards on the
   real map (otherwise yards form a ring around the centre)
+
+On the Server Map, `tools/studio/PlaceMap.luau` builds both from the placed
+map: a spot on each plot facing its gate, and a template of invisible pads,
+crate and marker where the map's yard art has them. It also sets
+`workspace.Arena` on the drone's fight floor and a SpawnLocation on the
+spawn pad.
 - `ServerStorage.MachineModels.SalvageMachine1`..`3`: one model per tier
 - `ServerStorage.PartBundle`: a MeshPart for carried and dropped bundles

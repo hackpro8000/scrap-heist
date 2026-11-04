@@ -130,7 +130,10 @@ chunks and put back together in Studio:
    a Transparency of 0.02 so their texture's alpha blends, and files every
    part under
    `workspace.Map` by object: `Map > Pad1 > Plaza > 1_0_0`,
-   `Map > Yard1 > Gate > Frame`. Save the place.
+   `Map > Yard1 > Gate > Frame`. It turns collision off on the propellers
+   and the yard gates, then hooks the map up to the game: `YardSpots`,
+   `ServerStorage.YardTemplate`, `workspace.Arena` and a SpawnLocation (see
+   `docs/systems/tycoon-raiding.md`). Save the place.
 
 Rebuilding the chunks makes new files, so upload them again and commit the new
 IDs and anchors together.
