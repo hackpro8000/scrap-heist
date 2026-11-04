@@ -60,8 +60,8 @@ local FILL_LUMPS = 0.12
 -- Junk on the heap, first pieces first: kind, spot on the heap (-1 to 1 of
 -- its half size), how far it sinks in, tilt XYZ in degrees and scale. A piece
 -- with `on` stands over that earlier piece instead, offset by `at`. Each is
--- dropped straight down until it meets the heap or a piece already there,
--- then sunk in by `sink`, so nothing hangs in the air.
+-- dropped straight down until it meets the heap (or, with `on`, the piece
+-- it's stacked on), then sunk in by `sink`, so nothing hangs in the air.
 local JUNK = {
 	{ kind = "Tire", at = { -0.45, -0.2 }, sink = 0.12, tilt = { 25, -10, 23 } },
 	{ kind = "Cog", at = { 0.2, 0.45 }, sink = 0.05, tilt = { 70, 15, 17 } },
@@ -645,12 +645,12 @@ local function surfacePoints(verts, faces, thickness, size, turn)
 	return points, if faces then 0 else SPRING_RADIUS * size
 end
 
--- How close (across) a point of a resting piece must be to hold up a
--- falling one.
+-- How close (across) a point of the piece underneath must be to hold up a
+-- stacked one.
 local RESTING_REACH = 0.12
 
--- Drops a piece at (x, y) until its surface meets the heap or a resting
--- piece, returning the height to place it at.
+-- Drops a piece at (x, y) until its surface meets the heap or a point of
+-- `resting` (the piece it's stacked on), returning the height to place it at.
 local function dropHeight(points, pad, x, y, heightAt, resting)
 	local best = -math.huge
 	for _, p in points do
@@ -703,8 +703,6 @@ for number, level in FILL_LEVELS do
 	local fill, heightAt, middle, halfX, halfY = heap(level[1] * 1, level[2])
 	local pieces = {}
 	local placed = {}
-	-- Surface points of the pieces already down, for later ones to land on.
-	local resting = {}
 	for index = 1, level[3] do
 		local piece = JUNK[index]
 		local verts, faces, smooth, thickness, painter = junkShapes[piece.kind]()
@@ -713,17 +711,18 @@ for number, level in FILL_LEVELS do
 		local base = if piece.on then placed[piece.on + 1] else nil
 		local x, y
 		if base then
-			x, y = base[1] + piece.at[1], base[2] + piece.at[2]
+			x, y = base.location[1] + piece.at[1], base.location[2] + piece.at[2]
 		else
 			x, y = middle[1] + piece.at[1] * halfX, middle[2] + piece.at[2] * halfY
 		end
 		local points, pad = surfacePoints(verts, faces, thickness, size, turn)
-		local location = { x, y, dropHeight(points, pad, x, y, heightAt, resting) - piece.sink }
+		local location = { x, y, dropHeight(points, pad, x, y, heightAt, if base then base.surface else {}) - piece.sink }
+		local surface = {}
 		for _, p in points do
-			table.insert(resting, { x + p[1], y + p[2], location[3] + p[3] + pad })
+			table.insert(surface, { x + p[1], y + p[2], location[3] + p[3] + pad })
 		end
 		local mesh = placeJunk(piece, location, size, turn, verts, faces, smooth, thickness)
-		placed[index] = location
+		placed[index] = { location = location, surface = surface }
 		table.insert(pieces, { mesh = mesh, kind = piece.kind, location = location, size = size, turn = turn, paint = painter })
 	end
 
