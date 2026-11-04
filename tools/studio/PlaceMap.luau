@@ -24,8 +24,11 @@
 local InsertService = game:GetService("InsertService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Assets = require(ReplicatedStorage.Shared.Assets)
-local MapChunks = require(ReplicatedStorage.Shared.Config.MapChunks)
+-- The command bar keeps what a module returned the first time it was
+-- required, even after Rojo syncs new source into it, so require fresh
+-- copies to pick up chunks uploaded since.
+local Assets = require(ReplicatedStorage.Shared.Assets:Clone())
+local MapChunks = require(ReplicatedStorage.Shared.Config.MapChunks:Clone())
 
 -- How far off an anchor may land, in studs, before the chunk is flagged.
 local TOLERANCE = 0.05
