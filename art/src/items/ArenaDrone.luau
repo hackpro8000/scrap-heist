@@ -12,6 +12,8 @@ useTexelDensity(16)
 local GIRDER = { 0.5, 0.24, 0.15 }
 local HAZARD_YELLOW = { 0.9, 0.72, 0.15 }
 local HAZARD_BLACK = { 0.11, 0.11, 0.12 }
+-- Motor windings: a deep red copper, well clear of the hazard yellow.
+local COIL_COPPER = { 0.55, 0.22, 0.1 }
 
 -- The truss (ring girder and arms) is painted in yellow and black hazard
 -- bands. The bands are planes across the model, tilted so no strut runs
@@ -465,7 +467,7 @@ for i, degrees in ARM_DIRECTIONS do
 			end
 		end
 	end, 30, paintHazard, MOTOR_TEXTURE)
-	part(`Motor{i}`, nil, COPPER, function(mesh)
+	part(`Motor{i}`, nil, COIL_COPPER, function(mesh)
 		local lean = leaning(mesh, px, py, pz, ux, uy, MOTOR_TILT)
 		cylinder(lean, mx, my, base + 4.75, 5.2, 8.5, "z", 20)
 		cylinder(lean, mx, my, base + 0.5, 4.4, 1, "z", 20)
