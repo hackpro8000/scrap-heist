@@ -54,6 +54,19 @@ upload() {
 	return 1
 }
 
+# Uploads one chunk and records its ID; each record is one short append, so
+# parallel uploads don't interleave in the IDs file.
+upload_chunk() {
+	local file="$1" key="$2" id
+	say "uploading ${key} ($(du -h "${file}" | cut -f1))"
+	id="$(upload "${file}" "${key}")" || return 1
+	echo "${key} ${id}" >> "${ids}"
+	say "${key} is asset ${id}"
+}
+
+# Several chunks go up at once (UPLOAD_JOBS, default 6).
+jobs_max="${UPLOAD_JOBS:-6}"
+pids=()
 for file in "${chunks}/${name}"_[0-9][0-9].glb; do
 	number="$(basename "${file}" .glb)"
 	key="${name}${number##*_}"
@@ -61,11 +74,20 @@ for file in "${chunks}/${name}"_[0-9][0-9].glb; do
 		say "${key} already uploaded"
 		continue
 	fi
-	say "uploading ${key} ($(du -h "${file}" | cut -f1))"
-	id="$(upload "${file}" "${key}")"
-	echo "${key} ${id}" >> "${ids}"
-	say "${key} is asset ${id}"
+	while [ "$(jobs -rp | wc -l)" -ge "${jobs_max}" ]; do
+		wait -n || true
+	done
+	upload_chunk "${file}" "${key}" &
+	pids+=("$!")
 done
+failed=0
+for pid in "${pids[@]}"; do
+	wait "${pid}" || failed=1
+done
+if [ "${failed}" -ne 0 ]; then
+	say "some chunks failed; run again to retry them"
+	exit 1
+fi
 
 # Rewrite the Assets.MapChunks table from the IDs file.
 block="$(sort "${ids}" | awk 'BEGIN { print "Assets.MapChunks = {" } { printf "\t%s = \"rbxassetid://%s\",\n", $1, $2 } END { print "}" }')"
