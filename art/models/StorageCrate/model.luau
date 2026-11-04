@@ -59,7 +59,9 @@ local FILL_LUMPS = 0.12
 
 -- Junk on the heap, first pieces first: kind, spot on the heap (-1 to 1 of
 -- its half size), how far it sinks in, tilt XYZ in degrees and scale. A piece
--- with `on` rests on top of that earlier piece instead, offset by `at`.
+-- with `on` stands over that earlier piece instead, offset by `at`. Each is
+-- dropped straight down until it meets the heap or a piece already there,
+-- then sunk in by `sink`, so nothing hangs in the air.
 local JUNK = {
 	{ kind = "Tire", at = { -0.45, -0.2 }, sink = 0.12, tilt = { 25, -10, 23 } },
 	{ kind = "Cog", at = { 0.2, 0.45 }, sink = 0.05, tilt = { 70, 15, 17 } },
@@ -628,14 +630,40 @@ local function placeJunk(piece, location, size, turn, verts, faces, smooth, thic
 	return mesh
 end
 
--- Lowest and highest z of a piece's verts once turned and scaled.
-local function extent(verts, size, turn)
-	local low, high = math.huge, -math.huge
+-- Points over a piece's surface relative to where it's placed, turned and
+-- scaled, with how far its surface stands out from them: a spring's points
+-- run down its tube's middle, and a cog's ring is solidified up its own z.
+local SPRING_RADIUS = 0.075
+local function surfacePoints(verts, faces, thickness, size, turn)
+	local points = {}
 	for _, p in verts do
-		local z = rotate(turn, scale(p, size))[3]
-		low, high = math.min(low, z), math.max(high, z)
+		table.insert(points, rotate(turn, scale(p, size)))
+		if thickness then
+			table.insert(points, rotate(turn, scale(add(p, { 0, 0, thickness }), size)))
+		end
 	end
-	return low, high
+	return points, if faces then 0 else SPRING_RADIUS * size
+end
+
+-- How close (across) a point of a resting piece must be to hold up a
+-- falling one.
+local RESTING_REACH = 0.12
+
+-- Drops a piece at (x, y) until its surface meets the heap or a resting
+-- piece, returning the height to place it at.
+local function dropHeight(points, pad, x, y, heightAt, resting)
+	local best = -math.huge
+	for _, p in points do
+		local px, py = x + p[1], y + p[2]
+		local support = heightAt(px, py)
+		for _, r in resting do
+			if math.abs(r[1] - px) < RESTING_REACH and math.abs(r[2] - py) < RESTING_REACH then
+				support = math.max(support, r[3])
+			end
+		end
+		best = math.max(best, support + pad - p[3])
+	end
+	return best
 end
 
 local bodyMesh = body()
@@ -675,24 +703,27 @@ for number, level in FILL_LEVELS do
 	local fill, heightAt, middle, halfX, halfY = heap(level[1] * 1, level[2])
 	local pieces = {}
 	local placed = {}
+	-- Surface points of the pieces already down, for later ones to land on.
+	local resting = {}
 	for index = 1, level[3] do
 		local piece = JUNK[index]
 		local verts, faces, smooth, thickness, painter = junkShapes[piece.kind]()
 		local size = piece.scale or 1
 		local turn = rotation(piece.tilt)
-		local location
 		local base = if piece.on then placed[piece.on + 1] else nil
+		local x, y
 		if base then
-			-- Rests on an earlier piece instead of falling into the heap.
-			local low = extent(verts, size, turn)
-			location = { base.location[1] + piece.at[1], base.location[2] + piece.at[2], base.top - low - piece.sink }
+			x, y = base[1] + piece.at[1], base[2] + piece.at[2]
 		else
-			local x, y = middle[1] + piece.at[1] * halfX, middle[2] + piece.at[2] * halfY
-			location = { x, y, heightAt(x, y) - piece.sink }
+			x, y = middle[1] + piece.at[1] * halfX, middle[2] + piece.at[2] * halfY
+		end
+		local points, pad = surfacePoints(verts, faces, thickness, size, turn)
+		local location = { x, y, dropHeight(points, pad, x, y, heightAt, resting) - piece.sink }
+		for _, p in points do
+			table.insert(resting, { x + p[1], y + p[2], location[3] + p[3] + pad })
 		end
 		local mesh = placeJunk(piece, location, size, turn, verts, faces, smooth, thickness)
-		local _, high = extent(verts, size, turn)
-		placed[index] = { location = location, top = location[3] + high }
+		placed[index] = location
 		table.insert(pieces, { mesh = mesh, kind = piece.kind, location = location, size = size, turn = turn, paint = painter })
 	end
 
