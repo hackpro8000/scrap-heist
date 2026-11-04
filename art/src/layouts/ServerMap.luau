@@ -27,8 +27,9 @@ useTexelDensity(MAP_DENSITY)
 -- builds when it isn't cached, so the map's density is set again after each
 -- one. Otherwise everything after it bakes at the model's density, or not,
 -- depending on what happens to be cached.
-local function placeModel(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?)
-	place(label, build, x, y, z, turn)
+-- `scale` builds it that many times its own size (see place()).
+local function placeModel(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, scale: number?)
+	place(label, build, x, y, z, turn, nil, nil, scale)
 	useTexelDensity(MAP_DENSITY)
 end
 
@@ -903,7 +904,7 @@ slab("Ramps", function()
 				end
 				-- Ring pieces, black-yellow-black from the mouth to the corner.
 				local ring = { ARENA_FLOOR - HAZARD_WIDTH, ARENA_FLOOR }
-				local cuts = { RAMP_HALF, RAMP_HALF + 3.2, RAMP_HALF + 6.4, 99 }
+				local cuts = { RAMP_HALF, RAMP_HALF + 3.2 * ARENA_SCALE, RAMP_HALF + 6.4 * ARENA_SCALE, 99 }
 				for s = 3 - k, 3, 2 do
 					rampBlock(mesh, (i - 1) * 45, ring, cuts[s], cuts[s + 1], 0)
 					rampBlock(mesh, (i - 1) * 45, ring, -cuts[s + 1], -cuts[s], 0)
@@ -917,9 +918,10 @@ end, 0, 0)
 -- of the spoke, along the top of the bank just inside the road. A half
 -- starts square at `near` across the spoke, where it meets the ramp's hazard
 -- strip, and ends mitred at the octagon corner.
-local WALL_INNER, WALL_OUTER = ROAD_INNER - 1.2, ROAD_INNER - 0.4
--- Its foot sinks into the bank; its top stands 1.25 over the road deck.
-local WALL_BOTTOM, WALL_TOP = DECK - 0.5, DECK + 1.25
+local WALL_INNER, WALL_OUTER = ROAD_INNER - 1.8, ROAD_INNER - 0.6
+-- Its foot sinks into the bank; its top stands about waist high (1.9) over
+-- the road deck.
+local WALL_BOTTOM, WALL_TOP = DECK - 0.8, DECK + 1.9
 local function wallRun(mesh, degrees: number, side: number, inner: number, outer: number, near: number, bottom: number, top: number)
 	local angle = math.rad(degrees)
 	local c, n = math.cos(angle), math.sin(angle)
@@ -1306,29 +1308,33 @@ local lastPad = PAD_XS[#PAD_XS] + PAD_PLAZA
 bridge(`Avenue{#PAD_XS + 1}`, lastPad, 0, 0, MARKET_X - MARKET_PLAZA - lastPad, 0, DECK, false)
 
 -- The market's shop on the plaza's east side, its front (local -y) toward the
--- middle. Local +y points away from the middle.
+-- middle. Local +y points away from the middle. Its shell is built small, so
+-- it grows to a real 20-foot container a player walks into.
+local SHOP_SCALE = 2.5
 local shopX, shopY = polar(MARKET_PLAZA - 6, 0)
-placeModel("Shop", buildShopConceptContainer, MARKET_X + shopX, shopY, DECK, -90)
+placeModel("Shop", buildShopConceptContainer, MARKET_X + shopX, shopY, DECK, -90, SHOP_SCALE)
 -- Trees stand in concrete planters full of soil, their roots down in the soil.
-local PLANTER_TOP = DECK + 1
+-- Trees and planters grow together to stand well over the players.
+local TREE_SCALE = 1.5
+local PLANTER_TOP = DECK + TREE_SCALE
 local DIRT = { 0.22, 0.16, 0.1 }
 local function plantTree(label: string, build: () -> (), x: number, y: number, turn: number)
 	slab(`{label}Planter`, function()
 		part("Box", nil, CONCRETE, function(mesh)
-			box(mesh, 0, 0, DECK, 3.4, 3.4, 1)
+			box(mesh, 0, 0, DECK, 3.4 * TREE_SCALE, 3.4 * TREE_SCALE, TREE_SCALE)
 		end, nil, 0.5)
 		part("Soil", nil, DIRT, function(mesh)
-			box(mesh, 0, 0, PLANTER_TOP - 0.2, 3, 3, 0.3)
+			box(mesh, 0, 0, PLANTER_TOP - 0.2, 3 * TREE_SCALE, 3 * TREE_SCALE, 0.3)
 		end, nil, 0.8)
 	end, MARKET_X + x, y)
-	place(label, build, MARKET_X + x, y, PLANTER_TOP - 0.1, turn)
+	place(label, build, MARKET_X + x, y, PLANTER_TOP - 0.1, turn, nil, nil, TREE_SCALE)
 end
 -- Plaza dressing: a scrap-tree lamppost off to the north so the walk in from
 -- the bridge looks straight at the shop, a vending machine and bench by the
 -- shop, and palms at the west corners clear of the bridge.
 plantTree("Landmark", buildScrapTreeLamppost, 0, 14, 0)
-place("Vending", buildVendingMachine, MARKET_X + 17, -7, DECK, -90)
-place("Bench", buildParkBench, MARKET_X + 17, 7, DECK, -90)
+place("Vending", buildVendingMachine, MARKET_X + 10, -9, DECK, -90, nil, nil, 2)
+place("Bench", buildParkBench, MARKET_X + 10, 9, DECK, -90, nil, nil, 1.85)
 for i, degrees in { 135, -135 } do
 	local x, y = polar(MARKET_PLAZA - 5, degrees)
 	plantTree(`Palm{i}`, buildScrapPalm, x, y, 0)
@@ -1364,14 +1370,26 @@ end
 for i = 1, 8 do
 	local degrees = (i - 1) * 45
 	local coneX, coneY = polar(ROAD_INNER + 1.5, degrees + 9)
-	place(`Cones{i}`, buildTrafficCones, coneX, coneY, heightAt(coneX, coneY), degrees)
+	place(`Cones{i}`, buildTrafficCones, coneX, coneY, heightAt(coneX, coneY), degrees, nil, nil, 1.8)
 end
 
 -- Cover for the storm fights, offset from the spokes so paths stay open.
-for i, build in { buildShippingContainer, buildCarStack, buildCrushedCar, buildBarrels, buildTyreStack, buildJunkWall, buildDumpster, buildPallets } do
+-- The props are built about half real size; each grows to its real size
+-- beside a 5.5-stud-tall player (a 20-foot container stands 7.8 tall).
+local COVER = {
+	{ buildShippingContainer, 1.5 },
+	{ buildCarStack, 2.5 },
+	{ buildCrushedCar, 2.5 },
+	{ buildBarrels, 1.9 },
+	{ buildTyreStack, 1.8 },
+	{ buildJunkWall, 1.75 },
+	{ buildDumpster, 2.2 },
+	{ buildPallets, 1.4 },
+}
+for i, cover in COVER do
 	local degrees = (i - 0.5) * 45
 	local x, y = polar(26 * ARENA_SCALE, degrees)
-	placeModel(`Cover{i}`, build, x, y, 0.2 - ARENA_DEPTH, degrees + 90)
+	placeModel(`Cover{i}`, cover[1], x, y, 0.2 - ARENA_DEPTH, degrees + 90, cover[2])
 end
 -- Bot spawn hatches in the arena floor, inside the cover ring between the spokes.
 -- Storm bots climb out of these; the hazard rim marks where they emerge.
@@ -1380,16 +1398,20 @@ for i = 1, 4 do
 	local x, y = polar(17 * ARENA_SCALE, degrees)
 	slab(`Hatch{i}`, function()
 		local floor = 0.1 - ARENA_DEPTH
-		part("Rim", nil, MARK, function(mesh)
+		part("Rim", nil, MARK, function(base)
+			local mesh = grown(base, ARENA_SCALE, floor)
 			ring(mesh, 0, 0, floor, 2.6, 3.1, 0.12, "z", 24)
 		end, nil, 0.3)
-		part("Frame", nil, DARK_STEEL, function(mesh)
+		part("Frame", nil, DARK_STEEL, function(base)
+			local mesh = grown(base, ARENA_SCALE, floor)
 			ring(mesh, 0, 0, floor, 2.1, 2.6, 0.2, "z", 24)
 		end, nil, 0.5)
-		part("Pit", nil, { 0.05, 0.05, 0.05 }, function(mesh)
+		part("Pit", nil, { 0.05, 0.05, 0.05 }, function(base)
+			local mesh = grown(base, ARENA_SCALE, floor)
 			cylinder(mesh, 0, 0, floor - 0.05, 2.1, 0.1, "z", 24)
 		end, nil, 0)
-		part("Grate", nil, STEEL, function(mesh)
+		part("Grate", nil, STEEL, function(base)
+			local mesh = grown(base, ARENA_SCALE, floor)
 			for n = -3, 3 do
 				local half = math.sqrt(2.1 * 2.1 - (n * 0.55) ^ 2)
 				box(mesh, n * 0.55, 0, floor + 0.08, 0.14, half * 2, 0.1)
@@ -1401,5 +1423,5 @@ end
 for i = 1, 4 do
 	local degrees = (i - 0.75) * 90
 	local x, y = polar(ROAD_INNER - 2, degrees)
-	place(`Light{i}`, buildStreetlightBroken, x, y, heightAt(x, y), degrees + 90)
+	place(`Light{i}`, buildStreetlightBroken, x, y, heightAt(x, y), degrees + 90, nil, nil, 2)
 end
