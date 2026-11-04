@@ -9416,7 +9416,9 @@ local FILL_LUMPS = 0.12
 
 -- Junk on the heap, first pieces first: kind, spot on the heap (-1 to 1 of
 -- its half size), how far it sinks in, tilt XYZ in degrees and scale. A piece
--- with `on` rests on top of that earlier piece instead, offset by `at`.
+-- with `on` stands over that earlier piece instead, offset by `at`. Each is
+-- dropped straight down until it meets the heap (or, with `on`, the piece
+-- it's stacked on), then sunk in by `sink`, so nothing hangs in the air.
 local JUNK = {
 	{ kind = "Tire", at = { -0.45, -0.2 }, sink = 0.12, tilt = { 25, -10, 23 } },
 	{ kind = "Cog", at = { 0.2, 0.45 }, sink = 0.05, tilt = { 70, 15, 17 } },
@@ -9985,14 +9987,40 @@ local function placeJunk(piece, location, size, turn, verts, faces, smooth, thic
 	return mesh
 end
 
--- Lowest and highest z of a piece's verts once turned and scaled.
-local function extent(verts, size, turn)
-	local low, high = math.huge, -math.huge
+-- Points over a piece's surface relative to where it's placed, turned and
+-- scaled, with how far its surface stands out from them: a spring's points
+-- run down its tube's middle, and a cog's ring is solidified up its own z.
+local SPRING_RADIUS = 0.075
+local function surfacePoints(verts, faces, thickness, size, turn)
+	local points = {}
 	for _, p in verts do
-		local z = rotate(turn, scale(p, size))[3]
-		low, high = math.min(low, z), math.max(high, z)
+		table.insert(points, rotate(turn, scale(p, size)))
+		if thickness then
+			table.insert(points, rotate(turn, scale(add(p, { 0, 0, thickness }), size)))
+		end
 	end
-	return low, high
+	return points, if faces then 0 else SPRING_RADIUS * size
+end
+
+-- How close (across) a point of the piece underneath must be to hold up a
+-- stacked one.
+local RESTING_REACH = 0.12
+
+-- Drops a piece at (x, y) until its surface meets the heap or a point of
+-- `resting` (the piece it's stacked on), returning the height to place it at.
+local function dropHeight(points, pad, x, y, heightAt, resting)
+	local best = -math.huge
+	for _, p in points do
+		local px, py = x + p[1], y + p[2]
+		local support = heightAt(px, py)
+		for _, r in resting do
+			if math.abs(r[1] - px) < RESTING_REACH and math.abs(r[2] - py) < RESTING_REACH then
+				support = math.max(support, r[3])
+			end
+		end
+		best = math.max(best, support + pad - p[3])
+	end
+	return best
 end
 
 local bodyMesh = body()
@@ -10037,19 +10065,21 @@ for number, level in FILL_LEVELS do
 		local verts, faces, smooth, thickness, painter = junkShapes[piece.kind]()
 		local size = piece.scale or 1
 		local turn = rotation(piece.tilt)
-		local location
 		local base = if piece.on then placed[piece.on + 1] else nil
+		local x, y
 		if base then
-			-- Rests on an earlier piece instead of falling into the heap.
-			local low = extent(verts, size, turn)
-			location = { base.location[1] + piece.at[1], base.location[2] + piece.at[2], base.top - low - piece.sink }
+			x, y = base.location[1] + piece.at[1], base.location[2] + piece.at[2]
 		else
-			local x, y = middle[1] + piece.at[1] * halfX, middle[2] + piece.at[2] * halfY
-			location = { x, y, heightAt(x, y) - piece.sink }
+			x, y = middle[1] + piece.at[1] * halfX, middle[2] + piece.at[2] * halfY
+		end
+		local points, pad = surfacePoints(verts, faces, thickness, size, turn)
+		local location = { x, y, dropHeight(points, pad, x, y, heightAt, if base then base.surface else {}) - piece.sink }
+		local surface = {}
+		for _, p in points do
+			table.insert(surface, { x + p[1], y + p[2], location[3] + p[3] + pad })
 		end
 		local mesh = placeJunk(piece, location, size, turn, verts, faces, smooth, thickness)
-		local _, high = extent(verts, size, turn)
-		placed[index] = { location = location, top = location[3] + high }
+		placed[index] = { location = location, surface = surface }
 		table.insert(pieces, { mesh = mesh, kind = piece.kind, location = location, size = size, turn = turn, paint = painter })
 	end
 
@@ -10074,7 +10104,7 @@ for number, level in FILL_LEVELS do
 	end
 end
 end
-buildKeys[buildStorageCrate] = "StorageCrate-89818cbbab0af5ae"
+buildKeys[buildStorageCrate] = "StorageCrate-c614511f3ac18d0e"
 local function buildYardPath()
 local CACHE_KEY = "YardPath-d70f4e9db93f8ba1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -11782,8 +11812,8 @@ for i, y in PAD_ROWS do
 end
 
 for i, c in { -12, -4, 4, 12 } do
-	piece(`FenceBack{i}`, buildYardFence, c, 16)
-	piece(`FenceLeft{i}`, buildYardFence, -16, c, 0, 90)
+	piece(`FenceBack{i}`, buildYardFence, c, 16, 0, 180)
+	piece(`FenceLeft{i}`, buildYardFence, -16, c, 0, 270)
 	piece(`FenceRight{i}`, buildYardFence, 16, c, 0, 90)
 	piece(`FootingBack{i}`, buildYardFooting, c, 16)
 	piece(`FootingLeft{i}`, buildYardFooting, -16, c, 0, 90)
