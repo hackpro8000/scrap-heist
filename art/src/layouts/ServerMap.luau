@@ -43,6 +43,10 @@ local ARENA_FLOOR, ARENA_DEPTH = 54, 6.25
 local HAZARD_WIDTH = 1.8 * ARENA_SCALE
 -- Length of each yellow or black block in the bridges' hazard strips.
 local HAZARD_BLOCK = 0.6
+-- How much wider the bridges are than their 7-stud base design. Every
+-- measurement across a bridge (deck, railings, girders, end posts, seats)
+-- and the gaps it lands in scale by it; lengths and thicknesses don't.
+local BRIDGE_WIDTH = 1.5
 -- How far the yard island's grass reaches in front of the gate, where the
 -- bridge lands, and how its island is turned under the yard (as in
 -- YardLayout.luau) so the fence corners stand on its lobes. Its turf
@@ -625,8 +629,8 @@ local function bridgeDeck(degrees: number, cx: number, cy: number, flareAt: (num
 		local u = (x - cx) * c + (y - cy) * s
 		local v = (y - cy) * c - (x - cx) * s
 		local flare = flareAt(v)
-		local edge = 3 + 0.5 * flare - math.abs(u)
-		local wheel = math.exp(-((math.abs(u) - 1.4) / 0.5) ^ 2)
+		local edge = (3 + 0.5 * flare) * BRIDGE_WIDTH - math.abs(u)
+		local wheel = math.exp(-((math.abs(u) - 1.4 * BRIDGE_WIDTH) / 0.5) ^ 2)
 		local k = 0.72 + fbm(u / 2, v / 2, 31) * 0.1
 		-- Diamond treads alternate direction, flattened where tyres run.
 		local du, dv = (u * 5) % 1 - 0.5, (v * 2.5) % 1 - 0.5
@@ -745,9 +749,9 @@ local function plazaIsland(label: string, x: number, y: number, buildIsland: () 
 		end, nil, function(px, py)
 			return asphalt(px - x, py - y, 40, seed + 50)
 		end, true)
-		-- Each run ends inside a bridge end post, 3.5 off the bridge's middle
-		-- halfway across the kerb, on the octagon's flat side.
-		local gap = math.deg(math.atan(3.5 / (plaza + 0.2)))
+		-- Each run ends inside a bridge end post, 3.5 * BRIDGE_WIDTH off the
+		-- bridge's middle halfway across the kerb.
+		local gap = math.deg(math.atan(3.5 * BRIDGE_WIDTH / (plaza + 0.2)))
 		chunkedPart("Kerb", nil, CONCRETE, function(mesh)
 			for k, opening in openings do
 				local after = openings[k % #openings + 1] + (if k == #openings then 360 else 0)
@@ -989,12 +993,15 @@ end
 -- runs along it, from its low end at `to` (on deck level) to its far end at
 -- `from`, which climbs to `highZ`. Every part is built flat and then sheared
 -- up along its length, so posts stay upright and the end pieces sit level at
--- their own tier. A yard end lands on an apron under a gate frame; at any
--- other end the railings flare out to the kerb ends and stop at end posts.
+-- their own tier. A yard end lands on an apron; at any other end the
+-- railings flare out to the kerb ends and stop at end posts. Across the
+-- bridge everything is laid out on the 7-stud base design times
+-- BRIDGE_WIDTH, through `w`.
 -- `droneEnd` says the low end lands on the arena drone's rim, which carries
 -- it, so that end needs no concrete seat.
 local function bridge(label: string, x: number, y: number, degrees: number, from: number, to: number, highZ: number, yardEnd: boolean, droneEnd: boolean?)
 	local middle, length = (from + to) / 2, from - to
+	local w = BRIDGE_WIDTH
 	local function lift(py: number): number
 		return DECK + (highZ - DECK) * math.clamp((py - to) / length, 0, 1)
 	end
@@ -1059,7 +1066,7 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 			end
 			local top, bottom = {}, {}
 			for k, py in stations do
-				local half = 3 + 0.5 * flareAt(py)
+				local half = (3 + 0.5 * flareAt(py)) * w
 				top[k], bottom[k] = {}, {}
 				for i = 0, 8 do
 					local px = -half + half * i / 4
@@ -1096,9 +1103,9 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 					for _, side in { -1, 1 } do
 						local corners = {}
 						for i, py in { a, b } do
-							local out = 0.6 * flareAt(py)
+							local centre = (2.45 + 0.6 * flareAt(py)) * w
 							local z = topAt(py) + 0.015
-							corners[i] = { side * (2.2 + out), side * (2.7 + out), py, z }
+							corners[i] = { side * (centre - 0.25), side * (centre + 0.25), py, z }
 						end
 						-- A thin block: its top, and the four sides down to the deck.
 						local top, base = {}, {}
@@ -1127,7 +1134,7 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 		bridgePart("Girders", DARK_STEEL, function(mesh)
 			-- I-beams: a web between two flanges, ribbed on the outside, with
 			-- bolted splice plates where the beam sections join.
-			for _, side in { -2.6, 2.6 } do
+			for _, side in { -2.6 * w, 2.6 * w } do
 				local out = math.sign(side)
 				box(mesh, side, middle, -1.4, 0.2, length, 1.2)
 				box(mesh, side, middle, -1.4, 0.6, length, 0.15)
@@ -1146,14 +1153,14 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 				end
 			end
 			for n = 0, math.floor(length / 4) do
-				box(mesh, 0, to + 1 + n * 4, -0.6, 5.6, 0.3, 0.4)
+				box(mesh, 0, to + 1 + n * 4, -0.6, 5.6 * w, 0.3, 0.4)
 			end
 		end, bridgeGirders(degrees, x, y))
 		-- Railing posts spaced evenly so both ends get one, each bolted down
 		-- on a base plate and capped. A flared end trades its last post for
 		-- an end post out at the kerb end.
 		bridgePart("Posts", STEEL, function(mesh)
-			for _, side in { -2.9, 2.9 } do
+			for _, side in { -2.9 * w, 2.9 * w } do
 				for n = 1, if yardEnd then postCount else postCount - 1 do
 					local at = to + 0.15 + n * postGap
 					box(mesh, side, at, -0.05, 0.36, 0.36, 0.06)
@@ -1166,7 +1173,7 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 		-- straight between the flares, then angled out to the end posts.
 		bridgePart("Rail", MARK, function(mesh)
 			local straight, span = (flareFrom + flareTo) / 2, flareFrom - flareTo
-			for _, side in { -2.9, 2.9 } do
+			for _, side in { -2.9 * w, 2.9 * w } do
 				local out = math.sign(side)
 				box(mesh, side, straight, 1.16, 0.16, span, 0.12)
 				box(mesh, side, straight, 0.62, 0.08, span, 0.08)
@@ -1174,8 +1181,8 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 				for _, flare in flares do
 					local edge, inward, start = flare[1], flare[2], flare[3]
 					local postY = endPostAt(edge, inward)
-					strut(mesh, side, start, 1.22, out * 3.5, postY, 1.22, 0.14)
-					strut(mesh, side, start, 0.66, out * 3.5, postY, 0.66, 0.08)
+					strut(mesh, side, start, 1.22, out * 3.5 * w, postY, 1.22, 0.14)
+					strut(mesh, side, start, 0.66, out * 3.5 * w, postY, 0.66, 0.08)
 				end
 			end
 		end, 0.3)
@@ -1183,12 +1190,12 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 		-- upstand under the flared rail that sinks into the deck where the
 		-- flare starts, so the railing grows out of the kerb.
 		bridgePart("KerbEnds", CONCRETE, function(mesh)
-			for _, side in { -2.9, 2.9 } do
+			for _, side in { -2.9 * w, 2.9 * w } do
 				local out = math.sign(side)
 				for _, flare in flares do
 					local postY = endPostAt(flare[1], flare[2])
-					box(mesh, out * 3.5, postY, -0.6, 0.7, 0.7, 0.9)
-					upstand(mesh, out * 3.5, postY, side, flare[3], 0.4, { -0.6, 0.3 }, { -0.2, 0.1 })
+					box(mesh, out * 3.5 * w, postY, -0.6, 0.7, 0.7, 0.9)
+					upstand(mesh, out * 3.5 * w, postY, side, flare[3], 0.4, { -0.6, 0.3 }, { -0.2, 0.1 })
 				end
 			end
 		end, 0.5)
@@ -1196,7 +1203,7 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 		-- down on a base plate and capped with a broad plate, so the railing
 		-- reads as ending.
 		bridgePart("EndPosts", DARK_STEEL, function(mesh)
-			for _, side in { -3.5, 3.5 } do
+			for _, side in { -3.5 * w, 3.5 * w } do
 				for _, flare in flares do
 					local postY = endPostAt(flare[1], flare[2])
 					box(mesh, side, postY, 0.3, 0.6, 0.6, 0.06)
@@ -1215,9 +1222,9 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 				if land == -1 and droneEnd then
 					continue
 				end
-				box(mesh, 0, edge + land * 0.75, -3, 7.3, 3.5, 2.92)
+				box(mesh, 0, edge + land * 0.75, -3, 7.3 * w, 3.5, 2.92)
 				if land == 1 and yardEnd then
-					for _, side in { -3.4, 3.4 } do
+					for _, side in { -3.4 * w, 3.4 * w } do
 						box(mesh, side, edge - land * 0.5, -3, 0.5, 1, 3.45)
 					end
 				end
@@ -1226,17 +1233,11 @@ local function bridge(label: string, x: number, y: number, degrees: number, from
 		-- A yard end lands on its apron with a steel plate over the joint.
 		if not yardEnd then return end
 		bridgePart("JointPlate", STEEL, function(mesh)
-			box(mesh, 0, from, 0.1, 6, 0.8, 0.04)
+			box(mesh, 0, from, 0.1, 6 * w, 0.8, 0.04)
 		end, 0.3, true)
 		bridgePart("Apron", CONCRETE, function(mesh)
-			box(mesh, 0, from + 2.5, 0, 7.3, 5, 0.12)
+			box(mesh, 0, from + 2.5, 0, 7.3 * w, 5, 0.12)
 		end, 0.5)
-		bridgePart("GateFrame", DARK_STEEL, function(mesh)
-			for _, side in { -3.4, 3.4 } do
-				box(mesh, side, from - 0.5, 0.45, 0.4, 0.4, 4)
-			end
-			box(mesh, 0, from - 0.5, 4.15, 7.2, 0.3, 0.3)
-		end, 0.3)
 	end, x, y, degrees - 90)
 end
 
@@ -1358,7 +1359,7 @@ for i = 1, 2 * #PAD_XS do
 	local c, s = math.cos(math.rad(degrees - 90)), math.sin(math.rad(degrees - 90))
 	slab(`Spoke{i}`, function()
 		part("Road", nil, ROAD, function(mesh)
-			box(mesh, 0, -(16 * YARD_SCALE + YARD_ISLAND) / 2, YARD_TIER, 6, YARD_ISLAND - 16 * YARD_SCALE, 0.1)
+			box(mesh, 0, -(16 * YARD_SCALE + YARD_ISLAND) / 2, YARD_TIER, 6 * BRIDGE_WIDTH, YARD_ISLAND - 16 * YARD_SCALE, 0.1)
 		end, nil, function(px, py)
 			local u = (px - x) * c + (py - y) * s
 			local v = (py - y) * c - (px - x) * s
