@@ -126,8 +126,9 @@ chunks and put back together in Studio:
    already uploaded.
 3. In Studio, with Rojo synced, paste `tools/studio/PlaceMap.luau` into the
    command bar. It loads every chunk, scales, turns and moves it so its
-   anchors land in place, anchors the parts, sets the propeller blur discs'
-   `AlphaMode` to `Transparency`, and files every part under
+   anchors land in place, anchors the parts, gives the propeller blur discs
+   a Transparency of 0.02 so their texture's alpha blends, and files every
+   part under
    `workspace.Map` by object: `Map > Pad1 > Plaza > 1_0_0`,
    `Map > Yard1 > Gate > Frame`. Save the place.
 
@@ -175,7 +176,7 @@ Code, tooling and models all live on `main`; there is no separate models branch.
 - Give each part its own image; `paintShading` writes into the image it is given.
 - Pass nearby meshes as `occluders` to `paintShading` so they cast contact shadows. Use this to ground parts on a surface.
 - Check that every variant reads from the game camera. A low fill level can hide behind the crate wall.
-- For a see-through part (a propeller blur disc, glass), return a fourth value, the opacity, from the `mesh:paint` colour fn. The image gains an alpha channel, the PNG is written as RGBA, the glb material uses `alphaMode` BLEND, and previews blend it over solid parts. In Roblox, set that part's SurfaceAppearance `AlphaMode` to `Transparency`. Paint it flat, without `paintShading`.
+- For a see-through part (a propeller blur disc, glass), return a fourth value, the opacity, from the `mesh:paint` colour fn. The image gains an alpha channel, the PNG is written as RGBA, the glb material uses `alphaMode` BLEND, and previews blend it over solid parts. In Roblox, give that part a small Transparency (0.02): the importer hands it a plain TextureID, and Roblox only blends a MeshPart texture's alpha once the part is a little transparent. Paint it flat, without `paintShading`.
 
 ## Session workflow
 Sources live in `art/src`, and `art/models/<Name>/model.luau` is generated from them; never edit it by hand.

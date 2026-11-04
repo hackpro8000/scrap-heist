@@ -86,11 +86,16 @@ local function place(model: Model, anchors: { Anchor }): (boolean, string)
 end
 
 -- Anchors every part, and lets the see-through ones (the propeller blur
--- discs) blend.
+-- discs) blend. The importer gives most meshes a plain TextureID rather
+-- than a SurfaceAppearance, and Roblox only blends a MeshPart texture's
+-- alpha once the part itself is a little transparent.
 local function prepare(model: Model)
 	for _, descendant in model:GetDescendants() do
 		if descendant:IsA("BasePart") then
 			descendant.Anchored = true
+			if string.find(descendant.Name, "PropDisc", 1, true) then
+				descendant.Transparency = 0.02
+			end
 		elseif descendant:IsA("SurfaceAppearance") then
 			local parent = descendant.Parent
 			if parent and string.find(parent.Name, "PropDisc", 1, true) then
