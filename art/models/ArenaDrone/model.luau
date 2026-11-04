@@ -1,4 +1,4 @@
-local CACHE_KEY = "ArenaDrone-5b150792760e270b"
+local CACHE_KEY = "ArenaDrone-7865f5c4ff155c8d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1021,41 +1021,51 @@ end, nil, 0.6, GIRDER_TEXTURE)
 -- Four truss arms in an X, each a box truss of four chords tapering out
 -- from the ring to a motor 175 studs from the middle. Inside the ring the
 -- arm runs level under the grating, tied into the girder; past the ring
--- it climbs to the motor mount.
+-- it climbs to the collar clamped round the motor.
 local ARM_DIRECTIONS = { 45, 135, 225, 315 }
 local MOTOR_OUT = 175
 local ARM_ROOT = RING_INNER + 1
 local ARM_PANEL = 8
 local ARM_TEXTURE, MOTOR_TEXTURE = 512, 256
+-- Each motor is gripped round its lower body by a steel collar, and the
+-- arm's tip is welded to the collar's inner side. The collar's height
+-- covers the arm's tip, which ends where its chords meet the collar.
+local COLLAR_INNER, COLLAR_OUTER, COLLAR_HEIGHT = 5.3, 6.8, 3.6
+local ARM_TIP_TOP, ARM_TIP_BOTTOM, ARM_TIP_HALF = 8, 5, 3
+local ARM_END = MOTOR_OUT - math.sqrt(COLLAR_OUTER ^ 2 - ARM_TIP_HALF ^ 2) + 0.3
 -- Half width across the arm, and its top and bottom chords' heights, at a
 -- distance out from the middle.
 local function armShape(r: number): (number, number, number)
-	local t = math.clamp((r - ARM_ROOT) / (MOTOR_OUT - ARM_ROOT), 0, 1)
-	local climb = math.clamp((r - RING_OUTER) / (MOTOR_OUT - RING_OUTER), 0, 1)
-	return lerp(7, 3, t), lerp(top, 3, climb), lerp(bottom, 0, climb)
+	local t = math.clamp((r - ARM_ROOT) / (ARM_END - ARM_ROOT), 0, 1)
+	local climb = math.clamp((r - RING_OUTER) / (ARM_END - RING_OUTER), 0, 1)
+	return lerp(7, ARM_TIP_HALF, t), lerp(top, ARM_TIP_TOP, climb), lerp(bottom, ARM_TIP_BOTTOM, climb)
 end
 -- The motors lean in towards the middle, so the propellers on them tilt
--- that way too.
+-- that way too. Each motor and its collar lean about the point where the
+-- collar meets the arm's tip, so the weld stays put.
 local MOTOR_TILT = math.rad(8)
--- The motor stands on the mount plate's top (the plate is CHORD thick from
--- z = 3). It leans about the inner edge of its base flange, so the base
--- never dips into the plate, and a wedge shim fills the gap under the
--- raised outer edge.
-local MOTOR_MOUNT = 3 + CHORD
-local MOTOR_FLANGE = 7
-local MOTOR_PIVOT = MOTOR_FLANGE
+local MOTOR_PIVOT = COLLAR_OUTER
+local MOTOR_PIVOT_Z = (ARM_TIP_TOP + ARM_TIP_BOTTOM) / 2
+-- The motor's bottom hangs a stud below the collar.
+local MOTOR_BASE = MOTOR_PIVOT_Z - COLLAR_HEIGHT / 2 - 1
+
+-- Where (x, y, z) ends up tipped about a level axis through (px, py, pz),
+-- so whatever stands up from the pivot leans `angle` towards (-dx, -dy).
+local function tipped(px: number, py: number, pz: number, dx: number, dy: number, angle: number, x: number, y: number, z: number)
+	local c, s = math.cos(angle), math.sin(angle)
+	local ox, oy, oz = x - px, y - py, z - pz
+	local out = ox * dx + oy * dy
+	local across = -ox * dy + oy * dx
+	out, oz = out * c - oz * s, out * s + oz * c
+	return px + out * dx - across * dy, py + out * dy + across * dx, pz + oz
+end
 
 -- Builds into a mesh tipped about a level axis through (px, py, pz), so
 -- whatever stands up from the pivot leans `angle` towards (-dx, -dy).
 local function leaning(mesh, px: number, py: number, pz: number, dx: number, dy: number, angle: number)
-	local c, s = math.cos(angle), math.sin(angle)
 	return setmetatable({
 		vertex = function(_, x, y, z)
-			local ox, oy, oz = x - px, y - py, z - pz
-			local out = ox * dx + oy * dy
-			local across = -ox * dy + oy * dx
-			out, oz = out * c - oz * s, out * s + oz * c
-			return mesh:vertex(px + out * dx - across * dy, py + out * dy + across * dx, pz + oz)
+			return mesh:vertex(tipped(px, py, pz, dx, dy, angle, x, y, z))
 		end,
 	}, {
 		__index = function(_, key)
@@ -1133,9 +1143,9 @@ local DISC_RINGS, DISC_SECTORS = 24, 64
 local DISC_TEXTURE = 512
 local DISC_SMEAR = 1.1
 local DISC_TINT = { 0.2, 0.2, 0.22 }
-local function blurDisc(name: string, mx: number, my: number, base: number, ux: number, uy: number, hubZ: number, phase: number)
+local function blurDisc(name: string, mx: number, my: number, ux: number, uy: number, hubZ: number, phase: number)
 	local mesh = Mesh.new()
-	local lean = leaning(mesh, mx - ux * MOTOR_PIVOT, my - uy * MOTOR_PIVOT, base, ux, uy, MOTOR_TILT)
+	local lean = leaning(mesh, mx - ux * MOTOR_PIVOT, my - uy * MOTOR_PIVOT, MOTOR_PIVOT_Z, ux, uy, MOTOR_TILT)
 	local rows = {}
 	for j = 0, DISC_RINGS do
 		local r = lerp(PROP_HUB, PROP_RADIUS, j / DISC_RINGS)
@@ -1157,7 +1167,7 @@ local function blurDisc(name: string, mx: number, my: number, base: number, ux: 
 	-- Back from world space into the disc's own plane (see leaning()).
 	local c, s = math.cos(MOTOR_TILT), math.sin(MOTOR_TILT)
 	mesh:paint(image, function(x, y, z)
-		local wx, wy, wz = x - (mx - ux * MOTOR_PIVOT), y - (my - uy * MOTOR_PIVOT), z - base
+		local wx, wy, wz = x - (mx - ux * MOTOR_PIVOT), y - (my - uy * MOTOR_PIVOT), z - MOTOR_PIVOT_Z
 		local out = wx * ux * c + wy * uy * c + wz * s - MOTOR_PIVOT
 		local across = -wx * uy + wy * ux
 		local r = math.sqrt(out * out + across * across)
@@ -1197,8 +1207,8 @@ for i, degrees in ARM_DIRECTIONS do
 	-- the arm starts to climb.
 	local stations = { ARM_ROOT }
 	local r = ARM_ROOT
-	while r < MOTOR_OUT - 1 do
-		local nextR = math.min(r + ARM_PANEL, MOTOR_OUT)
+	while r < ARM_END - 1 do
+		local nextR = math.min(r + ARM_PANEL, ARM_END)
 		if r < RING_OUTER - 1 and nextR > RING_OUTER - 1 then
 			nextR = RING_OUTER - 1
 		end
@@ -1233,76 +1243,67 @@ for i, degrees in ARM_DIRECTIONS do
 				end
 			end
 		end
-		-- The mount plate the motor stands on.
-		local mx, my = ux * MOTOR_OUT, uy * MOTOR_OUT
-		box(mesh, mx, my, 3, 15, 15, CHORD)
 	end, nil, paintHazard, ARM_TEXTURE, nil, nil, 1)
 
-	-- The motor: a flanged base, a finned stator and a spinning bell on
-	-- top, leaning in towards the middle.
+	-- The motor: a finned stator gripped by its collar, with a spinning
+	-- bell on top, leaning in towards the middle.
 	local mx, my = ux * MOTOR_OUT, uy * MOTOR_OUT
-	local base = MOTOR_MOUNT
-	local px, py = mx - ux * MOTOR_PIVOT, my - uy * MOTOR_PIVOT
-	-- The shim: a wedge on the plate, its top following the motor's lean.
-	part(`MotorShim{i}`, nil, DARK_STEEL, function(mesh)
-		local slope = math.tan(MOTOR_TILT)
-		local bottom, top = {}, {}
-		local sides = 20
-		for k = 0, sides - 1 do
-			local a = k / sides * TAU
-			local x, y = mx + math.cos(a) * MOTOR_FLANGE, my + math.sin(a) * MOTOR_FLANGE
-			local out = (x - px) * ux + (y - py) * uy
-			bottom[k + 1] = mesh:vertex(x, y, base)
-			top[k + 1] = mesh:vertex(x, y, base + out * slope)
+	local base = MOTOR_BASE
+	local px, py, pz = mx - ux * MOTOR_PIVOT, my - uy * MOTOR_PIVOT, MOTOR_PIVOT_Z
+	-- The collar: a split steel band round the motor, with a lip at top and
+	-- bottom, and two lugs on the outer side drawn together by clamp bolts.
+	part(`MotorCollar{i}`, nil, STEEL, function(mesh)
+		local lean = leaning(mesh, px, py, pz, ux, uy, MOTOR_TILT)
+		ring(lean, mx, my, pz, COLLAR_INNER, COLLAR_OUTER, COLLAR_HEIGHT, "z", 24)
+		for _, side in { -1, 1 } do
+			ring(lean, mx, my, pz + side * (COLLAR_HEIGHT / 2 - 0.3), COLLAR_OUTER - 0.2, COLLAR_OUTER + 0.35, 0.6, "z", 24)
 		end
-		for k = 1, sides do
-			local l = k % sides + 1
-			mesh:face({ bottom[k], bottom[l], top[l], top[k] })
+		local vx, vy = -uy, ux
+		for _, side in { -1, 1 } do
+			local gap = side * 0.8
+			strut(lean, mx + ux * (COLLAR_OUTER - 0.4) + vx * gap, my + uy * (COLLAR_OUTER - 0.4) + vy * gap, pz,
+				mx + ux * (COLLAR_OUTER + 3) + vx * gap, my + uy * (COLLAR_OUTER + 3) + vy * gap, pz, 1.2)
 		end
-		local under = {}
-		for k = sides, 1, -1 do
-			table.insert(under, bottom[k])
+		for _, along in { 1.2, 2.4 } do
+			local cx, cy = mx + ux * (COLLAR_OUTER + along), my + uy * (COLLAR_OUTER + along)
+			for _, height in { -0.9, 0.9 } do
+				strut(lean, cx - vx * 1.9, cy - vy * 1.9, pz + height, cx + vx * 1.9, cy + vy * 1.9, pz + height, 0.5)
+			end
 		end
-		mesh:face(under)
-		mesh:face(top)
-	end, nil, 0.45, 128, nil, true)
+	end, 30, 0.35, MOTOR_TEXTURE)
 	part(`Motor{i}`, nil, DARK_STEEL, function(mesh)
-		local lean = leaning(mesh, px, py, base, ux, uy, MOTOR_TILT)
-		cylinder(lean, mx, my, base + 4, 5.2, 7, "z", 20)
-		for f = 0, 4 do
-			ring(lean, mx, my, base + 1.6 + f * 1.25, 5.1, 6, 0.45, "z", 20)
+		local lean = leaning(mesh, px, py, pz, ux, uy, MOTOR_TILT)
+		cylinder(lean, mx, my, base + 4.75, 5.2, 8.5, "z", 20)
+		cylinder(lean, mx, my, base + 0.5, 4.4, 1, "z", 20)
+		for f = 0, 2 do
+			ring(lean, mx, my, base + 5.6 + f * 1.2, 5.1, 6, 0.45, "z", 20)
 		end
 	end, 30, 0.45, MOTOR_TEXTURE)
 	part(`MotorTrim{i}`, nil, STEEL, function(mesh)
-		local lean = leaning(mesh, px, py, base, ux, uy, MOTOR_TILT)
-		cylinder(lean, mx, my, base + 0.5, 7, 1, "z", 20)
-		for b = 0, 7 do
-			local a = b * TAU / 8
-			bolt(lean, mx + math.cos(a) * 6.3, my + math.sin(a) * 6.3, base + 1.05, "z", 0.35)
-		end
+		local lean = leaning(mesh, px, py, pz, ux, uy, MOTOR_TILT)
 		-- The bell, with the shaft the propeller will sit on.
-		cylinder(lean, mx, my, base + 8.4, 6, 1.8, "z", 20)
-		cylinder(lean, mx, my, base + 9.8, 1.2, 1.4, "z", 12)
+		cylinder(lean, mx, my, base + 9.9, 6, 1.8, "z", 20)
+		cylinder(lean, mx, my, base + 11.3, 1.2, 1.4, "z", 12)
 	end, 30, 0.3, MOTOR_TEXTURE)
 
-	local hubZ = base + 11.3
+	local hubZ = base + 12.8
 	-- Each propeller stopped at its own angle, so the four don't match.
 	local phase = math.rad(degrees + 30 * i)
 	part(`Prop{i}`, nil, DARK_STEEL, function(mesh)
-		local lean = leaning(mesh, px, py, base, ux, uy, MOTOR_TILT)
+		local lean = leaning(mesh, px, py, pz, ux, uy, MOTOR_TILT)
 		for b = 0, 1 do
 			blade(lean, mx, my, hubZ, phase + b * math.pi, PROP_HUB, PROP_RADIUS - PROP_TIP)
 		end
 	end, 30, 0.35, PROP_TEXTURE)
 	part(`PropTips{i}`, nil, HAZARD_YELLOW, function(mesh)
-		local lean = leaning(mesh, px, py, base, ux, uy, MOTOR_TILT)
+		local lean = leaning(mesh, px, py, pz, ux, uy, MOTOR_TILT)
 		for b = 0, 1 do
 			blade(lean, mx, my, hubZ, phase + b * math.pi, PROP_RADIUS - PROP_TIP, PROP_RADIUS)
 		end
 	end, 30, 0.35, 128)
-	blurDisc(`PropDisc{i}`, mx, my, base, ux, uy, hubZ, phase)
+	blurDisc(`PropDisc{i}`, mx, my, ux, uy, hubZ, phase)
 	part(`PropHub{i}`, nil, STEEL, function(mesh)
-		local lean = leaning(mesh, px, py, base, ux, uy, MOTOR_TILT)
+		local lean = leaning(mesh, px, py, pz, ux, uy, MOTOR_TILT)
 		cylinder(lean, mx, my, hubZ, PROP_HUB + 0.6, 2.4, "z", 16)
 		cylinder(lean, mx, my, hubZ + 1.6, 1.6, 0.8, "z", 12)
 		for b = 0, 3 do
@@ -1319,7 +1320,8 @@ for i, degrees in ARM_DIRECTIONS do
 			table.insert(points, { at(station, 0, zb - 0.9) })
 		end
 		local last = points[#points]
-		table.insert(points, { last[1] - ux * 2, last[2] - uy * 2, MOTOR_MOUNT + 2 })
+		-- Up into the middle of the motor's underside.
+		table.insert(points, { tipped(px, py, pz, ux, uy, MOTOR_TILT, mx - ux * 1.5, my - uy * 1.5, base + 0.2) })
 		tube(mesh, points, 0.45, 8)
 	end, true, RUBBER, 256)
 end
@@ -1448,7 +1450,7 @@ part("Skids", nil, DARK_STEEL, function(mesh)
 	end
 end, 40, 0.5, 256)
 
--- Navigation lights at the outer edge of each motor mount, as on an
+-- Navigation lights on top of each motor collar's clamp lugs, as on an
 -- aircraft facing west (away from the gangway): green on the north
 -- (starboard) motors, red on the south (port) ones.
 local NAV_GREEN = { 0.25, 1, 0.4 }
@@ -1457,14 +1459,17 @@ local NAV_GLOW = 3
 for i, degrees in ARM_DIRECTIONS do
 	local angle = math.rad(degrees)
 	local ux, uy = math.cos(angle), math.sin(angle)
-	local lx, ly = ux * (MOTOR_OUT + 8.5), uy * (MOTOR_OUT + 8.5)
-	local lz = 3 + CHORD / 2
+	local mx, my = ux * MOTOR_OUT, uy * MOTOR_OUT
+	local px, py = mx - ux * MOTOR_PIVOT, my - uy * MOTOR_PIVOT
+	local lx, ly = ux * (MOTOR_OUT + COLLAR_OUTER + 1.8), uy * (MOTOR_OUT + COLLAR_OUTER + 1.8)
+	local lz = MOTOR_PIVOT_Z + 0.6
 	part(`NavHousing{i}`, nil, DARK_STEEL, function(mesh)
-		cylinder(mesh, lx, ly, lz + 0.4, 1.9, 0.8, "z", 12)
-		box(mesh, ux * (MOTOR_OUT + 7.4), uy * (MOTOR_OUT + 7.4), lz - 0.6, 2.4, 2.4, 1)
+		local lean = leaning(mesh, px, py, MOTOR_PIVOT_Z, ux, uy, MOTOR_TILT)
+		cylinder(lean, lx, ly, lz + 0.3, 1.5, 0.6, "z", 12)
 	end, nil, 0.4, 64)
 	part(`NavLight{i}`, nil, if uy > 0 then NAV_GREEN else NAV_RED, function(mesh)
-		sphere(mesh, lx, ly, lz + 0.8, 1.4, 1.4, 1.2, 6, 12)
+		local lean = leaning(mesh, px, py, MOTOR_PIVOT_Z, ux, uy, MOTOR_TILT)
+		sphere(lean, lx, ly, lz + 0.6, 1.1, 1.1, 1, 6, 12)
 	end, true, 0, 32, NAV_GLOW)
 end
 
