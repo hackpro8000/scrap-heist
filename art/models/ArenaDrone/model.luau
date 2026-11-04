@@ -1,4 +1,4 @@
-local CACHE_KEY = "ArenaDrone-f9581083b0e3d10e"
+local CACHE_KEY = "ArenaDrone-2911a40917a20cb0"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1245,12 +1245,12 @@ for i, degrees in ARM_DIRECTIONS do
 		end
 	end, nil, paintHazard, ARM_TEXTURE, nil, nil, 1)
 
-	-- The motor: a finned stator in hazard stripes, gripped by its collar,
+	-- The motor: finned copper coils, gripped by a hazard-striped collar,
 	-- with a spinning bell on top, leaning in towards the middle.
 	local mx, my = ux * MOTOR_OUT, uy * MOTOR_OUT
 	local base = MOTOR_BASE
 	local px, py, pz = mx - ux * MOTOR_PIVOT, my - uy * MOTOR_PIVOT, MOTOR_PIVOT_Z
-	-- The collar: a split steel band round the motor, with a lip at top and
+	-- The collar: a split band round the motor, with a lip at top and
 	-- bottom, and two lugs on the outer side drawn together by clamp bolts.
 	part(`MotorCollar{i}`, nil, STEEL, function(mesh)
 		local lean = leaning(mesh, px, py, pz, ux, uy, MOTOR_TILT)
@@ -1270,15 +1270,15 @@ for i, degrees in ARM_DIRECTIONS do
 				strut(lean, cx - vx * 1.9, cy - vy * 1.9, pz + height, cx + vx * 1.9, cy + vy * 1.9, pz + height, 0.5)
 			end
 		end
-	end, 30, 0.35, MOTOR_TEXTURE)
-	part(`Motor{i}`, nil, DARK_STEEL, function(mesh)
+	end, 30, paintHazard, MOTOR_TEXTURE)
+	part(`Motor{i}`, nil, COPPER, function(mesh)
 		local lean = leaning(mesh, px, py, pz, ux, uy, MOTOR_TILT)
 		cylinder(lean, mx, my, base + 4.75, 5.2, 8.5, "z", 20)
 		cylinder(lean, mx, my, base + 0.5, 4.4, 1, "z", 20)
 		for f = 0, 2 do
 			ring(lean, mx, my, base + 5.6 + f * 1.2, 5.1, 6, 0.45, "z", 20)
 		end
-	end, 30, paintHazard, MOTOR_TEXTURE)
+	end, 30, 0.3, MOTOR_TEXTURE)
 	part(`MotorTrim{i}`, nil, STEEL, function(mesh)
 		local lean = leaning(mesh, px, py, pz, ux, uy, MOTOR_TILT)
 		-- The bell, with the shaft the propeller will sit on.
