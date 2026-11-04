@@ -110,6 +110,30 @@ reference.
 1. Avatar or Home tab → **Import 3D**, pick `<Name>.glb`.
 2. Upload it, then paste the asset ID into `src/shared/Assets.luau`.
 
+### Layouts too big for one upload (the Server Map)
+
+Open Cloud takes at most 20 MB per upload, so a layout is exported in
+chunks and put back together in Studio:
+
+1. `scripts/build-model.sh ServerMap -- --chunks` writes
+   `art/models/ServerMap/chunks/ServerMap_NN.glb`, each under 19 MB, and
+   `ServerMapChunks.luau`, which names two anchor parts per chunk and where
+   their middles stand.
+2. `ROBLOX_API_KEY=... ROBLOX_CREATOR_ID=<user id> scripts/upload-chunks.sh ServerMap`
+   uploads each chunk as a Model (the key needs `asset:write`), writes the IDs
+   into `Assets.MapChunks` and copies the anchors to
+   `src/shared/Config/MapChunks.luau`. Commit both. Re-running skips chunks
+   already uploaded.
+3. In Studio, with Rojo synced, paste `tools/studio/PlaceMap.luau` into the
+   command bar. It loads every chunk, scales, turns and moves it so its
+   anchors land in place, anchors the parts, sets the propeller blur discs'
+   `AlphaMode` to `Transparency`, and files every part under
+   `workspace.Map` by object: `Map > Pad1 > Plaza > 1_0_0`,
+   `Map > Yard1 > Gate > Frame`. Save the place.
+
+Rebuilding the chunks makes new files, so upload them again and commit the new
+IDs and anchors together.
+
 ## Quick tweaks
 
 To tune settings fast, keep the model building while you edit:

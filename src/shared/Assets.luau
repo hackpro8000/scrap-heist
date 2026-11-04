@@ -13,6 +13,7 @@
 		Assets.PLACEHOLDER
 		Assets.Animations.<Name>
 		Assets.Sounds.<Name>
+		Assets.MapChunks.<Layout><NN>
 		Assets.isSet(id): boolean   -- false for placeholders and missing IDs
 ]]
 
@@ -57,6 +58,12 @@ Assets.Sounds = {
 	StormEnd = PLACEHOLDER,
 	LootRare = PLACEHOLDER,
 	UiClick = PLACEHOLDER,
+}
+
+-- The map's pieces, each a Model asset under Open Cloud's 20 MB upload limit.
+-- Written by scripts/upload-chunks.sh; tools/studio/PlaceMap.luau places them
+-- in Studio.
+Assets.MapChunks = {
 }
 
 function Assets.isSet(id: string?): boolean

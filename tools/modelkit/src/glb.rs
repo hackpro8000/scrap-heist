@@ -227,3 +227,119 @@ pub fn write(parts: &[Part], bones: &[Bone], clips: &[Clip]) -> Vec<u8> {
 	out.extend_from_slice(&bin);
 	out
 }
+
+// Chunked export, for Roblox's Open Cloud upload, which takes at most 20 MB per
+// file. The parts are packed into several GLBs, each under `limit` bytes,
+// keeping every placed object (the parts sharing a label, the name before the
+// first `_`) in one chunk where it fits. Each chunk names two anchor parts far
+// apart and where their middles stand, so the chunk can be put back in place
+// after upload however the importer moved, turned or scaled it.
+pub struct Chunk {
+	pub glb: Vec<u8>,
+	pub parts: usize,
+	pub anchors: Vec<(String, [f32; 3])>,
+}
+
+fn label(name: &str) -> &str {
+	name.split('_').next().unwrap_or(name)
+}
+
+// The middle of a part's bounds, Y up as written.
+fn middle(part: &Part) -> [f32; 3] {
+	let mut low = [f32::MAX; 3];
+	let mut high = [f32::MIN; 3];
+	for triangle in part.mesh.borrow().triangles() {
+		for corner in triangle {
+			let p = to_y_up(corner.position);
+			for axis in 0..3 {
+				low[axis] = low[axis].min(p[axis]);
+				high[axis] = high[axis].max(p[axis]);
+			}
+		}
+	}
+	[0, 1, 2].map(|a| (low[a] + high[a]) / 2.0)
+}
+
+fn distance(a: [f32; 3], b: [f32; 3]) -> f32 {
+	((a[0] - b[0]).powi(2) + (a[1] - b[1]).powi(2) + (a[2] - b[2]).powi(2)).sqrt()
+}
+
+// Two parts far apart: the one farthest from the chunk's middle, then the one
+// farthest from that. One part alone is its own anchor.
+fn anchors(parts: &[Part]) -> Vec<(String, [f32; 3])> {
+	let middles: Vec<[f32; 3]> = parts.iter().map(middle).collect();
+	let count = middles.len() as f32;
+	let centre = [0, 1, 2].map(|a| middles.iter().map(|m| m[a]).sum::<f32>() / count);
+	let farthest = |from: [f32; 3]| (0..middles.len()).max_by(|&i, &j| distance(middles[i], from).total_cmp(&distance(middles[j], from))).unwrap_or(0);
+	let first = farthest(centre);
+	let second = farthest(middles[first]);
+	let mut list = vec![(parts[first].name.clone(), middles[first])];
+	if second != first {
+		list.push((parts[second].name.clone(), middles[second]));
+	}
+	list
+}
+
+// Roughly what a part adds to a GLB: its vertices (position, normal, UV),
+// indices, texture and JSON. Shared textures are counted each time, so this
+// errs high.
+fn estimate(part: &Part) -> usize {
+	let (corners, indices) = part.mesh.borrow().indexed();
+	corners.len() * 32 + indices.len() * 4 + part.image.borrow().encode_png().len() + 600
+}
+
+pub fn write_chunks(parts: &[Part], limit: usize) -> Vec<Chunk> {
+	let mut groups: Vec<(&str, Vec<usize>)> = Vec::new();
+	for (index, part) in parts.iter().enumerate() {
+		let name = label(&part.name);
+		match groups.iter_mut().find(|(group, _)| *group == name) {
+			Some((_, members)) => members.push(index),
+			None => groups.push((name, vec![index])),
+		}
+	}
+	let sizes: Vec<usize> = parts.iter().map(estimate).collect();
+	// Pack by the estimates with a margin, then check each chunk as written.
+	let budget = limit * 9 / 10;
+	let mut sets: Vec<Vec<usize>> = Vec::new();
+	let mut current: Vec<usize> = Vec::new();
+	let mut used = 0;
+	for (_, members) in &groups {
+		let total: usize = members.iter().map(|&i| sizes[i]).sum();
+		if total <= budget {
+			if used + total > budget && !current.is_empty() {
+				sets.push(std::mem::take(&mut current));
+				used = 0;
+			}
+			current.extend(members);
+			used += total;
+			continue;
+		}
+		// An object too big for one chunk is spread over as many as it needs.
+		for &index in members {
+			if used + sizes[index] > budget && !current.is_empty() {
+				sets.push(std::mem::take(&mut current));
+				used = 0;
+			}
+			current.push(index);
+			used += sizes[index];
+		}
+	}
+	if !current.is_empty() {
+		sets.push(current);
+	}
+	let mut chunks = Vec::new();
+	let mut queue: std::collections::VecDeque<Vec<usize>> = sets.into();
+	while let Some(set) = queue.pop_front() {
+		let subset: Vec<Part> = set.iter().map(|&i| parts[i].clone()).collect();
+		let glb = write(&subset, &[], &[]);
+		// Still too big (the estimate missed): halve it and try again.
+		if glb.len() > limit && set.len() > 1 {
+			let (a, b) = set.split_at(set.len() / 2);
+			queue.push_front(b.to_vec());
+			queue.push_front(a.to_vec());
+			continue;
+		}
+		chunks.push(Chunk { glb, parts: subset.len(), anchors: anchors(&subset) });
+	}
+	chunks
+}
