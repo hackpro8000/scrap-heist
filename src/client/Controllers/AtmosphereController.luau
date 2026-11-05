@@ -2,49 +2,82 @@
 --[[
 	AtmosphereController
 
-	The world around the islands, built on this client only:
+	The world around the islands, built on this client only, from art baked
+	ahead of time (nothing is generated here but where things go):
 
-	- The sky: a saturated blue inverted sphere SKY_RADIUS studs out over a
-	  plain skybox, with soft cumulus clouds drifting under it.
-	- Distant bodies, all SpecialMesh parts (a Part can't be bigger than
-	  2048 studs, and meshes keep rendering at that distance) in a
-	  Persistent model so they never stream out: a pastel banded planet
-	  with a sparkling ring system, a ringed moon orbiting behind it, a
-	  huge rusted cog half hidden behind it, a red-orange moon and two pale
-	  moons drifting, a spiral galaxy wisp, floating rocks, mossy floating
-	  islands with trees, and slowly turning structures on the horizon.
+	- The sky: a hand-painted gradient skybox, saturated blue overhead and
+	  pale at the horizon, with no sun disc, moon or stars.
+	- Clouds: fifty painted cumulus sprites (Assets.UI.CloudNN, from
+	  scripts/paint-clouds.py) on SurfaceGuis, always far off, drifting
+	  slowly round the map.
+	- Solid bodies, from the models tools/studio/PlaceSky.luau puts in
+	  ReplicatedStorage.SkyModels (art/src/items/Sky*): a pastel banded
+	  planet with a glinting ring system, a great cog turning half hidden
+	  behind it, a ringed moon orbiting it, a red-orange moon and two pale
+	  moons, floating islands with trees, loose rocks, and windmills
+	  turning on the horizon. A MeshPart can't be bigger than 2048 studs,
+	  so each is shown as a SpecialMesh of the model's mesh and texture,
+	  scaled up as far as it needs, in a Persistent model so none of it
+	  ever streams out.
+	- A spiral galaxy wisp, painted, high in the sky.
 	- Life on the islands: dust motes drifting around the camera, flecks of
 	  gulls crossing the sky every few minutes, and a shimmer of glints
 	  along each island's edge.
-
-	Everything is flat colored for now; hand-drawn textures replace the
-	colors as they're painted.
 
 	Public API: none.
 ]]
 
 local Lighting = game:GetService("Lighting")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
-local SKY_RADIUS = 20000
-local SKY_COLOR = Color3.fromRGB(70, 150, 255)
--- The haze the islands sit in, thin enough for the distant bodies to show.
-local ATMOSPHERE_DENSITY = 0.12
+local Assets = require(ReplicatedStorage.Shared.Assets)
 
-local PLANET_AT = Vector3.new(9000, 2600, -7000)
-local PLANET_RADIUS = 2400
-local PLANET_BANDS = {
-	Color3.fromRGB(255, 205, 180),
-	Color3.fromRGB(250, 230, 190),
-	Color3.fromRGB(205, 190, 245),
-	Color3.fromRGB(190, 225, 240),
-	Color3.fromRGB(255, 190, 210),
-}
-local RING_COLORS = { Color3.fromRGB(255, 240, 200), Color3.fromRGB(230, 210, 255), Color3.fromRGB(200, 240, 255) }
-local RING_SEGMENTS = 64
-local RING_SPARKLE_SECONDS = 0.15
+local SKY_MODELS = "SkyModels"
+-- SurfaceGuis stop drawing past their MaxDistance; the sky is far past it.
+local FAR = 1e6
+
+-- How much farther out space (the planet, its moons and the cog) is than
+-- the numbers below say. Every distance and size there is multiplied by
+-- it, so space looks the same from the map but is far beyond everything
+-- else in the sky: islands and clouds never pass behind it. Past about
+-- 40,000 studs the engine hazes everything toward the sky, so the cog (the
+-- farthest) stays inside that.
+local SPACE_DEPTH = 2.6
+
+local PLANET_AT = Vector3.new(9000, 2900, -7000) * SPACE_DEPTH
+-- The art is 10 studs in radius.
+local PLANET_SCALE = 230 * SPACE_DEPTH
+-- The sun washes the pastels out; this holds the planet's colours back.
+local PLANET_TINT = Vector3.new(0.76, 0.76, 0.8)
+local RING_TINT = Vector3.new(0.76, 0.72, 0.9)
+-- The ring bands' inner and outer radius in the art, for the glints.
+local RING_INNER, RING_OUTER = 13.4, 22.2
+local RING_GLINTS = 28
+local GLINT_SECONDS = NumberRange.new(0.8, 2.4)
+
+-- How wide the ringed moon swings behind the planet.
+local ORBIT_RADIUS = 6500 * SPACE_DEPTH
+-- How far behind the planet the loop is centred, and how flat it is.
+local ORBIT_BEHIND = 3500 * SPACE_DEPTH
+local ORBIT_FLAT = 0.3
+
+local COG_AT = Vector3.new(6400, 3300, -11500) * SPACE_DEPTH
+-- The art is 8.5 studs in radius.
+local COG_SCALE = 420 * SPACE_DEPTH
+
+local CLOUDS = 50
+local CLOUD_DISTANCE = NumberRange.new(4500, 9000)
+local CLOUD_HEIGHT = NumberRange.new(-200, 2200)
+local CLOUD_WIDTH = NumberRange.new(1300, 2048)
+-- Radians a second the cloud layers turn round the map.
+local CLOUD_DRIFT = { 0.0016, 0.0024, 0.0034 }
+
+local ISLANDS = 9
+local ROCKS = 22
+local WINDMILLS = 4
 
 local GULL_EVERY = NumberRange.new(90, 200)
 local GULL_HEIGHT = 140
@@ -54,9 +87,22 @@ local MOTE_BOX = Vector3.new(120, 40, 120)
 local AtmosphereController = {}
 
 local world: Model
-local spinners: { { part: Model | BasePart, axis: Vector3, speed: number, base: CFrame } } = {}
-local orbiters: { { model: Model, center: Vector3, radius: number, height: number, speed: number, phase: number } } = {}
-local ringParts: { BasePart } = {}
+local random = Random.new(11)
+
+-- Things that turn in place: `turn` maps seconds to the rotation laid over
+-- `base`, about the first part's own middle.
+type Spinner = { parts: { BasePart }, offsets: { CFrame }, base: CFrame, turn: (number) -> CFrame }
+local spinners: { Spinner } = {}
+-- Things that circle a point: the body's parts ride `spinner.base`.
+type Orbiter = { spinner: Spinner, center: Vector3, radius: number, tilt: CFrame, speed: number, phase: number }
+local orbiters: { Orbiter } = {}
+-- Sky meshes: where each one's mesh should stand; its part is a host near
+-- the camera (see fileMesh).
+local hosted: { [BasePart]: { mesh: SpecialMesh, target: CFrame } } = {}
+-- How far in front of the camera the host parts stand.
+local HOST_AHEAD = 20
+-- Cloud layers, each turning round the map at its own pace.
+local cloudLayers: { { model: Model, speed: number } } = {}
 
 local function meshPart(
 	kind: Enum.MeshType,
@@ -86,10 +132,6 @@ local function meshPart(
 	return part
 end
 
-local function sphere(radius: number, at: Vector3, color: Color3, parent: Instance, material: Enum.Material?): BasePart
-	return meshPart(Enum.MeshType.Sphere, Vector3.one * radius * 2, CFrame.new(at), color, parent, material)
-end
-
 local function model(name: string): Model
 	local group = Instance.new("Model")
 	group.Name = name
@@ -97,336 +139,396 @@ local function model(name: string): Model
 	return group
 end
 
--- A ring of flat segments around `center`, tilted by `tilt`. Rings are
--- built from segments because a solid disc would show through the planet.
-local function ring(
-	center: CFrame,
-	inner: number,
-	outer: number,
-	segments: number,
-	colors: { Color3 },
+-- A template MeshPart shown as a SpecialMesh `scale` times the art's size.
+-- The part itself is only a host: each frame it is moved just in front of
+-- the camera, and the mesh is pushed out to `cframe` with its Offset, so
+-- the engine never culls a tiny part thousands of studs away.
+local function fileMesh(source: MeshPart, cframe: CFrame, scale: number, parent: Instance): BasePart
+	local part = meshPart(Enum.MeshType.FileMesh, Vector3.one, cframe, Color3.new(1, 1, 1), parent)
+	part.Name = source.Name
+	local mesh = part:FindFirstChildOfClass("SpecialMesh") :: SpecialMesh
+	mesh.MeshId = source.MeshId
+	mesh.TextureId = source.TextureID
+	mesh.Scale = source.Size / source.MeshSize * scale
+	hosted[part] = { mesh = mesh, target = cframe }
+	return part
+end
+
+-- A whole template model, `scale` times its size, with `anchor` (one of
+-- its parts, whose middle is the art's origin) standing at `cframe`.
+-- Returns the parts and each one's place relative to `cframe`. Everything
+-- is measured from the anchor, so it doesn't matter where the template
+-- stands or which way it faces.
+local function fileModel(
+	template: Model,
+	anchor: MeshPart,
+	cframe: CFrame,
+	scale: number,
 	parent: Instance
-)
-	local radius = (inner + outer) / 2
-	local width = outer - inner
-	local length = 2 * math.pi * radius / segments * 1.08
-	for index = 1, segments do
-		local angle = index / segments * math.pi * 2
-		local cframe = center * CFrame.Angles(0, angle, 0) * CFrame.new(radius, 0, 0)
-		local part = meshPart(
-			Enum.MeshType.Brick,
-			Vector3.new(width, width * 0.02, length),
-			cframe,
-			colors[index % #colors + 1],
-			parent,
-			Enum.Material.Neon,
-			0.25
-		)
-		table.insert(ringParts, part)
+): ({ BasePart }, { CFrame })
+	local parts, offsets = {}, {}
+	for _, source in template:GetDescendants() do
+		if source:IsA("MeshPart") then
+			local relative = anchor.CFrame:ToObjectSpace(source.CFrame)
+			local offset = CFrame.new(relative.Position * scale) * relative.Rotation
+			table.insert(parts, fileMesh(source, cframe * offset, scale, parent))
+			table.insert(offsets, offset)
+		end
 	end
+	return parts, offsets
+end
+
+local function spin(parts: { BasePart }, offsets: { CFrame }, base: CFrame, turn: (number) -> CFrame): Spinner
+	local spinner = { parts = parts, offsets = offsets, base = base, turn = turn }
+	table.insert(spinners, spinner)
+	return spinner
+end
+
+-- A painted sprite standing at `cframe`, facing along its look direction,
+-- `size` studs across. A part can't be bigger than 2048 studs.
+local function sprite(image: string, size: Vector2, cframe: CFrame, parent: Instance): BasePart
+	local part = Instance.new("Part")
+	part.Anchored = true
+	part.CanCollide = false
+	part.CanQuery = false
+	part.CanTouch = false
+	part.CastShadow = false
+	part.Transparency = 1
+	part.Size = Vector3.new(size.X, size.Y, 1)
+	part.CFrame = cframe
+	local gui = Instance.new("SurfaceGui")
+	gui.Face = Enum.NormalId.Front
+	gui.LightInfluence = 0
+	gui.MaxDistance = FAR
+	gui.SizingMode = Enum.SurfaceGuiSizingMode.FixedSize
+	gui.CanvasSize = Vector2.new(512, 512 * size.Y / size.X)
+	gui.Parent = part
+	local label = Instance.new("ImageLabel")
+	label.BackgroundTransparency = 1
+	label.Size = UDim2.fromScale(1, 1)
+	label.Image = image
+	label.Parent = gui
+	part.Parent = parent
+	return part
 end
 
 local function buildSky()
-	local sky = model("Sky")
-	-- A negative scale turns the sphere inside out, so it's seen from within.
-	meshPart(Enum.MeshType.Sphere, -Vector3.one * SKY_RADIUS * 2, CFrame.new(), SKY_COLOR, sky, Enum.Material.Neon)
-
-	-- A plain skybox underneath: no sun, moon or stars to compete.
-	local skybox = Lighting:FindFirstChildOfClass("Sky")
-	if skybox then
-		skybox.CelestialBodiesShown = false
-		skybox.StarCount = 0
+	-- The painted gradient is the skybox itself, with nothing in it to
+	-- compete with the sky's own bodies.
+	local sky = Lighting:FindFirstChildOfClass("Sky")
+	if not sky then
+		sky = Instance.new("Sky")
+		sky.Parent = Lighting
 	end
-	local atmosphere = Lighting:FindFirstChildOfClass("Atmosphere")
-	if atmosphere then
-		atmosphere.Density = math.min(atmosphere.Density, ATMOSPHERE_DENSITY)
+	local side, up, down = Assets.UI.SkySide, Assets.UI.SkyUp, Assets.UI.SkyDown
+	if Assets.isSet(side) and Assets.isSet(up) and Assets.isSet(down) then
+		sky.SkyboxBk, sky.SkyboxFt, sky.SkyboxLf, sky.SkyboxRt = side, side, side, side
+		sky.SkyboxUp, sky.SkyboxDn = up, down
 	end
+	sky.CelestialBodiesShown = false
+	sky.SunAngularSize = 0
+	sky.MoonAngularSize = 0
+	sky.StarCount = 0
 end
 
-local function buildPlanet()
+-- The planet turns slowly under its rings, tilted toward the map. Glints
+-- come and go along the rings.
+local function buildPlanet(templates: Instance)
+	local template = templates:FindFirstChild("SkyPlanet")
+	local ringSource = template and template:FindFirstChild("Ring", true)
+	if not (template and template:IsA("Model") and ringSource and ringSource:IsA("MeshPart")) then
+		return
+	end
 	local planet = model("Planet")
-	local tilt = CFrame.new(PLANET_AT) * CFrame.Angles(math.rad(18), 0, math.rad(-12))
-	sphere(PLANET_RADIUS, PLANET_AT, PLANET_BANDS[1], planet).CFrame = tilt
-
-	-- Bands: belts hugging the sphere at each latitude, alternating colors.
-	local bands = 9
-	for index = 1, bands do
-		local latitude = (index / (bands + 1) - 0.5) * math.pi * 0.9
-		local beltRadius = PLANET_RADIUS * math.cos(latitude) * 1.004
-		local height = PLANET_RADIUS * 0.16
-		meshPart(
-			Enum.MeshType.Cylinder,
-			Vector3.new(height, beltRadius * 2, beltRadius * 2),
-			tilt * CFrame.new(0, PLANET_RADIUS * math.sin(latitude), 0) * CFrame.Angles(0, 0, math.rad(90)),
-			PLANET_BANDS[index % #PLANET_BANDS + 1],
-			planet
-		)
+	-- Facing the map, then tipped so the rings open toward it.
+	local base = CFrame.lookAt(PLANET_AT, Vector3.zero) * CFrame.Angles(math.rad(-20), 0, math.rad(-16))
+	local parts, offsets = fileModel(template, ringSource, base, PLANET_SCALE, planet)
+	for _, part in parts do
+		local mesh = part:FindFirstChildOfClass("SpecialMesh") :: SpecialMesh
+		mesh.VertexColor = if part.Name == ringSource.Name then RING_TINT else PLANET_TINT
 	end
+	spin(parts, offsets, base, function(now)
+		return CFrame.Angles(0, now * 0.004, 0)
+	end)
 
-	ring(tilt, PLANET_RADIUS * 1.35, PLANET_RADIUS * 1.75, RING_SEGMENTS, RING_COLORS, planet)
-	ring(tilt, PLANET_RADIUS * 1.8, PLANET_RADIUS * 2.15, RING_SEGMENTS, { RING_COLORS[2], RING_COLORS[1] }, planet)
-
-	-- A ringed moon orbiting behind the planet, spinning slowly.
-	local moon = model("RingedMoon")
-	sphere(420, Vector3.zero, Color3.fromRGB(215, 225, 255), moon)
-	ring(CFrame.Angles(math.rad(25), 0, 0), 560, 760, 24, { Color3.fromRGB(255, 220, 240) }, moon)
-	table.insert(orbiters, {
-		model = moon,
-		center = PLANET_AT + (PLANET_AT.Unit * 3500),
-		radius = PLANET_RADIUS * 3.2,
-		height = 600,
-		speed = 0.004,
-		phase = 0,
-	})
-	table.insert(spinners, { part = moon, axis = Vector3.yAxis, speed = 0.05, base = CFrame.identity })
+	local twinkle = Assets.UI.Twinkle
+	if not Assets.isSet(twinkle) then
+		return
+	end
+	local glints = model("RingGlints")
+	for _ = 1, RING_GLINTS do
+		local angle = random:NextNumber(0, math.pi * 2)
+		local reach = random:NextNumber(RING_INNER, RING_OUTER) * PLANET_SCALE
+		local at = (base * CFrame.new(math.cos(angle) * reach, 0, math.sin(angle) * reach)).Position
+		local size = random:NextNumber(900, 1900) * SPACE_DEPTH
+		-- Billboards, since a part (and so a SurfaceGui) stops at 2048 studs.
+		local point = Instance.new("Attachment")
+		point.WorldPosition = at
+		point.Parent = Workspace.Terrain
+		local gui = Instance.new("BillboardGui")
+		gui.Size = UDim2.fromScale(size, size)
+		gui.LightInfluence = 0
+		gui.MaxDistance = FAR
+		gui.Adornee = point
+		gui.Parent = glints
+		local label = Instance.new("ImageLabel")
+		label.BackgroundTransparency = 1
+		label.Size = UDim2.fromScale(1, 1)
+		label.Image = twinkle
+		label.Parent = gui
+		label.ImageTransparency = 1
+		-- Each glint swells in and fades out at its own pace, forever.
+		local seconds = random:NextNumber(GLINT_SECONDS.Min, GLINT_SECONDS.Max)
+		task.delay(random:NextNumber(0, 3), function()
+			TweenService:Create(
+				label,
+				TweenInfo.new(seconds, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true),
+				{ ImageTransparency = 0 }
+			):Play()
+		end)
+	end
 end
 
-local function buildCog()
-	local cog = model("Cog")
-	local at = PLANET_AT * 1.45 + Vector3.new(-2500, -400, 0)
-	local radius = 2600
-	local rust = Color3.fromRGB(150, 80, 45)
-	local center = CFrame.lookAt(at, Vector3.zero)
-	meshPart(
-		Enum.MeshType.Cylinder,
-		Vector3.new(500, radius * 2, radius * 2),
-		center * CFrame.Angles(0, math.rad(90), 0),
-		rust,
-		cog
-	)
-	meshPart(
-		Enum.MeshType.Cylinder,
-		Vector3.new(560, radius * 0.6, radius * 0.6),
-		center * CFrame.Angles(0, math.rad(90), 0),
-		Color3.fromRGB(110, 60, 35),
-		cog
-	)
-	local teeth = 24
-	for index = 1, teeth do
-		local angle = index / teeth * math.pi * 2
-		meshPart(
-			Enum.MeshType.Brick,
-			Vector3.new(radius * 0.22, radius * 0.3, 500),
-			center * CFrame.Angles(0, 0, angle) * CFrame.new(0, radius + radius * 0.1, 0),
-			rust,
-			cog
-		)
+-- The cog stands behind the planet, turned a little off face-on so its
+-- depth shows, and never stops turning.
+local function buildCog(templates: Instance)
+	local template = templates:FindFirstChild("SkyCog")
+	local hub = template and template:FindFirstChild("Hub", true)
+	if not (template and template:IsA("Model") and hub and hub:IsA("MeshPart")) then
+		return
 	end
-	cog.WorldPivot = center
-	table.insert(spinners, { part = cog, axis = Vector3.zAxis, speed = 0.01, base = center })
+	local base = CFrame.lookAt(COG_AT, Vector3.zero) * CFrame.Angles(0, math.rad(24), 0)
+	local parts, offsets = fileModel(template, hub, base, COG_SCALE, model("Cog"))
+	spin(parts, offsets, base, function(now)
+		return CFrame.Angles(0, 0, now * 0.02)
+	end)
 end
 
-local function buildMoons()
-	local moons = {
-		{ radius = 600, at = Vector3.new(-6000, 3200, -9000), color = Color3.fromRGB(240, 110, 60), speed = 0.003 },
-		{ radius = 350, at = Vector3.new(-11000, 4200, 2000), color = Color3.fromRGB(235, 235, 245), speed = 0.002 },
-		{ radius = 220, at = Vector3.new(4000, 5200, 11000), color = Color3.fromRGB(225, 240, 250), speed = 0.004 },
+-- One moon of the set, by name, with the ring that shares its middle.
+local function moonParts(templates: Instance, name: string, at: CFrame, scale: number): ({ BasePart }, { CFrame })
+	local parts, offsets = {}, {}
+	local template = templates:FindFirstChild("SkyMoons")
+	for _, suffix in { "", "Ring" } do
+		local source = template and template:FindFirstChild(name .. suffix, true)
+		if source and source:IsA("MeshPart") then
+			table.insert(parts, fileMesh(source, at, scale, model(name .. suffix)))
+			table.insert(offsets, CFrame.identity)
+		end
+	end
+	return parts, offsets
+end
+
+local function buildMoons(templates: Instance)
+	-- The lone moons hang where they are, turning on their own axes.
+	local lone = {
+		{ name = "RedMoon", at = Vector3.new(-7000, 5200, -9000), scale = 62 },
+		{ name = "PaleMoon1", at = Vector3.new(-11000, 3000, -2500), scale = 30 },
+		{ name = "PaleMoon2", at = Vector3.new(3000, 6500, -12000), scale = 22 },
 	}
-	for index, spec in moons do
-		local moon = model(`Moon{index}`)
-		sphere(spec.radius, Vector3.zero, spec.color, moon)
-		local flat = Vector3.new(spec.at.X, 0, spec.at.Z)
-		table.insert(orbiters, {
-			model = moon,
-			center = Vector3.zero,
-			radius = flat.Magnitude,
-			height = spec.at.Y,
-			speed = spec.speed,
-			phase = math.atan2(spec.at.Z, spec.at.X),
-		})
+	for _, moon in lone do
+		moon.at *= SPACE_DEPTH
+		moon.scale *= SPACE_DEPTH
+	end
+	for _, moon in lone do
+		local base = CFrame.new(moon.at) * CFrame.Angles(math.rad(12), 0, math.rad(-18))
+		local parts, offsets = moonParts(templates, moon.name, base, moon.scale)
+		spin(parts, offsets, base, function(now)
+			return CFrame.Angles(0, now * 0.01, 0)
+		end)
+	end
+
+	-- The ringed moon circles a point just behind the planet, on a flattened
+	-- loop facing the map and tipped like the planet's rings, so it swings
+	-- out to either side and passes behind the planet, spinning as it goes.
+	local tilt = CFrame.lookAt(PLANET_AT, Vector3.zero) * CFrame.Angles(math.rad(-20), 0, math.rad(-16))
+	local parts, offsets = moonParts(templates, "RingMoon", tilt, 42 * SPACE_DEPTH)
+	local spinner = spin(parts, offsets, tilt, function(now)
+		return CFrame.Angles(0, now * 0.12, 0)
+	end)
+	table.insert(orbiters, {
+		spinner = spinner,
+		center = PLANET_AT + PLANET_AT.Unit * ORBIT_BEHIND,
+		radius = ORBIT_RADIUS,
+		tilt = CFrame.lookAt(PLANET_AT, Vector3.zero).Rotation * CFrame.Angles(0, 0, math.rad(-16)),
+		speed = 0.012,
+		phase = 2,
+	})
+end
+
+-- A direction on the horizon ring, as a point `distance` out and `height` up.
+local function around(angle: number, distance: number, height: number): Vector3
+	return Vector3.new(math.cos(angle) * distance, height, math.sin(angle) * distance)
+end
+
+-- Floating islands and loose rocks, each a baked variant picked in turn
+-- and turned its own way, bobbing a little.
+local function buildIslands(templates: Instance)
+	local template = templates:FindFirstChild("SkyIslands")
+	if not template then
+		return
+	end
+	local islands, rocks = {}, {}
+	for _, source in template:GetDescendants() do
+		if source:IsA("MeshPart") then
+			table.insert(if source.Name:match("^Island") then islands else rocks, source)
+		end
+	end
+	local function scatter(
+		sources: { MeshPart },
+		count: number,
+		group: Model,
+		distance: NumberRange,
+		height: NumberRange,
+		scale: NumberRange
+	)
+		if #sources == 0 then
+			return
+		end
+		for index = 1, count do
+			local source = sources[(index - 1) % #sources + 1]
+			local angle = (index + random:NextNumber(-0.35, 0.35)) / count * math.pi * 2
+			local at =
+				around(angle, random:NextNumber(distance.Min, distance.Max), random:NextNumber(height.Min, height.Max))
+			local base = CFrame.new(at) * CFrame.Angles(0, random:NextNumber(0, math.pi * 2), 0)
+			local size = random:NextNumber(scale.Min, scale.Max)
+			local part = fileMesh(source, base, size, group)
+			local phase, rise = random:NextNumber(0, 6), size * 0.6
+			spin({ part }, { CFrame.identity }, base, function(now)
+				return CFrame.new(0, math.sin(now * 0.15 + phase) * rise, 0)
+			end)
+		end
+	end
+	scatter(
+		islands,
+		ISLANDS,
+		model("Islands"),
+		NumberRange.new(2600, 5200),
+		NumberRange.new(-300, 1500),
+		NumberRange.new(14, 30)
+	)
+	scatter(
+		rocks,
+		ROCKS,
+		model("Rocks"),
+		NumberRange.new(1300, 4200),
+		NumberRange.new(-400, 1300),
+		NumberRange.new(9, 26)
+	)
+end
+
+-- Windmills far out on the horizon, their rotors turning.
+local function buildWindmills(templates: Instance)
+	local template = templates:FindFirstChild("SkyWindmill")
+	local tower = template and template:FindFirstChild("Tower", true)
+	local rotor = template and template:FindFirstChild("Rotor", true)
+	if not (template and tower and tower:IsA("MeshPart") and rotor and rotor:IsA("MeshPart")) then
+		return
+	end
+	-- Each stands on a floating rock, if the island set has any.
+	local rocks = {}
+	local islandSet = templates:FindFirstChild("SkyIslands")
+	for _, source in if islandSet then islandSet:GetDescendants() else {} do
+		if source:IsA("MeshPart") and source.Name:match("^Rock") then
+			table.insert(rocks, source)
+		end
+	end
+	local group = model("Windmills")
+	for index = 1, WINDMILLS do
+		local angle = (index + random:NextNumber(-0.3, 0.3)) / WINDMILLS * math.pi * 2 + 0.6
+		local at = around(angle, random:NextNumber(6500, 8500), random:NextNumber(200, 900))
+		local scale = random:NextNumber(40, 60)
+		-- Facing the map, give or take.
+		local base = CFrame.lookAt(at, Vector3.new(0, at.Y, 0)) * CFrame.Angles(0, random:NextNumber(-0.5, 0.5), 0)
+		fileMesh(tower, base, scale, group)
+		local rock = rocks[(index - 1) % math.max(#rocks, 1) + 1]
+		if rock then
+			-- Wide enough to carry the tower's feet, its top at their level.
+			local rockScale = scale * tower.Size.X * 2.2 / rock.Size.X
+			local drop = tower.Size.Y / 2 * scale + rock.Size.Y * 0.42 * rockScale
+			fileMesh(rock, base * CFrame.new(0, -drop, 0), rockScale, group)
+		end
+		local hub = CFrame.new(tower.CFrame:ToObjectSpace(rotor.CFrame).Position * scale)
+		local speed, phase = random:NextNumber(0.25, 0.5), random:NextNumber(0, 6)
+		local part = fileMesh(rotor, base * hub, scale, group)
+		spin({ part }, { CFrame.identity }, base * hub, function(now)
+			return CFrame.Angles(0, 0, now * speed + phase)
+		end)
 	end
 end
 
 local function buildGalaxy()
-	local galaxy = model("Galaxy")
-	local center = CFrame.lookAt(Vector3.new(-9000, 9000, -11000), Vector3.zero) * CFrame.Angles(math.rad(70), 0, 0)
-	meshPart(
-		Enum.MeshType.Sphere,
-		Vector3.new(1400, 200, 1400),
-		center,
-		Color3.fromRGB(255, 240, 255),
-		galaxy,
-		Enum.Material.Neon,
-		0.6
+	local image = Assets.UI.Galaxy
+	if not Assets.isSet(image) then
+		return
+	end
+	-- A sprite can't be wider than 2048 studs, so it hangs nearer than the
+	-- moons to look as big as it should.
+	local at = Vector3.new(-2000, 1900, -1400)
+	sprite(
+		image,
+		Vector2.new(2048, 1024),
+		CFrame.lookAt(at, Vector3.zero) * CFrame.Angles(0, 0, math.rad(-20)),
+		model("Galaxy")
 	)
-	-- Two arms of soft puffs spiralling out from the core.
-	for arm = 0, 1 do
-		for step = 1, 14 do
-			local angle = arm * math.pi + step * 0.42
-			local distance = 500 + step * 260
-			meshPart(
-				Enum.MeshType.Sphere,
-				Vector3.new(900 - step * 30, 120, 500),
-				center * CFrame.Angles(0, -angle, 0) * CFrame.new(distance, 0, 0),
-				if step % 2 == 0 then Color3.fromRGB(210, 190, 255) else Color3.fromRGB(190, 220, 255),
-				galaxy,
-				Enum.Material.Neon,
-				0.8 + step * 0.01
-			)
-		end
-	end
 end
 
-local function buildRocks()
-	local rocks = model("FloatingRocks")
-	local random = Random.new(7)
-	for _ = 1, 7 do
-		local angle = random:NextNumber(0, math.pi * 2)
-		local distance = random:NextNumber(3000, 7000)
-		local at = Vector3.new(math.cos(angle) * distance, random:NextNumber(-300, 1500), math.sin(angle) * distance)
-		local size = random:NextNumber(80, 320)
-		for _ = 1, random:NextInteger(2, 4) do
-			meshPart(
-				Enum.MeshType.Sphere,
-				Vector3.new(size, size * 0.8, size) * random:NextNumber(0.6, 1.2),
-				CFrame.new(at + random:NextUnitVector() * size * 0.6) * CFrame.Angles(0, random:NextNumber(0, 6), 0),
-				Color3.fromRGB(125, 110, 100):Lerp(Color3.fromRGB(160, 140, 120), random:NextNumber()),
-				rocks
-			)
-		end
-	end
-end
-
-local function buildIslands()
-	local islands = model("FloatingIslands")
-	local random = Random.new(11)
-	-- Three tiers: near, middle and far, each higher and bigger than the last.
-	local tiers = { { 2500, 200, 1 }, { 5000, 900, 2 }, { 8500, 1800, 3.5 } }
-	for _, tier in tiers do
-		for _ = 1, 4 do
-			local angle = random:NextNumber(0, math.pi * 2)
-			local at = Vector3.new(
-				math.cos(angle) * tier[1],
-				tier[2] + random:NextNumber(-200, 200),
-				math.sin(angle) * tier[1]
-			)
-			local scale = tier[3] * random:NextNumber(0.8, 1.3)
-			local width = 160 * scale
-			-- Rock tapering down underneath, moss on top, a few round trees.
-			meshPart(
-				Enum.MeshType.Sphere,
-				Vector3.new(width, width * 1.1, width),
-				CFrame.new(at - Vector3.new(0, width * 0.35, 0)),
-				Color3.fromRGB(140, 115, 95),
-				islands
-			)
-			meshPart(
-				Enum.MeshType.Cylinder,
-				Vector3.new(width * 0.12, width * 1.02, width * 1.02),
-				CFrame.new(at + Vector3.new(0, width * 0.15, 0)) * CFrame.Angles(0, 0, math.rad(90)),
-				Color3.fromRGB(110, 190, 90),
-				islands
-			)
-			for _ = 1, random:NextInteger(2, 4) do
-				local spot = at
-					+ Vector3.new(
-						random:NextNumber(-0.3, 0.3) * width,
-						width * 0.21,
-						random:NextNumber(-0.3, 0.3) * width
-					)
-				local trunk = width * 0.18
-				meshPart(
-					Enum.MeshType.Cylinder,
-					Vector3.new(trunk, trunk * 0.18, trunk * 0.18),
-					CFrame.new(spot + Vector3.new(0, trunk / 2, 0)) * CFrame.Angles(0, 0, math.rad(90)),
-					Color3.fromRGB(120, 85, 60),
-					islands
-				)
-				sphere(trunk * 0.55, spot + Vector3.new(0, trunk * 1.1, 0), Color3.fromRGB(90, 175, 80), islands)
-			end
-		end
-	end
-end
-
-local function buildStructures()
-	local structures = model("Structures")
-	local random = Random.new(23)
-	for _ = 1, 6 do
-		local angle = random:NextNumber(0, math.pi * 2)
-		local distance = random:NextNumber(11000, 14000)
-		local at = Vector3.new(math.cos(angle) * distance, random:NextNumber(-600, 400), math.sin(angle) * distance)
-		local tower = Instance.new("Model")
-		tower.Name = "Structure"
-		tower.Parent = structures
-		local height = random:NextNumber(1500, 3500)
-		local color = Color3.fromRGB(150, 170, 210)
-		local base =
-			meshPart(Enum.MeshType.Brick, Vector3.new(300, height, 300), CFrame.new(at), color, tower, nil, 0.35)
-		meshPart(
-			Enum.MeshType.Brick,
-			Vector3.new(900, 120, 120),
-			CFrame.new(at + Vector3.new(0, height * 0.35, 0)),
-			color,
-			tower,
-			nil,
-			0.35
-		)
-		tower.PrimaryPart = base
-		table.insert(spinners, {
-			part = tower,
-			axis = Vector3.yAxis,
-			speed = random:NextNumber(0.01, 0.03),
-			base = CFrame.new(at),
-		})
-	end
-end
-
+-- Painted clouds, always far off, each facing the map, in layers that
+-- drift round it at different paces.
 local function buildClouds()
-	local clouds = model("Clouds")
-	local random = Random.new(5)
-	for _ = 1, 16 do
-		local angle = random:NextNumber(0, math.pi * 2)
-		local distance = random:NextNumber(1200, 6000)
-		local at = Vector3.new(math.cos(angle) * distance, random:NextNumber(250, 900), math.sin(angle) * distance)
-		local size = random:NextNumber(120, 320)
-		for puff = 1, random:NextInteger(4, 7) do
-			local offset = Vector3.new(
-				random:NextNumber(-1.2, 1.2) * size,
-				random:NextNumber(0, 0.4) * size,
-				random:NextNumber(-0.5, 0.5) * size
-			)
-			meshPart(
-				Enum.MeshType.Sphere,
-				Vector3.new(size, size * 0.7, size) * (if puff == 1 then 1.3 else random:NextNumber(0.6, 1)),
-				CFrame.new(at + offset),
-				Color3.new(1, 1, 1),
-				clouds,
-				nil,
-				0.1
-			)
-		end
+	for layer, speed in CLOUD_DRIFT do
+		local group = model("Clouds" .. layer)
+		group.WorldPivot = CFrame.identity
+		table.insert(cloudLayers, { model = group, speed = speed })
 	end
-	clouds.WorldPivot = CFrame.identity
-	table.insert(spinners, { part = clouds, axis = Vector3.yAxis, speed = 0.004, base = CFrame.identity })
+	for index = 1, CLOUDS do
+		local image = (Assets.UI :: { [string]: string })[string.format("Cloud%02d", index)]
+		if not Assets.isSet(image) then
+			continue
+		end
+		local angle = (index + random:NextNumber(-0.4, 0.4)) / CLOUDS * math.pi * 2
+		local distance = random:NextNumber(CLOUD_DISTANCE.Min, CLOUD_DISTANCE.Max)
+		-- Most sit low, near the horizon; a few ride high.
+		local height = CLOUD_HEIGHT.Min + (CLOUD_HEIGHT.Max - CLOUD_HEIGHT.Min) * random:NextNumber() ^ 2
+		local at = around(angle, distance, height)
+		local width = random:NextNumber(CLOUD_WIDTH.Min, CLOUD_WIDTH.Max)
+		-- The SurfaceGui is on the part's front, which looks along -Z.
+		local facing = CFrame.lookAt(at, Vector3.new(0, at.Y, 0))
+		sprite(image, Vector2.new(width, width / 2), facing, cloudLayers[index % #cloudLayers + 1].model)
+	end
 end
 
 local function animate()
 	local now = os.clock()
-	for _, spinner in spinners do
-		local cframe = spinner.base * CFrame.fromAxisAngle(spinner.axis, now * spinner.speed)
-		if spinner.part:IsA("Model") then
-			spinner.part:PivotTo(cframe)
-		else
-			spinner.part.CFrame = cframe
-		end
-	end
 	for _, orbiter in orbiters do
 		local angle = orbiter.phase + now * orbiter.speed
-		local position = orbiter.center
-			+ Vector3.new(math.cos(angle) * orbiter.radius, orbiter.height, math.sin(angle) * orbiter.radius)
-		orbiter.model:PivotTo(CFrame.new(position) * orbiter.model:GetPivot().Rotation)
+		local at = orbiter.tilt
+			* Vector3.new(math.cos(angle) * orbiter.radius, math.sin(angle) * orbiter.radius * ORBIT_FLAT, 0)
+		orbiter.spinner.base = CFrame.new(orbiter.center + at) * orbiter.spinner.base.Rotation
 	end
-end
-
--- Now and then a ring segment glints.
-local function sparkleRings()
-	while true do
-		task.wait(RING_SPARKLE_SECONDS)
-		local part = ringParts[math.random(#ringParts)]
-		if part then
-			part.Transparency = 0
-			TweenService:Create(part, TweenInfo.new(0.8), { Transparency = 0.25 }):Play()
+	for _, spinner in spinners do
+		local turned = spinner.base * spinner.turn(now)
+		for index, part in spinner.parts do
+			local entry = hosted[part]
+			if entry then
+				entry.target = turned * spinner.offsets[index]
+			end
 		end
+	end
+	for _, layer in cloudLayers do
+		layer.model:PivotTo(CFrame.Angles(0, now * layer.speed, 0))
+	end
+
+	-- Hosts stand just in front of the camera, turned as their meshes are;
+	-- the Offset (in the host's own space) carries each mesh out to its place.
+	local camera = Workspace.CurrentCamera
+	if not camera then
+		return
+	end
+	local ahead = camera.CFrame.Position + camera.CFrame.LookVector * HOST_AHEAD
+	for part, entry in hosted do
+		local host = CFrame.new(ahead) * entry.target.Rotation
+		part.CFrame = host
+		entry.mesh.Offset = host:PointToObjectSpace(entry.target.Position)
 	end
 end
 
@@ -565,18 +667,25 @@ function AtmosphereController.start()
 	world.Parent = Workspace
 
 	buildSky()
-	buildPlanet()
-	buildCog()
-	buildMoons()
 	buildGalaxy()
-	buildRocks()
-	buildIslands()
-	buildStructures()
 	buildClouds()
 	buildMotes()
 
-	RunService.Heartbeat:Connect(animate)
-	task.spawn(sparkleRings)
+	-- The baked models; without them (PlaceSky not run yet) the sky keeps
+	-- its clouds and gradient.
+	local templates = ReplicatedStorage:FindFirstChild(SKY_MODELS)
+	if templates then
+		buildPlanet(templates)
+		buildCog(templates)
+		buildMoons(templates)
+		buildIslands(templates)
+		buildWindmills(templates)
+	else
+		warn(`AtmosphereController: no ReplicatedStorage.{SKY_MODELS}; run tools/studio/PlaceSky.luau`)
+	end
+
+	-- After the camera moves, so the hosts sit where it is this frame.
+	RunService:BindToRenderStep("Atmosphere", Enum.RenderPriority.Camera.Value + 2, animate)
 	-- The map streams in after spawn.
 	task.delay(5, shimmerIslands)
 	task.spawn(function()
