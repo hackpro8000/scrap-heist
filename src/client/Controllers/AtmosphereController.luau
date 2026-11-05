@@ -39,6 +39,8 @@ local Workspace = game:GetService("Workspace")
 local Assets = require(ReplicatedStorage.Shared.Assets)
 
 local SKY_MODELS = "SkyModels"
+-- Every part this controller makes, the hosts of meshes and sprites included.
+local HOST_MATERIAL = Enum.Material.Sand
 -- SurfaceGuis stop drawing past their MaxDistance; the sky is far past it.
 local FAR = 1e6
 
@@ -167,7 +169,7 @@ local function meshPart(
 	part.Size = Vector3.one
 	part.CFrame = cframe
 	part.Color = color
-	part.Material = material or Enum.Material.SmoothPlastic
+	part.Material = material or HOST_MATERIAL
 	part.Transparency = transparency or 0
 	local mesh = Instance.new("SpecialMesh")
 	mesh.MeshType = kind
@@ -233,6 +235,7 @@ end
 -- `size` studs across. A part can't be bigger than 2048 studs.
 local function sprite(image: string, size: Vector2, cframe: CFrame, parent: Instance): BasePart
 	local part = Instance.new("Part")
+	part.Material = HOST_MATERIAL
 	part.Anchored = true
 	part.CanCollide = false
 	part.CanQuery = false
@@ -639,6 +642,7 @@ end
 -- Dust motes in a box that follows the camera.
 local function buildMotes()
 	local box = Instance.new("Part")
+	box.Material = HOST_MATERIAL
 	box.Name = "DustMotes"
 	box.Anchored = true
 	box.CanCollide = false
@@ -734,6 +738,7 @@ local function shimmerIslands()
 		end
 		local box, size = island:GetBoundingBox()
 		local rim = Instance.new("Part")
+		rim.Material = HOST_MATERIAL
 		rim.Name = "Shimmer"
 		rim.Anchored = true
 		rim.CanCollide = false
