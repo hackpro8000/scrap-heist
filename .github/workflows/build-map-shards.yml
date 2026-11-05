@@ -1,0 +1,134 @@
+# Builds a layout (ServerMap) split across parallel machines with modelkit
+# --shard, uploads every shard's chunks to Roblox and opens a PR with the
+# merged chunk IDs and anchors. Run it from the Actions tab or with
+#
+#   gh workflow run build-map-shards.yml -f ref=<commit or branch> -f shards=8
+#
+# Uploads need the repository secrets ROBLOX_API_KEY (asset:write) and
+# ROBLOX_CREATOR_ID; without them the shards are built and checked only.
+# Only small results (part lists, manifests, IDs, previews) are kept as
+# artifacts, for a day: the .glb chunks go straight to Roblox.
+name: Build map shards
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Commit or branch to build (scripts/push-wip.sh pushes unfinished work to wip/coordinator)
+        default: main
+      layout:
+        description: Layout to build
+        default: ServerMap
+      shards:
+        description: Number of machines
+        default: "8"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
+    steps:
+      - id: plan
+        run: echo "shards=$(seq -s, 1 "${{ inputs.shards }}" | sed 's/^/[/; s/$/]/')" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: plan
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    env:
+      LAYOUT: ${{ inputs.layout }}
+      SHARE: ${{ matrix.shard }}/${{ inputs.shards }}
+      ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+      ROBLOX_CREATOR_ID: ${{ secrets.ROBLOX_CREATOR_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+      - name: Build shard ${{ matrix.shard }}
+        run: |
+          scripts/assemble-model.sh "$LAYOUT"
+          start=$SECONDS
+          scripts/build-model.sh "$LAYOUT" -- --chunks --shard "$SHARE"
+          echo "BUILD_SECONDS=$((SECONDS - start))" >> "$GITHUB_ENV"
+      - name: Collect results
+        run: |
+          out="results/S${{ matrix.shard }}"
+          mkdir -p "$out"
+          python3 - "art/models/$LAYOUT/$LAYOUT.glb" > "$out/parts.txt" << 'EOF'
+          import json, struct, sys
+          data = open(sys.argv[1], "rb").read()
+          length = struct.unpack_from("<I", data, 12)[0]
+          names = [node["name"] for node in json.loads(data[20:20 + length])["nodes"] if "mesh" in node]
+          print("\n".join(sorted(names)))
+          EOF
+          cp "art/models/$LAYOUT/chunks/${LAYOUT}Chunks.luau" "$out/"
+          cp "art/models/$LAYOUT/preview.png" "$out/" || true
+      - name: Upload chunks to Roblox
+        if: env.ROBLOX_API_KEY != '' && env.ROBLOX_CREATOR_ID != ''
+        run: |
+          start=$SECONDS
+          scripts/upload-chunks.sh "$LAYOUT"
+          cp "art/models/$LAYOUT/chunks/${LAYOUT}AssetIds.txt" "results/S${{ matrix.shard }}/"
+          echo "UPLOAD_SECONDS=$((SECONDS - start))" >> "$GITHUB_ENV"
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Shard $SHARE" >> "$GITHUB_STEP_SUMMARY"
+          echo "build ${BUILD_SECONDS:--}s, upload ${UPLOAD_SECONDS:-skipped}${UPLOAD_SECONDS:+s}, $(wc -l < "results/S${{ matrix.shard }}/parts.txt" 2>/dev/null || echo 0) parts" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shard-${{ matrix.shard }}
+          path: results/S${{ matrix.shard }}
+          retention-days: 1
+
+  merge:
+    needs: build
+    runs-on: ubuntu-24.04
+    env:
+      LAYOUT: ${{ inputs.layout }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/download-artifact@v4
+        with:
+          path: shards
+          pattern: shard-*
+      - name: Check shards
+        run: |
+          count=$(ls -d shards/shard-* | wc -l)
+          [ "$count" -eq "${{ inputs.shards }}" ] || { echo "only $count of ${{ inputs.shards }} shards came back"; exit 1; }
+          twice=$(cat shards/shard-*/parts.txt | sort | uniq -d)
+          [ -z "$twice" ] || { echo "parts built by more than one shard:"; echo "$twice" | head; exit 1; }
+          echo "$(cat shards/shard-*/parts.txt | wc -l) parts across $count shards, none built twice" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Merge chunk IDs and open a PR
+        run: |
+          if ! ls shards/shard-*/"${LAYOUT}AssetIds.txt" > /dev/null 2>&1; then
+            echo "No chunks were uploaded (no Roblox secrets), so there is nothing to merge." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          scripts/merge-shards.sh "$LAYOUT" $(ls -d shards/shard-* | sort -V)
+          branch="map-chunks/${{ github.run_id }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add src/shared/Assets.luau src/shared/Config/MapChunks.luau
+          git commit -m "$LAYOUT chunks from a ${{ inputs.shards }}-shard build of ${{ inputs.ref }}"
+          git push origin "$branch"
+          if gh pr create --base main --head "$branch" \
+            --title "$LAYOUT chunks: ${{ inputs.shards }}-shard build of ${{ inputs.ref }}" \
+            --body "New chunk IDs and anchors from [run ${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}). Load them in Studio with tools/studio/PlaceMap.luau."; then
+            echo "Opened a PR from $branch" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Pushed $branch, but couldn't open a PR (allow GitHub Actions to create pull requests in the repository settings): ${{ github.server_url }}/${{ github.repository }}/compare/$branch" | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
