@@ -89,11 +89,12 @@ local CLOUD_SLICE_GAP = 350
 -- Parallax: a cloud layer follows this share of the camera's sideways
 -- movement, so the deeper a layer the more it hangs back while nearer ones
 -- slide past. Each also turns round the map at its own pace (radians a
--- second), the near ones fastest. The side-on clouds' layers, near to far:
+-- second), the near ones fastest, and fades by `fade` (image transparency)
+-- the deeper it lies. The side-on clouds' layers, near to far:
 local CLOUD_LAYERS = {
-	{ distance = NumberRange.new(4500, 6000), follow = 0.25, drift = 0.0034 },
-	{ distance = NumberRange.new(6000, 7500), follow = 0.45, drift = 0.0024 },
-	{ distance = NumberRange.new(7500, 9000), follow = 0.65, drift = 0.0016 },
+	{ distance = NumberRange.new(4500, 6000), follow = 0.25, drift = 0.0034, fade = 0 },
+	{ distance = NumberRange.new(6000, 7500), follow = 0.45, drift = 0.0024, fade = 0.3 },
+	{ distance = NumberRange.new(7500, 9000), follow = 0.65, drift = 0.0016, fade = 0.55 },
 }
 -- The layer of clouds below the map, painted from above (Assets.UI.
 -- CloudBelowNN), lying flat and facing up, round the map's middle.
@@ -107,11 +108,11 @@ local BELOW_WIDTH = NumberRange.new(700, 1700)
 local BELOW_SLICES = 4
 local BELOW_SLICE_GAP = 45
 -- The layer's bands, near (just under the map) to deep; deeper clouds are
--- painted a little bigger so they still read.
+-- painted a little bigger so they still read, and fade more.
 local BELOW_LAYERS = {
-	{ height = NumberRange.new(-480, -360), follow = 0.1, drift = 0.004, grow = 1 },
-	{ height = NumberRange.new(-700, -580), follow = 0.3, drift = 0.0028, grow = 1.15 },
-	{ height = NumberRange.new(-960, -840), follow = 0.5, drift = 0.0018, grow = 1.2 },
+	{ height = NumberRange.new(-480, -360), follow = 0.1, drift = 0.004, grow = 1, fade = 0 },
+	{ height = NumberRange.new(-700, -580), follow = 0.3, drift = 0.0028, grow = 1.15, fade = 0.3 },
+	{ height = NumberRange.new(-960, -840), follow = 0.5, drift = 0.0018, grow = 1.2, fade = 0.55 },
 }
 
 local ISLANDS = 9
@@ -234,9 +235,16 @@ local function spin(parts: { BasePart }, offsets: { CFrame }, base: CFrame, turn
 end
 
 -- A painted sprite standing at `cframe`, facing along its look direction,
--- `size` studs across, lit `brightness` times over. A part can't be bigger
--- than 2048 studs.
-local function sprite(image: string, size: Vector2, cframe: CFrame, parent: Instance, brightness: number?): BasePart
+-- `size` studs across, lit `brightness` times over and `fade` see-through.
+-- A part can't be bigger than 2048 studs.
+local function sprite(
+	image: string,
+	size: Vector2,
+	cframe: CFrame,
+	parent: Instance,
+	brightness: number?,
+	fade: number?
+): BasePart
 	local part = Instance.new("Part")
 	part.Material = HOST_MATERIAL
 	part.Anchored = true
@@ -259,6 +267,7 @@ local function sprite(image: string, size: Vector2, cframe: CFrame, parent: Inst
 	label.BackgroundTransparency = 1
 	label.Size = UDim2.fromScale(1, 1)
 	label.Image = image
+	label.ImageTransparency = fade or 0
 	label.Parent = gui
 	part.Parent = parent
 	return part
@@ -569,7 +578,14 @@ local function buildClouds()
 			local at = around(angle, distance * grow, height * grow)
 			-- The SurfaceGui is on the part's front, which looks along -Z.
 			local facing = CFrame.lookAt(at, Vector3.new(0, at.Y, 0))
-			sprite(image, Vector2.new(width, width / 2) * grow, facing, layers[band].model, CLOUD_BRIGHTNESS)
+			sprite(
+				image,
+				Vector2.new(width, width / 2) * grow,
+				facing,
+				layers[band].model,
+				CLOUD_BRIGHTNESS,
+				CLOUD_LAYERS[band].fade
+			)
 		end
 	end
 end
@@ -603,7 +619,7 @@ local function buildCloudsBelow()
 			end
 			local lift = Vector3.yAxis * (slice - 1) * BELOW_SLICE_GAP
 			local facing = CFrame.lookAt(at + lift, at + lift + Vector3.yAxis) * CFrame.Angles(0, 0, turn)
-			sprite(image, Vector2.new(width, width / 2), facing, layers[band].model, CLOUD_BRIGHTNESS)
+			sprite(image, Vector2.new(width, width / 2), facing, layers[band].model, CLOUD_BRIGHTNESS, layer.fade)
 		end
 	end
 end
