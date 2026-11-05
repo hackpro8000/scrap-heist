@@ -45,7 +45,7 @@ local FAR = 1e6
 -- else in the sky: islands and clouds never pass behind it. Past about
 -- 40,000 studs the engine hazes everything toward the sky, so the cog (the
 -- farthest) stays inside that.
-local SPACE_DEPTH = 2.6
+local SPACE_DEPTH = 2.3
 
 local PLANET_AT = Vector3.new(9000, 2900, -7000) * SPACE_DEPTH
 -- The art is 10 studs in radius.
@@ -64,9 +64,9 @@ local ORBIT_RADIUS = 6500 * SPACE_DEPTH
 local ORBIT_BEHIND = 3500 * SPACE_DEPTH
 local ORBIT_FLAT = 0.3
 
-local COG_AT = Vector3.new(8615, 3609, -11091) * SPACE_DEPTH
+local COG_AT = Vector3.new(10100, 4231, -13003) * SPACE_DEPTH
 -- The art is 8.5 studs in radius.
-local COG_SCALE = 420 * SPACE_DEPTH
+local COG_SCALE = 492 * SPACE_DEPTH
 
 local CLOUDS = 50
 local CLOUD_DISTANCE = NumberRange.new(4500, 9000)
@@ -290,9 +290,10 @@ local function buildPlanet(templates: Instance)
 end
 
 -- The cog stands just behind the planet, offset enough that the planet
--- hides its near side but not its hub, turned a little off face-on so its
--- depth shows (not so far that it reaches into the rings), and never stops
--- turning.
+-- hides its near side but not its hub, and never stops turning. The rings
+-- lie nearly edge-on to the map, so they reach far back past the planet:
+-- the cog stands farther back still (and is scaled up to match), clear of
+-- them, turned only a little off face-on so it stays thin from front to back.
 local function buildCog(templates: Instance)
 	local template = templates:FindFirstChild("SkyCog")
 	local hub = template and template:FindFirstChild("Hub", true)
