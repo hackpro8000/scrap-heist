@@ -1,4 +1,4 @@
-local CACHE_KEY = "SkyIslands-90d476e8e352a9d0"
+local CACHE_KEY = "SkyIslands-a140b14b6cfdcbc8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1157,8 +1157,18 @@ local function groundPainter(island, offsetX, offsetY)
 				-- tier beneath, round the foot of this one's wall.
 			end
 		end
-		-- Strata measured from the lowest tier's top, so the beds line up.
-		local r, g, b = islandPaint(x, y, z - island.tiers[1].top + 0.5, island.seed, 1.05)
+		-- Strata measured down from the top of the tier this wall belongs to:
+		-- the lowest tier whose top is above the point.
+		local wallTop = math.huge
+		for _, tier in island.tiers do
+			if tier.top >= z - 0.05 then
+				wallTop = math.min(wallTop, tier.top)
+			end
+		end
+		if wallTop == math.huge then
+			wallTop = island.tiers[1].top
+		end
+		local r, g, b = islandPaint(x, y, z - wallTop + 0.5, island.seed, 1.05)
 		local fade = math.clamp(-z / -bottom, 0, 1) * 0.35
 		return blend({ r, g, b }, HAZE, fade)
 	end
