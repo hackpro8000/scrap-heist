@@ -195,6 +195,7 @@ local function onPadTriggered(player: Player, yard: PlotService.Yard, padName: s
 
 	local level = if machine then machine.level + 1 else 1
 	data.yard.machines[padName] = { level = level }
+	Notify.Sound:FireClient(player, "Purchase")
 	refreshPad(yard, padName)
 	MachineService.machineChanged:fire(player, padName, level)
 end
@@ -204,6 +205,7 @@ local function bank(player: Player, parts: number)
 	local scrap = math.floor(parts * Economy.PART_VALUE * ShopService.scrapMultiplier(player))
 	DataService.addScrap(player, scrap)
 	Notify.Message:FireClient(player, `Collected {scrap} scrap`)
+	Notify.Sound:FireClient(player, "Collect")
 	MachineService.crateCollected:fire(player, parts)
 end
 

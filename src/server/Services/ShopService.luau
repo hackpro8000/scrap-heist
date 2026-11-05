@@ -178,6 +178,7 @@ local function onBuyWeapon(player: Player, weaponName: any): string?
 	data.weapons[weaponName] = true
 	syncWeapons(player)
 	ShopService.weaponsChanged:fire(player)
+	Notify.Sound:FireClient(player, "Purchase")
 	Notify.Message:FireClient(
 		player,
 		`{WeaponConfig.Weapons[weaponName].displayName} is yours! Press its number to equip it.`
@@ -207,6 +208,7 @@ local function onBuyBoost(player: Player, boostName: any): string?
 		data.raidShieldUntil = math.max(data.raidShieldUntil, endsAt)
 		ShopService.syncShield(player)
 	end
+	Notify.Sound:FireClient(player, "Purchase")
 	Notify.Message:FireClient(player, `{boost.displayName} running for {boost.seconds // 60} minutes`)
 	sendState(player)
 	return nil
@@ -245,6 +247,7 @@ local function processReceipt(receipt: { [string]: any }): Enum.ProductPurchaseD
 	DataService.addScrap(player, pack.scrap)
 	DataService.save(player)
 	Notify.Message:FireClient(player, `+{pack.scrap} scrap. Thanks!`)
+	Notify.Sound:FireClient(player, "Purchase")
 	return Enum.ProductPurchaseDecision.PurchaseGranted
 end
 
@@ -268,6 +271,7 @@ function ShopService.start()
 				if pass.gamePassId ~= 0 and pass.gamePassId == gamePassId then
 					setPassOwned(player, pass.name)
 					Notify.Message:FireClient(player, `{pass.displayName} unlocked!`)
+					Notify.Sound:FireClient(player, "Purchase")
 				end
 			end
 			sendState(player)

@@ -4,6 +4,7 @@
 
 	Server to client:
 		Message(text)   -- a short toast for one player ("Not enough scrap")
+		Sound(key)      -- plays Assets.Sounds[key] for one player ("Purchase")
 ]]
 
 local Net = require(script.Parent.Net)
@@ -12,4 +13,5 @@ local SYSTEM = "Notify"
 
 return {
 	Message = Net.event(SYSTEM, "Message"),
+	Sound = Net.event(SYSTEM, "Sound"),
 }

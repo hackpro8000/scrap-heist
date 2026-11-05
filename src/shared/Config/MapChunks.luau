@@ -61,7 +61,7 @@ return {
 		file = "ServerMap_07.glb",
 		parts = 39,
 		anchors = {
-			{ name = "MarketIslandRock_Columns_0_0_-1_101", position = Vector3.new(688.3434, -31.62254, 1.9245772) },
+			{ name = "MarketIslandRock_Columns_0_0_-1_101", position = Vector3.new(715.3434, -31.62254, 1.9245772) },
 			{ name = "Avenue4_EndPosts", position = Vector3.new(499.99292, 2.9022593, 0.014246225) },
 		},
 	},
@@ -70,35 +70,35 @@ return {
 		file = "ServerMap_08.glb",
 		parts = 54,
 		anchors = {
-			{ name = "MarketIslandRock_Grass_-1_-1_0_000", position = Vector3.new(601.9757, -1.3348733, 17.811165) },
-			{ name = "MarketIslandRock_Dirt_0_0_0_110", position = Vector3.new(701.6239, -6.7402005, -18.22268) },
+			{ name = "MarketIslandRock_Grass_-1_-1_0_000", position = Vector3.new(628.9757, -1.3348733, 17.811165) },
+			{ name = "MarketIslandRock_Dirt_0_0_0_110", position = Vector3.new(728.6239, -6.7402005, -18.22268) },
 		},
 	},
 	{
 		key = "ServerMap09",
 		file = "ServerMap_09.glb",
-		parts = 45,
+		parts = 44,
 		anchors = {
-			{ name = "Avenue5_Posts", position = Vector3.new(594.9846, 2.6456153, -0.0016610622) },
-			{ name = "MarketIslandRock_Grass_0_0_0_110", position = Vector3.new(702.4221, -1.1280881, -17.75564) },
+			{ name = "Avenue5_HazardYellow", position = Vector3.new(608.20074, 2.06, 0) },
+			{ name = "MarketIslandRock_Grass_0_0_0_110", position = Vector3.new(729.4221, -1.1280881, -17.75564) },
 		},
 	},
 	{
 		key = "ServerMap10",
 		file = "ServerMap_10.glb",
-		parts = 46,
+		parts = 45,
 		anchors = {
-			{ name = "Shop_Container_-1_-1_0_010", position = Vector3.new(675.10693, 4.808943, -10.068851) },
-			{ name = "Shop_Container_0_0_0_101", position = Vector3.new(680.1616, 9.700348, 10.003075) },
+			{ name = "Shop_Container_-1_0_0_000", position = Vector3.new(705.5365, 4.8261914, -10.066711) },
+			{ name = "Shop_Container_0_0_0_101", position = Vector3.new(707.1616, 9.700348, 10.003075) },
 		},
 	},
 	{
 		key = "ServerMap11",
 		file = "ServerMap_11.glb",
-		parts = 37,
+		parts = 36,
 		anchors = {
-			{ name = "Shop_Doors", position = Vector3.new(677.03827, 5.7437515, 11.276333) },
-			{ name = "Shop_Frame_-1_-1_0_011", position = Vector3.new(674.99084, 8.332964, -10.047283) },
+			{ name = "Shop_Doors", position = Vector3.new(704.03827, 5.7437515, 11.276333) },
+			{ name = "Shop_Container_-1_-1_0_011", position = Vector3.new(702.0123, 8.465285, -10.050419) },
 		},
 	},
 	{
@@ -106,41 +106,41 @@ return {
 		file = "ServerMap_12.glb",
 		parts = 73,
 		anchors = {
-			{ name = "Shop_Frame_-1_0_0_100_001", position = Vector3.new(680.64764, 5.8616014, -9.983452) },
-			{ name = "Shop_DoorProp", position = Vector3.new(678.7272, 4.4861803, 13.306605) },
+			{ name = "Shop_Frame_-1_-1_0_011", position = Vector3.new(701.99084, 8.332964, -10.047283) },
+			{ name = "Shop_DoorProp", position = Vector3.new(705.7272, 4.4861803, 13.306605) },
 		},
 	},
 	{
 		key = "ServerMap13",
 		file = "ServerMap_13.glb",
-		parts = 96,
+		parts = 94,
 		anchors = {
-			{ name = "Shop_Counter_-1_0_0_100_001_011", position = Vector3.new(679.52625, 4.66788, -8.5246) },
-			{ name = "Shop_FlapFrame_0_-1_0_011_101_001", position = Vector3.new(668.7788, 8.813689, 6.7998967) },
+			{ name = "Shop_Counter_-1_0_0_100_001_100", position = Vector3.new(706.4016, 5.9859376, -5.7055235) },
+			{ name = "Shop_FlapFrame_0_-1_0_011_101_001", position = Vector3.new(695.7788, 8.813689, 6.7998967) },
 		},
 	},
 	{
 		key = "ServerMap14",
 		file = "ServerMap_14.glb",
-		parts = 30,
+		parts = 34,
 		anchors = {
-			{ name = "Shop_Stock", position = Vector3.new(672.0231, 3.0445018, -12.198507) },
-			{ name = "Shop_SignJaw", position = Vector3.new(676.1402, 20.376183, 6.992863) },
+			{ name = "Shop_SignJaw", position = Vector3.new(703.1402, 20.376183, 6.992863) },
+			{ name = "Shop_Counter_-1_0_0_100_000", position = Vector3.new(705.5217, 3.8075688, -8.006447) },
 		},
 	},
 	{
 		key = "ServerMap15",
 		file = "ServerMap_15.glb",
-		parts = 69,
+		parts = 66,
 		anchors = {
 			{ name = "Island1_Columns_-1_-1_0", position = Vector3.new(197.97464, -15.558359, -92.10275) },
-			{ name = "Shop_Drum", position = Vector3.new(681.98474, 3.6647136, 13.494031) },
+			{ name = "Shop_Drum", position = Vector3.new(708.98474, 3.6647136, 13.494031) },
 		},
 	},
 	{
 		key = "ServerMap16",
 		file = "ServerMap_16.glb",
-		parts = 74,
+		parts = 65,
 		anchors = {
 			{ name = "Island1_Grass_0_0_0_110", position = Vector3.new(267.95386, 3.5470216, -74.1679) },
 			{ name = "Island1_Grass_-1_-1_0_000", position = Vector3.new(172.72914, 3.4132085, -91.94004) },
@@ -149,7 +149,7 @@ return {
 	{
 		key = "ServerMap17",
 		file = "ServerMap_17.glb",
-		parts = 118,
+		parts = 131,
 		anchors = {
 			{ name = "Yard1_FenceFrontHalf1_Sheets", position = Vector3.new(199.00105, 9.817822, -59.96888) },
 			{ name = "Yard1_FootingBack4_Footing", position = Vector3.new(237.99783, 6.266335, -108.03322) },
@@ -179,7 +179,7 @@ return {
 		parts = 95,
 		anchors = {
 			{ name = "Island3_Columns_-1_0_0_110", position = Vector3.new(351.28497, -8.055065, -115.18216) },
-			{ name = "Yard2_FenceBack4_Posts", position = Vector3.new(201.995, 9.97339, 108.13428) },
+			{ name = "Yard2_FenceBack4_Sheets", position = Vector3.new(201.97807, 9.821013, 108.03191) },
 		},
 	},
 	{
@@ -196,8 +196,8 @@ return {
 		file = "ServerMap_22.glb",
 		parts = 135,
 		anchors = {
-			{ name = "Yard3_FenceLeft1_Posts", position = Vector3.new(307.86572, 9.97339, -66.005005) },
-			{ name = "Yard3_FootingRight4_Footing", position = Vector3.new(355.9668, 6.266335, -101.99783) },
+			{ name = "Yard3_FenceRight1_Sheets", position = Vector3.new(356.03192, 9.821013, -65.97807) },
+			{ name = "Yard3_FootingLeft4_Footing", position = Vector3.new(307.9668, 6.266335, -101.99783) },
 		},
 	},
 	{
@@ -224,7 +224,7 @@ return {
 		parts = 113,
 		anchors = {
 			{ name = "Island5_Columns_-1_0_0_110", position = Vector3.new(463.28497, -8.055065, -115.18216) },
-			{ name = "Yard4_FenceBack4_Posts", position = Vector3.new(313.995, 9.97339, 108.13428) },
+			{ name = "Yard4_FenceBack4_Sheets", position = Vector3.new(313.9781, 9.821013, 108.03191) },
 		},
 	},
 	{
@@ -242,7 +242,7 @@ return {
 		parts = 120,
 		anchors = {
 			{ name = "Island5_Grass_0_0_0_110", position = Vector3.new(491.95386, 3.5470216, -74.1679) },
-			{ name = "Yard5_FenceBack1_Posts", position = Vector3.new(426.005, 9.97339, -108.13428) },
+			{ name = "Yard5_FenceBack1_Sheets", position = Vector3.new(426.0219, 9.821013, -108.03191) },
 		},
 	},
 	{
@@ -251,7 +251,7 @@ return {
 		parts = 76,
 		anchors = {
 			{ name = "Island6_Columns_-1_0_0_001", position = Vector3.new(455.07648, -12.422028, 118.53125) },
-			{ name = "Yard5_FenceBack4_Posts", position = Vector3.new(462.005, 9.97339, -108.13428) },
+			{ name = "Yard5_FenceBack4_Sheets", position = Vector3.new(462.0219, 9.821013, -108.03191) },
 		},
 	},
 	{
@@ -269,7 +269,7 @@ return {
 		parts = 113,
 		anchors = {
 			{ name = "Spoke6_Road", position = Vector3.new(444.0027, 6.0490174, 51.500114) },
-			{ name = "Yard6_FenceBack4_Posts", position = Vector3.new(425.995, 9.97339, 108.13428) },
+			{ name = "Yard6_FenceBack4_Sheets", position = Vector3.new(425.9781, 9.821013, 108.03191) },
 		},
 	},
 	{
@@ -296,7 +296,7 @@ return {
 		parts = 95,
 		anchors = {
 			{ name = "Island8_Columns_-1_0_0_001", position = Vector3.new(567.0765, -12.422028, 118.53125) },
-			{ name = "Yard7_FenceBack1_Posts", position = Vector3.new(538.005, 9.97339, -108.13428) },
+			{ name = "Yard7_FenceBack1_Sheets", position = Vector3.new(538.0219, 9.821013, -108.03191) },
 		},
 	},
 	{
@@ -313,8 +313,8 @@ return {
 		file = "ServerMap_35.glb",
 		parts = 135,
 		anchors = {
-			{ name = "Yard8_FenceLeft1_Posts", position = Vector3.new(580.1343, 9.97339, 66.005005) },
-			{ name = "Yard8_FootingRight4_Footing", position = Vector3.new(532.0332, 6.266335, 101.99783) },
+			{ name = "Yard8_FenceRight1_Sheets", position = Vector3.new(531.9681, 9.821013, 65.97807) },
+			{ name = "Yard8_FootingLeft4_Footing", position = Vector3.new(580.0332, 6.266335, 101.99783) },
 		},
 	},
 	{

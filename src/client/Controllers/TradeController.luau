@@ -31,6 +31,7 @@ local TradeConfig = require(ReplicatedStorage.Shared.Config.Trade)
 local HudController = require(script.Parent.HudController)
 local InventoryController = require(script.Parent.InventoryController)
 local NotifyController = require(script.Parent.NotifyController)
+local Sfx = require(script.Parent.Parent.Sfx)
 local ItemText = require(script.Parent.Parent.UI.ItemText)
 local Kit = require(script.Parent.Parent.UI.Kit)
 local TradeScreen = require(script.Parent.Parent.UI.Screens.Trade)
@@ -274,6 +275,9 @@ function TradeController.start()
 		Windows.close(WINDOW)
 		render()
 		local color = if reason == "Completed" then Theme.Colors.Good else Theme.Colors.Warning
+		if reason == "Completed" then
+			Sfx.play("TradeComplete")
+		end
 		NotifyController.show(END_MESSAGES[reason] or "Trade ended", color)
 	end)
 

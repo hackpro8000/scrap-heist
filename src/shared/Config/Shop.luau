@@ -127,7 +127,14 @@ export type ScrapPack = {
 Shop.SCRAP_PACKS = {
 	{ name = "Pile", displayName = "SCRAP PILE", icon = "IconScrap64", scrap = 1000, robux = 49, productId = 0 },
 	{ name = "Heap", displayName = "SCRAP HEAP", icon = "IconScrapHeap", scrap = 5000, robux = 199, productId = 0 },
-	{ name = "Mountain", displayName = "SCRAP MOUNTAIN", icon = "IconScrapMountain", scrap = 20000, robux = 599, productId = 0 },
+	{
+		name = "Mountain",
+		displayName = "SCRAP MOUNTAIN",
+		icon = "IconScrapMountain",
+		scrap = 20000,
+		robux = 599,
+		productId = 0,
+	},
 } :: { ScrapPack }
 
 -- Perk sizes.

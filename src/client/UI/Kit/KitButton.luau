@@ -15,6 +15,7 @@ local TweenService = game:GetService("TweenService")
 
 local React = require(ReplicatedStorage.Packages.React)
 
+local Sfx = require(script.Parent.Parent.Parent.Sfx)
 local Art = require(script.Parent.Art)
 local KitText = require(script.Parent.KitText)
 
@@ -107,6 +108,7 @@ local function KitButton(props: Props)
 		end,
 		[React.Event.Activated] = function()
 			if enabledRef.current then
+				Sfx.play("UiClick")
 				props.onClick()
 			end
 		end,

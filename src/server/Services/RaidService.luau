@@ -270,6 +270,7 @@ spawnDrop = function(position: Vector3, parts: number, fromUserId: number)
 			remove()
 			returnToOwner(fromUserId, parts)
 			Notify.Message:FireClient(player, `Recovered {parts} parts`)
+			Notify.Sound:FireClient(player, "Collect")
 			return
 		end
 
@@ -300,6 +301,7 @@ local function bank(player: Player)
 	DataService.addScrap(player, scrap)
 	data.stats.raidsWon += 1
 	Notify.Message:FireClient(player, `Banked {scrap} scrap from your raid!`)
+	Notify.Sound:FireClient(player, "Bank")
 	RaidService.raidBanked:fire(player, carry.parts)
 end
 
@@ -346,6 +348,7 @@ local function onGrabTriggered(player: Player, yard: PlotService.Yard)
 
 	Remotes.Alert:FireClient(owner, "Grabbed", `{player.DisplayName} stole {taken} parts! Stop them!`)
 	Notify.Message:FireClient(player, `Grabbed {taken} parts. Get them home!`)
+	Notify.Sound:FireClient(player, "Grab")
 end
 
 local function setOwnerBuff(owner: Player, active: boolean)

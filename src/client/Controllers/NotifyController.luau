@@ -20,6 +20,7 @@ local React = require(ReplicatedStorage.Packages.React)
 
 local Kit = require(script.Parent.Parent.UI.Kit)
 local NotifyScreen = require(script.Parent.Parent.UI.Screens.Notify)
+local Sfx = require(script.Parent.Parent.Sfx)
 
 local MAX_TOASTS = 3
 -- Under the raid strip (14px down, 44px tall) with a 10px gap.
@@ -75,6 +76,11 @@ function NotifyController.start()
 	Notify.Message.OnClientEvent:Connect(function(text: string)
 		if type(text) == "string" then
 			NotifyController.show(text)
+		end
+	end)
+	Notify.Sound.OnClientEvent:Connect(function(key: string)
+		if type(key) == "string" then
+			Sfx.play(key)
 		end
 	end)
 end

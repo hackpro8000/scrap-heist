@@ -25,7 +25,6 @@ local ContextActionService = game:GetService("ContextActionService")
 local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local SoundService = game:GetService("SoundService")
 
 local Assets = require(ReplicatedStorage.Shared.Assets)
 local Remotes = require(ReplicatedStorage.Shared.Combat.Remotes)
@@ -33,6 +32,7 @@ local Signal = require(ReplicatedStorage.Shared.Util.Signal)
 local WeaponConfig = require(ReplicatedStorage.Shared.Combat.WeaponConfig)
 
 local NotifyController = require(script.Parent.NotifyController)
+local Sfx = require(script.Parent.Parent.Sfx)
 
 local localPlayer = Players.LocalPlayer
 
@@ -96,20 +96,9 @@ local function playAnimation(model: Model, key: string): AnimationTrack?
 end
 
 local function playSound(key: string, parent: Instance?)
-	local id = (Assets.Sounds :: any)[key]
-	if not Assets.isSet(id) or not parent then
-		return
+	if parent then
+		Sfx.play(key, parent)
 	end
-
-	local sound = Instance.new("Sound")
-	-- Effects volume comes from the player's settings.
-	sound.SoundGroup = SoundService:FindFirstChild("Effects") :: SoundGroup?
-	sound.SoundId = id
-	sound.Parent = parent
-	sound:Play()
-	sound.Ended:Once(function()
-		sound:Destroy()
-	end)
 end
 
 local function flash(model: Model, outcome: string)

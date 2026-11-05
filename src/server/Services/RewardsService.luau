@@ -88,6 +88,7 @@ local function onClaimDaily(player: Player): string?
 	end
 	local text = pay(player, Rewards.DAILY[day])
 	Notify.Message:FireClient(player, `Day {day} reward: {text}`)
+	Notify.Sound:FireClient(player, "Collect")
 	sendState(player)
 	return nil
 end
@@ -106,6 +107,7 @@ local function onClaimGift(player: Player, index: any): string?
 	data.rewards.giftsClaimed[tostring(index)] = true
 	local text = pay(player, Rewards.GIFTS[index])
 	Notify.Message:FireClient(player, `Playtime gift: {text}`)
+	Notify.Sound:FireClient(player, "Collect")
 	sendState(player)
 	return nil
 end

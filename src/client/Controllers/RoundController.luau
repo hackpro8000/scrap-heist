@@ -21,15 +21,14 @@
 local Lighting = game:GetService("Lighting")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 
-local Assets = require(ReplicatedStorage.Shared.Assets)
 local Items = require(ReplicatedStorage.Shared.Config.Items)
 local React = require(ReplicatedStorage.Packages.React)
 local Remotes = require(ReplicatedStorage.Shared.Net.Round)
 local Signal = require(ReplicatedStorage.Shared.Util.Signal)
 
+local Sfx = require(script.Parent.Parent.Sfx)
 local ItemText = require(script.Parent.Parent.UI.ItemText)
 local Kit = require(script.Parent.Parent.UI.Kit)
 local ResultsScreen = require(script.Parent.Parent.UI.Screens.Results)
@@ -99,20 +98,9 @@ local function renderResults()
 end
 
 local function playSound(key: string?)
-	local id = key and (Assets.Sounds :: any)[key]
-	if not Assets.isSet(id) then
-		return
+	if key then
+		Sfx.play(key)
 	end
-
-	local sound = Instance.new("Sound")
-	-- Effects volume comes from the player's settings.
-	sound.SoundGroup = SoundService:FindFirstChild("Effects") :: SoundGroup?
-	sound.SoundId = id
-	sound.Parent = workspace.CurrentCamera
-	sound:Play()
-	sound.Ended:Once(function()
-		sound:Destroy()
-	end)
 end
 
 local function setStormSky(isStorm: boolean)

@@ -28,6 +28,7 @@ local CONTROLLERS: { Boot.Entry } = {
 	{ name = "JuiceController", module = require(Controllers.JuiceController) },
 	{ name = "HotbarController", module = require(Controllers.HotbarController) },
 	{ name = "BotAnimationController", module = require(Controllers.BotAnimationController) },
+	{ name = "PlayerPoseController", module = require(Controllers.PlayerPoseController) },
 	{ name = "PropellerController", module = require(Controllers.PropellerController) },
 	{ name = "PromptController", module = require(Controllers.PromptController) },
 	{ name = "LeaderboardController", module = require(Controllers.LeaderboardController) },
