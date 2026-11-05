@@ -7,7 +7,9 @@
 	  collect (OwnerOnly) to the owner when the server marks them
 	  Available, "Grab parts" (RaiderOnly) to everyone else. This is
 	  tidiness only; the server checks every press.
-	- A red banner when someone raids your yard, cleared when it's safe.
+	- A red sign that drops in under the raid strip when someone raids your
+	  yard ("ROOK IS RAIDING!"), hazard signs wobbling at its ends, and a
+	  green one once it's safe.
 	- A "carrying" bar while you haul a stolen bundle home.
 
 	The scrap counter lives in HudController.
@@ -17,22 +19,36 @@
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 
 local Assets = require(ReplicatedStorage.Shared.Assets)
+local React = require(ReplicatedStorage.Packages.React)
 local Remotes = require(ReplicatedStorage.Shared.Net.Raid)
-local Theme = require(ReplicatedStorage.Shared.Config.Theme)
 
-local Widgets = require(script.Parent.Parent.UI.Widgets)
+local NotifyController = require(script.Parent.NotifyController)
+local Kit = require(script.Parent.Parent.UI.Kit)
+local PlotScreen = require(script.Parent.Parent.UI.Screens.Plot)
 
 local localPlayer = Players.LocalPlayer
 
 local ALERT_SECONDS = 6
 
+-- Matches the sign's spot under the raid strip in UI/Screens/Plot.
+local ALERT_BOTTOM = 66 + 50
+
 local PlotController = {}
 
-local alertBanner: TextLabel
-local carryLabel: TextLabel
-local alertToken = 0
+local root: Kit.Root
+local alert: PlotScreen.Alert? = nil
+local alertCount = 0
+
+local function render()
+	local parts = localPlayer:GetAttribute("CarryingParts")
+	root.render(React.createElement(PlotScreen, {
+		alert = alert,
+		carrying = if type(parts) == "number" then parts else nil,
+	}))
+end
 
 local function yardOwnerOf(prompt: ProximityPrompt): number?
 	local node: Instance? = prompt.Parent
@@ -97,16 +113,24 @@ local function watchYard(yard: Instance)
 	end)
 end
 
-local function showAlert(kind: string, text: string)
-	alertToken += 1
-	local token = alertToken
+local function hideAlert()
+	alert = nil
+	render()
+	NotifyController.setTop(nil)
+end
 
-	alertBanner.Text = text
-	alertBanner.BackgroundColor3 = if kind == "Clear" then Theme.Colors.Good else Theme.Colors.Bad
-	alertBanner.Visible = true
+local function showAlert(kind: string, text: string)
+	alertCount += 1
+	local id = alertCount
+	alert = { id = id, kind = kind, text = text }
+	render()
+	-- Messages drop below the sign while it hangs there.
+	NotifyController.setTop(ALERT_BOTTOM + 10)
 
 	if kind ~= "Clear" and Assets.isSet(Assets.Sounds.RaidAlert) then
 		local sound = Instance.new("Sound")
+		-- Effects volume comes from the player's settings.
+		sound.SoundGroup = SoundService:FindFirstChild("Effects") :: SoundGroup?
 		sound.SoundId = Assets.Sounds.RaidAlert
 		sound.Parent = workspace.CurrentCamera
 		sound:Play()
@@ -116,44 +140,15 @@ local function showAlert(kind: string, text: string)
 	end
 
 	task.delay(if kind == "Clear" then 2 else ALERT_SECONDS, function()
-		if alertToken == token then
-			alertBanner.Visible = false
+		if alert and alert.id == id then
+			hideAlert()
 		end
 	end)
 end
 
-local function refreshCarry()
-	local parts = localPlayer:GetAttribute("CarryingParts")
-	carryLabel.Visible = type(parts) == "number"
-	if type(parts) == "number" then
-		carryLabel.Text = `Carrying {parts} parts. Get back to your yard!`
-	end
-end
-
 function PlotController.init()
-	local screen = Widgets.screen("Plot")
-
-	alertBanner = Widgets.label("", {
-		Visible = false,
-		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, 12),
-		Size = UDim2.new(0.6, 0, 0, 44),
-		BackgroundTransparency = 0.1,
-		Font = Theme.Font,
-	})
-	alertBanner.Parent = screen
-
-	carryLabel = Widgets.label("", {
-		Visible = false,
-		AnchorPoint = Vector2.new(0.5, 1),
-		Position = UDim2.new(0.5, 0, 1, -110),
-		Size = UDim2.new(0.6, 0, 0, 36),
-		BackgroundColor3 = Theme.Colors.Background,
-		BackgroundTransparency = 0.2,
-		TextColor3 = Theme.Colors.Accent,
-		Font = Theme.Font,
-	})
-	carryLabel.Parent = screen
+	root = Kit.mount("Plot")
+	render()
 end
 
 function PlotController.start()
@@ -169,8 +164,7 @@ function PlotController.start()
 		end
 	end)
 
-	refreshCarry()
-	localPlayer:GetAttributeChangedSignal("CarryingParts"):Connect(refreshCarry)
+	localPlayer:GetAttributeChangedSignal("CarryingParts"):Connect(render)
 end
 
 return PlotController

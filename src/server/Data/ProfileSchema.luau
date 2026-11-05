@@ -65,6 +65,29 @@ export type ProfileData = {
 	lastSeenAt: number,
 	-- Tutorial steps finished, by step name.
 	tutorial: { [string]: boolean },
+	-- Player weapons owned, by WeaponConfig name.
+	weapons: { [string]: boolean },
+	-- os.time() until which each shop boost runs, by boost name.
+	boosts: { [string]: number },
+	settings: Settings,
+	rewards: {
+		streakDay: number,
+		lastClaimDay: number,
+		playDay: number,
+		playSeconds: number,
+		giftsClaimed: { [string]: boolean },
+	},
+	-- Developer product receipts already paid out, by PurchaseId, so a
+	-- receipt Roblox sends twice pays once.
+	purchases: { [string]: number },
+}
+
+export type Settings = {
+	music: number,
+	sounds: number,
+	screenShake: boolean,
+	damageNumbers: boolean,
+	hitPause: boolean,
 }
 
 ProfileSchema.VERSION = 1
@@ -89,6 +112,23 @@ ProfileSchema.TEMPLATE = {
 	raidShieldUntil = 0,
 	lastSeenAt = 0,
 	tutorial = {},
+	weapons = { Bat = true },
+	boosts = {},
+	settings = {
+		music = 0.6,
+		sounds = 0.85,
+		screenShake = true,
+		damageNumbers = true,
+		hitPause = true,
+	},
+	rewards = {
+		streakDay = 0,
+		lastClaimDay = 0,
+		playDay = 0,
+		playSeconds = 0,
+		giftsClaimed = {},
+	},
+	purchases = {},
 } :: ProfileData
 
 -- MIGRATIONS[n] upgrades a save from version n to n + 1. Example for a

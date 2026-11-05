@@ -73,4 +73,12 @@ crate and marker where the map's yard art has them. It also sets
 `workspace.Arena` on the drone's fight floor and a SpawnLocation on the
 spawn pad.
 - `ServerStorage.MachineModels.SalvageMachine1`..`3`: one model per tier
-- `ServerStorage.PartBundle`: a MeshPart for carried and dropped bundles
+- `ServerStorage.CrateFills.Fill_1`..`6`: the crate's heap of scrap, emptiest
+  first, each pivoted where it sits on the template's Crate. The yard shows
+  none while the crate is empty, then the level that matches how full it is
+- `ServerStorage.PartBundle`: a Model holding `Sack_1`-`Sack_6` (fill levels,
+  emptiest first) for carried and dropped bundles
+
+`tools/studio/PlaceModels.luau` loads the machine tiers, crate fills and the
+part bundle from their uploaded art (the crate fills after PlaceMap, since
+they're lined up on the placed map's Yard1 crate).

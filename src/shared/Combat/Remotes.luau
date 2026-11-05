@@ -6,6 +6,7 @@
 		Attack()                    -- "I want to swing"
 		SetBlocking(isBlocking)     -- "I'm holding / released block"
 		EquipWeapon(weaponName)     -- "switch to this weapon"
+		UnequipWeapon()             -- "put my weapon away"
 
 	Server to client:
 		PlaySwing(model, weaponName, stepIndex)   -- all clients: animate a swing
@@ -21,6 +22,7 @@ return {
 	Attack = Net.event(SYSTEM, "Attack"),
 	SetBlocking = Net.event(SYSTEM, "SetBlocking"),
 	EquipWeapon = Net.event(SYSTEM, "EquipWeapon"),
+	UnequipWeapon = Net.event(SYSTEM, "UnequipWeapon"),
 	PlaySwing = Net.event(SYSTEM, "PlaySwing"),
 	HitEffect = Net.event(SYSTEM, "HitEffect"),
 	Knockback = Net.event(SYSTEM, "Knockback"),

@@ -29,6 +29,7 @@ local ServerStorage = game:GetService("ServerStorage")
 
 local Economy = require(ReplicatedStorage.Shared.Config.Economy)
 local Notify = require(ReplicatedStorage.Shared.Net.Notify)
+local Shop = require(ReplicatedStorage.Shared.Config.Shop)
 local Signal = require(ReplicatedStorage.Shared.Util.Signal)
 
 local DataService = require(script.Parent.DataService)
@@ -36,9 +37,12 @@ local DebugService = require(script.Parent.DebugService)
 local MachineRules = require(script.Parent.Parent.Tycoon.MachineRules)
 local PlotService = require(script.Parent.PlotService)
 local RemoteGuard = require(script.Parent.Parent.Security.RemoteGuard)
+local ShopService = require(script.Parent.ShopService)
 
 local SYSTEM = "Machine"
 local MODELS_FOLDER = "MachineModels"
+-- The placed map art (tools/studio/PlaceMap.luau).
+local MAP_FOLDER = "Map"
 local PROMPT_DISTANCE = 10
 -- Extra studs allowed on the server's distance check, for lag.
 local DISTANCE_SLACK = 4
@@ -75,10 +79,30 @@ local function newPrompt(parent: BasePart, actionText: string): ProximityPrompt
 	prompt.HoldDuration = 0.25
 	prompt.MaxActivationDistance = PROMPT_DISTANCE
 	prompt.RequiresLineOfSight = false
+	-- Drawn by the client's PromptController as a kit card.
+	prompt.Style = Enum.ProximityPromptStyle.Custom
 	prompt:SetAttribute("OwnerOnly", true)
 	prompt.Parent = parent
 
 	return prompt
+end
+
+-- Where the pad's bay floor is, under its middle. The pad hook part is the
+-- art's whole bounding box, which reaches up to the junction box on its back
+-- edge, so the floor is found by dropping a ray onto the map art itself.
+local function padSurface(pad: BasePart): Vector3
+	local top = pad.Position + Vector3.new(0, pad.Size.Y / 2, 0)
+	local map = workspace:FindFirstChild(MAP_FOLDER)
+	if not map then
+		return top
+	end
+
+	local params = RaycastParams.new()
+	params.FilterType = Enum.RaycastFilterType.Include
+	params.FilterDescendantsInstances = { map }
+	local hit = workspace:Raycast(top + Vector3.new(0, 1, 0), Vector3.new(0, -pad.Size.Y - 2, 0), params)
+
+	return if hit then hit.Position else top
 end
 
 local function buildMachineModel(pad: BasePart, level: number): Model
@@ -99,9 +123,12 @@ local function buildMachineModel(pad: BasePart, level: number): Model
 	end
 
 	model.Name = "SalvageMachine"
-	local _, size = model:GetBoundingBox()
-	-- Stand the machine on top of the pad.
-	model:PivotTo(pad.CFrame * CFrame.new(0, pad.Size.Y / 2 + size.Y / 2, 0))
+	-- Seat the machine's bounding box, not its pivot, on the pad: a template's
+	-- pivot can sit anywhere inside it.
+	local box, size = model:GetBoundingBox()
+	local boxToPivot = box:ToObjectSpace(model:GetPivot())
+	local seat = CFrame.new(padSurface(pad)) * pad.CFrame.Rotation
+	model:PivotTo(seat * CFrame.new(0, size.Y / 2, 0) * boxToPivot)
 	model.Parent = pad
 
 	return model
@@ -127,12 +154,17 @@ local function refreshPad(yard: PlotService.Yard, padName: string)
 		state.model = buildMachineModel(yard.pads[padName], machine.level)
 	end
 
-	local cost = if machine
-		then MachineRules.upgradeCost(padName, machine.level)
-		else MachineRules.buyCost(padName)
+	local cost = if machine then MachineRules.upgradeCost(padName, machine.level) else MachineRules.buyCost(padName)
 	state.prompt:SetAttribute("Available", cost ~= nil)
 	state.prompt.ActionText = if machine then `Upgrade to level {machine.level + 1}` else "Buy salvage machine"
 	state.prompt.ObjectText = if cost then `{cost} scrap` else "Max level"
+	-- What the pad card shows: the level change, its cost and the rates.
+	local level = if machine then machine.level else 0
+	state.prompt:SetAttribute("Pad", true)
+	state.prompt:SetAttribute("Level", level)
+	state.prompt:SetAttribute("Cost", cost)
+	state.prompt:SetAttribute("RateFrom", if machine then MachineRules.rateOf(level) else nil)
+	state.prompt:SetAttribute("RateTo", if cost then MachineRules.rateOf(level + 1) else nil)
 end
 
 local function onPadTriggered(player: Player, yard: PlotService.Yard, padName: string)
@@ -152,9 +184,7 @@ local function onPadTriggered(player: Player, yard: PlotService.Yard, padName: s
 	end
 
 	local machine = data.yard.machines[padName]
-	local cost = if machine
-		then MachineRules.upgradeCost(padName, machine.level)
-		else MachineRules.buyCost(padName)
+	local cost = if machine then MachineRules.upgradeCost(padName, machine.level) else MachineRules.buyCost(padName)
 	if not cost then
 		return
 	end
@@ -167,6 +197,14 @@ local function onPadTriggered(player: Player, yard: PlotService.Yard, padName: s
 	data.yard.machines[padName] = { level = level }
 	refreshPad(yard, padName)
 	MachineService.machineChanged:fire(player, padName, level)
+end
+
+-- Turns crate parts into scrap, with the player's scrap passes applied.
+local function bank(player: Player, parts: number)
+	local scrap = math.floor(parts * Economy.PART_VALUE * ShopService.scrapMultiplier(player))
+	DataService.addScrap(player, scrap)
+	Notify.Message:FireClient(player, `Collected {scrap} scrap`)
+	MachineService.crateCollected:fire(player, parts)
 end
 
 local function onCollectTriggered(player: Player, yard: PlotService.Yard)
@@ -185,9 +223,7 @@ local function onCollectTriggered(player: Player, yard: PlotService.Yard)
 		return
 	end
 
-	DataService.addScrap(player, parts * Economy.PART_VALUE)
-	Notify.Message:FireClient(player, `Collected {parts * Economy.PART_VALUE} scrap`)
-	MachineService.crateCollected:fire(player, parts)
+	bank(player, parts)
 end
 
 local function onYardAssigned(player: Player, yard: PlotService.Yard)
@@ -214,7 +250,13 @@ local function produce()
 		local data = owner and DataService.getData(owner)
 		if owner and data then
 			local before = data.yard.crateParts
-			local after = MachineRules.produce(before, data.yard.machines, Economy.TICK_SECONDS)
+			local after = MachineRules.produce(
+				before,
+				data.yard.machines,
+				Economy.TICK_SECONDS,
+				ShopService.crateCapacity(owner),
+				ShopService.productionMultiplier(owner)
+			)
 			if after ~= before then
 				PlotService.setCrateParts(owner, after)
 			end
@@ -227,7 +269,7 @@ function MachineService.init()
 		if not PlotService.yardOf(player) then
 			return "You don't have a yard"
 		end
-		PlotService.setCrateParts(player, tonumber(args[1]) or Economy.CRATE_CAPACITY)
+		PlotService.setCrateParts(player, tonumber(args[1]) or ShopService.crateCapacity(player))
 		return `Crate now holds {math.floor(PlotService.getCrateParts(player))} parts`
 	end)
 
@@ -279,6 +321,21 @@ function MachineService.start()
 		while true do
 			task.wait(Economy.TICK_SECONDS)
 			produce()
+		end
+	end)
+	-- Auto Collect pass: the crate banks itself every so often.
+	task.spawn(function()
+		while true do
+			task.wait(Shop.AUTO_COLLECT_SECONDS)
+			for _, yard in PlotService.getYards() do
+				local owner = yard.owner
+				if owner and ShopService.hasPass(owner, "AutoCollect") then
+					local parts = PlotService.takeFromCrate(owner, PlotService.getCrateParts(owner))
+					if parts > 0 then
+						bank(owner, parts)
+					end
+				end
+			end
 		end
 	end)
 end

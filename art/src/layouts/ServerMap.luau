@@ -64,8 +64,10 @@ local YARD_TIER = 6
 local PAD_XS = { 220, 332, 444, 556 }
 local PAD_PLAZA = 11
 local YARD_OFFSET = 84
--- The market island closes the avenue's east end.
-local MARKET_X = 653
+-- The market island closes the avenue's east end, its bridge as long as
+-- the ones between the pads so its wide island stands well clear of the
+-- last pad and its yards.
+local MARKET_X = 680
 local MARKET_PLAZA = 30
 
 local GROUND = { 0.3, 0.27, 0.22 }
@@ -1279,8 +1281,8 @@ local function yardTemplate(index: number, x: number, y: number, turn: number)
 		piece(`Branch{i * 2}`, buildYardPathStub, 4, py, 0.01, 90)
 	end
 	for i, f in { -12, -4, 4, 12 } do
-		piece(`FenceBack{i}`, buildYardFence, f, 16)
-		piece(`FenceLeft{i}`, buildYardFence, -16, f, 0, 90)
+		piece(`FenceBack{i}`, buildYardFence, f, 16, 0, 180)
+		piece(`FenceLeft{i}`, buildYardFence, -16, f, 0, 270)
 		piece(`FenceRight{i}`, buildYardFence, 16, f, 0, 90)
 		piece(`FootingBack{i}`, buildYardFooting, f, 16)
 		piece(`FootingLeft{i}`, buildYardFooting, -16, f, 0, 90)

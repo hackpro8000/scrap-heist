@@ -33,6 +33,7 @@ local DataService = require(script.Parent.DataService)
 local InventoryService = require(script.Parent.InventoryService)
 local LootRules = require(script.Parent.Parent.Rounds.LootRules)
 local RoundService = require(script.Parent.RoundService)
+local ShopService = require(script.Parent.ShopService)
 
 local LootService = {}
 
@@ -66,8 +67,12 @@ local function reward(player: Player, survived: boolean, topRank: number?, storm
 	local rewards = {}
 	local scrap = 0
 	if survived then
-		for _, item in LootRules.roll(LootConfig.Tables.Survivor, nextNumber) do
-			table.insert(rewards, item)
+		-- The Storm Luck pass rolls the survivor table twice.
+		local rolls = if ShopService.hasPass(player, "StormLuck") then 2 else 1
+		for _ = 1, rolls do
+			for _, item in LootRules.roll(LootConfig.Tables.Survivor, nextNumber) do
+				table.insert(rewards, item)
+			end
 		end
 		scrap = LootRules.survivorScrap(stormRound)
 		data.stats.stormsSurvived += 1

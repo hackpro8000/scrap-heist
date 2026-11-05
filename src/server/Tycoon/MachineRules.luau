@@ -13,7 +13,7 @@
 		MachineRules.upgradeCost(padName, currentLevel): number?   -- nil at max level
 		MachineRules.rateOf(level): number                         -- parts per second
 		MachineRules.incomePerSecond(machines): number
-		MachineRules.produce(crateParts, machines, seconds): number
+		MachineRules.produce(crateParts, machines, seconds, capacity?, speed?): number
 		MachineRules.offlineEarnings(machines, secondsAway): number
 		MachineRules.yardLevel(machines): number
 		MachineRules.crateFill(crateParts): number                 -- 0 to 1
@@ -60,9 +60,17 @@ function MachineRules.incomePerSecond(machines: Machines): number
 	return total
 end
 
-function MachineRules.produce(crateParts: number, machines: Machines, seconds: number): number
-	local produced = MachineRules.incomePerSecond(machines) * seconds
-	return math.min(Economy.CRATE_CAPACITY, crateParts + produced)
+-- `capacity` and `speed` default to a plain crate and machines; shop perks
+-- (a bigger crate, Overdrive) pass their own.
+function MachineRules.produce(
+	crateParts: number,
+	machines: Machines,
+	seconds: number,
+	capacity: number?,
+	speed: number?
+): number
+	local produced = MachineRules.incomePerSecond(machines) * seconds * (speed or 1)
+	return math.min(capacity or Economy.CRATE_CAPACITY, crateParts + produced)
 end
 
 -- Paid as scrap straight into the balance, so it can't be raided. Capped

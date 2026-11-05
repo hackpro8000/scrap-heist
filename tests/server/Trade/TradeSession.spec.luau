@@ -139,12 +139,8 @@ describe("TradeSession.swap", function()
 		local ana, ben = inventories()
 		local anaBefore, benBefore = table.clone(ana.stacks), table.clone(ben.stacks)
 
-		local ok, reason = TradeSession.swap(
-			ana,
-			ben,
-			offerOf({ RustyGear = 4 }),
-			offerOf({}, { ["already-traded"] = true })
-		)
+		local ok, reason =
+			TradeSession.swap(ana, ben, offerOf({ RustyGear = 4 }), offerOf({}, { ["already-traded"] = true }))
 
 		expect(ok).toBe(false)
 		expect(reason).toBe("SecondPlayerMissingItems")

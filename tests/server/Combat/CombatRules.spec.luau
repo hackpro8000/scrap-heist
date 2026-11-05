@@ -268,6 +268,22 @@ describe("CombatRules weapons", function()
 		expect(attack.step).toBe(WeaponConfig.Weapons.Spanner.combo[1])
 	end)
 
+	it("puts the weapon away: no swinging or blocking until re-equipped", function()
+		local fighter = CombatRules.newCombatant("Bat")
+		CombatRules.tryStartAttack(fighter, 10)
+		expect(CombatRules.unequip(fighter, 10.05)).toBe("Busy")
+
+		CombatRules.setBlocking(fighter, true, 20)
+		expect(CombatRules.unequip(fighter, 20)).toBe(nil)
+		expect(fighter.blocking).toBe(false)
+		expect(select(2, CombatRules.tryStartAttack(fighter, 21))).toBe("Unarmed")
+		expect(CombatRules.setBlocking(fighter, true, 21)).toBe("Unarmed")
+
+		expect(CombatRules.equip(fighter, "Bat", 22)).toBe(nil)
+		local attack = CombatRules.tryStartAttack(fighter, 22)
+		expect(attack.step).toBe(WeaponConfig.Weapons.Bat.combo[1])
+	end)
+
 	it("rejects unknown weapons", function()
 		local fighter = CombatRules.newCombatant("Bat")
 		expect(CombatRules.equip(fighter, "Bazooka", 10)).toBe("UnknownWeapon")

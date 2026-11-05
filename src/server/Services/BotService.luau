@@ -93,6 +93,7 @@ local function buildBot(typeName: string): Model
 	local botType = BotsConfig.Types[typeName]
 	local model = NpcRig.build(typeName, {
 		size = botType.size,
+		scale = botType.scale,
 		color = botType.color,
 		maxHealth = botType.maxHealth,
 	})
@@ -144,7 +145,7 @@ function BotService.spawn(typeName: string, position: Vector3): Model?
 	local root = model:FindFirstChild("HumanoidRootPart") :: BasePart
 	humanoid.Health = humanoid.MaxHealth
 
-	model:PivotTo(CFrame.new(position + Vector3.new(0, botType.size.Y / 2 + 1, 0)))
+	model:PivotTo(CFrame.new(position + Vector3.new(0, botType.size.Y * botType.scale / 2 + 1, 0)))
 	model.Parent = activeFolder
 	-- SECURITY: the server simulates bots, so no client can move them.
 	root:SetNetworkOwner(nil)
@@ -376,8 +377,8 @@ function BotService.init()
 
 	for typeName, botType in BotsConfig.Types do
 		agentParams[typeName] = {
-			AgentRadius = math.max(botType.size.X, botType.size.Z) / 2 + 0.5,
-			AgentHeight = botType.size.Y + 1,
+			AgentRadius = math.max(botType.size.X, botType.size.Z) * botType.scale / 2 + 0.5,
+			AgentHeight = botType.size.Y * botType.scale + 1,
 			AgentCanJump = true,
 		}
 	end

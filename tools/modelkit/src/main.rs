@@ -568,6 +568,9 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 	progress::say(&format!("writing {name}.glb and {} textures", parts.len()));
 	let glb = dir.join(format!("{name}.glb"));
 	std::fs::write(&glb, glb::write(&parts, &bones, &clips.borrow())).map_err(|e| e.to_string())?;
+	if !clips.borrow().is_empty() {
+		std::fs::write(dir.join(format!("{name}Clips.luau")), anim::write_luau(&name, &bones, &clips.borrow())).map_err(|e| e.to_string())?;
+	}
 	if chunks {
 		write_chunks(dir, &name, &parts, !bones.is_empty())?;
 	}

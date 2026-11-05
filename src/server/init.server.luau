@@ -21,7 +21,9 @@ local SERVICES: { Boot.Entry } = {
 	{ name = "InventoryService", module = require(Services.InventoryService) },
 	{ name = "TradeService", module = require(Services.TradeService) },
 	{ name = "CombatService", module = require(Services.CombatService) },
+	{ name = "HeldWeaponService", module = require(Services.HeldWeaponService) },
 	{ name = "DummyService", module = require(Services.DummyService) },
+	{ name = "ShopService", module = require(Services.ShopService) },
 	{ name = "PlotService", module = require(Services.PlotService) },
 	{ name = "MachineService", module = require(Services.MachineService) },
 	{ name = "RoundService", module = require(Services.RoundService) },
@@ -29,6 +31,8 @@ local SERVICES: { Boot.Entry } = {
 	{ name = "BotService", module = require(Services.BotService) },
 	{ name = "LootService", module = require(Services.LootService) },
 	{ name = "TutorialService", module = require(Services.TutorialService) },
+	{ name = "RewardsService", module = require(Services.RewardsService) },
+	{ name = "SettingsService", module = require(Services.SettingsService) },
 	{ name = "LeaderboardService", module = require(Services.LeaderboardService) },
 	{ name = "ShowcaseService", module = require(Services.ShowcaseService) },
 }

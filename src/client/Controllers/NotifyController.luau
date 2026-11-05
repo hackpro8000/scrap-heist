@@ -2,85 +2,73 @@
 --[[
 	NotifyController
 
-	Shows short toast messages at the top of the screen: server messages
-	from Notify.Message ("Not enough scrap", debug command results) and any
-	controller that calls NotifyController.show. Toasts stack and fade out
-	on their own.
+	Shows short messages just under the raid strip: server messages from
+	Notify.Message ("Not enough scrap", debug command results) and any
+	controller that calls NotifyController.show. Each is a slim navy tag
+	sized to its text; they stack and fade out on their own. While the raid
+	sign hangs under the strip, messages drop below it.
 
 	Public API:
 		NotifyController.show(text, color?)
+		NotifyController.setTop(y)    -- pixels from the top the stack starts at
 ]]
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local TweenService = game:GetService("TweenService")
 
 local Notify = require(ReplicatedStorage.Shared.Net.Notify)
-local Theme = require(ReplicatedStorage.Shared.Config.Theme)
+local React = require(ReplicatedStorage.Packages.React)
 
-local Widgets = require(script.Parent.Parent.UI.Widgets)
+local Kit = require(script.Parent.Parent.UI.Kit)
+local NotifyScreen = require(script.Parent.Parent.UI.Screens.Notify)
 
-local TOAST_SECONDS = 3
-local FADE_SECONDS = 0.4
-local MAX_TOASTS = 4
+local MAX_TOASTS = 3
+-- Under the raid strip (14px down, 44px tall) with a 10px gap.
+local DEFAULT_TOP = 68
 
 local NotifyController = {}
 
-local container: Frame
+local root: Kit.Root?
+local top = DEFAULT_TOP
+local toasts: { NotifyScreen.Toast } = {}
 -- Increments per toast so newer toasts sort below older ones.
 local toastCount = 0
 
-function NotifyController.show(text: string, color: Color3?)
-	if not container then
+local function render()
+	if not root then
 		return
 	end
+	root.render(React.createElement(NotifyScreen, {
+		top = top,
+		toasts = table.clone(toasts),
+		onGone = function(id: number)
+			for index, toast in toasts do
+				if toast.id == id then
+					table.remove(toasts, index)
+					break
+				end
+			end
+			render()
+		end,
+	}))
+end
 
-	local toasts: { TextLabel } = {}
-	for _, child in container:GetChildren() do
-		if child:IsA("TextLabel") then
-			table.insert(toasts, child)
-		end
-	end
-	if #toasts >= MAX_TOASTS then
-		table.sort(toasts, function(a, b)
-			return a.LayoutOrder < b.LayoutOrder
-		end)
-		toasts[1]:Destroy()
-	end
+function NotifyController.setTop(y: number?)
+	top = y or DEFAULT_TOP
+	render()
+end
 
+function NotifyController.show(text: string, color: Color3?)
 	toastCount += 1
-	local toast = Widgets.label(text, {
-		BackgroundTransparency = 0.2,
-		BackgroundColor3 = Theme.Colors.Background,
-		TextColor3 = color or Theme.Colors.Text,
-		Size = UDim2.new(1, 0, 0, 34),
-		LayoutOrder = toastCount,
-	})
-	toast.Parent = container
-
-	task.delay(TOAST_SECONDS, function()
-		local fade = TweenInfo.new(FADE_SECONDS)
-		TweenService:Create(toast, fade, { TextTransparency = 1, BackgroundTransparency = 1 }):Play()
-		task.wait(FADE_SECONDS)
-		toast:Destroy()
-	end)
+	table.insert(toasts, { id = toastCount, text = text, color = color })
+	if #toasts > MAX_TOASTS then
+		table.remove(toasts, 1)
+	end
+	render()
 end
 
 function NotifyController.init()
-	local screen = Widgets.screen("Notifications")
-	screen.DisplayOrder = 10
-
-	container = Instance.new("Frame")
-	container.BackgroundTransparency = 1
-	container.AnchorPoint = Vector2.new(0.5, 0)
-	container.Position = UDim2.new(0.5, 0, 0, 60)
-	container.Size = UDim2.new(0.5, 0, 0.4, 0)
-	container.Parent = screen
-	Widgets.list(container, nil, 4)
-
-	local sizeLimit = Instance.new("UISizeConstraint")
-	sizeLimit.MinSize = Vector2.new(260, 0)
-	sizeLimit.MaxSize = Vector2.new(520, math.huge)
-	sizeLimit.Parent = container
+	root = Kit.mount("Notifications", 20)
+	render()
 end
 
 function NotifyController.start()

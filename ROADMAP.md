@@ -87,6 +87,11 @@ than a missing one.
   test framework package. Approved by Tristen.
 - **Toolchain manager:** Rokit (or Aftman) with a `rokit.toml` pinning Rojo,
   Wally, StyLua, Selene, and Lune versions.
+- **UI:** [React Lua](https://github.com/jsdotlua/react-lua) (`jsdotlua/react`
+  and `jsdotlua/react-roblox` via Wally, shared realm). Approved by Tristen.
+  Screens are function components with hooks; controllers own game state and
+  remotes and hand it to the UI through props or a small store. One React root
+  per ScreenGui, mounted by the controller that owns it.
 - **No other frameworks** (no Knit, no full networking libraries) unless
   Tristen approves. Plain modules are easier to explain to clients.
 
@@ -153,7 +158,10 @@ scrap-heist/
         │   ├── TradeController.luau
         │   ├── PlotController.luau
         │   └── RoundController.luau
-        └── UI/                # UI built in code, styled from Config/Theme
+        └── UI/                # React components, styled from Config/Theme
+            ├── Kit/           # kit primitives: KitImage, KitText, KitButton,
+            │                  # Slot, Bar, Window (ToyKit art at painted size)
+            └── Screens/       # one component per window or HUD piece
 ```
 
 ---

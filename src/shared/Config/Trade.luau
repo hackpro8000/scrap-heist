@@ -12,8 +12,9 @@ local Trade = {}
 Trade.COUNTDOWN_SECONDS = 3
 -- Seconds a trade request stays open.
 Trade.REQUEST_TIMEOUT = 30
--- Most different entries (stack types plus unique items) in one offer.
-Trade.MAX_OFFER_ENTRIES = 12
+-- Most different entries (stack types plus unique items) in one offer:
+-- the trade window's offer grid, 5 by 2.
+Trade.MAX_OFFER_ENTRIES = 10
 -- Trades kept in each player's profile for support.
 Trade.LOG_SIZE = 20
 

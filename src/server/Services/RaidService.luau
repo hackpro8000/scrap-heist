@@ -38,6 +38,7 @@ local Economy = require(ReplicatedStorage.Shared.Config.Economy)
 local Notify = require(ReplicatedStorage.Shared.Net.Notify)
 local RaidConfig = require(ReplicatedStorage.Shared.Config.Raid)
 local Remotes = require(ReplicatedStorage.Shared.Net.Raid)
+local Shop = require(ReplicatedStorage.Shared.Config.Shop)
 local Signal = require(ReplicatedStorage.Shared.Util.Signal)
 local Trove = require(ReplicatedStorage.Shared.Util.Trove)
 
@@ -48,6 +49,7 @@ local MachineRules = require(script.Parent.Parent.Tycoon.MachineRules)
 local NpcRig = require(script.Parent.Parent.Npc.NpcRig)
 local PlotService = require(script.Parent.PlotService)
 local RaidRules = require(script.Parent.Parent.Tycoon.RaidRules)
+local ShopService = require(script.Parent.ShopService)
 local RemoteGuard = require(script.Parent.Parent.Security.RemoteGuard)
 local RoundService = require(script.Parent.RoundService)
 local YardLayout = require(script.Parent.Parent.Tycoon.YardLayout)
@@ -122,26 +124,59 @@ local function returnToOwner(fromUserId: number, parts: number)
 	end
 end
 
-local function newBundlePart(parts: number): BasePart
+-- The sack for `parts`, from ServerStorage.PartBundle: a Model holding one
+-- Sack_<n> model per fill level, emptiest first, each pivoted at its middle.
+local function sackFor(parts: number): Model?
 	local template = ServerStorage:FindFirstChild(BUNDLE_MODEL_NAME)
-	local part: BasePart
-	if template and template:IsA("BasePart") then
-		part = template:Clone()
-	else
-		local ball = Instance.new("Part")
-		ball.Shape = Enum.PartType.Ball
-		ball.Color = BUNDLE_COLOR
-		ball.Material = Enum.Material.Fabric
-		part = ball
+	if not (template and template:IsA("Model")) then
+		return nil
 	end
+	local levels = #template:GetChildren()
+	local level = math.clamp(math.ceil(parts / RaidConfig.BUNDLE_MAX * levels), 1, levels)
+	local sack = template:FindFirstChild(`Sack_{level}`)
+	return if sack and sack:IsA("Model") then sack:Clone() else nil
+end
 
+-- A bundle is one part, so it can be carried, dropped and picked up as a
+-- unit: the sack art welded inside an invisible box, or a plain ball when
+-- there's no art.
+local function newBundlePart(parts: number): BasePart
 	-- Bigger bundles look bigger, so a fat haul is worth chasing.
 	local scale = 1.5 + math.min(1.5, parts / RaidConfig.BUNDLE_MAX * 1.5)
-	part.Size = Vector3.one * scale
+
+	local part = Instance.new("Part")
 	part.Name = "Bundle"
 	part.CanCollide = false
 	part.CanQuery = false
 	part.Massless = true
+
+	local sack = sackFor(parts)
+	if sack then
+		local _, size = sack:GetBoundingBox()
+		sack:ScaleTo(sack:GetScale() * scale / math.max(size.X, size.Z))
+		local _, scaled = sack:GetBoundingBox()
+		part.Size = scaled
+		part.Transparency = 1
+		sack:PivotTo(part.CFrame)
+		for _, piece in sack:GetDescendants() do
+			if piece:IsA("BasePart") then
+				piece.Anchored = false
+				piece.CanCollide = false
+				piece.CanQuery = false
+				piece.Massless = true
+				local weld = Instance.new("WeldConstraint")
+				weld.Part0 = part
+				weld.Part1 = piece
+				weld.Parent = piece
+			end
+		end
+		sack.Parent = part
+	else
+		part.Shape = Enum.PartType.Ball
+		part.Color = BUNDLE_COLOR
+		part.Material = Enum.Material.Fabric
+		part.Size = Vector3.one * scale
+	end
 
 	return part
 end
@@ -212,6 +247,7 @@ spawnDrop = function(position: Vector3, parts: number, fromUserId: number)
 	prompt.HoldDuration = 0.5
 	prompt.MaxActivationDistance = RaidConfig.PICKUP_DISTANCE
 	prompt.RequiresLineOfSight = false
+	prompt.Style = Enum.ProximityPromptStyle.Custom
 	prompt.Parent = part
 
 	local function remove()
@@ -301,7 +337,10 @@ local function onGrabTriggered(player: Player, yard: PlotService.Yard)
 		return
 	end
 
-	ownerData.raidShieldUntil = RaidRules.shieldUntil(now)
+	local shieldSeconds = RaidConfig.SHIELD_SECONDS
+		* (if ShopService.hasPass(owner, "LongShield") then Shop.LONG_SHIELD else 1)
+	ownerData.raidShieldUntil = math.max(ownerData.raidShieldUntil, RaidRules.shieldUntil(now, shieldSeconds))
+	ShopService.syncShield(owner)
 	ownerData.stats.timesRaided += 1
 	startCarrying(player, taken, owner.UserId)
 
@@ -451,6 +490,7 @@ function RaidService.init()
 		prompt.HoldDuration = 1
 		prompt.MaxActivationDistance = RaidConfig.GRAB_DISTANCE
 		prompt.RequiresLineOfSight = false
+		prompt.Style = Enum.ProximityPromptStyle.Custom
 		-- The client shows this one to everyone except the owner.
 		prompt:SetAttribute("RaiderOnly", true)
 		prompt.Parent = yard.crate

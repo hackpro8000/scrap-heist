@@ -8,7 +8,8 @@
 	Input (also bound as touch buttons on mobile):
 		Click / R2          attack
 		F / right-click     hold to block
-		1, 2, ...           switch weapon (WeaponConfig.PLAYER_WEAPONS order)
+		1, 2, ...           switch weapon (WeaponConfig.PLAYER_WEAPONS order);
+		                    the held weapon's key puts it away
 
 	Animations and sounds come from Assets and are skipped while their IDs
 	are placeholders. Hit effects use a short-lived flash so hits read
@@ -16,17 +17,22 @@
 
 	Public API:
 		CombatController.hitShown: Signal(model, outcome, damage, attacker)   -- for juice effects
+		CombatController.toggleWeapon(weaponName)   -- equip it, or put it away if held
+		CombatController.ownsWeapon(weaponName): boolean
 ]]
 
 local ContextActionService = game:GetService("ContextActionService")
 local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 
 local Assets = require(ReplicatedStorage.Shared.Assets)
 local Remotes = require(ReplicatedStorage.Shared.Combat.Remotes)
 local Signal = require(ReplicatedStorage.Shared.Util.Signal)
 local WeaponConfig = require(ReplicatedStorage.Shared.Combat.WeaponConfig)
+
+local NotifyController = require(script.Parent.NotifyController)
 
 local localPlayer = Players.LocalPlayer
 
@@ -96,6 +102,8 @@ local function playSound(key: string, parent: Instance?)
 	end
 
 	local sound = Instance.new("Sound")
+	-- Effects volume comes from the player's settings.
+	sound.SoundGroup = SoundService:FindFirstChild("Effects") :: SoundGroup?
 	sound.SoundId = id
 	sound.Parent = parent
 	sound:Play()
@@ -187,6 +195,25 @@ local function onBlockInput(_action: string, state: Enum.UserInputState, _input:
 	return Enum.ContextActionResult.Pass
 end
 
+-- Weapons this player owns, from the "Weapons" attribute ShopService keeps.
+function CombatController.ownsWeapon(weaponName: string): boolean
+	local owned = localPlayer:GetAttribute("Weapons")
+	return type(owned) == "string" and table.find(string.split(owned, ","), weaponName) ~= nil
+end
+
+function CombatController.toggleWeapon(weaponName: string)
+	if not CombatController.ownsWeapon(weaponName) then
+		NotifyController.show(`Buy the {WeaponConfig.Weapons[weaponName].displayName} in the Shop first`)
+		return
+	end
+	local character = localPlayer.Character
+	if character and character:GetAttribute("Weapon") == weaponName then
+		Remotes.UnequipWeapon:FireServer()
+	else
+		Remotes.EquipWeapon:FireServer(weaponName)
+	end
+end
+
 local function bindWeaponKeys()
 	for index, weaponName in WeaponConfig.PLAYER_WEAPONS do
 		local key = WEAPON_KEYS[index]
@@ -197,7 +224,7 @@ local function bindWeaponKeys()
 		local action = `Equip{weaponName}`
 		ContextActionService:BindAction(action, function(_action, state, _input)
 			if state == Enum.UserInputState.Begin then
-				Remotes.EquipWeapon:FireServer(weaponName)
+				CombatController.toggleWeapon(weaponName)
 			end
 			return Enum.ContextActionResult.Pass
 		end, true, key)

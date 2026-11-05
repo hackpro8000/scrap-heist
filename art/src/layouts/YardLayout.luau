@@ -57,8 +57,8 @@ for i, y in PAD_ROWS do
 end
 
 for i, c in { -12, -4, 4, 12 } do
-	piece(`FenceBack{i}`, buildYardFence, c, 16)
-	piece(`FenceLeft{i}`, buildYardFence, -16, c, 0, 90)
+	piece(`FenceBack{i}`, buildYardFence, c, 16, 0, 180)
+	piece(`FenceLeft{i}`, buildYardFence, -16, c, 0, 270)
 	piece(`FenceRight{i}`, buildYardFence, 16, c, 0, 90)
 	piece(`FootingBack{i}`, buildYardFooting, c, 16)
 	piece(`FootingLeft{i}`, buildYardFooting, -16, c, 0, 90)

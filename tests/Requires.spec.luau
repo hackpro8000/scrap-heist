@@ -50,6 +50,9 @@ local function resolve(file: string, text: string, chain: string, depth: number?
 
 	if root == "script" then
 		node = scriptInstance(file)
+	elseif root == "ReplicatedStorage" and parts[2] == "Packages" then
+		-- Wally packages shared with the client (React).
+		return nil
 	elseif root == "ReplicatedStorage" then
 		node = Source.instance("src/shared")
 		assert(parts[2] == "Shared", `{file}: only ReplicatedStorage.Shared is mapped, got {chain}`)

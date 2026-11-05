@@ -10,7 +10,9 @@
 	middle. The tilt is baked into the meshes, so the parts themselves sit
 	upright and their own axes are no use. Every part of a propeller turns by
 	the same angle, so the smear painted on its disc stays trailing its
-	blades. Anticlockwise from above, the way the art paints the smear.
+	blades. Neighbouring propellers counter-rotate like a real quadcopter's:
+	the odd ones (1 and 3) turn anticlockwise from above, the way the art
+	paints the smear, and the even ones clockwise, so the diagonal pairs match.
 
 	The place streams, so parts come and go as the player moves: each is
 	picked up when it streams in, from where it rests, and dropped when it
@@ -33,6 +35,8 @@ type Propeller = {
 	parts: { [BasePart]: CFrame },
 	-- Through the hub, along the shaft; nil until the hub streams in.
 	shaft: CFrame?,
+	-- 1 for anticlockwise from above, -1 for clockwise.
+	direction: number,
 }
 
 local PropellerController = {}
@@ -51,7 +55,7 @@ end
 local function propellerFor(index: string): Propeller
 	local propeller = propellers[index]
 	if not propeller then
-		propeller = { parts = {}, shaft = nil }
+		propeller = { parts = {}, shaft = nil, direction = if tonumber(index) % 2 == 1 then 1 else -1 }
 		propellers[index] = propeller
 	end
 	return propeller
@@ -86,15 +90,14 @@ end
 
 local function spin(deltaTime: number)
 	angle = (angle + deltaTime * SPIN_SPEED * math.pi * 2) % (math.pi * 2)
-	-- A turn about the shaft's own Y axis, carried out in world space.
-	local turn = CFrame.Angles(0, angle, 0)
 	local parts, cframes = {}, {}
 	for _, propeller in propellers do
 		local shaft = propeller.shaft
 		if not shaft then
 			continue
 		end
-		local turned = shaft * turn * shaft:Inverse()
+		-- A turn about the shaft's own Y axis, carried out in world space.
+		local turned = shaft * CFrame.Angles(0, angle * propeller.direction, 0) * shaft:Inverse()
 		for part, rest in propeller.parts do
 			table.insert(parts, part)
 			table.insert(cframes, turned * rest)

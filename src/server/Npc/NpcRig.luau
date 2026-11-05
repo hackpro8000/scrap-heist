@@ -4,9 +4,10 @@
 
 	Builds the character model for an NPC (bots and the training dummy).
 
-	If Tristen has dropped a model named after the NPC into
-	ServerStorage.NpcModels (for example ServerStorage.NpcModels.Bruiser),
-	that model is cloned. It needs a Humanoid and a HumanoidRootPart.
+	If a model named after the NPC is in ServerStorage.NpcModels (for
+	example ServerStorage.NpcModels.Bruiser), that model is cloned. It needs
+	a Humanoid and a HumanoidRootPart. tools/studio/PlaceModels.luau puts the
+	bots there from their uploaded art.
 	Otherwise a gray-block placeholder is built, so every system works before
 	any art exists.
 
@@ -25,6 +26,8 @@ export type Look = {
 	size: Vector3,
 	color: Color3,
 	maxHealth: number,
+	-- Grows the whole rig, art or placeholder, this many times its size.
+	scale: number?,
 }
 
 local function buildPlaceholder(look: Look): Model
@@ -79,6 +82,9 @@ function NpcRig.build(name: string, look: Look): Model
 
 	local humanoid = model:FindFirstChildOfClass("Humanoid")
 	assert(humanoid, `NpcRig: {name} model needs a Humanoid`)
+	if look.scale and look.scale ~= 1 then
+		model:ScaleTo(look.scale)
+	end
 	humanoid.MaxHealth = look.maxHealth
 	humanoid.Health = look.maxHealth
 

@@ -10,7 +10,7 @@
 	Public API:
 		RaidRules.canGrab(context): reason?
 		RaidRules.bundleSize(crateParts): number
-		RaidRules.shieldUntil(now): number
+		RaidRules.shieldUntil(now, seconds?): number
 		RaidRules.REASON_TEXT: { [reason]: string }   -- what the raider is told
 ]]
 
@@ -92,8 +92,9 @@ function RaidRules.bundleSize(crateParts: number): number
 	return math.min(size, math.floor(crateParts))
 end
 
-function RaidRules.shieldUntil(now: number): number
-	return now + RaidConfig.SHIELD_SECONDS
+-- `seconds` defaults to the plain shield; the Long Shield pass passes more.
+function RaidRules.shieldUntil(now: number, seconds: number?): number
+	return now + (seconds or RaidConfig.SHIELD_SECONDS)
 end
 
 return RaidRules

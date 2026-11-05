@@ -16,6 +16,9 @@ export type BotType = {
 	walkSpeed: number,
 	-- Placeholder body size; also sizes the pathfinding agent.
 	size: Vector3,
+	-- The rig (art or placeholder) is grown this many times its size, so
+	-- bots read clearly and are easy to land hits on.
+	scale: number,
 	color: Color3,
 	-- Studs: swings when the target is this close.
 	attackRange: number,
@@ -24,32 +27,36 @@ export type BotType = {
 }
 
 Bots.Types = {
-	-- Fast and weak: rushes in, dies quickly.
+	-- Quick and weak: rushes in, dies in a few hits. A touch slower than a
+	-- player, so a player can always back off.
 	Scrapper = {
 		weapon = "Saw",
-		maxHealth = 40,
-		walkSpeed = 20,
+		maxHealth = 30,
+		walkSpeed = 14,
 		size = Vector3.new(2, 2.5, 2),
+		scale = 1.6,
 		color = Color3.fromRGB(170, 90, 60),
-		attackRange = 4.5,
+		attackRange = 6,
 		retreatHealthFraction = 0,
 	},
 	-- Slow tank with big, parryable slams.
 	Bruiser = {
 		weapon = "Slam",
-		maxHealth = 220,
-		walkSpeed = 10,
+		maxHealth = 160,
+		walkSpeed = 9,
 		size = Vector3.new(4, 5, 3),
+		scale = 1.35,
 		color = Color3.fromRGB(110, 90, 70),
-		attackRange = 6.5,
+		attackRange = 8.5,
 		retreatHealthFraction = 0,
 	},
 	-- Ranged: zaps from a distance, backs off when hurt.
 	Zapper = {
 		weapon = "Zap",
-		maxHealth = 60,
-		walkSpeed = 14,
+		maxHealth = 45,
+		walkSpeed = 12,
 		size = Vector3.new(2, 4.5, 2),
+		scale = 1.5,
 		color = Color3.fromRGB(80, 120, 170),
 		attackRange = 26,
 		retreatHealthFraction = 0.35,

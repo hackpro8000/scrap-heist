@@ -3,9 +3,11 @@
 	RoundController
 
 	The storm round UI:
-	- a banner at the top with the phase and a live countdown
-	- the survivor count during a storm
-	- the results screen with your rewards when a storm ends
+	- the raid strip at the top: a plank with the bots still standing (the
+	  survivors during a storm, everyone in the server otherwise) beside a
+	  plank with the live countdown to the next phase, and a third with
+	  your yard's raid shield while it lasts
+	- the results window with your rewards when a storm ends
 	- warning/storm sounds and a darker sky during storms
 
 	The countdown is computed locally from the phase's end time in
@@ -17,23 +19,28 @@
 ]]
 
 local Lighting = game:GetService("Lighting")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 
 local Assets = require(ReplicatedStorage.Shared.Assets)
 local Items = require(ReplicatedStorage.Shared.Config.Items)
+local React = require(ReplicatedStorage.Packages.React)
 local Remotes = require(ReplicatedStorage.Shared.Net.Round)
 local Signal = require(ReplicatedStorage.Shared.Util.Signal)
-local Theme = require(ReplicatedStorage.Shared.Config.Theme)
 
 local ItemText = require(script.Parent.Parent.UI.ItemText)
-local Pop = require(script.Parent.Parent.UI.Pop)
-local Widgets = require(script.Parent.Parent.UI.Widgets)
+local Kit = require(script.Parent.Parent.UI.Kit)
+local ResultsScreen = require(script.Parent.Parent.UI.Screens.Results)
+local RoundScreen = require(script.Parent.Parent.UI.Screens.Round)
+local Windows = require(script.Parent.Parent.UI.Windows)
 
 local REFRESH_SECONDS = 0.2
 local RESULTS_SECONDS = 12
 local STORM_BRIGHTNESS = 0.6
 local SKY_TWEEN = TweenInfo.new(3)
+local RESULTS = "Results"
 
 local PHASE_SOUNDS: { [string]: string } = {
 	Warning = "StormWarning",
@@ -53,10 +60,11 @@ local RoundController = {}
 RoundController.phaseChanged = Signal.new()
 
 local state: RoundState? = nil
-local banner: TextLabel
-local resultsPanel: Frame
-local resultsList: ScrollingFrame
-local resultsToken = 0
+local stripRoot: Kit.Root
+local resultsRoot: Kit.Root
+local results: { [string]: any }? = nil
+local loot: { ResultsScreen.Loot } = {}
+local closesAt = 0
 local calmBrightness = Lighting.Brightness
 
 local function formatTime(seconds: number): string
@@ -64,27 +72,30 @@ local function formatTime(seconds: number): string
 	return string.format("%d:%02d", whole // 60, whole % 60)
 end
 
-local function bannerText(current: RoundState): string
-	local left = formatTime(current.endsAt - workspace:GetServerTimeNow())
-	if current.phase == "Calm" then
-		return `Calm. Storm {current.round + 1} in {left}`
-	elseif current.phase == "Warning" then
-		return `STORM INCOMING {left}`
-	elseif current.phase == "Storm" then
-		return `STORM {current.round}  {left}  |  {current.survivorsLeft} surviving`
-	end
-
-	return `Storm over. Next calm in {left}`
+-- The strip: bots standing, time to the next phase, and the raid shield
+-- while the server's ShieldUntil (os.time) is ahead.
+local function renderStrip()
+	local now = workspace:GetServerTimeNow()
+	local shieldUntil = Players.LocalPlayer:GetAttribute("ShieldUntil")
+	local shieldLeft = if type(shieldUntil) == "number" then shieldUntil - now else 0
+	stripRoot.render(React.createElement(RoundScreen, {
+		count = if state
+			then tostring(if state.phase == "Storm" then state.survivorsLeft else #Players:GetPlayers())
+			else "-",
+		timer = if state then formatTime(state.endsAt - now) else "-",
+		shield = if shieldLeft > 0 then formatTime(shieldLeft) else nil,
+	}))
 end
 
-local function bannerColor(phase: string): Color3
-	if phase == "Warning" then
-		return Theme.Colors.Warning
-	elseif phase == "Storm" then
-		return Theme.Colors.Bad
-	end
-
-	return Theme.Colors.Background
+local function renderResults()
+	resultsRoot.render(React.createElement(ResultsScreen, {
+		results = results,
+		loot = loot,
+		closesIn = closesAt - os.clock(),
+		onClose = function()
+			Windows.close(RESULTS)
+		end,
+	}))
 end
 
 local function playSound(key: string?)
@@ -94,6 +105,8 @@ local function playSound(key: string?)
 	end
 
 	local sound = Instance.new("Sound")
+	-- Effects volume comes from the player's settings.
+	sound.SoundGroup = SoundService:FindFirstChild("Effects") :: SoundGroup?
 	sound.SoundId = id
 	sound.Parent = workspace.CurrentCamera
 	sound:Play()
@@ -114,8 +127,7 @@ local function onRoundState(newState: RoundState)
 
 	local previousPhase = state and state.phase
 	state = newState
-	banner.BackgroundColor3 = bannerColor(newState.phase)
-	banner.Text = bannerText(newState)
+	renderStrip()
 
 	if newState.phase ~= previousPhase then
 		playSound(PHASE_SOUNDS[newState.phase])
@@ -124,97 +136,48 @@ local function onRoundState(newState: RoundState)
 	end
 end
 
-local function showResults(results: { [string]: any })
-	Widgets.clear(resultsList)
+-- Same items from different loot rolls show as one stack, rarest first.
+local function mergedLoot(rewards: { any }): { ResultsScreen.Loot }
+	local counts: { [string]: number } = {}
+	for _, reward in rewards do
+		if type(reward) == "table" and type(reward.itemId) == "string" then
+			counts[reward.itemId] = (counts[reward.itemId] or 0) + (tonumber(reward.count) or 1)
+		end
+	end
+	local merged = {}
+	for _, itemId in ItemText.sortedStackIds(counts) do
+		table.insert(merged, { itemId = itemId, count = counts[itemId] })
+	end
+	return merged
+end
 
-	local order = 0
-	local function line(text: string, color: Color3?)
-		order += 1
-		local label = Widgets.label(text, {
-			TextColor3 = color or Theme.Colors.Text,
-			LayoutOrder = order,
-		})
-		label.Parent = resultsList
-	end
-
-	if results.survived then
-		line("You survived the storm!", Theme.Colors.Good)
-	else
-		line("You didn't make it through this storm.", Theme.Colors.TextDim)
-	end
-	if results.topRank then
-		line(`#{results.topRank} damage dealer ({results.damage} damage)`, Theme.Colors.Accent)
-	elseif (results.damage or 0) > 0 then
-		line(`{results.damage} damage dealt`, Theme.Colors.TextDim)
-	end
-	if (results.scrap or 0) > 0 then
-		line(`+{results.scrap} scrap`, Theme.Colors.Accent)
-	end
-
-	local foundRare = false
-	for _, reward in results.rewards or {} do
-		line(`+ {ItemText.stackLine(reward.itemId, reward.count)}`, ItemText.color(reward.itemId))
-		local definition = Items.get(reward.itemId)
+local function showResults(newResults: { [string]: any })
+	results = newResults
+	loot = mergedLoot(newResults.rewards or {})
+	for _, entry in loot do
+		local definition = Items.get(entry.itemId)
 		if definition and (definition.rarity == "Rare" or definition.rarity == "Legendary") then
-			foundRare = true
+			playSound("LootRare")
+			break
 		end
 	end
-	if foundRare then
-		playSound("LootRare")
-	end
-
-	Pop.show(resultsPanel)
-	resultsToken += 1
-	local token = resultsToken
-	task.delay(RESULTS_SECONDS, function()
-		if resultsToken == token then
-			resultsPanel.Visible = false
-		end
-	end)
+	closesAt = os.clock() + RESULTS_SECONDS
+	renderResults()
+	Windows.open(RESULTS)
 end
 
 function RoundController.init()
-	local screen = Widgets.screen("Round")
-
-	banner = Widgets.label("", {
-		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, 62),
-		Size = UDim2.new(0.55, 0, 0, 36),
-		BackgroundTransparency = 0.2,
-		BackgroundColor3 = Theme.Colors.Background,
-		Font = Theme.Font,
-	})
-	banner.Parent = screen
-
-	resultsPanel = Widgets.panel({
-		Visible = false,
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.5),
-		Size = UDim2.fromScale(0.45, 0.5),
-	})
-	resultsPanel.Parent = screen
-	local sizeLimit = Instance.new("UISizeConstraint")
-	sizeLimit.MinSize = Vector2.new(280, 240)
-	sizeLimit.MaxSize = Vector2.new(460, 480)
-	sizeLimit.Parent = resultsPanel
-
-	local title = Widgets.label("Storm results", { Font = Theme.Font, Size = UDim2.new(1, -50, 0, 32) })
-	title.Parent = resultsPanel
-
-	local close = Widgets.button("X", function()
-		resultsPanel.Visible = false
-	end, { AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, 0, 0, 0), Size = UDim2.new(0, 40, 0, 32) })
-	close.Parent = resultsPanel
-
-	resultsList = Widgets.scrollList({ Position = UDim2.new(0, 0, 0, 40), Size = UDim2.new(1, 0, 1, -40) })
-	resultsList.Parent = resultsPanel
+	stripRoot = Kit.mount("Round")
+	resultsRoot = Kit.mount("Results", 10)
+	renderStrip()
+	renderResults()
 end
 
 function RoundController.start()
 	Remotes.RoundState.OnClientEvent:Connect(onRoundState)
-	Remotes.RoundResults.OnClientEvent:Connect(function(results)
-		if type(results) == "table" then
-			showResults(results)
+	Remotes.RoundResults.OnClientEvent:Connect(function(newResults)
+		if type(newResults) == "table" then
+			showResults(newResults)
 		end
 	end)
 	-- Joining mid-round: ask for the current phase instead of waiting.
@@ -223,8 +186,14 @@ function RoundController.start()
 	task.spawn(function()
 		while true do
 			task.wait(REFRESH_SECONDS)
-			if state then
-				banner.Text = bannerText(state)
+			renderStrip()
+			-- The results window counts down, then closes itself.
+			if Windows.isOpen(RESULTS) then
+				if os.clock() >= closesAt then
+					Windows.close(RESULTS)
+				else
+					renderResults()
+				end
 			end
 		end
 	end)

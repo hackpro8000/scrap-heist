@@ -2,16 +2,19 @@
 --[[
 	TradeController
 
-	The trade UI. Three pieces:
-	- Player list (Trade button): pick someone to send a request to.
-	- Request prompt: accept or decline an incoming request.
-	- Trade window: your items (click to offer), your offer (click to take
-	  back), their offer, and Ready / Confirm / Cancel.
+	The trade UI, in three pieces:
+	- Player picker (Trade button, or "Trade it" in the bag): pick someone
+	  to send a request to.
+	- Request card, bottom right: accept or decline an incoming request
+	  before its timer runs out.
+	- Trade window: your offer and theirs side by side, each with a ready
+	  tick (yours is the button), your bag in a strip below to offer from,
+	  and Confirm / Cancel. Tapping an item in your offer takes one back.
 
-	The window always shows what the server last sent. Clicking an item
-	sends a whole new offer; nothing changes on screen until the server
-	echoes it back in TradeUpdated, so the UI can't show a trade the server
-	doesn't agree with.
+	The window always shows what the server last sent. Tapping an item sends
+	a whole new offer; nothing changes on screen until the server echoes it
+	back in TradeUpdated, so the UI can't show a trade the server doesn't
+	agree with.
 
 	Public API: none (driven by remotes and its own buttons).
 ]]
@@ -20,6 +23,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local InventoryTypes = require(ReplicatedStorage.Shared.Inventory.InventoryTypes)
+local React = require(ReplicatedStorage.Packages.React)
 local Remotes = require(ReplicatedStorage.Shared.Net.Trade)
 local Theme = require(ReplicatedStorage.Shared.Config.Theme)
 local TradeConfig = require(ReplicatedStorage.Shared.Config.Trade)
@@ -28,10 +32,14 @@ local HudController = require(script.Parent.HudController)
 local InventoryController = require(script.Parent.InventoryController)
 local NotifyController = require(script.Parent.NotifyController)
 local ItemText = require(script.Parent.Parent.UI.ItemText)
-local Pop = require(script.Parent.Parent.UI.Pop)
-local Widgets = require(script.Parent.Parent.UI.Widgets)
+local Kit = require(script.Parent.Parent.UI.Kit)
+local TradeScreen = require(script.Parent.Parent.UI.Screens.Trade)
+local Windows = require(script.Parent.Parent.UI.Windows)
 
 local localPlayer = Players.LocalPlayer
+
+local PICKER = "TradePick"
+local WINDOW = "Trade"
 
 local END_MESSAGES: { [string]: string } = {
 	Completed = "Trade complete!",
@@ -52,23 +60,14 @@ type Snapshot = {
 	theyConfirmed: boolean,
 }
 
+type Entry = TradeScreen.Entry
+
 local TradeController = {}
 
 local snapshot: Snapshot? = nil
-
-local playerListPanel: Frame
-local playerList: ScrollingFrame
-local requestPanel: Frame
-local requestLabel: TextLabel
-local pendingRequester: Player? = nil
-local window: Frame
-local titleLabel: TextLabel
-local statusLabel: TextLabel
-local myItemsList: ScrollingFrame
-local myOfferList: ScrollingFrame
-local theirOfferList: ScrollingFrame
-local readyButton: TextButton
-local confirmButton: TextButton
+local request: TradeScreen.Request? = nil
+local requestCount = 0
+local root: Kit.Root
 
 -- The offer the server last confirmed, in the shape SetOffer expects.
 local function currentOffer(): InventoryTypes.Offer
@@ -79,7 +78,6 @@ local function currentOffer(): InventoryTypes.Offer
 			offer.uniques[guid] = true
 		end
 	end
-
 	return offer
 end
 
@@ -91,7 +89,6 @@ local function countEntries(offer: InventoryTypes.Offer): number
 	for _ in offer.uniques do
 		entries += 1
 	end
-
 	return entries
 end
 
@@ -103,276 +100,141 @@ local function sendOffer(offer: InventoryTypes.Offer)
 	Remotes.SetOffer:FireServer(offer)
 end
 
-local function addItemButton(list: ScrollingFrame, text: string, color: Color3, order: number, onClick: (() -> ())?)
-	local button = Widgets.button(text, onClick or function() end, {
-		TextColor3 = color,
-		Size = UDim2.new(1, -8, 0, 34),
-		LayoutOrder = order,
-		AutoButtonColor = onClick ~= nil,
-	})
-	button.Parent = list
-end
-
--- Lists an offer. Your own offer's items are buttons that take one back.
-local function renderOffer(list: ScrollingFrame, offer: InventoryTypes.OfferDescription, canRemove: boolean)
-	Widgets.clear(list)
-
-	local order = 0
+local function offerEntries(offer: InventoryTypes.OfferDescription): { Entry }
+	local list: { Entry } = {}
 	for _, itemId in ItemText.sortedStackIds(offer.stacks) do
-		order += 1
-		local takeBack = function()
-			local offerNow = currentOffer()
-			local remaining = (offerNow.stacks[itemId] or 0) - 1
-			offerNow.stacks[itemId] = if remaining > 0 then remaining else nil
-			sendOffer(offerNow)
-		end
-		local text = ItemText.stackLine(itemId, offer.stacks[itemId])
-		addItemButton(list, text, ItemText.color(itemId), order, if canRemove then takeBack else nil)
+		table.insert(list, { itemId = itemId, count = offer.stacks[itemId] })
 	end
-
 	for guid, itemId in offer.uniques do
-		order += 1
-		local takeBack = function()
-			local offerNow = currentOffer()
-			offerNow.uniques[guid] = nil
-			sendOffer(offerNow)
-		end
-		addItemButton(list, ItemText.name(itemId), ItemText.color(itemId), order, if canRemove then takeBack else nil)
+		table.insert(list, { itemId = itemId, count = 1, guid = guid })
 	end
+	return list
 end
 
--- Items you hold that aren't already offered, each click offering one more.
-local function renderMyItems()
-	Widgets.clear(myItemsList)
-	if not snapshot then
-		return
-	end
-
+-- Items you hold that aren't already offered.
+local function bagEntriesFor(state: Snapshot): { Entry }
 	local inventory = InventoryController.getInventory()
-	local offered = snapshot.yourOffer
-	local order = 0
+	local list: { Entry } = {}
 	for _, itemId in ItemText.sortedStackIds(inventory.stacks) do
-		local available = inventory.stacks[itemId] - (offered.stacks[itemId] or 0)
+		local available = inventory.stacks[itemId] - (state.yourOffer.stacks[itemId] or 0)
 		if available > 0 then
-			order += 1
-			addItemButton(myItemsList, ItemText.stackLine(itemId, available), ItemText.color(itemId), order, function()
-				local offerNow = currentOffer()
-				offerNow.stacks[itemId] = (offerNow.stacks[itemId] or 0) + 1
-				sendOffer(offerNow)
-			end)
+			table.insert(list, { itemId = itemId, count = available })
 		end
 	end
 	for guid, item in inventory.uniques do
-		if offered.uniques[guid] == nil then
-			order += 1
-			addItemButton(myItemsList, ItemText.name(item.itemId), ItemText.color(item.itemId), order, function()
-				local offerNow = currentOffer()
-				offerNow.uniques[guid] = true
-				sendOffer(offerNow)
-			end)
+		if state.yourOffer.uniques[guid] == nil then
+			table.insert(list, { itemId = item.itemId, count = 1, guid = guid })
 		end
 	end
+	return list
+end
+
+local function takeBack(entry: Entry)
+	local offer = currentOffer()
+	if entry.guid then
+		offer.uniques[entry.guid] = nil
+	else
+		local remaining = (offer.stacks[entry.itemId] or 0) - 1
+		offer.stacks[entry.itemId] = if remaining > 0 then remaining else nil
+	end
+	sendOffer(offer)
+end
+
+local function offerOne(entry: Entry)
+	local offer = currentOffer()
+	if entry.guid then
+		offer.uniques[entry.guid] = true
+	else
+		offer.stacks[entry.itemId] = (offer.stacks[entry.itemId] or 0) + 1
+	end
+	sendOffer(offer)
 end
 
 local function statusText(state: Snapshot): string
 	if state.phase == "Countdown" then
-		return `Both ready... {math.ceil(state.countdownSeconds)}`
+		return `BOTH READY... {math.ceil(state.countdownSeconds)}`
 	elseif state.phase == "Confirm" then
 		if state.youConfirmed then
-			return "Waiting for them to confirm"
+			return `WAITING FOR {string.upper(state.partnerName)}`
 		end
-		return "Check both offers, then Confirm"
+		return "CHECK BOTH OFFERS, THEN CONFIRM!"
 	end
-
-	local theirs = if state.theyReady then "They're ready." else "They're not ready."
-	return `{theirs} Click items to offer them.`
+	return "CHECK BOTH OFFERS! TRADES ARE FINAL."
 end
 
-local function render()
-	local state = snapshot
-	if not state then
-		window.Visible = false
-		return
-	end
-	Pop.show(window)
+local render: () -> ()
 
-	titleLabel.Text = `Trading with {state.partnerName}`
-	statusLabel.Text = statusText(state)
-	readyButton.Text = if state.youReady then "Unready" else "Ready"
-	readyButton.BackgroundColor3 = if state.youReady then Theme.Colors.Good else Theme.Colors.PanelLight
-	confirmButton.Visible = state.phase == "Confirm" and not state.youConfirmed
-
-	renderMyItems()
-	renderOffer(myOfferList, state.yourOffer, true)
-	renderOffer(theirOfferList, state.theirOffer, false)
-end
-
-local function renderPlayerList()
-	Widgets.clear(playerList)
-	local order = 0
+local function pickerRows(): { TradeScreen.PlayerRow }
+	local rows = {}
 	for _, player in Players:GetPlayers() do
-		if player ~= localPlayer then
-			order += 1
-			local button = Widgets.button(`Trade {player.DisplayName}`, function()
+		if player == localPlayer then
+			continue
+		end
+		local stats = player:FindFirstChild("leaderstats")
+		local scrap = stats and stats:FindFirstChild("Scrap")
+		table.insert(rows, {
+			userId = player.UserId,
+			name = player.DisplayName,
+			scrap = if scrap then `{(scrap :: any).Value} scrap` else "",
+			onTrade = function()
 				Remotes.RequestTrade:FireServer(player)
 				NotifyController.show(`Trade request sent to {player.DisplayName}`)
-				playerListPanel.Visible = false
-			end, { Size = UDim2.new(1, -8, 0, 40), LayoutOrder = order })
-			button.Parent = playerList
-		end
+				Windows.close(PICKER)
+			end,
+		})
 	end
+	return rows
+end
 
-	if order == 0 then
-		local empty = Widgets.label("Nobody else is here yet.", { TextColor3 = Theme.Colors.TextDim })
-		empty.Parent = playerList
+local function tradeView(state: Snapshot): TradeScreen.TradeView
+	return {
+		partnerName = state.partnerName,
+		status = statusText(state),
+		mine = offerEntries(state.yourOffer),
+		theirs = offerEntries(state.theirOffer),
+		youReady = state.youReady,
+		theyReady = state.theyReady,
+		bag = bagEntriesFor(state),
+		canConfirm = state.phase == "Confirm" and not state.youConfirmed,
+		onTakeBack = takeBack,
+		onOffer = offerOne,
+		onReady = function()
+			Remotes.SetReady:FireServer(not (snapshot and snapshot.youReady))
+		end,
+		onConfirm = function()
+			Remotes.Confirm:FireServer()
+		end,
+		onCancel = function()
+			Remotes.Cancel:FireServer()
+		end,
+	}
+end
+
+function render()
+	root.render(React.createElement(TradeScreen, {
+		players = pickerRows(),
+		request = request,
+		trade = if snapshot then tradeView(snapshot) else nil,
+	}))
+end
+
+local function hideRequest()
+	request = nil
+	render()
+end
+
+local function togglePicker()
+	if Windows.isOpen(PICKER) then
+		Windows.close(PICKER)
+	else
+		render()
+		Windows.open(PICKER)
 	end
-end
-
-local function column(parent: Instance, heading: string, order: number): ScrollingFrame
-	local holder = Instance.new("Frame")
-	holder.BackgroundTransparency = 1
-	holder.Size = UDim2.new(1 / 3, -6, 1, 0)
-	holder.LayoutOrder = order
-	holder.Parent = parent
-
-	local label = Widgets.label(heading, { Font = Theme.Font, Size = UDim2.new(1, 0, 0, 26) })
-	label.Parent = holder
-
-	local list = Widgets.scrollList({
-		Position = UDim2.new(0, 0, 0, 30),
-		Size = UDim2.new(1, 0, 1, -30),
-	})
-	list.Parent = holder
-
-	return list
-end
-
-local function buildWindow(screen: ScreenGui)
-	window = Widgets.panel({
-		Visible = false,
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.5),
-		Size = UDim2.fromScale(0.9, 0.75),
-	})
-	window.Parent = screen
-	local sizeLimit = Instance.new("UISizeConstraint")
-	sizeLimit.MaxSize = Vector2.new(900, 600)
-	sizeLimit.Parent = window
-
-	titleLabel = Widgets.label("Trading", { Font = Theme.Font, Size = UDim2.new(1, 0, 0, 30) })
-	titleLabel.Parent = window
-
-	local columns = Instance.new("Frame")
-	columns.BackgroundTransparency = 1
-	columns.Position = UDim2.new(0, 0, 0, 36)
-	columns.Size = UDim2.new(1, 0, 1, -36 - 90)
-	columns.Parent = window
-	Widgets.list(columns, Enum.FillDirection.Horizontal, 8)
-
-	myItemsList = column(columns, "Your items", 1)
-	myOfferList = column(columns, "Your offer", 2)
-	theirOfferList = column(columns, "Their offer", 3)
-
-	statusLabel = Widgets.label("", {
-		AnchorPoint = Vector2.new(0, 1),
-		Position = UDim2.new(0, 0, 1, -50),
-		TextColor3 = Theme.Colors.Accent,
-	})
-	statusLabel.Parent = window
-
-	local buttons = Instance.new("Frame")
-	buttons.BackgroundTransparency = 1
-	buttons.AnchorPoint = Vector2.new(0, 1)
-	buttons.Position = UDim2.new(0, 0, 1, 0)
-	buttons.Size = UDim2.new(1, 0, 0, 44)
-	buttons.Parent = window
-	Widgets.list(buttons, Enum.FillDirection.Horizontal, 8)
-
-	readyButton = Widgets.button("Ready", function()
-		Remotes.SetReady:FireServer(not (snapshot and snapshot.youReady))
-	end, { Size = UDim2.new(1 / 3, -6, 1, 0), LayoutOrder = 1 })
-	readyButton.Parent = buttons
-
-	confirmButton = Widgets.button("Confirm", function()
-		Remotes.Confirm:FireServer()
-	end, { Size = UDim2.new(1 / 3, -6, 1, 0), LayoutOrder = 2, BackgroundColor3 = Theme.Colors.Good })
-	confirmButton.Parent = buttons
-
-	local cancelButton = Widgets.button("Cancel", function()
-		Remotes.Cancel:FireServer()
-	end, { Size = UDim2.new(1 / 3, -6, 1, 0), LayoutOrder = 3, BackgroundColor3 = Theme.Colors.Bad })
-	cancelButton.Parent = buttons
-end
-
-local function buildPlayerList(screen: ScreenGui)
-	playerListPanel = Widgets.panel({
-		Visible = false,
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.5),
-		Size = UDim2.fromScale(0.4, 0.5),
-	})
-	playerListPanel.Parent = screen
-	local sizeLimit = Instance.new("UISizeConstraint")
-	sizeLimit.MinSize = Vector2.new(260, 220)
-	sizeLimit.MaxSize = Vector2.new(420, 480)
-	sizeLimit.Parent = playerListPanel
-
-	local title = Widgets.label("Trade with...", { Font = Theme.Font, Size = UDim2.new(1, -50, 0, 30) })
-	title.Parent = playerListPanel
-
-	local close = Widgets.button("X", function()
-		playerListPanel.Visible = false
-	end, { AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, 0, 0, 0), Size = UDim2.new(0, 40, 0, 30) })
-	close.Parent = playerListPanel
-
-	playerList = Widgets.scrollList({ Position = UDim2.new(0, 0, 0, 38), Size = UDim2.new(1, 0, 1, -38) })
-	playerList.Parent = playerListPanel
-end
-
-local function buildRequestPrompt(screen: ScreenGui)
-	requestPanel = Widgets.panel({
-		Visible = false,
-		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, 120),
-		Size = UDim2.new(0, 320, 0, 110),
-	})
-	requestPanel.Parent = screen
-
-	requestLabel = Widgets.label("", { Size = UDim2.new(1, 0, 0, 40) })
-	requestLabel.Parent = requestPanel
-
-	local function respond(accept: boolean)
-		if pendingRequester then
-			Remotes.RespondTrade:FireServer(pendingRequester, accept)
-		end
-		pendingRequester = nil
-		requestPanel.Visible = false
-	end
-
-	local accept = Widgets.button("Accept", function()
-		respond(true)
-	end, {
-		Position = UDim2.new(0, 0, 1, -44),
-		Size = UDim2.new(0.5, -4, 0, 44),
-		BackgroundColor3 = Theme.Colors.Good,
-	})
-	accept.Parent = requestPanel
-
-	local decline = Widgets.button("Decline", function()
-		respond(false)
-	end, {
-		Position = UDim2.new(0.5, 4, 1, -44),
-		Size = UDim2.new(0.5, -4, 0, 44),
-		BackgroundColor3 = Theme.Colors.Bad,
-	})
-	decline.Parent = requestPanel
 end
 
 function TradeController.init()
-	local screen = Widgets.screen("Trade")
-	buildWindow(screen)
-	buildPlayerList(screen)
-	buildRequestPrompt(screen)
+	root = Kit.mount("Trade", 10)
+	render()
 end
 
 function TradeController.start()
@@ -380,27 +242,36 @@ function TradeController.start()
 		if typeof(fromPlayer) ~= "Instance" or snapshot then
 			return
 		end
-		pendingRequester = fromPlayer
-		requestLabel.Text = `{fromPlayer.DisplayName} wants to trade`
-		requestPanel.Visible = true
-
+		requestCount += 1
+		local id = requestCount
+		request = {
+			id = id,
+			userId = fromPlayer.UserId,
+			name = fromPlayer.DisplayName,
+			onRespond = function(accept: boolean)
+				Remotes.RespondTrade:FireServer(fromPlayer, accept)
+				hideRequest()
+			end,
+		}
+		render()
 		task.delay(TradeConfig.REQUEST_TIMEOUT, function()
-			if pendingRequester == fromPlayer then
-				pendingRequester = nil
-				requestPanel.Visible = false
+			if request and request.id == id then
+				hideRequest()
 			end
 		end)
 	end)
 
 	Remotes.TradeUpdated.OnClientEvent:Connect(function(newSnapshot: Snapshot)
 		snapshot = newSnapshot
-		playerListPanel.Visible = false
-		requestPanel.Visible = false
+		request = nil
+		Windows.close(PICKER)
 		render()
+		Windows.open(WINDOW, true)
 	end)
 
 	Remotes.TradeEnded.OnClientEvent:Connect(function(reason: string)
 		snapshot = nil
+		Windows.close(WINDOW)
 		render()
 		local color = if reason == "Completed" then Theme.Colors.Good else Theme.Colors.Warning
 		NotifyController.show(END_MESSAGES[reason] or "Trade ended", color)
@@ -408,8 +279,16 @@ function TradeController.start()
 
 	InventoryController.changed:connect(function()
 		if snapshot then
-			renderMyItems()
+			render()
 		end
+	end)
+	InventoryController.tradeRequested:connect(function()
+		render()
+		Windows.open(PICKER)
+	end)
+	Players.PlayerAdded:Connect(render)
+	Players.PlayerRemoving:Connect(function()
+		task.defer(render)
 	end)
 
 	-- Keep the countdown number ticking between server updates.
@@ -419,15 +298,12 @@ function TradeController.start()
 			local state = snapshot
 			if state and state.phase == "Countdown" then
 				state.countdownSeconds = math.max(0, state.countdownSeconds - 0.25)
-				statusLabel.Text = statusText(state)
+				render()
 			end
 		end
 	end)
 
-	HudController.addButton("Trade", 2, function()
-		renderPlayerList()
-		playerListPanel.Visible = not playerListPanel.Visible
-	end)
+	HudController.addButton("Trade", 1, togglePicker)
 end
 
 return TradeController

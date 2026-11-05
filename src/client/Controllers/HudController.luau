@@ -2,77 +2,51 @@
 --[[
 	HudController
 
-	The always-on HUD: the scrap counter (top left) and a column of menu
-	buttons down the left edge that other controllers add to (Bag, Trade).
-	Scrap comes from the player's "Scrap" attribute, which DataService
-	keeps up to date.
+	The always-on HUD (UI/Screens/Hud): the scrap count and the menu grid
+	other controllers add buttons to (Trade, Shop, Rewards, Bag). Scrap
+	comes from the player's "Scrap" attribute, which DataService keeps up
+	to date.
 
 	Public API:
-		HudController.addButton(text, order, onClick): TextButton
-		HudController.screen: ScreenGui
+		HudController.addButton(text, order, onClick)
 ]]
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Theme = require(ReplicatedStorage.Shared.Config.Theme)
+local React = require(ReplicatedStorage.Packages.React)
 
-local Widgets = require(script.Parent.Parent.UI.Widgets)
+local Kit = require(script.Parent.Parent.UI.Kit)
+local HudScreen = require(script.Parent.Parent.UI.Screens.Hud)
 
 local localPlayer = Players.LocalPlayer
 
 local HudController = {}
 
-local buttonColumn: Frame
-local scrapLabel: TextLabel
+local root: Kit.Root
+local buttons: { HudScreen.MenuButton } = {}
 
-function HudController.addButton(text: string, order: number, onClick: () -> ()): TextButton
-	local button = Widgets.button(text, onClick, {
-		Size = UDim2.new(1, 0, 0, 44),
-		LayoutOrder = order,
-	})
-	button.Parent = buttonColumn
-
-	return button
+local function render()
+	local scrap = localPlayer:GetAttribute("Scrap")
+	root.render(React.createElement(HudScreen, {
+		scrap = if type(scrap) == "number" then scrap else nil,
+		buttons = buttons,
+	}))
 end
 
-local function refreshScrap()
-	local scrap = localPlayer:GetAttribute("Scrap")
-	scrapLabel.Text = if type(scrap) == "number" then `Scrap: {scrap}` else "Scrap: ..."
+function HudController.addButton(text: string, order: number, onClick: () -> ())
+	table.insert(buttons, { text = text, order = order, onClick = onClick })
+	render()
 end
 
 function HudController.init()
-	local screen = Widgets.screen("Hud")
-	HudController.screen = screen
-
-	local scrapPanel = Widgets.panel({
-		Position = UDim2.new(0, 12, 0, 12),
-		Size = UDim2.new(0, 200, 0, 48),
-		BackgroundColor3 = Theme.Colors.Background,
-		BackgroundTransparency = 0.2,
-	})
-	scrapPanel.Parent = screen
-
-	scrapLabel = Widgets.label("Scrap: ...", {
-		Size = UDim2.fromScale(1, 1),
-		Font = Theme.Font,
-		TextColor3 = Theme.Colors.Accent,
-		TextXAlignment = Enum.TextXAlignment.Left,
-	})
-	scrapLabel.Parent = scrapPanel
-
-	buttonColumn = Instance.new("Frame")
-	buttonColumn.BackgroundTransparency = 1
-	buttonColumn.AnchorPoint = Vector2.new(0, 0.5)
-	buttonColumn.Position = UDim2.new(0, 12, 0.5, 0)
-	buttonColumn.Size = UDim2.new(0, 110, 0, 200)
-	buttonColumn.Parent = screen
-	Widgets.list(buttonColumn, nil, 6)
+	root = Kit.mount("Hud")
+	render()
 end
 
 function HudController.start()
-	refreshScrap()
-	localPlayer:GetAttributeChangedSignal("Scrap"):Connect(refreshScrap)
+	render()
+	localPlayer:GetAttributeChangedSignal("Scrap"):Connect(render)
 end
 
 return HudController

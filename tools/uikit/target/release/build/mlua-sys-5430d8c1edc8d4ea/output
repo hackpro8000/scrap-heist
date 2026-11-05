@@ -1,0 +1,127 @@
+cargo:rerun-if-changed=build
+cargo:rerun-if-env-changed=LUAU_CXXFLAGS
+cargo:rerun-if-env-changed=LUAU_INCLUDE_DIRS
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+exit status: 0
+cargo:rustc-link-search=native=/home/major-scale/Dev 2026/scrap-heist/tools/uikit/target/release/build/mlua-sys-5430d8c1edc8d4ea/out/luau-build
+cargo:rustc-link-lib=static=luauinliner
+cargo:rustc-link-lib=static=luauvm
+cargo:rustc-link-lib=static=luaubytecode
+cargo:rustc-link-lib=static=luaucompiler
+cargo:rustc-link-lib=static=luauast
+cargo:rustc-link-lib=static=luaucommon
+cargo:rustc-link-lib=static=luauconfig
+cargo:rustc-link-lib=static=luaucustom
+cargo:rustc-link-lib=static=luaurequire
+cargo:rustc-link-lib=static=luaucodegen
+cargo:rustc-link-lib=stdc++
+cargo:rustc-env=LUAU_VERSION=0.740

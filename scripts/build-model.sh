@@ -51,4 +51,10 @@ for name in "${models[@]}"; do
 		exit 1
 	fi
 	"${modelkit}" "${dir}" "${flags[@]}"
+	# A rigged model's clips go to the game as a module the client plays
+	# (src/client/Controllers/BotAnimationController.luau).
+	if [ -f "${dir}/${name}Clips.luau" ]; then
+		mkdir -p "${root}/src/shared/Animations"
+		cp "${dir}/${name}Clips.luau" "${root}/src/shared/Animations/${name}.luau"
+	fi
 done

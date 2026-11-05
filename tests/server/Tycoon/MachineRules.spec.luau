@@ -62,9 +62,7 @@ describe("MachineRules production", function()
 		local perSecond = Economy.LEVEL_RATES[2] * INCOME * Economy.OFFLINE_RATE * Economy.PART_VALUE
 
 		expect(MachineRules.offlineEarnings(machines, 100)).toBe(math.floor(perSecond * 100))
-		expect(MachineRules.offlineEarnings(machines, 10 ^ 9)).toBe(
-			math.floor(perSecond * Economy.OFFLINE_CAP_SECONDS)
-		)
+		expect(MachineRules.offlineEarnings(machines, 10 ^ 9)).toBe(math.floor(perSecond * Economy.OFFLINE_CAP_SECONDS))
 		expect(MachineRules.offlineEarnings(machines, -50)).toBe(0)
 		expect(MachineRules.offlineEarnings({}, 1000)).toBe(0)
 	end)

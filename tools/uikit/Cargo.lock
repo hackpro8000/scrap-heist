@@ -195,14 +195,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "modelkit"
-version = "0.1.0"
-dependencies = [
- "mlua",
- "png",
-]
-
-[[package]]
 name = "num-traits"
 version = "0.2.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -345,6 +337,14 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "uikit"
+version = "0.1.0"
+dependencies = [
+ "mlua",
+ "png",
 ]
 
 [[package]]

@@ -23,6 +23,7 @@
 		CombatRules.wasInterrupted(combatant, attack): boolean
 		CombatRules.setBlocking(combatant, wantsBlock, now): reason?
 		CombatRules.equip(combatant, weaponName, now): reason?
+		CombatRules.unequip(combatant, now): reason?   -- put the weapon away
 		CombatRules.resolveHit(attacker, defender, step, positions..., now): HitResult
 		CombatRules.isFacing(look, fromPosition, toPosition, angleDegrees): boolean
 		CombatRules.hitbox(position, look, step): (center, size)
@@ -44,7 +45,10 @@ local SETTINGS = WeaponConfig.Combat
 local CombatRules = {}
 
 export type Combatant = {
+	-- The weapon in hand, or the one last held while unarmed.
 	weaponName: string,
+	-- False once the weapon is put away: no swinging or blocking.
+	armed: boolean,
 	-- Index of the last combo step started; 0 before the first swing.
 	comboIndex: number,
 	-- When the current or last swing ends its recovery.
@@ -83,6 +87,7 @@ function CombatRules.newCombatant(weaponName: string): Combatant
 
 	return {
 		weaponName = weaponName,
+		armed = true,
 		comboIndex = 0,
 		busyUntil = 0,
 		blocking = false,
@@ -113,6 +118,9 @@ function CombatRules.tryStartAttack(combatant: Combatant, now: number): (AttackS
 	-- SECURITY: these checks are why spamming the Attack remote does
 	-- nothing. A swing can only start once the last one has fully
 	-- recovered, whatever rate the client fires at.
+	if not combatant.armed then
+		return nil, "Unarmed"
+	end
 	if CombatRules.isStunned(combatant, now) then
 		return nil, "Stunned"
 	end
@@ -138,8 +146,7 @@ function CombatRules.tryStartAttack(combatant: Combatant, now: number): (AttackS
 		index = index,
 		startedAt = now,
 		hitAt = now + step.windup,
-	},
-		nil
+	}, nil
 end
 
 -- A stun that lands during the windup cancels the swing. Stuns can only
@@ -160,6 +167,9 @@ function CombatRules.setBlocking(combatant: Combatant, wantsBlock: boolean, now:
 		return nil
 	end
 
+	if not combatant.armed then
+		return "Unarmed"
+	end
 	if CombatRules.isStunned(combatant, now) then
 		return "Stunned"
 	end
@@ -186,6 +196,19 @@ function CombatRules.equip(combatant: Combatant, weaponName: string, now: number
 	end
 
 	combatant.weaponName = weaponName
+	combatant.armed = true
+	combatant.comboIndex = 0
+
+	return nil
+end
+
+function CombatRules.unequip(combatant: Combatant, now: number): string?
+	if CombatRules.isAttacking(combatant, now) then
+		return "Busy"
+	end
+
+	CombatRules.setBlocking(combatant, false, now)
+	combatant.armed = false
 	combatant.comboIndex = 0
 
 	return nil

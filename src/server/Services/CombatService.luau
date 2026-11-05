@@ -4,7 +4,7 @@
 
 	Runs every fight on the server: player characters, bots and the training
 	dummy are all "fighters" here, using the same rules. Clients only send
-	intent (Attack, SetBlocking, EquipWeapon); this service decides whether a
+	intent (Attack, SetBlocking, EquipWeapon, UnequipWeapon); this service decides whether a
 	swing starts, checks the hitbox itself after the windup, and applies
 	damage, stuns and knockback.
 
@@ -31,6 +31,7 @@
 		CombatService.setDamageTakenMultiplier(model, multiplier)
 		CombatService.hitLanded: Signal(attackerModel, targetModel, HitResult)
 		CombatService.swingChecked: Signal(boxCFrame, boxSize)   -- for the debug overlay
+		CombatService.weaponChanged: Signal(model, weaponName?)   -- nil when put away
 ]]
 
 local Players = game:GetService("Players")
@@ -44,6 +45,7 @@ local WeaponConfig = require(ReplicatedStorage.Shared.Combat.WeaponConfig)
 
 local CombatRules = require(script.Parent.Parent.Combat.CombatRules)
 local RemoteGuard = require(script.Parent.Parent.Security.RemoteGuard)
+local ShopService = require(script.Parent.ShopService)
 
 local SYSTEM = "Combat"
 
@@ -69,6 +71,7 @@ local CombatService = {}
 
 CombatService.hitLanded = Signal.new()
 CombatService.swingChecked = Signal.new()
+CombatService.weaponChanged = Signal.new()
 
 local fighters: { [Model]: Fighter } = {}
 -- The weapon each player last chose, kept across respawns.
@@ -199,6 +202,7 @@ function CombatService.register(model: Model, weaponName: string)
 
 	model:SetAttribute("Weapon", weaponName)
 	model:SetAttribute("Blocking", false)
+	CombatService.weaponChanged:fire(model, weaponName)
 end
 
 function CombatService.unregister(model: Model)
@@ -262,6 +266,23 @@ function CombatService.equip(model: Model, weaponName: string): string?
 	local reason = CombatRules.equip(fighter.combatant, weaponName, os.clock())
 	if not reason then
 		model:SetAttribute("Weapon", weaponName)
+		CombatService.weaponChanged:fire(model, weaponName)
+	end
+
+	return reason
+end
+
+function CombatService.unequip(model: Model): string?
+	local fighter = fighters[model]
+	if not fighter then
+		return "NotFighter"
+	end
+
+	local reason = CombatRules.unequip(fighter.combatant, os.clock())
+	if not reason then
+		model:SetAttribute("Weapon", nil)
+		model:SetAttribute("Blocking", false)
+		CombatService.weaponChanged:fire(model, nil)
 	end
 
 	return reason
@@ -348,6 +369,10 @@ function CombatService.start()
 		if not WeaponConfig.isPlayerWeapon(weaponName) then
 			return "NotPlayerWeapon"
 		end
+		-- SECURITY: and only weapons this player has bought.
+		if not ShopService.ownsWeapon(player, weaponName) then
+			return "NotOwned"
+		end
 		local character = player.Character
 		if not character then
 			return "NoCharacter"
@@ -359,6 +384,15 @@ function CombatService.start()
 		end
 
 		return reason
+	end)
+
+	RemoteGuard.listen(SYSTEM, Remotes.UnequipWeapon, EQUIP_RATE, function(player: Player)
+		local character = player.Character
+		if not character then
+			return "NoCharacter"
+		end
+
+		return CombatService.unequip(character)
 	end)
 
 	Players.PlayerAdded:Connect(onPlayerAdded)

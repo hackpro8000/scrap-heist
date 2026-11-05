@@ -26,7 +26,14 @@ local CONTROLLERS: { Boot.Entry } = {
 	{ name = "ShowcaseController", module = require(Controllers.ShowcaseController) },
 	{ name = "CombatController", module = require(Controllers.CombatController) },
 	{ name = "JuiceController", module = require(Controllers.JuiceController) },
+	{ name = "HotbarController", module = require(Controllers.HotbarController) },
+	{ name = "BotAnimationController", module = require(Controllers.BotAnimationController) },
 	{ name = "PropellerController", module = require(Controllers.PropellerController) },
+	{ name = "PromptController", module = require(Controllers.PromptController) },
+	{ name = "LeaderboardController", module = require(Controllers.LeaderboardController) },
+	{ name = "SettingsController", module = require(Controllers.SettingsController) },
+	{ name = "ShopController", module = require(Controllers.ShopController) },
+	{ name = "RewardsController", module = require(Controllers.RewardsController) },
 }
 
 Boot.run("Client", CONTROLLERS)

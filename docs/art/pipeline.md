@@ -106,11 +106,39 @@ reference.
   Studio imports the joints as Bones for the Animation Editor, each named
   `<name>Bone`: Studio turns a bone that shares a part's name into a Motor6D
   and drops the parts skinned to it.
+- `model.clip(name, {length, keys = {Bone = {{t, rot?, pos?}, ...}}})` adds
+  an animation. The bots use `Idle`, `Move` and `Attack`. Besides going into
+  the GLB, a rigged model's clips are written to `<Name>Clips.luau`, and
+  `scripts/build-model.sh` copies that to `src/shared/Animations/<Name>.luau`:
+  every frame of each moving bone's `Bone.Transform`, which
+  `BotAnimationController` plays in game. No Animation assets are uploaded.
 
 ## Importing into Studio
 
 1. Avatar or Home tab → **Import 3D**, pick `<Name>.glb`.
 2. Upload it, then paste the asset ID into `src/shared/Assets.luau`.
+
+### Bots, machines, crates and weapons
+
+1. `scripts/build-model.sh Scrapper Bruiser Zapper SalvageMachine StorageCrate PartBundle StarterWeapon BigSpanner`
+   (for the bots this also refreshes their clip modules in
+   `src/shared/Animations`).
+2. `ROBLOX_API_KEY=... ROBLOX_CREATOR_ID=<user id> scripts/upload-model.sh <Name>...`
+   uploads each GLB as a Model and writes its ID into `Assets.Models`.
+3. In Studio (edit mode, Rojo synced) run `tools/studio/PlaceModels.luau` in
+   the command bar, then save the place. It loads:
+   - each bot into `ServerStorage.NpcModels`, with a HumanoidRootPart,
+     Humanoid and Head built round the imported rig, for `NpcRig`;
+   - the salvage machine's tiers into `ServerStorage.MachineModels` as
+     `SalvageMachine1`-`3`, pivoted at their art centre, for `MachineService`;
+   - the storage crate's six heaps into `ServerStorage.CrateFills`, lined up
+     on Yard1's crate in the placed map (so run `PlaceMap` first), for
+     `PlotService`;
+   - the part bundle's fill levels into `ServerStorage.PartBundle`, for
+     `RaidService`;
+   - the weapons into `ServerStorage.WeaponModels`, named after their
+     WeaponConfig weapon (StarterWeapon is the Bat, BigSpanner the Spanner)
+     with a `Grip` attachment, for `HeldWeaponService`.
 
 ### Layouts too big for one upload (the Server Map)
 

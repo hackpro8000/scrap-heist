@@ -10,7 +10,10 @@
 
 	Yard models come from ServerStorage.YardTemplate if Tristen has added
 	one (a Model with parts or models named Pad1-Pad4, Crate and PlotMarker),
-	otherwise gray-block placeholders are built. Placement comes from parts
+	otherwise gray-block placeholders are built. The crate's heap of scrap
+	comes from ServerStorage.CrateFills: Fill_1 (a few parts) up to the
+	fullest, each pivoted where it sits on the template's Crate, and the
+	level shown follows how full the crate is. Placement comes from parts
 	named Yard1, Yard2, ... in a workspace folder called YardSpots if it
 	exists, otherwise a ring around the map centre (see Tycoon/YardLayout).
 
@@ -36,10 +39,12 @@ local Game = require(ReplicatedStorage.Shared.Config.Game)
 local Signal = require(ReplicatedStorage.Shared.Util.Signal)
 
 local DataService = require(script.Parent.DataService)
+local ShopService = require(script.Parent.ShopService)
 local YardLayout = require(script.Parent.Parent.Tycoon.YardLayout)
 
 local YARD_TEMPLATE_NAME = "YardTemplate"
 local YARD_SPOTS_FOLDER = "YardSpots"
+local CRATE_FILLS_FOLDER = "CrateFills"
 local FREE_YARD_TEXT = "Free yard"
 
 local FLOOR_COLOR = Color3.fromRGB(110, 110, 105)
@@ -58,6 +63,9 @@ export type Yard = {
 	owner: Player?,
 	crateLabel: TextLabel,
 	markerLabel: TextLabel,
+	-- The heap showing in the crate, and its level (0 when empty).
+	crateFill: Model?,
+	crateFillLevel: number,
 }
 
 local PlotService = {}
@@ -201,12 +209,49 @@ local function buildYard(index: number, folder: Folder): Yard
 		owner = nil,
 		crateLabel = billboard(crate, Vector3.new(0, 4, 0), ""),
 		markerLabel = billboard(marker, Vector3.new(0, 5, 0), FREE_YARD_TEXT),
+		crateFill = nil,
+		crateFillLevel = 0,
 	}
 end
 
+-- How many parts the yard's crate holds (the Big Crate pass raises it).
+local function capacityOf(yard: Yard): number
+	return if yard.owner then ShopService.crateCapacity(yard.owner) else Economy.CRATE_CAPACITY
+end
+
+-- Shows the heap for `parts` in the crate: none when it's empty or the
+-- yard is free, else the level that matches how full it is, so a crate
+-- worth raiding looks it.
+local function showCrateFill(yard: Yard, parts: number)
+	local fills = ServerStorage:FindFirstChild(CRATE_FILLS_FOLDER)
+	local levels = if fills then #fills:GetChildren() else 0
+	local level = if yard.owner
+			and parts > 0
+			and levels > 0
+		then math.clamp(math.ceil(parts / capacityOf(yard) * levels), 1, levels)
+		else 0
+	if level == yard.crateFillLevel then
+		return
+	end
+	yard.crateFillLevel = level
+	if yard.crateFill then
+		yard.crateFill:Destroy()
+		yard.crateFill = nil
+	end
+	local template = fills and fills:FindFirstChild(`Fill_{level}`)
+	if not (template and template:IsA("Model")) then
+		return
+	end
+	local fill = template:Clone()
+	fill:PivotTo(yard.crate.CFrame)
+	fill.Parent = yard.model
+	yard.crateFill = fill
+end
+
 local function showCrate(yard: Yard, parts: number)
-	yard.crateLabel.Text = if yard.owner then `{math.floor(parts)} / {Economy.CRATE_CAPACITY} parts` else ""
+	yard.crateLabel.Text = if yard.owner then `{math.floor(parts)} / {capacityOf(yard)} parts` else ""
 	yard.crate:SetAttribute("Parts", math.floor(parts))
+	showCrateFill(yard, parts)
 end
 
 function PlotService.getYards(): { Yard }
@@ -245,7 +290,7 @@ function PlotService.setCrateParts(player: Player, parts: number)
 		return
 	end
 
-	data.yard.crateParts = math.clamp(parts, 0, Economy.CRATE_CAPACITY)
+	data.yard.crateParts = math.clamp(parts, 0, ShopService.crateCapacity(player))
 	local yard = yardByPlayer[player]
 	if yard then
 		showCrate(yard, data.yard.crateParts)

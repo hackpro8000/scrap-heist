@@ -7,7 +7,9 @@ fight through the same code.
 ## How it works
 
 1. The client sends **intent only**: "attack", "block on/off", "equip
-   weapon". It never says who it hit.
+   weapon", "unequip". It never says who it hit. Pressing the held weapon's
+   key (or clicking its hotbar slot) puts it away; an unarmed fighter can't
+   swing or block until they equip again.
 2. `CombatService` asks `CombatRules` whether the swing may start. If the
    last swing hasn't recovered, or the fighter is stunned or blocking, the
    request is dropped.
@@ -43,4 +45,6 @@ the Zapper's "bolt" is just a long, narrow hitbox.
 - `src/server/Services/CombatService.luau`: fighters, remotes, hitbox queries
 - `src/shared/Combat/WeaponConfig.luau`: tuning
 - `src/client/Controllers/CombatController.luau`: input, animations, effects
+- `src/server/Services/HeldWeaponService.luau`: the held weapon's model in the right hand
+  (from `ServerStorage.WeaponModels`, placed by `tools/studio/PlaceModels.luau`)
 - `tests/server/Combat/CombatRules.spec.luau`: specs for every rule above

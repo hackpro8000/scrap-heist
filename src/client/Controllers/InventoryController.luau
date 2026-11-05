@@ -2,13 +2,15 @@
 --[[
 	InventoryController
 
-	Keeps the latest inventory snapshot from the server and shows it in a
-	simple panel (Bag button or B). The trade window reads the same snapshot
-	to list what you can offer.
+	Keeps the latest inventory snapshot from the server and shows it in the
+	Bag window (Bag button or B): a scrolling grid of slots framed by
+	rarity, and a detail card for the selected item. The trade window reads
+	the same snapshot to list what you can offer.
 
 	Public API:
 		InventoryController.getInventory(): Inventory
 		InventoryController.changed: Signal(inventory)
+		InventoryController.tradeRequested: Signal()   -- "Trade it" pressed
 		InventoryController.toggle()
 ]]
 
@@ -16,96 +18,98 @@ local ContextActionService = game:GetService("ContextActionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local InventoryTypes = require(ReplicatedStorage.Shared.Inventory.InventoryTypes)
+local Items = require(ReplicatedStorage.Shared.Config.Items)
+local React = require(ReplicatedStorage.Packages.React)
 local Remotes = require(ReplicatedStorage.Shared.Net.Inventory)
 local Signal = require(ReplicatedStorage.Shared.Util.Signal)
-local Theme = require(ReplicatedStorage.Shared.Config.Theme)
 
 local HudController = require(script.Parent.HudController)
+local InventoryScreen = require(script.Parent.Parent.UI.Screens.Inventory)
 local ItemText = require(script.Parent.Parent.UI.ItemText)
-local Pop = require(script.Parent.Parent.UI.Pop)
-local Widgets = require(script.Parent.Parent.UI.Widgets)
+local Kit = require(script.Parent.Parent.UI.Kit)
+local Windows = require(script.Parent.Parent.UI.Windows)
+
+type Entry = InventoryScreen.Entry
+
+local WINDOW = "Bag"
 
 local InventoryController = {}
 
 InventoryController.changed = Signal.new()
+InventoryController.tradeRequested = Signal.new()
 
 local inventory: InventoryTypes.Inventory = { stacks = {}, uniques = {} }
-local panel: Frame
-local list: ScrollingFrame
+local sortByName = false
+local selected = 1
+local root: Kit.Root
 
 function InventoryController.getInventory(): InventoryTypes.Inventory
 	return inventory
 end
 
-local function render()
-	Widgets.clear(list)
+local function rarityRank(itemId: string): number
+	local definition = Items.get(itemId)
+	return if definition then table.find(Items.RARITY_ORDER, definition.rarity) or 0 else 0
+end
 
-	local order = 0
-	local function addLine(text: string, color: Color3)
-		order += 1
-		local line = Widgets.label(text, {
-			TextColor3 = color,
-			TextXAlignment = Enum.TextXAlignment.Left,
-			LayoutOrder = order,
-		})
-		line.Parent = list
-	end
-
+-- One entry per stack and per unique item, rarest first (or by name).
+local function entries(): { Entry }
+	local list: { Entry } = {}
 	for _, itemId in ItemText.sortedStackIds(inventory.stacks) do
-		addLine(ItemText.stackLine(itemId, inventory.stacks[itemId]), ItemText.color(itemId))
+		table.insert(list, { itemId = itemId, count = inventory.stacks[itemId] })
 	end
 	for guid, item in inventory.uniques do
-		-- The short ID shows two copies of the same item are different items.
-		addLine(`{ItemText.name(item.itemId)}  #{string.sub(guid, 1, 6)}`, ItemText.color(item.itemId))
+		table.insert(list, { itemId = item.itemId, count = 1, guid = guid })
 	end
+	table.sort(list, function(a, b)
+		if sortByName then
+			return ItemText.name(a.itemId) < ItemText.name(b.itemId)
+		end
+		local rankA, rankB = rarityRank(a.itemId), rarityRank(b.itemId)
+		if rankA ~= rankB then
+			return rankA > rankB
+		end
+		if a.itemId ~= b.itemId then
+			return a.itemId < b.itemId
+		end
+		return (a.guid or "") < (b.guid or "")
+	end)
+	return list
+end
 
-	if order == 0 then
-		addLine("Empty. Survive a storm to find loot.", Theme.Colors.TextDim)
-	end
+local function render()
+	local list = entries()
+	selected = math.clamp(selected, 1, math.max(#list, 1))
+	root.render(React.createElement(InventoryScreen, {
+		entries = list,
+		selected = selected,
+		sortByName = sortByName,
+		onSelect = function(index: number)
+			selected = index
+			render()
+		end,
+		onSort = function()
+			sortByName = not sortByName
+			render()
+		end,
+		onTrade = function()
+			Windows.close(WINDOW)
+			InventoryController.tradeRequested:fire()
+		end,
+	}))
 end
 
 function InventoryController.toggle()
-	if panel.Visible then
-		panel.Visible = false
-	else
-		Pop.show(panel)
-	end
+	Windows.toggle(WINDOW)
 end
 
 function InventoryController.init()
-	local screen = Widgets.screen("Inventory")
-
-	panel = Widgets.panel({
-		Visible = false,
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.5),
-		Size = UDim2.fromScale(0.5, 0.6),
-	})
-	panel.Parent = screen
-	local sizeLimit = Instance.new("UISizeConstraint")
-	sizeLimit.MinSize = Vector2.new(280, 260)
-	sizeLimit.MaxSize = Vector2.new(480, 560)
-	sizeLimit.Parent = panel
-
-	local title = Widgets.label("Inventory", {
-		Font = Theme.Font,
-		Size = UDim2.new(1, -50, 0, 32),
-	})
-	title.Parent = panel
-
-	local close = Widgets.button("X", InventoryController.toggle, {
-		AnchorPoint = Vector2.new(1, 0),
-		Position = UDim2.new(1, 0, 0, 0),
-		Size = UDim2.new(0, 40, 0, 32),
-	})
-	close.Parent = panel
-
-	list = Widgets.scrollList({
-		Position = UDim2.new(0, 0, 0, 40),
-		Size = UDim2.new(1, 0, 1, -40),
-	})
-	list.Parent = panel
-
+	root = Kit.mount("Inventory", 10)
+	Windows.opened:connect(function(name: string)
+		if name == WINDOW then
+			render()
+		end
+	end)
 	render()
 end
 
@@ -120,7 +124,7 @@ function InventoryController.start()
 	end)
 	Remotes.RequestInventory:FireServer()
 
-	HudController.addButton("Bag", 1, InventoryController.toggle)
+	HudController.addButton("Bag", 4, InventoryController.toggle)
 	ContextActionService:BindAction("ToggleInventory", function(_action, state, _input)
 		if state == Enum.UserInputState.Begin then
 			InventoryController.toggle()

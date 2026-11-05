@@ -3,7 +3,8 @@
 	ShowcaseController
 
 	The showcase panel and debug overlay, for players the server marked
-	IsAdmin (Studio, or Config/Game.ADMIN_USER_IDS).
+	IsAdmin (Studio, or Config/Game.ADMIN_USER_IDS). Admins open it with F4;
+	it has no HUD button, so the menu grid stays for players.
 
 	Panel: one-tap buttons for the commands that make clips quick to record
 	(storm now, spawn bots, give items, fake raid, ...). Each button just
@@ -16,16 +17,17 @@
 	Public API: none.
 ]]
 
+local ContextActionService = game:GetService("ContextActionService")
 local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local React = require(ReplicatedStorage.Packages.React)
 local Remotes = require(ReplicatedStorage.Shared.Net.Showcase)
 local Theme = require(ReplicatedStorage.Shared.Config.Theme)
 
-local HudController = require(script.Parent.HudController)
-local Pop = require(script.Parent.Parent.UI.Pop)
-local Widgets = require(script.Parent.Parent.UI.Widgets)
+local Kit = require(script.Parent.Parent.UI.Kit)
+local ShowcaseScreen = require(script.Parent.Parent.UI.Screens.Showcase)
 
 local localPlayer = Players.LocalPlayer
 
@@ -54,13 +56,30 @@ local BUTTONS: { { any } } = {
 
 local ShowcaseController = {}
 
-local screen: ScreenGui
-local panel: Frame
-local statsPanel: Frame
-local statsList: ScrollingFrame
+local root: Kit.Root
+local panelOpen = false
+local stats: { [string]: number }? = nil
 local overlayOn = false
 local overlayFolder: Folder
 local botConnections: { RBXScriptConnection } = {}
+
+local function render()
+	local buttons: { ShowcaseScreen.Button } = {}
+	for _, entry in BUTTONS do
+		local label, command, args = entry[1], entry[2], entry[3]
+		table.insert(buttons, {
+			label = label,
+			onClick = function()
+				Remotes.Command:FireServer(command, args)
+			end,
+		})
+	end
+	root.render(React.createElement(ShowcaseScreen, {
+		open = panelOpen,
+		buttons = buttons,
+		stats = if overlayOn then stats or {} else nil,
+	}))
+end
 
 local function drawPart(cframe: CFrame, size: Vector3, color: Color3, seconds: number, shape: Enum.PartType?)
 	local part = Instance.new("Part")
@@ -132,7 +151,7 @@ end
 
 local function setOverlay(on: boolean)
 	overlayOn = on
-	statsPanel.Visible = on
+	render()
 
 	for _, connection in botConnections do
 		connection:Disconnect()
@@ -162,92 +181,38 @@ local function onOverlayStats(counts: { [string]: number }?)
 		setOverlay(true)
 	end
 
-	Widgets.clear(statsList)
-	local keys = {}
-	for key in counts do
-		table.insert(keys, key)
-	end
-	table.sort(keys)
-
-	if #keys == 0 then
-		Widgets.label("No rejected calls yet", { TextColor3 = Theme.Colors.TextDim }).Parent = statsList
-	end
-	for index, key in keys do
-		local line = Widgets.label(`{key}: {counts[key]}`, {
-			TextXAlignment = Enum.TextXAlignment.Left,
-			LayoutOrder = index,
-		})
-		line.Parent = statsList
-	end
-end
-
-local function buildPanel()
-	panel = Widgets.panel({
-		Visible = false,
-		AnchorPoint = Vector2.new(1, 0.5),
-		Position = UDim2.new(1, -12, 0.5, 0),
-		Size = UDim2.new(0, 200, 0.7, 0),
-	})
-	panel.Parent = screen
-
-	local title = Widgets.label("Showcase", { Font = Theme.Font, Size = UDim2.new(1, 0, 0, 28) })
-	title.Parent = panel
-
-	local list = Widgets.scrollList({ Position = UDim2.new(0, 0, 0, 34), Size = UDim2.new(1, 0, 1, -34) })
-	list.Parent = panel
-
-	for index, entry in BUTTONS do
-		local label, command, args = entry[1], entry[2], entry[3]
-		local button = Widgets.button(label, function()
-			Remotes.Command:FireServer(command, args)
-		end, { Size = UDim2.new(1, -8, 0, 38), LayoutOrder = index })
-		button.Parent = list
-	end
-
-	statsPanel = Widgets.panel({
-		Visible = false,
-		AnchorPoint = Vector2.new(1, 1),
-		Position = UDim2.new(1, -12, 1, -12),
-		Size = UDim2.new(0, 260, 0, 200),
-		BackgroundColor3 = Theme.Colors.Background,
-		BackgroundTransparency = 0.2,
-	})
-	statsPanel.Parent = screen
-
-	local statsTitle = Widgets.label("Rejected remote calls", { Font = Theme.Font, Size = UDim2.new(1, 0, 0, 24) })
-	statsTitle.Parent = statsPanel
-
-	statsList = Widgets.scrollList({ Position = UDim2.new(0, 0, 0, 28), Size = UDim2.new(1, 0, 1, -28) })
-	statsList.Parent = statsPanel
+	stats = counts
+	render()
 end
 
 function ShowcaseController.init()
-	screen = Widgets.screen("Showcase")
+	root = Kit.mount("Showcase")
 	overlayFolder = Instance.new("Folder")
 	overlayFolder.Name = "DebugOverlay"
 	overlayFolder.Parent = workspace
-	buildPanel()
+	render()
 end
 
 function ShowcaseController.start()
 	Remotes.DebugDraw.OnClientEvent:Connect(onDebugDraw)
 	Remotes.OverlayStats.OnClientEvent:Connect(onOverlayStats)
 
-	local showcaseButton: TextButton? = nil
+	local TOGGLE_ACTION = "ToggleShowcase"
+	local function togglePanel(_action: string, state: Enum.UserInputState, _input: InputObject)
+		if state ~= Enum.UserInputState.Begin then
+			return Enum.ContextActionResult.Pass
+		end
+		panelOpen = not panelOpen
+		render()
+		return Enum.ContextActionResult.Sink
+	end
 	local function refreshAdmin()
-		local isAdmin = localPlayer:GetAttribute("IsAdmin") == true
-		if isAdmin and not showcaseButton then
-			showcaseButton = HudController.addButton("Showcase", 10, function()
-				if panel.Visible then
-					panel.Visible = false
-				else
-					Pop.show(panel)
-				end
-			end)
-		elseif not isAdmin and showcaseButton then
-			showcaseButton:Destroy()
-			showcaseButton = nil
-			panel.Visible = false
+		if localPlayer:GetAttribute("IsAdmin") == true then
+			ContextActionService:BindAction(TOGGLE_ACTION, togglePanel, false, Enum.KeyCode.F4)
+		else
+			ContextActionService:UnbindAction(TOGGLE_ACTION)
+			panelOpen = false
+			render()
 		end
 	end
 	refreshAdmin()
