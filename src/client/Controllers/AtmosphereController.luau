@@ -16,7 +16,7 @@
 	- Solid bodies, from the models tools/studio/PlaceSky.luau puts in
 	  ReplicatedStorage.SkyModels (art/src/items/Sky*): a pastel banded
 	  planet with a glinting ring system, a great cog turning half hidden
-	  behind it, a ringed moon orbiting it, a red-orange moon and two pale
+	  behind it, a cratered moon orbiting it, a red-orange moon and two pale
 	  moons, floating islands with trees, loose rocks, and windmills
 	  turning on the horizon. A MeshPart can't be bigger than 2048 studs,
 	  so each is shown as a SpecialMesh of the model's mesh and texture,
@@ -63,7 +63,7 @@ local RING_INNER, RING_OUTER = 13.4, 22.2
 local RING_GLINTS = 28
 local GLINT_SECONDS = NumberRange.new(0.8, 2.4)
 
--- How wide the ringed moon swings behind the planet.
+-- How wide the orbiting moon swings behind the planet.
 local ORBIT_RADIUS = 6500 * SPACE_DEPTH
 -- How far behind the planet the loop is centred, and how flat it is.
 local ORBIT_BEHIND = 3500 * SPACE_DEPTH
@@ -355,16 +355,20 @@ local function buildCog(templates: Instance)
 	end)
 end
 
--- One moon of the set, by name, with the ring that shares its middle.
-local function moonParts(templates: Instance, name: string, at: CFrame, scale: number): ({ BasePart }, { CFrame })
+-- One moon of the set, by name; `as` names the copy.
+local function moonParts(
+	templates: Instance,
+	name: string,
+	at: CFrame,
+	scale: number,
+	as: string?
+): ({ BasePart }, { CFrame })
 	local parts, offsets = {}, {}
 	local template = templates:FindFirstChild("SkyMoons")
-	for _, suffix in { "", "Ring" } do
-		local source = template and template:FindFirstChild(name .. suffix, true)
-		if source and source:IsA("MeshPart") then
-			table.insert(parts, fileMesh(source, at, scale, model(name .. suffix)))
-			table.insert(offsets, CFrame.identity)
-		end
+	local source = template and template:FindFirstChild(name, true)
+	if source and source:IsA("MeshPart") then
+		table.insert(parts, fileMesh(source, at, scale, model(as or name)))
+		table.insert(offsets, CFrame.identity)
 	end
 	return parts, offsets
 end
@@ -388,11 +392,11 @@ local function buildMoons(templates: Instance)
 		end)
 	end
 
-	-- The ringed moon circles a point just behind the planet, on a flattened
+	-- A plain cratered moon circles a point just behind the planet, on a flattened
 	-- loop facing the map and tipped like the planet's rings, so it swings
 	-- out to either side and passes behind the planet, spinning as it goes.
 	local tilt = CFrame.lookAt(PLANET_AT, Vector3.zero) * CFrame.Angles(math.rad(-20), 0, math.rad(-16))
-	local parts, offsets = moonParts(templates, "RingMoon", tilt, 42 * SPACE_DEPTH)
+	local parts, offsets = moonParts(templates, "PaleMoon1", tilt, 34 * SPACE_DEPTH, "Orbiter")
 	local spinner = spin(parts, offsets, tilt, function(now)
 		return CFrame.Angles(0, now * 0.12, 0)
 	end)
