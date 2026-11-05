@@ -1,4 +1,4 @@
-local CACHE_KEY = "SkyCog-1629ae0e81cff31b"
+local CACHE_KEY = "SkyCog-0f382556173f3db5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -804,23 +804,21 @@ local function finishParts()
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
--- Sky Cog: the huge rusted cogwheel that hangs half hidden behind the
--- planet. A toothed rim with a raised inner lip, five tapered spokes tied by
--- a brace ring, a stepped hub, bolt heads, and moss and vines grown over its
--- upper side. It stands upright in the x-z plane, turning about y, 8.5 studs
--- in radius; the game scales it up a few hundred times, so it is painted at
--- the kit's full detail: rust, wear, edge highlights and contact shadows.
+-- Sky Cog: the huge cogwheel that turns half hidden behind the planet. It is
+-- a working machine, kept up and still spinning, so it is whole and only
+-- lightly weathered: a bronze toothed rim with a raised inner lip, five
+-- tapered steel spokes tied by a brace ring, a stepped hub and brass bolt
+-- heads. It stands upright in the x-z plane, turning about y, 8.5 studs in
+-- radius; the game scales it up a few hundred times, so it is painted at the
+-- kit's full detail: edge highlights, contact shadows and a little grime.
 
 local TEETH = 16
 local BASE, TIP = 7.1, 8.5
 local INNER = 5.5
 local THICK = 1.3
-local IRON = { 0.5, 0.33, 0.22 }
-local DARK_IRON = { 0.4, 0.27, 0.2 }
-local BRASS = { 0.72, 0.55, 0.28 }
--- Teeth that broke off, and ones that chipped short.
-local BROKEN = { [5] = true }
-local CHIPPED = { [11] = 0.5, [14] = 0.75 }
+local BRONZE = { 0.66, 0.46, 0.26 }
+local STEEL = { 0.36, 0.38, 0.45 }
+local BRASS = { 0.86, 0.68, 0.32 }
 
 -- Ring round the y axis: `outerAt(i, steps)` gives the outer radius at each
 -- step, so the same builder makes plain rings and the toothed rim.
@@ -847,9 +845,8 @@ end
 
 -- Eight steps a tooth: sloped flanks up to a flat top.
 local function toothed(i, _steps)
-	local tooth, step = i // 8 + 1, i % 8
-	local top = if BROKEN[tooth] then BASE + 0.15 else BASE + (TIP - BASE) * (CHIPPED[tooth] or 1)
-	return if step >= 2 and step <= 4 then top else BASE
+	local step = i % 8
+	return if step >= 2 and step <= 4 then TIP else BASE
 end
 
 local function plain(radius)
@@ -880,27 +877,27 @@ local function at(angle, radius)
 	return math.sin(angle) * radius, math.cos(angle) * radius
 end
 
-part("Rim", nil, IRON, function(mesh)
+part("Rim", nil, BRONZE, function(mesh)
 	band(mesh, toothed, INNER + 0.5, THICK, TEETH * 8)
 	-- The raised lip round the inside.
 	band(mesh, plain(INNER + 0.6), INNER, THICK * 1.25, 48)
 	-- A shallow stiffening ridge on each face.
 	band(mesh, plain(BASE - 0.35), BASE - 0.6, THICK * 1.1, 48)
-end, nil, 0.9, 1024, nil, true, 0.5)
+end, nil, 0.2, 1024, nil, true, 0.5)
 
-part("Spokes", nil, DARK_IRON, function(mesh)
+part("Spokes", nil, STEEL, function(mesh)
 	for k = 0, 4 do
 		spoke(mesh, k / 5 * TAU + 0.3, 1.2, INNER + 0.2, 1.5, 0.95, 1.0, 0.8)
 	end
 	-- The brace ring tying the spokes together.
 	band(mesh, plain(3.45), 3.0, 0.7, 40)
-end, nil, 0.85, 1024, nil, true, 0.4)
+end, nil, 0.15, 1024, nil, true, 0.4)
 
-part("Hub", nil, IRON, function(mesh)
+part("Hub", nil, BRONZE, function(mesh)
 	cylinder(mesh, 0, 0, 0, 1.9, 1.7, "y", 20)
 	cylinder(mesh, 0, 0, 0, 1.25, 2.1, "y", 16)
 	cylinder(mesh, 0, 0, 0, 0.55, 2.6, "y", 8)
-end, nil, 0.8, 512, nil, true, 0.3)
+end, nil, 0.15, 512, nil, true, 0.3)
 
 part("Bolts", nil, BRASS, function(mesh)
 	for _, side in { -1, 1 } do
@@ -923,55 +920,6 @@ part("Bolts", nil, BRASS, function(mesh)
 			cylinder(mesh, x, side * THICK * 0.52, z, 0.1, 0.12, "y", 6)
 		end
 	end
-end, nil, 0.5, 256, nil, true)
-
--- Moss greens, darkest in the hollows.
-local MOSS = { { 0.2, 0.33, 0.14 }, { 0.33, 0.5, 0.18 }, { 0.5, 0.66, 0.24 }, { 0.68, 0.8, 0.36 } }
-local mossPaint = rusting(0, function(x, y, z, _nx, _ny, nz)
-	local patch = math.noise(x * 1.3, y * 1.3, z * 1.3) + math.noise(x * 4.1, y * 4.1, z * 4.1) * 0.4
-	local level = math.clamp(math.floor((patch * 0.9 + nz * 0.55 + 0.6) * 2.2) + 1, 1, #MOSS)
-	local color = MOSS[level]
-	return color[1], color[2], color[3]
-end)
-
-part("Moss", nil, MOSS[2], function(mesh)
-	-- Clumps along the upper rim: on the tooth tops and in the gaps, thicker
-	-- toward the top of the wheel.
-	local clumps = 80
-	for k = 0, clumps - 1 do
-		local spread = (k / (clumps - 1) - 0.5) * 2
-		local angle = spread * 1.5 + math.noise(k * 0.7, 3.3) * 0.1
-		local toothStep = (angle / TAU * TEETH * 8) % 8
-		local onTooth = toothStep >= 2 and toothStep <= 4
-		local radius = (if onTooth then TIP else BASE) - 0.12
-		local x, z = at(angle, radius)
-		local size = (0.75 + 0.4 * math.noise(k * 1.9, 7.1)) * (1.2 - math.abs(spread) * 0.55)
-		local y = math.noise(k * 2.3, 1.7) * THICK * 0.5
-		sphere(mesh, x, y, z, size * 1.2, size * 1.05, size * 0.5, 5, 8)
-	end
-	-- Pads on the tops of the upper spokes, the brace ring and the hub.
-	for k = 0, 9 do
-		local angle = (k / 9 - 0.5) * 2.2
-		local x, z = at(angle, 3.5)
-		sphere(mesh, x, math.noise(k * 3.1, 2.2) * 0.3, z, 0.55, 0.45, 0.22, 4, 7)
-	end
-	sphere(mesh, 0.2, 0.1, 1.95, 0.95, 0.8, 0.3, 4, 8)
-	sphere(mesh, -0.5, -0.4, 1.8, 0.6, 0.5, 0.25, 4, 7)
-	-- Vines hanging off the rim into the wheel and over its faces.
-	for k = 0, 13 do
-		local angle = (k / 13 - 0.5) * 2.3
-		local x, z = at(angle, if k % 2 == 0 then INNER else BASE - 0.2)
-		local y = (if k % 3 == 0 then 1 else -1) * (if k % 2 == 0 then 0.3 else THICK * 0.56)
-		local length = 1.2 + (math.noise(k * 1.3, 9.9) + 0.5) * 2.4
-		local points = {}
-		for step = 0, 5 do
-			local t = step / 5
-			table.insert(points, { x + math.sin(t * 5 + k) * 0.12, y + math.cos(t * 4 + k) * 0.06, z - t * length })
-		end
-		tube(mesh, points, 0.055, 4)
-		-- A leaf clump at the end.
-		sphere(mesh, x + math.sin(5 + k) * 0.12, y, z - length, 0.2, 0.16, 0.24, 3, 6)
-	end
-end, true, mossPaint, 512, nil, true)
+end, nil, 0.1, 256, nil, true)
 
 finishParts()
