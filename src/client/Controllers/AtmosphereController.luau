@@ -64,7 +64,7 @@ local ORBIT_RADIUS = 6500 * SPACE_DEPTH
 local ORBIT_BEHIND = 3500 * SPACE_DEPTH
 local ORBIT_FLAT = 0.3
 
-local COG_AT = Vector3.new(6400, 3300, -11500) * SPACE_DEPTH
+local COG_AT = Vector3.new(8615, 3609, -11091) * SPACE_DEPTH
 -- The art is 8.5 studs in radius.
 local COG_SCALE = 420 * SPACE_DEPTH
 
@@ -289,15 +289,17 @@ local function buildPlanet(templates: Instance)
 	end
 end
 
--- The cog stands behind the planet, turned a little off face-on so its
--- depth shows, and never stops turning.
+-- The cog stands just behind the planet, offset enough that the planet
+-- hides its near side but not its hub, turned a little off face-on so its
+-- depth shows (not so far that it reaches into the rings), and never stops
+-- turning.
 local function buildCog(templates: Instance)
 	local template = templates:FindFirstChild("SkyCog")
 	local hub = template and template:FindFirstChild("Hub", true)
 	if not (template and template:IsA("Model") and hub and hub:IsA("MeshPart")) then
 		return
 	end
-	local base = CFrame.lookAt(COG_AT, Vector3.zero) * CFrame.Angles(0, math.rad(24), 0)
+	local base = CFrame.lookAt(COG_AT, Vector3.zero) * CFrame.Angles(0, math.rad(12), 0)
 	local parts, offsets = fileModel(template, hub, base, COG_SCALE, model("Cog"))
 	spin(parts, offsets, base, function(now)
 		return CFrame.Angles(0, 0, now * 0.02)
