@@ -56,7 +56,8 @@ jobs:
         run: |
           scripts/assemble-model.sh "$LAYOUT"
           start=$SECONDS
-          scripts/build-model.sh "$LAYOUT" -- --chunks --shard "$SHARE"
+          set -o pipefail
+          scripts/build-model.sh "$LAYOUT" -- --chunks --shard "$SHARE" 2>&1 | tee build.log
           echo "BUILD_SECONDS=$((SECONDS - start))" >> "$GITHUB_ENV"
       - name: Collect results
         run: |
@@ -71,6 +72,8 @@ jobs:
           EOF
           cp "art/models/$LAYOUT/chunks/${LAYOUT}Chunks.luau" "$out/"
           cp "art/models/$LAYOUT/preview.png" "$out/" || true
+          # Each placement's build time, for dealing the next run's shards.
+          awk -F'\t' '$1 == "SHARD_COST" { print $2 "\t" $3 }' build.log > "$out/costs.txt"
       - name: Upload chunks to Roblox
         if: env.ROBLOX_API_KEY != '' && env.ROBLOX_CREATOR_ID != ''
         run: |
@@ -82,6 +85,7 @@ jobs:
         if: always()
         run: |
           echo "### Shard $SHARE" >> "$GITHUB_STEP_SUMMARY"
+          awk -F'\t' '{ s += $2 } END { printf "measured work: %.0fs over %d builds\n", s, NR }' "results/S${{ matrix.shard }}/costs.txt" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
           echo "build ${BUILD_SECONDS:--}s, upload ${UPLOAD_SECONDS:-skipped}${UPLOAD_SECONDS:+s}, $(wc -l < "results/S${{ matrix.shard }}/parts.txt" 2>/dev/null || echo 0) parts" >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
@@ -109,23 +113,37 @@ jobs:
           twice=$(cat shards/shard-*/parts.txt | sort | uniq -d)
           [ -z "$twice" ] || { echo "parts built by more than one shard:"; echo "$twice" | head; exit 1; }
           echo "$(cat shards/shard-*/parts.txt | wc -l) parts across $count shards, none built twice" | tee -a "$GITHUB_STEP_SUMMARY"
-      - name: Merge chunk IDs and open a PR
+      - name: Merge costs and chunk IDs, open a PR
         run: |
-          if ! ls shards/shard-*/"${LAYOUT}AssetIds.txt" > /dev/null 2>&1; then
-            echo "No chunks were uploaded (no Roblox secrets), so there is nothing to merge." | tee -a "$GITHUB_STEP_SUMMARY"
+          # Build times: this run's measurements (the slowest where a model was
+          # built on more than one shard), plus older ones it didn't measure.
+          costs="art/src/layouts/${LAYOUT}Costs.txt"
+          touch "$costs"
+          cat shards/shard-*/costs.txt | awk -F'\t' '!($1 in t) || $2 > t[$1] { t[$1] = $2 } END { for (k in t) print k "\t" t[k] }' > new-costs.txt
+          awk -F'\t' 'NR == FNR { seen[$1] = 1; print; next } !($1 in seen)' new-costs.txt "$costs" | LC_ALL=C sort > "$costs.new"
+          mv "$costs.new" "$costs"
+          echo "$(wc -l < new-costs.txt) build times measured" >> "$GITHUB_STEP_SUMMARY"
+          what="build times"
+          if ls shards/shard-*/"${LAYOUT}AssetIds.txt" > /dev/null 2>&1; then
+            scripts/merge-shards.sh "$LAYOUT" $(ls -d shards/shard-* | sort -V)
+            what="chunks and build times"
+          else
+            echo "No chunks were uploaded (no Roblox secrets); the PR carries build times only." | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
+          if git diff --quiet; then
+            echo "Nothing changed." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          scripts/merge-shards.sh "$LAYOUT" $(ls -d shards/shard-* | sort -V)
-          branch="map-chunks/${{ github.run_id }}"
+          branch="map-build/${{ github.run_id }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$branch"
-          git add src/shared/Assets.luau src/shared/Config/MapChunks.luau
-          git commit -m "$LAYOUT chunks from a ${{ inputs.shards }}-shard build of ${{ inputs.ref }}"
+          git add -A src/shared "$costs"
+          git commit -m "$LAYOUT $what from a ${{ inputs.shards }}-shard build of ${{ inputs.ref }}"
           git push origin "$branch"
           if gh pr create --base main --head "$branch" \
-            --title "$LAYOUT chunks: ${{ inputs.shards }}-shard build of ${{ inputs.ref }}" \
-            --body "New chunk IDs and anchors from [run ${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}). Load them in Studio with tools/studio/PlaceMap.luau."; then
+            --title "$LAYOUT $what: ${{ inputs.shards }}-shard build of ${{ inputs.ref }}" \
+            --body "New $what from [run ${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}). Build times deal the next run's shards by cost. New chunk IDs load in Studio with tools/studio/PlaceMap.luau."; then
             echo "Opened a PR from $branch" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "Pushed $branch, but couldn't open a PR (allow GitHub Actions to create pull requests in the repository settings): ${{ github.server_url }}/${{ github.repository }}/compare/$branch" | tee -a "$GITHUB_STEP_SUMMARY"

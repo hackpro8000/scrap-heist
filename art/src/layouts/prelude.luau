@@ -82,18 +82,59 @@ local buildKeys = {}
 -- function starts on, so placeSlab() can reuse an unchanged slab.
 local slabKeys = {}
 
--- With modelkit --shard, each machine builds every SHARD_COUNT-th placement,
--- dealt round in the order the layout places them. The order is the same on
--- every machine, so between them the shards build each placement once. A
--- placement inside another one's build belongs to it, and isn't counted:
--- whether it runs depends on that build being cached.
-local placements = 0
-local function inThisShard(): boolean
-	if builtParts then
+-- With modelkit --shard, each placement goes to the shard with the least work
+-- dealt so far, by its measured build time (SHARD_COSTS, from the assembler's
+-- <Layout>Costs.txt; unmeasured ones count as the median). A model a shard has
+-- already built costs it almost nothing to place again, so repeats of a prop
+-- gather on one shard. Every machine runs the same deal in the same order, so
+-- between them the shards build each placement once. A placement inside
+-- another one's build belongs to it, and isn't dealt: whether it runs depends
+-- on that build being cached.
+local REPEAT_COST = 0.01
+local shardLoads, shardModels = {}, {}
+local medianCost = 1
+do
+	local costs = {}
+	for _, seconds in SHARD_COSTS do
+		table.insert(costs, seconds)
+	end
+	table.sort(costs)
+	if #costs > 0 then
+		medianCost = costs[(#costs + 1) // 2]
+	end
+end
+-- `reuses`, when given, names the model build this placement reuses.
+local function inThisShard(costKey: string, reuses: string?): boolean
+	if builtParts or SHARD_COUNT == nil then
 		return true
 	end
-	placements += 1
-	return SHARD_COUNT == nil or (placements - 1) % SHARD_COUNT + 1 == SHARD_INDEX
+	local cost = SHARD_COSTS[costKey] or medianCost
+	local best, bestLoad = 1, math.huge
+	for shard = 1, SHARD_COUNT do
+		shardModels[shard] = shardModels[shard] or {}
+		local extra = if reuses and shardModels[shard][reuses] then REPEAT_COST else cost
+		local load = (shardLoads[shard] or 0) + extra
+		if load < bestLoad then
+			best, bestLoad = shard, load
+		end
+	end
+	shardLoads[best] = bestLoad
+	if reuses then
+		shardModels[best][reuses] = true
+	end
+	return best == SHARD_INDEX
+end
+
+-- Times a cached build when sharding, printing a line the build workflow
+-- gathers into <Layout>Costs.txt for the next deal.
+local function timedBuild(costKey: string, build: () -> any): any
+	if SHARD_COUNT == nil then
+		return build()
+	end
+	local started = os.clock()
+	local result = build()
+	print(string.format("SHARD_COST\t%s\t%.3f", costKey, os.clock() - started))
+	return result
 end
 
 local function addPart(name, mesh, image, preview, emissive)
@@ -118,14 +159,14 @@ end
 -- `scale` builds the model that many times its own size, so its textures
 -- keep their density instead of being stretched with it.
 local function place(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, stretch: number?, axis: string?, scale: number?)
-	if not inThisShard() then
-		return
-	end
-	placeLabel = label
-	placeX, placeY, placeZ, placeTurn = x, y, z or 0, math.rad(turn or 0)
-	placeStretch, placeAxis, placeScale = stretch or 1, axis or "x", scale or 1
 	local key = buildKeys[build]
 	if not key then
+		if not inThisShard(`place {label}`) then
+			return
+		end
+		placeLabel = label
+		placeX, placeY, placeZ, placeTurn = x, y, z or 0, math.rad(turn or 0)
+		placeStretch, placeAxis, placeScale = stretch or 1, axis or "x", scale or 1
 		build()
 		placeScale = 1
 		return
@@ -133,24 +174,36 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 	-- Built once at the origin per model, scale and stretch, then moved into
 	-- place, so moving a prop never rebuilds it. Eye previews size textures by
 	-- distance, so there placements share a build per distance band.
-	key = if placeScale == 1 then `{key} {placeStretch} {placeAxis}` else `{key} {placeStretch} {placeAxis} x{placeScale}`
+	local variant = if (scale or 1) == 1 then `{stretch or 1} {axis or "x"}` else `{stretch or 1} {axis or "x"} x{scale}`
+	-- Costs are keyed by model name, not source hash, so an edited model keeps
+	-- its last measured cost until it's measured again.
+	local costKey = `{string.match(key, "^(.-)%-%x+$") or key} {variant}`
+	if not inThisShard(costKey, `{key} {variant}`) then
+		return
+	end
+	placeLabel = label
+	placeX, placeY, placeZ, placeTurn = x, y, z or 0, math.rad(turn or 0)
+	placeStretch, placeAxis, placeScale = stretch or 1, axis or "x", scale or 1
+	key = `{key} {variant}`
 	if previewBand then
 		key = `{key} band {previewBand(x, y, z or 0)}`
 	end
 	local x0, y0, z0, turn0 = placeX, placeY, placeZ, placeTurn
 	for _, part in model.cached(key, function()
-		placeX, placeY, placeZ, placeTurn = 0, 0, 0, 0
-		if previewPlacing then
-			previewPlacing(x0, y0, z0, turn0)
-		end
-		builtParts = {}
-		build()
-		if previewPlacing then
-			previewPlacing()
-		end
-		local built = builtParts
-		builtParts = nil
-		return built
+		return timedBuild(costKey, function()
+			placeX, placeY, placeZ, placeTurn = 0, 0, 0, 0
+			if previewPlacing then
+				previewPlacing(x0, y0, z0, turn0)
+			end
+			builtParts = {}
+			build()
+			if previewPlacing then
+				previewPlacing()
+			end
+			local built = builtParts
+			builtParts = nil
+			return built
+		end)
 	end) do
 		addPart(part.name, part.mesh:moved(turn0, x0, y0, z0), part.image, part.preview, part.emissive)
 	end
@@ -166,21 +219,24 @@ local function placeSlab(label: string, build: () -> (), x: number, y: number, t
 	if not key then
 		error(`slab {label} has no cache key; start its body on a line ending in "function()"`)
 	end
-	if not inThisShard() then
+	local costKey = `slab {label}`
+	if not inThisShard(costKey) then
 		return
 	end
 	placeLabel = label
 	placeX, placeY, placeZ, placeTurn = x, y, 0, math.rad(turn or 0)
 	placeStretch, placeAxis, placeScale = 1, "x", 1
 	for _, part in model.cached(`{key} {label} {x} {y} {turn or 0}`, function()
-		builtParts = {}
-		build()
-		if finish then
-			finish()
-		end
-		local built = builtParts
-		builtParts = nil
-		return built
+		return timedBuild(costKey, function()
+			builtParts = {}
+			build()
+			if finish then
+				finish()
+			end
+			local built = builtParts
+			builtParts = nil
+			return built
+		end)
 	end) do
 		addPart(part.name, part.mesh, part.image, part.preview, part.emissive)
 	end

@@ -59,8 +59,14 @@ elif [ -f "${src}/layouts/${name}.luau" ]; then
 		open && index($0, indent "end") == 1 { print start, NR; open = 0 }' "${layout}")"
 	outside="$(awk -v spans="${spans}" 'BEGIN { n = split(spans, s, /[ \n]/); for (i = 1; i < n; i += 2) for (l = s[i] + 1; l < s[i + 1]; l++) skip[l] = 1 }
 		!skip[NR]' "${layout}" | cat "${out}.head" - | sha1sum | cut -c1-16)"
-	offset=$(( $(wc -l < "${out}.head") + $(printf '%s\n' "${spans}" | grep -c . || true) ))
+	# Measured build times for dealing placements to shards (see prelude.luau),
+	# written by the build-map-shards workflow. They go on one line ahead of
+	# everything and into no key, so new timings never invalidate the cache.
+	costs="${src}/layouts/${name}Costs.txt"
+	costs_line="local SHARD_COSTS = { $(if [ -f "${costs}" ]; then awk -F'\t' 'NF == 2 { printf "[\"%s\"] = %s, ", $1, $2 }' "${costs}"; fi) }"
+	offset=$(( 1 + $(wc -l < "${out}.head") + $(printf '%s\n' "${spans}" | grep -c . || true) ))
 	{
+		echo "${costs_line}"
 		cat "${out}.head"
 		while read -r start end; do
 			[ -n "${start}" ] || continue
