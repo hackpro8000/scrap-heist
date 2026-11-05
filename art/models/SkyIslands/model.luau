@@ -1,4 +1,4 @@
-local CACHE_KEY = "SkyIslands-cfb635ef53d303a9"
+local CACHE_KEY = "SkyIslands-c8461b289a3899c7"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -827,9 +827,9 @@ local LX, LY, LZ = -0.45, -0.35, 0.82
 
 local GRASS = { { 0.3, 0.46, 0.2 }, { 0.44, 0.63, 0.25 }, { 0.6, 0.76, 0.32 } }
 local LEAF = { { 0.19, 0.35, 0.2 }, { 0.33, 0.53, 0.23 }, { 0.56, 0.73, 0.31 } }
-local STONE = { { 0.3, 0.29, 0.36 }, { 0.47, 0.45, 0.47 }, { 0.65, 0.62, 0.59 } }
+local STONE = { { 0.4, 0.33, 0.3 }, { 0.58, 0.5, 0.43 }, { 0.78, 0.71, 0.6 } }
 local BARK = { { 0.3, 0.21, 0.16 }, { 0.45, 0.32, 0.22 } }
-local HAZE = { 0.5, 0.66, 0.9 }
+local HAZE = { 0.62, 0.66, 0.78 }
 
 -- A seeded random source (the engine has no Random).
 local function seeded(seed)
@@ -1054,7 +1054,7 @@ local function islandPainter(island, offsetX, offsetY)
 		-- Rock: strata bands, fading toward the sky's blue at the point.
 		local strata = math.sin(z * 0.9 + math.noise(x * 0.15, y * 0.15, island.seed) * 5)
 		local r, g, b = tone(STONE, light + 0.15 + (if strata > 0.6 then -0.25 else 0))
-		local fade = math.clamp((0 - z) / (0 - bottom), 0, 1) * 0.45
+		local fade = math.clamp((0 - z) / (0 - bottom), 0, 1) * 0.3
 		return r + (HAZE[1] - r) * fade, g + (HAZE[2] - g) * fade, b + (HAZE[3] - b) * fade
 	end
 end
