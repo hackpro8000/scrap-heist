@@ -5,9 +5,9 @@ Painted the way an anime background cloud is: two hard tones and no
 airbrushing. The body is a pale cyan shadow, and over it lie pure white lit
 shapes with crisp, jagged edges that break into brush flicks. The light
 comes from the upper left, so each puff's upper left is white and the white
-thins out down the cloud. A lighter cyan picks out a few in-between shapes,
-a deeper one the creases where a puff sits in front of another, and the flat
-base is a crisp, slightly wavy edge with a darker underside. Small cloudlets
+thins out down the cloud. A lighter cyan picks out a few in-between shapes
+and a deeper one the creases where a puff sits in front of another. Clouds
+are round all over, lumpy underneath as well as on top, and small cloudlets
 drift loose round the heap.
 
 Every cloud is painted as a stack of slices the game sets apart in depth, so
@@ -43,7 +43,6 @@ WHITE = np.array([255, 255, 255], float)
 PALE = np.array([214, 242, 249], float)
 SHADOW = np.array([170, 223, 237], float)
 CREASE = np.array([140, 200, 222], float)
-UNDERSIDE = np.array([128, 188, 214], float)
 # Light from the upper left.
 LIGHT = np.array([-0.55, -0.65, 0.52])
 LIGHT /= np.linalg.norm(LIGHT)
@@ -80,14 +79,12 @@ class Brush:
         self.dx = displacement(26, 60, 24) + displacement(7, 11, 8)
         self.dy = displacement(60, 20, 18) + displacement(9, 6, 7)
         self.pale = value_noise(w, h, 40 * reach, 30 * reach, rng) > 0.45
-        self.base_wave = (value_noise(w, 1, 50 * reach, 1, rng)[0] - 0.5) * 8 * reach
 
 
-def shade(w, h, discs, light_bias, brush, base=None):
+def shade(w, h, discs, light_bias, brush):
     """Paints discs (x, y, r, light fn of unit offsets; front-most last)
-    into one slice: two-tone light with jagged edges, creases where a disc
-    overlaps one behind it, and a crisp flat base at `base` if given.
-    Returns colour and alpha."""
+    into one slice: two-tone light with jagged edges and creases where a
+    disc overlaps one behind it. Returns colour and alpha."""
     ys, xs = np.mgrid[0:h, 0:w].astype(float)
     lit = np.zeros((h, w))
     cover = np.zeros((h, w))
@@ -113,13 +110,6 @@ def shade(w, h, discs, light_bias, brush, base=None):
     pale = (field > PALE_AT) & brush.pale
     color = np.where((field > WHITE_AT)[..., None], WHITE, np.where(pale[..., None], PALE, SHADOW))
     color = np.where(((creases > 0.5) & (field < WHITE_AT))[..., None], CREASE, color)
-
-    if base is not None:
-        # A crisp, slightly wavy flat base with a darker underside above it.
-        line = base + brush.base_wave[None, :]
-        shape = shape * (ys < line)
-        underside = (ys > line - 6 * (h / 256)) & (field < WHITE_AT + 0.15)
-        color = np.where(underside[..., None], UNDERSIDE, color)
 
     edge = Image.fromarray((np.clip(shape, 0, 1) * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.7))
     return color, np.asarray(edge, float) / 255
@@ -155,6 +145,13 @@ def side_puffs(rng):
             a = rng.uniform(0.2, np.pi - 0.2)
             d = r * rng.uniform(0.8, 0.98)
             small.append((x + np.cos(a) * d, y + np.sin(a) * d, r * rng.uniform(0.14, 0.38), layer))
+    # Lumps along the underside of the bottom row, so the cloud is round
+    # underneath too, not flat.
+    for x, y, r, layer in main[:count]:
+        for _ in range(int(rng.integers(2, 5))):
+            a = rng.uniform(np.pi + 0.3, 2 * np.pi - 0.3)
+            d = r * rng.uniform(0.75, 0.95)
+            small.append((x + np.cos(a) * d, y + np.sin(a) * d, r * rng.uniform(0.16, 0.36), layer))
     # Loose cloudlets drift in the middle slice.
     loose = []
     for _ in range(int(rng.integers(2, 6))):
@@ -170,24 +167,26 @@ def paint_side(seed, room):
     puffs = side_puffs(rng)
     left = min(x - r for x, _, r, _ in puffs)
     right = max(x + r for x, _, r, _ in puffs)
-    top = max(y + r for _, y, r, _ in puffs)
-    scale = min(w * 0.88 / (right - left), h * 0.82 / top) * room
-    base = h * 0.9
+    low = min(y - r for _, y, r, _ in puffs)
+    high = max(y + r for _, y, r, _ in puffs)
+    scale = min(w * 0.88 / (right - left), h * 0.86 / (high - low)) * room
     ox = (w - (right - left) * scale) / 2 - left * scale
-    placed = [(x * scale + ox, base - y * scale, r * scale, s) for x, y, r, s in puffs]
+    oy = (h + (high - low) * scale) / 2 + low * scale
+    placed = [(x * scale + ox, oy - y * scale, r * scale, s) for x, y, r, s in puffs]
     highest = min(y - r for _, y, r, _ in placed)
+    lowest = max(y + r for _, y, r, _ in placed)
     brush = Brush(w, h, rng, w / 1024)
 
     def lighting(dx, dy, d2, ys):
         nz = np.sqrt(np.clip(1 - d2, 0, 1))
-        down = np.clip((ys - highest) / (base - highest), 0, 1)
+        down = np.clip((ys - highest) / (lowest - highest), 0, 1)
         return dx * LIGHT[0] + dy * LIGHT[1] + nz * LIGHT[2] - down**1.3 * 0.62
 
     slices = []
     for layer in range(SIDE_SLICES):
         # Within a slice the higher puffs lie behind, so lower ones overlap them.
         discs = [(x, y, r, lighting) for x, y, r, s in sorted(placed, key=lambda p: p[1]) if s == layer]
-        slices.append(shade(w, h, discs, 0.18, brush, base))
+        slices.append(shade(w, h, discs, 0.18, brush))
     return slices
 
 
