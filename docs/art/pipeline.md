@@ -164,7 +164,7 @@ chunks and put back together in Studio:
    `ServerMap_S<i>_NN.glb`, keyed `ServerMapS<i>_NN`. Uploading a shard leaves
    `src/shared` alone; its `ServerMapAssetIds.txt` and `ServerMapChunks.luau`
    are merged with the other shards' afterwards. A shard build never prunes
-   the cache.
+   the cache. Cloud build workers run these as jobs (`docs/builds/workers.md`).
 3. In Studio, with Rojo synced, paste `tools/studio/PlaceMap.luau` into the
    command bar. It loads every chunk, scales, turns and moves it so its
    anchors land in place, anchors the parts, gives the propeller blur discs
