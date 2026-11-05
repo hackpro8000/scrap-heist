@@ -75,6 +75,8 @@ local COG_SCALE = 492 * SPACE_DEPTH
 
 -- Side-on clouds round the horizon: how many hang there, out of how many
 -- painted variants (Assets.UI.CloudNNN).
+-- How brightly the cloud sprites glow.
+local CLOUD_BRIGHTNESS = 3
 local CLOUDS = 45
 local CLOUD_VARIANTS = 100
 local CLOUD_HEIGHT = NumberRange.new(-200, 2200)
@@ -232,8 +234,9 @@ local function spin(parts: { BasePart }, offsets: { CFrame }, base: CFrame, turn
 end
 
 -- A painted sprite standing at `cframe`, facing along its look direction,
--- `size` studs across. A part can't be bigger than 2048 studs.
-local function sprite(image: string, size: Vector2, cframe: CFrame, parent: Instance): BasePart
+-- `size` studs across, lit `brightness` times over. A part can't be bigger
+-- than 2048 studs.
+local function sprite(image: string, size: Vector2, cframe: CFrame, parent: Instance, brightness: number?): BasePart
 	local part = Instance.new("Part")
 	part.Material = HOST_MATERIAL
 	part.Anchored = true
@@ -247,6 +250,7 @@ local function sprite(image: string, size: Vector2, cframe: CFrame, parent: Inst
 	local gui = Instance.new("SurfaceGui")
 	gui.Face = Enum.NormalId.Front
 	gui.LightInfluence = 0
+	gui.Brightness = brightness or 1
 	gui.MaxDistance = FAR
 	gui.SizingMode = Enum.SurfaceGuiSizingMode.FixedSize
 	gui.CanvasSize = Vector2.new(512, 512 * size.Y / size.X)
@@ -565,7 +569,7 @@ local function buildClouds()
 			local at = around(angle, distance * grow, height * grow)
 			-- The SurfaceGui is on the part's front, which looks along -Z.
 			local facing = CFrame.lookAt(at, Vector3.new(0, at.Y, 0))
-			sprite(image, Vector2.new(width, width / 2) * grow, facing, layers[band].model)
+			sprite(image, Vector2.new(width, width / 2) * grow, facing, layers[band].model, CLOUD_BRIGHTNESS)
 		end
 	end
 end
@@ -599,7 +603,7 @@ local function buildCloudsBelow()
 			end
 			local lift = Vector3.yAxis * (slice - 1) * BELOW_SLICE_GAP
 			local facing = CFrame.lookAt(at + lift, at + lift + Vector3.yAxis) * CFrame.Angles(0, 0, turn)
-			sprite(image, Vector2.new(width, width / 2), facing, layers[band].model)
+			sprite(image, Vector2.new(width, width / 2), facing, layers[band].model, CLOUD_BRIGHTNESS)
 		end
 	end
 end
