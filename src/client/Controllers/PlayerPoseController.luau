@@ -17,7 +17,9 @@
 	- Stagger: a short lean back when guard-broken, or when parried as the
 	  attacker.
 
-	Joints are offset from where they rest (Motor6D.C0), blended a little
+	Each frame, after the Animator has posed a joint (its Transform), the
+	offset is laid on top, so the walk and idle keep playing underneath.
+	Offsets are blended a little
 	each frame so poses never snap. Characters further than MAX_DISTANCE
 	from the camera aren't posed.
 
@@ -37,7 +39,8 @@ local MAX_DISTANCE = 200
 local BLEND_RATE = 22
 local STAGGER_SECONDS = 0.45
 
--- Joint name -> the part holding its Motor6D.
+-- Joint name -> the part holding it (a Motor6D, or the AnimationConstraint
+-- newer avatars are rigged with).
 local JOINTS: { [string]: string } = {
 	RightShoulder = "RightUpperArm",
 	LeftShoulder = "LeftUpperArm",
@@ -124,7 +127,10 @@ local CARRY: Pose = { RightShoulder = v(35, 0, -25), LeftShoulder = v(35, 0, 25)
 local STAGGER: Pose =
 	{ Waist = v(-25, 0, 0), Neck = v(-20, 0, 0), RightShoulder = v(-20, 0, 30), LeftShoulder = v(-20, 0, -30) }
 
-type Joint = { motor: Motor6D, rest: CFrame, current: Vector3 }
+-- `animated` is the Transform the Animator last left on the joint, and
+-- `written` what this controller put there on top of it: a joint no clip
+-- moves keeps the written Transform, which mustn't be built on again.
+type Joint = { joint: Motor6D | AnimationConstraint, animated: CFrame, written: CFrame?, current: Vector3 }
 
 type Posed = {
 	joints: { [string]: Joint },
@@ -143,11 +149,12 @@ local function jointsOf(model: Model): { [string]: Joint }?
 	local joints: { [string]: Joint } = {}
 	for name, partName in JOINTS do
 		local part = model:FindFirstChild(partName)
-		local motor = part and part:FindFirstChild(name)
-		if not (motor and motor:IsA("Motor6D")) then
+		local joint = part and part:FindFirstChild(name)
+		if not (joint and (joint:IsA("Motor6D") or joint:IsA("AnimationConstraint"))) then
 			return nil
 		end
-		joints[name] = { motor = motor, rest = motor.C0, current = Vector3.zero }
+		local animated = (joint :: any).Transform :: CFrame
+		joints[name] = { joint = joint :: any, animated = animated, written = nil, current = Vector3.zero }
 	end
 	return joints
 end
@@ -290,7 +297,7 @@ local function step(deltaTime: number)
 		end
 		local resting = true
 		for name, joint in entry.joints do
-			if not joint.motor.Parent then
+			if not joint.joint.Parent then
 				continue
 			end
 			local target = targetOf(model, entry, now, name)
@@ -299,12 +306,21 @@ local function step(deltaTime: number)
 			if degrees.Magnitude > 0.05 or target ~= Vector3.zero then
 				resting = false
 			end
-			joint.motor.C0 = joint.rest * CFrame.Angles(math.rad(degrees.X), math.rad(degrees.Y), math.rad(degrees.Z))
+			local transform = joint.joint.Transform
+			if transform ~= joint.written then
+				joint.animated = transform
+			end
+			local written = joint.animated
+				* CFrame.Angles(math.rad(degrees.X), math.rad(degrees.Y), math.rad(degrees.Z))
+			joint.joint.Transform = written
+			joint.written = written
 		end
 		-- Back at rest with nothing to hold: stop posing it.
 		if resting and not entry.swing then
 			for _, joint in entry.joints do
-				joint.motor.C0 = joint.rest
+				if joint.joint.Transform == joint.written then
+					joint.joint.Transform = joint.animated
+				end
 			end
 			posed[model] = nil
 		end
@@ -318,7 +334,8 @@ function PlayerPoseController.init() end
 function PlayerPoseController.start()
 	Remotes.PlaySwing.OnClientEvent:Connect(onSwing)
 	Remotes.HitEffect.OnClientEvent:Connect(onHitEffect)
-	RunService.RenderStepped:Connect(step)
+	-- After the Animator's step, so the offsets land on this frame's pose.
+	RunService.PreSimulation:Connect(step)
 end
 
 return PlayerPoseController
