@@ -8,6 +8,7 @@
 # The key needs the Assets API's asset:write permission. Each kit keeps
 # art/ui/<Kit>/uploads.tsv (name, PNG hash, asset ID), so an element whose
 # PNG hasn't changed since its last upload is skipped and keeps its ID.
+# UPLOAD_JOBS (default 8) sets how many upload at once.
 set -euo pipefail
 
 [ $# -gt 1 ] || { echo "usage: scripts/upload-ui.sh <Kit> <Element>..." >&2; exit 1; }
@@ -66,6 +67,13 @@ record() {
 	mv "${assets}.new" "${assets}"
 }
 
+# Uploads run UPLOAD_JOBS at a time, each writing its ID to its own file;
+# the manifest and Assets.luau are then updated one name at a time, so no
+# two writers ever touch them at once.
+jobs_max="${UPLOAD_JOBS:-8}"
+results="$(mktemp -d)"
+trap 'rm -rf "${results}"' EXIT
+pending=()
 for name in "$@"; do
 	file="${dir}/${name}.png"
 	[ -f "${file}" ] || { say "no ${file}; paint it with: scripts/build-ui.sh ${kit}"; exit 1; }
@@ -75,10 +83,27 @@ for name in "$@"; do
 		record "${name}" "${previous##*$'\t'}"
 		continue
 	fi
-	id="$(upload "${file}" "${name}")"
+	pending+=("${name}")
+	echo "${hash}" > "${results}/${name}.hash"
+	while [ "$(jobs -rp | wc -l)" -ge "${jobs_max}" ]; do
+		wait -n || true
+	done
+	( upload "${file}" "${name}" > "${results}/${name}.id" || rm -f "${results}/${name}.id" ) &
+done
+wait || true
+
+failed=0
+for name in "${pending[@]}"; do
+	id="$(cat "${results}/${name}.id" 2> /dev/null || true)"
+	if [ -z "${id}" ]; then
+		failed=$((failed + 1))
+		continue
+	fi
+	hash="$(cat "${results}/${name}.hash")"
 	awk -F'\t' -v n="${name}" '$1 != n' "${manifest}" > "${manifest}.new"
 	printf '%s\t%s\t%s\n' "${name}" "${hash}" "${id}" >> "${manifest}.new"
 	mv "${manifest}.new" "${manifest}"
 	record "${name}" "${id}"
 	say "${name} is image ${id}"
 done
+[ "${failed}" -eq 0 ] || { say "${failed} upload(s) failed; run again to retry them"; exit 1; }

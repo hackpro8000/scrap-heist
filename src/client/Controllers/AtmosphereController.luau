@@ -7,9 +7,10 @@
 
 	- The sky: a hand-painted gradient skybox, saturated blue overhead and
 	  pale at the horizon, with no sun disc, moon or stars.
-	- Clouds: fifty painted cumulus sprites (Assets.UI.CloudNN, from
-	  scripts/paint-clouds.py) on SurfaceGuis, always far off, drifting
-	  slowly round the map.
+	- Clouds: a hundred painted anime cumulus sprites (Assets.UI.CloudNNN,
+	  from scripts/paint-clouds.py) on SurfaceGuis, always far off, drifting
+	  slowly round the map, and a floor of clouds painted from above
+	  (CloudBelowNN) lying flat under the map.
 	- Solid bodies, from the models tools/studio/PlaceSky.luau puts in
 	  ReplicatedStorage.SkyModels (art/src/items/Sky*): a pastel banded
 	  planet with a glinting ring system, a great cog turning half hidden
@@ -68,12 +69,24 @@ local COG_AT = Vector3.new(10100, 4231, -13003) * SPACE_DEPTH
 -- The art is 8.5 studs in radius.
 local COG_SCALE = 492 * SPACE_DEPTH
 
-local CLOUDS = 50
+-- Side-on clouds round the horizon: how many hang there, out of how many
+-- painted variants (Assets.UI.CloudNNN).
+local CLOUDS = 100
+local CLOUD_VARIANTS = 100
 local CLOUD_DISTANCE = NumberRange.new(4500, 9000)
 local CLOUD_HEIGHT = NumberRange.new(-200, 2200)
 local CLOUD_WIDTH = NumberRange.new(1300, 2048)
 -- Radians a second the cloud layers turn round the map.
 local CLOUD_DRIFT = { 0.0016, 0.0024, 0.0034 }
+-- The layer of clouds below the map, painted from above (Assets.UI.
+-- CloudBelowNN), lying flat and facing up, round the map's middle.
+local BELOW_CLOUDS = 70
+local BELOW_VARIANTS = 30
+local BELOW_CENTER = Vector3.new(280, 0, 0)
+local BELOW_REACH = NumberRange.new(0, 3600)
+local BELOW_HEIGHT = NumberRange.new(-900, -350)
+local BELOW_WIDTH = NumberRange.new(700, 2048)
+local BELOW_DRIFT = 0.003
 
 local ISLANDS = 9
 local ROCKS = 22
@@ -109,7 +122,8 @@ local hosted: { [BasePart]: { mesh: SpecialMesh, target: CFrame } } = {}
 -- How far in front of the camera the host parts stand.
 local HOST_AHEAD = 20
 -- Cloud layers, each turning round the map at its own pace.
-local cloudLayers: { { model: Model, speed: number } } = {}
+-- Cloud layers, each turning round `center` at its own pace.
+local cloudLayers: { { model: Model, speed: number, center: CFrame } } = {}
 
 local function meshPart(
 	kind: Enum.MeshType,
@@ -495,10 +509,11 @@ local function buildClouds()
 	for layer, speed in CLOUD_DRIFT do
 		local group = model("Clouds" .. layer)
 		group.WorldPivot = CFrame.identity
-		table.insert(cloudLayers, { model = group, speed = speed })
+		table.insert(cloudLayers, { model = group, speed = speed, center = CFrame.identity })
 	end
 	for index = 1, CLOUDS do
-		local image = (Assets.UI :: { [string]: string })[string.format("Cloud%02d", index)]
+		local variant = (index - 1) % CLOUD_VARIANTS + 1
+		local image = (Assets.UI :: { [string]: string })[string.format("Cloud%03d", variant)]
 		if not Assets.isSet(image) then
 			continue
 		end
@@ -511,6 +526,29 @@ local function buildClouds()
 		-- The SurfaceGui is on the part's front, which looks along -Z.
 		local facing = CFrame.lookAt(at, Vector3.new(0, at.Y, 0))
 		sprite(image, Vector2.new(width, width / 2), facing, cloudLayers[index % #cloudLayers + 1].model)
+	end
+end
+
+-- A floor of clouds under the map, seen from above: each lies flat facing
+-- up, turned any way, and the whole layer drifts slowly round the map.
+local function buildCloudsBelow()
+	local center = CFrame.new(BELOW_CENTER)
+	local group = model("CloudsBelow")
+	group.WorldPivot = center
+	table.insert(cloudLayers, { model = group, speed = BELOW_DRIFT, center = center })
+	for index = 1, BELOW_CLOUDS do
+		local variant = (index - 1) % BELOW_VARIANTS + 1
+		local image = (Assets.UI :: { [string]: string })[string.format("CloudBelow%02d", variant)]
+		if not Assets.isSet(image) then
+			continue
+		end
+		local angle = random:NextNumber(0, math.pi * 2)
+		-- Spread evenly over the disc rather than bunched in the middle.
+		local reach = BELOW_REACH.Min + (BELOW_REACH.Max - BELOW_REACH.Min) * math.sqrt(random:NextNumber())
+		local at = BELOW_CENTER + around(angle, reach, random:NextNumber(BELOW_HEIGHT.Min, BELOW_HEIGHT.Max))
+		local width = random:NextNumber(BELOW_WIDTH.Min, BELOW_WIDTH.Max)
+		local facing = CFrame.lookAt(at, at + Vector3.yAxis) * CFrame.Angles(0, 0, random:NextNumber(0, math.pi * 2))
+		sprite(image, Vector2.new(width, width / 2), facing, group)
 	end
 end
 
@@ -532,7 +570,7 @@ local function animate()
 		end
 	end
 	for _, layer in cloudLayers do
-		layer.model:PivotTo(CFrame.Angles(0, now * layer.speed, 0))
+		layer.model:PivotTo(layer.center * CFrame.Angles(0, now * layer.speed, 0))
 	end
 
 	-- Hosts stand just in front of the camera, turned as their meshes are;
@@ -686,6 +724,7 @@ function AtmosphereController.start()
 	buildSky()
 	buildGalaxy()
 	buildClouds()
+	buildCloudsBelow()
 	buildMotes()
 
 	-- The baked models; without them (PlaceSky not run yet) the sky keeps
