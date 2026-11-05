@@ -10,6 +10,11 @@
 //   modelkit art/models/ServerMap --chunks
 //                                                also split the GLB into uploadable
 //                                                chunks (see write_chunks)
+//   modelkit art/models/ServerMap --chunks --shard 3/8
+//                                                build only this machine's share of
+//                                                a layout's placements (SHARD_INDEX
+//                                                and SHARD_COUNT in the script), with
+//                                                chunks tagged S3 so shards don't clash
 //
 // The script (model.luau) builds meshes and paints textures through the API
 // below; this engine does the heavy, generic work (triangulating, export,
@@ -526,7 +531,7 @@ fn write_png(path: &Path, size: usize, data: &[u8]) -> std::io::Result<()> {
 // A close-up: focus point x, y, z, framing radius, and camera spin in degrees.
 type Closeup = (f64, f64, f64, f64, f64);
 
-fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[(mesh::Vec3, mesh::Vec3)], shown_clip: Option<&str>, texel_scale: f64, detail_eyes: &[(mesh::Vec3, mesh::Vec3)], chunks: bool) -> Result<(), String> {
+fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[(mesh::Vec3, mesh::Vec3)], shown_clip: Option<&str>, texel_scale: f64, detail_eyes: &[(mesh::Vec3, mesh::Vec3)], chunks: bool, shard: Option<(usize, usize)>) -> Result<(), String> {
 	let started = Instant::now();
 	let name = dir.file_name().and_then(|n| n.to_str()).ok_or("bad model folder")?.to_string();
 	let script = dir.join("model.luau");
@@ -541,6 +546,11 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 	let used = Rc::new(RefCell::new(Vec::new()));
 	cache::enable_paint_cache(dir, used.clone());
 	install_api(&lua, dir, parts.clone(), bones.clone(), clips.clone(), used.clone(), vec![dir.to_path_buf(), library], texel_scale, detail_eyes, size).map_err(|e| e.to_string())?;
+	// The layout prelude reads these to build only this shard's placements.
+	if let Some((index, count)) = shard {
+		lua.globals().set("SHARD_INDEX", index).map_err(|e| e.to_string())?;
+		lua.globals().set("SHARD_COUNT", count).map_err(|e| e.to_string())?;
+	}
 	// Marks the globals safe once the API is in: Luau then caches lookups like
 	// math.noise, takes its fast paths for builtins and runs the JIT's native
 	// code. Without it a paint fn runs several times slower. A safe chunk
@@ -552,7 +562,11 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 	unsafe { lua.exec_raw::<()>((), |state| mlua::ffi::lua_setsafeenv(state, mlua::ffi::LUA_GLOBALSINDEX, 1)) }.map_err(|e| e.to_string())?;
 	progress::say(&format!("running {name}/model.luau"));
 	lua.load(source).set_name(format!("@{}", script.display())).exec().map_err(|e| e.to_string())?;
-	cache::prune(dir, &used.borrow());
+	// A shard uses only part of the cache, so pruning would throw away the
+	// other shards' entries.
+	if shard.is_none() {
+		cache::prune(dir, &used.borrow());
+	}
 	let scripted = started.elapsed();
 
 	let parts = parts.borrow();
@@ -572,7 +586,8 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 		std::fs::write(dir.join(format!("{name}Clips.luau")), anim::write_luau(&name, &bones, &clips.borrow())).map_err(|e| e.to_string())?;
 	}
 	if chunks {
-		write_chunks(dir, &name, &parts, !bones.is_empty())?;
+		let tag = shard.map_or(String::new(), |(index, _)| format!("S{index}_"));
+		write_chunks(dir, &name, &tag, &parts, !bones.is_empty())?;
 	}
 	for part in parts.iter() {
 		let png = dir.join(format!("{}.png", part.name));
@@ -645,10 +660,11 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 // Open Cloud takes at most 20 MB per upload; stay a little under.
 const CHUNK_LIMIT: usize = 19_000_000;
 
-// Writes chunks/<Name>_NN.glb, each small enough to upload, and
+// Writes chunks/<Name>_<tag>NN.glb, each small enough to upload, and
 // chunks/<Name>Chunks.luau listing them with their anchor parts, in Roblox
 // coordinates (Y up), for the Studio placer (tools/studio/PlaceMap.luau).
-fn write_chunks(dir: &Path, name: &str, parts: &[Part], rigged: bool) -> Result<(), String> {
+// A shard's tag (S3_) keeps its files and keys apart from the other shards'.
+fn write_chunks(dir: &Path, name: &str, tag: &str, parts: &[Part], rigged: bool) -> Result<(), String> {
 	if rigged {
 		return Err("--chunks is for layouts; a rigged model can't be split".into());
 	}
@@ -663,7 +679,7 @@ fn write_chunks(dir: &Path, name: &str, parts: &[Part], rigged: bool) -> Result<
 		if chunk.glb.len() > CHUNK_LIMIT {
 			return Err(format!("chunk {} is {} bytes even alone; a single part is over the upload limit", n + 1, chunk.glb.len()));
 		}
-		let file = format!("{name}_{:02}.glb", n + 1);
+		let file = format!("{name}_{tag}{:02}.glb", n + 1);
 		std::fs::write(out.join(&file), &chunk.glb).map_err(|e| e.to_string())?;
 		let anchors: Vec<String> = chunk
 			.anchors
@@ -671,7 +687,7 @@ fn write_chunks(dir: &Path, name: &str, parts: &[Part], rigged: bool) -> Result<
 			.map(|(part, p)| format!("{{ name = \"{part}\", position = Vector3.new({}, {}, {}) }}", p[0], p[1], p[2]))
 			.collect();
 		manifest.push_str(&format!(
-			"\t{{ key = \"{name}{:02}\", file = \"{file}\", parts = {}, anchors = {{ {} }} }},\n",
+			"\t{{ key = \"{name}{tag}{:02}\", file = \"{file}\", parts = {}, anchors = {{ {} }} }},\n",
 			n + 1,
 			chunk.parts,
 			anchors.join(", ")
@@ -686,7 +702,7 @@ fn write_chunks(dir: &Path, name: &str, parts: &[Part], rigged: bool) -> Result<
 fn main() {
 	let args: Vec<String> = std::env::args().skip(1).collect();
 	let Some(dir) = args.first() else {
-		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--eye EX,EY,EZ,TX,TY,TZ]... [--clip NAME] [--chunks]");
+		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--eye EX,EY,EZ,TX,TY,TZ]... [--clip NAME] [--chunks] [--shard INDEX/COUNT]");
 		std::process::exit(2);
 	};
 	let turntable = match args.iter().position(|a| a == "--turntable") {
@@ -722,7 +738,20 @@ fn main() {
 	let texel_scale = if preview { 0.5 } else { 1.0 };
 	let detail_eyes = if preview { eyes.clone() } else { Vec::new() };
 	let chunks = args.iter().any(|a| a == "--chunks");
-	if let Err(error) = run(Path::new(dir), turntable, size, &closeups, &eyes, clip.map(|c| c.as_str()), texel_scale, &detail_eyes, chunks) {
+	let shard = match args.iter().position(|a| a == "--shard") {
+		Some(at) => {
+			let parsed = args.get(at + 1).and_then(|s| s.split_once('/')).and_then(|(i, n)| Some((i.parse::<usize>().ok()?, n.parse::<usize>().ok()?)));
+			match parsed {
+				Some((index, count)) if index >= 1 && index <= count => Some((index, count)),
+				_ => {
+					eprintln!("error: --shard needs INDEX/COUNT with 1 <= INDEX <= COUNT, like 3/8");
+					std::process::exit(2);
+				}
+			}
+		}
+		None => None,
+	};
+	if let Err(error) = run(Path::new(dir), turntable, size, &closeups, &eyes, clip.map(|c| c.as_str()), texel_scale, &detail_eyes, chunks, shard) {
 		eprintln!("error: {error}");
 		std::process::exit(1);
 	}

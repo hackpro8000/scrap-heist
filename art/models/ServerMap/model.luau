@@ -82,6 +82,20 @@ local buildKeys = {}
 -- function starts on, so placeSlab() can reuse an unchanged slab.
 local slabKeys = {}
 
+-- With modelkit --shard, each machine builds every SHARD_COUNT-th placement,
+-- dealt round in the order the layout places them. The order is the same on
+-- every machine, so between them the shards build each placement once. A
+-- placement inside another one's build belongs to it, and isn't counted:
+-- whether it runs depends on that build being cached.
+local placements = 0
+local function inThisShard(): boolean
+	if builtParts then
+		return true
+	end
+	placements += 1
+	return SHARD_COUNT == nil or (placements - 1) % SHARD_COUNT + 1 == SHARD_INDEX
+end
+
 local function addPart(name, mesh, image, preview, emissive)
 	if skipPart(name) then
 		return
@@ -104,6 +118,9 @@ end
 -- `scale` builds the model that many times its own size, so its textures
 -- keep their density instead of being stretched with it.
 local function place(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, stretch: number?, axis: string?, scale: number?)
+	if not inThisShard() then
+		return
+	end
 	placeLabel = label
 	placeX, placeY, placeZ, placeTurn = x, y, z or 0, math.rad(turn or 0)
 	placeStretch, placeAxis, placeScale = stretch or 1, axis or "x", scale or 1
@@ -148,6 +165,9 @@ local function placeSlab(label: string, build: () -> (), x: number, y: number, t
 	local key = slabKeys[debug.info(build, "l")]
 	if not key then
 		error(`slab {label} has no cache key; start its body on a line ending in "function()"`)
+	end
+	if not inThisShard() then
+		return
 	end
 	placeLabel = label
 	placeX, placeY, placeZ, placeTurn = x, y, 0, math.rad(turn or 0)
@@ -2450,7 +2470,7 @@ end, 40, 0.5, 256)
 
 finishParts()
 end
-buildKeys[buildArenaDrone] = "ArenaDrone-a995fda8f7996adc"
+buildKeys[buildArenaDrone] = "ArenaDrone-c68a77443345a71e"
 local function buildPadIsland()
 local CACHE_KEY = "PadIsland-f783d7e207cc4ce2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -4998,7 +5018,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildPadIsland] = "PadIsland-db6a867108a07657"
+buildKeys[buildPadIsland] = "PadIsland-53a31293eff74dbb"
 local function buildMarketIsland()
 local CACHE_KEY = "MarketIsland-9cacf2f39f7e2f36"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -7546,7 +7566,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildMarketIsland] = "MarketIsland-a5101ae8a186be26"
+buildKeys[buildMarketIsland] = "MarketIsland-19bdeee9f2f3eeed"
 local function buildYardIsland()
 local CACHE_KEY = "YardIsland-4e2be22217e2850d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -10104,7 +10124,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildYardIsland] = "YardIsland-cb99ff1d8a284018"
+buildKeys[buildYardIsland] = "YardIsland-fef313941ef05d7d"
 local function buildShopConceptContainer()
 local CACHE_KEY = "ShopConceptContainer-6558ebfd0e67d87c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -11597,7 +11617,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildShopConceptContainer] = "ShopConceptContainer-61411a32ba148070"
+buildKeys[buildShopConceptContainer] = "ShopConceptContainer-ec231d77af5766f4"
 local function buildScrapTreeLamppost()
 local CACHE_KEY = "ScrapTreeLamppost-5ed4db4ae7a3dacb"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -12504,7 +12524,7 @@ end, nil, 0.2)
 
 finishParts()
 end
-buildKeys[buildScrapTreeLamppost] = "ScrapTreeLamppost-4171fe645cd04b41"
+buildKeys[buildScrapTreeLamppost] = "ScrapTreeLamppost-f2720193485d3479"
 local function buildVendingMachine()
 local CACHE_KEY = "VendingMachine-a30b7bd1b18cccda"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -13807,7 +13827,7 @@ end, nil, 0.3, nil, nil, true)
 
 finishParts()
 end
-buildKeys[buildVendingMachine] = "VendingMachine-fcbc0ed74758210c"
+buildKeys[buildVendingMachine] = "VendingMachine-86ce488d3b2148c3"
 local function buildParkBench()
 local CACHE_KEY = "ParkBench-363d90ccbbf5b421"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -14619,7 +14639,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildParkBench] = "ParkBench-4ba883a552fd2e43"
+buildKeys[buildParkBench] = "ParkBench-0d9bc285e44b4d7d"
 local function buildScrapPalm()
 local CACHE_KEY = "ScrapPalm-28b85c3ac0c6f2aa"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -15510,7 +15530,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildScrapPalm] = "ScrapPalm-572a1afc0b202a1f"
+buildKeys[buildScrapPalm] = "ScrapPalm-713d58250baf18a8"
 local function buildShippingContainer()
 local CACHE_KEY = "ShippingContainer-bbbb81d7d8c9a284"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -16328,7 +16348,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildShippingContainer] = "ShippingContainer-bfa01c98188e0997"
+buildKeys[buildShippingContainer] = "ShippingContainer-0a47f6c56b323987"
 local function buildCarStack()
 local CACHE_KEY = "CarStack-4477c34e70c629a8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -17145,7 +17165,7 @@ end, nil, 0.3)
 
 finishParts()
 end
-buildKeys[buildCarStack] = "CarStack-bbbc8f2c2d0b95fc"
+buildKeys[buildCarStack] = "CarStack-66d329fdc1443583"
 local function buildCrushedCar()
 local CACHE_KEY = "CrushedCar-5975815478d90f0b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -17962,7 +17982,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildCrushedCar] = "CrushedCar-01fbde00cc480051"
+buildKeys[buildCrushedCar] = "CrushedCar-4d3088cf4956b78c"
 local function buildBarrels()
 local CACHE_KEY = "Barrels-2285cb5b02b1be23"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -18779,7 +18799,7 @@ end, nil, 0)
 
 finishParts()
 end
-buildKeys[buildBarrels] = "Barrels-d46176fef21e13ce"
+buildKeys[buildBarrels] = "Barrels-40e6d203538c4767"
 local function buildTyreStack()
 local CACHE_KEY = "TyreStack-19f3532338710b6b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -19581,7 +19601,7 @@ end, nil, 0.8)
 
 finishParts()
 end
-buildKeys[buildTyreStack] = "TyreStack-f8d049b9de3d2b36"
+buildKeys[buildTyreStack] = "TyreStack-0c9687a5de623115"
 local function buildJunkWall()
 local CACHE_KEY = "JunkWall-6053d8e423ee4d87"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -20396,7 +20416,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildJunkWall] = "JunkWall-b5bff1af502d0051"
+buildKeys[buildJunkWall] = "JunkWall-2a5f07bf6b279ac5"
 local function buildDumpster()
 local CACHE_KEY = "Dumpster-6517681a9ae30045"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -21225,7 +21245,7 @@ end, nil, RUBBER)
 
 finishParts()
 end
-buildKeys[buildDumpster] = "Dumpster-6b5dfea1eb7cdff6"
+buildKeys[buildDumpster] = "Dumpster-ae59e125c5531848"
 local function buildPallets()
 local CACHE_KEY = "Pallets-a21bc20428684cc6"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -22040,7 +22060,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildPallets] = "Pallets-36b83680c009da11"
+buildKeys[buildPallets] = "Pallets-fc7ba69e04059644"
 local function buildStreetlightBroken()
 local CACHE_KEY = "StreetlightBroken-218c9c695c8aabc9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -22849,7 +22869,7 @@ end, nil, 0.3)
 
 finishParts()
 end
-buildKeys[buildStreetlightBroken] = "StreetlightBroken-2ab4ac035154dc5e"
+buildKeys[buildStreetlightBroken] = "StreetlightBroken-20cf4b9a44c3025d"
 local function buildTrafficCones()
 local CACHE_KEY = "TrafficCones-76f2e5f67d838576"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -23667,7 +23687,7 @@ end, nil, 0.4)
 
 finishParts()
 end
-buildKeys[buildTrafficCones] = "TrafficCones-71942122b0980b23"
+buildKeys[buildTrafficCones] = "TrafficCones-a66dfdbeea7a3830"
 local function buildGroundTile()
 local CACHE_KEY = "GroundTile-06e115bba8685577"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -24475,7 +24495,7 @@ part("Scrap", nil, DARK_STEEL, function(mesh)
 end, nil, 0.7)
 finishParts()
 end
-buildKeys[buildGroundTile] = "GroundTile-5a7128ab31f35e93"
+buildKeys[buildGroundTile] = "GroundTile-8166b5a4e3d870dd"
 local function buildMachinePad()
 local CACHE_KEY = "MachinePad-f370f638b01b1c2e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -25298,7 +25318,7 @@ part("Hardware", nil, STEEL, function(mesh)
 end, nil, 0.45)
 finishParts()
 end
-buildKeys[buildMachinePad] = "MachinePad-2e7cb60988e559d9"
+buildKeys[buildMachinePad] = "MachinePad-47a50ad7125a282a"
 local function buildYardFence()
 local CACHE_KEY = "YardFence-79638c833401e47a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -26122,7 +26142,7 @@ part("Fittings", nil, DARK_STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildYardFence] = "YardFence-3cf960b06ac7cad2"
+buildKeys[buildYardFence] = "YardFence-7ebd12a99673b263"
 local function buildYardFenceHalf()
 local CACHE_KEY = "YardFenceHalf-f2ca6d6436d118d5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -26946,7 +26966,7 @@ part("Fittings", nil, DARK_STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildYardFenceHalf] = "YardFenceHalf-758d2d2abb1b6d60"
+buildKeys[buildYardFenceHalf] = "YardFenceHalf-1ac1f163157d58fd"
 local function buildYardFooting()
 local CACHE_KEY = "YardFooting-7df7c30e617afb8a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -27774,7 +27794,7 @@ end, nil, 0.35)
 
 finishParts()
 end
-buildKeys[buildYardFooting] = "YardFooting-8b8f20e9408da708"
+buildKeys[buildYardFooting] = "YardFooting-bcaf2ae9ae9a9677"
 local function buildYardGate()
 local CACHE_KEY = "YardGate-a6bba3472eb4e337"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -28637,7 +28657,7 @@ part("Hardware", nil, DARK_STEEL, function(mesh)
 end, nil, 0.55)
 finishParts()
 end
-buildKeys[buildYardGate] = "YardGate-cfb8e00a607cadca"
+buildKeys[buildYardGate] = "YardGate-3de995d1d0eb248a"
 local function buildPlotMarker()
 local CACHE_KEY = "PlotMarker-774d90149afa2f90"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -29493,7 +29513,7 @@ part("Fittings", nil, STEEL, function(mesh)
 end, nil, 0.5)
 finishParts()
 end
-buildKeys[buildPlotMarker] = "PlotMarker-b399f3ea89de2a17"
+buildKeys[buildPlotMarker] = "PlotMarker-37e3d0633f8fdc4e"
 local function buildStorageCrate()
 -- Storage crate: a lopsided green scrap bin that flares toward its wobbly rim,
 -- leaning and twisting as it rises. Bolted patch plates cover its sides, a
@@ -30244,7 +30264,7 @@ for number, level in FILL_LEVELS do
 	end
 end
 end
-buildKeys[buildStorageCrate] = "StorageCrate-c614511f3ac18d0e"
+buildKeys[buildStorageCrate] = "StorageCrate-b310fb84d808a23b"
 local function buildYardPath()
 local CACHE_KEY = "YardPath-d70f4e9db93f8ba1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -31072,7 +31092,7 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildYardPath] = "YardPath-188f30590041d9c8"
+buildKeys[buildYardPath] = "YardPath-cd0830e54e9d6099"
 local function buildYardPathStub()
 local CACHE_KEY = "YardPathStub-dd7f0fd4959c81cf"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -31892,17 +31912,17 @@ end, nil, 0.7)
 
 finishParts()
 end
-buildKeys[buildYardPathStub] = "YardPathStub-ec7805c51c55b33e"
-slabKeys[32651] = "faf962458d6cddc6-0c960e1f862726f4"
-slabKeys[32737] = "faf962458d6cddc6-13efa5a1845e203d"
-slabKeys[32748] = "faf962458d6cddc6-041aab4d823cacfb"
-slabKeys[32802] = "faf962458d6cddc6-e1d53c436615f36a"
-slabKeys[32860] = "faf962458d6cddc6-f4f9015cc7a52d81"
-slabKeys[32955] = "faf962458d6cddc6-f80a5011da1b57d2"
-slabKeys[33230] = "faf962458d6cddc6-2b2b51e4886723fb"
-slabKeys[33260] = "faf962458d6cddc6-886388888fe59ef3"
-slabKeys[33267] = "faf962458d6cddc6-209bd5af05ec8c81"
-slabKeys[33307] = "faf962458d6cddc6-c8fbb33a2805dfaf"
+buildKeys[buildYardPathStub] = "YardPathStub-53fc1db37fd9ef27"
+slabKeys[32671] = "3967329179776b5c-0c960e1f862726f4"
+slabKeys[32757] = "3967329179776b5c-13efa5a1845e203d"
+slabKeys[32768] = "3967329179776b5c-041aab4d823cacfb"
+slabKeys[32822] = "3967329179776b5c-e1d53c436615f36a"
+slabKeys[32880] = "3967329179776b5c-f4f9015cc7a52d81"
+slabKeys[32975] = "3967329179776b5c-f80a5011da1b57d2"
+slabKeys[33250] = "3967329179776b5c-2b2b51e4886723fb"
+slabKeys[33280] = "3967329179776b5c-886388888fe59ef3"
+slabKeys[33287] = "3967329179776b5c-209bd5af05ec8c81"
+slabKeys[33327] = "3967329179776b5c-c8fbb33a2805dfaf"
 -- uses: ArenaDrone PadIsland MarketIsland YardIsland ShopConceptContainer ScrapTreeLamppost VendingMachine ParkBench ScrapPalm ShippingContainer CarStack CrushedCar Barrels TyreStack JunkWall Dumpster Pallets StreetlightBroken TrafficCones GroundTile MachinePad YardFence YardFenceHalf YardFooting YardGate PlotMarker StorageCrate YardPath YardPathStub
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands. The arena rides a hovering quadcopter in the middle, its

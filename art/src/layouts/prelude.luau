@@ -82,6 +82,20 @@ local buildKeys = {}
 -- function starts on, so placeSlab() can reuse an unchanged slab.
 local slabKeys = {}
 
+-- With modelkit --shard, each machine builds every SHARD_COUNT-th placement,
+-- dealt round in the order the layout places them. The order is the same on
+-- every machine, so between them the shards build each placement once. A
+-- placement inside another one's build belongs to it, and isn't counted:
+-- whether it runs depends on that build being cached.
+local placements = 0
+local function inThisShard(): boolean
+	if builtParts then
+		return true
+	end
+	placements += 1
+	return SHARD_COUNT == nil or (placements - 1) % SHARD_COUNT + 1 == SHARD_INDEX
+end
+
 local function addPart(name, mesh, image, preview, emissive)
 	if skipPart(name) then
 		return
@@ -104,6 +118,9 @@ end
 -- `scale` builds the model that many times its own size, so its textures
 -- keep their density instead of being stretched with it.
 local function place(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, stretch: number?, axis: string?, scale: number?)
+	if not inThisShard() then
+		return
+	end
 	placeLabel = label
 	placeX, placeY, placeZ, placeTurn = x, y, z or 0, math.rad(turn or 0)
 	placeStretch, placeAxis, placeScale = stretch or 1, axis or "x", scale or 1
@@ -148,6 +165,9 @@ local function placeSlab(label: string, build: () -> (), x: number, y: number, t
 	local key = slabKeys[debug.info(build, "l")]
 	if not key then
 		error(`slab {label} has no cache key; start its body on a line ending in "function()"`)
+	end
+	if not inThisShard() then
+		return
 	end
 	placeLabel = label
 	placeX, placeY, placeZ, placeTurn = x, y, 0, math.rad(turn or 0)

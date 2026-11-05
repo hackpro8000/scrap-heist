@@ -153,7 +153,18 @@ chunks and put back together in Studio:
    uploads each chunk as a Model (the key needs `asset:write`), writes the IDs
    into `Assets.MapChunks` and copies the anchors to
    `src/shared/Config/MapChunks.luau`. Commit both. Re-running skips chunks
-   already uploaded.
+   already uploaded. Each run throttles itself so several machines can upload
+   at once: a random start delay, one upload in flight (`UPLOAD_JOBS`), and
+   rate limits (429) and server errors waited out using Retry-After or a
+   jittered backoff. The knobs are listed at the top of the script.
+
+   To split a build across machines, give each one
+   `scripts/build-model.sh ServerMap -- --chunks --shard <i>/<n>`. Each builds
+   every n-th placement (in the order the layout places them) and writes
+   `ServerMap_S<i>_NN.glb`, keyed `ServerMapS<i>_NN`. Uploading a shard leaves
+   `src/shared` alone; its `ServerMapAssetIds.txt` and `ServerMapChunks.luau`
+   are merged with the other shards' afterwards. A shard build never prunes
+   the cache.
 3. In Studio, with Rojo synced, paste `tools/studio/PlaceMap.luau` into the
    command bar. It loads every chunk, scales, turns and moves it so its
    anchors land in place, anchors the parts, gives the propeller blur discs
