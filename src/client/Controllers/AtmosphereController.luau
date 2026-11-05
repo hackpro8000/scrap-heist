@@ -77,6 +77,13 @@ local CLOUD_DRIFT = { 0.0016, 0.0024, 0.0034 }
 
 local ISLANDS = 9
 local ROCKS = 22
+-- Islands sit out among the far clouds; the art is about 44 studs across.
+local ISLAND_DISTANCE = NumberRange.new(5500, 9000)
+local ISLAND_HEIGHT = NumberRange.new(-300, 2000)
+local ISLAND_SCALE = NumberRange.new(11, 20)
+local ROCK_DISTANCE = NumberRange.new(3000, 6500)
+local ROCK_HEIGHT = NumberRange.new(-400, 1500)
+local ROCK_SCALE = NumberRange.new(7, 16)
 local WINDMILLS = 4
 
 local GULL_EVERY = NumberRange.new(90, 200)
@@ -370,53 +377,60 @@ local function buildIslands(templates: Instance)
 	if not template then
 		return
 	end
+	-- Each variant's parts, by the name before any "_" (Island03_Ground and
+	-- Island03_Trees are one island), its first part first.
 	local islands, rocks = {}, {}
+	local byName: { [string]: { MeshPart } } = {}
 	for _, source in template:GetDescendants() do
-		if source:IsA("MeshPart") then
-			table.insert(if source.Name:match("^Island") then islands else rocks, source)
+		if not source:IsA("MeshPart") then
+			continue
+		end
+		local name = string.match(source.Name, "^[^_]+") :: string
+		if not byName[name] then
+			byName[name] = {}
+			table.insert(if string.match(name, "^Island") then islands else rocks, byName[name])
+		end
+		local variant = byName[name]
+		-- The ground (or the lone rock) leads, so the others hang off it.
+		if string.match(source.Name, "_Ground$") then
+			table.insert(variant, 1, source)
+		else
+			table.insert(variant, source)
 		end
 	end
 	local function scatter(
-		sources: { MeshPart },
+		variants: { { MeshPart } },
 		count: number,
 		group: Model,
 		distance: NumberRange,
 		height: NumberRange,
 		scale: NumberRange
 	)
-		if #sources == 0 then
+		if #variants == 0 then
 			return
 		end
 		for index = 1, count do
-			local source = sources[(index - 1) % #sources + 1]
+			local variant = variants[(index - 1) % #variants + 1]
 			local angle = (index + random:NextNumber(-0.35, 0.35)) / count * math.pi * 2
 			local at =
 				around(angle, random:NextNumber(distance.Min, distance.Max), random:NextNumber(height.Min, height.Max))
 			local base = CFrame.new(at) * CFrame.Angles(0, random:NextNumber(0, math.pi * 2), 0)
 			local size = random:NextNumber(scale.Min, scale.Max)
-			local part = fileMesh(source, base, size, group)
+			local parts, offsets = {}, {}
+			for _, source in variant do
+				local relative = variant[1].CFrame:ToObjectSpace(source.CFrame)
+				local offset = CFrame.new(relative.Position * size) * relative.Rotation
+				table.insert(parts, fileMesh(source, base * offset, size, group))
+				table.insert(offsets, offset)
+			end
 			local phase, rise = random:NextNumber(0, 6), size * 0.6
-			spin({ part }, { CFrame.identity }, base, function(now)
+			spin(parts, offsets, base, function(now)
 				return CFrame.new(0, math.sin(now * 0.15 + phase) * rise, 0)
 			end)
 		end
 	end
-	scatter(
-		islands,
-		ISLANDS,
-		model("Islands"),
-		NumberRange.new(2600, 5200),
-		NumberRange.new(-300, 1500),
-		NumberRange.new(14, 30)
-	)
-	scatter(
-		rocks,
-		ROCKS,
-		model("Rocks"),
-		NumberRange.new(1300, 4200),
-		NumberRange.new(-400, 1300),
-		NumberRange.new(9, 26)
-	)
+	scatter(islands, ISLANDS, model("Islands"), ISLAND_DISTANCE, ISLAND_HEIGHT, ISLAND_SCALE)
+	scatter(rocks, ROCKS, model("Rocks"), ROCK_DISTANCE, ROCK_HEIGHT, ROCK_SCALE)
 end
 
 -- Windmills far out on the horizon, their rotors turning.
