@@ -7,7 +7,7 @@
 
 	- The sky: a hand-painted gradient skybox, saturated blue overhead and
 	  pale at the horizon, with no sun disc, moon or stars.
-	- Clouds: a hundred painted anime cumulus (Assets.UI.CloudNNN_K, from
+	- Clouds: forty-five painted anime cumulus (Assets.UI.CloudNNN_K, from
 	  scripts/paint-clouds.py) on SurfaceGuis, always far off, drifting
 	  slowly round the map, and a floor of clouds painted from above
 	  (CloudBelowNN_K) lying flat under the map. Each cloud is a stack of
@@ -73,7 +73,7 @@ local COG_SCALE = 492 * SPACE_DEPTH
 
 -- Side-on clouds round the horizon: how many hang there, out of how many
 -- painted variants (Assets.UI.CloudNNN).
-local CLOUDS = 100
+local CLOUDS = 45
 local CLOUD_VARIANTS = 100
 local CLOUD_HEIGHT = NumberRange.new(-200, 2200)
 -- Kept under 2048 so the back slice, scaled up to line up, still fits a part.
@@ -93,7 +93,7 @@ local CLOUD_LAYERS = {
 }
 -- The layer of clouds below the map, painted from above (Assets.UI.
 -- CloudBelowNN), lying flat and facing up, round the map's middle.
-local BELOW_CLOUDS = 70
+local BELOW_CLOUDS = 32
 local BELOW_VARIANTS = 30
 local BELOW_CENTER = Vector3.new(280, 0, 0)
 local BELOW_REACH = NumberRange.new(0, 3600)
