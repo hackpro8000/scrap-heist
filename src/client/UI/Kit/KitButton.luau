@@ -22,9 +22,11 @@ local KitText = require(script.Parent.KitText)
 local e = React.createElement
 
 local HOVER_SCALE = 1.05
-local PRESS_SCALE = 0.95
+local PRESS_SCALE = 0.85
 local PRESS_TINT = Color3.fromRGB(215, 215, 215)
 local REACT_TWEEN = TweenInfo.new(0.08, Enum.EasingStyle.Quad)
+-- Letting go springs the button back past its size before it settles.
+local RELEASE_TWEEN = TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
 
 local DISABLED_BY_WIDTH = { [200] = Art.LARGE.Disabled, [160] = Art.MEDIUM.Disabled, [120] = Art.SMALL.Disabled }
 
@@ -67,7 +69,8 @@ local function KitButton(props: Props)
 		local live = enabledRef.current
 		local down = pressed.current and live
 		local target = if down then PRESS_SCALE elseif hovered.current and live then HOVER_SCALE else 1
-		TweenService:Create(scale, REACT_TWEEN, { Scale = target }):Play()
+		local released = not down and scale.Scale < 1
+		TweenService:Create(scale, if released then RELEASE_TWEEN else REACT_TWEEN, { Scale = target }):Play()
 		TweenService:Create(button, REACT_TWEEN, { ImageColor3 = if down then PRESS_TINT else Color3.new(1, 1, 1) })
 			:Play()
 	end, {})

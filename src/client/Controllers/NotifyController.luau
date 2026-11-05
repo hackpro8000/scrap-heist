@@ -80,7 +80,8 @@ function NotifyController.start()
 	end)
 	Notify.Sound.OnClientEvent:Connect(function(key: string)
 		if type(key) == "string" then
-			Sfx.play(key)
+			-- A purchase rings out louder than pickups do.
+			Sfx.play(key, nil, if key == "Purchase" then { volume = 1 } else nil)
 		end
 	end)
 end

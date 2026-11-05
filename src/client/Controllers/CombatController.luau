@@ -47,13 +47,6 @@ local OUTCOME_COLORS: { [string]: Color3 } = {
 	GuardBroken = Color3.fromRGB(255, 140, 40),
 }
 
-local OUTCOME_SOUNDS: { [string]: string } = {
-	Hit = "Hit",
-	Blocked = "Block",
-	Parried = "Parry",
-	GuardBroken = "GuardBreak",
-}
-
 local CombatController = {}
 
 CombatController.hitShown = Signal.new()
@@ -148,7 +141,7 @@ local function onHitEffect(model: Model, outcome: string, damage: number, attack
 	end
 
 	flash(model, outcome)
-	playSound(OUTCOME_SOUNDS[outcome] or "Hit", model.PrimaryPart)
+	-- JuiceController plays the impact sound where the blow lands.
 	CombatController.hitShown:fire(model, outcome, damage, attacker)
 end
 
@@ -237,14 +230,7 @@ function CombatController.start()
 	)
 	ContextActionService:SetTitle("Attack", "Hit")
 
-	ContextActionService:BindAction(
-		"Block",
-		onBlockInput,
-		true,
-		Enum.KeyCode.F,
-		Enum.UserInputType.MouseButton2,
-		Enum.KeyCode.ButtonL2
-	)
+	ContextActionService:BindAction("Block", onBlockInput, true, Enum.KeyCode.F, Enum.KeyCode.ButtonL2)
 	ContextActionService:SetTitle("Block", "Block")
 
 	bindWeaponKeys()

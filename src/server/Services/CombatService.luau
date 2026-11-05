@@ -57,6 +57,10 @@ local EQUIP_RATE = 2
 -- Seconds between walk speed updates. Fast enough to feel instant, slow
 -- enough not to touch every Humanoid every frame.
 local SPEED_UPDATE_INTERVAL = 0.1
+-- Bots are shoved this much further than a weapon's knockback, and at
+-- least BOT_MIN_KNOCKBACK by any landed blow.
+local BOT_KNOCKBACK_SCALE = 1.6
+local BOT_MIN_KNOCKBACK = 18
 
 type Fighter = {
 	model: Model,
@@ -125,8 +129,14 @@ local function applyHit(attacker: Fighter, target: Fighter, attack: CombatRules.
 		target.humanoid:TakeDamage(result.damage)
 	end
 
-	if result.knockback > 0 then
-		local velocity = CombatRules.knockbackVelocity(attacker.root.Position, target.root.Position, result.knockback)
+	-- Bots react bigger than players: every landed blow shoves them back.
+	local isBot = target.model:GetAttribute("IsBot") == true
+	local landed = result.outcome == "Hit" or result.outcome == "GuardBroken"
+	local knockback = if isBot and landed
+		then math.max(result.knockback * BOT_KNOCKBACK_SCALE, BOT_MIN_KNOCKBACK)
+		else result.knockback
+	if knockback > 0 then
+		local velocity = CombatRules.knockbackVelocity(attacker.root.Position, target.root.Position, knockback)
 		local targetPlayer = Players:GetPlayerFromCharacter(target.model)
 		if targetPlayer then
 			-- A player's client simulates their own character, so a push set

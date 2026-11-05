@@ -18,6 +18,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
+local Notify = require(ReplicatedStorage.Shared.Net.Notify)
 local Remotes = require(ReplicatedStorage.Shared.Net.Shop)
 local Shop = require(ReplicatedStorage.Shared.Config.Shop)
 local WeaponConfig = require(ReplicatedStorage.Shared.Combat.WeaponConfig)
@@ -38,6 +39,10 @@ local PIPS = 5
 local ShopController = {}
 
 local state: { [string]: any } = { weapons = {}, boosts = {}, passes = {} }
+-- The card last pressed, and the one celebrating a purchase (its name and
+-- when, so a second purchase of the same thing celebrates again).
+local pressedCard: string? = nil
+local celebrated: { name: string, at: number }? = nil
 local tab = 1
 local root: Kit.Root
 
@@ -158,9 +163,32 @@ local function scrapCards(): { CardSpec }
 	return list
 end
 
+-- Marks the card that's celebrating a purchase, and notes which card each
+-- press came from so the server's purchase sound can be matched to it.
+local function withCelebration(list: { CardSpec }): { CardSpec }
+	for _, spec in list do
+		local action = spec.action
+		if action then
+			spec.action = function()
+				pressedCard = spec.name
+				action()
+			end
+		end
+		if celebrated and celebrated.name == spec.name then
+			spec.celebrate = celebrated.at
+		end
+	end
+	return list
+end
+
 local function render()
 	root.render(React.createElement(ShopScreen, {
-		lists = { weaponCards(), boostCards(), passCards(), scrapCards() },
+		lists = {
+			withCelebration(weaponCards()),
+			withCelebration(boostCards()),
+			withCelebration(passCards()),
+			withCelebration(scrapCards()),
+		},
 		tab = tab,
 		onTab = function(index: number)
 			tab = index
@@ -187,6 +215,12 @@ function ShopController.start()
 		end
 	end)
 	Remotes.RequestShop:FireServer()
+	Notify.Sound.OnClientEvent:Connect(function(key: string)
+		if key == "Purchase" and pressedCard and Windows.isOpen(WINDOW) then
+			celebrated = { name = pressedCard, at = os.clock() }
+			render()
+		end
+	end)
 
 	-- Boost timers count down while the window is open.
 	task.spawn(function()

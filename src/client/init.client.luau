@@ -29,6 +29,8 @@ local CONTROLLERS: { Boot.Entry } = {
 	{ name = "HotbarController", module = require(Controllers.HotbarController) },
 	{ name = "BotAnimationController", module = require(Controllers.BotAnimationController) },
 	{ name = "PlayerPoseController", module = require(Controllers.PlayerPoseController) },
+	{ name = "ScrapFxController", module = require(Controllers.ScrapFxController) },
+	{ name = "AtmosphereController", module = require(Controllers.AtmosphereController) },
 	{ name = "PropellerController", module = require(Controllers.PropellerController) },
 	{ name = "PromptController", module = require(Controllers.PromptController) },
 	{ name = "LeaderboardController", module = require(Controllers.LeaderboardController) },

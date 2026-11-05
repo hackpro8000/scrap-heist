@@ -10,6 +10,7 @@
 ]]
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 
 local React = require(ReplicatedStorage.Packages.React)
 local Theme = require(ReplicatedStorage.Shared.Config.Theme)
@@ -36,6 +37,9 @@ local PIPS = 5
 local PIP_STEP = 14
 local MEDIUM_W, MEDIUM_H = 160, 44
 local PRICE_ICON = 30
+local GOLD = Color3.fromRGB(255, 205, 60)
+local CELEBRATE_SCALE = 1.4
+local RING_SECONDS = 0.7
 
 export type Stat = { label: string, pips: number }
 
@@ -50,6 +54,8 @@ export type CardSpec = {
 	scrapPrice: boolean,
 	owned: boolean,
 	action: (() -> ())?,
+	-- Set (to when it happened) while the card celebrates a purchase.
+	celebrate: number?,
 }
 
 local function statRows(stats: { Stat })
@@ -115,12 +121,44 @@ end
 
 local function Card(props: { spec: CardSpec, position: UDim2 })
 	local spec = props.spec
+	local iconScale = React.useRef(nil :: UIScale?)
+	local ring = React.useRef(nil :: UIStroke?)
+
+	-- A purchase pops the icon past its size and back, and flashes a gold
+	-- ring around the card.
+	React.useEffect(function()
+		local scale, stroke = iconScale.current, ring.current
+		if not spec.celebrate or not scale or not stroke then
+			return
+		end
+		scale.Scale = CELEBRATE_SCALE
+		TweenService:Create(scale, TweenInfo.new(0.45, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = 1 })
+			:Play()
+		stroke.Transparency, stroke.Thickness = 0, 7
+		TweenService:Create(
+			stroke,
+			TweenInfo.new(RING_SECONDS, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+			{ Transparency = 1, Thickness = 2 }
+		):Play()
+	end, { spec.celebrate })
+
 	return e(Kit.Image, { element = "CardShop", position = props.position }, {
+		Ring = e("Frame", {
+			BackgroundTransparency = 1,
+			Size = UDim2.fromOffset(CARD_W - 5, CARD_H - 6),
+			ZIndex = 3,
+		}, {
+			Corner = e("UICorner", { CornerRadius = UDim.new(0, 12) }),
+			Stroke = e("UIStroke", { ref = ring, Color = GOLD, Thickness = 2, Transparency = 1 }),
+		}),
 		Well = e(Kit.Image, { element = "PreviewWell", position = UDim2.fromOffset(WELL, WELL) }, {
 			Icon = e(Kit.Image, {
 				element = spec.icon,
 				size = ICON,
-				position = UDim2.fromOffset(4, 4),
+				anchor = Vector2.new(0.5, 0.5),
+				position = UDim2.fromOffset(4 + ICON / 2, 4 + ICON / 2),
+			}, {
+				Pop = e("UIScale", { ref = iconScale }),
 			}),
 			Badge = if spec.badge
 				then e(Kit.Text, {

@@ -67,6 +67,8 @@ local FAKE_RAIDER_LOOK: NpcRig.Look = {
 }
 local FAKE_RAIDER_WEAPON = "Bat"
 local FAKE_RAID_SECONDS = 40
+-- How full a dropped bundle counts as for its pickup burst (Juice.collectPieces).
+local LOOT_BURST_FILL = 0.3
 -- Parts put in an empty crate so a fake raid always has something to take.
 local FAKE_RAID_CRATE_PARTS = 400
 -- Yard-space offsets: where the raider appears, and where it runs to.
@@ -266,7 +268,10 @@ spawnDrop = function(position: Vector3, parts: number, fromUserId: number)
 			return
 		end
 
+		-- The bundle arcs into whoever picks it up.
+		local from = part.Position
 		if player.UserId == fromUserId then
+			Notify.ScrapBurst:FireClient(player, from, parts, LOOT_BURST_FILL)
 			remove()
 			returnToOwner(fromUserId, parts)
 			Notify.Message:FireClient(player, `Recovered {parts} parts`)
@@ -278,6 +283,7 @@ spawnDrop = function(position: Vector3, parts: number, fromUserId: number)
 			RemoteGuard.reject(SYSTEM, "CantPickUp")
 			return
 		end
+		Notify.ScrapBurst:FireClient(player, from, parts, LOOT_BURST_FILL)
 		remove()
 		startCarrying(player, parts, fromUserId)
 	end)

@@ -28,6 +28,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 
 local Economy = require(ReplicatedStorage.Shared.Config.Economy)
+local Juice = require(ReplicatedStorage.Shared.Config.Juice)
 local Notify = require(ReplicatedStorage.Shared.Net.Notify)
 local Shop = require(ReplicatedStorage.Shared.Config.Shop)
 local Signal = require(ReplicatedStorage.Shared.Util.Signal)
@@ -200,13 +201,23 @@ local function onPadTriggered(player: Player, yard: PlotService.Yard, padName: s
 	MachineService.machineChanged:fire(player, padName, level)
 end
 
--- Turns crate parts into scrap, with the player's scrap passes applied.
-local function bank(player: Player, parts: number)
+-- Takes everything in the crate and turns it into scrap, with the
+-- player's scrap passes applied. The scrap flies out of the crate into the
+-- player while the heap drains with it. Returns the parts taken.
+local function collectCrate(player: Player, yard: PlotService.Yard): number
+	local before = PlotService.getCrateParts(player)
+	local parts = PlotService.takeFromCrate(player, before)
+	if parts <= 0 then
+		return 0
+	end
+
+	local fill = before / ShopService.crateCapacity(player)
 	local scrap = math.floor(parts * Economy.PART_VALUE * ShopService.scrapMultiplier(player))
 	DataService.addScrap(player, scrap)
-	Notify.Message:FireClient(player, `Collected {scrap} scrap`)
-	Notify.Sound:FireClient(player, "Collect")
+	PlotService.drainCrateFill(player, before, Juice.collectPieces(fill) * Juice.COLLECT_PIECE_GAP)
+	Notify.ScrapBurst:FireClient(player, yard.crate.Position, scrap, fill)
 	MachineService.crateCollected:fire(player, parts)
+	return parts
 end
 
 local function onCollectTriggered(player: Player, yard: PlotService.Yard)
@@ -219,13 +230,9 @@ local function onCollectTriggered(player: Player, yard: PlotService.Yard)
 		return
 	end
 
-	local parts = PlotService.takeFromCrate(player, PlotService.getCrateParts(player))
-	if parts <= 0 then
+	if collectCrate(player, yard) <= 0 then
 		Notify.Message:FireClient(player, "The crate is empty")
-		return
 	end
-
-	bank(player, parts)
 end
 
 local function onYardAssigned(player: Player, yard: PlotService.Yard)
@@ -332,10 +339,7 @@ function MachineService.start()
 			for _, yard in PlotService.getYards() do
 				local owner = yard.owner
 				if owner and ShopService.hasPass(owner, "AutoCollect") then
-					local parts = PlotService.takeFromCrate(owner, PlotService.getCrateParts(owner))
-					if parts > 0 then
-						bank(owner, parts)
-					end
+					collectCrate(owner, yard)
 				end
 			end
 		end

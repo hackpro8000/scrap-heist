@@ -25,6 +25,7 @@
 		PlotService.setCrateParts(player, parts)
 		PlotService.addToCrate(player, amount): number   -- amount actually added
 		PlotService.takeFromCrate(player, amount): number -- amount actually taken
+		PlotService.drainCrateFill(player, fromParts, seconds) -- step the heap down instead of jumping
 		PlotService.spawnCFrame(yard): CFrame
 		PlotService.yardAssigned: Signal(player, yard)
 		PlotService.yardReleased: Signal(player, yard)
@@ -66,6 +67,9 @@ export type Yard = {
 	-- The heap showing in the crate, and its level (0 when empty).
 	crateFill: Model?,
 	crateFillLevel: number,
+	-- While a collect drains the heap piece by piece (os.clock() before
+	-- this), crate changes don't jump the heap to the new total.
+	drainUntil: number,
 }
 
 local PlotService = {}
@@ -211,6 +215,7 @@ local function buildYard(index: number, folder: Folder): Yard
 		markerLabel = billboard(marker, Vector3.new(0, 5, 0), FREE_YARD_TEXT),
 		crateFill = nil,
 		crateFillLevel = 0,
+		drainUntil = 0,
 	}
 end
 
@@ -251,7 +256,9 @@ end
 local function showCrate(yard: Yard, parts: number)
 	yard.crateLabel.Text = if yard.owner then `{math.floor(parts)} / {capacityOf(yard)} parts` else ""
 	yard.crate:SetAttribute("Parts", math.floor(parts))
-	showCrateFill(yard, parts)
+	if os.clock() >= yard.drainUntil then
+		showCrateFill(yard, parts)
+	end
 end
 
 function PlotService.getYards(): { Yard }
@@ -302,6 +309,27 @@ function PlotService.addToCrate(player: Player, amount: number): number
 	PlotService.setCrateParts(player, before + math.max(0, amount))
 
 	return PlotService.getCrateParts(player) - before
+end
+
+-- Lowers the heap in the player's crate from `fromParts` to what the crate
+-- holds now in steps over `seconds`, instead of jumping, while the
+-- collected scrap flies out.
+function PlotService.drainCrateFill(player: Player, fromParts: number, seconds: number)
+	local yard = yardByPlayer[player]
+	if not yard then
+		return
+	end
+	local startedAt = os.clock()
+	yard.drainUntil = startedAt + seconds
+	task.spawn(function()
+		while yard.owner == player and os.clock() < yard.drainUntil do
+			local alpha = (os.clock() - startedAt) / seconds
+			local now = PlotService.getCrateParts(player)
+			showCrateFill(yard, fromParts + (now - fromParts) * math.clamp(alpha, 0, 1))
+			task.wait(0.05)
+		end
+		showCrateFill(yard, PlotService.getCrateParts(player))
+	end)
 end
 
 function PlotService.takeFromCrate(player: Player, amount: number): number
