@@ -29,7 +29,13 @@ The coordinator sends one line per job:
 |---|---|
 | `job servermap-a-s3 shard ServerMap 3/8` | builds shard 3 of 8, uploads its chunks |
 | `job crane-a model MagnetCrane` | builds one model, sends back its preview |
+| `job crane-b model MagnetCrane @3f9c2ab` | builds that commit or branch instead of `main` |
 
-Each job resets the worker's branch to the latest `main`, so any worker can
-take any job. Results land in `art/jobs/<job id>/` on the worker's branch,
+Workers only see what's on GitHub. To build unfinished work without
+committing it to `main`, the coordinator runs `scripts/push-wip.sh`, which
+pushes a snapshot of its working tree to `wip/coordinator` (leaving its own
+branch and files alone) and prints the commit to name with `@`.
+
+Each job resets the worker's branch to the code it names (`main` by
+default), keeping earlier jobs' results, so any worker can take any job. Results land in `art/jobs/<job id>/` on the worker's branch,
 and the report comment names the branch and commit.

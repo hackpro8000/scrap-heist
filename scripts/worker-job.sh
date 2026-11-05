@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 # Runs one job on a build worker (a long-lived cloud session) and reports it.
-# Every job starts from the latest main, so a worker can take any number of
-# jobs one after another without leftovers from the last one.
+# Every job starts fresh from the code it names, so a worker can take any
+# number of jobs one after another without leftovers from the last one.
 #
 #   scripts/worker-job.sh W3 servermap-a-s3 shard ServerMap 3/8
 #       build one shard of a layout and upload its chunks
 #   scripts/worker-job.sh W3 crane-a model MagnetCrane
 #       build one model and send back its preview
+#   scripts/worker-job.sh W3 crane-b model MagnetCrane @3f9c2ab
+#       build that commit or branch instead of main (scripts/push-wip.sh
+#       pushes unfinished work to wip/coordinator for this)
 #
 # Results go to art/jobs/<job id>/ on the worker's branch (its session
 # branch, or worker/<w> when it sits on main), which is reset to main and
@@ -20,6 +23,13 @@ worker="${1:?worker name required, like W3}"
 job="${2:?job id required}"
 kind="${3:?job kind required: shard or model}"
 shift 3
+# A last argument like @3f9c2ab names the code to build; main otherwise.
+source="main"
+if [ $# -gt 0 ] && [[ "${!#}" == @* ]]; then
+	source="${!#}"
+	source="${source#@}"
+	set -- "${@:1:$#-1}"
+fi
 pr="${RESULTS_PR:-1}"
 root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "${root}" || exit 1
@@ -28,6 +38,7 @@ log="/tmp/job-${job}.log"
 out="art/jobs/${job}"
 branch="-"
 commit="-"
+base="-"
 summary=""
 
 say() {
@@ -41,6 +52,7 @@ report() {
 	shift
 	body="${worker} ${job} ${status}
 job: ${kind} $*
+built from: ${source} (${base})
 ${summary}branch: ${branch}
 commit: ${commit}"
 	if [ "${status}" = "FAILED" ]; then
@@ -86,9 +98,15 @@ print("\n".join(sorted(names)))
 EOF
 }
 
-# Start from the latest main on the worker's own branch, carrying over the
+# Start from the job's code on the worker's own branch, carrying over the
 # earlier jobs' results so a report's commit stays fetchable after the next job.
-git fetch -q origin main >> "${log}" 2>&1 || fail "fetching main"
+# Fetching every branch lets a short commit hash resolve.
+git fetch -q origin >> "${log}" 2>&1 || fail "fetching from origin"
+base="$(git rev-parse --verify -q "origin/${source}^{commit}" || git rev-parse --verify -q "${source}^{commit}")" || {
+	base="-"
+	fail "no branch or commit ${source} on origin"
+}
+base="$(git rev-parse --short "${base}")"
 branch="$(git branch --show-current)"
 if [ "${branch}" = "main" ] || [ -z "${branch}" ]; then
 	branch="worker/$(echo "${worker}" | tr '[:upper:]' '[:lower:]')"
@@ -97,7 +115,7 @@ earlier=""
 if git fetch -q origin "${branch}" >> "${log}" 2>&1; then
 	earlier="$(git rev-parse FETCH_HEAD)"
 fi
-git checkout -q -B "${branch}" origin/main >> "${log}" 2>&1 || fail "resetting ${branch} to main"
+git checkout -q -B "${branch}" "${base}" >> "${log}" 2>&1 || fail "resetting ${branch} to ${source}"
 if [ -n "${earlier}" ] && git cat-file -e "${earlier}:art/jobs" 2>/dev/null; then
 	git checkout "${earlier}" -- art/jobs >> "${log}" 2>&1 || fail "carrying over earlier job results"
 fi
