@@ -76,7 +76,7 @@ local COG_SCALE = 492 * SPACE_DEPTH
 -- Side-on clouds round the horizon: how many hang there, out of how many
 -- painted variants (Assets.UI.CloudNNN).
 -- How brightly the cloud sprites glow.
-local CLOUD_BRIGHTNESS = 3
+local CLOUD_BRIGHTNESS = 1.5
 local CLOUDS = 45
 local CLOUD_VARIANTS = 100
 local CLOUD_HEIGHT = NumberRange.new(-200, 2200)
