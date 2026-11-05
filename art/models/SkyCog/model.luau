@@ -1,4 +1,4 @@
-local CACHE_KEY = "SkyCog-0f382556173f3db5"
+local CACHE_KEY = "SkyCog-55b342cd51684d8f"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -806,8 +806,8 @@ local function finishParts()
 end
 -- Sky Cog: the huge cogwheel that turns half hidden behind the planet. It is
 -- a working machine, kept up and still spinning, so it is whole and only
--- lightly weathered: a bronze toothed rim with a raised inner lip, five
--- tapered steel spokes tied by a brace ring, a stepped hub and brass bolt
+-- lightly weathered: bronze all over: a toothed rim with a raised inner lip, five
+-- tapered spokes tied by a brace ring, a stepped hub and brass bolt
 -- heads. It stands upright in the x-z plane, turning about y, 8.5 studs in
 -- radius; the game scales it up a few hundred times, so it is painted at the
 -- kit's full detail: edge highlights, contact shadows and a little grime.
@@ -817,7 +817,6 @@ local BASE, TIP = 7.1, 8.5
 local INNER = 5.5
 local THICK = 1.3
 local BRONZE = { 0.66, 0.46, 0.26 }
-local STEEL = { 0.36, 0.38, 0.45 }
 local BRASS = { 0.86, 0.68, 0.32 }
 
 -- Ring round the y axis: `outerAt(i, steps)` gives the outer radius at each
@@ -885,7 +884,7 @@ part("Rim", nil, BRONZE, function(mesh)
 	band(mesh, plain(BASE - 0.35), BASE - 0.6, THICK * 1.1, 48)
 end, nil, 0.2, 1024, nil, true, 0.5)
 
-part("Spokes", nil, STEEL, function(mesh)
+part("Spokes", nil, BRONZE, function(mesh)
 	for k = 0, 4 do
 		spoke(mesh, k / 5 * TAU + 0.3, 1.2, INNER + 0.2, 1.5, 0.95, 1.0, 0.8)
 	end
