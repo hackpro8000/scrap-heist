@@ -1,0 +1,73 @@
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses HubSectionA (key a8313e4a55d56339)
+assemble ServerMap: uses HubSectionB (key afc962b93a377a4a)
+assemble ServerMap: uses HubSectionEnd (key 48c8eb7545b33eb2)
+assemble ServerMap: uses YardIsland (key f7a297dc299e1e15)
+assemble ServerMap: uses YardFence (key fe3d5de848852dd7)
+assemble ServerMap: uses YardFenceHalf (key 18c1a8760a959e18)
+assemble ServerMap: uses YardFooting (key 5c7b334d7913a1ed)
+assemble ServerMap: uses YardGate (key 6a909dbc533c5385)
+assemble ServerMap: uses PlotMarker (key 1dcfac604b3fab76)
+assemble ServerMap: uses PadKitchen (key b26111bb8c8fc355)
+assemble ServerMap: uses PadGarage (key 734bbac536619471)
+assemble ServerMap: uses PadGadget (key 21e4e209e2c3928c)
+assemble ServerMap: uses BuildBay (key a81c2edb1019fad5)
+assemble ServerMap: uses ScrapCrate (key 313add4f147967e6)
+assemble ServerMap: uses RebirthPress (key a3e10ff078e85756)
+assemble ServerMap: uses JunkMound (key 7fa771084b98236c)
+assemble ServerMap: uses CapsuleScrap (key 97d6ab3947528bd1)
+assemble ServerMap: uses CapsuleSalvaged (key 920c7b0575b6f340)
+assemble ServerMap: uses CapsuleRefurbished (key 964e4fc946ec306e)
+assemble ServerMap: uses CapsuleFactory (key 23e7ef6e39d8fcb9)
+assemble ServerMap: uses CapsulePrecision (key 80c544621f832e35)
+assemble ServerMap: uses CapsulePrototype (key 107d166201005067)
+assemble ServerMap: uses CapsuleSecret (key 09ca92fc3f995992)
+assemble ServerMap: uses JunkrotCanettoRustini (key cb0c7bded31f7246)
+assemble ServerMap: uses JunkrotSpoonzoBentolo (key 333931ef9d44c809)
+assemble ServerMap: uses JunkrotKettlinaDentata (key b6a5a9b13a50ddfc)
+assemble ServerMap: uses JunkrotTyroFlattino (key 0a6fed4afb36bc08)
+assemble ServerMap: uses JunkrotBoltoloLonelo (key dc5359b2301236fb)
+assemble ServerMap: uses JunkrotHubcappaWobbla (key 4ece2c0c2d632439)
+assemble ServerMap: uses JunkrotRemotinoMuto (key adcd1b33b39b0e57)
+assemble ServerMap: uses JunkrotCabloTanglino (key 71a7bdce8a73c75d)
+assemble ServerMap: uses JunkrotBulboFulminato (key d3d88c8d1be348d5)
+assemble ServerMap: uses JunkrotCrumboPoppalot (key 407b76145c5b25df)
+assemble ServerMap: uses JunkrotPannettoPatchato (key 95ceb8add302c2b5)
+assemble ServerMap: uses JunkrotBlendroCigolante (key 576a5245f81a08f2)
+assemble ServerMap: uses JunkrotJackoloCrickato (key 775ba98d72736772)
+assemble ServerMap: uses JunkrotOilcannaGluglu (key da992b0b4928a820)
+assemble ServerMap: uses JunkrotMuffleroTossetto (key 51cde1cc6e30d9fd)
+assemble ServerMap: uses JunkrotRadioloFruscio (key 9ad8ba65324bc486)
+assemble ServerMap: uses JunkrotFanettoWobblino (key 8243f260a8b0b6e8)
+assemble ServerMap: uses JunkrotClockoTictacco (key 124e3e812d14c4c3)
+assemble ServerMap: slab at ServerMap.luau:278-468 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:548-577 (key 7ded6fc62f8b67a3)
+assemble ServerMap: slab at ServerMap.luau:580-584 (key 2f5b4070ee3aa512)
+assemble ServerMap: slab at ServerMap.luau:660-666 (key 7b25a7aa2539d602)
+assemble ServerMap: slab at ServerMap.luau:668-677 (key 107c5c30239027da)
+assemble ServerMap: slab at ServerMap.luau:685-715 (key 18845c9c8b69ea54)
+assemble ServerMap: slab at ServerMap.luau:790-801 (key 363b6dc9a40b12d8)
+assemble ServerMap: slab at ServerMap.luau:814-867 (key f4e0427155be5973)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 43712 lines, in 0s
+[    0.0s] running ServerMap/model.luau
+[    0.7s] cached HubSectionB 1 x part 2/4
+[    0.8s] cached YardIsland 1 x part 5/5
+[    0.8s] cached YardIsland 1 x part 5/5
+[    0.9s] cached YardIsland 1 x part 5/5
+[    1.0s] cached YardIsland 1 x part 5/5
+[    1.1s] cached YardIsland 1 x part 5/5
+[    1.2s] cached YardIsland 1 x part 5/5
+[    1.3s] cached YardIsland 1 x part 5/5
+[    1.3s] cached YardIsland 1 x part 5/5
+[    1.3s] writing ServerMap.glb and 202 textures
+ServerMap: 202 parts, script 1.33s, total 2.36s
+PLACED	HubSection3	0	HubSectionB-afc962b93a377a4a 1 x part 2/4
+PLACED	Island1	0	YardIsland-f7a297dc299e1e15 1 x part 5/5
+PLACED	Island2	0	YardIsland-f7a297dc299e1e15 1 x part 5/5
+PLACED	Island3	0	YardIsland-f7a297dc299e1e15 1 x part 5/5
+PLACED	Island4	0	YardIsland-f7a297dc299e1e15 1 x part 5/5
+PLACED	Island5	180	YardIsland-f7a297dc299e1e15 1 x part 5/5
+PLACED	Island6	180	YardIsland-f7a297dc299e1e15 1 x part 5/5
+PLACED	Island7	180	YardIsland-f7a297dc299e1e15 1 x part 5/5
+PLACED	Island8	180	YardIsland-f7a297dc299e1e15 1 x part 5/5
+export ServerMap: 2 objects (13.5 MB) for 9 placements
