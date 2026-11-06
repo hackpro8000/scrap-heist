@@ -1,8 +1,10 @@
-slab Bridge4	0.761
+slab Bridge4	0.737
 slab Bridge4 #split	1
-slab Approach7	0.158
+slab Approach7	0.145
 slab Approach7 #split	1
-slab Sorter	0.171
+slab Sorter	0.163
 slab Sorter #split	1
-JunkrotConsoloJoypaddino 1 x	0.492
-JunkrotConsoloJoypaddino 1 x #split	1
+JunkrotKnifeblockSlicetta 1 x	0.378
+JunkrotKnifeblockSlicetta 1 x #split	1
+JunkrotLaVacuumaSaturnita 1 x	0.541
+JunkrotLaVacuumaSaturnita 1 x #split	1

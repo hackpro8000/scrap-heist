@@ -37,8 +37,8 @@
 			"parts": 1
 		},
 		{
-			"id": "5fd31e94f5f3b7ca",
-			"key": "115ac3a755887f11-cf7e96091024d5cc Bridge4 210 180 0",
+			"id": "d328d47d9b66b9d0",
+			"key": "1cc43e4ea4bd80d5-cf7e96091024d5cc Bridge4 210 180 0",
 			"piece": 1,
 			"label": "Bridge4",
 			"turn": 0.0,
@@ -55,8 +55,8 @@
 			"parts": 1
 		},
 		{
-			"id": "a4451de9d955ee6a",
-			"key": "115ac3a755887f11-18845c9c8b69ea54 Approach7 70 0 180",
+			"id": "fa510bfa365bc6cc",
+			"key": "1cc43e4ea4bd80d5-18845c9c8b69ea54 Approach7 70 0 180",
 			"piece": 1,
 			"label": "Approach7",
 			"turn": 0.0,
@@ -64,8 +64,8 @@
 			"parts": 3
 		},
 		{
-			"id": "283b24f9e61566ae",
-			"key": "115ac3a755887f11-f4e0427155be5973 Sorter -202 16 0",
+			"id": "6f02b728d4b88809",
+			"key": "1cc43e4ea4bd80d5-f4e0427155be5973 Sorter -202 16 0",
 			"piece": 1,
 			"label": "Sorter",
 			"turn": 0.0,
@@ -87,7 +87,7 @@
 			"piece": 1,
 			"label": "Kit_CapsuleRefurbished",
 			"turn": 0.0,
-			"bytes": 456460,
+			"bytes": 456452,
 			"parts": 5
 		},
 		{
@@ -114,7 +114,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotGrindellaScintilla",
 			"turn": 0.0,
-			"bytes": 717968,
+			"bytes": 717980,
 			"parts": 8
 		},
 		{
@@ -125,6 +125,24 @@
 			"turn": 0.0,
 			"bytes": 753660,
 			"parts": 9
+		},
+		{
+			"id": "6ce702dd69cb7fdc",
+			"key": "JunkrotKnifeblockSlicetta-b0fc15670bb0eca0 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotKnifeblockSlicetta",
+			"turn": 0.0,
+			"bytes": 656240,
+			"parts": 6
+		},
+		{
+			"id": "1573ebf6bdbea3a8",
+			"key": "JunkrotLaVacuumaSaturnita-bd517ef7554f341c 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotLaVacuumaSaturnita",
+			"turn": 0.0,
+			"bytes": 823476,
+			"parts": 10
 		}
 	],
 	"placements": [
@@ -445,7 +463,7 @@
 			]
 		},
 		{
-			"asset": "5fd31e94f5f3b7ca",
+			"asset": "d328d47d9b66b9d0",
 			"label": "Bridge4",
 			"turn": 0.0,
 			"anchors": [
@@ -603,7 +621,7 @@
 			]
 		},
 		{
-			"asset": "a4451de9d955ee6a",
+			"asset": "fa510bfa365bc6cc",
 			"label": "Approach7",
 			"turn": 0.0,
 			"anchors": [
@@ -626,7 +644,7 @@
 			]
 		},
 		{
-			"asset": "283b24f9e61566ae",
+			"asset": "6f02b728d4b88809",
 			"label": "Sorter",
 			"turn": 0.0,
 			"anchors": [
@@ -656,7 +674,7 @@
 				{
 					"name": "Deck",
 					"position": [
-						-576.0069249999999,
+						-828.0069249999999,
 						-149.80111,
 						0.0005628999999998108
 					]
@@ -664,7 +682,7 @@
 				{
 					"name": "Rack",
 					"position": [
-						-575.98098,
+						-827.98098,
 						-148.90030000000002,
 						-4.71155935
 					]
@@ -679,7 +697,7 @@
 				{
 					"name": "Box",
 					"position": [
-						-432.00169,
+						-684.0017,
 						-149.40106,
 						-0.004411985000000007
 					]
@@ -694,7 +712,7 @@
 				{
 					"name": "Nail",
 					"position": [
-						-239.145215,
+						-491.145215,
 						-147.263805,
 						0.177136401
 					]
@@ -702,7 +720,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						-239.977835,
+						-491.97783,
 						-148.25650000000002,
 						0.550213515
 					]
@@ -717,7 +735,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						-23.977831,
+						-275.97783,
 						-147.3865,
 						0.430213525
 					]
@@ -725,7 +743,7 @@
 				{
 					"name": "Screw",
 					"position": [
-						-23.670682,
+						-275.67067,
 						-148.26735000000002,
 						-0.011748239999999993
 					]
@@ -740,7 +758,7 @@
 				{
 					"name": "Handle",
 					"position": [
-						239.38745,
+						-12.612543500000001,
 						-148.378335,
 						-0.5333064000000001
 					]
@@ -748,7 +766,7 @@
 				{
 					"name": "Sparks",
 					"position": [
-						242.597735,
+						-9.402267,
 						-148.70037000000002,
 						0.69901257
 					]
@@ -763,7 +781,7 @@
 				{
 					"name": "Buttons",
 					"position": [
-						528.0384300000001,
+						276.03843,
 						-148.15,
 						1.12
 					]
@@ -771,9 +789,55 @@
 				{
 					"name": "Core",
 					"position": [
-						528.0,
+						276.0,
 						-147.9,
 						0.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "6ce702dd69cb7fdc",
+			"label": "Kit_JunkrotKnifeblockSlicetta",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Handles",
+					"position": [
+						564.0,
+						-146.73774,
+						-0.519214795
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						564.0222,
+						-148.10649999999998,
+						0.880213495
+					]
+				}
+			]
+		},
+		{
+			"asset": "1573ebf6bdbea3a8",
+			"label": "Kit_JunkrotLaVacuumaSaturnita",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Glow",
+					"position": [
+						876.0,
+						-148.25,
+						1.12
+					]
+				},
+				{
+					"name": "HoseRing",
+					"position": [
+						875.984325,
+						-148.246985,
+						-0.012057849999999926
 					]
 				}
 			]

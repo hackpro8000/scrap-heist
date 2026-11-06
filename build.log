@@ -64,6 +64,27 @@ assemble ServerMap: uses JunkrotClankClankClankScrapur (key a30fc840bf59b273)
 assemble ServerMap: uses JunkrotVrrVrrPatatrim (key c5f05967943ccfb5)
 assemble ServerMap: uses JunkrotChimneyziniSpannerini (key 16b899b9c5febdc7)
 assemble ServerMap: uses JunkrotRusteliRustela (key 41867bade3ceb8a9)
+assemble ServerMap: uses JunkrotBallerinaTincuppina (key 30f20c40dd829229)
+assemble ServerMap: uses JunkrotTrashaleroTrashala (key 18a099d48482ff37)
+assemble ServerMap: uses JunkrotSockettoSeiSette (key 676d9911a0746861)
+assemble ServerMap: uses JunkrotChefbotPrecisio (key 655242385b26b2f8)
+assemble ServerMap: uses JunkrotSousvideSilvano (key 1305b15b458cf825)
+assemble ServerMap: uses JunkrotKnifeblockSlicetta (key b0fc15670bb0eca0)
+assemble ServerMap: uses JunkrotTorquoWrenchelli (key 3ac268b5345ff0f9)
+assemble ServerMap: uses JunkrotLaserlevelLineo (key 72fe0c3e9bfc4ac2)
+assemble ServerMap: uses JunkrotWeldettaSparkalot (key c11aed715eb587cc)
+assemble ServerMap: uses JunkrotDronettoBuzzatti (key 7acc8fb57bb9953e)
+assemble ServerMap: uses JunkrotTickworthPocketti (key 22a6c4d039ad0ff0)
+assemble ServerMap: uses JunkrotHeadphonoBassimo (key d47c976aa6738c6d)
+assemble ServerMap: uses JunkrotGascaniniHonkini (key f8b07ed06063b0f4)
+assemble ServerMap: uses JunkrotPercolattoNinjatto (key 3392c5d7d380fb69)
+assemble ServerMap: uses JunkrotBoilerdiroCrockpotilo (key 748a5e56f0959c15)
+assemble ServerMap: uses JunkrotSnackomaticPrototipo (key 580bc970b9d2684c)
+assemble ServerMap: uses JunkrotHoverbikkoZoomzoom (key 1b5900b42f82f562)
+assemble ServerMap: uses JunkrotHolofonoShimmerra (key 9a65f88f2484fd69)
+assemble ServerMap: uses JunkrotLaVacuumaSaturnita (key bd517ef7554f341c)
+assemble ServerMap: uses JunkrotTheMonolito (key e9bc9ca19c2b8402)
+assemble ServerMap: uses JunkrotUnitZero (key cf5027927a7e9ceb)
 assemble ServerMap: slab at ServerMap.luau:278-468 (key cf7e96091024d5cc)
 assemble ServerMap: slab at ServerMap.luau:548-577 (key 7ded6fc62f8b67a3)
 assemble ServerMap: slab at ServerMap.luau:580-584 (key 2f5b4070ee3aa512)
@@ -72,7 +93,7 @@ assemble ServerMap: slab at ServerMap.luau:668-677 (key 107c5c30239027da)
 assemble ServerMap: slab at ServerMap.luau:685-715 (key 18845c9c8b69ea54)
 assemble ServerMap: slab at ServerMap.luau:790-801 (key 363b6dc9a40b12d8)
 assemble ServerMap: slab at ServerMap.luau:814-867 (key f4e0427155be5973)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 64511 lines, in 0s
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 82647 lines, in 1s
 [    0.0s] running ServerMap/model.luau
 [    0.6s] cached HubSectionA 1 x part 3/4
 [    0.7s] cached HubSectionA 1 x part 3/4
@@ -95,19 +116,19 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 64511 lines, in 0s
 [    0.7s] cached YardFooting 1 x x1.5
 [    0.7s] cached YardFooting 0.5 x x1.5
 [    0.7s] building Bridge4 210 180 0
-[    0.8s] baking on CPU (no GPU)
-[    1.1s]   shaded Deck 932×932 in 0.31s
+[    0.9s] baking on CPU (no GPU)
+[    1.1s]   shaded Deck 932×932 in 0.30s
 [    1.1s]   shaded HazardYellow 132×132 in 0.01s
 [    1.1s]   shaded HazardBlack 132×132 in 0.00s
 [    1.3s]   shaded Girders 1024×1024 in 0.19s
 [    1.3s]   shaded Posts 192×192 in 0.01s
-[    1.4s]   shaded Rail 996×996 in 0.07s
+[    1.4s]   shaded Rail 996×996 in 0.06s
 [    1.4s]   shaded KerbEnds 108×108 in 0.00s
 [    1.4s]   shaded EndPosts 60×60 in 0.00s
-[    1.4s]   shaded Abutments 368×368 in 0.03s
-[    1.4s]   shaded JointPlate 152×152 in 0.00s
+[    1.5s]   shaded Abutments 368×368 in 0.03s
+[    1.5s]   shaded JointPlate 152×152 in 0.00s
 [    1.5s]   shaded Apron 184×184 in 0.01s
-[    1.5s] built Bridge4 210 180 0: 11 parts in 0.8s
+[    1.5s] built Bridge4 210 180 0: 11 parts in 0.7s
 [    1.5s] cached YardFence 1 x x1.5
 [    1.5s] cached YardFooting 1 x x1.5
 [    1.5s] cached YardFooting 1.037037037037037 x x1.5
@@ -119,14 +140,14 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 64511 lines, in 0s
 [    1.5s] cached YardFooting 1.037037037037037 x x1.5
 [    1.5s] building Approach7 70 0 180
 [    1.6s]   shaded Ramp 468×468 in 0.09s
-[    1.6s]   shaded Walls 488×488 in 0.03s
+[    1.6s]   shaded Walls 488×488 in 0.02s
 [    1.6s]   shaded WallCaps 468×468 in 0.02s
-[    1.6s] built Approach7 70 0 180: 3 parts in 0.2s
+[    1.6s] built Approach7 70 0 180: 3 parts in 0.1s
 [    1.6s] building Sorter -202 16 0
 [    1.7s]   shaded Legs 284×284 in 0.01s
 [    1.7s]   shaded Roof 532×532 in 0.04s
-[    1.8s]   shaded Fascia 232×232 in 0.01s
-[    1.8s]   shaded FasciaStripes 144×144 in 0.01s
+[    1.7s]   shaded Fascia 232×232 in 0.01s
+[    1.7s]   shaded FasciaStripes 144×144 in 0.01s
 [    1.8s]   shaded Curtains 412×412 in 0.02s
 [    1.8s]   shaded Hopper 260×260 in 0.01s
 [    1.8s]   shaded Crane 284×284 in 0.01s
@@ -137,19 +158,28 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 64511 lines, in 0s
 [    1.8s] cached JunkrotTyroFlattino 1 x
 [    1.8s] cached JunkrotJackoloCrickato 1 x
 [    1.8s] cached JunkrotGrindellaScintilla 1 x
-[    1.8s] building JunkrotConsoloJoypaddino 1 x
-[    1.9s]   shaded Shell 256×256 in 0.03s
-[    1.9s]   shaded Core 256×256 in 0.03s
-[    1.9s]   shaded LightBar 256×256 in 0.02s
-[    2.0s]   shaded Pad 256×256 in 0.05s
-[    2.1s]   shaded Buttons 256×256 in 0.09s
-[    2.1s]   shaded Cable 256×256 in 0.01s
-[    2.2s]   shaded Eyes 256×256 in 0.09s
-[    2.3s]   shaded Pupils 256×256 in 0.11s
-[    2.3s]   shaded Legs 256×256 in 0.04s
-[    2.3s] built JunkrotConsoloJoypaddino 1 x: 9 parts in 0.5s
-[    2.3s] writing ServerMap.glb and 173 textures
-ServerMap: 173 parts, script 2.34s, total 2.92s
+[    1.8s] cached JunkrotConsoloJoypaddino 1 x
+[    1.8s] building JunkrotKnifeblockSlicetta 1 x
+[    1.9s]   shaded Block 256×256 in 0.05s
+[    1.9s]   shaded Handles 256×256 in 0.03s
+[    2.0s]   shaded Caps 256×256 in 0.08s
+[    2.0s]   shaded Eyes 256×256 in 0.07s
+[    2.1s]   shaded Pupils 256×256 in 0.10s
+[    2.2s]   shaded Legs 256×256 in 0.03s
+[    2.2s] built JunkrotKnifeblockSlicetta 1 x: 6 parts in 0.4s
+[    2.2s] building JunkrotLaVacuumaSaturnita 1 x
+[    2.2s]   shaded Planet 256×256 in 0.02s
+[    2.2s]   shaded Bands 256×256 in 0.01s
+[    2.2s]   shaded HoseRing 256×256 in 0.01s
+[    2.3s]   shaded CowHead 256×256 in 0.07s
+[    2.4s]   shaded Spots 256×256 in 0.07s
+[    2.4s]   shaded Horns 256×256 in 0.04s
+[    2.5s]   shaded Eyes 256×256 in 0.11s
+[    2.7s]   shaded Pupils 256×256 in 0.14s
+[    2.7s]   shaded Legs 256×256 in 0.04s
+[    2.7s] built JunkrotLaVacuumaSaturnita 1 x: 10 parts in 0.5s
+[    2.7s] writing ServerMap.glb and 189 textures
+ServerMap: 189 parts, script 2.73s, total 3.24s
 PLACED	HubSection2	0	HubSectionA-a8313e4a55d56339 1 x part 3/4
 PLACED	HubSection4	180	HubSectionA-a8313e4a55d56339 1 x part 3/4
 PLACED	Yard3_FenceFront2	0	YardFence-fe3d5de848852dd7 1 x x1.5
@@ -170,8 +200,8 @@ PLACED	Yard4_FootingFront5	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
 PLACED	Yard4_FenceFront6	0	YardFence-fe3d5de848852dd7 1 x x1.5
 PLACED	Yard4_FootingFront6	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
 PLACED	Yard4_FootingFrontHalf2	0	YardFooting-5c7b334d7913a1ed 0.5 x x1.5
-PLACED	Bridge4	0	115ac3a755887f11-cf7e96091024d5cc Bridge4 210 180 0
-SHARD_COST	slab Bridge4	0.761
+PLACED	Bridge4	0	1cc43e4ea4bd80d5-cf7e96091024d5cc Bridge4 210 180 0
+SHARD_COST	slab Bridge4	0.737
 SHARD_COST	slab Bridge4 #split	1
 PLACED	Yard7_FenceBack7	360	YardFence-fe3d5de848852dd7 1 x x1.5
 PLACED	Yard7_FootingBack8	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
@@ -182,11 +212,11 @@ PLACED	Yard7_FootingLeft4	270	YardFooting-5c7b334d7913a1ed 1.037037037037037 x x
 PLACED	Yard7_FootingRight5	270	YardFooting-5c7b334d7913a1ed 1.037037037037037 x x1.5
 PLACED	Yard7_FootingLeft7	270	YardFooting-5c7b334d7913a1ed 1.037037037037037 x x1.5
 PLACED	Yard7_FootingRight8	270	YardFooting-5c7b334d7913a1ed 1.037037037037037 x x1.5
-PLACED	Approach7	0	115ac3a755887f11-18845c9c8b69ea54 Approach7 70 0 180
-SHARD_COST	slab Approach7	0.158
+PLACED	Approach7	0	1cc43e4ea4bd80d5-18845c9c8b69ea54 Approach7 70 0 180
+SHARD_COST	slab Approach7	0.145
 SHARD_COST	slab Approach7 #split	1
-PLACED	Sorter	0	115ac3a755887f11-f4e0427155be5973 Sorter -202 16 0
-SHARD_COST	slab Sorter	0.171
+PLACED	Sorter	0	1cc43e4ea4bd80d5-f4e0427155be5973 Sorter -202 16 0
+SHARD_COST	slab Sorter	0.163
 SHARD_COST	slab Sorter #split	1
 PLACED	Kit_Bay	0	BuildBay-a81c2edb1019fad5 1 x
 PLACED	Kit_CapsuleRefurbished	0	CapsuleRefurbished-964e4fc946ec306e 1 x
@@ -194,6 +224,10 @@ PLACED	Kit_JunkrotTyroFlattino	0	JunkrotTyroFlattino-0a6fed4afb36bc08 1 x
 PLACED	Kit_JunkrotJackoloCrickato	0	JunkrotJackoloCrickato-775ba98d72736772 1 x
 PLACED	Kit_JunkrotGrindellaScintilla	0	JunkrotGrindellaScintilla-34447cb98f0a6877 1 x
 PLACED	Kit_JunkrotConsoloJoypaddino	0	JunkrotConsoloJoypaddino-191abffb1bf801ba 1 x
-SHARD_COST	JunkrotConsoloJoypaddino 1 x	0.492
-SHARD_COST	JunkrotConsoloJoypaddino 1 x #split	1
-export ServerMap: 14 objects (17.0 MB) for 38 placements
+PLACED	Kit_JunkrotKnifeblockSlicetta	0	JunkrotKnifeblockSlicetta-b0fc15670bb0eca0 1 x
+SHARD_COST	JunkrotKnifeblockSlicetta 1 x	0.378
+SHARD_COST	JunkrotKnifeblockSlicetta 1 x #split	1
+PLACED	Kit_JunkrotLaVacuumaSaturnita	0	JunkrotLaVacuumaSaturnita-bd517ef7554f341c 1 x
+SHARD_COST	JunkrotLaVacuumaSaturnita 1 x	0.541
+SHARD_COST	JunkrotLaVacuumaSaturnita 1 x #split	1
+export ServerMap: 16 objects (18.5 MB) for 40 placements
