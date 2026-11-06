@@ -1,24 +1,24 @@
-ArenaDrone 1 x	45.439
+ArenaDrone 1 x	57.108
 ArenaDrone 1 x #split	1
-ShopConceptContainer 1 x x2.5	71.835
+ShopConceptContainer 1 x x2.5	77.339
 ShopConceptContainer 1 x x2.5 #split	1
-GroundTile 1 x x1.5	0.060
+GroundTile 1 x x1.5	0.189
 GroundTile 1 x x1.5 #split	1
-MachinePad 1 x x1.5	0.055
+MachinePad 1 x x1.5	0.188
 MachinePad 1 x x1.5 #split	1
-YardPath 1 x x1.5	0.230
+YardPath 1 x x1.5	0.232
 YardPath 1 x x1.5 #split	1
-YardPathStub 1 x x1.5	0.175
+YardPathStub 1 x x1.5	0.187
 YardPathStub 1 x x1.5 #split	1
-YardFence 1 x x1.5	0.175
+YardFence 1 x x1.5	0.188
 YardFence 1 x x1.5 #split	1
-YardFooting 1 x x1.5	0.058
+YardFooting 1 x x1.5	0.064
 YardFooting 1 x x1.5 #split	1
-slab Bridge2	1.249
+slab Bridge2	1.362
 slab Bridge2 #split	1
-YardFooting 0.5 x x1.5	0.063
+YardFooting 0.5 x x1.5	0.066
 YardFooting 0.5 x x1.5 #split	1
-slab Bridge4	1.141
+slab Bridge4	1.268
 slab Bridge4 #split	1
-slab Plot8	1.146
+slab Plot8	1.136
 slab Plot8 #split	1
