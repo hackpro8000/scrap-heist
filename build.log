@@ -1,47 +1,105 @@
 assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
-assemble ServerMap: uses ArenaDrone (key 3feaec12b72c179a)
 assemble ServerMap: uses HubSectionA (key a8617627bbdcd357)
 assemble ServerMap: uses HubSectionB (key 13537df3661bc8d8)
 assemble ServerMap: uses HubSectionEnd (key 992b2af78b33b635)
 assemble ServerMap: uses YardIsland (key 7ddd7ac889cc7658)
-assemble ServerMap: uses ShippingContainer (key b4618da1e6c8e874)
-assemble ServerMap: uses CarStack (key 18868d27bbadf854)
-assemble ServerMap: uses CrushedCar (key cb21a631053a549a)
-assemble ServerMap: uses Barrels (key 6fd22d825787f5b7)
-assemble ServerMap: uses TyreStack (key 19ab2944a510d9c5)
-assemble ServerMap: uses JunkWall (key acd51bf6f9b5d959)
-assemble ServerMap: uses Dumpster (key 5705b07a41a863a8)
-assemble ServerMap: uses Pallets (key af2bcdda5ec40e79)
-assemble ServerMap: uses StreetlightBroken (key 860caef50018b787)
-assemble ServerMap: uses TrafficCones (key 878424fc7df50b09)
-assemble ServerMap: slab at ServerMap.luau:821-870 (key 5c7ab7c43edf108b)
-assemble ServerMap: slab at ServerMap.luau:875-899 (key e1d53c436615f36a)
-assemble ServerMap: slab at ServerMap.luau:933-948 (key f4f9015cc7a52d81)
-assemble ServerMap: slab at ServerMap.luau:1027-1217 (key cf7e96091024d5cc)
-assemble ServerMap: slab at ServerMap.luau:1297-1326 (key 7ded6fc62f8b67a3)
-assemble ServerMap: slab at ServerMap.luau:1329-1333 (key 2f5b4070ee3aa512)
-assemble ServerMap: slab at ServerMap.luau:1345-1349 (key 014f342f2182a798)
-assemble ServerMap: slab at ServerMap.luau:1351-1359 (key 84939f33a0cb0864)
-assemble ServerMap: slab at ServerMap.luau:1404-1426 (key dfbe27eb7d68389c)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 22621 lines, in 1s
+assemble ServerMap: slab at ServerMap.luau:260-450 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:530-559 (key 7ded6fc62f8b67a3)
+assemble ServerMap: slab at ServerMap.luau:562-566 (key 2f5b4070ee3aa512)
+assemble ServerMap: slab at ServerMap.luau:578-582 (key 014f342f2182a798)
+assemble ServerMap: slab at ServerMap.luau:584-592 (key 84939f33a0cb0864)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 12141 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.5s] cached HubSectionA 1 x part 5/5
-[    0.6s] cached HubSectionA 1 x part 5/5
-[    0.6s] cached Plot2 -70 180 0
-[    0.6s] cached Spoke4 210 180 0
-[    0.6s] cached Plot5 -210 -180 180
-[    0.6s] cached Spoke8 210 -180 180
-[    0.7s] cached Side1 -140 150 -90
-[    0.7s] cached Side5 0 -150 -90
-[    0.7s] cached TyreStack 1 x x1.8
-[    0.7s] cached JunkWall 1 x x1.75
-[    0.7s] writing ServerMap.glb and 80 textures
-[    1.3s] chunk ServerMap_S16_01.glb: 65 parts, 11.0 MB
-[    1.3s] chunk ServerMap_S16_02.glb: 15 parts, 2.8 MB
-ServerMap: 80 parts, script 675.70ms, total 1.46s
-upload ServerMap: starting in 3.2s
-upload ServerMap: uploading ServerMapS16_01 (11M)
-upload ServerMap: ServerMapS16_01 is asset 109667525675667
-upload ServerMap: uploading ServerMapS16_02 (2.7M)
-upload ServerMap: ServerMapS16_02 is asset 94109314605008
-upload ServerMap: shard upload done: 2 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
+[    0.2s] building YardIsland 1 x part 2/5
+[    2.2s] baking on CPU (no GPU)
+[    2.3s]   shaded Columns_-1_0_-1_001 292×292 in 0.14s
+[    2.4s]   shaded Columns_-1_-1_-1_101 364×364 in 0.14s
+[    2.5s]   shaded Columns_0_-1_0_101 180×180 in 0.03s
+[    2.6s]   shaded Columns_0_-1_-1_001 324×324 in 0.14s
+[    4.2s]   shaded Columns_0_0_0 900×900 in 1.49s
+[    4.5s]   shaded Dirt_0_0_0_011 432×432 in 0.29s
+[    4.7s]   shaded Dirt_0_-1_0_010 372×372 in 0.14s
+[    5.1s]   shaded Dirt_-1_-1_0_011 568×568 in 0.46s
+[    5.5s]   shaded Dirt_-1_-1_0_000_111 452×452 in 0.30s
+[    6.9s]   shaded Dirt_-1_-1_0_101 1024×1024 in 1.38s
+[    8.3s]   shaded Dirt_-1_0_0_110 976×976 in 1.29s
+[    9.1s]   shaded Dirt_-1_0_0_001 696×696 in 0.76s
+[   10.4s]   shaded Dirt_-1_-2_0 700×700 in 1.28s
+[   11.1s]   shaded Dirt_0_-1_-1 584×584 in 0.67s
+[   11.2s]   shaded Pebbles_0_-2_0 96×96 in 0.04s
+[   11.2s]   shaded Pebbles_0_-1_-1 148×148 in 0.05s
+[   12.5s]   shaded Grass_0_-1_0_100 900×900 in 1.22s
+[   13.5s]   shaded Grass_-1_1_0 876×876 in 0.99s
+[   14.7s]   shaded Grass_0_0_0_110 840×840 in 1.10s
+[   14.9s]   shaded Grass_1_0_0 496×496 in 0.18s
+[   14.9s] built YardIsland 1 x part 2/5: 20 parts in 14.7s
+[   15.0s] building Spoke1 -210 180 0
+[   15.1s]   shaded Road 304×304 in 0.07s
+[   15.1s] built Spoke1 -210 180 0: 1 parts in 0.1s
+[   15.1s] building Bridge1 -210 180 0
+[   15.8s]   shaded Deck 1024×1024 in 0.53s
+[   15.8s]   shaded HazardYellow 148×148 in 0.04s
+[   15.9s]   shaded HazardBlack 148×148 in 0.05s
+[   16.2s]   shaded Girders 1024×1024 in 0.37s
+[   16.3s]   shaded Posts 212×212 in 0.07s
+[   16.5s]   shaded Rail 1024×1024 in 0.20s
+[   16.5s]   shaded KerbEnds 104×104 in 0.01s
+[   16.5s]   shaded EndPosts 60×60 in 0.01s
+[   16.7s]   shaded Abutments 372×372 in 0.17s
+[   16.7s]   shaded JointPlate 152×152 in 0.01s
+[   16.8s]   shaded Apron 184×184 in 0.05s
+[   16.8s] built Bridge1 -210 180 0: 11 parts in 1.7s
+[   17.0s] cached YardIsland 1 x part 2/5
+[   17.1s] cached YardIsland 1 x part 2/5
+[   17.1s] building Spoke3 70 180 0
+[   17.2s]   shaded Road 304×304 in 0.08s
+[   17.2s] built Spoke3 70 180 0: 1 parts in 0.1s
+[   17.2s] building Bridge3 70 180 0
+[   17.8s]   shaded Deck 1024×1024 in 0.51s
+[   17.9s]   shaded HazardYellow 148×148 in 0.04s
+[   17.9s]   shaded HazardBlack 148×148 in 0.04s
+[   18.3s]   shaded Girders 1024×1024 in 0.34s
+[   18.3s]   shaded Posts 212×212 in 0.07s
+[   18.6s]   shaded Rail 1024×1024 in 0.22s
+[   18.6s]   shaded KerbEnds 104×104 in 0.02s
+[   18.6s]   shaded EndPosts 60×60 in 0.01s
+[   18.8s]   shaded Abutments 372×372 in 0.16s
+[   18.8s]   shaded JointPlate 152×152 in 0.01s
+[   18.8s]   shaded Apron 184×184 in 0.05s
+[   18.8s] built Bridge3 70 180 0: 11 parts in 1.7s
+[   19.0s] cached YardIsland 1 x part 2/5
+[   19.1s] cached YardIsland 1 x part 2/5
+[   19.2s] cached YardIsland 1 x part 2/5
+[   19.4s] cached YardIsland 1 x part 2/5
+[   19.5s] cached YardIsland 1 x part 2/5
+[   19.5s] building Spoke8 210 -180 180
+[   19.6s]   shaded Road 304×304 in 0.08s
+[   19.6s] built Spoke8 210 -180 180: 1 parts in 0.1s
+[   19.6s] writing ServerMap.glb and 185 textures
+[   21.4s] chunk ServerMap_S16_01.glb: 52 parts, 9.7 MB
+[   21.4s] chunk ServerMap_S16_02.glb: 52 parts, 9.7 MB
+[   21.4s] chunk ServerMap_S16_03.glb: 40 parts, 6.6 MB
+[   21.4s] chunk ServerMap_S16_04.glb: 41 parts, 6.7 MB
+ServerMap: 185 parts, script 19.58s, total 22.00s
+SHARD_COST	YardIsland 1 x	73.589
+SHARD_COST	YardIsland 1 x #split	1
+SHARD_COST	slab Spoke1	0.083
+SHARD_COST	slab Spoke1 #split	1
+SHARD_COST	slab Bridge1	1.679
+SHARD_COST	slab Bridge1 #split	1
+SHARD_COST	slab Spoke3	0.090
+SHARD_COST	slab Spoke3 #split	1
+SHARD_COST	slab Bridge3	1.659
+SHARD_COST	slab Bridge3 #split	1
+SHARD_COST	slab Spoke8	0.089
+SHARD_COST	slab Spoke8 #split	1
+upload ServerMap: starting in 2.1s
+upload ServerMap: uploading ServerMapS16_01 (9.3M)
+upload ServerMap: ServerMapS16_01 is asset 118290226568908
+upload ServerMap: uploading ServerMapS16_02 (9.3M)
+upload ServerMap: ServerMapS16_02 is asset 102709843675374
+upload ServerMap: uploading ServerMapS16_03 (6.3M)
+upload ServerMap: ServerMapS16_03 is asset 114565046454311
+upload ServerMap: uploading ServerMapS16_04 (6.5M)
+upload ServerMap: ServerMapS16_04 is asset 116345806264379
+upload ServerMap: shard upload done: 4 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)

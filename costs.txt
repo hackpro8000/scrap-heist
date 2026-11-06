@@ -1,0 +1,12 @@
+YardIsland 1 x	73.589
+YardIsland 1 x #split	1
+slab Spoke1	0.083
+slab Spoke1 #split	1
+slab Bridge1	1.679
+slab Bridge1 #split	1
+slab Spoke3	0.090
+slab Spoke3 #split	1
+slab Bridge3	1.659
+slab Bridge3 #split	1
+slab Spoke8	0.089
+slab Spoke8 #split	1
