@@ -1,7 +1,0 @@
-Shop_Container_0_0_0_000
-Shop_Container_0_0_0_001
-Shop_Flap_-1_-1_0_101
-Shop_Roof
-Shop_SignHousing
-Shop_SignRecesses
-Shop_Wares
