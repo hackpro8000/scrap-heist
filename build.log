@@ -51,6 +51,19 @@ assemble ServerMap: uses JunkrotTypewrittoClackini (key fe49253052fa6f56)
 assemble ServerMap: uses JunkrotCamerinoFlashetto (key 2d8422ee9636d2d3)
 assemble ServerMap: uses JunkrotDrippiDroppi (key b006345a7aeeab08)
 assemble ServerMap: uses JunkrotDingDingDingDongo (key 1d1e1e950c96e4e4)
+assemble ServerMap: uses JunkrotGrindoBeanbasher (key 5a476970c2b89efc)
+assemble ServerMap: uses JunkrotAirfryoCroccante (key fe378a5846949e34)
+assemble ServerMap: uses JunkrotDishwashinoSplashetto (key 683d7dad7d3db771)
+assemble ServerMap: uses JunkrotLawnmowoRuggito (key 108da303884eadb8)
+assemble ServerMap: uses JunkrotLeafblowaWhooshini (key f2ce0e8b9e3edeaa)
+assemble ServerMap: uses JunkrotPressurwashoSprizzo (key 87ac2472b45f7495)
+assemble ServerMap: uses JunkrotConsoloJoypaddino (key 191abffb1bf801ba)
+assemble ServerMap: uses JunkrotSpeakeroneBoomba (key 3bbfbd68ef1f5c85)
+assemble ServerMap: uses JunkrotRobovaccoGirotondo (key 45bdee1d4d860040)
+assemble ServerMap: uses JunkrotClankClankClankScrapur (key a30fc840bf59b273)
+assemble ServerMap: uses JunkrotVrrVrrPatatrim (key c5f05967943ccfb5)
+assemble ServerMap: uses JunkrotChimneyziniSpannerini (key 16b899b9c5febdc7)
+assemble ServerMap: uses JunkrotRusteliRustela (key 41867bade3ceb8a9)
 assemble ServerMap: slab at ServerMap.luau:278-468 (key cf7e96091024d5cc)
 assemble ServerMap: slab at ServerMap.luau:548-577 (key 7ded6fc62f8b67a3)
 assemble ServerMap: slab at ServerMap.luau:580-584 (key 2f5b4070ee3aa512)
@@ -59,9 +72,9 @@ assemble ServerMap: slab at ServerMap.luau:668-677 (key 107c5c30239027da)
 assemble ServerMap: slab at ServerMap.luau:685-715 (key 18845c9c8b69ea54)
 assemble ServerMap: slab at ServerMap.luau:790-801 (key 363b6dc9a40b12d8)
 assemble ServerMap: slab at ServerMap.luau:814-867 (key f4e0427155be5973)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 53240 lines, in 0s
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 64511 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.7s] cached HubSectionB 1 x part 2/4
+[    0.8s] cached HubSectionB 1 x part 2/4
 [    0.8s] cached YardIsland 1 x part 5/5
 [    0.9s] cached YardIsland 1 x part 5/5
 [    1.0s] cached YardIsland 1 x part 5/5
@@ -71,7 +84,7 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 53240 lines, in 0s
 [    1.3s] cached YardIsland 1 x part 5/5
 [    1.4s] cached YardIsland 1 x part 5/5
 [    1.4s] writing ServerMap.glb and 202 textures
-ServerMap: 202 parts, script 1.40s, total 2.61s
+ServerMap: 202 parts, script 1.40s, total 2.57s
 PLACED	HubSection3	0	HubSectionB-afc962b93a377a4a 1 x part 2/4
 PLACED	Island1	0	YardIsland-f7a297dc299e1e15 1 x part 5/5
 PLACED	Island2	0	YardIsland-f7a297dc299e1e15 1 x part 5/5
