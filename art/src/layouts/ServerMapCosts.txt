@@ -1,75 +1,75 @@
-ArenaDrone 1 x	76.530
-Barrels 1 x x1.9	0.232
-CarStack 1 x x2.5	0.298
-CrushedCar 1 x x2.5	0.271
-Dumpster 1 x x2.2	0.552
-GroundTile 1 x x1.5	0.300
-JunkWall 1 x x1.75	0.402
-MachinePad 1 x x1.5	0.209
-MarketIsland 1 x	67.092
-PadIsland 1 x	10.928
-Pallets 1 x x1.4	0.354
-ParkBench 1 x x1.85	0.253
-PlotMarker 1 x x1.5	0.857
-ScrapPalm 1 x x1.5	0.337
-ScrapTreeLamppost 1 x x1.5	0.355
-ShippingContainer 1 x x1.5	0.313
-ShopConceptContainer 1 x x2.5	147.674
-StorageCrate 1 x x1.5	16.151
-StreetlightBroken 1 x x2	0.302
-TrafficCones 1 x x1.8	0.464
-TyreStack 1 x x1.8	0.271
-VendingMachine 1 x x2	7.080
-YardFence 1 x x1.5	0.203
-YardFenceHalf 1 x x1.5	0.175
-YardFooting 0.5 x x1.5	0.114
-YardFooting 1 x x1.5	0.127
-YardGate 1 x x1.5	0.351
-YardIsland 1 x	63.401
-YardPath 1 x x1.5	0.437
-YardPathStub 1 x x1.5	0.393
-slab ArenaWall	1.535
-slab Avenue1	2.249
-slab Avenue2	2.210
-slab Avenue3	1.799
-slab Avenue4	2.783
-slab Avenue5	2.659
-slab Beacon	1.030
-slab Bridge1	1.381
-slab Bridge2	1.652
-slab Bridge3	1.974
-slab Bridge4	1.291
-slab Bridge5	1.283
-slab Bridge6	1.639
-slab Bridge7	1.653
-slab Bridge8	2.046
-slab Hatch1	0.159
-slab Hatch2	0.152
-slab Hatch3	0.195
-slab Hatch4	0.144
-slab LandmarkPlanter	0.079
-slab MarketIsland	2.649
-slab Pad1	0.656
-slab Pad2	0.542
-slab Pad3	0.558
-slab Pad4	0.333
-slab Palm1Planter	0.060
-slab Palm2Planter	0.076
-slab Plot1	1.276
-slab Plot2	1.167
-slab Plot3	0.798
-slab Plot4	0.996
-slab Plot5	0.839
-slab Plot6	1.281
-slab Plot7	0.845
-slab Plot8	1.319
-slab Ramps	5.862
-slab Spawn	0.251
-slab Spoke1	0.156
-slab Spoke2	0.097
-slab Spoke3	0.188
-slab Spoke4	0.118
-slab Spoke5	0.155
-slab Spoke6	0.171
-slab Spoke7	0.092
-slab Spoke8	0.151
+ArenaDrone 1 x	60.667
+Barrels 1 x x1.9	0.382
+CarStack 1 x x2.5	0.519
+CrushedCar 1 x x2.5	0.347
+Dumpster 1 x x2.2	0.557
+GroundTile 1 x x1.5	0.321
+JunkWall 1 x x1.75	0.440
+MachinePad 1 x x1.5	0.344
+MarketIsland 1 x	50.515
+PadIsland 1 x	20.110
+Pallets 1 x x1.4	0.435
+ParkBench 1 x x1.85	0.149
+PlotMarker 1 x x1.5	1.154
+ScrapPalm 1 x x1.5	0.543
+ScrapTreeLamppost 1 x x1.5	0.537
+ShippingContainer 1 x x1.5	0.513
+ShopConceptContainer 1 x x2.5	179.980
+StorageCrate 1 x x1.5	16.725
+StreetlightBroken 1 x x2	0.324
+TrafficCones 1 x x1.8	0.589
+TyreStack 1 x x1.8	0.280
+VendingMachine 1 x x2	11.406
+YardFence 1 x x1.5	0.345
+YardFenceHalf 1 x x1.5	0.306
+YardFooting 0.5 x x1.5	0.151
+YardFooting 1 x x1.5	0.133
+YardGate 1 x x1.5	0.617
+YardIsland 1 x	36.953
+YardPath 1 x x1.5	0.451
+YardPathStub 1 x x1.5	0.399
+slab ArenaWall	1.452
+slab Avenue1	2.683
+slab Avenue2	2.958
+slab Avenue3	3.011
+slab Avenue4	3.019
+slab Avenue5	2.756
+slab Beacon	1.023
+slab Bridge1	1.990
+slab Bridge2	1.671
+slab Bridge3	2.108
+slab Bridge4	2.086
+slab Bridge5	2.205
+slab Bridge6	2.087
+slab Bridge7	1.654
+slab Bridge8	2.229
+slab Hatch1	0.244
+slab Hatch2	0.248
+slab Hatch3	0.254
+slab Hatch4	0.249
+slab LandmarkPlanter	0.075
+slab MarketIsland	3.478
+slab Pad1	0.645
+slab Pad2	0.481
+slab Pad3	0.647
+slab Pad4	0.405
+slab Palm1Planter	0.050
+slab Palm2Planter	0.049
+slab Plot1	1.197
+slab Plot2	1.210
+slab Plot3	1.255
+slab Plot4	1.227
+slab Plot5	1.359
+slab Plot6	1.246
+slab Plot7	1.240
+slab Plot8	1.230
+slab Ramps	9.757
+slab Spawn	0.324
+slab Spoke1	0.122
+slab Spoke2	0.153
+slab Spoke3	0.143
+slab Spoke4	0.119
+slab Spoke5	0.123
+slab Spoke6	0.124
+slab Spoke7	0.128
+slab Spoke8	0.162
