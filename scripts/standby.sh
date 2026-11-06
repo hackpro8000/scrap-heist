@@ -32,8 +32,9 @@ queue_head() {
 push_results() {
 	local id="$1" dir="$2" index_file tree commit
 	# A name only: git rejects an existing empty file as a corrupt index.
+	# The work tree must be absolute, or git adds nothing from here.
 	index_file="$(mktemp -u)"
-	GIT_INDEX_FILE="${index_file}" git --work-tree="${dir}" add -A
+	GIT_INDEX_FILE="${index_file}" git --work-tree="$(cd "${dir}" && pwd)" add -A
 	tree="$(GIT_INDEX_FILE="${index_file}" git write-tree)"
 	rm -f "${index_file}"
 	commit="$(git commit-tree "${tree}" -m "task ${id} S${index}/${count}")"
