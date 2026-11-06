@@ -1,4 +1,0 @@
-slab Ramps	7.314
-slab Ramps #split	1
-ShopConceptContainer 1 x x2.5	74.010
-ShopConceptContainer 1 x x2.5 #split	1
