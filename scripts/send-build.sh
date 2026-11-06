@@ -57,7 +57,8 @@ while [ "${#arrived[@]}" -lt "${count}" ] && [ $(($(date +%s) - started)) -lt "$
 		[ -z "${arrived[${i}]:-}" ] || continue
 		# Each results branch keeps a history, so the task's commit is found
 		# even after the machine has gone on to the next one.
-		sha="$(git log -n 50 --format='%H %s' "origin/build-results/s${i}" 2> /dev/null | awk -v want="task ${id} " 'index($0, want) == 42 { print $1; exit }')"
+		# awk stops at the first match, which breaks git log's pipe: not a failure.
+		sha="$(git log -n 50 --format='%H %s' "origin/build-results/s${i}" 2> /dev/null | awk -v want="task ${id} " 'index($0, want) == 42 { print $1; exit }' || true)"
 		[ -n "${sha}" ] || continue
 		arrived[${i}]=1
 		mkdir -p "${out}/S${i}"
