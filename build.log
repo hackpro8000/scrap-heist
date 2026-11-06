@@ -1,0 +1,105 @@
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses HubSectionA (key a8313e4a55d56339)
+assemble ServerMap: uses HubSectionB (key afc962b93a377a4a)
+assemble ServerMap: uses HubSectionEnd (key 48c8eb7545b33eb2)
+assemble ServerMap: uses YardIsland (key f7a297dc299e1e15)
+assemble ServerMap: uses YardFence (key fe3d5de848852dd7)
+assemble ServerMap: uses YardFenceHalf (key 18c1a8760a959e18)
+assemble ServerMap: uses YardFooting (key 5c7b334d7913a1ed)
+assemble ServerMap: uses YardGate (key 6a909dbc533c5385)
+assemble ServerMap: uses PlotMarker (key 1dcfac604b3fab76)
+assemble ServerMap: slab at ServerMap.luau:274-464 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:544-573 (key 7ded6fc62f8b67a3)
+assemble ServerMap: slab at ServerMap.luau:576-580 (key 2f5b4070ee3aa512)
+assemble ServerMap: slab at ServerMap.luau:656-662 (key 7b25a7aa2539d602)
+assemble ServerMap: slab at ServerMap.luau:664-673 (key 107c5c30239027da)
+assemble ServerMap: slab at ServerMap.luau:681-711 (key 18845c9c8b69ea54)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
+[    0.0s] running ServerMap/model.luau
+[    0.4s] cached HubSectionA 1 x part 4/4
+[    0.6s] cached HubSectionA 1 x part 4/4
+[    0.6s] cached YardFooting 1 x x1.5
+[    0.6s] cached YardFooting 0.5 x x1.5
+[    0.6s] cached YardFooting 0.5 x x1.5
+[    0.6s] cached Approach3 70 0 0
+[    0.6s] cached YardFooting 1 x x1.5
+[    0.6s] cached YardFence 1.037037037037037 x x1.5
+[    0.6s] cached YardFence 1.037037037037037 x x1.5
+[    0.6s] cached YardFence 1.037037037037037 x x1.5
+[    0.6s] cached YardFence 1.037037037037037 x x1.5
+[    0.6s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached Bridge5 -210 -180 180
+[    0.7s] cached YardFooting 1 x x1.5
+[    0.7s] cached YardFooting 1 x x1.5
+[    0.7s] cached YardFooting 1 x x1.5
+[    0.7s] cached YardFooting 1 x x1.5
+[    0.7s] cached YardFooting 1 x x1.5
+[    0.7s] cached YardFooting 1 x x1.5
+[    0.7s] cached YardFooting 1 x x1.5
+[    0.7s] cached YardFooting 1 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.7s] cached Spoke8 210 -180 180
+[    0.7s] writing ServerMap.glb and 162 textures
+ServerMap: 162 parts, script 687.48ms, total 1.24s
+PLACED	HubSection2	0	HubSectionA-a8313e4a55d56339 1 x part 4/4
+PLACED	HubSection4	180	HubSectionA-a8313e4a55d56339 1 x part 4/4
+PLACED	Yard3_FootingFront2	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard3_FootingFrontHalf1	0	YardFooting-5c7b334d7913a1ed 0.5 x x1.5
+PLACED	Yard3_FootingFrontHalf2	0	YardFooting-5c7b334d7913a1ed 0.5 x x1.5
+PLACED	Approach3	0	abb4bc7b898fe3b1-18845c9c8b69ea54 Approach3 70 0 0
+PLACED	Yard5_FootingBack7	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard5_FenceRight2	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard5_FenceLeft4	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard5_FenceRight5	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard5_FenceLeft7	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard5_FenceRight8	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Bridge5	0	abb4bc7b898fe3b1-cf7e96091024d5cc Bridge5 -210 -180 180
+PLACED	Yard8_FootingBack1	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard8_FootingBack2	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard8_FootingBack3	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard8_FootingBack4	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard8_FootingBack5	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard8_FootingBack6	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard8_FootingBack7	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard8_FootingBack8	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard8_FenceLeft1	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceRight1	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceLeft2	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceRight2	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceLeft3	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceRight3	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceLeft4	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceRight4	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceLeft5	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceRight5	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceLeft6	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceRight6	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceLeft7	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceRight7	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceLeft8	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceRight8	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceLeft9	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard8_FenceRight9	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Spoke8	0	abb4bc7b898fe3b1-107c5c30239027da Spoke8 210 -180 180
+export ServerMap: 7 objects (12.0 MB) for 40 placements
+remote: 
+remote: Create a pull request for 'build-objects/s8' on GitHub by visiting:        
+remote:      https://github.com/hackpro8000/scrap-heist/pull/new/build-objects/s8        
+remote: 
