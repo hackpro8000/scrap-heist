@@ -30,10 +30,10 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 22621 lines, in 0s
 [    0.5s] writing ServerMap.glb and 71 textures
 [    1.0s] chunk ServerMap_S1_01.glb: 51 parts, 12.8 MB
 [    1.0s] chunk ServerMap_S1_02.glb: 20 parts, 5.9 MB
-ServerMap: 71 parts, script 524.89ms, total 1.21s
-upload ServerMap: starting in 1.3s
+ServerMap: 71 parts, script 501.55ms, total 1.17s
+upload ServerMap: starting in 2.5s
 upload ServerMap: uploading ServerMapS1_01 (13M)
-upload ServerMap: ServerMapS1_01 is asset 86192850055413
+upload ServerMap: ServerMapS1_01 is asset 127828294961159
 upload ServerMap: uploading ServerMapS1_02 (5.7M)
-upload ServerMap: ServerMapS1_02 is asset 73876063762889
+upload ServerMap: ServerMapS1_02 is asset 118144338582677
 upload ServerMap: shard upload done: 2 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
