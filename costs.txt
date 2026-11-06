@@ -1,2 +1,0 @@
-YardIsland 1 x	60.089
-YardIsland 1 x #split	1
