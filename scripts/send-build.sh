@@ -6,6 +6,7 @@
 #
 #   scripts/send-build.sh                      # main, 8 shards, wait 5 min
 #   scripts/send-build.sh "$(scripts/push-wip.sh)" 8 300
+#   scripts/send-build.sh main 8 300 no         # build without uploading
 #
 # Results land in .standby-results/<task id>/S<i>/ (ignored by git).
 
@@ -14,6 +15,7 @@ set -euo pipefail
 ref="${1:-main}"
 count="${2:-8}"
 wait_seconds="${3:-300}"
+upload="${4:-yes}"
 root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "${root}"
 
@@ -24,7 +26,7 @@ id="t$(date +%s)-$$"
 
 # The task is a file added to the queue branch on top of the earlier ones,
 # made without touching the checkout; a push that loses a race retries.
-blob="$(printf 'ref=%s\n' "${commit}" | git hash-object -w --stdin)"
+blob="$(printf 'ref=%s\nupload=%s\n' "${commit}" "${upload}" | git hash-object -w --stdin)"
 posted=0
 for attempt in 1 2 3 4 5; do
 	index_file="$(mktemp -u)"

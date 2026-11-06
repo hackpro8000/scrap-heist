@@ -7,7 +7,8 @@
 #   scripts/standby.sh <Layout> <index> <count> <minutes>
 #
 # The queue is a branch of task files, tasks/<task id>.txt, each holding
-# `ref=<full commit hash>`; scripts/send-build.sh adds them. Every task
+# `ref=<full commit hash>` and optionally `upload=no`; scripts/send-build.sh
+# adds them. Every task
 # posted since this machine came up (STANDBY_SINCE) is built once, oldest
 # first. Results go to results/<task id>/ and are pushed to
 # build-results/s<index> as a new commit on top of the earlier ones, its
@@ -34,9 +35,9 @@ queue_head() {
 
 # Builds this machine's shard of whatever is checked out into `out`, writing
 # build.log, parts.txt, the chunk manifest, costs.txt and summary.txt, and
-# uploads its chunks.
+# uploads its chunks unless `upload` is "no".
 build_shard() {
-	local out="$1" started=${SECONDS} status="DONE" build_seconds="-" upload="skipped"
+	local out="$1" upload_chunks="${2:-yes}" started=${SECONDS} status="DONE" build_seconds="-" upload="skipped"
 	mkdir -p "${out}"
 	{
 		scripts/assemble-model.sh "${layout}" &&
@@ -57,7 +58,7 @@ EOF
 		cp "art/models/${layout}/chunks/${layout}Chunks.luau" "${out}/" 2>> "${out}/build.log" || status="FAILED"
 		awk -F'\t' '$1 == "SHARD_COST" { print $2 "\t" $3 }' "${out}/build.log" > "${out}/costs.txt"
 	fi
-	if [ "${status}" = "DONE" ] && [ -n "${ROBLOX_API_KEY:-}" ] && [ -n "${ROBLOX_CREATOR_ID:-}" ]; then
+	if [ "${status}" = "DONE" ] && [ "${upload_chunks}" != "no" ] && [ -n "${ROBLOX_API_KEY:-}" ] && [ -n "${ROBLOX_CREATOR_ID:-}" ]; then
 		local upload_started=${SECONDS}
 		if scripts/upload-chunks.sh "${layout}" >> "${out}/build.log" 2>&1; then
 			cp "art/models/${layout}/chunks/${layout}AssetIds.txt" "${out}/"
@@ -97,11 +98,11 @@ push_results() {
 }
 
 run_task() {
-	local id="$1" ref="$2" out="results/$1" result
+	local id="$1" ref="$2" upload_chunks="$3" out="results/$1" result
 	mkdir -p "${out}"
 	say "task ${id}: building ${ref}"
 	if git fetch -q --depth=1 origin "${ref}" > "${out}/build.log" 2>&1 && git checkout -q -f FETCH_HEAD >> "${out}/build.log" 2>&1; then
-		result="$(build_shard "${out}")"
+		result="$(build_shard "${out}" "${upload_chunks}")"
 	else
 		{ echo "status=FAILED"; echo "build=-"; echo "upload=skipped"; echo "total=0"; echo "parts=0"; } > "${out}/summary.txt"
 		tail -n 30 "${out}/build.log" > "${out}/error.txt"
@@ -133,12 +134,14 @@ while [ "${SECONDS}" -lt "${deadline}" ]; do
 				continue
 			fi
 			built[${id}]=1
-			ref="$(git show "${head}:${file}" | sed -n 's/^ref=//p')"
+			task="$(git show "${head}:${file}")"
+			ref="$(sed -n 's/^ref=//p' <<< "${task}")"
+			upload_chunks="$(sed -n 's/^upload=//p' <<< "${task}")"
 			if [ -z "${ref}" ]; then
 				say "task ${id} has no ref"
 				continue
 			fi
-			run_task "${id}" "${ref}"
+			run_task "${id}" "${ref}" "${upload_chunks:-yes}"
 		done
 	fi
 	sleep 3
