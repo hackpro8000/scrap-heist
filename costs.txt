@@ -1,0 +1,8 @@
+PadIsland 1 x	11.198
+PadIsland 1 x #split	1
+YardIsland 1 x	45.009
+YardIsland 1 x #split	1
+YardFooting 1 x x1.5	0.062
+YardFooting 1 x x1.5 #split	1
+slab Bridge6	1.233
+slab Bridge6 #split	1
