@@ -1,6 +1,11 @@
-HubSectionB 1 x	67.599
-HubSectionB 1 x #split	1
-slab Spoke2	0.086
+slab Yard1_Bay2	0.168
+slab Yard1_Bay2 #split	1
+JunkMound 1 x x2.3	0.669
+YardFooting 1 x x1.5	0.061
+YardFooting 1 x x1.5 #split	1
+YardFence 1.037037037037037 x x1.5	0.181
+YardFence 1.037037037037037 x x1.5 #split	1
+slab Spoke2	0.081
 slab Spoke2 #split	1
-slab Plot3	5.052
+slab Plot3	4.946
 slab Plot3 #split	1
