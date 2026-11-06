@@ -1,0 +1,102 @@
+{
+	"assets": [
+		{
+			"id": "d789ea49d48887e6",
+			"key": "d85c17ddde731d72-7ded6fc62f8b67a3 Line 0 0 0",
+			"piece": 1,
+			"label": "Line",
+			"turn": 0.0,
+			"bytes": 16823556,
+			"parts": 55
+		},
+		{
+			"id": "8bdfc353665a11b7",
+			"key": "d85c17ddde731d72-7ded6fc62f8b67a3 Line 0 0 0",
+			"piece": 2,
+			"label": "Line",
+			"turn": 0.0,
+			"bytes": 16537372,
+			"parts": 51
+		},
+		{
+			"id": "d7d499acd5bfdc29",
+			"key": "d85c17ddde731d72-7ded6fc62f8b67a3 Line 0 0 0",
+			"piece": 3,
+			"label": "Line",
+			"turn": 0.0,
+			"bytes": 3691976,
+			"parts": 10
+		}
+	],
+	"placements": [
+		{
+			"asset": "d789ea49d48887e6",
+			"label": "Line",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Kerb_-5_0_0",
+					"position": [
+						-261.72384,
+						1.8508879999999999,
+						-28.26035787125
+					]
+				},
+				{
+					"name": "Kerb_4_-1_0",
+					"position": [
+						261.73892,
+						1.8490745,
+						28.240252298999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "8bdfc353665a11b7",
+			"label": "Line",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Walk_-5_-1_0",
+					"position": [
+						-260.117645,
+						1.7,
+						28.0
+					]
+				},
+				{
+					"name": "Walk_2_0_0_110",
+					"position": [
+						173.411765,
+						1.7,
+						-41.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "d7d499acd5bfdc29",
+			"label": "Line",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Walk_3_-1_0_000",
+					"position": [
+						204.94118,
+						1.7,
+						41.0
+					]
+				},
+				{
+					"name": "Walk_4_0_0",
+					"position": [
+						260.117645,
+						1.7,
+						-28.0
+					]
+				}
+			]
+		}
+	]
+}

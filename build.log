@@ -1,0 +1,177 @@
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses HubSectionA (key a8313e4a55d56339)
+assemble ServerMap: uses HubSectionB (key afc962b93a377a4a)
+assemble ServerMap: uses HubSectionEnd (key 48c8eb7545b33eb2)
+assemble ServerMap: uses YardIsland (key f7a297dc299e1e15)
+assemble ServerMap: uses YardFence (key fe3d5de848852dd7)
+assemble ServerMap: uses YardFenceHalf (key 18c1a8760a959e18)
+assemble ServerMap: uses YardFooting (key 5c7b334d7913a1ed)
+assemble ServerMap: uses YardGate (key 6a909dbc533c5385)
+assemble ServerMap: uses PlotMarker (key 1dcfac604b3fab76)
+assemble ServerMap: uses PadKitchen (key b26111bb8c8fc355)
+assemble ServerMap: uses PadGarage (key 734bbac536619471)
+assemble ServerMap: uses PadGadget (key 21e4e209e2c3928c)
+assemble ServerMap: uses BuildBay (key a81c2edb1019fad5)
+assemble ServerMap: uses ScrapCrate (key 313add4f147967e6)
+assemble ServerMap: uses RebirthPress (key a3e10ff078e85756)
+assemble ServerMap: uses JunkMound (key 7fa771084b98236c)
+assemble ServerMap: uses CapsuleScrap (key 97d6ab3947528bd1)
+assemble ServerMap: uses CapsuleSalvaged (key 920c7b0575b6f340)
+assemble ServerMap: uses CapsuleRefurbished (key 964e4fc946ec306e)
+assemble ServerMap: uses CapsuleFactory (key 23e7ef6e39d8fcb9)
+assemble ServerMap: uses CapsulePrecision (key 80c544621f832e35)
+assemble ServerMap: uses CapsulePrototype (key 107d166201005067)
+assemble ServerMap: uses CapsuleSecret (key 09ca92fc3f995992)
+assemble ServerMap: uses JunkrotCanettoRustini (key cb0c7bded31f7246)
+assemble ServerMap: uses JunkrotSpoonzoBentolo (key 333931ef9d44c809)
+assemble ServerMap: uses JunkrotKettlinaDentata (key b6a5a9b13a50ddfc)
+assemble ServerMap: uses JunkrotTyroFlattino (key 0a6fed4afb36bc08)
+assemble ServerMap: uses JunkrotBoltoloLonelo (key dc5359b2301236fb)
+assemble ServerMap: uses JunkrotHubcappaWobbla (key 4ece2c0c2d632439)
+assemble ServerMap: uses JunkrotRemotinoMuto (key adcd1b33b39b0e57)
+assemble ServerMap: uses JunkrotCabloTanglino (key 71a7bdce8a73c75d)
+assemble ServerMap: uses JunkrotBulboFulminato (key d3d88c8d1be348d5)
+assemble ServerMap: uses JunkrotCrumboPoppalot (key 407b76145c5b25df)
+assemble ServerMap: uses JunkrotPannettoPatchato (key 95ceb8add302c2b5)
+assemble ServerMap: uses JunkrotBlendroCigolante (key 576a5245f81a08f2)
+assemble ServerMap: uses JunkrotJackoloCrickato (key 775ba98d72736772)
+assemble ServerMap: uses JunkrotOilcannaGluglu (key da992b0b4928a820)
+assemble ServerMap: uses JunkrotMuffleroTossetto (key 51cde1cc6e30d9fd)
+assemble ServerMap: uses JunkrotRadioloFruscio (key 9ad8ba65324bc486)
+assemble ServerMap: uses JunkrotFanettoWobblino (key 8243f260a8b0b6e8)
+assemble ServerMap: uses JunkrotClockoTictacco (key 124e3e812d14c4c3)
+assemble ServerMap: slab at ServerMap.luau:278-468 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:548-577 (key 7ded6fc62f8b67a3)
+assemble ServerMap: slab at ServerMap.luau:580-584 (key 2f5b4070ee3aa512)
+assemble ServerMap: slab at ServerMap.luau:660-666 (key 7b25a7aa2539d602)
+assemble ServerMap: slab at ServerMap.luau:668-677 (key 107c5c30239027da)
+assemble ServerMap: slab at ServerMap.luau:685-715 (key 18845c9c8b69ea54)
+assemble ServerMap: slab at ServerMap.luau:790-801 (key 363b6dc9a40b12d8)
+assemble ServerMap: slab at ServerMap.luau:814-867 (key f4e0427155be5973)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 43712 lines, in 0s
+[    0.0s] running ServerMap/model.luau
+[    0.5s] building Line 0 0 0
+[    0.6s] baking on CPU (no GPU)
+[    0.8s]   shaded Walk_-5_0_0 556×556 in 0.17s
+[    1.1s]   shaded Walk_-4_0_0_010 524×524 in 0.27s
+[    1.3s]   shaded Walk_-4_0_0_000 528×528 in 0.17s
+[    1.6s]   shaded Walk_-4_0_0_110 524×524 in 0.27s
+[    1.6s]   shaded Walk_-4_0_0_100 516×516 in 0.02s
+[    1.9s]   shaded Walk_-3_0_0_010 524×524 in 0.27s
+[    1.9s]   shaded Walk_-3_0_0_000 516×516 in 0.02s
+[    2.2s]   shaded Walk_-3_0_0_110 524×524 in 0.26s
+[    2.2s]   shaded Walk_-3_0_0_100 516×516 in 0.02s
+[    2.5s]   shaded Walk_-2_0_0_010 524×524 in 0.27s
+[    2.6s]   shaded Walk_-2_0_0_000 516×516 in 0.02s
+[    2.9s]   shaded Walk_-2_0_0_110 524×524 in 0.26s
+[    2.9s]   shaded Walk_-2_0_0_100 516×516 in 0.02s
+[    3.2s]   shaded Walk_-1_0_0_010 524×524 in 0.30s
+[    3.2s]   shaded Walk_-1_0_0_000 516×516 in 0.02s
+[    3.5s]   shaded Walk_-1_0_0_110 524×524 in 0.26s
+[    3.6s]   shaded Walk_-1_0_0_100 516×516 in 0.02s
+[    3.8s]   shaded Walk_0_0_0_010 524×524 in 0.26s
+[    3.9s]   shaded Walk_0_0_0_000 516×516 in 0.02s
+[    4.1s]   shaded Walk_0_0_0_110 524×524 in 0.25s
+[    4.2s]   shaded Walk_0_0_0_100 516×516 in 0.02s
+[    4.4s]   shaded Walk_1_0_0_010 524×524 in 0.25s
+[    4.5s]   shaded Walk_1_0_0_000 516×516 in 0.02s
+[    4.7s]   shaded Walk_1_0_0_110 524×524 in 0.25s
+[    4.8s]   shaded Walk_1_0_0_100 516×516 in 0.02s
+[    5.0s]   shaded Walk_2_0_0_010 524×524 in 0.26s
+[    5.1s]   shaded Walk_2_0_0_000 516×516 in 0.01s
+[    5.4s]   shaded Walk_2_0_0_110 524×524 in 0.25s
+[    5.4s]   shaded Walk_2_0_0_100 516×516 in 0.02s
+[    5.7s]   shaded Walk_3_0_0_010 524×524 in 0.25s
+[    5.7s]   shaded Walk_3_0_0_000 516×516 in 0.01s
+[    6.0s]   shaded Walk_3_0_0_110 524×524 in 0.25s
+[    6.2s]   shaded Walk_3_0_0_100 528×528 in 0.16s
+[    6.3s]   shaded Walk_4_0_0 556×556 in 0.15s
+[    6.5s]   shaded Walk_-5_-1_0 556×556 in 0.16s
+[    6.8s]   shaded Walk_-4_-1_0_000 524×524 in 0.25s
+[    7.0s]   shaded Walk_-4_-1_0_010 528×528 in 0.17s
+[    7.3s]   shaded Walk_-4_-1_0_100 524×524 in 0.25s
+[    7.3s]   shaded Walk_-4_-1_0_110 516×516 in 0.02s
+[    7.6s]   shaded Walk_-3_-1_0_000 524×524 in 0.26s
+[    7.6s]   shaded Walk_-3_-1_0_010 516×516 in 0.01s
+[    7.9s]   shaded Walk_-3_-1_0_100 524×524 in 0.25s
+[    7.9s]   shaded Walk_-3_-1_0_110 516×516 in 0.02s
+[    8.1s]   shaded Walk_-2_-1_0_000 524×524 in 0.24s
+[    8.2s]   shaded Walk_-2_-1_0_010 516×516 in 0.01s
+[    8.4s]   shaded Walk_-2_-1_0_100 524×524 in 0.25s
+[    8.5s]   shaded Walk_-2_-1_0_110 516×516 in 0.01s
+[    8.7s]   shaded Walk_-1_-1_0_000 524×524 in 0.25s
+[    8.7s]   shaded Walk_-1_-1_0_010 516×516 in 0.02s
+[    9.0s]   shaded Walk_-1_-1_0_100 524×524 in 0.25s
+[    9.0s]   shaded Walk_-1_-1_0_110 516×516 in 0.01s
+[    9.3s]   shaded Walk_0_-1_0_000 524×524 in 0.23s
+[    9.3s]   shaded Walk_0_-1_0_010 516×516 in 0.01s
+[    9.6s]   shaded Walk_0_-1_0_100 524×524 in 0.24s
+[    9.6s]   shaded Walk_0_-1_0_110 516×516 in 0.01s
+[    9.8s]   shaded Walk_1_-1_0_000 524×524 in 0.24s
+[    9.9s]   shaded Walk_1_-1_0_010 516×516 in 0.01s
+[   10.1s]   shaded Walk_1_-1_0_100 524×524 in 0.24s
+[   10.1s]   shaded Walk_1_-1_0_110 516×516 in 0.01s
+[   10.4s]   shaded Walk_2_-1_0_000 524×524 in 0.25s
+[   10.4s]   shaded Walk_2_-1_0_010 516×516 in 0.01s
+[   10.7s]   shaded Walk_2_-1_0_100 524×524 in 0.24s
+[   10.7s]   shaded Walk_2_-1_0_110 516×516 in 0.01s
+[   11.0s]   shaded Walk_3_-1_0_000 524×524 in 0.24s
+[   11.0s]   shaded Walk_3_-1_0_010 516×516 in 0.01s
+[   11.3s]   shaded Walk_3_-1_0_100 524×524 in 0.25s
+[   11.5s]   shaded Walk_3_-1_0_110 528×528 in 0.16s
+[   11.6s]   shaded Walk_4_-1_0 556×556 in 0.15s
+[   11.9s]   shaded Bed_-4_-1_0 528×528 in 0.22s
+[   12.1s]   shaded Bed_-4_0_0 528×528 in 0.22s
+[   12.4s]   shaded Bed_-3_-1_0_010 524×524 in 0.22s
+[   12.6s]   shaded Bed_-3_-1_0_110 524×524 in 0.22s
+[   12.9s]   shaded Bed_-3_0_0_000 524×524 in 0.22s
+[   13.1s]   shaded Bed_-3_0_0_100 524×524 in 0.21s
+[   13.4s]   shaded Bed_-2_-1_0_010 524×524 in 0.21s
+[   13.6s]   shaded Bed_-2_-1_0_110 524×524 in 0.21s
+[   13.8s]   shaded Bed_-2_0_0_000 524×524 in 0.21s
+[   14.1s]   shaded Bed_-2_0_0_100 524×524 in 0.22s
+[   14.3s]   shaded Bed_-1_-1_0_010 524×524 in 0.22s
+[   14.6s]   shaded Bed_-1_-1_0_110 524×524 in 0.21s
+[   14.8s]   shaded Bed_-1_0_0_000 524×524 in 0.22s
+[   15.1s]   shaded Bed_-1_0_0_100 524×524 in 0.22s
+[   15.3s]   shaded Bed_0_-1_0_010 524×524 in 0.22s
+[   15.6s]   shaded Bed_0_-1_0_110 524×524 in 0.22s
+[   15.9s]   shaded Bed_0_0_0_000 524×524 in 0.22s
+[   16.1s]   shaded Bed_0_0_0_100 524×524 in 0.21s
+[   16.3s]   shaded Bed_1_-1_0_010 524×524 in 0.21s
+[   16.6s]   shaded Bed_1_-1_0_110 524×524 in 0.21s
+[   16.8s]   shaded Bed_1_0_0_000 524×524 in 0.20s
+[   17.0s]   shaded Bed_1_0_0_100 524×524 in 0.21s
+[   17.2s]   shaded Bed_2_-1_0_010 524×524 in 0.20s
+[   17.5s]   shaded Bed_2_-1_0_110 524×524 in 0.21s
+[   17.7s]   shaded Bed_2_0_0_000 524×524 in 0.21s
+[   17.9s]   shaded Bed_2_0_0_100 524×524 in 0.21s
+[   18.3s]   shaded Bed_3_-1_0 800×800 in 0.34s
+[   18.7s]   shaded Bed_3_0_0 800×800 in 0.35s
+[   18.8s]   shaded Kerb_-5_-1_0 444×444 in 0.04s
+[   18.8s]   shaded Kerb_-4_-1_0 248×248 in 0.02s
+[   18.8s]   shaded Kerb_-3_-1_0 264×264 in 0.02s
+[   18.9s]   shaded Kerb_-2_-1_0 260×260 in 0.02s
+[   18.9s]   shaded Kerb_-1_-1_0 308×308 in 0.02s
+[   18.9s]   shaded Kerb_0_-1_0 252×252 in 0.02s
+[   18.9s]   shaded Kerb_1_-1_0 260×260 in 0.02s
+[   18.9s]   shaded Kerb_2_-1_0 264×264 in 0.02s
+[   19.0s]   shaded Kerb_3_-1_0 256×256 in 0.02s
+[   19.0s]   shaded Kerb_4_-1_0 448×448 in 0.04s
+[   19.0s]   shaded Kerb_-5_0_0 444×444 in 0.04s
+[   19.1s]   shaded Kerb_-4_0_0 252×252 in 0.02s
+[   19.1s]   shaded Kerb_-3_0_0 256×256 in 0.02s
+[   19.1s]   shaded Kerb_-2_0_0 264×264 in 0.02s
+[   19.1s]   shaded Kerb_-1_0_0 312×312 in 0.02s
+[   19.1s]   shaded Kerb_0_0_0 264×264 in 0.02s
+[   19.2s]   shaded Kerb_1_0_0 256×256 in 0.02s
+[   19.2s]   shaded Kerb_2_0_0 264×264 in 0.02s
+[   19.2s]   shaded Kerb_3_0_0 252×252 in 0.02s
+[   19.2s]   shaded Kerb_4_0_0 448×448 in 0.04s
+[   19.2s] built Line 0 0 0: 116 parts in 18.8s
+[   19.5s] writing ServerMap.glb and 116 textures
+ServerMap: 116 parts, script 19.52s, total 19.90s
+PLACED	Line	0	d85c17ddde731d72-7ded6fc62f8b67a3 Line 0 0 0
+SHARD_COST	slab Line	18.766
+SHARD_COST	slab Line #split	1
+export ServerMap: 3 objects (37.1 MB) for 3 placements
