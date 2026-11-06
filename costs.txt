@@ -1,6 +1,6 @@
-slab Plot1	3.084
+slab Plot1	3.150
 slab Plot1 #split	1
-slab Bridge8	0.748
+slab Bridge8	0.786
 slab Bridge8 #split	1
-JunkrotDingDingDingDongo 1 x	0.370
-JunkrotDingDingDingDongo 1 x #split	1
+JunkrotChimneyziniSpannerini 1 x	0.461
+JunkrotChimneyziniSpannerini 1 x #split	1

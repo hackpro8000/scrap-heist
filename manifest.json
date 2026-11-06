@@ -10,8 +10,8 @@
 			"parts": 22
 		},
 		{
-			"id": "e565413c2b647bc9",
-			"key": "fc0c5e558eaf305d-7b25a7aa2539d602 Plot1 -210 180 0",
+			"id": "8069fe0e30fcb47f",
+			"key": "115ac3a755887f11-7b25a7aa2539d602 Plot1 -210 180 0",
 			"piece": 1,
 			"label": "Plot1",
 			"turn": 0.0,
@@ -37,8 +37,8 @@
 			"parts": 3
 		},
 		{
-			"id": "32e04a59c921e8dc",
-			"key": "fc0c5e558eaf305d-cf7e96091024d5cc Bridge8 210 -180 180",
+			"id": "e2ea5aa62361c928",
+			"key": "115ac3a755887f11-cf7e96091024d5cc Bridge8 210 -180 180",
 			"piece": 1,
 			"label": "Bridge8",
 			"turn": 0.0,
@@ -69,7 +69,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotClockoTictacco",
 			"turn": 0.0,
-			"bytes": 598928,
+			"bytes": 598920,
 			"parts": 7
 		},
 		{
@@ -80,6 +80,15 @@
 			"turn": 0.0,
 			"bytes": 578932,
 			"parts": 7
+		},
+		{
+			"id": "6f080b248c5ce108",
+			"key": "JunkrotChimneyziniSpannerini-16b899b9c5febdc7 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotChimneyziniSpannerini",
+			"turn": 0.0,
+			"bytes": 761800,
+			"parts": 8
 		}
 	],
 	"placements": [
@@ -107,7 +116,7 @@
 			]
 		},
 		{
-			"asset": "e565413c2b647bc9",
+			"asset": "8069fe0e30fcb47f",
 			"label": "Plot1",
 			"turn": 0.0,
 			"anchors": [
@@ -756,7 +765,7 @@
 			]
 		},
 		{
-			"asset": "32e04a59c921e8dc",
+			"asset": "e2ea5aa62361c928",
 			"label": "Bridge8",
 			"turn": 0.0,
 			"anchors": [
@@ -786,7 +795,7 @@
 				{
 					"name": "Clasps",
 					"position": [
-						-228.00515000000001,
+						-384.00514,
 						-148.54465499999998,
 						1.03341805
 					]
@@ -794,7 +803,7 @@
 				{
 					"name": "Corners",
 					"position": [
-						-228.00389,
+						-384.00389,
 						-148.899575,
 						-0.007264300000000001
 					]
@@ -809,7 +818,7 @@
 				{
 					"name": "Battery",
 					"position": [
-						-11.888969,
+						-167.88896499999998,
 						-148.999675,
 						-0.26237187
 					]
@@ -817,7 +826,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						-11.98422,
+						-167.984215,
 						-147.54899999999998,
 						0.336809025
 					]
@@ -832,7 +841,7 @@
 				{
 					"name": "Bells",
 					"position": [
-						251.99297,
+						95.992978,
 						-147.12666000000002,
 						0.003604040000000003
 					]
@@ -840,7 +849,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						252.021175,
+						96.0211725,
 						-148.05349999999999,
 						0.6402135
 					]
@@ -855,7 +864,7 @@
 				{
 					"name": "Eyes",
 					"position": [
-						516.9849999999999,
+						360.985,
 						-147.19,
 						0.2
 					]
@@ -863,9 +872,32 @@
 				{
 					"name": "Lever",
 					"position": [
-						514.5914,
+						358.591415,
 						-148.78833500000002,
 						0.8267715
+					]
+				}
+			]
+		},
+		{
+			"asset": "6f080b248c5ce108",
+			"label": "Kit_JunkrotChimneyziniSpannerini",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "PeelTips",
+					"position": [
+						648.000305,
+						-147.70609000000002,
+						-0.01741360000000003
+					]
+				},
+				{
+					"name": "Spanner",
+					"position": [
+						648.862025,
+						-146.79371,
+						0.727153065
 					]
 				}
 			]
