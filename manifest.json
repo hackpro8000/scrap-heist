@@ -1,0 +1,173 @@
+{
+	"assets": [
+		{
+			"id": "7ada9538faf9cd09",
+			"key": "HubSectionEnd-48c8eb7545b33eb2 1 x part 3/4",
+			"piece": 1,
+			"label": "HubSection1",
+			"turn": 180.0,
+			"bytes": 8018912,
+			"parts": 28
+		},
+		{
+			"id": "07f962966ea91871",
+			"key": "d85c17ddde731d72-107c5c30239027da Spoke2 -70 180 0",
+			"piece": 1,
+			"label": "Spoke2",
+			"turn": 0.0,
+			"bytes": 120984,
+			"parts": 1
+		},
+		{
+			"id": "5f4f06f9ab7454eb",
+			"key": "d85c17ddde731d72-7b25a7aa2539d602 Plot3 70 180 0",
+			"piece": 1,
+			"label": "Plot3",
+			"turn": 0.0,
+			"bytes": 5843228,
+			"parts": 10
+		},
+		{
+			"id": "ecf31198181ab087",
+			"key": "CapsuleSecret-09ca92fc3f995992 1 x",
+			"piece": 1,
+			"label": "Kit_CapsuleSecret",
+			"turn": 0.0,
+			"bytes": 108620,
+			"parts": 2
+		},
+		{
+			"id": "99b6301d22c5a56d",
+			"key": "JunkrotBulboFulminato-d3d88c8d1be348d5 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotBulboFulminato",
+			"turn": 0.0,
+			"bytes": 552460,
+			"parts": 6
+		}
+	],
+	"placements": [
+		{
+			"asset": "7ada9538faf9cd09",
+			"label": "HubSection1",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_-1_0_100_100",
+					"position": [
+						-273.09882,
+						-4.8561655,
+						-51.515176499999995
+					]
+				},
+				{
+					"name": "Grass_-1_0_0_010",
+					"position": [
+						-173.15305,
+						-1.4233624999999999,
+						48.169684499999995
+					]
+				}
+			]
+		},
+		{
+			"asset": "7ada9538faf9cd09",
+			"label": "HubSection5",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_-1_0_100_100",
+					"position": [
+						273.09882,
+						-4.8561655,
+						51.515176499999995
+					]
+				},
+				{
+					"name": "Grass_-1_0_0_010",
+					"position": [
+						173.15305,
+						-1.4233624999999999,
+						-48.169684499999995
+					]
+				}
+			]
+		},
+		{
+			"asset": "07f962966ea91871",
+			"label": "Spoke2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Road",
+					"position": [
+						-70.00175300000001,
+						6.050334449999999,
+						-119.757243
+					]
+				}
+			]
+		},
+		{
+			"asset": "5f4f06f9ab7454eb",
+			"label": "Plot3",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_-1_0",
+					"position": [
+						46.0,
+						5.865,
+						-148.0
+					]
+				},
+				{
+					"name": "Ground_0_0_0_110",
+					"position": [
+						110.0,
+						5.865,
+						-220.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "ecf31198181ab087",
+			"label": "Kit_CapsuleSecret",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Seam",
+					"position": [
+						-48.0,
+						-148.3,
+						0.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "99b6301d22c5a56d",
+			"label": "Kit_JunkrotBulboFulminato",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pupils",
+					"position": [
+						168.03267,
+						-147.958,
+						0.91999998
+					]
+				},
+				{
+					"name": "Soot",
+					"position": [
+						168.116265,
+						-147.259235,
+						-0.0444378
+					]
+				}
+			]
+		}
+	]
+}
