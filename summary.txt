@@ -1,5 +1,5 @@
 status=DONE
-build=2
-upload=27s
-total=29
+build=1
+upload=23s
+total=25
 parts=93
