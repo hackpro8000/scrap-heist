@@ -64,6 +64,27 @@ assemble ServerMap: uses JunkrotClankClankClankScrapur (key a30fc840bf59b273)
 assemble ServerMap: uses JunkrotVrrVrrPatatrim (key c5f05967943ccfb5)
 assemble ServerMap: uses JunkrotChimneyziniSpannerini (key 16b899b9c5febdc7)
 assemble ServerMap: uses JunkrotRusteliRustela (key 41867bade3ceb8a9)
+assemble ServerMap: uses JunkrotBallerinaTincuppina (key 30f20c40dd829229)
+assemble ServerMap: uses JunkrotTrashaleroTrashala (key 18a099d48482ff37)
+assemble ServerMap: uses JunkrotSockettoSeiSette (key 676d9911a0746861)
+assemble ServerMap: uses JunkrotChefbotPrecisio (key 655242385b26b2f8)
+assemble ServerMap: uses JunkrotSousvideSilvano (key 1305b15b458cf825)
+assemble ServerMap: uses JunkrotKnifeblockSlicetta (key b0fc15670bb0eca0)
+assemble ServerMap: uses JunkrotTorquoWrenchelli (key 3ac268b5345ff0f9)
+assemble ServerMap: uses JunkrotLaserlevelLineo (key 72fe0c3e9bfc4ac2)
+assemble ServerMap: uses JunkrotWeldettaSparkalot (key c11aed715eb587cc)
+assemble ServerMap: uses JunkrotDronettoBuzzatti (key 7acc8fb57bb9953e)
+assemble ServerMap: uses JunkrotTickworthPocketti (key 22a6c4d039ad0ff0)
+assemble ServerMap: uses JunkrotHeadphonoBassimo (key d47c976aa6738c6d)
+assemble ServerMap: uses JunkrotGascaniniHonkini (key f8b07ed06063b0f4)
+assemble ServerMap: uses JunkrotPercolattoNinjatto (key 3392c5d7d380fb69)
+assemble ServerMap: uses JunkrotBoilerdiroCrockpotilo (key 748a5e56f0959c15)
+assemble ServerMap: uses JunkrotSnackomaticPrototipo (key 580bc970b9d2684c)
+assemble ServerMap: uses JunkrotHoverbikkoZoomzoom (key 1b5900b42f82f562)
+assemble ServerMap: uses JunkrotHolofonoShimmerra (key 9a65f88f2484fd69)
+assemble ServerMap: uses JunkrotLaVacuumaSaturnita (key bd517ef7554f341c)
+assemble ServerMap: uses JunkrotTheMonolito (key e9bc9ca19c2b8402)
+assemble ServerMap: uses JunkrotUnitZero (key cf5027927a7e9ceb)
 assemble ServerMap: slab at ServerMap.luau:278-468 (key cf7e96091024d5cc)
 assemble ServerMap: slab at ServerMap.luau:548-577 (key 7ded6fc62f8b67a3)
 assemble ServerMap: slab at ServerMap.luau:580-584 (key 2f5b4070ee3aa512)
@@ -72,10 +93,9 @@ assemble ServerMap: slab at ServerMap.luau:668-677 (key 107c5c30239027da)
 assemble ServerMap: slab at ServerMap.luau:685-715 (key 18845c9c8b69ea54)
 assemble ServerMap: slab at ServerMap.luau:790-801 (key 363b6dc9a40b12d8)
 assemble ServerMap: slab at ServerMap.luau:814-867 (key f4e0427155be5973)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 64511 lines, in 0s
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 82647 lines, in 1s
 [    0.0s] running ServerMap/model.luau
 [    0.8s] cached HubSectionB 1 x part 2/4
-[    0.8s] cached YardIsland 1 x part 5/5
 [    0.9s] cached YardIsland 1 x part 5/5
 [    1.0s] cached YardIsland 1 x part 5/5
 [    1.1s] cached YardIsland 1 x part 5/5
@@ -83,8 +103,9 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 64511 lines, in 0s
 [    1.2s] cached YardIsland 1 x part 5/5
 [    1.3s] cached YardIsland 1 x part 5/5
 [    1.4s] cached YardIsland 1 x part 5/5
-[    1.4s] writing ServerMap.glb and 202 textures
-ServerMap: 202 parts, script 1.40s, total 2.57s
+[    1.5s] cached YardIsland 1 x part 5/5
+[    1.5s] writing ServerMap.glb and 202 textures
+ServerMap: 202 parts, script 1.50s, total 2.63s
 PLACED	HubSection3	0	HubSectionB-afc962b93a377a4a 1 x part 2/4
 PLACED	Island1	0	YardIsland-f7a297dc299e1e15 1 x part 5/5
 PLACED	Island2	0	YardIsland-f7a297dc299e1e15 1 x part 5/5
