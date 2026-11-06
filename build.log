@@ -2,21 +2,8 @@ assemble ShopTest: layout: prelude, rarity, shared helpers, used models, layout
 assemble ShopTest: uses ShopConceptContainer (key ea4f346237b0dbb0)
 assemble ShopTest: wrote art/models/ShopTest/model.luau, 2716 lines, in 0s
 [    0.0s] running ShopTest/model.luau
-[    0.0s] building ShopConceptContainer 1 x part 3/8
-[    0.3s] baking on CPU (no GPU)
-[    1.0s]   shaded Container_-1_0_0_100 816×816 in 0.75s
-[    1.1s]   shaded CastingHoles 124×124 in 0.05s
-[    1.8s]   shaded Interior_-1_0_0 756×756 in 0.64s
-[    2.0s]   shaded Interior_0_-1_0 524×524 in 0.19s
-[    2.0s]   shaded Flap_-1_-1_0_111 84×84 in 0.02s
-[    2.0s]   shaded Flap_0_-1_0_110 84×84 in 0.03s
-[    2.4s]   shaded Counter_0_-1_0 740×740 in 0.38s
-[    3.6s]   shaded Drum 1024×1024 in 1.16s
-[    3.9s]   shaded Steps 544×544 in 0.29s
-[    4.0s] built ShopConceptContainer 1 x part 3/8: 11 parts in 3.9s
-[    4.0s] writing ShopTest.glb and 11 textures
-[    4.1s] chunk ShopTest_S3_01.glb: 11 parts, 3.6 MB
-[    4.1s] rendering preview of 11 parts
-ShopTest: 11 parts, script 3.99s, total 4.28s
-SHARD_COST	ShopConceptContainer 1 x	31.360
-SHARD_COST	ShopConceptContainer 1 x #split	1
+[    0.1s] cached ShopConceptContainer 1 x part 3/8
+[    0.1s] writing ShopTest.glb and 11 textures
+[    0.2s] chunk ShopTest_S3_01.glb: 11 parts, 3.6 MB
+[    0.2s] rendering preview of 11 parts
+ShopTest: 11 parts, script 77.39ms, total 383.88ms
