@@ -1,0 +1,472 @@
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses ArenaDrone (key 18c26b39db37ce48)
+assemble ServerMap: uses PadIsland (key ad355357363725be)
+assemble ServerMap: uses MarketIsland (key 58b70b8346d6706b)
+assemble ServerMap: uses YardIsland (key be1c30b602492195)
+assemble ServerMap: uses ShopConceptContainer (key 9ee92800396676e9)
+assemble ServerMap: uses ScrapTreeLamppost (key b3e052fdd1a45c7d)
+assemble ServerMap: uses VendingMachine (key 55132b4a4e17f7ee)
+assemble ServerMap: uses ParkBench (key d65d521fbd51e74e)
+assemble ServerMap: uses ScrapPalm (key bc26bcde0b991a3c)
+assemble ServerMap: uses ShippingContainer (key 73425303442244cc)
+assemble ServerMap: uses CarStack (key 1912a227749426f1)
+assemble ServerMap: uses CrushedCar (key 84922847a5d2e7d3)
+assemble ServerMap: uses Barrels (key 20f10dd7a3bbfd04)
+assemble ServerMap: uses TyreStack (key ea3538f3f9bd9168)
+assemble ServerMap: uses JunkWall (key 89d5c4dffb1bf1f0)
+assemble ServerMap: uses Dumpster (key 199a3d23fa2e58d5)
+assemble ServerMap: uses Pallets (key 401baee6f4b12367)
+assemble ServerMap: uses StreetlightBroken (key 5e75827a147fa2b6)
+assemble ServerMap: uses TrafficCones (key 58b2d450da747efc)
+assemble ServerMap: uses GroundTile (key a713e47036ae92fa)
+assemble ServerMap: uses MachinePad (key e6d1359742642e5d)
+assemble ServerMap: uses YardFence (key c5864b7c62510696)
+assemble ServerMap: uses YardFenceHalf (key 2a87c7bf28eacfe9)
+assemble ServerMap: uses YardFooting (key 00779c259122496a)
+assemble ServerMap: uses YardGate (key 2ac4a4f2fd86ba8f)
+assemble ServerMap: uses PlotMarker (key 85ffb29778baceb2)
+assemble ServerMap: uses StorageCrate (key 47fb8c7d90a885c1)
+assemble ServerMap: uses YardPath (key b119f649b51de6a2)
+assemble ServerMap: uses YardPathStub (key 7de93e5e96f9b326)
+assemble ServerMap: slab at ServerMap.luau:746-763 (key 0c960e1f862726f4)
+assemble ServerMap: slab at ServerMap.luau:832-836 (key 13efa5a1845e203d)
+assemble ServerMap: slab at ServerMap.luau:843-892 (key 041aab4d823cacfb)
+assemble ServerMap: slab at ServerMap.luau:897-921 (key e1d53c436615f36a)
+assemble ServerMap: slab at ServerMap.luau:955-970 (key f4f9015cc7a52d81)
+assemble ServerMap: slab at ServerMap.luau:1050-1243 (key f80a5011da1b57d2)
+assemble ServerMap: slab at ServerMap.luau:1325-1332 (key 2b2b51e4886723fb)
+assemble ServerMap: slab at ServerMap.luau:1355-1359 (key 886388888fe59ef3)
+assemble ServerMap: slab at ServerMap.luau:1362-1370 (key 209bd5af05ec8c81)
+assemble ServerMap: slab at ServerMap.luau:1402-1424 (key c8fbb33a2805dfaf)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 33582 lines, in 0s
+[    0.0s] running ServerMap/model.luau
+[    0.4s] building ArenaDrone 1 x part 1/2
+[    2.1s] baking on CPU (no GPU)
+[    2.2s]   shaded Plating_0_0_0_010_110 492×492 in 0.10s
+[    2.4s]   shaded Plating_0_0_0_010_001 612×612 in 0.16s
+[    2.5s]   shaded Plating_0_0_0_010_101 632×632 in 0.14s
+[    2.6s]   shaded Plating_0_0_0_010_111 248×248 in 0.02s
+[    2.7s]   shaded Plating_0_0_0_110_000 676×676 in 0.14s
+[    2.9s]   shaded Plating_0_0_0_110_100 692×692 in 0.16s
+[    2.9s]   shaded Plating_0_0_0_110_110 252×252 in 0.03s
+[    3.1s]   shaded Plating_0_0_0_100_001 612×612 in 0.16s
+[    3.3s]   shaded Plating_0_0_0_100_011 632×632 in 0.14s
+[    3.4s]   shaded Plating_0_0_0_100_100 352×352 in 0.09s
+[    3.5s]   shaded Plating_0_0_0_000_101 536×536 in 0.11s
+[    3.8s]   shaded Plating_1_0_0 800×800 in 0.30s
+[    4.0s]   shaded Plating_-1_0_0_110_101 552×552 in 0.14s
+[    4.1s]   shaded Plating_-1_0_0_110_001 632×632 in 0.14s
+[    4.4s]   shaded Plating_-1_0_0_100_011 720×720 in 0.19s
+[    4.4s]   shaded Plating_-1_0_0_000_011 288×288 in 0.03s
+[    4.5s]   shaded Plating_-1_0_0_000_000 352×352 in 0.09s
+[    4.6s]   shaded Plating_-1_0_0_000_001 344×344 in 0.05s
+[    4.7s]   shaded Plating_-1_0_0_010_110 692×692 in 0.15s
+[    4.8s]   shaded Plating_-1_0_0_010_101 416×416 in 0.04s
+[    5.0s]   shaded Plating_-1_1_0 628×628 in 0.22s
+[    5.3s]   shaded Plating_-2_0_0 804×804 in 0.29s
+[    5.5s]   shaded Plating_-1_-1_0_010_000 612×612 in 0.12s
+[    5.6s]   shaded Plating_-1_-1_0_010_111 592×592 in 0.15s
+[    5.8s]   shaded Plating_-1_-1_0_010_101 632×632 in 0.14s
+[    6.0s]   shaded Plating_-1_-1_0_110_111 608×608 in 0.15s
+[    6.1s]   shaded Plating_-1_-1_0_110_011 528×528 in 0.11s
+[    6.2s]   shaded Plating_-1_-1_0_110_101 468×468 in 0.09s
+[    6.3s]   shaded Plating_-1_-1_0_100_000 492×492 in 0.09s
+[    6.3s]   shaded Plating_-1_-1_0_100_001 248×248 in 0.02s
+[    6.4s]   shaded Plating_-1_-1_0_100_100 352×352 in 0.08s
+[    6.5s]   shaded Plating_-1_-1_0_100_101 340×340 in 0.06s
+[    6.6s]   shaded Plating_-1_-1_0_000_110 676×676 in 0.13s
+[    6.8s]   shaded Plating_-1_-1_0_000_010 692×692 in 0.15s
+[    6.8s]   shaded Plating_-1_-1_0_000_000 252×252 in 0.03s
+[    7.1s]   shaded Plating_-1_-2_0 632×632 in 0.21s
+[    7.1s]   shaded Plating_0_-1_0_000_001 280×280 in 0.05s
+[    7.2s]   shaded Plating_0_-1_0_010_001 476×476 in 0.09s
+[    7.4s]   shaded Plating_0_-1_0_010_101 720×720 in 0.19s
+[    7.6s]   shaded Plating_0_-1_0_110_100 612×612 in 0.12s
+[    7.7s]   shaded Plating_0_-1_0_110_001 632×632 in 0.15s
+[    7.8s]   shaded Plating_0_-1_0_110_101 288×288 in 0.03s
+[    7.8s]   shaded Plating_0_-1_0_110_110 352×352 in 0.08s
+[    7.9s]   shaded Plating_0_-1_0_110_111 344×344 in 0.05s
+[    8.1s]   shaded Plating_0_-1_0_100_000 692×692 in 0.15s
+[    8.1s]   shaded Plating_0_-1_0_100_011 416×416 in 0.04s
+[    8.3s]   shaded Grating2 256×256 in 0.18s
+[    8.5s]   shaded Grating4 256×256 in 0.17s
+[    8.7s]   shaded Grating6 256×256 in 0.18s
+[    8.9s]   shaded Grating8 256×256 in 0.19s
+[    8.9s]   shaded GratingRim2 256×256 in 0.04s
+[    8.9s]   shaded GratingRim4 256×256 in 0.04s
+[    9.0s]   shaded GratingRim6 256×256 in 0.04s
+[    9.0s]   shaded GratingRim8 256×256 in 0.04s
+[    9.5s]   shaded Girder1 512×512 in 0.50s
+[   10.0s]   shaded Girder3 512×512 in 0.47s
+[   10.5s]   shaded Girder5 512×512 in 0.50s
+[   11.0s]   shaded Girder7 512×512 in 0.50s
+[   14.5s]   shaded Joists 512×512 in 3.43s
+[   14.6s]   shaded Motor1 256×256 in 0.14s
+[   14.8s]   shaded Prop1 512×512 in 0.16s
+[   14.8s]   shaded PropTips1 128×128 in 0.03s
+[   14.9s]   shaded MotorCollar2 256×256 in 0.10s
+[   15.1s]   shaded Motor2 256×256 in 0.13s
+[   15.2s]   shaded Prop2 512×512 in 0.15s
+[   15.3s]   shaded MotorCollar3 256×256 in 0.11s
+[   15.5s]   shaded Motor3 256×256 in 0.13s
+[   15.5s]   shaded MotorTrim3 256×256 in 0.06s
+[   15.6s]   shaded PropTips3 128×128 in 0.02s
+[   15.6s]   shaded PropHub3 128×128 in 0.02s
+[   15.9s]   shaded Cable3 256×256 in 0.30s
+[   16.6s]   shaded Arm4 512×512 in 0.75s
+[   16.8s]   shaded Prop4 512×512 in 0.16s
+[   16.9s]   shaded BatteryWarning 128×128 in 0.06s
+[   17.1s]   shaded BatteryStraps 256×256 in 0.27s
+[   17.2s]   shaded Terminals 128×128 in 0.03s
+[   17.6s]   shaded Cradle 512×512 in 0.39s
+[   18.0s]   shaded Skids 256×256 in 0.43s
+[   18.0s] built ArenaDrone 1 x part 1/2: 80 parts in 17.6s
+[   18.2s] building Plot1 220 84 0
+[   19.0s]   shaded Slab 1024×1024 in 0.70s
+[   19.0s] built Plot1 220 84 0: 1 parts in 0.8s
+[   19.0s] building YardPath 1 x x1.5
+[   19.1s]   shaded Gravel 256×256 in 0.06s
+[   19.1s]   shaded Pavers 256×256 in 0.04s
+[   19.2s]   shaded Grit 256×256 in 0.05s
+[   19.2s] built YardPath 1 x x1.5: 3 parts in 0.2s
+[   19.2s] cached YardPath 1 x x1.5
+[   19.2s] cached YardPath 1 x x1.5
+[   19.2s] building YardPathStub 1 x x1.5
+[   19.2s]   shaded Gravel 256×256 in 0.03s
+[   19.2s]   shaded Pavers 256×256 in 0.04s
+[   19.3s]   shaded Grit 256×256 in 0.04s
+[   19.3s] built YardPathStub 1 x x1.5: 3 parts in 0.1s
+[   19.3s] cached YardPathStub 1 x x1.5
+[   19.3s] cached YardPathStub 1 x x1.5
+[   19.3s] cached YardPathStub 1 x x1.5
+[   19.3s] building YardFence 1 x x1.5
+[   19.3s]   shaded Posts 256×256 in 0.02s
+[   19.4s]   shaded Sheets 256×256 in 0.04s
+[   19.4s]   shaded Fittings 256×256 in 0.04s
+[   19.4s] built YardFence 1 x x1.5: 3 parts in 0.1s
+[   19.4s] cached YardFence 1 x x1.5
+[   19.4s] cached YardFence 1 x x1.5
+[   19.4s] building YardFooting 1 x x1.5
+[   19.4s]   shaded Footing 256×256 in 0.04s
+[   19.4s] built YardFooting 1 x x1.5: 1 parts in 0.0s
+[   19.4s] cached YardFooting 1 x x1.5
+[   19.4s] cached YardFooting 1 x x1.5
+[   19.4s] cached YardFence 1 x x1.5
+[   19.4s] cached YardFence 1 x x1.5
+[   19.4s] cached YardFence 1 x x1.5
+[   19.4s] cached YardFooting 1 x x1.5
+[   19.4s] cached YardFooting 1 x x1.5
+[   19.4s] cached YardFooting 1 x x1.5
+[   19.4s] cached YardFence 1 x x1.5
+[   19.4s] cached YardFence 1 x x1.5
+[   19.4s] cached YardFence 1 x x1.5
+[   19.4s] cached YardFooting 1 x x1.5
+[   19.4s] cached YardFooting 1 x x1.5
+[   19.4s] cached YardFooting 1 x x1.5
+[   19.4s] cached YardFence 1 x x1.5
+[   19.4s] cached YardFence 1 x x1.5
+[   19.4s] cached YardFence 1 x x1.5
+[   19.4s] cached YardFooting 1 x x1.5
+[   19.4s] cached YardFooting 1 x x1.5
+[   19.4s] cached YardFooting 1 x x1.5
+[   19.4s] cached YardFence 1 x x1.5
+[   19.4s] building YardFenceHalf 1 x x1.5
+[   19.5s]   shaded Posts 256×256 in 0.02s
+[   19.5s]   shaded Sheets 256×256 in 0.03s
+[   19.5s]   shaded Fittings 256×256 in 0.04s
+[   19.5s] built YardFenceHalf 1 x x1.5: 3 parts in 0.1s
+[   19.5s] cached YardFooting 1 x x1.5
+[   19.5s] building YardFooting 0.5 x x1.5
+[   19.6s]   shaded Footing 256×256 in 0.04s
+[   19.6s] built YardFooting 0.5 x x1.5: 1 parts in 0.0s
+[   19.6s] cached YardFence 1 x x1.5
+[   19.6s] cached YardFenceHalf 1 x x1.5
+[   19.6s] cached YardFooting 1 x x1.5
+[   19.6s] cached YardFooting 0.5 x x1.5
+[   19.6s] building YardGate 1 x x1.5
+[   19.6s]   shaded Frame 256×256 in 0.03s
+[   19.6s]   shaded Doors 256×256 in 0.02s
+[   19.7s]   shaded Padlock 256×256 in 0.06s
+[   19.7s]   shaded Hardware 256×256 in 0.04s
+[   19.7s] built YardGate 1 x x1.5: 4 parts in 0.2s
+[   19.8s] building PlotMarker 1 x x1.5
+[   19.8s]   shaded Post 256×256 in 0.04s
+[   19.8s]   shaded Sign 256×256 in 0.04s
+[   20.0s]   shaded Lamp 256×256 in 0.12s
+[   20.0s]   shaded Fittings 256×256 in 0.04s
+[   20.0s] built PlotMarker 1 x x1.5: 4 parts in 0.3s
+[   20.0s] building Spoke1 220 84 0
+[   20.1s]   shaded Road 300×300 in 0.09s
+[   20.1s] built Spoke1 220 84 0: 1 parts in 0.1s
+[   20.1s] building Bridge1 220 84 0
+[   20.3s]   shaded Deck 712×712 in 0.20s
+[   20.4s]   shaded HazardYellow 112×112 in 0.02s
+[   20.4s]   shaded HazardBlack 104×104 in 0.02s
+[   20.6s]   shaded Girders 1024×1024 in 0.17s
+[   20.6s]   shaded Posts 144×144 in 0.03s
+[   20.7s]   shaded Rail 976×976 in 0.09s
+[   20.7s]   shaded KerbEnds 108×108 in 0.01s
+[   20.7s]   shaded EndPosts 64×64 in 0.01s
+[   20.8s]   shaded Abutments 372×372 in 0.11s
+[   20.8s]   shaded JointPlate 152×152 in 0.01s
+[   20.9s]   shaded Apron 184×184 in 0.03s
+[   20.9s] built Bridge1 220 84 0: 11 parts in 0.8s
+[   20.9s] building MachinePad 1 x x1.5
+[   20.9s]   shaded Plate 256×256 in 0.06s
+[   21.0s]   shaded Stripes 256×256 in 0.02s
+[   21.0s]   shaded Hardware 256×256 in 0.03s
+[   21.0s] built MachinePad 1 x x1.5: 3 parts in 0.1s
+[   21.0s] cached MachinePad 1 x x1.5
+[   21.0s] cached MachinePad 1 x x1.5
+[   21.0s] cached MachinePad 1 x x1.5
+[   21.0s] cached YardPath 1 x x1.5
+[   21.0s] cached YardPath 1 x x1.5
+[   21.0s] cached YardPath 1 x x1.5
+[   21.0s] cached YardPathStub 1 x x1.5
+[   21.0s] cached YardPathStub 1 x x1.5
+[   21.0s] cached YardPathStub 1 x x1.5
+[   21.0s] cached YardPathStub 1 x x1.5
+[   21.0s] cached YardFence 1 x x1.5
+[   21.0s] cached YardFence 1 x x1.5
+[   21.0s] cached YardFence 1 x x1.5
+[   21.0s] cached YardFence 1 x x1.5
+[   21.0s] cached YardFence 1 x x1.5
+[   21.0s] cached YardFence 1 x x1.5
+[   21.0s] cached YardFence 1 x x1.5
+[   21.0s] cached YardFence 1 x x1.5
+[   21.0s] cached YardFence 1 x x1.5
+[   21.0s] cached YardFence 1 x x1.5
+[   21.0s] cached YardFence 1 x x1.5
+[   21.0s] cached YardFence 1 x x1.5
+[   21.0s] cached YardFence 1 x x1.5
+[   21.0s] cached YardFenceHalf 1 x x1.5
+[   21.0s] cached YardFence 1 x x1.5
+[   21.0s] cached YardFenceHalf 1 x x1.5
+[   21.0s] cached YardGate 1 x x1.5
+[   21.0s] cached PlotMarker 1 x x1.5
+[   21.0s] building Bridge2 220 -84 180
+[   21.2s]   shaded Deck 712×712 in 0.20s
+[   21.3s]   shaded HazardYellow 112×112 in 0.02s
+[   21.3s]   shaded HazardBlack 104×104 in 0.02s
+[   21.5s]   shaded Girders 1024×1024 in 0.17s
+[   21.5s]   shaded Posts 144×144 in 0.03s
+[   21.6s]   shaded Rail 976×976 in 0.09s
+[   21.6s]   shaded KerbEnds 108×108 in 0.01s
+[   21.6s]   shaded EndPosts 64×64 in 0.01s
+[   21.7s]   shaded Abutments 372×372 in 0.11s
+[   21.7s]   shaded JointPlate 152×152 in 0.01s
+[   21.8s]   shaded Apron 184×184 in 0.03s
+[   21.8s] built Bridge2 220 -84 180: 11 parts in 0.8s
+[   21.8s] cached YardFooting 1 x x1.5
+[   21.8s] cached YardFooting 1 x x1.5
+[   21.8s] cached YardFence 1 x x1.5
+[   21.8s] cached YardFooting 1 x x1.5
+[   21.8s] cached YardFooting 1 x x1.5
+[   21.8s] cached YardFenceHalf 1 x x1.5
+[   21.8s] cached YardFooting 0.5 x x1.5
+[   21.8s] cached YardFenceHalf 1 x x1.5
+[   21.8s] cached YardFooting 0.5 x x1.5
+[   21.8s] cached YardGate 1 x x1.5
+[   21.8s] cached PlotMarker 1 x x1.5
+[   21.8s] building Plot4 332 -84 180
+[   22.6s]   shaded Slab 1024×1024 in 0.69s
+[   22.6s] built Plot4 332 -84 180: 1 parts in 0.8s
+[   22.6s] cached YardFence 1 x x1.5
+[   22.6s] cached YardFence 1 x x1.5
+[   22.6s] cached YardFence 1 x x1.5
+[   22.6s] cached YardFenceHalf 1 x x1.5
+[   22.6s] cached YardFenceHalf 1 x x1.5
+[   22.6s] cached YardGate 1 x x1.5
+[   22.6s] cached PlotMarker 1 x x1.5
+[   22.6s] building GroundTile 1 x x1.5
+[   22.7s]   shaded Dirt 256×256 in 0.05s
+[   22.7s]   shaded Slabs 256×256 in 0.03s
+[   22.7s]   shaded Scrap 256×256 in 0.02s
+[   22.7s] built GroundTile 1 x x1.5: 3 parts in 0.1s
+[   22.7s] cached GroundTile 1 x x1.5
+[   22.7s] cached GroundTile 1 x x1.5
+[   22.7s] cached GroundTile 1 x x1.5
+[   22.7s] cached GroundTile 1 x x1.5
+[   22.7s] cached GroundTile 1 x x1.5
+[   22.7s] cached GroundTile 1 x x1.5
+[   22.7s] cached GroundTile 1 x x1.5
+[   22.7s] cached GroundTile 1 x x1.5
+[   22.7s] cached GroundTile 1 x x1.5
+[   22.7s] cached GroundTile 1 x x1.5
+[   22.7s] cached GroundTile 1 x x1.5
+[   22.7s] cached GroundTile 1 x x1.5
+[   22.7s] cached GroundTile 1 x x1.5
+[   22.7s] cached MachinePad 1 x x1.5
+[   22.7s] cached MachinePad 1 x x1.5
+[   22.7s] cached MachinePad 1 x x1.5
+[   22.7s] cached MachinePad 1 x x1.5
+[   22.7s] cached YardPath 1 x x1.5
+[   22.7s] cached YardPath 1 x x1.5
+[   22.7s] cached YardPath 1 x x1.5
+[   22.7s] cached YardPathStub 1 x x1.5
+[   22.7s] cached YardPathStub 1 x x1.5
+[   22.7s] cached YardPathStub 1 x x1.5
+[   22.7s] cached YardPathStub 1 x x1.5
+[   22.7s] cached YardFence 1 x x1.5
+[   22.7s] cached YardFence 1 x x1.5
+[   22.7s] cached YardFence 1 x x1.5
+[   22.7s] cached YardFence 1 x x1.5
+[   22.7s] cached YardFence 1 x x1.5
+[   22.7s] cached YardFence 1 x x1.5
+[   22.7s] cached YardFence 1 x x1.5
+[   22.7s] cached YardFence 1 x x1.5
+[   22.7s] cached YardFence 1 x x1.5
+[   22.7s] cached YardFence 1 x x1.5
+[   22.7s] cached YardFence 1 x x1.5
+[   22.7s] cached YardFence 1 x x1.5
+[   22.7s] cached YardFence 1 x x1.5
+[   22.7s] cached YardFenceHalf 1 x x1.5
+[   22.7s] cached YardFence 1 x x1.5
+[   22.7s] cached YardFenceHalf 1 x x1.5
+[   22.7s] cached YardGate 1 x x1.5
+[   22.7s] cached PlotMarker 1 x x1.5
+[   22.7s] building Bridge5 444 84 0
+[   23.0s]   shaded Deck 712×712 in 0.20s
+[   23.0s]   shaded HazardYellow 112×112 in 0.02s
+[   23.0s]   shaded HazardBlack 104×104 in 0.02s
+[   23.2s]   shaded Girders 1024×1024 in 0.20s
+[   23.3s]   shaded Posts 144×144 in 0.03s
+[   23.4s]   shaded Rail 976×976 in 0.11s
+[   23.4s]   shaded KerbEnds 108×108 in 0.01s
+[   23.4s]   shaded EndPosts 64×64 in 0.01s
+[   23.5s]   shaded Abutments 372×372 in 0.10s
+[   23.5s]   shaded JointPlate 152×152 in 0.01s
+[   23.5s]   shaded Apron 184×184 in 0.03s
+[   23.5s] built Bridge5 444 84 0: 11 parts in 0.8s
+[   23.6s] cached PlotMarker 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached MachinePad 1 x x1.5
+[   23.6s] cached MachinePad 1 x x1.5
+[   23.6s] cached YardPath 1 x x1.5
+[   23.6s] cached YardPath 1 x x1.5
+[   23.6s] cached YardPathStub 1 x x1.5
+[   23.6s] cached YardPathStub 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFenceHalf 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFenceHalf 1 x x1.5
+[   23.6s] cached PlotMarker 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached GroundTile 1 x x1.5
+[   23.6s] cached MachinePad 1 x x1.5
+[   23.6s] cached MachinePad 1 x x1.5
+[   23.6s] cached MachinePad 1 x x1.5
+[   23.6s] cached YardPath 1 x x1.5
+[   23.6s] cached YardPath 1 x x1.5
+[   23.6s] cached YardPath 1 x x1.5
+[   23.6s] cached YardPathStub 1 x x1.5
+[   23.6s] cached YardPathStub 1 x x1.5
+[   23.6s] cached YardPathStub 1 x x1.5
+[   23.6s] cached YardPathStub 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFenceHalf 1 x x1.5
+[   23.6s] cached YardFooting 0.5 x x1.5
+[   23.6s] cached YardFence 1 x x1.5
+[   23.6s] cached YardFenceHalf 1 x x1.5
+[   23.6s] cached YardFooting 0.5 x x1.5
+[   23.6s] cached YardGate 1 x x1.5
+[   23.6s] cached PlotMarker 1 x x1.5
+[   23.6s] building Bridge8 556 -84 180
+[   23.9s]   shaded Deck 712×712 in 0.22s
+[   23.9s]   shaded HazardYellow 112×112 in 0.02s
+[   23.9s]   shaded HazardBlack 104×104 in 0.02s
+[   24.1s]   shaded Girders 1024×1024 in 0.19s
+[   24.2s]   shaded Posts 144×144 in 0.05s
+[   24.3s]   shaded Rail 976×976 in 0.11s
+[   24.3s]   shaded KerbEnds 108×108 in 0.01s
+[   24.3s]   shaded EndPosts 64×64 in 0.01s
+[   24.5s]   shaded Abutments 372×372 in 0.11s
+[   24.5s]   shaded JointPlate 152×152 in 0.01s
+[   24.5s]   shaded Apron 184×184 in 0.03s
+[   24.5s] built Bridge8 556 -84 180: 11 parts in 0.9s
+[   24.5s] writing ServerMap.glb and 702 textures
+[   26.3s] chunk ServerMap_S1_01.glb: 76 parts, 17.1 MB
+[   26.3s] chunk ServerMap_S1_02.glb: 110 parts, 8.9 MB
+[   26.3s] chunk ServerMap_S1_03.glb: 123 parts, 7.8 MB
+[   26.3s] chunk ServerMap_S1_04.glb: 24 parts, 3.0 MB
+[   26.3s] chunk ServerMap_S1_05.glb: 131 parts, 5.4 MB
+[   26.3s] chunk ServerMap_S1_06.glb: 91 parts, 6.7 MB
+[   26.3s] chunk ServerMap_S1_07.glb: 136 parts, 5.6 MB
+[   26.3s] chunk ServerMap_S1_08.glb: 11 parts, 2.5 MB
+[   26.8s] rendering preview of 702 parts
+ServerMap: 702 parts, script 24.54s, total 27.22s
+SHARD_COST	ArenaDrone 1 x	35.355
+SHARD_COST	ArenaDrone 1 x #split	1
+SHARD_COST	slab Plot1	0.813
+SHARD_COST	slab Plot1 #split	1
+SHARD_COST	YardPath 1 x x1.5	0.160
+SHARD_COST	YardPath 1 x x1.5 #split	1
+SHARD_COST	YardPathStub 1 x x1.5	0.120
+SHARD_COST	YardPathStub 1 x x1.5 #split	1
+SHARD_COST	YardFence 1 x x1.5	0.116
+SHARD_COST	YardFence 1 x x1.5 #split	1
+SHARD_COST	YardFooting 1 x x1.5	0.040
+SHARD_COST	YardFooting 1 x x1.5 #split	1
+SHARD_COST	YardFenceHalf 1 x x1.5	0.100
+SHARD_COST	YardFenceHalf 1 x x1.5 #split	1
+SHARD_COST	YardFooting 0.5 x x1.5	0.040
+SHARD_COST	YardFooting 0.5 x x1.5 #split	1
+SHARD_COST	YardGate 1 x x1.5	0.164
+SHARD_COST	YardGate 1 x x1.5 #split	1
+SHARD_COST	PlotMarker 1 x x1.5	0.251
+SHARD_COST	PlotMarker 1 x x1.5 #split	1
+SHARD_COST	slab Spoke1	0.099
+SHARD_COST	slab Spoke1 #split	1
+SHARD_COST	slab Bridge1	0.764
+SHARD_COST	slab Bridge1 #split	1
+SHARD_COST	MachinePad 1 x x1.5	0.121
+SHARD_COST	MachinePad 1 x x1.5 #split	1
+SHARD_COST	slab Bridge2	0.762
+SHARD_COST	slab Bridge2 #split	1
+SHARD_COST	slab Plot4	0.808
+SHARD_COST	slab Plot4 #split	1
+SHARD_COST	GroundTile 1 x x1.5	0.120
+SHARD_COST	GroundTile 1 x x1.5 #split	1
+SHARD_COST	slab Bridge5	0.806
+SHARD_COST	slab Bridge5 #split	1
+SHARD_COST	slab Bridge8	0.880
+SHARD_COST	slab Bridge8 #split	1
