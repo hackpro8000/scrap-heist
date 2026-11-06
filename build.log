@@ -18,10 +18,6 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
 [    0.0s] running ServerMap/model.luau
 [    0.4s] cached Line 0 0 0
 [    0.4s] writing ServerMap.glb and 116 textures
-ServerMap: 116 parts, script 441.25ms, total 838.86ms
+ServerMap: 116 parts, script 440.85ms, total 1.01s
 PLACED	Line	0	abb4bc7b898fe3b1-7ded6fc62f8b67a3 Line 0 0 0
 export ServerMap: 3 objects (37.1 MB) for 3 placements
-remote: 
-remote: Create a pull request for 'build-objects/s13' on GitHub by visiting:        
-remote:      https://github.com/hackpro8000/scrap-heist/pull/new/build-objects/s13        
-remote: 
