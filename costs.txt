@@ -1,11 +1,11 @@
-PadIsland 1 x	9.269
+PadIsland 1 x	11.248
 PadIsland 1 x #split	1
-slab Avenue5	1.617
+slab Avenue5	1.876
 slab Avenue5 #split	1
-ShopConceptContainer 1 x x2.5	53.702
+ShopConceptContainer 1 x x2.5	88.248
 ShopConceptContainer 1 x x2.5 #split	1
-GroundTile 1 x x1.5	0.150
+GroundTile 1 x x1.5	0.169
 GroundTile 1 x x1.5 #split	1
-MachinePad 1 x x1.5	0.045
+MachinePad 1 x x1.5	0.173
 MachinePad 1 x x1.5 #split	1
-StorageCrate 1 x x1.5	8.054
+StorageCrate 1 x x1.5	9.712
