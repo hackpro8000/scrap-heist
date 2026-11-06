@@ -4,20 +4,33 @@
 # back. The commit must already be on GitHub (scripts/push-wip.sh pushes
 # unfinished work).
 #
-#   scripts/send-build.sh                      # main, 8 shards, wait 5 min
-#   scripts/send-build.sh "$(scripts/push-wip.sh)" 8 300
-#   scripts/send-build.sh main 8 300 no         # build without uploading
+#   scripts/send-build.sh                      # main, on the running standby
+#   scripts/send-build.sh "$(scripts/push-wip.sh)"
+#   scripts/send-build.sh main auto 300 no      # build without uploading
+#   scripts/send-build.sh main 8 300            # say the machine count yourself
+#
+# With the count left as `auto`, the running standby's machine count is used
+# (scripts/standby-status.sh), and it stops at once if none is running.
 #
 # Results land in .standby-results/<task id>/S<i>/ (ignored by git).
 
 set -euo pipefail
 
 ref="${1:-main}"
-count="${2:-8}"
+count="${2:-auto}"
 wait_seconds="${3:-300}"
 upload="${4:-yes}"
 root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "${root}"
+
+if [ "${count}" = "auto" ]; then
+	if ! status="$(scripts/standby-status.sh --line)"; then
+		scripts/standby-status.sh >&2 || true
+		exit 1
+	fi
+	count="$(sed -n 's/.*shards=\([0-9]*\).*/\1/p' <<< "${status}")"
+	echo "using standby: ${status}" >&2
+fi
 
 git fetch -q origin "${ref}" 2> /dev/null || true
 commit="$(git rev-parse --verify -q "origin/${ref}^{commit}" || git rev-parse --verify "${ref}^{commit}")"

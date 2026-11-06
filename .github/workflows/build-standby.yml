@@ -7,6 +7,9 @@
 #
 #   gh workflow run build-standby.yml -f shards=8 -f minutes=15 -f max_minutes=60
 name: Build standby
+# The run's title carries its settings, so scripts/standby-status.sh can read
+# them from the run list (workflow inputs aren't in the runs API).
+run-name: "Standby ${{ inputs.layout }} x${{ inputs.shards }} from ${{ inputs.ref }} (idle ${{ inputs.minutes }}m, max ${{ inputs.max_minutes }}m)"
 
 on:
   workflow_dispatch:

@@ -35,3 +35,4 @@ Supplementary rules for agents working on Scrap Heist.
 - Before a change that grows textures or part counts, estimate the cache size (each paint layer is stored raw at 6 bytes per texel, several layers per part) and keep it within the limit the user sets.
 - Sketch approval for a new model, one change per checkpoint, screenshot to the user. This applies to every harness, Claude Code and DeepSeek Harness alike.
 - If a model task can't be done, stop and report why to the user. Don't fall back to doing it a different way.
+- Before a layout build (ServerMap), run `scripts/standby-status.sh`. If build machines are warm for that layout, send the build to them with `scripts/send-build.sh <commit>` (unfinished work: `scripts/push-wip.sh` first) instead of building locally; if none are, build locally. Standby is started with the build-standby workflow (`.github/workflows/build-standby.yml`).
