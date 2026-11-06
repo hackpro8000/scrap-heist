@@ -25,98 +25,23 @@ assemble ServerMap: slab at ServerMap.luau:1351-1359 (key 84939f33a0cb0864)
 assemble ServerMap: slab at ServerMap.luau:1404-1426 (key dfbe27eb7d68389c)
 assemble ServerMap: wrote art/models/ServerMap/model.luau, 22621 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.4s] building HubSectionEnd 1 x part 1/5
-[    2.6s] baking on CPU (no GPU)
-[    2.6s]   shaded Columns_-1_0_0_011 324×324 in 0.14s
-[    2.7s]   shaded Columns_-1_0_0_010 200×200 in 0.08s
-[    4.3s]   shaded Columns_-1_-1_-1_111 880×880 in 1.53s
-[    4.4s]   shaded Columns_-1_-1_-1_011 236×236 in 0.11s
-[    4.8s]   shaded Columns_-1_-1_0_111 564×564 in 0.37s
-[    6.1s]   shaded Columns_0_-1_0 876×876 in 1.18s
-[    6.1s]   shaded Columns_0_0_-1_011 120×120 in 0.04s
-[    8.3s]   shaded Dirt_0_0_0_100 1020×1020 in 2.10s
-[    8.5s]   shaded Dirt_0_-1_0_100_101 460×460 in 0.23s
-[    8.7s]   shaded Dirt_0_-1_0_100_010 384×384 in 0.20s
-[    9.1s]   shaded Dirt_0_-1_0_100_000 520×520 in 0.38s
-[    9.8s]   shaded Dirt_0_-1_0_111 588×588 in 0.62s
-[   10.8s]   shaded Dirt_0_-1_0_001 768×768 in 0.96s
-[   11.1s]   shaded Dirt_-1_0_0_100 496×496 in 0.31s
-[   12.7s]   shaded Dirt_-1_-1_0_000 916×916 in 1.56s
-[   13.0s]   shaded Pebbles_0_0_0 324×324 in 0.19s
-[   13.0s]   shaded Pebbles_-1_0_0 192×192 in 0.07s
-[   13.1s]   shaded Pebbles_-1_1_0 136×136 in 0.05s
-[   13.1s]   shaded Pebbles_-1_-2_0 56×56 in 0.03s
-[   13.4s]   shaded Grass_-1_-1_0_010 624×624 in 0.29s
-[   13.8s]   shaded Grass_-1_-1_0_100 408×408 in 0.35s
-[   14.3s]   shaded Grass_-1_0_0_000 668×668 in 0.50s
-[   15.3s]   shaded Grass_-1_1_0 924×924 in 0.97s
-[   15.3s] built HubSectionEnd 1 x part 1/5: 23 parts in 14.9s
-[   15.5s] cached HubSectionEnd 1 x part 1/5
-[   15.5s] building Spawn -250 0 0
-[   15.6s]   shaded Pad 608×608 in 0.08s
-[   15.6s] built Spawn -250 0 0: 1 parts in 0.1s
-[   15.6s] building Bridge2 -70 180 0
-[   16.2s]   shaded Deck 1024×1024 in 0.53s
-[   16.3s]   shaded HazardYellow 148×148 in 0.04s
-[   16.3s]   shaded HazardBlack 148×148 in 0.04s
-[   16.7s]   shaded Girders 1024×1024 in 0.37s
-[   16.8s]   shaded Posts 212×212 in 0.07s
-[   17.0s]   shaded Rail 1024×1024 in 0.21s
-[   17.1s]   shaded KerbEnds 104×104 in 0.02s
-[   17.1s]   shaded EndPosts 60×60 in 0.01s
-[   17.3s]   shaded Abutments 372×372 in 0.17s
-[   17.3s]   shaded JointPlate 152×152 in 0.01s
-[   17.3s]   shaded Apron 184×184 in 0.05s
-[   17.3s] built Bridge2 -70 180 0: 11 parts in 1.7s
-[   17.4s] building Spoke5 -210 -180 180
-[   17.5s]   shaded Road 304×304 in 0.08s
-[   17.5s] built Spoke5 -210 -180 180: 1 parts in 0.1s
-[   17.5s] building Plot6 -70 -180 180
-[   22.5s]   shaded Slab 1024×1024 in 4.80s
-[   22.5s] built Plot6 -70 -180 180: 1 parts in 5.1s
-[   22.6s] building Side2 0 150 -90
-[   22.9s]   shaded Deck 508×508 in 0.26s
-[   22.9s]   shaded HazardYellow 100×100 in 0.01s
-[   22.9s]   shaded HazardBlack 92×92 in 0.01s
-[   23.2s]   shaded Girders 640×640 in 0.24s
-[   23.2s]   shaded Posts 124×124 in 0.03s
-[   23.3s]   shaded Rail 416×416 in 0.05s
-[   23.3s]   shaded KerbEnds 148×148 in 0.03s
-[   23.3s]   shaded EndPosts 80×80 in 0.01s
-[   23.5s]   shaded Abutments 368×368 in 0.13s
-[   23.5s] built Side2 0 150 -90: 9 parts in 0.9s
-[   23.5s] building Side6 140 -150 -90
-[   23.8s]   shaded Deck 508×508 in 0.26s
-[   23.8s]   shaded HazardYellow 100×100 in 0.01s
-[   23.8s]   shaded HazardBlack 92×92 in 0.01s
-[   24.1s]   shaded Girders 640×640 in 0.23s
-[   24.1s]   shaded Posts 124×124 in 0.03s
-[   24.2s]   shaded Rail 416×416 in 0.05s
-[   24.2s]   shaded KerbEnds 148×148 in 0.03s
-[   24.2s]   shaded EndPosts 80×80 in 0.01s
-[   24.4s]   shaded Abutments 368×368 in 0.13s
-[   24.4s] built Side6 140 -150 -90: 9 parts in 0.9s
-[   24.4s] building Pallets 1 x x1.4
-[   24.5s]   shaded Wood 256×256 in 0.09s
-[   24.6s]   shaded Nails 256×256 in 0.08s
-[   24.6s] built Pallets 1 x x1.4: 2 parts in 0.2s
-[   24.6s] writing ServerMap.glb and 80 textures
-[   25.3s] chunk ServerMap_S7_01.glb: 60 parts, 10.9 MB
-[   25.3s] chunk ServerMap_S7_02.glb: 20 parts, 4.3 MB
-ServerMap: 80 parts, script 24.62s, total 25.44s
-SHARD_COST	HubSectionEnd 1 x	74.559
-SHARD_COST	HubSectionEnd 1 x #split	1
-SHARD_COST	slab Spawn	0.093
-SHARD_COST	slab Spawn #split	1
-SHARD_COST	slab Bridge2	1.720
-SHARD_COST	slab Bridge2 #split	1
-SHARD_COST	slab Spoke5	0.085
-SHARD_COST	slab Spoke5 #split	1
-SHARD_COST	slab Plot6	5.076
-SHARD_COST	slab Plot6 #split	1
-SHARD_COST	slab Side2	0.880
-SHARD_COST	slab Side2 #split	1
-SHARD_COST	slab Side6	0.877
-SHARD_COST	slab Side6 #split	1
-SHARD_COST	Pallets 1 x x1.4	0.185
-SHARD_COST	Pallets 1 x x1.4 #split	1
+[    0.5s] cached HubSectionEnd 1 x part 1/5
+[    0.6s] cached HubSectionEnd 1 x part 1/5
+[    0.6s] cached Spawn -250 0 0
+[    0.7s] cached Bridge2 -70 180 0
+[    0.7s] cached Spoke5 -210 -180 180
+[    0.7s] cached Plot6 -70 -180 180
+[    0.7s] cached Side2 0 150 -90
+[    0.7s] cached Side6 140 -150 -90
+[    0.7s] cached Pallets 1 x x1.4
+[    0.8s] writing ServerMap.glb and 80 textures
+[    1.4s] chunk ServerMap_S7_01.glb: 60 parts, 10.9 MB
+[    1.4s] chunk ServerMap_S7_02.glb: 20 parts, 4.3 MB
+ServerMap: 80 parts, script 778.62ms, total 1.66s
+upload ServerMap: starting in 4.6s
+upload ServerMap: uploading ServerMapS7_01 (11M)
+upload ServerMap: ServerMapS7_01 is asset 101243113295602
+upload ServerMap: uploading ServerMapS7_02 (4.2M)
+upload ServerMap: ServerMapS7_02 failed: {"path":"operations/610bb339-cdbe-45dc-8510-3658bd0e7e1a","operationId":"610bb339-cdbe-45dc-8510-3658bd0e7e1a","done":true,"error":{"code":"Unknown","message":"Unknown Error","details":[]}}
+upload ServerMap: FAILED: 1 of 2 chunks have no usable ID: ServerMapS7_02 
+upload ServerMap: nothing was written to src/shared; see the errors above, then run again to retry just these
