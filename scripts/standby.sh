@@ -33,9 +33,10 @@ queue_head() {
 }
 
 # Builds this machine's shard of whatever is checked out into `out`, writing
-# build.log, parts.txt, the chunk manifest, costs.txt and summary.txt.
+# build.log, parts.txt, the chunk manifest, costs.txt and summary.txt, and
+# uploads its chunks unless `upload` is "no".
 build_shard() {
-	local out="$1" started=${SECONDS} status="DONE" build_seconds="-" upload="skipped"
+	local out="$1" upload_chunks="${2:-yes}" started=${SECONDS} status="DONE" build_seconds="-" upload="skipped"
 	mkdir -p "${out}"
 	{
 		scripts/assemble-model.sh "${layout}" &&
@@ -56,7 +57,7 @@ EOF
 		cp "art/models/${layout}/chunks/${layout}Chunks.luau" "${out}/" 2>> "${out}/build.log" || status="FAILED"
 		awk -F'\t' '$1 == "SHARD_COST" { print $2 "\t" $3 }' "${out}/build.log" > "${out}/costs.txt"
 	fi
-	if [ "${status}" = "DONE" ] && [ -n "${ROBLOX_API_KEY:-}" ] && [ -n "${ROBLOX_CREATOR_ID:-}" ]; then
+	if [ "${status}" = "DONE" ] && [ "${upload_chunks}" = "yes" ] && [ -n "${ROBLOX_API_KEY:-}" ] && [ -n "${ROBLOX_CREATOR_ID:-}" ]; then
 		local upload_started=${SECONDS}
 		if scripts/upload-chunks.sh "${layout}" >> "${out}/build.log" 2>&1; then
 			cp "art/models/${layout}/chunks/${layout}AssetIds.txt" "${out}/"
@@ -113,7 +114,8 @@ run_task() {
 # The first build on a fresh machine is the slow one, so do it now, from the
 # commit standby started on, rather than on the first task.
 if [ "${STANDBY_WARM:-1}" != "0" ]; then
-	say "warming up: $(build_shard results/warm-up)"
+	# Warm-ups don't upload: nobody asked for those chunks.
+	say "warming up: $(build_shard results/warm-up no)"
 	# Its result doubles as a signal that this machine is warm and waiting.
 	push_results "warm-up-${GITHUB_RUN_ID:-local}" results/warm-up || say "could not push the warm-up result"
 fi
