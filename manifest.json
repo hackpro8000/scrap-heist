@@ -10,8 +10,8 @@
 			"parts": 22
 		},
 		{
-			"id": "463c3b49bc58426e",
-			"key": "d85c17ddde731d72-7b25a7aa2539d602 Plot1 -210 180 0",
+			"id": "e565413c2b647bc9",
+			"key": "fc0c5e558eaf305d-7b25a7aa2539d602 Plot1 -210 180 0",
 			"piece": 1,
 			"label": "Plot1",
 			"turn": 0.0,
@@ -37,8 +37,8 @@
 			"parts": 3
 		},
 		{
-			"id": "bb51a85a829cce87",
-			"key": "d85c17ddde731d72-cf7e96091024d5cc Bridge8 210 -180 180",
+			"id": "32e04a59c921e8dc",
+			"key": "fc0c5e558eaf305d-cf7e96091024d5cc Bridge8 210 -180 180",
 			"piece": 1,
 			"label": "Bridge8",
 			"turn": 0.0,
@@ -51,7 +51,7 @@
 			"piece": 1,
 			"label": "Kit_CapsulePrecision",
 			"turn": 0.0,
-			"bytes": 544604,
+			"bytes": 544612,
 			"parts": 4
 		},
 		{
@@ -60,7 +60,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotRemotinoMuto",
 			"turn": 0.0,
-			"bytes": 627528,
+			"bytes": 627536,
 			"parts": 7
 		},
 		{
@@ -70,6 +70,15 @@
 			"label": "Kit_JunkrotClockoTictacco",
 			"turn": 0.0,
 			"bytes": 598928,
+			"parts": 7
+		},
+		{
+			"id": "b1f44fd4a3123d92",
+			"key": "JunkrotDingDingDingDongo-1d1e1e950c96e4e4 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotDingDingDingDongo",
+			"turn": 0.0,
+			"bytes": 578932,
 			"parts": 7
 		}
 	],
@@ -98,7 +107,7 @@
 			]
 		},
 		{
-			"asset": "463c3b49bc58426e",
+			"asset": "e565413c2b647bc9",
 			"label": "Plot1",
 			"turn": 0.0,
 			"anchors": [
@@ -747,7 +756,7 @@
 			]
 		},
 		{
-			"asset": "bb51a85a829cce87",
+			"asset": "32e04a59c921e8dc",
 			"label": "Bridge8",
 			"turn": 0.0,
 			"anchors": [
@@ -777,7 +786,7 @@
 				{
 					"name": "Clasps",
 					"position": [
-						-96.005145,
+						-228.00515000000001,
 						-148.54465499999998,
 						1.03341805
 					]
@@ -785,7 +794,7 @@
 				{
 					"name": "Corners",
 					"position": [
-						-96.003887,
+						-228.00389,
 						-148.899575,
 						-0.007264300000000001
 					]
@@ -800,7 +809,7 @@
 				{
 					"name": "Battery",
 					"position": [
-						120.111031,
+						-11.888969,
 						-148.999675,
 						-0.26237187
 					]
@@ -808,7 +817,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						120.015777,
+						-11.98422,
 						-147.54899999999998,
 						0.336809025
 					]
@@ -823,7 +832,7 @@
 				{
 					"name": "Bells",
 					"position": [
-						383.99298,
+						251.99297,
 						-147.12666000000002,
 						0.003604040000000003
 					]
@@ -831,9 +840,32 @@
 				{
 					"name": "Pupils",
 					"position": [
-						384.021165,
+						252.021175,
 						-148.05349999999999,
 						0.6402135
+					]
+				}
+			]
+		},
+		{
+			"asset": "b1f44fd4a3123d92",
+			"label": "Kit_JunkrotDingDingDingDongo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Eyes",
+					"position": [
+						516.9849999999999,
+						-147.19,
+						0.2
+					]
+				},
+				{
+					"name": "Lever",
+					"position": [
+						514.5914,
+						-148.78833500000002,
+						0.8267715
 					]
 				}
 			]
