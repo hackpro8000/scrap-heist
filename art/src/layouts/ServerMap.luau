@@ -1,4 +1,4 @@
--- uses: HubSectionA HubSectionB HubSectionEnd YardIsland YardFence YardFenceHalf YardFooting YardGate PlotMarker PadKitchen PadGarage PadGadget BuildBay ScrapCrate RebirthPress JunkMound CapsuleScrap CapsuleSalvaged CapsuleRefurbished CapsuleFactory CapsulePrecision CapsulePrototype CapsuleSecret JunkrotCanettoRustini JunkrotSpoonzoBentolo JunkrotKettlinaDentata JunkrotTyroFlattino JunkrotBoltoloLonelo JunkrotHubcappaWobbla JunkrotRemotinoMuto JunkrotCabloTanglino JunkrotBulboFulminato JunkrotCrumboPoppalot JunkrotPannettoPatchato JunkrotBlendroCigolante JunkrotJackoloCrickato JunkrotOilcannaGluglu JunkrotMuffleroTossetto JunkrotRadioloFruscio JunkrotFanettoWobblino JunkrotClockoTictacco JunkrotFrostboxGelatone JunkrotMicrondoBippetto JunkrotMixerellaVroom JunkrotMopaMopetta JunkrotDrilloTrapanino JunkrotGrindellaScintilla JunkrotTelefonoRingaling JunkrotTypewrittoClackini JunkrotCamerinoFlashetto JunkrotDrippiDroppi JunkrotDingDingDingDongo
+-- uses: HubSectionA HubSectionB HubSectionEnd YardIsland YardFence YardFenceHalf YardFooting YardGate PlotMarker PadKitchen PadGarage PadGadget BuildBay ScrapCrate RebirthPress JunkMound CapsuleScrap CapsuleSalvaged CapsuleRefurbished CapsuleFactory CapsulePrecision CapsulePrototype CapsuleSecret JunkrotCanettoRustini JunkrotSpoonzoBentolo JunkrotKettlinaDentata JunkrotTyroFlattino JunkrotBoltoloLonelo JunkrotHubcappaWobbla JunkrotRemotinoMuto JunkrotCabloTanglino JunkrotBulboFulminato JunkrotCrumboPoppalot JunkrotPannettoPatchato JunkrotBlendroCigolante JunkrotJackoloCrickato JunkrotOilcannaGluglu JunkrotMuffleroTossetto JunkrotRadioloFruscio JunkrotFanettoWobblino JunkrotClockoTictacco JunkrotFrostboxGelatone JunkrotMicrondoBippetto JunkrotMixerellaVroom JunkrotMopaMopetta JunkrotDrilloTrapanino JunkrotGrindellaScintilla JunkrotTelefonoRingaling JunkrotTypewrittoClackini JunkrotCamerinoFlashetto JunkrotDrippiDroppi JunkrotDingDingDingDongo JunkrotGrindoBeanbasher JunkrotAirfryoCroccante JunkrotDishwashinoSplashetto JunkrotLawnmowoRuggito JunkrotLeafblowaWhooshini JunkrotPressurwashoSprizzo JunkrotConsoloJoypaddino JunkrotSpeakeroneBoomba JunkrotRobovaccoGirotondo JunkrotClankClankClankScrapur JunkrotVrrVrrPatatrim JunkrotChimneyziniSpannerini JunkrotRusteliRustela
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands laid out along a line (the Scrap Line). The hub is a long
 -- island running along x, five sections in a row, paved from end to end: a
@@ -920,6 +920,19 @@ local KIT = {
 	{ "JunkrotCamerinoFlashetto", buildJunkrotCamerinoFlashetto, 1 },
 	{ "JunkrotDrippiDroppi", buildJunkrotDrippiDroppi, 1 },
 	{ "JunkrotDingDingDingDongo", buildJunkrotDingDingDingDongo, 1 },
+	{ "JunkrotGrindoBeanbasher", buildJunkrotGrindoBeanbasher, 1 },
+	{ "JunkrotAirfryoCroccante", buildJunkrotAirfryoCroccante, 1 },
+	{ "JunkrotDishwashinoSplashetto", buildJunkrotDishwashinoSplashetto, 1 },
+	{ "JunkrotLawnmowoRuggito", buildJunkrotLawnmowoRuggito, 1 },
+	{ "JunkrotLeafblowaWhooshini", buildJunkrotLeafblowaWhooshini, 1 },
+	{ "JunkrotPressurwashoSprizzo", buildJunkrotPressurwashoSprizzo, 1 },
+	{ "JunkrotConsoloJoypaddino", buildJunkrotConsoloJoypaddino, 1 },
+	{ "JunkrotSpeakeroneBoomba", buildJunkrotSpeakeroneBoomba, 1 },
+	{ "JunkrotRobovaccoGirotondo", buildJunkrotRobovaccoGirotondo, 1 },
+	{ "JunkrotClankClankClankScrapur", buildJunkrotClankClankClankScrapur, 1 },
+	{ "JunkrotVrrVrrPatatrim", buildJunkrotVrrVrrPatatrim, 1 },
+	{ "JunkrotChimneyziniSpannerini", buildJunkrotChimneyziniSpannerini, 1 },
+	{ "JunkrotRusteliRustela", buildJunkrotRusteliRustela, 1 },
 }
 useTexelDensity(KIT_DENSITY)
 for index, entry in KIT do
