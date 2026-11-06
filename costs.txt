@@ -1,4 +1,20 @@
-YardIsland 1 x	75.810
+YardIsland 1 x	75.046
 YardIsland 1 x #split	1
-slab Plot1	4.937
+slab Plot1	4.790
 slab Plot1 #split	1
+YardFenceHalf 1 x x1.5	0.155
+YardFenceHalf 1 x x1.5 #split	1
+slab Yard5_Bay2	0.160
+slab Yard5_Bay2 #split	1
+PadKitchen 1 x x1.6666666666666667	0.196
+PadKitchen 1 x x1.6666666666666667 #split	1
+slab Yard6_Press	0.151
+slab Yard6_Press #split	1
+slab Yard7_Bay3	0.158
+slab Yard7_Bay3 #split	1
+YardFooting 1 x x1.5	0.058
+YardFooting 1 x x1.5 #split	1
+YardGate 1 x x1.5	0.256
+YardGate 1 x x1.5 #split	1
+slab Yard8_Bay3	0.160
+slab Yard8_Bay3 #split	1
