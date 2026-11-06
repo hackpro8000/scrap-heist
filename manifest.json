@@ -37,8 +37,8 @@
 			"parts": 1
 		},
 		{
-			"id": "4e1e7d7d63a7d503",
-			"key": "d85c17ddde731d72-cf7e96091024d5cc Bridge4 210 180 0",
+			"id": "9f049505ca1f7e05",
+			"key": "fc0c5e558eaf305d-cf7e96091024d5cc Bridge4 210 180 0",
 			"piece": 1,
 			"label": "Bridge4",
 			"turn": 0.0,
@@ -55,8 +55,8 @@
 			"parts": 1
 		},
 		{
-			"id": "8350811d08c8f8c3",
-			"key": "d85c17ddde731d72-18845c9c8b69ea54 Approach7 70 0 180",
+			"id": "93ccdcc4dbb284eb",
+			"key": "fc0c5e558eaf305d-18845c9c8b69ea54 Approach7 70 0 180",
 			"piece": 1,
 			"label": "Approach7",
 			"turn": 0.0,
@@ -64,8 +64,8 @@
 			"parts": 3
 		},
 		{
-			"id": "3e770a60025e2292",
-			"key": "d85c17ddde731d72-f4e0427155be5973 Sorter -202 16 0",
+			"id": "3314de72f17d43fc",
+			"key": "fc0c5e558eaf305d-f4e0427155be5973 Sorter -202 16 0",
 			"piece": 1,
 			"label": "Sorter",
 			"turn": 0.0,
@@ -96,7 +96,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotTyroFlattino",
 			"turn": 0.0,
-			"bytes": 549536,
+			"bytes": 549544,
 			"parts": 6
 		},
 		{
@@ -105,8 +105,17 @@
 			"piece": 1,
 			"label": "Kit_JunkrotJackoloCrickato",
 			"turn": 0.0,
-			"bytes": 570276,
+			"bytes": 570280,
 			"parts": 6
+		},
+		{
+			"id": "0acf3e8411f5f03b",
+			"key": "JunkrotGrindellaScintilla-34447cb98f0a6877 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotGrindellaScintilla",
+			"turn": 0.0,
+			"bytes": 717964,
+			"parts": 8
 		}
 	],
 	"placements": [
@@ -427,7 +436,7 @@
 			]
 		},
 		{
-			"asset": "4e1e7d7d63a7d503",
+			"asset": "9f049505ca1f7e05",
 			"label": "Bridge4",
 			"turn": 0.0,
 			"anchors": [
@@ -585,7 +594,7 @@
 			]
 		},
 		{
-			"asset": "8350811d08c8f8c3",
+			"asset": "93ccdcc4dbb284eb",
 			"label": "Approach7",
 			"turn": 0.0,
 			"anchors": [
@@ -608,7 +617,7 @@
 			]
 		},
 		{
-			"asset": "3e770a60025e2292",
+			"asset": "3314de72f17d43fc",
 			"label": "Sorter",
 			"turn": 0.0,
 			"anchors": [
@@ -638,7 +647,7 @@
 				{
 					"name": "Deck",
 					"position": [
-						-288.006925,
+						-420.006925,
 						-149.80111,
 						0.0005628999999998108
 					]
@@ -646,7 +655,7 @@
 				{
 					"name": "Rack",
 					"position": [
-						-287.981,
+						-419.981,
 						-148.90030000000002,
 						-4.71155935
 					]
@@ -661,7 +670,7 @@
 				{
 					"name": "Box",
 					"position": [
-						-144.00169499999998,
+						-276.00169,
 						-149.40106,
 						-0.004411985000000007
 					]
@@ -676,7 +685,7 @@
 				{
 					"name": "Nail",
 					"position": [
-						48.854782,
+						-83.14522,
 						-147.263805,
 						0.177136401
 					]
@@ -684,7 +693,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						48.022171,
+						-83.9778275,
 						-148.25650000000002,
 						0.550213515
 					]
@@ -699,7 +708,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						264.02217,
+						132.022165,
 						-147.3865,
 						0.430213525
 					]
@@ -707,9 +716,32 @@
 				{
 					"name": "Screw",
 					"position": [
-						264.32933,
+						132.329315,
 						-148.26735000000002,
 						-0.011748239999999993
+					]
+				}
+			]
+		},
+		{
+			"asset": "0acf3e8411f5f03b",
+			"label": "Kit_JunkrotGrindellaScintilla",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Handle",
+					"position": [
+						395.38745,
+						-148.378335,
+						-0.5333064000000001
+					]
+				},
+				{
+					"name": "Sparks",
+					"position": [
+						398.597735,
+						-148.70037000000002,
+						0.69901257
 					]
 				}
 			]

@@ -1,14 +1,8 @@
-slab Bridge4	0.967
+slab Bridge4	0.775
 slab Bridge4 #split	1
-slab Approach7	0.231
+slab Approach7	0.152
 slab Approach7 #split	1
-slab Sorter	0.454
+slab Sorter	0.173
 slab Sorter #split	1
-BuildBay 1 x	0.253
-BuildBay 1 x #split	1
-CapsuleRefurbished 1 x	0.187
-CapsuleRefurbished 1 x #split	1
-JunkrotTyroFlattino 1 x	0.405
-JunkrotTyroFlattino 1 x #split	1
-JunkrotJackoloCrickato 1 x	0.350
-JunkrotJackoloCrickato 1 x #split	1
+JunkrotGrindellaScintilla 1 x	0.391
+JunkrotGrindellaScintilla 1 x #split	1
