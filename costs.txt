@@ -1,6 +1,0 @@
-HubSectionEnd 1 x	80.390
-HubSectionEnd 1 x #split	1
-slab Spoke2	0.082
-slab Spoke2 #split	1
-slab Plot3	5.260
-slab Plot3 #split	1
