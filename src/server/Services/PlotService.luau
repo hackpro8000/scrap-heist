@@ -69,6 +69,9 @@ local YARD_KIT_FOLDER = "YardKit"
 local YARD_SPOTS_FOLDER = "YardSpots"
 local FREE_YARD_TEXT = "Free yard"
 local WELCOME_TEXT = "Welcome! Buy a capsule off the belt, carry it home to your build bay and hatch it"
+-- Art is modelled with its front toward its own -Z (Roblox's forward). A
+-- yard's +Z points at its gate, so art is turned half round to face it.
+local ART_FACES_GATE = CFrame.Angles(0, math.pi, 0)
 local RUBBLE_FOLDER = "Rubble"
 local RUBBLE_THICKNESS = 0.3
 local RUBBLE_COLOR = Color3.fromRGB(95, 85, 72)
@@ -240,9 +243,10 @@ local function buildThing(yard: Yard, object: Object): Model
 	local template = templateFor(object)
 	if template then
 		model = template:Clone()
-		-- Stand the template's bounding box, not its pivot, on the floor.
+		-- Stand the template's bounding box, not its pivot, on the floor,
+		-- and turn its front to the gate.
 		local box, size = model:GetBoundingBox()
-		model:PivotTo(floor * CFrame.new(0, size.Y / 2, 0) * box:ToObjectSpace(model:GetPivot()))
+		model:PivotTo(floor * ART_FACES_GATE * CFrame.new(0, size.Y / 2, 0) * box:ToObjectSpace(model:GetPivot()))
 		height = size.Y
 	else
 		model = Instance.new("Model")

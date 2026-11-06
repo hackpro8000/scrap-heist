@@ -132,9 +132,13 @@ function CapsuleService.newBody(capsule: Capsule): BasePart
 				piece.CanCollide = false
 				piece.CanQuery = false
 				piece.Massless = true
-				local weld = Instance.new("WeldConstraint")
+				-- A Weld holds the piece at this offset wherever the body
+				-- is put; a WeldConstraint would let go of it each time
+				-- the body's CFrame is set.
+				local weld = Instance.new("Weld")
 				weld.Part0 = body
 				weld.Part1 = piece
+				weld.C0 = body.CFrame:ToObjectSpace(piece.CFrame)
 				weld.Parent = piece
 			end
 		end
@@ -441,7 +445,8 @@ local function onThingBuilt(yard: PlotService.Yard, object: PlotService.Object, 
 	}
 	local body = CapsuleService.newBody(capsule)
 	body.Anchored = true
-	body.CFrame = PlotService.seatOf(model) * CFrame.new(0, body.Size.Y / 2, 0)
+	-- Its front (the body's -Z) turned to the gate.
+	body.CFrame = PlotService.seatOf(model) * CFrame.Angles(0, math.pi, 0) * CFrame.new(0, body.Size.Y / 2, 0)
 	body.Parent = model
 
 	local text = body:FindFirstChild("Text", true) :: TextLabel

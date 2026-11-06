@@ -167,9 +167,13 @@ local function newBundlePart(fill: number): BasePart
 				piece.CanCollide = false
 				piece.CanQuery = false
 				piece.Massless = true
-				local weld = Instance.new("WeldConstraint")
+				-- A Weld holds the piece at this offset wherever the
+				-- bundle is put; a WeldConstraint would let go of it each
+				-- time the bundle's CFrame is set.
+				local weld = Instance.new("Weld")
 				weld.Part0 = part
 				weld.Part1 = piece
+				weld.C0 = part.CFrame:ToObjectSpace(piece.CFrame)
 				weld.Parent = piece
 			end
 		end

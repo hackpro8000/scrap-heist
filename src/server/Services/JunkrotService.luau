@@ -50,6 +50,11 @@ local REACH_SLACK = 6
 -- Seconds between mound whacks that count.
 local MOUND_COOLDOWN = 0.25
 local GOLD = Color3.fromRGB(255, 205, 70)
+-- Art faces its own -Z (Roblox's forward); a pad's +Z points at the gate,
+-- so a junkrot is turned half round to greet whoever walks in.
+local ART_FACES_GATE = CFrame.Angles(0, math.pi, 0)
+local ART_SCALE = 1.5
+local ART_SCALE_PER_TIER = 0.12
 
 local JunkrotService = {}
 
@@ -118,8 +123,11 @@ local function buildJunkrotModel(junkrot: Junkrots.Junkrot, seat: CFrame): Model
 	local model: Model
 	if template and template:IsA("Model") then
 		model = template:Clone()
+		-- Art is modelled about 3 studs tall; on a 10-stud pad it stands
+		-- bigger, and bigger still the better its tier.
+		model:ScaleTo(ART_SCALE + ART_SCALE_PER_TIER * (Junkrots.tierIndex(junkrot.tier) - 1))
 		local box, size = model:GetBoundingBox()
-		model:PivotTo(seat * CFrame.new(0, size.Y / 2, 0) * box:ToObjectSpace(model:GetPivot()))
+		model:PivotTo(seat * ART_FACES_GATE * CFrame.new(0, size.Y / 2, 0) * box:ToObjectSpace(model:GetPivot()))
 	else
 		model = Instance.new("Model")
 		local tier = Junkrots.tierIndex(junkrot.tier)
