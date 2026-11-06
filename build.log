@@ -1,0 +1,86 @@
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses HubSectionA (key a8313e4a55d56339)
+assemble ServerMap: uses HubSectionB (key afc962b93a377a4a)
+assemble ServerMap: uses HubSectionEnd (key 48c8eb7545b33eb2)
+assemble ServerMap: uses YardIsland (key f7a297dc299e1e15)
+assemble ServerMap: uses YardFence (key fe3d5de848852dd7)
+assemble ServerMap: uses YardFenceHalf (key 18c1a8760a959e18)
+assemble ServerMap: uses YardFooting (key 5c7b334d7913a1ed)
+assemble ServerMap: uses YardGate (key 6a909dbc533c5385)
+assemble ServerMap: uses PlotMarker (key 1dcfac604b3fab76)
+assemble ServerMap: slab at ServerMap.luau:274-464 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:544-573 (key 7ded6fc62f8b67a3)
+assemble ServerMap: slab at ServerMap.luau:576-580 (key 2f5b4070ee3aa512)
+assemble ServerMap: slab at ServerMap.luau:656-662 (key 7b25a7aa2539d602)
+assemble ServerMap: slab at ServerMap.luau:664-673 (key 107c5c30239027da)
+assemble ServerMap: slab at ServerMap.luau:681-711 (key 18845c9c8b69ea54)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
+[    0.0s] running ServerMap/model.luau
+[    0.3s] building HubSectionEnd 1 x part 3/4
+[    2.3s]   shaded Columns_-1_0_0_011 324×324 in 0.01s
+[    2.5s]   shaded Columns_-1_0_0_001 812×812 in 0.10s
+[    2.5s]   shaded Columns_-1_0_0_000 232×232 in 0.01s
+[    2.5s]   shaded Columns_0_0_0_010 180×180 in 0.01s
+[    2.5s]   shaded Columns_0_1_0 104×104 in 0.00s
+[    2.6s]   shaded Columns_-1_-1_-1_110 536×536 in 0.04s
+[    2.6s]   shaded Columns_-1_-1_0_111 564×564 in 0.04s
+[    2.7s]   shaded Columns_-1_-1_0_000 132×132 in 0.00s
+[    2.7s]   shaded Columns_-1_-1_0_101 620×620 in 0.05s
+[    2.9s]   shaded Columns_0_0_-1_001 880×880 in 0.11s
+[    3.1s]   shaded Columns_-1_0_-1_101 916×916 in 0.12s
+[    3.1s]   shaded Columns_-1_0_-1_111 136×136 in 0.00s
+[    3.4s]   shaded Dirt_0_-1_0_110 1004×1004 in 0.16s
+[    3.4s]   shaded Dirt_0_-1_0_100_100 444×444 in 0.03s
+[    3.5s]   shaded Dirt_0_-1_0_100_001 432×432 in 0.02s
+[    3.5s]   shaded Dirt_0_-1_0_100_010 384×384 in 0.02s
+[    3.5s]   shaded Dirt_0_-1_0_100_000 520×520 in 0.03s
+[    3.6s]   shaded Dirt_0_-1_0_001 768×768 in 0.08s
+[    3.8s]   shaded Dirt_-1_0_0_110 896×896 in 0.12s
+[    3.9s]   shaded Dirt_-1_0_0_100 496×496 in 0.03s
+[    4.1s]   shaded Dirt_-1_0_0_000 1004×1004 in 0.13s
+[    4.2s]   shaded Dirt_-1_-1_0_111 588×588 in 0.04s
+[    4.2s]   shaded Dirt_-1_-1_0_010_000 392×392 in 0.02s
+[    4.2s]   shaded Dirt_-1_-1_0_010_010 296×296 in 0.01s
+[    4.2s]   shaded Dirt_0_-2_0 264×264 in 0.01s
+[    4.2s]   shaded Dirt_0_0_-1 212×212 in 0.01s
+[    4.3s]   shaded Grass_-1_0_0_000 668×668 in 0.05s
+[    4.4s]   shaded Grass_-1_0_0_010 792×792 in 0.08s
+[    4.4s] built HubSectionEnd 1 x part 3/4: 28 parts in 4.1s
+[    4.7s] cached HubSectionEnd 1 x part 3/4
+[    4.7s] building Spoke2 -70 180 0
+[    4.7s] baking on CPU (no GPU)
+[    4.8s]   shaded Road 300×300 in 0.07s
+[    4.8s] built Spoke2 -70 180 0: 1 parts in 0.1s
+[    4.8s] building Plot3 70 180 0
+[    5.9s]   shaded Ground_-1_-1_0 816×816 in 0.92s
+[    6.1s]   shaded Ground_-1_0_0_000 540×540 in 0.19s
+[    6.4s]   shaded Ground_-1_0_0_010 544×544 in 0.23s
+[    6.8s]   shaded Ground_-1_0_0_100 540×540 in 0.38s
+[    7.2s]   shaded Ground_-1_0_0_110 544×544 in 0.38s
+[    8.3s]   shaded Ground_0_-1_0 816×816 in 0.92s
+[    8.8s]   shaded Ground_0_0_0_000 540×540 in 0.38s
+[    9.2s]   shaded Ground_0_0_0_010 544×544 in 0.37s
+[    9.4s]   shaded Ground_0_0_0_100 540×540 in 0.19s
+[    9.7s]   shaded Ground_0_0_0_110 544×544 in 0.19s
+[    9.7s] built Plot3 70 180 0: 10 parts in 4.9s
+[    9.7s] writing ServerMap.glb and 67 textures
+ServerMap: 67 parts, script 9.75s, total 10.17s
+PLACED	HubSection1	180	HubSectionEnd-48c8eb7545b33eb2 1 x part 3/4
+SHARD_COST	HubSectionEnd 1 x	16.574
+SHARD_COST	HubSectionEnd 1 x #split	1
+PLACED	HubSection5	0	HubSectionEnd-48c8eb7545b33eb2 1 x part 3/4
+PLACED	Spoke2	0	abb4bc7b898fe3b1-107c5c30239027da Spoke2 -70 180 0
+SHARD_COST	slab Spoke2	0.079
+SHARD_COST	slab Spoke2 #split	1
+PLACED	Plot3	0	abb4bc7b898fe3b1-7b25a7aa2539d602 Plot3 70 180 0
+SHARD_COST	slab Plot3	4.882
+SHARD_COST	slab Plot3 #split	1
+export ServerMap: 3 objects (14.0 MB) for 4 placements
+upload ServerMap: starting in 1.3s
+upload ServerMap: uploading 7ada9538faf9cd09 (HubSection1, 7.7M)
+upload ServerMap: uploading 836de6c9ebf54640 (Spoke2, 120K)
+upload ServerMap: uploading 880114247c30b22f (Plot3, 5.6M)
+upload ServerMap: 836de6c9ebf54640 is asset 93503792865136
+upload ServerMap: 7ada9538faf9cd09 is asset 114879630444666
+upload ServerMap: 880114247c30b22f is asset 128560185079670
+upload ServerMap: done: 3 uploaded, 0 already had an asset
