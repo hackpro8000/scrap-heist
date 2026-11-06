@@ -130,15 +130,16 @@ jobs:
           else
             echo "No chunks were uploaded (no Roblox secrets); the PR carries build times only." | tee -a "$GITHUB_STEP_SUMMARY"
           fi
-          if git diff --quiet; then
-            echo "Nothing changed." >> "$GITHUB_STEP_SUMMARY"
+          # Staged first, so a costs file that didn't exist before counts as a change.
+          git add -A src/shared "$costs"
+          if git diff --cached --quiet; then
+            echo "Nothing changed." | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           branch="map-build/${{ github.run_id }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$branch"
-          git add -A src/shared "$costs"
           git commit -m "$LAYOUT $what from a ${{ inputs.shards }}-shard build of ${{ inputs.ref }}"
           git push origin "$branch"
           if gh pr create --base main --head "$branch" \
