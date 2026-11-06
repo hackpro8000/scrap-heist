@@ -19,8 +19,8 @@
 			"parts": 3
 		},
 		{
-			"id": "576c087d5f952fd6",
-			"key": "d85c17ddde731d72-cf7e96091024d5cc Bridge1 -210 180 0",
+			"id": "1841ab939f081f93",
+			"key": "fc0c5e558eaf305d-cf7e96091024d5cc Bridge1 -210 180 0",
 			"piece": 1,
 			"label": "Bridge1",
 			"turn": 0.0,
@@ -37,8 +37,8 @@
 			"parts": 3
 		},
 		{
-			"id": "6a356518a43b4151",
-			"key": "d85c17ddde731d72-7b25a7aa2539d602 Plot6 -70 -180 180",
+			"id": "fb493f7618a15c20",
+			"key": "fc0c5e558eaf305d-7b25a7aa2539d602 Plot6 -70 -180 180",
 			"piece": 1,
 			"label": "Plot6",
 			"turn": 0.0,
@@ -101,7 +101,7 @@
 			]
 		},
 		{
-			"asset": "576c087d5f952fd6",
+			"asset": "1841ab939f081f93",
 			"label": "Bridge1",
 			"turn": 0.0,
 			"anchors": [
@@ -244,7 +244,7 @@
 			]
 		},
 		{
-			"asset": "6a356518a43b4151",
+			"asset": "fb493f7618a15c20",
 			"label": "Plot6",
 			"turn": 0.0,
 			"anchors": [

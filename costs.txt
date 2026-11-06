@@ -1,4 +1,4 @@
-slab Bridge1	1.228
+slab Bridge1	1.010
 slab Bridge1 #split	1
-slab Plot6	3.812
+slab Plot6	3.781
 slab Plot6 #split	1
