@@ -6,4 +6,8 @@ assemble ShopTest: wrote art/models/ShopTest/model.luau, 2716 lines, in 0s
 [    0.2s] writing ShopTest.glb and 17 textures
 [    0.4s] chunk ShopTest_S4_01.glb: 17 parts, 7.6 MB
 [    0.5s] rendering preview of 17 parts
-ShopTest: 17 parts, script 156.20ms, total 633.69ms
+ShopTest: 17 parts, script 157.44ms, total 653.04ms
+upload ShopTest: starting in 2.4s
+upload ShopTest: uploading ShopTestS4_01 (7.3M)
+upload ShopTest: ShopTestS4_01 is asset 110836356506045
+upload ShopTest: shard upload done: 1 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ShopTest/chunks/ShopTestAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ShopTest/chunks/ShopTestChunks.luau (src/shared not touched)
