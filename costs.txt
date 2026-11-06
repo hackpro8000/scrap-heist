@@ -1,0 +1,12 @@
+slab Approach2	0.273
+slab Approach2 #split	1
+slab Approach4	0.255
+slab Approach4 #split	1
+slab Spoke5	0.071
+slab Spoke5 #split	1
+slab Spoke7	0.078
+slab Spoke7 #split	1
+slab Bridge7	1.313
+slab Bridge7 #split	1
+JunkrotDrilloTrapanino 1 x	0.627
+JunkrotDrilloTrapanino 1 x #split	1
