@@ -1,0 +1,48 @@
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses ArenaDrone (key 3feaec12b72c179a)
+assemble ServerMap: uses HubIsland (key 6021be3c8a87dbbc)
+assemble ServerMap: uses YardIsland (key 11c6adb69c9d778d)
+assemble ServerMap: uses ShopConceptContainer (key 3bd24aa005fdec59)
+assemble ServerMap: uses ScrapTreeLamppost (key 3721cdc5289a1227)
+assemble ServerMap: uses VendingMachine (key 8c8c9e54c0152446)
+assemble ServerMap: uses ParkBench (key 644aec5ddc470126)
+assemble ServerMap: uses ScrapPalm (key 71b29a81d57ca962)
+assemble ServerMap: uses ShippingContainer (key b4618da1e6c8e874)
+assemble ServerMap: uses CarStack (key 18868d27bbadf854)
+assemble ServerMap: uses CrushedCar (key cb21a631053a549a)
+assemble ServerMap: uses Barrels (key 6fd22d825787f5b7)
+assemble ServerMap: uses TyreStack (key 19ab2944a510d9c5)
+assemble ServerMap: uses JunkWall (key acd51bf6f9b5d959)
+assemble ServerMap: uses Dumpster (key 5705b07a41a863a8)
+assemble ServerMap: uses Pallets (key af2bcdda5ec40e79)
+assemble ServerMap: uses StreetlightBroken (key 860caef50018b787)
+assemble ServerMap: uses TrafficCones (key 878424fc7df50b09)
+assemble ServerMap: uses GroundTile (key 43a80920e4c5168b)
+assemble ServerMap: uses MachinePad (key 1b6d00719513f1f7)
+assemble ServerMap: uses YardFence (key 122ba19da15d7e80)
+assemble ServerMap: uses YardFenceHalf (key 76101fa539bb054b)
+assemble ServerMap: uses YardFooting (key 5f7c0e3c30ab293e)
+assemble ServerMap: uses YardGate (key 692a8cf69b44f092)
+assemble ServerMap: uses PlotMarker (key f406cb0c06262f89)
+assemble ServerMap: uses StorageCrate (key 5d99f3bcd3db5fca)
+assemble ServerMap: uses YardPath (key f096c7510747dcc8)
+assemble ServerMap: uses YardPathStub (key 9d6e97b27d7f04b9)
+assemble ServerMap: slab at ServerMap.luau:822-871 (key 5c7ab7c43edf108b)
+assemble ServerMap: slab at ServerMap.luau:876-900 (key e1d53c436615f36a)
+assemble ServerMap: slab at ServerMap.luau:934-949 (key f4f9015cc7a52d81)
+assemble ServerMap: slab at ServerMap.luau:1028-1218 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:1281-1285 (key cd506193dae2c60f)
+assemble ServerMap: slab at ServerMap.luau:1314-1335 (key 1db25ee55eaf429a)
+assemble ServerMap: slab at ServerMap.luau:1348-1365 (key 492adbf74c50ddf1)
+assemble ServerMap: slab at ServerMap.luau:1381-1388 (key 2b2b51e4886723fb)
+assemble ServerMap: slab at ServerMap.luau:1411-1415 (key 886388888fe59ef3)
+assemble ServerMap: slab at ServerMap.luau:1418-1426 (key 209bd5af05ec8c81)
+assemble ServerMap: slab at ServerMap.luau:1470-1492 (key dfbe27eb7d68389c)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 31115 lines, in 0s
+[    0.0s] running ServerMap/model.luau
+[    0.7s] cached ArenaDrone 1 x part 2/3
+[    0.9s] cached HubIsland 1 x part 15/16
+[    0.9s] writing ServerMap.glb and 78 textures
+[    1.4s] chunk ServerMap_S2_01.glb: 55 parts, 12.1 MB
+[    1.4s] chunk ServerMap_S2_02.glb: 23 parts, 6.1 MB
+ServerMap: 78 parts, script 868.03ms, total 1.60s
