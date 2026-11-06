@@ -51,6 +51,19 @@ assemble ServerMap: uses JunkrotTypewrittoClackini (key fe49253052fa6f56)
 assemble ServerMap: uses JunkrotCamerinoFlashetto (key 2d8422ee9636d2d3)
 assemble ServerMap: uses JunkrotDrippiDroppi (key b006345a7aeeab08)
 assemble ServerMap: uses JunkrotDingDingDingDongo (key 1d1e1e950c96e4e4)
+assemble ServerMap: uses JunkrotGrindoBeanbasher (key 5a476970c2b89efc)
+assemble ServerMap: uses JunkrotAirfryoCroccante (key fe378a5846949e34)
+assemble ServerMap: uses JunkrotDishwashinoSplashetto (key 683d7dad7d3db771)
+assemble ServerMap: uses JunkrotLawnmowoRuggito (key 108da303884eadb8)
+assemble ServerMap: uses JunkrotLeafblowaWhooshini (key f2ce0e8b9e3edeaa)
+assemble ServerMap: uses JunkrotPressurwashoSprizzo (key 87ac2472b45f7495)
+assemble ServerMap: uses JunkrotConsoloJoypaddino (key 191abffb1bf801ba)
+assemble ServerMap: uses JunkrotSpeakeroneBoomba (key 3bbfbd68ef1f5c85)
+assemble ServerMap: uses JunkrotRobovaccoGirotondo (key 45bdee1d4d860040)
+assemble ServerMap: uses JunkrotClankClankClankScrapur (key a30fc840bf59b273)
+assemble ServerMap: uses JunkrotVrrVrrPatatrim (key c5f05967943ccfb5)
+assemble ServerMap: uses JunkrotChimneyziniSpannerini (key 16b899b9c5febdc7)
+assemble ServerMap: uses JunkrotRusteliRustela (key 41867bade3ceb8a9)
 assemble ServerMap: slab at ServerMap.luau:278-468 (key cf7e96091024d5cc)
 assemble ServerMap: slab at ServerMap.luau:548-577 (key 7ded6fc62f8b67a3)
 assemble ServerMap: slab at ServerMap.luau:580-584 (key 2f5b4070ee3aa512)
@@ -59,25 +72,25 @@ assemble ServerMap: slab at ServerMap.luau:668-677 (key 107c5c30239027da)
 assemble ServerMap: slab at ServerMap.luau:685-715 (key 18845c9c8b69ea54)
 assemble ServerMap: slab at ServerMap.luau:790-801 (key 363b6dc9a40b12d8)
 assemble ServerMap: slab at ServerMap.luau:814-867 (key f4e0427155be5973)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 53240 lines, in 0s
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 64511 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.7s] cached HubSectionB 1 x part 3/4
-[    0.7s] cached YardFenceHalf 1 x x1.5
-[    0.7s] cached YardFenceHalf 1 x x1.5
-[    0.7s] building Bridge1 -210 180 0
+[    0.8s] cached HubSectionB 1 x part 3/4
+[    0.8s] cached YardFenceHalf 1 x x1.5
+[    0.8s] cached YardFenceHalf 1 x x1.5
+[    0.8s] building Bridge1 -210 180 0
 [    0.9s] baking on CPU (no GPU)
-[    1.2s]   shaded Deck 932×932 in 0.41s
+[    1.3s]   shaded Deck 932×932 in 0.41s
 [    1.3s]   shaded HazardYellow 132×132 in 0.01s
 [    1.3s]   shaded HazardBlack 132×132 in 0.01s
-[    1.5s]   shaded Girders 1024×1024 in 0.26s
+[    1.6s]   shaded Girders 1024×1024 in 0.26s
 [    1.6s]   shaded Posts 192×192 in 0.01s
 [    1.7s]   shaded Rail 996×996 in 0.09s
 [    1.7s]   shaded KerbEnds 108×108 in 0.01s
 [    1.7s]   shaded EndPosts 60×60 in 0.00s
 [    1.7s]   shaded Abutments 368×368 in 0.04s
-[    1.7s]   shaded JointPlate 152×152 in 0.00s
-[    1.7s]   shaded Apron 184×184 in 0.01s
-[    1.7s] built Bridge1 -210 180 0: 11 parts in 1.0s
+[    1.8s]   shaded JointPlate 152×152 in 0.00s
+[    1.8s]   shaded Apron 184×184 in 0.01s
+[    1.8s] built Bridge1 -210 180 0: 11 parts in 1.0s
 [    1.8s] cached YardFence 1.037037037037037 x x1.5
 [    1.8s] cached YardFence 1.037037037037037 x x1.5
 [    1.8s] cached YardFence 1.037037037037037 x x1.5
@@ -87,24 +100,46 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 53240 lines, in 0s
 [    1.8s] cached YardFence 1.037037037037037 x x1.5
 [    1.8s] cached YardFence 1.037037037037037 x x1.5
 [    1.8s] building Plot6 -70 -180 180
-[    2.6s]   shaded Ground_-1_-1_0 816×816 in 0.73s
+[    2.6s]   shaded Ground_-1_-1_0 816×816 in 0.72s
 [    2.8s]   shaded Ground_-1_0_0_000 540×540 in 0.15s
 [    3.0s]   shaded Ground_-1_0_0_010 544×544 in 0.15s
 [    3.3s]   shaded Ground_-1_0_0_100 540×540 in 0.29s
-[    3.7s]   shaded Ground_-1_0_0_110 544×544 in 0.30s
+[    3.7s]   shaded Ground_-1_0_0_110 544×544 in 0.29s
 [    4.5s]   shaded Ground_0_-1_0 816×816 in 0.72s
-[    4.8s]   shaded Ground_0_0_0_000 540×540 in 0.29s
-[    5.2s]   shaded Ground_0_0_0_010 544×544 in 0.30s
+[    4.9s]   shaded Ground_0_0_0_000 540×540 in 0.30s
+[    5.2s]   shaded Ground_0_0_0_010 544×544 in 0.29s
 [    5.4s]   shaded Ground_0_0_0_100 540×540 in 0.15s
-[    5.5s]   shaded Ground_0_0_0_110 544×544 in 0.15s
+[    5.6s]   shaded Ground_0_0_0_110 544×544 in 0.15s
 [    5.6s] built Plot6 -70 -180 180: 10 parts in 3.8s
-[    5.6s] writing ServerMap.glb and 77 textures
-ServerMap: 77 parts, script 5.59s, total 5.96s
+[    5.6s] building JunkrotGrindoBeanbasher 1 x
+[    5.7s]   shaded Body 256×256 in 0.05s
+[    5.7s]   shaded Front 256×256 in 0.06s
+[    5.8s]   shaded Hopper 256×256 in 0.04s
+[    5.9s]   shaded Cup 256×256 in 0.08s
+[    5.9s]   shaded Sticker 256×256 in 0.09s
+[    6.1s]   shaded Eyes 256×256 in 0.11s
+[    6.2s]   shaded Pupils 256×256 in 0.15s
+[    6.3s]   shaded Legs 256×256 in 0.05s
+[    6.3s] built JunkrotGrindoBeanbasher 1 x: 8 parts in 0.7s
+[    6.3s] building JunkrotRusteliRustela 1 x
+[    6.3s]   shaded Barrel 256×256 in 0.03s
+[    6.4s]   shaded Head 256×256 in 0.05s
+[    6.4s]   shaded Trunk 256×256 in 0.02s
+[    6.4s]   shaded Ears 256×256 in 0.04s
+[    6.5s]   shaded Spikes 256×256 in 0.03s
+[    6.5s]   shaded BackLegs 256×256 in 0.04s
+[    6.6s]   shaded FlipFlops 256×256 in 0.05s
+[    6.7s]   shaded Eyes 256×256 in 0.11s
+[    6.8s]   shaded Pupils 256×256 in 0.15s
+[    6.9s]   shaded Legs 256×256 in 0.05s
+[    6.9s] built JunkrotRusteliRustela 1 x: 10 parts in 0.6s
+[    6.9s] writing ServerMap.glb and 95 textures
+ServerMap: 95 parts, script 6.89s, total 7.30s
 PLACED	HubSection3	0	HubSectionB-afc962b93a377a4a 1 x part 3/4
 PLACED	Yard1_FenceFrontHalf1	0	YardFenceHalf-18c1a8760a959e18 1 x x1.5
 PLACED	Yard1_FenceFrontHalf2	0	YardFenceHalf-18c1a8760a959e18 1 x x1.5
-PLACED	Bridge1	0	fc0c5e558eaf305d-cf7e96091024d5cc Bridge1 -210 180 0
-SHARD_COST	slab Bridge1	1.010
+PLACED	Bridge1	0	115ac3a755887f11-cf7e96091024d5cc Bridge1 -210 180 0
+SHARD_COST	slab Bridge1	1.008
 SHARD_COST	slab Bridge1 #split	1
 PLACED	Yard5_FenceLeft1	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
 PLACED	Yard5_FenceRight1	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
@@ -114,7 +149,13 @@ PLACED	Yard5_FenceLeft5	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
 PLACED	Yard5_FenceRight6	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
 PLACED	Yard5_FenceLeft8	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
 PLACED	Yard5_FenceRight9	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
-PLACED	Plot6	0	fc0c5e558eaf305d-7b25a7aa2539d602 Plot6 -70 -180 180
-SHARD_COST	slab Plot6	3.781
+PLACED	Plot6	0	115ac3a755887f11-7b25a7aa2539d602 Plot6 -70 -180 180
+SHARD_COST	slab Plot6	3.767
 SHARD_COST	slab Plot6 #split	1
-export ServerMap: 5 objects (16.9 MB) for 13 placements
+PLACED	Kit_JunkrotGrindoBeanbasher	0	JunkrotGrindoBeanbasher-5a476970c2b89efc 1 x
+SHARD_COST	JunkrotGrindoBeanbasher 1 x	0.657
+SHARD_COST	JunkrotGrindoBeanbasher 1 x #split	1
+PLACED	Kit_JunkrotRusteliRustela	0	JunkrotRusteliRustela-41867bade3ceb8a9 1 x
+SHARD_COST	JunkrotRusteliRustela 1 x	0.608
+SHARD_COST	JunkrotRusteliRustela 1 x #split	1
+export ServerMap: 7 objects (18.6 MB) for 15 placements

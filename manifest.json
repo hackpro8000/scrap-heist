@@ -19,8 +19,8 @@
 			"parts": 3
 		},
 		{
-			"id": "1841ab939f081f93",
-			"key": "fc0c5e558eaf305d-cf7e96091024d5cc Bridge1 -210 180 0",
+			"id": "88b167075b6ef9e3",
+			"key": "115ac3a755887f11-cf7e96091024d5cc Bridge1 -210 180 0",
 			"piece": 1,
 			"label": "Bridge1",
 			"turn": 0.0,
@@ -37,12 +37,30 @@
 			"parts": 3
 		},
 		{
-			"id": "fb493f7618a15c20",
-			"key": "fc0c5e558eaf305d-7b25a7aa2539d602 Plot6 -70 -180 180",
+			"id": "e7ca7611403ff458",
+			"key": "115ac3a755887f11-7b25a7aa2539d602 Plot6 -70 -180 180",
 			"piece": 1,
 			"label": "Plot6",
 			"turn": 0.0,
 			"bytes": 5869764,
+			"parts": 10
+		},
+		{
+			"id": "0486e1d1a0b389aa",
+			"key": "JunkrotGrindoBeanbasher-5a476970c2b89efc 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotGrindoBeanbasher",
+			"turn": 0.0,
+			"bytes": 721404,
+			"parts": 8
+		},
+		{
+			"id": "0720886069862270",
+			"key": "JunkrotRusteliRustela-41867bade3ceb8a9 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotRusteliRustela",
+			"turn": 0.0,
+			"bytes": 938936,
 			"parts": 10
 		}
 	],
@@ -101,7 +119,7 @@
 			]
 		},
 		{
-			"asset": "1841ab939f081f93",
+			"asset": "88b167075b6ef9e3",
 			"label": "Bridge1",
 			"turn": 0.0,
 			"anchors": [
@@ -244,7 +262,7 @@
 			]
 		},
 		{
-			"asset": "fb493f7618a15c20",
+			"asset": "e7ca7611403ff458",
 			"label": "Plot6",
 			"turn": 0.0,
 			"anchors": [
@@ -262,6 +280,52 @@
 						-110.0,
 						5.865,
 						220.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "0486e1d1a0b389aa",
+			"label": "Kit_JunkrotGrindoBeanbasher",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Hopper",
+					"position": [
+						384.0,
+						-146.56,
+						-0.20000000499999998
+					]
+				},
+				{
+					"name": "Sticker",
+					"position": [
+						384.7,
+						-147.2,
+						0.83
+					]
+				}
+			]
+		},
+		{
+			"asset": "0720886069862270",
+			"label": "Kit_JunkrotRusteliRustela",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "BackLegs",
+					"position": [
+						671.9840300000001,
+						-149.503055,
+						-1.1165569199999998
+					]
+				},
+				{
+					"name": "Trunk",
+					"position": [
+						671.9787650000001,
+						-148.642085,
+						1.7710532
 					]
 				}
 			]

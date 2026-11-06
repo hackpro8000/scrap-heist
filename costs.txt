@@ -1,4 +1,8 @@
-slab Bridge1	1.010
+slab Bridge1	1.008
 slab Bridge1 #split	1
-slab Plot6	3.781
+slab Plot6	3.767
 slab Plot6 #split	1
+JunkrotGrindoBeanbasher 1 x	0.657
+JunkrotGrindoBeanbasher 1 x #split	1
+JunkrotRusteliRustela 1 x	0.608
+JunkrotRusteliRustela 1 x #split	1
