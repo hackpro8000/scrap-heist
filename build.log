@@ -1,0 +1,368 @@
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses HubSectionA (key a8313e4a55d56339)
+assemble ServerMap: uses HubSectionB (key afc962b93a377a4a)
+assemble ServerMap: uses HubSectionEnd (key 48c8eb7545b33eb2)
+assemble ServerMap: uses YardIsland (key f7a297dc299e1e15)
+assemble ServerMap: uses YardFence (key fe3d5de848852dd7)
+assemble ServerMap: uses YardFenceHalf (key 18c1a8760a959e18)
+assemble ServerMap: uses YardFooting (key 5c7b334d7913a1ed)
+assemble ServerMap: uses YardGate (key 6a909dbc533c5385)
+assemble ServerMap: uses PlotMarker (key 1dcfac604b3fab76)
+assemble ServerMap: slab at ServerMap.luau:274-464 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:544-573 (key 7ded6fc62f8b67a3)
+assemble ServerMap: slab at ServerMap.luau:576-580 (key 2f5b4070ee3aa512)
+assemble ServerMap: slab at ServerMap.luau:656-662 (key 7b25a7aa2539d602)
+assemble ServerMap: slab at ServerMap.luau:664-673 (key 107c5c30239027da)
+assemble ServerMap: slab at ServerMap.luau:681-711 (key 18845c9c8b69ea54)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 1s
+[    0.0s] running ServerMap/model.luau
+[    0.3s] building Spawn -250 0 0
+[    0.3s]   shaded Pad 608×608 in 0.06s
+[    0.3s] built Spawn -250 0 0: 1 parts in 0.1s
+[    0.3s] building YardIsland 1 x part 3/5
+[    2.5s]   shaded Columns_-1_-1_0_101 704×704 in 0.08s
+[    2.7s]   shaded Columns_-1_0_-1_101 1000×1000 in 0.17s
+[    2.8s]   shaded Columns_-1_0_-1_100 504×504 in 0.04s
+[    3.0s]   shaded Columns_0_0_0 956×956 in 0.15s
+[    3.0s]   shaded Columns_-1_-2_0 44×44 in 0.00s
+[    3.0s]   shaded Dirt_0_0_0_100_110 244×244 in 0.01s
+[    3.1s]   shaded Dirt_0_0_0_011 464×464 in 0.03s
+[    3.1s]   shaded Dirt_0_0_0_000 372×372 in 0.02s
+[    3.1s]   shaded Dirt_0_-1_0_111 392×392 in 0.02s
+[    3.4s]   shaded Dirt_-1_-1_0_000 932×932 in 0.14s
+[    3.4s]   shaded Dirt_-1_0_0_010_100 284×284 in 0.01s
+[    3.5s]   shaded Dirt_-1_0_0_010_101 568×568 in 0.05s
+[    3.5s]   shaded Dirt_-1_0_0_000_111 496×496 in 0.04s
+[    3.6s]   shaded Dirt_-1_0_0_000_010 560×560 in 0.04s
+[    3.6s]   shaded Dirt_-1_0_0_000_011 336×336 in 0.01s
+[    3.7s]   shaded Dirt_-1_-2_0 724×724 in 0.08s
+[    3.7s]   shaded Pebbles_-1_-2_0 156×156 in 0.00s
+[    3.7s]   shaded Pebbles_-1_1_0 116×116 in 0.00s
+[    3.9s]   shaded Grass_0_-2_0 852×852 in 0.11s
+[    3.9s]   shaded Grass_-1_0_0_110 408×408 in 0.02s
+[    4.1s]   shaded Grass_0_0_0_100 876×876 in 0.13s
+[    4.1s] built YardIsland 1 x part 3/5: 21 parts in 3.8s
+[    4.2s] building YardFooting 1 x x1.5
+[    4.3s]   shaded Footing 256×256 in 0.01s
+[    4.3s] built YardFooting 1 x x1.5: 1 parts in 0.0s
+[    4.3s] cached YardFooting 1 x x1.5
+[    4.3s] cached YardFooting 1 x x1.5
+[    4.3s] cached YardFooting 1 x x1.5
+[    4.3s] cached YardFooting 1 x x1.5
+[    4.3s] cached YardFooting 1 x x1.5
+[    4.3s] cached YardFooting 1 x x1.5
+[    4.3s] cached YardFooting 1 x x1.5
+[    4.3s] building YardFence 1.037037037037037 x x1.5
+[    4.3s]   shaded Posts 256×256 in 0.01s
+[    4.3s]   shaded Sheets 256×256 in 0.02s
+[    4.3s]   shaded Fittings 256×256 in 0.01s
+[    4.3s] built YardFence 1.037037037037037 x x1.5: 3 parts in 0.1s
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFence 1.037037037037037 x x1.5
+[    4.3s] cached YardFooting 1 x x1.5
+[    4.3s] cached YardFooting 1 x x1.5
+[    4.3s] cached YardFooting 1 x x1.5
+[    4.3s] cached YardFooting 1 x x1.5
+[    4.3s] cached YardFooting 1 x x1.5
+[    4.3s] cached YardFooting 1 x x1.5
+[    4.3s] building PlotMarker 1 x x1.5
+[    4.3s]   shaded Post 256×256 in 0.01s
+[    4.4s]   shaded Sign 256×256 in 0.01s
+[    4.4s]   shaded Lamp 256×256 in 0.01s
+[    4.4s]   shaded Fittings 256×256 in 0.01s
+[    4.4s] built PlotMarker 1 x x1.5: 4 parts in 0.1s
+[    4.5s] cached YardIsland 1 x part 3/5
+[    4.5s] building YardFence 1 x x1.5
+[    4.5s]   shaded Posts 256×256 in 0.02s
+[    4.5s]   shaded Sheets 256×256 in 0.02s
+[    4.5s]   shaded Fittings 256×256 in 0.01s
+[    4.5s] built YardFence 1 x x1.5: 3 parts in 0.1s
+[    4.5s] cached YardFooting 1 x x1.5
+[    4.5s] cached YardFence 1 x x1.5
+[    4.5s] cached YardFooting 1 x x1.5
+[    4.5s] cached YardFence 1 x x1.5
+[    4.5s] cached YardFooting 1 x x1.5
+[    4.5s] cached YardFence 1 x x1.5
+[    4.5s] cached YardFooting 1 x x1.5
+[    4.5s] cached YardFence 1 x x1.5
+[    4.5s] cached YardFooting 1 x x1.5
+[    4.5s] cached YardFence 1 x x1.5
+[    4.5s] cached YardFooting 1 x x1.5
+[    4.5s] cached YardFooting 1 x x1.5
+[    4.5s] cached YardFooting 1 x x1.5
+[    4.5s] cached YardFence 1.037037037037037 x x1.5
+PLACED	Spawn	0	abb4bc7b898fe3b1-2f5b4070ee3aa512 Spawn -250 0 0
+SHARD_COST	slab Spawn	0.064
+SHARD_COST	slab Spawn #split	1
+PLACED	Island1	0	YardIsland-f7a297dc299e1e15 1 x part 3/5
+SHARD_COST	YardIsland 1 x	19.034
+SHARD_COST	YardIsland 1 x #split	1
+PLACED	Yard1_FootingBack1	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+SHARD_COST	YardFooting 1 x x1.5	0.018
+SHARD_COST	YardFooting 1 x x1.5 #split	1
+PLACED	Yard1_FootingBack2	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard1_FootingBack3	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard1_FootingBack4	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard1_FootingBack5	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard1_FootingBack6	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard1_FootingBack7	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard1_FootingBack8	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard1_FenceLeft1	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+SHARD_COST	YardFence 1.037037037037037 x x1.5	0.061
+SHARD_COST	YardFence 1.037037037037037 x x1.5 #split	1
+PLACED	Yard1_FenceRight1	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceLeft2	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceRight2	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceLeft3	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceRight3	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceLeft4	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceRight4	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceLeft5	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceRight5	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceLeft6	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceRight6	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceLeft7	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceRight7	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceLeft8	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceRight8	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceLeft9	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FenceRight9	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard1_FootingFront1	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard1_FootingFront2	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard1_FootingFront3	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard1_FootingFront4	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard1_FootingFront5	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard1_FootingFront6	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard1_PlotMarker	0	PlotMarker-1dcfac604b3fab76 1 x x1.5
+SHARD_COST	PlotMarker 1 x x1.5	0.059
+SHARD_COST	PlotMarker 1 x x1.5 #split	1
+PLACED	Island2	0	YardIsland-f7a297dc299e1e15 1 x part 3/5
+PLACED	Yard2_FenceBack1	180	YardFence-fe3d5de848852dd7 1 x x1.5
+SHARD_COST	YardFence 1 x x1.5	0.070
+SHARD_COST	YardFence 1 x x1.5 #split	1
+PLACED	Yard2_FootingBack1	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard2_FenceBack2	180	YardFence-fe3d5de848852dd7 1 x x1.5
+PLACED	Yard2_FootingBack2	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard2_FenceBack3	180	YardFence-fe3d5de848852dd7 1 x x1.5
+PLACED	Yard2_FootingBack3	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard2_FenceBack4	180	YardFence-fe3d5de848852dd7 1 x x1.5
+PLACED	Yard2_FootingBack4	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard2_FenceBack5	180	YardFence-fe3d5de848852dd7 1 x x1.5
+PLACED	Yard2_FootingBack5	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard2_FenceBack6	180	YardFence-fe3d5de848852dd7 1 x x1.5
+PLACED	Yard2_FootingBack6	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard2_FootingBack7	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard2_FootingBack8	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard2_FenceLeft1	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceRight1	9[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFence 1.037037037037037 x x1.5
+[    4.6s] cached YardFooting 1 x x1.5
+[    4.6s] cached YardFooting 1 x x1.5
+[    4.6s] cached YardFooting 1 x x1.5
+[    4.6s] building YardFooting 0.5 x x1.5
+[    4.6s]   shaded Footing 256×256 in 0.01s
+[    4.6s] built YardFooting 0.5 x x1.5: 1 parts in 0.0s
+[    4.6s] cached YardFence 1 x x1.5
+[    4.6s] cached YardFooting 1 x x1.5
+[    4.6s] cached YardFence 1 x x1.5
+[    4.6s] cached YardFooting 1 x x1.5
+[    4.6s] cached YardFence 1 x x1.5
+[    4.6s] cached YardFooting 0.5 x x1.5
+[    4.6s] cached PlotMarker 1 x x1.5
+[    4.7s] cached YardIsland 1 x part 3/5
+[    4.7s] cached YardFence 1 x x1.5
+[    4.7s] cached YardFooting 1 x x1.5
+[    4.7s] cached YardFooting 1 x x1.5
+[    4.7s] cached YardFooting 1 x x1.5
+[    4.7s] cached YardFooting 1 x x1.5
+[    4.7s] cached YardFooting 1 x x1.5
+[    4.7s] cached YardFooting 1 x x1.5
+[    4.7s] cached YardFooting 1 x x1.5
+[    4.7s] cached YardFooting 1 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+0	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceLeft2	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceRight2	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceLeft3	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceRight3	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceLeft4	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceRight4	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceLeft5	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceRight5	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceLeft6	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceRight6	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceLeft7	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceRight7	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceLeft8	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceRight8	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceLeft9	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FenceRight9	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard2_FootingFront1	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard2_FootingFront2	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard2_FootingFront3	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard2_FootingFrontHalf1	0	YardFooting-5c7b334d7913a1ed 0.5 x x1.5
+SHARD_COST	YardFooting 0.5 x x1.5	0.020
+SHARD_COST	YardFooting 0.5 x x1.5 #split	1
+PLACED	Yard2_FenceFront4	0	YardFence-fe3d5de848852dd7 1 x x1.5
+PLACED	Yard2_FootingFront4	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard2_FenceFront5	0	YardFence-fe3d5de848852dd7 1 x x1.5
+PLACED	Yard2_FootingFront5	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard2_FenceFront6	0	YardFence-fe3d5de848852dd7 1 x x1.5
+PLACED	Yard2_FootingFrontHalf2	0	YardFooting-5c7b334d7913a1ed 0.5 x x1.5
+PLACED	Yard2_PlotMarker	0	PlotMarker-1dcfac604b3fab76 1 x x1.5
+PLACED	Island3	0	YardIsland-f7a297dc299e1e15 1 x part 3/5
+PLACED	Yard3_FenceBack1	180	YardFence-fe3d5de848852dd7 1 x x1.5
+PLACED	Yard3_FootingBack1	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard3_FootingBack2	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard3_FootingBack3	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard3_FootingBack4	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard3_FootingBack5	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard3_FootingBack6	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard3_FootingBack7	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard3_FootingBack8	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard3_FenceLeft1	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceRight1	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceLeft2	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceRight2	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceLeft3	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceRight3	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceLeft4	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceRight4	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceLeft5	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceRight5	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceLeft6	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceRight6	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceLeft7	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceRight7	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceLeft8	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceRight8	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_Fen[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached YardFence 1.037037037037037 x x1.5
+[    4.7s] cached PlotMarker 1 x x1.5
+[    4.8s] cached YardIsland 1 x part 3/5
+[    4.8s] cached YardFooting 1 x x1.5
+[    4.8s] cached YardFooting 1 x x1.5
+[    4.8s] cached YardFooting 1 x x1.5
+[    4.8s] cached YardFooting 1 x x1.5
+[    4.8s] cached YardFooting 1 x x1.5
+[    4.8s] cached YardFooting 1 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached YardFence 1.037037037037037 x x1.5
+[    4.8s] cached PlotMarker 1 x x1.5
+[    4.9s] cached YardIsland 1 x part 3/5
+[    4.9s] building Plot5 -210 -180 180
+[    5.2s] baking on CPU (no GPU)
+[    6.0s]   shaded Ground_-1_-1_0 816×816 in 0.90s
+[    6.2s]   shaded Ground_-1_0_0_000 540×540 in 0.20s
+[    6.4s]   shaded Ground_-1_0_0_010 544×544 in 0.20s
+[    6.9s]   shaded Ground_-1_0_0_100 540×540 in 0.38s
+[    7.3s]   shaded Ground_-1_0_0_110 544×544 in 0.37s
+[    8.4s]   shaded Ground_0_-1_0 816×816 in 0.90s
+[    8.8s]   shaded Ground_0_0_0_000 540×540 in 0.38s
+[    9.3s]   shaded Ground_0_0_0_010 544×544 in 0.38s
+[    9.5s]   shaded Ground_0_0_0_100 540×540 in 0.20s
+[    9.7s]   shaded Ground_0_0_0_110 544×544 in 0.21s
+[    9.7s] built Plot5 -210 -180 180: 10 parts in 4.8s
+[    9.8s] cached YardIsland 1 x part 3/5
+[    9.9s] cached YardIsland 1 x part 3/5
+[   10.0s] cached YardIsland 1 x part 3/5
+[   10.0s] writing ServerMap.glb and 484 textures
+ServerMap: 484 parts, script 10.00s, total 11.78s
+ceLeft9	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_FenceRight9	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard3_PlotMarker	0	PlotMarker-1dcfac604b3fab76 1 x x1.5
+PLACED	Island4	0	YardIsland-f7a297dc299e1e15 1 x part 3/5
+PLACED	Yard4_FootingBack1	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard4_FootingBack2	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard4_FootingBack3	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard4_FootingBack4	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard4_FootingBack6	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard4_FootingBack8	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard4_FenceLeft1	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight1	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft2	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight2	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft3	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight3	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft4	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight4	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft5	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight5	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft6	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight6	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft7	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight7	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft8	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight8	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft9	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight9	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_PlotMarker	0	PlotMarker-1dcfac604b3fab76 1 x x1.5
+PLACED	Island5	180	YardIsland-f7a297dc299e1e15 1 x part 3/5
+PLACED	Plot5	0	abb4bc7b898fe3b1-7b25a7aa2539d602 Plot5 -210 -180 180
+SHARD_COST	slab Plot5	4.817
+SHARD_COST	slab Plot5 #split	1
+PLACED	Island6	180	YardIsland-f7a297dc299e1e15 1 x part 3/5
+PLACED	Island7	180	YardIsland-f7a297dc299e1e15 1 x part 3/5
+PLACED	Island8	180	YardIsland-f7a297dc299e1e15 1 x part 3/5
+export ServerMap: part Yard2_FenceRight1_Posts belongs to no placement in results/t1793967217-657770/build.log

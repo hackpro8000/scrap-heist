@@ -1,0 +1,30 @@
+PLACED	Yard4_FootingBack4	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard4_FootingBack6	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard4_FootingBack8	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
+PLACED	Yard4_FenceLeft1	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight1	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft2	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight2	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft3	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight3	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft4	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight4	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft5	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight5	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft6	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight6	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft7	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight7	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft8	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight8	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft9	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_FenceRight9	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
+PLACED	Yard4_PlotMarker	0	PlotMarker-1dcfac604b3fab76 1 x x1.5
+PLACED	Island5	180	YardIsland-f7a297dc299e1e15 1 x part 3/5
+PLACED	Plot5	0	abb4bc7b898fe3b1-7b25a7aa2539d602 Plot5 -210 -180 180
+SHARD_COST	slab Plot5	4.817
+SHARD_COST	slab Plot5 #split	1
+PLACED	Island6	180	YardIsland-f7a297dc299e1e15 1 x part 3/5
+PLACED	Island7	180	YardIsland-f7a297dc299e1e15 1 x part 3/5
+PLACED	Island8	180	YardIsland-f7a297dc299e1e15 1 x part 3/5
+export ServerMap: part Yard2_FenceRight1_Posts belongs to no placement in results/t1793967217-657770/build.log
