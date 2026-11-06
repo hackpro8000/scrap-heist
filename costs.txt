@@ -1,18 +1,12 @@
-slab Yard2_Press	0.134
-slab Yard2_Press #split	1
-slab Yard3_Bay1	0.050
-slab Yard3_Bay1 #split	1
-slab Approach3	0.325
-slab Approach3 #split	1
-YardPath 1 x x2	0.198
-YardPath 1 x x2 #split	1
-YardFooting 1 x x1.5	0.049
+HubSectionA 1 x	57.643
+HubSectionA 1 x #split	1
+YardFooting 1 x x1.5	0.018
 YardFooting 1 x x1.5 #split	1
-slab Approach5	0.325
-slab Approach5 #split	1
-slab Yard6_Press	0.122
-slab Yard6_Press #split	1
-slab Yard7_Bay3	0.125
-slab Yard7_Bay3 #split	1
-slab Yard8_Bay1	0.134
-slab Yard8_Bay1 #split	1
+slab Bridge3	1.321
+slab Bridge3 #split	1
+YardFence 1 x x1.5	0.154
+YardFence 1 x x1.5 #split	1
+YardGate 1 x x1.5	0.207
+YardGate 1 x x1.5 #split	1
+slab Plot7	3.998
+slab Plot7 #split	1
