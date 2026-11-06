@@ -38,6 +38,10 @@ jobs:
       ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
       ROBLOX_CREATOR_ID: ${{ secrets.ROBLOX_CREATOR_ID }}
     steps:
+      # Tasks posted since this machine came up count, even ones posted while
+      # it was still checking out and restoring its cache.
+      - name: Note start time
+        run: echo "STANDBY_SINCE=$(date +%s)" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref }}

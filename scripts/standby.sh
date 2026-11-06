@@ -85,9 +85,14 @@ EOF
 	say "task ${id}: ${status} in $((SECONDS - started))s (build ${build_seconds}s)"
 }
 
-# Only tasks posted after standby starts count.
+# Tasks posted since this standby run began count, even one posted while
+# this machine was still starting up; older ones are ignored.
+since="${STANDBY_SINCE:-$(date +%s)}"
 seen="$(queue_head)"
-say "waiting ${minutes} min for tasks (queue at ${seen:-empty})"
+if [ -n "${seen}" ] && git fetch -q --depth=1 origin "${seen}" && [ "$(git log -1 --format=%ct "${seen}")" -ge "${since}" ]; then
+	seen=""
+fi
+say "waiting ${minutes} min for tasks posted since $(date -d "@${since}" +%T)"
 while [ "${SECONDS}" -lt "${deadline}" ]; do
 	sleep 3
 	head="$(queue_head)"
