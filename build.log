@@ -14,7 +14,7 @@ assemble ServerMap: slab at ServerMap.luau:576-580 (key 2f5b4070ee3aa512)
 assemble ServerMap: slab at ServerMap.luau:656-662 (key 7b25a7aa2539d602)
 assemble ServerMap: slab at ServerMap.luau:664-673 (key 107c5c30239027da)
 assemble ServerMap: slab at ServerMap.luau:681-711 (key 18845c9c8b69ea54)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 1s
 [    0.0s] running ServerMap/model.luau
 [    0.2s] cached Spawn -250 0 0
 [    0.2s] cached YardIsland 1 x part 3/5
@@ -34,10 +34,10 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
 [    0.2s] cached YardFence 1.037037037037037 x x1.5
 [    0.2s] cached YardFence 1.037037037037037 x x1.5
 [    0.2s] cached YardFence 1.037037037037037 x x1.5
-[    0.3s] cached YardFence 1.037037037037037 x x1.5
-[    0.3s] cached YardFence 1.037037037037037 x x1.5
-[    0.3s] cached YardFence 1.037037037037037 x x1.5
-[    0.3s] cached YardFence 1.037037037037037 x x1.5
+[    0.2s] cached YardFence 1.037037037037037 x x1.5
+[    0.2s] cached YardFence 1.037037037037037 x x1.5
+[    0.2s] cached YardFence 1.037037037037037 x x1.5
+[    0.2s] cached YardFence 1.037037037037037 x x1.5
 [    0.3s] cached YardFence 1.037037037037037 x x1.5
 [    0.3s] cached YardFence 1.037037037037037 x x1.5
 [    0.3s] cached YardFence 1.037037037037037 x x1.5
@@ -70,11 +70,11 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
 [    0.3s] cached YardFence 1.037037037037037 x x1.5
 [    0.3s] cached YardFence 1.037037037037037 x x1.5
 [    0.3s] cached YardFence 1.037037037037037 x x1.5
-[    0.4s] cached YardFence 1.037037037037037 x x1.5
-[    0.4s] cached YardFence 1.037037037037037 x x1.5
-[    0.4s] cached YardFence 1.037037037037037 x x1.5
-[    0.4s] cached YardFence 1.037037037037037 x x1.5
-[    0.4s] cached YardFence 1.037037037037037 x x1.5
+[    0.3s] cached YardFence 1.037037037037037 x x1.5
+[    0.3s] cached YardFence 1.037037037037037 x x1.5
+[    0.3s] cached YardFence 1.037037037037037 x x1.5
+[    0.3s] cached YardFence 1.037037037037037 x x1.5
+[    0.3s] cached YardFence 1.037037037037037 x x1.5
 [    0.4s] cached YardFence 1.037037037037037 x x1.5
 [    0.4s] cached YardFence 1.037037037037037 x x1.5
 [    0.4s] cached YardFence 1.037037037037037 x x1.5
@@ -107,13 +107,13 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
 [    0.4s] cached YardFooting 1 x x1.5
 [    0.4s] cached YardFence 1.037037037037037 x x1.5
 [    0.4s] cached YardFence 1.037037037037037 x x1.5
-[    0.5s] cached YardFence 1.037037037037037 x x1.5
-[    0.5s] cached YardFence 1.037037037037037 x x1.5
-[    0.5s] cached YardFence 1.037037037037037 x x1.5
-[    0.5s] cached YardFence 1.037037037037037 x x1.5
-[    0.5s] cached YardFence 1.037037037037037 x x1.5
-[    0.5s] cached YardFence 1.037037037037037 x x1.5
-[    0.5s] cached YardFence 1.037037037037037 x x1.5
+[    0.4s] cached YardFence 1.037037037037037 x x1.5
+[    0.4s] cached YardFence 1.037037037037037 x x1.5
+[    0.4s] cached YardFence 1.037037037037037 x x1.5
+[    0.4s] cached YardFence 1.037037037037037 x x1.5
+[    0.4s] cached YardFence 1.037037037037037 x x1.5
+[    0.4s] cached YardFence 1.037037037037037 x x1.5
+[    0.4s] cached YardFence 1.037037037037037 x x1.5
 [    0.5s] cached YardFence 1.037037037037037 x x1.5
 [    0.5s] cached YardFence 1.037037037037037 x x1.5
 [    0.5s] cached YardFence 1.037037037037037 x x1.5
@@ -139,13 +139,13 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
 [    0.5s] cached YardFence 1.037037037037037 x x1.5
 [    0.5s] cached YardFence 1.037037037037037 x x1.5
 [    0.5s] cached YardFence 1.037037037037037 x x1.5
-[    0.6s] cached YardFence 1.037037037037037 x x1.5
-[    0.6s] cached YardFence 1.037037037037037 x x1.5
-[    0.6s] cached YardFence 1.037037037037037 x x1.5
-[    0.6s] cached YardFence 1.037037037037037 x x1.5
-[    0.6s] cached YardFence 1.037037037037037 x x1.5
-[    0.6s] cached YardFence 1.037037037037037 x x1.5
-[    0.6s] cached YardFence 1.037037037037037 x x1.5
+[    0.5s] cached YardFence 1.037037037037037 x x1.5
+[    0.5s] cached YardFence 1.037037037037037 x x1.5
+[    0.5s] cached YardFence 1.037037037037037 x x1.5
+[    0.5s] cached YardFence 1.037037037037037 x x1.5
+[    0.5s] cached YardFence 1.037037037037037 x x1.5
+[    0.5s] cached YardFence 1.037037037037037 x x1.5
+[    0.5s] cached YardFence 1.037037037037037 x x1.5
 [    0.6s] cached YardFence 1.037037037037037 x x1.5
 [    0.6s] cached YardFence 1.037037037037037 x x1.5
 [    0.6s] cached YardFence 1.037037037037037 x x1.5
@@ -156,7 +156,7 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
 [    0.8s] cached YardIsland 1 x part 3/5
 [    0.9s] cached YardIsland 1 x part 3/5
 [    0.9s] writing ServerMap.glb and 484 textures
-ServerMap: 484 parts, script 887.25ms, total 1.97s
+ServerMap: 484 parts, script 863.90ms, total 2.22s
 PLACED	Spawn	0	abb4bc7b898fe3b1-2f5b4070ee3aa512 Spawn -250 0 0
 PLACED	Island1	0	YardIsland-f7a297dc299e1e15 1 x part 3/5
 PLACED	Yard1_FootingBack1	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
@@ -297,7 +297,3 @@ PLACED	Island6	180	YardIsland-f7a297dc299e1e15 1 x part 3/5
 PLACED	Island7	180	YardIsland-f7a297dc299e1e15 1 x part 3/5
 PLACED	Island8	180	YardIsland-f7a297dc299e1e15 1 x part 3/5
 export ServerMap: 8 objects (13.8 MB) for 139 placements
-remote: 
-remote: Create a pull request for 'build-objects/s14' on GitHub by visiting:        
-remote:      https://github.com/hackpro8000/scrap-heist/pull/new/build-objects/s14        
-remote: 
