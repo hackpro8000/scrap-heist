@@ -1,0 +1,151 @@
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses ArenaDrone (key 3feaec12b72c179a)
+assemble ServerMap: uses HubIsland (key 6021be3c8a87dbbc)
+assemble ServerMap: uses YardIsland (key 11c6adb69c9d778d)
+assemble ServerMap: uses ShopConceptContainer (key 3bd24aa005fdec59)
+assemble ServerMap: uses ScrapTreeLamppost (key 3721cdc5289a1227)
+assemble ServerMap: uses VendingMachine (key 8c8c9e54c0152446)
+assemble ServerMap: uses ParkBench (key 644aec5ddc470126)
+assemble ServerMap: uses ScrapPalm (key 71b29a81d57ca962)
+assemble ServerMap: uses ShippingContainer (key b4618da1e6c8e874)
+assemble ServerMap: uses CarStack (key 18868d27bbadf854)
+assemble ServerMap: uses CrushedCar (key cb21a631053a549a)
+assemble ServerMap: uses Barrels (key 6fd22d825787f5b7)
+assemble ServerMap: uses TyreStack (key 19ab2944a510d9c5)
+assemble ServerMap: uses JunkWall (key acd51bf6f9b5d959)
+assemble ServerMap: uses Dumpster (key 5705b07a41a863a8)
+assemble ServerMap: uses Pallets (key af2bcdda5ec40e79)
+assemble ServerMap: uses StreetlightBroken (key 860caef50018b787)
+assemble ServerMap: uses TrafficCones (key 878424fc7df50b09)
+assemble ServerMap: uses GroundTile (key 43a80920e4c5168b)
+assemble ServerMap: uses MachinePad (key 1b6d00719513f1f7)
+assemble ServerMap: uses YardFence (key 122ba19da15d7e80)
+assemble ServerMap: uses YardFenceHalf (key 76101fa539bb054b)
+assemble ServerMap: uses YardFooting (key 5f7c0e3c30ab293e)
+assemble ServerMap: uses YardGate (key 692a8cf69b44f092)
+assemble ServerMap: uses PlotMarker (key f406cb0c06262f89)
+assemble ServerMap: uses StorageCrate (key 5d99f3bcd3db5fca)
+assemble ServerMap: uses YardPath (key f096c7510747dcc8)
+assemble ServerMap: uses YardPathStub (key 9d6e97b27d7f04b9)
+assemble ServerMap: slab at ServerMap.luau:822-871 (key 5c7ab7c43edf108b)
+assemble ServerMap: slab at ServerMap.luau:876-900 (key e1d53c436615f36a)
+assemble ServerMap: slab at ServerMap.luau:934-949 (key f4f9015cc7a52d81)
+assemble ServerMap: slab at ServerMap.luau:1028-1218 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:1281-1285 (key cd506193dae2c60f)
+assemble ServerMap: slab at ServerMap.luau:1314-1335 (key 1db25ee55eaf429a)
+assemble ServerMap: slab at ServerMap.luau:1348-1365 (key 492adbf74c50ddf1)
+assemble ServerMap: slab at ServerMap.luau:1381-1388 (key 2b2b51e4886723fb)
+assemble ServerMap: slab at ServerMap.luau:1411-1415 (key 886388888fe59ef3)
+assemble ServerMap: slab at ServerMap.luau:1418-1426 (key 209bd5af05ec8c81)
+assemble ServerMap: slab at ServerMap.luau:1470-1492 (key dfbe27eb7d68389c)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 31115 lines, in 1s
+[    0.0s] running ServerMap/model.luau
+[    0.4s] building HubIsland 1 x part 9/16
+[    2.5s] baking on CPU (no GPU)
+[    2.6s]   shaded Columns_-1_1_-1_011 380×380 in 0.13s
+[    3.6s]   shaded Columns_0_-1_-2 864×864 in 0.97s
+[    3.6s]   shaded Columns_0_0_-1_110_001 284×284 in 0.03s
+[    4.0s]   shaded Columns_0_-2_0_001 616×616 in 0.30s
+[    4.2s]   shaded Columns_1_0_-1_011 464×464 in 0.18s
+[    5.2s]   shaded Columns_0_-2_-1 900×900 in 1.03s
+[    5.7s]   shaded Dirt_1_-1_0_101 632×632 in 0.42s
+[    6.2s]   shaded Dirt_1_0_0_101 692×692 in 0.53s
+[    6.4s]   shaded Dirt_1_0_0_000 64×64 in 0.11s
+[    6.7s]   shaded Dirt_1_-2_0_011_101 492×492 in 0.30s
+[    7.3s]   shaded Dirt_-1_-1_-1_001 768×768 in 0.61s
+[    8.2s]   shaded Dirt_1_-1_-1 780×780 in 0.85s
+[    8.5s]   shaded Dirt_0_-1_-1_100 420×420 in 0.28s
+[    9.3s]   shaded Dirt_-1_-2_0_000 664×664 in 0.77s
+[    9.7s]   shaded Dirt_-2_1_0_101_001 548×548 in 0.38s
+[    9.7s]   shaded Pebbles_1_-1_-1 136×136 in 0.02s
+[    9.8s]   shaded Pebbles_0_-2_0 348×348 in 0.15s
+[    9.9s]   shaded Pebbles_1_-2_0 156×156 in 0.03s
+[   10.0s]   shaded Pebbles_1_-1_0 280×280 in 0.10s
+[   10.4s]   shaded Grass_-2_-1_0_000_010 532×532 in 0.39s
+[   11.1s]   shaded Grass_-2_-1_0_100 540×540 in 0.63s
+[   11.8s]   shaded Grass_-1_1_0_010 964×964 in 0.72s
+[   12.0s]   shaded Grass_2_0_0 256×256 in 0.10s
+[   12.6s]   shaded Grass_-1_0_0_100 540×540 in 0.62s
+[   12.6s] built HubIsland 1 x part 9/16: 24 parts in 12.2s
+[   12.7s] building TyreStack 1 x x1.8
+[   12.8s]   shaded Tyres 256×256 in 0.05s
+[   12.8s]   shaded Rim 256×256 in 0.03s
+[   12.8s] built TyreStack 1 x x1.8: 2 parts in 0.1s
+[   12.8s] building Barrels 1 x x1.9
+[   12.8s]   shaded RustDrums 256×256 in 0.04s
+[   12.9s]   shaded BlueDrum 256×256 in 0.04s
+[   12.9s]   shaded Hoops 256×256 in 0.02s
+[   12.9s]   shaded Slick 256×256 in 0.03s
+[   12.9s] built Barrels 1 x x1.9: 4 parts in 0.2s
+[   12.9s] building ShopConceptContainer 1 x x2.5 part 4/5
+[   13.6s]   shaded Container_-1_0_0_100_001_111 536×536 in 0.17s
+[   14.0s]   shaded Container_-1_0_0_101_000_001 792×792 in 0.42s
+[   14.2s]   shaded Container_-1_0_0_101_000_011 520×520 in 0.16s
+[   14.4s]   shaded Container_-1_0_0_101_000_111 548×548 in 0.14s
+[   14.5s]   shaded Container_-1_0_0_101_100_011 456×456 in 0.13s
+[   14.7s]   shaded Container_0_0_0_000_001_010 516×516 in 0.16s
+[   14.8s]   shaded Container_0_0_0_000_001_111 400×400 in 0.09s
+[   15.3s]   shaded Container_0_0_0_000_101 896×896 in 0.49s
+[   15.4s]   shaded Container_0_0_0_001_001_011 436×436 in 0.11s
+[   15.7s]   shaded Container_0_0_0_001_000_001 632×632 in 0.23s
+[   16.1s]   shaded Container_-1_-1_0_111_010_011 776×776 in 0.35s
+[   16.5s]   shaded Container_0_-1_0_010_110 876×876 in 0.40s
+[   16.8s]   shaded Container_0_-1_0_011_010_011 760×760 in 0.29s
+[   16.9s]   shaded Frame_-1_-1_0_110_011 428×428 in 0.07s
+[   17.0s]   shaded Frame_-1_-1_0_110_111 708×708 in 0.07s
+[   17.0s]   shaded Frame_0_-1_0_010_111 396×396 in 0.07s
+[   17.1s]   shaded Frame_0_-1_0_110_011_011 212×212 in 0.03s
+[   17.3s]   shaded Frame_0_-1_0_011_011 732×732 in 0.17s
+[   17.4s]   shaded Frame_-1_0_0_100_100 672×672 in 0.12s
+[   17.5s]   shaded Frame_-1_0_0_101_101 680×680 in 0.06s
+[   17.5s]   shaded Frame_0_0_0_100_001_011 168×168 in 0.02s
+[   17.7s]   shaded Frame_0_0_0_100_001_001 1008×1008 in 0.19s
+[   17.8s]   shaded Frame_0_0_0_001_101 688×688 in 0.09s
+[   17.8s]   shaded Interior_-1_-1_0_010_100 336×336 in 0.05s
+[   17.9s]   shaded Interior_-1_-1_0_110_100 316×316 in 0.05s
+[   18.0s]   shaded Interior_-1_-1_0_110_110 672×672 in 0.14s
+[   18.4s]   shaded Interior_-1_0_0_101 928×928 in 0.36s
+[   18.6s]   shaded Interior_0_-1_0_010_110 660×660 in 0.14s
+[   18.9s]   shaded Interior_0_0_0_000_000 840×840 in 0.30s
+[   18.9s]   shaded Flap_-1_-1_0_001_101 104×104 in 0.01s
+[   19.0s]   shaded Flap_-1_-1_0_101_000 108×108 in 0.01s
+[   19.0s]   shaded Flap_0_-1_0_010 228×228 in 0.05s
+[   19.2s]   shaded Flap_0_-1_0_001_011_000 980×980 in 0.21s
+[   19.4s]   shaded Flap_0_-1_0_001_111_001 968×968 in 0.20s
+[   19.5s]   shaded Flap_0_-1_0_011 208×208 in 0.03s
+[   19.5s]   shaded Flap_0_-1_0_101_001 212×212 in 0.02s
+[   19.8s]   shaded Flap_0_-1_0_101_011_001 1008×1008 in 0.30s
+[   19.9s]   shaded Flap_0_-1_0_101_011_101 700×700 in 0.09s
+[   20.1s]   shaded Flap_0_-1_0_101_011_100 840×840 in 0.21s
+[   20.2s]   shaded FlapFrame_-1_-1_0_111_111_101_100_111 1024×1024 in 0.10s
+[   20.3s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_110_111_101 164×164 in 0.01s
+[   20.3s]   shaded FlapFrame_-1_-1_0_111_001_100 364×364 in 0.08s
+[   20.5s]   shaded FlapFrame_-1_-1_0_111_001_111_000 204×204 in 0.17s
+[   20.6s]   shaded FlapFrame_0_-1_0_011_111 156×156 in 0.04s
+[   20.6s]   shaded FlapFrame_0_-1_0_011_100 76×76 in 0.03s
+[   20.7s]   shaded Counter_-1_-1_0_101_111 1024×1024 in 0.14s
+[   21.3s]   shaded Counter_-1_-1_0_111 932×932 in 0.52s
+[   21.3s]   shaded Counter_0_-1_0_101 260×260 in 0.05s
+[   21.5s]   shaded Counter_0_-1_0_111 564×564 in 0.19s
+[   21.5s]   shaded Counter_0_-1_0_010 308×308 in 0.02s
+[   21.7s]   shaded Counter_-1_0_0_100_001_101 608×608 in 0.13s
+[   21.8s]   shaded Counter_-1_0_0_100_001_011 336×336 in 0.09s
+[   22.1s]   shaded Counter_-1_0_0_101 864×864 in 0.33s
+[   22.3s]   shaded Wire 1024×1024 in 0.15s
+[   22.9s]   shaded SignSpring 1024×1024 in 0.55s
+[   23.0s]   shaded SignBolts_-1_-1_1_111_111 1024×1024 in 0.10s
+[   23.5s]   shaded Drum 1024×1024 in 0.45s
+[   23.6s]   shaded Stencil 656×656 in 0.15s
+[   23.6s] built ShopConceptContainer 1 x x2.5 part 4/5: 58 parts in 10.7s
+[   24.3s] writing ServerMap.glb and 88 textures
+[   25.0s] chunk ServerMap_S15_01.glb: 30 parts, 6.9 MB
+[   25.0s] chunk ServerMap_S15_02.glb: 58 parts, 16.1 MB
+ServerMap: 88 parts, script 24.29s, total 25.25s
+SHARD_COST	HubIsland 1 x	195.487
+SHARD_COST	HubIsland 1 x #split	1
+SHARD_COST	TyreStack 1 x x1.8	0.092
+SHARD_COST	TyreStack 1 x x1.8 #split	1
+SHARD_COST	Barrels 1 x x1.9	0.150
+SHARD_COST	Barrels 1 x x1.9 #split	1
+SHARD_COST	ShopConceptContainer 1 x x2.5	53.361
+SHARD_COST	ShopConceptContainer 1 x x2.5 #split	1

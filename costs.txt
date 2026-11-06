@@ -1,0 +1,8 @@
+HubIsland 1 x	195.487
+HubIsland 1 x #split	1
+TyreStack 1 x x1.8	0.092
+TyreStack 1 x x1.8 #split	1
+Barrels 1 x x1.9	0.150
+Barrels 1 x x1.9 #split	1
+ShopConceptContainer 1 x x2.5	53.361
+ShopConceptContainer 1 x x2.5 #split	1
