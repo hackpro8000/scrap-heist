@@ -1,6 +1,0 @@
-slab Bridge1	1.005
-slab Bridge1 #split	1
-slab Plot6	3.854
-slab Plot6 #split	1
-JunkrotHeadphonoBassimo 1 x	0.502
-JunkrotHeadphonoBassimo 1 x #split	1
