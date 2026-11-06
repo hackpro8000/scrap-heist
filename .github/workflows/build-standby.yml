@@ -4,7 +4,8 @@
 # stay up while tasks keep coming: each task restarts the idle countdown
 # (`minutes`, at most 60), and standby ends at `max_minutes` regardless (or
 # when the run is cancelled). Each machine saves its cache when it ends. The
-# defaults keep machines warm for an hour.
+# defaults let machines idle for up to an hour between tasks, for at most
+# 5 hours in all.
 #
 #   gh workflow run build-standby.yml -f ref=wip/coordinator -f shards=16
 name: Build standby
@@ -29,7 +30,7 @@ on:
         default: "60"
       max_minutes:
         description: Most minutes standby stays up, tasks or not (1-300)
-        default: "60"
+        default: "300"
       cold:
         description: Start without the saved build caches, so the first task builds from scratch
         type: boolean

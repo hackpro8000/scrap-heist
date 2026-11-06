@@ -17,7 +17,7 @@ cd "${root}"
 run="$(gh run list --workflow=build-standby.yml --limit 10 --json databaseId,status,displayTitle,createdAt \
 	--jq '[.[] | select(.status == "in_progress" or .status == "queued")][0] | select(. != null) | "\(.databaseId)\t\(.displayTitle)\t\(.createdAt)"')"
 if [ -z "${run}" ]; then
-	[ "${1:-}" = "--line" ] || echo "no build machines on standby; start some (warm for an hour) with: gh workflow run build-standby.yml -f ref=wip/coordinator -f shards=16"
+	[ "${1:-}" = "--line" ] || echo "no build machines on standby; start some (idle up to an hour) with: gh workflow run build-standby.yml -f ref=wip/coordinator -f shards=16"
 	exit 1
 fi
 IFS=$'\t' read -r id title created <<< "${run}"
