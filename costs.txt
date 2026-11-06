@@ -1,6 +1,29 @@
-slab Spawn	0.094
+slab Spawn	0.063
 slab Spawn #split	1
-YardIsland 1 x	74.753
+YardIsland 1 x	72.525
 YardIsland 1 x #split	1
-slab Plot2	4.782
-slab Plot2 #split	1
+PadGarage 1 x x1.6666666666666667	0.185
+PadGarage 1 x x1.6666666666666667 #split	1
+slab Yard1_Bay1	0.150
+slab Yard1_Bay1 #split	1
+StorageCrate 1 x x2	8.993
+YardPath 1 x x2	0.238
+YardPath 1 x x2 #split	1
+PlotMarker 1 x x1.5	0.383
+PlotMarker 1 x x1.5 #split	1
+YardFenceHalf 1 x x1.5	0.151
+YardFenceHalf 1 x x1.5 #split	1
+slab Yard3_Bay3	0.157
+slab Yard3_Bay3 #split	1
+slab Yard4_Press	0.153
+slab Yard4_Press #split	1
+YardFooting 1 x x1.5	0.060
+YardFooting 1 x x1.5 #split	1
+YardFooting 0.5 x x1.5	0.064
+YardFooting 0.5 x x1.5 #split	1
+slab Bridge5	1.605
+slab Bridge5 #split	1
+YardFence 1 x x1.5	0.174
+YardFence 1 x x1.5 #split	1
+slab Bridge7	1.608
+slab Bridge7 #split	1
