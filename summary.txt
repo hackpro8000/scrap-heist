@@ -1,5 +1,5 @@
-status=FAILED
-build=9
-upload=skipped
-total=9
-parts=0
+status=DONE
+build=3
+upload=45s
+total=48
+parts=496
