@@ -19,8 +19,8 @@
 			"parts": 4
 		},
 		{
-			"id": "9e68755092be82ed",
-			"key": "d85c17ddde731d72-107c5c30239027da Spoke3 70 180 0",
+			"id": "a55fff5333a66ff2",
+			"key": "fc0c5e558eaf305d-107c5c30239027da Spoke3 70 180 0",
 			"piece": 1,
 			"label": "Spoke3",
 			"turn": 0.0,
@@ -28,8 +28,8 @@
 			"parts": 1
 		},
 		{
-			"id": "e5bbcdc7164a4e5f",
-			"key": "d85c17ddde731d72-7b25a7aa2539d602 Plot4 210 180 0",
+			"id": "5f50c978082efa9c",
+			"key": "fc0c5e558eaf305d-7b25a7aa2539d602 Plot4 210 180 0",
 			"piece": 1,
 			"label": "Plot4",
 			"turn": 0.0,
@@ -42,7 +42,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotHubcappaWobbla",
 			"turn": 0.0,
-			"bytes": 556988,
+			"bytes": 557008,
 			"parts": 6
 		},
 		{
@@ -51,8 +51,17 @@
 			"piece": 1,
 			"label": "Kit_JunkrotFanettoWobblino",
 			"turn": 0.0,
-			"bytes": 647608,
+			"bytes": 647612,
 			"parts": 7
+		},
+		{
+			"id": "bd6b6ba77380bf74",
+			"key": "JunkrotDrippiDroppi-b006345a7aeeab08 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotDrippiDroppi",
+			"turn": 0.0,
+			"bytes": 820588,
+			"parts": 9
 		}
 	],
 	"placements": [
@@ -133,7 +142,7 @@
 			]
 		},
 		{
-			"asset": "9e68755092be82ed",
+			"asset": "a55fff5333a66ff2",
 			"label": "Spoke3",
 			"turn": 0.0,
 			"anchors": [
@@ -148,7 +157,7 @@
 			]
 		},
 		{
-			"asset": "e5bbcdc7164a4e5f",
+			"asset": "5f50c978082efa9c",
 			"label": "Plot4",
 			"turn": 0.0,
 			"anchors": [
@@ -178,7 +187,7 @@
 				{
 					"name": "Cap",
 					"position": [
-						96.014375,
+						-35.985620499999996,
 						-148.78175,
 						0.1183449785
 					]
@@ -193,7 +202,7 @@
 				{
 					"name": "Motor",
 					"position": [
-						359.998985,
+						227.99898000000002,
 						-147.611965,
 						-0.299714545
 					]
@@ -201,9 +210,32 @@
 				{
 					"name": "Pupils",
 					"position": [
-						360.021165,
+						228.021175,
 						-148.9535,
 						0.62021354
+					]
+				}
+			]
+		},
+		{
+			"asset": "bd6b6ba77380bf74",
+			"label": "Kit_JunkrotDrippiDroppi",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Bands",
+					"position": [
+						491.99721,
+						-148.504455,
+						-0.56426208
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						492.021165,
+						-147.4535,
+						1.27021355
 					]
 				}
 			]

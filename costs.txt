@@ -1,8 +1,6 @@
-slab Spoke3	0.100
+slab Spoke3	0.079
 slab Spoke3 #split	1
-slab Plot4	4.710
+slab Plot4	4.704
 slab Plot4 #split	1
-JunkrotHubcappaWobbla 1 x	0.538
-JunkrotHubcappaWobbla 1 x #split	1
-JunkrotFanettoWobblino 1 x	0.669
-JunkrotFanettoWobblino 1 x #split	1
+JunkrotDrippiDroppi 1 x	0.946
+JunkrotDrippiDroppi 1 x #split	1
