@@ -57,7 +57,7 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
 [    0.7s] cached YardFence 1.037037037037037 x x1.5
 [    0.7s] cached Spoke8 210 -180 180
 [    0.7s] writing ServerMap.glb and 162 textures
-ServerMap: 162 parts, script 687.48ms, total 1.24s
+ServerMap: 162 parts, script 689.91ms, total 1.31s
 PLACED	HubSection2	0	HubSectionA-a8313e4a55d56339 1 x part 4/4
 PLACED	HubSection4	180	HubSectionA-a8313e4a55d56339 1 x part 4/4
 PLACED	Yard3_FootingFront2	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
@@ -99,7 +99,3 @@ PLACED	Yard8_FenceLeft9	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
 PLACED	Yard8_FenceRight9	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
 PLACED	Spoke8	0	abb4bc7b898fe3b1-107c5c30239027da Spoke8 210 -180 180
 export ServerMap: 7 objects (12.0 MB) for 40 placements
-remote: 
-remote: Create a pull request for 'build-objects/s8' on GitHub by visiting:        
-remote:      https://github.com/hackpro8000/scrap-heist/pull/new/build-objects/s8        
-remote: 
