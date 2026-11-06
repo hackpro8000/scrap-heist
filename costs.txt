@@ -1,28 +1,28 @@
-slab ArenaWall	1.220
+slab ArenaWall	2.038
 slab ArenaWall #split	1
-slab Pad3	0.328
+slab Pad3	0.549
 slab Pad3 #split	1
-slab Pad4	0.326
+slab Pad4	0.550
 slab Pad4 #split	1
-slab Avenue4	1.245
+slab Avenue4	2.067
 slab Avenue4 #split	1
-MarketIsland 1 x	31.541
+MarketIsland 1 x	53.878
 MarketIsland 1 x #split	1
-YardIsland 1 x	23.548
+YardIsland 1 x	10.400
 YardIsland 1 x #split	1
-YardFooting 1 x x1.5	0.039
+YardFooting 1 x x1.5	0.062
 YardFooting 1 x x1.5 #split	1
-slab Bridge5	0.789
+slab Bridge5	1.225
 slab Bridge5 #split	1
-YardGate 1 x x1.5	0.153
+YardGate 1 x x1.5	0.254
 YardGate 1 x x1.5 #split	1
-YardFooting 0.5 x x1.5	0.041
+YardFooting 0.5 x x1.5	0.069
 YardFooting 0.5 x x1.5 #split	1
-slab Spoke8	0.092
+slab Spoke8	0.152
 slab Spoke8 #split	1
-ShippingContainer 1 x x1.5	0.241
+ShippingContainer 1 x x1.5	0.385
 ShippingContainer 1 x x1.5 #split	1
-slab Hatch1	0.078
+slab Hatch1	0.138
 slab Hatch1 #split	1
-slab Hatch3	0.076
+slab Hatch3	0.134
 slab Hatch3 #split	1
