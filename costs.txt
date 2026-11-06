@@ -1,0 +1,20 @@
+slab ArenaWall	1.994
+slab ArenaWall #split	1
+MarketIsland 1 x	60.874
+MarketIsland 1 x #split	1
+YardIsland 1 x	42.443
+YardIsland 1 x #split	1
+YardFooting 0.5 x x1.5	0.061
+YardFooting 0.5 x x1.5 #split	1
+MachinePad 1 x x1.5	0.179
+MachinePad 1 x x1.5 #split	1
+YardFooting 1 x x1.5	0.059
+YardFooting 1 x x1.5 #split	1
+TrafficCones 1 x x1.8	0.196
+TrafficCones 1 x x1.8 #split	1
+TyreStack 1 x x1.8	0.112
+TyreStack 1 x x1.8 #split	1
+slab Hatch1	0.127
+slab Hatch1 #split	1
+StreetlightBroken 1 x x2	0.126
+StreetlightBroken 1 x x2 #split	1
