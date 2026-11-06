@@ -25,113 +25,22 @@ assemble ServerMap: slab at ServerMap.luau:1351-1359 (key 84939f33a0cb0864)
 assemble ServerMap: slab at ServerMap.luau:1404-1426 (key dfbe27eb7d68389c)
 assemble ServerMap: wrote art/models/ServerMap/model.luau, 22621 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.4s] building HubSectionA 1 x part 2/5
-[    2.0s] baking on CPU (no GPU)
-[    2.0s]   shaded Columns_-1_0_0_110 184×184 in 0.13s
-[    3.2s]   shaded Columns_-1_0_0_001 820×820 in 1.10s
-[    3.3s]   shaded Columns_-1_0_0_100 284×284 in 0.11s
-[    3.7s]   shaded Columns_-1_0_0_101 544×544 in 0.40s
-[    3.8s]   shaded Columns_-1_0_0_000 344×344 in 0.12s
-[    3.9s]   shaded Columns_-1_0_0_010 296×296 in 0.09s
-[    3.9s]   shaded Columns_-1_-1_-1_011 108×108 in 0.02s
-[    4.2s]   shaded Columns_-1_0_-1_001 404×404 in 0.22s
-[    4.9s]   shaded Columns_0_-1_0_111 612×612 in 0.68s
-[    4.9s]   shaded Columns_0_-1_0_010 104×104 in 0.00s
-[    5.3s]   shaded Columns_0_0_0_101 524×524 in 0.41s
-[    5.4s]   shaded Columns_0_0_0_100 264×264 in 0.08s
-[    5.9s]   shaded Columns_0_0_-1_000 516×516 in 0.47s
-[    5.9s]   shaded Dirt_-1_0_0_010_100 68×68 in 0.04s
-[    6.3s]   shaded Dirt_-1_0_0_101 476×476 in 0.38s
-[    8.0s]   shaded Dirt_0_0_0_100 904×904 in 1.64s
-[    8.2s]   shaded Dirt_0_0_0_000 364×364 in 0.16s
-[    8.6s]   shaded Dirt_0_-1_0_100_100 380×380 in 0.37s
-[    8.6s]   shaded Dirt_0_-1_0_100_010 16×16 in 0.03s
-[    9.1s]   shaded Dirt_0_-1_0_110_001 584×584 in 0.43s
-[    9.3s]   shaded Dirt_0_-1_0_110_111 408×408 in 0.25s
-[    9.4s]   shaded Dirt_0_-1_-1 192×192 in 0.08s
-[    9.7s]   shaded Pebbles_-1_-1_0 432×432 in 0.31s
-[   10.6s]   shaded Grass_0_-1_0_100 820×820 in 0.80s
-[   11.8s]   shaded Grass_0_-2_0 976×976 in 1.14s
-[   12.6s]   shaded Grass_-1_-2_0 896×896 in 0.81s
-[   13.0s]   shaded Grass_-2_0_0 652×652 in 0.39s
-[   13.0s] built HubSectionA 1 x part 2/5: 27 parts in 12.6s
-[   13.2s] cached HubSectionA 1 x part 2/5
-[   13.2s] building Plot1 -210 180 0
-[   17.3s]   shaded Slab 1024×1024 in 3.86s
-[   17.3s] built Plot1 -210 180 0: 1 parts in 4.1s
-[   17.4s] building Bridge4 210 180 0
-[   18.0s]   shaded Deck 1024×1024 in 0.50s
-[   18.0s]   shaded HazardYellow 148×148 in 0.04s
-[   18.0s]   shaded HazardBlack 148×148 in 0.04s
-[   18.4s]   shaded Girders 1024×1024 in 0.35s
-[   18.5s]   shaded Posts 212×212 in 0.07s
-[   18.7s]   shaded Rail 1024×1024 in 0.19s
-[   18.7s]   shaded KerbEnds 104×104 in 0.02s
-[   18.7s]   shaded EndPosts 60×60 in 0.01s
-[   18.9s]   shaded Abutments 372×372 in 0.17s
-[   18.9s]   shaded JointPlate 152×152 in 0.01s
-[   19.0s]   shaded Apron 184×184 in 0.05s
-[   19.0s] built Bridge4 210 180 0: 11 parts in 1.6s
-[   19.0s] building Bridge7 70 -180 180
-[   19.6s]   shaded Deck 1024×1024 in 0.50s
-[   19.6s]   shaded HazardYellow 148×148 in 0.04s
-[   19.7s]   shaded HazardBlack 148×148 in 0.04s
-[   20.0s]   shaded Girders 1024×1024 in 0.35s
-[   20.1s]   shaded Posts 212×212 in 0.07s
-[   20.3s]   shaded Rail 1024×1024 in 0.19s
-[   20.3s]   shaded KerbEnds 104×104 in 0.02s
-[   20.3s]   shaded EndPosts 60×60 in 0.01s
-[   20.5s]   shaded Abutments 372×372 in 0.17s
-[   20.5s]   shaded JointPlate 152×152 in 0.01s
-[   20.6s]   shaded Apron 184×184 in 0.05s
-[   20.6s] built Bridge7 70 -180 180: 11 parts in 1.6s
-[   20.6s] building Side3 140 150 -90
-[   20.9s]   shaded Deck 508×508 in 0.27s
-[   21.0s]   shaded HazardYellow 100×100 in 0.01s
-[   21.0s]   shaded HazardBlack 92×92 in 0.01s
-[   21.2s]   shaded Girders 640×640 in 0.24s
-[   21.3s]   shaded Posts 124×124 in 0.03s
-[   21.3s]   shaded Rail 416×416 in 0.06s
-[   21.4s]   shaded KerbEnds 148×148 in 0.03s
-[   21.4s]   shaded EndPosts 80×80 in 0.01s
-[   21.5s]   shaded Abutments 368×368 in 0.14s
-[   21.5s] built Side3 140 150 -90: 9 parts in 0.9s
-[   21.5s] building CarStack 1 x x2.5
-[   21.6s]   shaded Car1 256×256 in 0.07s
-[   21.7s]   shaded Car2 256×256 in 0.07s
-[   21.8s]   shaded Car3 256×256 in 0.07s
-[   21.8s]   shaded Wheels 256×256 in 0.04s
-[   21.9s]   shaded Glass 256×256 in 0.04s
-[   21.9s] built CarStack 1 x x2.5: 5 parts in 0.3s
-[   21.9s] building Hatch2 -9.758427525309788 23.558928079037813 112.5
-[   21.9s]   shaded Rim 312×312 in 0.03s
-[   21.9s]   shaded Frame 260×260 in 0.03s
-[   22.0s]   shaded Pit 212×212 in 0.03s
-[   22.0s]   shaded Grate 292×292 in 0.03s
-[   22.0s] built Hatch2 -9.758427525309788 23.558928079037813 112.5: 4 parts in 0.1s
-[   22.0s] building Hatch4 9.758427525309795 -23.55892807903781 292.5
-[   22.0s]   shaded Rim 312×312 in 0.03s
-[   22.1s]   shaded Frame 260×260 in 0.03s
-[   22.1s]   shaded Pit 212×212 in 0.03s
-[   22.1s]   shaded Grate 292×292 in 0.03s
-[   22.1s] built Hatch4 9.758427525309795 -23.55892807903781 292.5: 4 parts in 0.1s
-[   22.2s] writing ServerMap.glb and 99 textures
-[   23.0s] chunk ServerMap_S13_01.glb: 66 parts, 10.2 MB
-[   23.0s] chunk ServerMap_S13_02.glb: 33 parts, 6.3 MB
-ServerMap: 99 parts, script 22.21s, total 23.26s
-SHARD_COST	HubSectionA 1 x	63.133
-SHARD_COST	HubSectionA 1 x #split	1
-SHARD_COST	slab Plot1	4.136
-SHARD_COST	slab Plot1 #split	1
-SHARD_COST	slab Bridge4	1.591
-SHARD_COST	slab Bridge4 #split	1
-SHARD_COST	slab Bridge7	1.597
-SHARD_COST	slab Bridge7 #split	1
-SHARD_COST	slab Side3	0.926
-SHARD_COST	slab Side3 #split	1
-SHARD_COST	CarStack 1 x x2.5	0.332
-SHARD_COST	CarStack 1 x x2.5 #split	1
-SHARD_COST	slab Hatch2	0.131
-SHARD_COST	slab Hatch2 #split	1
-SHARD_COST	slab Hatch4	0.131
-SHARD_COST	slab Hatch4 #split	1
+[    0.5s] cached HubSectionA 1 x part 2/5
+[    0.6s] cached HubSectionA 1 x part 2/5
+[    0.6s] cached Plot1 -210 180 0
+[    0.6s] cached Bridge4 210 180 0
+[    0.7s] cached Bridge7 70 -180 180
+[    0.7s] cached Side3 140 150 -90
+[    0.7s] cached CarStack 1 x x2.5
+[    0.7s] cached Hatch2 -9.758427525309788 23.558928079037813 112.5
+[    0.7s] cached Hatch4 9.758427525309795 -23.55892807903781 292.5
+[    0.7s] writing ServerMap.glb and 99 textures
+[    1.6s] chunk ServerMap_S13_01.glb: 66 parts, 10.2 MB
+[    1.6s] chunk ServerMap_S13_02.glb: 33 parts, 6.3 MB
+ServerMap: 99 parts, script 741.81ms, total 1.89s
+upload ServerMap: starting in 3.4s
+upload ServerMap: uploading ServerMapS13_01 (9.8M)
+upload ServerMap: ServerMapS13_01 is asset 129114197596996
+upload ServerMap: uploading ServerMapS13_02 (6.0M)
+upload ServerMap: ServerMapS13_02 is asset 89908875808789
+upload ServerMap: shard upload done: 2 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
