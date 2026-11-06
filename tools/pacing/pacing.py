@@ -25,8 +25,9 @@ WALK_SECONDS = 25  # carry home and back
 # Parts: star n -> n+1 costs STAR_PARTS[n-1] * RARITY_PART_FACTOR**rarity.
 STAR_PARTS = [10, 30, 90, 270]
 RARITY_PART_FACTOR = 3
-# Parts income: per storm round (every 395 s), plus the junk mound trickle.
-ROUND_SECONDS = 395
+# Parts income: picked up in each storm (one every 380 s) by a player who
+# stays out for all of it, plus the junk mound trickle.
+ROUND_SECONDS = 380
 PARTS_PER_ROUND = lambda tier, rank: 25 * tier * (1 + 0.15 * rank)
 MOUND_PARTS_PER_MIN = 1
 PADS_AT = lambda rank: min(20, 6 + rank)  # +1 pad per rebirth, 20 at rank 14

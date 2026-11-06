@@ -25,7 +25,7 @@ python3 tools/pacing/pacing.py
 
 | Hours | What the player is doing | New things |
 |---|---|---|
-| 0-1 | Whacks the junk mound, grabs Scrap capsules, fills 6 pads, first rebirth | Belt, carrying, hatching, crate, raids on them |
+| 0-1 | Whacks the junk mound, grabs Scrap capsules, fills 6 pads, first rebirth | Belt, carrying, hatching, crate, raids on them, build mode |
 | 1-6 | Salvaged and first Refurbished junkrots, upgrades with gears and coils, ranks 2-6 | Upgrades, parts, Belt Alert, Limited Edition chance, second build bay |
 | 6-24 | Gantry Isle belt (tier 2), Refurbished to Factory, ranks 7-13 | Tier 2 zone, storm haul priority, auto-collect |
 | 24-48 | Crown Heap belt (tier 3), Factory to Precision, ranks 14-20 | Tier 3 zone, all 20 pads, Prototype hunting, logbook completion, the Scrap Baron title |
@@ -82,7 +82,7 @@ These are variants of any tier's capsule:
 
 | Special | Look | Effect |
 |---|---|---|
-| **Storm** | Crackles with lightning | Storm haul only. Rolls one tier higher |
+| **Storm** | Crackles with lightning | During storms only. Rolls one tier higher |
 | **Limited Edition** | Gold-plated serial badge on the capsule | About 1 in 500. The junkrot comes out Limited Edition (×3, logged forever) |
 | **Opened box** | Lid half open | You can see which junkrot is inside. Costs 1.5× |
 | **Ticking** | Beeps and flashes | Hatches in half the time, but everyone can hear where it is |
@@ -163,16 +163,16 @@ The rates sit inside their tier's band, so pacing is unchanged. The rebirth ladd
 | 4→5 ★ | Circuit Board | 270 / 810 / 2,430 / 7,290 / 21,870 / 65,610 / 196,830 |
 
 - **Where parts come from:**
-  - Storm rounds pay **25 × zone tier × (1 + 0.15 × rank)** parts per round survived, about every 6.5 minutes.
+  - Storms rain parts as pickups: about **25 × zone tier × (1 + 0.15 × rank)** for a player who stays out the whole storm, about every 6.5 minutes.
   - The junk mound pays about 1 per minute of whacking.
   - Missions and raids pay some too.
 - **Drop mix:** gears are the most common and circuit boards the rarest. Keep each part's share of drops in line with its share of what the upgrade costs ask for. The sim pools all parts together.
 
 ## Pads
 
-- **Start:** 6 pads, two of each family.
-- **Rebirths:** each rebirth adds one pad, cycling Kitchen, Garage, Gadget, up to **20 at rank 14**.
-- **Locked pads** show in the yard as roped-off rubble plots with the rank that opens them.
+- **Start:** 6 pads to place, two of each family.
+- **Rebirths:** each rebirth adds one pad of the family you choose, up to **20 at rank 14**. "Pad N" in the rebirth table means one more pad to place.
+- **Where they go** is up to the player (see Yard).
 
 ## Rebirth ladder ("Scrap the Yard")
 
@@ -215,27 +215,65 @@ Rank 20 lands at about 35-52 hours, depending on Prototype luck. The ★ require
 
 ## Zones
 
-- **Salvage hub (tier 1).** The centre of the server map, with the shop, the tinkerer, the arena drone overhead, and spawn.
+- **Salvage hub (tier 1).** The centre of the server map, with the shop, the tinkerer and spawn.
 - **Gantry Isle (tier 2, rank 6).** A higher island reached by a cargo lift from the hub. It has its own crane and belt, shared by everyone on the server who has rank 6. The capsules are richer and the walk home is longer, so there's more heist risk.
 - **Crown Heap (tier 3, rank 13).** The top island, a junk mountain with a giant magnet crane, reached by a zipline from Gantry Isle. Prototypes mostly come from here.
 - **Your yard stays where it is.** Capsules from higher zones are carried down the lift and zipline, which become the ambush routes.
 
 ## Yard
 
-The approved layout (`art/concepts/yard-layout-sketch.png`):
-- **Pads:** up to 20 typed pads in rows, with locked ones as rubble plots.
-- **Build bays:** one at the start, three by rank 11. Capsules hatch here and can be stolen until they do.
-- **Junk mound:** levels 1-3; whack it for scrap and parts.
-- **Crate:** the scrap your junkrots earn sits here until you collect it, and it's what raiders steal. Size goes up at ranks 4 and 9, and it auto-collects from rank 10.
-- **Logbook board:** on the billboard frame.
-- **Rebirth press.**
-- **Gate and fences**, as now.
+The yard has no fixed layout. A player starts with an abandoned lot and lays it out in **build mode**, placing everything where they like. Raiders walk in through the gate, and the blackout opens every gate, so where the crate and the build bays stand matters.
 
-## Storms and the storm haul
+### The lot
 
-- **Rounds:** as now, 4 min calm, 20 s warning, 2 min storm, 15 s results. Survivors get parts.
-- **Storm haul:** when a storm ends, each zone's crane dumps **10 Storm capsules** over 20 s. Each rolls one tier higher: Scrap becomes Salvaged, Salvaged becomes Refurbished, and so on. Everyone races for them.
-- **Raids:** stealing from the crate and the build bays stays on, but raiding is off during storms (Config/Raid).
+- **Plot:** 96 x 112 studs inside a fixed fence, with the gate in the middle of the side facing the Line. The fence, the gate and the plot marker never move.
+- **Land:** the plot is 12 parcels, 3 across and 4 deep, each 32 x 28 studs. The front row is clear from the start. The other 9 are buried under rubble heaps, weeds and old tyres, scattered differently for every player. They can be walked through but not built on.
+- **Clearing:** ranks 1, 2, 3, 4, 6, 8, 10, 12 and 14 each clear one parcel of the player's choice, next to land they already have.
+- **Doorstep:** the 12 x 8 studs just inside the gate always stay clear.
+
+### Build mode
+
+- **Grid:** things snap to 2 studs and turn in quarter turns.
+- **What can be placed:**
+  - pads, 10 x 10 (a junkrot stands on each; the pad's family gives its +10%)
+  - build bays, 10 x 10: one at the start, a second at rank 5, a third at rank 11
+  - the crate (bigger at ranks 4 and 9, auto-collecting from rank 10)
+  - the junk mound (levels 1-3)
+  - the rebirth press, 16 x 8
+  - the logbook board and the medal rack
+  - path pavers, free and unlimited
+  - inner fence panels, 12 long: 4 at the start and 2 more per rank
+  - decorations as they unlock: string lights (rank 3), a tinkering shack (rank 7), signs and trims
+- **Rules,** checked on the server:
+  - everything stands on cleared land, and nothing overlaps
+  - every pad, bay, crate and press can be walked to from the gate along a way at least 4 studs wide, a player's width, so nothing can be walled in
+  - the doorstep stays clear
+- **When:** any time, except during a storm or while a raider is inside the yard. Moving a junkrot keeps its upgrades.
+- **Starter layout:** a new player's first 6 pads, bay, crate, mound and press are placed for them, so the game is playable before they ever open build mode.
+- **Controls:** pick a thing up, move a ghost of it (green where it fits, red where it doesn't), turn it, drop it. The same on phone, gamepad and mouse.
+- **Saved** as a list of what stands where.
+
+### What the map holds
+
+The map bakes only each yard's shell: the island, the ground, the fence, the gate and the plot marker. Pads, bays, the crate, the mound, the press, the boards, fence panels, decorations and the rubble heaps (4 baked variants) are separate models the game places for each player.
+
+## Storms
+
+There are no bots and no arena. A storm is weather: it makes the belt richer and the map more dangerous, and it ends with every yard's defences down.
+
+- **Rounds:** 4 min calm, then a 20 s warning (the sky darkens and the crane's siren sounds), then a 2 min storm.
+- **Scrap storm** (the whole 2 minutes):
+  - **Storm haul:** the belt runs at double speed, so a lap takes 45 s, and capsules spawn twice as often. Every one is a Storm capsule, rolled one tier higher: Scrap becomes Salvaged, Salvaged becomes Refurbished, and so on.
+  - **Parts rain** onto the hub's walkways and plazas as pickups. A player who stays out for the whole storm collects about **25 × zone tier × (1 + 0.15 × rank)** parts.
+  - **Lightning** strikes the hub and the bridges. A warning ring 10 studs across shows for 1 s, then the bolt lands. Anyone inside it is knocked down for 2 s and drops their capsule. Strikes favour players who are carrying one.
+  - **Yards are safe from lightning.** Hiding costs you the haul and the parts.
+- **Blackout** (the last 30 seconds): the power fails across the map.
+  - Every yard gate swings open.
+  - Booby traps and capsule guard switch off.
+  - Crates unlock, so a raider takes twice the usual share.
+  - Capsules still hatching in build bays are there for the taking.
+- **Raids** stay on through the whole storm (this replaces the old rule that turned them off).
+- **Each zone** has its own storm at the same time, with its own belt's odds.
 
 ## Logbook
 
@@ -266,14 +304,14 @@ The approved layout (`art/concepts/yard-layout-sketch.png`):
   5. Collect your crate.
   6. Fill 3 pads.
   7. Fill 6 pads.
-  8. Survive a storm.
+  8. Pick up 20 parts in a storm.
   9. Add an upgrade.
   10. Buy a Salvaged capsule.
   11. Steal a capsule from someone, or defend one.
-  12. Place a junkrot on a matching pad.
+  12. Move a pad in build mode, and place a junkrot on a matching pad.
   13. Reach 2,500 scrap/s.
   14. Rebirth once.
-- **Daily jobs:** 3 rotating each day, worth about 20 minutes of parts. Examples: hatch 5 capsules; survive 2 storms; grab 3 Storm capsules; raid a crate; hatch a Refurbished junkrot.
+- **Daily jobs:** 3 rotating each day, worth about 20 minutes of parts. Examples: hatch 5 capsules; pick up 60 parts in storms; grab 3 Storm capsules; raid a crate; hatch a Refurbished junkrot.
 
 ## Offline and economy guard rails
 
@@ -286,7 +324,7 @@ The approved layout (`art/concepts/yard-layout-sketch.png`):
 This is the order from the approved plan (`~/.claude/plans/merry-watching-cray.md`), with machines replaced by capsules and junkrots:
 1. Sketches: the map, the yard, the crane and belt, then the capsules and junkrots.
 2. Belt and capsules.
-3. Hatching, income, upgrades and parts.
+3. Build mode, hatching, income, upgrades and parts.
 4. Rebirth and logbook.
-5. Storm haul.
+5. Storms: the storm haul, parts rain, lightning and the blackout.
 6. Gantry Isle, Crown Heap and the full cast, tuned with `tools/pacing/pacing.py`.
