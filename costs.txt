@@ -1,17 +1,8 @@
-slab Spoke1	0.079
-slab Spoke1 #split	1
-slab Approach1	0.412
-slab Approach1 #split	1
-PadGarage 1 x x1.6666666666666667	0.188
-PadGarage 1 x x1.6666666666666667 #split	1
-JunkMound 1 x x2.3	0.659
-slab Yard4_Bay3	0.153
-slab Yard4_Bay3 #split	1
-slab Yard5_Bay1	0.160
-slab Yard5_Bay1 #split	1
-slab Bridge5	1.573
-slab Bridge5 #split	1
-YardGate 1 x x1.5	0.242
+HubSectionEnd 1 x	70.305
+HubSectionEnd 1 x #split	1
+YardGate 1 x x1.5	0.075
 YardGate 1 x x1.5 #split	1
-slab Yard8_Bay2	0.163
-slab Yard8_Bay2 #split	1
+slab Spoke3	0.074
+slab Spoke3 #split	1
+slab Plot4	4.840
+slab Plot4 #split	1
