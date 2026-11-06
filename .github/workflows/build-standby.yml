@@ -1,4 +1,4 @@
-# Keeps up to 8 shard machines warm for up to 15 minutes, building each task
+# Keeps up to 16 shard machines warm for up to 15 minutes, building each task
 # posted with scripts/send-build.sh as it arrives (scripts/standby.sh). One
 # cold start, then every task skips machine start, checkout and cache
 # restore. Each machine saves its cache when standby ends.
@@ -16,7 +16,7 @@ on:
         description: Layout the tasks build
         default: ServerMap
       shards:
-        description: Number of machines (1-8)
+        description: Number of machines (1-16)
         default: "8"
       minutes:
         description: Minutes to stay on standby (1-15)
@@ -36,7 +36,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: ${{ fromJSON('{"1":[1],"2":[1,2],"3":[1,2,3],"4":[1,2,3,4],"5":[1,2,3,4,5],"6":[1,2,3,4,5,6],"7":[1,2,3,4,5,6,7],"8":[1,2,3,4,5,6,7,8]}')[inputs.shards] }}
+        shard: ${{ fromJSON('{"1":[1],"2":[1,2],"3":[1,2,3],"4":[1,2,3,4],"5":[1,2,3,4,5],"6":[1,2,3,4,5,6],"7":[1,2,3,4,5,6,7],"8":[1,2,3,4,5,6,7,8],"9":[1,2,3,4,5,6,7,8,9],"10":[1,2,3,4,5,6,7,8,9,10],"11":[1,2,3,4,5,6,7,8,9,10,11],"12":[1,2,3,4,5,6,7,8,9,10,11,12],"13":[1,2,3,4,5,6,7,8,9,10,11,12,13],"14":[1,2,3,4,5,6,7,8,9,10,11,12,13,14],"15":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],"16":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]}')[inputs.shards] }}
     env:
       MODELKIT_PRUNE: "1"
       ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
