@@ -1,1 +1,5 @@
-up=1793938188
+status=DONE
+build=34
+upload=skipped
+total=35
+parts=78
