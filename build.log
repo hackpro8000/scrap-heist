@@ -33,24 +33,24 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 22621 lines, in 0s
 [    0.8s] cached YardIsland 1 x part 3/5
 [    0.9s] cached YardIsland 1 x part 3/5
 [    1.0s] cached YardIsland 1 x part 3/5
-[    1.0s] cached YardIsland 1 x part 3/5
 [    1.1s] cached YardIsland 1 x part 3/5
-[    1.2s] writing ServerMap.glb and 208 textures
+[    1.1s] cached YardIsland 1 x part 3/5
+[    1.1s] writing ServerMap.glb and 208 textures
 [    2.9s] chunk ServerMap_S10_01.glb: 48 parts, 6.6 MB
 [    2.9s] chunk ServerMap_S10_02.glb: 40 parts, 7.3 MB
 [    2.9s] chunk ServerMap_S10_03.glb: 40 parts, 7.3 MB
-[    2.9s] chunk ServerMap_S10_04.glb: 40 parts, 7.3 MB
-[    2.9s] chunk ServerMap_S10_05.glb: 40 parts, 7.3 MB
-ServerMap: 208 parts, script 1.19s, total 3.62s
-upload ServerMap: starting in 0.3s
+[    3.0s] chunk ServerMap_S10_04.glb: 40 parts, 7.3 MB
+[    3.0s] chunk ServerMap_S10_05.glb: 40 parts, 7.3 MB
+ServerMap: 208 parts, script 1.15s, total 3.62s
+upload ServerMap: starting in 0.2s
 upload ServerMap: uploading ServerMapS10_01 (6.3M)
-upload ServerMap: ServerMapS10_01 is asset 89351802261649
+upload ServerMap: ServerMapS10_01 is asset 95298904519321
 upload ServerMap: uploading ServerMapS10_02 (7.0M)
-upload ServerMap: ServerMapS10_02 is asset 93830670462421
+upload ServerMap: ServerMapS10_02 is asset 100553476199238
 upload ServerMap: uploading ServerMapS10_03 (7.0M)
-upload ServerMap: ServerMapS10_03 is asset 130445220366483
+upload ServerMap: ServerMapS10_03 is asset 131908329912396
 upload ServerMap: uploading ServerMapS10_04 (7.0M)
-upload ServerMap: ServerMapS10_04 is asset 126795493195473
+upload ServerMap: ServerMapS10_04 is asset 126716219462015
 upload ServerMap: uploading ServerMapS10_05 (7.0M)
-upload ServerMap: ServerMapS10_05 is asset 129686013112605
+upload ServerMap: ServerMapS10_05 is asset 140508327982391
 upload ServerMap: shard upload done: 5 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
