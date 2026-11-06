@@ -1,0 +1,13 @@
+ArenaDrone 1 x	52.542
+ArenaDrone 1 x #split	1
+GroundTile 1 x x1.5	0.175
+GroundTile 1 x x1.5 #split	1
+MachinePad 1 x x1.5	0.174
+MachinePad 1 x x1.5 #split	1
+StorageCrate 1 x x1.5	9.288
+CrushedCar 1 x x2.5	0.191
+CrushedCar 1 x x2.5 #split	1
+JunkWall 1 x x1.75	0.227
+JunkWall 1 x x1.75 #split	1
+slab Hatch4	0.126
+slab Hatch4 #split	1
