@@ -31,7 +31,8 @@ queue_head() {
 # through a temporary index so the checkout is left alone.
 push_results() {
 	local id="$1" dir="$2" index_file tree commit
-	index_file="$(mktemp)"
+	# A name only: git rejects an existing empty file as a corrupt index.
+	index_file="$(mktemp -u)"
 	GIT_INDEX_FILE="${index_file}" git --work-tree="${dir}" add -A
 	tree="$(GIT_INDEX_FILE="${index_file}" git write-tree)"
 	rm -f "${index_file}"
