@@ -23,13 +23,13 @@ Game.YARD_COUNT = 8
 Game.ROUND_DURATIONS = {
 	Calm = 240,
 	Warning = 20,
-	Storm = 120,
-	Results = 15,
+	Storm = 90,
+	Blackout = 30,
 }
 
--- Multiplies every machine's output.
+-- Multiplies every junkrot's output.
 Game.INCOME_MULTIPLIER = 1
--- Multiplies every machine's buy and upgrade cost.
+-- Multiplies every capsule's price.
 Game.COST_MULTIPLIER = 1
 
 return Game

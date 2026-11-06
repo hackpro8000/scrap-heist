@@ -15,10 +15,8 @@ local function validGrab(overrides: { [string]: any }?)
 		raiderInsideYard = true,
 		distance = 4,
 		alreadyCarrying = false,
-		raidsPaused = false,
-		crateParts = 400,
-		raiderLevel = 3,
-		ownerLevel = 3,
+		crateScrap = 400,
+		crateCapacity = 2000,
 		ownerShieldUntil = 0,
 		now = 1000,
 	}
@@ -38,21 +36,15 @@ describe("RaidRules.canGrab", function()
 		local cases = {
 			{ { isOwner = true }, "OwnCrate" },
 			{ { raiderHasYard = false }, "NoYard" },
-			{ { raidsPaused = true }, "RaidsPaused" },
 			{ { raiderInsideYard = false }, "NotInYard" },
 			{ { distance = RaidConfig.GRAB_DISTANCE + 1 }, "TooFar" },
 			{ { alreadyCarrying = true }, "AlreadyCarrying" },
 			{ { ownerShieldUntil = 1001 }, "Shielded" },
-			{ { raiderLevel = 3 + RaidConfig.MAX_LEVEL_GAP + 1 }, "LevelGap" },
-			{ { crateParts = RaidConfig.MIN_CRATE_PARTS - 1 }, "CrateTooEmpty" },
+			{ { crateScrap = RaidRules.worthRaiding(2000) - 1 }, "CrateTooEmpty" },
 		}
 		for _, case in cases do
 			expect(RaidRules.canGrab(validGrab(case[1]))).toBe(case[2])
 		end
-	end)
-
-	it("lets weaker players raid stronger ones", function()
-		expect(RaidRules.canGrab(validGrab({ raiderLevel = 1, ownerLevel = 12 }))).toBe(nil)
 	end)
 
 	it("lifts the shield when it expires", function()
@@ -60,21 +52,21 @@ describe("RaidRules.canGrab", function()
 	end)
 
 	it("has text for every reason", function()
-		for _, reason in { "OwnCrate", "NoYard", "RaidsPaused", "NotInYard", "TooFar", "AlreadyCarrying" } do
+		for _, reason in { "OwnCrate", "NoYard", "NotInYard", "TooFar", "AlreadyCarrying", "Shielded", "CrateTooEmpty" } do
 			expect(type(RaidRules.REASON_TEXT[reason])).toBe("string")
 		end
 	end)
 end)
 
 describe("RaidRules.bundleSize", function()
-	it("takes a share of the crate within the limits", function()
+	it("takes a share of the crate, and more in a blackout", function()
 		expect(RaidRules.bundleSize(400)).toBe(math.floor(400 * RaidConfig.BUNDLE_FRACTION))
-		expect(RaidRules.bundleSize(100000)).toBe(RaidConfig.BUNDLE_MAX)
-		expect(RaidRules.bundleSize(RaidConfig.BUNDLE_MIN)).toBe(RaidConfig.BUNDLE_MIN)
+		expect(RaidRules.bundleSize(400, 2)).toBe(math.floor(400 * RaidConfig.BUNDLE_FRACTION * 2))
+		expect(RaidRules.bundleSize(400, 10)).toBe(400)
 	end)
 
 	it("never takes more than the crate holds", function()
-		expect(RaidRules.bundleSize(5.5)).toBe(5)
+		expect(RaidRules.bundleSize(5.5, 4)).toBe(5)
 	end)
 
 	it("shields for the configured time", function()

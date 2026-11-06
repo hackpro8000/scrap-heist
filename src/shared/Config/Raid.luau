@@ -7,13 +7,11 @@
 
 local Raid = {}
 
--- A grab takes this fraction of the target crate, between the min and max.
+-- A grab takes this fraction of the scrap in the target crate.
 Raid.BUNDLE_FRACTION = 0.25
-Raid.BUNDLE_MIN = 20
-Raid.BUNDLE_MAX = 500
 
--- A crate holding fewer parts than this can't be raided at all.
-Raid.MIN_CRATE_PARTS = 20
+-- A crate less full than this can't be raided at all.
+Raid.MIN_CRATE_FRACTION = 0.01
 
 -- Walk speed multiplier while carrying a bundle.
 Raid.CARRY_SPEED_MULTIPLIER = 0.7
@@ -30,8 +28,6 @@ Raid.DROP_EXPIRE_SECONDS = 30
 -- Anti-grief.
 -- Seconds a yard can't be raided again after a grab.
 Raid.SHIELD_SECONDS = 5 * 60
--- Can't raid a yard this many levels (sum of machine levels) below yours.
-Raid.MAX_LEVEL_GAP = 4
 -- Damage the yard owner takes while raiders are inside their yard.
 Raid.OWNER_DAMAGE_TAKEN_MULTIPLIER = 0.7
 

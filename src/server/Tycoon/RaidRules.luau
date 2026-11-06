@@ -9,7 +9,8 @@
 
 	Public API:
 		RaidRules.canGrab(context): reason?
-		RaidRules.bundleSize(crateParts): number
+		RaidRules.worthRaiding(crateCapacity): number
+		RaidRules.bundleSize(crateScrap, multiplier?): number
 		RaidRules.shieldUntil(now, seconds?): number
 		RaidRules.REASON_TEXT: { [reason]: string }   -- what the raider is told
 ]]
@@ -28,10 +29,9 @@ export type GrabContext = {
 	-- Studs from the raider to the crate.
 	distance: number,
 	alreadyCarrying: boolean,
-	raidsPaused: boolean,
-	crateParts: number,
-	raiderLevel: number,
-	ownerLevel: number,
+	-- Scrap waiting in the crate, and the least worth raiding for.
+	crateScrap: number,
+	crateCapacity: number,
 	-- os.time() values.
 	ownerShieldUntil: number,
 	now: number,
@@ -39,14 +39,12 @@ export type GrabContext = {
 
 RaidRules.REASON_TEXT = {
 	OwnCrate = "That's your own crate. Collect it instead.",
-	NoYard = "You need a yard to bring parts back to.",
+	NoYard = "You need a yard to bring scrap back to.",
 	NotInYard = "Get inside their yard first.",
 	TooFar = "Get closer to the crate.",
 	AlreadyCarrying = "You're already carrying a bundle.",
-	RaidsPaused = "Raiding is paused during the storm.",
-	CrateTooEmpty = "Not enough parts in that crate to steal.",
+	CrateTooEmpty = "Not enough scrap in that crate to steal.",
 	Shielded = "This yard was raided recently and is shielded.",
-	LevelGap = "That yard is too far below your level to raid.",
 } :: { [string]: string }
 
 function RaidRules.canGrab(context: GrabContext): string?
@@ -57,9 +55,6 @@ function RaidRules.canGrab(context: GrabContext): string?
 	end
 	if not context.raiderHasYard then
 		return "NoYard"
-	end
-	if context.raidsPaused then
-		return "RaidsPaused"
 	end
 	if not context.raiderInsideYard then
 		return "NotInYard"
@@ -73,23 +68,23 @@ function RaidRules.canGrab(context: GrabContext): string?
 	if context.now < context.ownerShieldUntil then
 		return "Shielded"
 	end
-	-- Anti-grief: strong players can't farm much newer yards.
-	if context.raiderLevel - context.ownerLevel > RaidConfig.MAX_LEVEL_GAP then
-		return "LevelGap"
-	end
-	if context.crateParts < RaidConfig.MIN_CRATE_PARTS then
+	if context.crateScrap < RaidRules.worthRaiding(context.crateCapacity) then
 		return "CrateTooEmpty"
 	end
 
 	return nil
 end
 
-function RaidRules.bundleSize(crateParts: number): number
-	local share = math.floor(crateParts * RaidConfig.BUNDLE_FRACTION)
-	local size = math.clamp(share, RaidConfig.BUNDLE_MIN, RaidConfig.BUNDLE_MAX)
+-- A crate holding less than this can't be raided at all.
+function RaidRules.worthRaiding(crateCapacity: number): number
+	return math.floor(crateCapacity * RaidConfig.MIN_CRATE_FRACTION)
+end
 
-	-- Never more than the crate actually holds.
-	return math.min(size, math.floor(crateParts))
+-- What one grab takes: a share of the crate, `multiplier` times as much in
+-- a blackout, and never more than the crate holds.
+function RaidRules.bundleSize(crateScrap: number, multiplier: number?): number
+	local share = math.floor(crateScrap * RaidConfig.BUNDLE_FRACTION * (multiplier or 1))
+	return math.min(share, math.floor(crateScrap))
 end
 
 -- `seconds` defaults to the plain shield; the Long Shield pass passes more.
