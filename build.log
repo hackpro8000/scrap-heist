@@ -34,14 +34,13 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 22621 lines, in 0s
 [    0.7s] cached Side2 0 150 -90
 [    0.7s] cached Side6 140 -150 -90
 [    0.7s] cached Pallets 1 x x1.4
-[    0.8s] writing ServerMap.glb and 80 textures
+[    0.7s] writing ServerMap.glb and 80 textures
 [    1.4s] chunk ServerMap_S7_01.glb: 60 parts, 10.9 MB
 [    1.4s] chunk ServerMap_S7_02.glb: 20 parts, 4.3 MB
-ServerMap: 80 parts, script 778.62ms, total 1.66s
-upload ServerMap: starting in 4.6s
+ServerMap: 80 parts, script 750.05ms, total 1.63s
+upload ServerMap: starting in 3.6s
 upload ServerMap: uploading ServerMapS7_01 (11M)
-upload ServerMap: ServerMapS7_01 is asset 101243113295602
+upload ServerMap: ServerMapS7_01 is asset 118081784459059
 upload ServerMap: uploading ServerMapS7_02 (4.2M)
-upload ServerMap: ServerMapS7_02 failed: {"path":"operations/610bb339-cdbe-45dc-8510-3658bd0e7e1a","operationId":"610bb339-cdbe-45dc-8510-3658bd0e7e1a","done":true,"error":{"code":"Unknown","message":"Unknown Error","details":[]}}
-upload ServerMap: FAILED: 1 of 2 chunks have no usable ID: ServerMapS7_02 
-upload ServerMap: nothing was written to src/shared; see the errors above, then run again to retry just these
+upload ServerMap: ServerMapS7_02 is asset 127212562158992
+upload ServerMap: shard upload done: 2 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
