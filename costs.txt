@@ -1,0 +1,15 @@
+slab Beacon	0.615
+slab Beacon #split	1
+HubIsland 1 x	199.467
+HubIsland 1 x #split	1
+StorageCrate 1 x x1.5	7.701
+slab Side2	1.436
+slab Side2 #split	1
+slab Side6	1.426
+slab Side6 #split	1
+CarStack 1 x x2.5	0.259
+CarStack 1 x x2.5 #split	1
+JunkWall 1 x x1.75	0.187
+JunkWall 1 x x1.75 #split	1
+StreetlightBroken 1 x x2	0.101
+StreetlightBroken 1 x x2 #split	1

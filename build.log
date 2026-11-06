@@ -1,0 +1,208 @@
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses ArenaDrone (key 3feaec12b72c179a)
+assemble ServerMap: uses HubIsland (key 6021be3c8a87dbbc)
+assemble ServerMap: uses YardIsland (key 11c6adb69c9d778d)
+assemble ServerMap: uses ShopConceptContainer (key 3bd24aa005fdec59)
+assemble ServerMap: uses ScrapTreeLamppost (key 3721cdc5289a1227)
+assemble ServerMap: uses VendingMachine (key 8c8c9e54c0152446)
+assemble ServerMap: uses ParkBench (key 644aec5ddc470126)
+assemble ServerMap: uses ScrapPalm (key 71b29a81d57ca962)
+assemble ServerMap: uses ShippingContainer (key b4618da1e6c8e874)
+assemble ServerMap: uses CarStack (key 18868d27bbadf854)
+assemble ServerMap: uses CrushedCar (key cb21a631053a549a)
+assemble ServerMap: uses Barrels (key 6fd22d825787f5b7)
+assemble ServerMap: uses TyreStack (key 19ab2944a510d9c5)
+assemble ServerMap: uses JunkWall (key acd51bf6f9b5d959)
+assemble ServerMap: uses Dumpster (key 5705b07a41a863a8)
+assemble ServerMap: uses Pallets (key af2bcdda5ec40e79)
+assemble ServerMap: uses StreetlightBroken (key 860caef50018b787)
+assemble ServerMap: uses TrafficCones (key 878424fc7df50b09)
+assemble ServerMap: uses GroundTile (key 43a80920e4c5168b)
+assemble ServerMap: uses MachinePad (key 1b6d00719513f1f7)
+assemble ServerMap: uses YardFence (key 122ba19da15d7e80)
+assemble ServerMap: uses YardFenceHalf (key 76101fa539bb054b)
+assemble ServerMap: uses YardFooting (key 5f7c0e3c30ab293e)
+assemble ServerMap: uses YardGate (key 692a8cf69b44f092)
+assemble ServerMap: uses PlotMarker (key f406cb0c06262f89)
+assemble ServerMap: uses StorageCrate (key 5d99f3bcd3db5fca)
+assemble ServerMap: uses YardPath (key f096c7510747dcc8)
+assemble ServerMap: uses YardPathStub (key 9d6e97b27d7f04b9)
+assemble ServerMap: slab at ServerMap.luau:822-871 (key 5c7ab7c43edf108b)
+assemble ServerMap: slab at ServerMap.luau:876-900 (key e1d53c436615f36a)
+assemble ServerMap: slab at ServerMap.luau:934-949 (key f4f9015cc7a52d81)
+assemble ServerMap: slab at ServerMap.luau:1028-1218 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:1281-1285 (key cd506193dae2c60f)
+assemble ServerMap: slab at ServerMap.luau:1314-1335 (key 1db25ee55eaf429a)
+assemble ServerMap: slab at ServerMap.luau:1348-1365 (key 492adbf74c50ddf1)
+assemble ServerMap: slab at ServerMap.luau:1381-1388 (key 2b2b51e4886723fb)
+assemble ServerMap: slab at ServerMap.luau:1411-1415 (key 886388888fe59ef3)
+assemble ServerMap: slab at ServerMap.luau:1418-1426 (key 209bd5af05ec8c81)
+assemble ServerMap: slab at ServerMap.luau:1470-1492 (key dfbe27eb7d68389c)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 31115 lines, in 0s
+[    0.0s] running ServerMap/model.luau
+[    0.4s] building Beacon 0 0 0
+[    0.5s] baking on CPU (no GPU)
+[    0.6s]   shaded Plinth 496×496 in 0.18s
+[    0.7s]   shaded PlinthStripe 460×460 in 0.03s
+[    0.9s]   shaded Mast 880×880 in 0.25s
+[    1.0s]   shaded CoreMount 248×248 in 0.04s
+[    1.0s]   shaded CoreCage 172×172 in 0.02s
+[    1.0s] built Beacon 0 0 0: 6 parts in 0.6s
+[    1.0s] building HubIsland 1 x part 11/16
+[    3.1s]   shaded Columns_-1_-1_-1_000_011 184×184 in 0.07s
+[    3.9s]   shaded Columns_-1_-2_-1_011 912×912 in 0.79s
+[    4.3s]   shaded Columns_0_-1_-1_110_011 432×432 in 0.29s
+[    4.7s]   shaded Columns_0_-1_-1_110_100 656×656 in 0.41s
+[    4.9s]   shaded Columns_0_-1_-1_100_101 368×368 in 0.20s
+[    5.2s]   shaded Columns_0_-1_-1_101 572×572 in 0.26s
+[    5.4s]   shaded Columns_0_0_-1_100_100 348×348 in 0.24s
+[    5.7s]   shaded Columns_0_0_-1_100_010 436×436 in 0.24s
+[    5.7s]   shaded Columns_0_0_-1_110_100 268×268 in 0.06s
+[    6.6s]   shaded Dirt_-2_0_0_111 852×852 in 0.86s
+[    7.5s]   shaded Dirt_-3_0_0 756×756 in 0.87s
+[    8.2s]   shaded Dirt_0_-2_0_101 796×796 in 0.67s
+[    8.9s]   shaded Dirt_0_-2_0_111 700×700 in 0.63s
+[    9.7s]   shaded Dirt_0_-1_-1_101 648×648 in 0.77s
+[    9.8s]   shaded Pebbles_-2_-1_0 312×312 in 0.11s
+[   11.0s]   shaded Grass_1_-1_0_110 956×956 in 1.08s
+[   11.0s]   shaded Grass_1_-2_0_100 224×224 in 0.04s
+[   11.4s]   shaded Grass_-2_-2_0_110_100 588×588 in 0.36s
+[   11.5s]   shaded Grass_-2_-2_0_100 152×152 in 0.02s
+[   11.7s]   shaded Grass_-2_1_0_100_010 516×516 in 0.28s
+[   12.1s]   shaded Grass_-2_1_0_100_110 520×520 in 0.36s
+[   12.8s]   shaded Grass_0_1_0_000 540×540 in 0.63s
+[   13.5s]   shaded Grass_0_0_0_000 540×540 in 0.62s
+[   13.5s] built HubIsland 1 x part 11/16: 23 parts in 12.5s
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached GroundTile 1 x x1.5
+[   13.6s] cached MachinePad 1 x x1.5
+[   13.6s] cached MachinePad 1 x x1.5
+[   13.6s] cached MachinePad 1 x x1.5
+[   13.6s] cached MachinePad 1 x x1.5
+[   13.6s] building StorageCrate 1 x x1.5
+[   14.1s]   shaded  1024×1024 in 0.43s
+[   14.2s]   shaded  512×512 in 0.09s
+[   14.3s]   shaded  512×512 in 0.05s
+[   14.3s]   shaded  256×256 in 0.06s
+[   14.4s]   shaded  1024×64 in 0.03s
+[   14.9s]   shaded  1024×1024 in 0.39s
+[   15.0s]   shaded  256×256 in 0.03s
+[   15.4s]   shaded  1024×1024 in 0.34s
+[   15.5s]   shaded  256×256 in 0.03s
+[   15.7s]   shaded  256×256 in 0.04s
+[   16.1s]   shaded  1024×1024 in 0.36s
+[   16.2s]   shaded  256×256 in 0.03s
+[   16.3s]   shaded  256×256 in 0.04s
+[   16.5s]   shaded  256×256 in 0.10s
+[   16.6s]   shaded  256×256 in 0.02s
+[   17.1s]   shaded  1024×1024 in 0.41s
+[   17.2s]   shaded  256×256 in 0.03s
+[   17.3s]   shaded  256×256 in 0.04s
+[   17.5s]   shaded  256×256 in 0.10s
+[   17.6s]   shaded  256×256 in 0.02s
+[   17.7s]   shaded  256×256 in 0.06s
+[   17.9s]   shaded  256×256 in 0.06s
+[   18.4s]   shaded  1024×1024 in 0.44s
+[   18.5s]   shaded  256×256 in 0.03s
+[   18.6s]   shaded  256×256 in 0.04s
+[   18.8s]   shaded  256×256 in 0.09s
+[   18.9s]   shaded  256×256 in 0.02s
+[   19.0s]   shaded  256×256 in 0.05s
+[   19.1s]   shaded  256×256 in 0.06s
+[   19.3s]   shaded  256×256 in 0.04s
+[   19.4s]   shaded  256×256 in 0.02s
+[   19.9s]   shaded  1024×1024 in 0.44s
+[   20.0s]   shaded  256×256 in 0.03s
+[   20.2s]   shaded  256×256 in 0.04s
+[   20.3s]   shaded  256×256 in 0.09s
+[   20.4s]   shaded  256×256 in 0.02s
+[   20.6s]   shaded  256×256 in 0.05s
+[   20.7s]   shaded  256×256 in 0.06s
+[   20.8s]   shaded  256×256 in 0.04s
+[   20.9s]   shaded  256×256 in 0.02s
+[   21.0s]   shaded  256×256 in 0.07s
+[   21.1s]   shaded  256×256 in 0.05s
+[   21.3s]   shaded  256×256 in 0.05s
+[   21.3s] built StorageCrate 1 x x1.5: 5 parts in 7.7s
+[   21.3s] cached StorageCrate 1 x x1.5
+[   21.3s] cached StorageCrate 1 x x1.5
+[   21.3s] cached StorageCrate 1 x x1.5
+[   21.3s] cached StorageCrate 1 x x1.5
+[   21.3s] cached StorageCrate 1 x x1.5
+[   21.3s] cached StorageCrate 1 x x1.5
+[   21.3s] cached StorageCrate 1 x x1.5
+[   21.3s] building Side2 1.1314261122877003e-14 184.77590650225736 90
+[   21.9s]   shaded Deck 1024×1024 in 0.46s
+[   21.9s]   shaded HazardYellow 168×168 in 0.02s
+[   21.9s]   shaded HazardBlack 160×160 in 0.02s
+[   22.3s]   shaded Girders 1024×1024 in 0.39s
+[   22.4s]   shaded Posts 240×240 in 0.05s
+[   22.6s]   shaded Rail 1024×1024 in 0.16s
+[   22.6s]   shaded KerbEnds 148×148 in 0.03s
+[   22.6s]   shaded EndPosts 76×76 in 0.01s
+[   22.7s]   shaded Abutments 368×368 in 0.11s
+[   22.7s] built Side2 1.1314261122877003e-14 184.77590650225736 90: 9 parts in 1.4s
+[   22.8s] building Side6 -3.394278336863101e-14 -184.77590650225736 270
+[   23.3s]   shaded Deck 1024×1024 in 0.46s
+[   23.4s]   shaded HazardYellow 168×168 in 0.02s
+[   23.4s]   shaded HazardBlack 160×160 in 0.02s
+[   23.8s]   shaded Girders 1024×1024 in 0.39s
+[   23.9s]   shaded Posts 240×240 in 0.05s
+[   24.0s]   shaded Rail 1024×1024 in 0.15s
+[   24.1s]   shaded KerbEnds 148×148 in 0.03s
+[   24.1s]   shaded EndPosts 76×76 in 0.01s
+[   24.2s]   shaded Abutments 368×368 in 0.11s
+[   24.2s] built Side6 -3.394278336863101e-14 -184.77590650225736 270: 9 parts in 1.4s
+[   24.2s] building CarStack 1 x x2.5
+[   24.3s]   shaded Car1 256×256 in 0.06s
+[   24.3s]   shaded Car2 256×256 in 0.06s
+[   24.4s]   shaded Car3 256×256 in 0.05s
+[   24.4s]   shaded Wheels 256×256 in 0.03s
+[   24.5s]   shaded Glass 256×256 in 0.03s
+[   24.5s] built CarStack 1 x x2.5: 5 parts in 0.3s
+[   24.5s] building JunkWall 1 x x1.75
+[   24.5s]   shaded Fridges 256×256 in 0.05s
+[   24.6s]   shaded Doors 256×256 in 0.05s
+[   24.6s]   shaded Drums 256×256 in 0.04s
+[   24.7s]   shaded Handles 256×256 in 0.03s
+[   24.7s] built JunkWall 1 x x1.75: 4 parts in 0.2s
+[   24.7s] building StreetlightBroken 1 x x2
+[   24.7s]   shaded Pole 256×256 in 0.02s
+[   24.7s]   shaded Head 256×256 in 0.03s
+[   24.8s]   shaded Glass 256×256 in 0.03s
+[   24.8s]   shaded Wires 256×256 in 0.01s
+[   24.8s] built StreetlightBroken 1 x x2: 4 parts in 0.1s
+[   25.0s] writing ServerMap.glb and 160 textures
+[   25.8s] chunk ServerMap_S4_01.glb: 94 parts, 11.6 MB
+[   25.8s] chunk ServerMap_S4_02.glb: 44 parts, 6.6 MB
+[   25.8s] chunk ServerMap_S4_03.glb: 22 parts, 5.5 MB
+ServerMap: 160 parts, script 24.99s, total 26.11s
+SHARD_COST	slab Beacon	0.615
+SHARD_COST	slab Beacon #split	1
+SHARD_COST	HubIsland 1 x	199.467
+SHARD_COST	HubIsland 1 x #split	1
+SHARD_COST	StorageCrate 1 x x1.5	7.701
+SHARD_COST	slab Side2	1.436
+SHARD_COST	slab Side2 #split	1
+SHARD_COST	slab Side6	1.426
+SHARD_COST	slab Side6 #split	1
+SHARD_COST	CarStack 1 x x2.5	0.259
+SHARD_COST	CarStack 1 x x2.5 #split	1
+SHARD_COST	JunkWall 1 x x1.75	0.187
+SHARD_COST	JunkWall 1 x x1.75 #split	1
+SHARD_COST	StreetlightBroken 1 x x2	0.101
+SHARD_COST	StreetlightBroken 1 x x2 #split	1
