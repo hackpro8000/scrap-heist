@@ -1,0 +1,30 @@
+slab Ramps	5.920
+slab Ramps #split	1
+HubIsland 1 x	208.087
+HubIsland 1 x #split	1
+YardPathStub 1 x x1.5	0.148
+YardPathStub 1 x x1.5 #split	1
+slab Spoke4	0.126
+slab Spoke4 #split	1
+YardFooting 0.5 x x1.5	0.050
+YardFooting 0.5 x x1.5 #split	1
+YardGate 1 x x1.5	0.201
+YardGate 1 x x1.5 #split	1
+slab Plot6	0.872
+slab Plot6 #split	1
+YardFence 1 x x1.5	0.143
+YardFence 1 x x1.5 #split	1
+slab Bridge7	1.661
+slab Bridge7 #split	1
+PlotMarker 1 x x1.5	0.312
+PlotMarker 1 x x1.5 #split	1
+slab Side3	1.468
+slab Side3 #split	1
+slab Side7	1.442
+slab Side7 #split	1
+CrushedCar 1 x x2.5	0.164
+CrushedCar 1 x x2.5 #split	1
+Pallets 1 x x1.4	0.152
+Pallets 1 x x1.4 #split	1
+StreetlightBroken 1 x x2	0.101
+StreetlightBroken 1 x x2 #split	1
