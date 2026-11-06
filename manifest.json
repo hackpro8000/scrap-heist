@@ -1,8 +1,8 @@
 {
 	"assets": [
 		{
-			"id": "0502634484551b82",
-			"key": "d85c17ddde731d72-2f5b4070ee3aa512 Spawn -250 0 0",
+			"id": "4fd2f6cd061daf9c",
+			"key": "fc0c5e558eaf305d-2f5b4070ee3aa512 Spawn -250 0 0",
 			"piece": 1,
 			"label": "Spawn",
 			"turn": 0.0,
@@ -64,8 +64,8 @@
 			"parts": 1
 		},
 		{
-			"id": "8c0a120fa7dfaa4b",
-			"key": "d85c17ddde731d72-7b25a7aa2539d602 Plot5 -210 -180 180",
+			"id": "d7fd67539ab4f3db",
+			"key": "fc0c5e558eaf305d-7b25a7aa2539d602 Plot5 -210 -180 180",
 			"piece": 1,
 			"label": "Plot5",
 			"turn": 0.0,
@@ -80,11 +80,20 @@
 			"turn": 0.0,
 			"bytes": 558100,
 			"parts": 6
+		},
+		{
+			"id": "ab03a70597e56c99",
+			"key": "JunkrotTypewrittoClackini-fe49253052fa6f56 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotTypewrittoClackini",
+			"turn": 0.0,
+			"bytes": 750436,
+			"parts": 8
 		}
 	],
 	"placements": [
 		{
-			"asset": "0502634484551b82",
+			"asset": "4fd2f6cd061daf9c",
 			"label": "Spawn",
 			"turn": 0.0,
 			"anchors": [
@@ -2149,7 +2158,7 @@
 			]
 		},
 		{
-			"asset": "8c0a120fa7dfaa4b",
+			"asset": "d7fd67539ab4f3db",
 			"label": "Plot5",
 			"turn": 0.0,
 			"anchors": [
@@ -2248,7 +2257,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						312.02267,
+						180.022675,
 						-148.308,
 						0.85521353
 					]
@@ -2256,9 +2265,32 @@
 				{
 					"name": "Soot",
 					"position": [
-						312.66195500000003,
+						180.661955,
 						-146.155,
 						-0.01195774999999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "ab03a70597e56c99",
+			"label": "Kit_JunkrotTypewrittoClackini",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Paper",
+					"position": [
+						444.0,
+						-146.95,
+						-0.89
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						444.02218,
+						-147.9565,
+						0.85021353
 					]
 				}
 			]

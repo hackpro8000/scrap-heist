@@ -1,6 +1,6 @@
-slab Spawn	0.097
+slab Spawn	0.045
 slab Spawn #split	1
-slab Plot5	4.016
+slab Plot5	3.913
 slab Plot5 #split	1
-JunkrotMuffleroTossetto 1 x	0.518
-JunkrotMuffleroTossetto 1 x #split	1
+JunkrotTypewrittoClackini 1 x	0.605
+JunkrotTypewrittoClackini 1 x #split	1
