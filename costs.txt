@@ -1,0 +1,16 @@
+HubSectionA 1 x	63.133
+HubSectionA 1 x #split	1
+slab Plot1	4.136
+slab Plot1 #split	1
+slab Bridge4	1.591
+slab Bridge4 #split	1
+slab Bridge7	1.597
+slab Bridge7 #split	1
+slab Side3	0.926
+slab Side3 #split	1
+CarStack 1 x x2.5	0.332
+CarStack 1 x x2.5 #split	1
+slab Hatch2	0.131
+slab Hatch2 #split	1
+slab Hatch4	0.131
+slab Hatch4 #split	1
