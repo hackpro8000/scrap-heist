@@ -1,0 +1,67 @@
+# Keeps up to 8 shard machines warm for up to 15 minutes, building each task
+# posted with scripts/send-build.sh as it arrives (scripts/standby.sh). One
+# cold start, then every task skips machine start, checkout and cache
+# restore. Each machine saves its cache when standby ends.
+#
+#   gh workflow run build-standby.yml -f shards=8 -f minutes=15
+name: Build standby
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Commit or branch to warm up from
+        default: main
+      layout:
+        description: Layout the tasks build
+        default: ServerMap
+      shards:
+        description: Number of machines (1-8)
+        default: "8"
+      minutes:
+        description: Minutes to stay on standby (1-15)
+        default: "15"
+
+permissions:
+  contents: write
+
+jobs:
+  standby:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON('{"1":[1],"2":[1,2],"3":[1,2,3],"4":[1,2,3,4],"5":[1,2,3,4,5],"6":[1,2,3,4,5,6],"7":[1,2,3,4,5,6,7],"8":[1,2,3,4,5,6,7,8]}')[inputs.shards] }}
+    env:
+      MODELKIT_PRUNE: "1"
+      ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+      ROBLOX_CREATOR_ID: ${{ secrets.ROBLOX_CREATOR_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /scripts/
+            /art/src/
+            /art/models/*/model.luau
+            /tools/modelkit/
+      - name: Restore this shard's build cache
+        uses: actions/cache/restore@v4
+        with:
+          path: art/models/${{ inputs.layout }}/.cache
+          key: shard-cache-${{ inputs.layout }}-${{ inputs.shards }}-${{ matrix.shard }}-${{ github.run_id }}
+          restore-keys: shard-cache-${{ inputs.layout }}-${{ inputs.shards }}-${{ matrix.shard }}-
+      - name: Wait for tasks
+        run: |
+          minutes=$(( ${{ inputs.minutes }} > 15 ? 15 : ${{ inputs.minutes }} ))
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          scripts/standby.sh "${{ inputs.layout }}" "${{ matrix.shard }}" "${{ inputs.shards }}" "$minutes"
+      - name: Save this shard's build cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: art/models/${{ inputs.layout }}/.cache
+          key: shard-cache-${{ inputs.layout }}-${{ inputs.shards }}-${{ matrix.shard }}-${{ github.run_id }}

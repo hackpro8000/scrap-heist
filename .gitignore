@@ -25,3 +25,4 @@ __pycache__/
 art/models/*/*
 !art/models/*/model.luau
 !art/models/*/sketch.png
+.standby-results/
