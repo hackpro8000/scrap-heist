@@ -1,4 +1,21 @@
-HubSectionEnd 1 x	59.048
-HubSectionEnd 1 x #split	1
-slab Plot5	3.931
-slab Plot5 #split	1
+YardFence 1 x x1.5	0.153
+YardFence 1 x x1.5 #split	1
+YardFooting 1 x x1.5	0.051
+YardFooting 1 x x1.5 #split	1
+YardFooting 0.5 x x1.5	0.052
+YardFooting 0.5 x x1.5 #split	1
+slab Bridge1	1.336
+slab Bridge1 #split	1
+slab Spoke4	0.061
+slab Spoke4 #split	1
+slab Yard5_Press	0.122
+slab Yard5_Press #split	1
+PadGadget 1 x x1.6666666666666667	0.160
+PadGadget 1 x x1.6666666666666667 #split	1
+StorageCrate 1 x x2	7.578
+slab Yard7_Bay2	0.126
+slab Yard7_Bay2 #split	1
+slab Spoke7	0.065
+slab Spoke7 #split	1
+slab Plot8	4.024
+slab Plot8 #split	1
