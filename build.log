@@ -1,42 +1,71 @@
 assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
-assemble ServerMap: uses ArenaDrone (key 3feaec12b72c179a)
 assemble ServerMap: uses HubSectionA (key a8617627bbdcd357)
 assemble ServerMap: uses HubSectionB (key 13537df3661bc8d8)
 assemble ServerMap: uses HubSectionEnd (key 992b2af78b33b635)
 assemble ServerMap: uses YardIsland (key 7ddd7ac889cc7658)
-assemble ServerMap: uses ShippingContainer (key b4618da1e6c8e874)
-assemble ServerMap: uses CarStack (key 18868d27bbadf854)
-assemble ServerMap: uses CrushedCar (key cb21a631053a549a)
-assemble ServerMap: uses Barrels (key 6fd22d825787f5b7)
-assemble ServerMap: uses TyreStack (key 19ab2944a510d9c5)
-assemble ServerMap: uses JunkWall (key acd51bf6f9b5d959)
-assemble ServerMap: uses Dumpster (key 5705b07a41a863a8)
-assemble ServerMap: uses Pallets (key af2bcdda5ec40e79)
-assemble ServerMap: uses StreetlightBroken (key 860caef50018b787)
-assemble ServerMap: uses TrafficCones (key 878424fc7df50b09)
-assemble ServerMap: slab at ServerMap.luau:821-870 (key 5c7ab7c43edf108b)
-assemble ServerMap: slab at ServerMap.luau:875-899 (key e1d53c436615f36a)
-assemble ServerMap: slab at ServerMap.luau:933-948 (key f4f9015cc7a52d81)
-assemble ServerMap: slab at ServerMap.luau:1027-1217 (key cf7e96091024d5cc)
-assemble ServerMap: slab at ServerMap.luau:1297-1326 (key 7ded6fc62f8b67a3)
-assemble ServerMap: slab at ServerMap.luau:1329-1333 (key 2f5b4070ee3aa512)
-assemble ServerMap: slab at ServerMap.luau:1345-1349 (key 014f342f2182a798)
-assemble ServerMap: slab at ServerMap.luau:1351-1359 (key 84939f33a0cb0864)
-assemble ServerMap: slab at ServerMap.luau:1404-1426 (key dfbe27eb7d68389c)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 22621 lines, in 0s
+assemble ServerMap: slab at ServerMap.luau:260-450 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:530-559 (key 7ded6fc62f8b67a3)
+assemble ServerMap: slab at ServerMap.luau:562-566 (key 2f5b4070ee3aa512)
+assemble ServerMap: slab at ServerMap.luau:578-582 (key 014f342f2182a798)
+assemble ServerMap: slab at ServerMap.luau:584-592 (key 84939f33a0cb0864)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 12141 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.5s] cached ArenaDrone 1 x part 3/3
-[    0.8s] cached Line 0 0 0
-[    0.8s] writing ServerMap.glb and 171 textures
-[    2.2s] chunk ServerMap_S3_01.glb: 68 parts, 16.9 MB
-[    2.2s] chunk ServerMap_S3_02.glb: 52 parts, 16.6 MB
-[    2.2s] chunk ServerMap_S3_03.glb: 51 parts, 16.2 MB
-ServerMap: 171 parts, script 831.23ms, total 2.72s
-upload ServerMap: starting in 2.8s
-upload ServerMap: uploading ServerMapS3_01 (17M)
-upload ServerMap: ServerMapS3_01 is asset 125315983259006
-upload ServerMap: uploading ServerMapS3_02 (16M)
-upload ServerMap: ServerMapS3_02 is asset 132114876651640
-upload ServerMap: uploading ServerMapS3_03 (16M)
-upload ServerMap: ServerMapS3_03 is asset 84976828318306
-upload ServerMap: shard upload done: 3 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
+[    0.2s] building HubSectionEnd 1 x part 3/4
+[    2.2s] baking on CPU (no GPU)
+[    2.4s]   shaded Columns_-1_0_0_011 324×324 in 0.14s
+[    3.6s]   shaded Columns_-1_0_0_001 812×812 in 1.13s
+[    3.7s]   shaded Columns_-1_0_0_000 232×232 in 0.08s
+[    3.7s]   shaded Columns_0_0_0_010 180×180 in 0.05s
+[    3.8s]   shaded Columns_0_1_0 104×104 in 0.03s
+[    4.3s]   shaded Columns_-1_-1_-1_110 536×536 in 0.56s
+[    4.7s]   shaded Columns_-1_-1_0_111 564×564 in 0.40s
+[    4.8s]   shaded Columns_-1_-1_0_000 132×132 in 0.03s
+[    5.4s]   shaded Columns_-1_-1_0_101 620×620 in 0.58s
+[    6.8s]   shaded Columns_0_0_-1_001 880×880 in 1.32s
+[    8.5s]   shaded Columns_-1_0_-1_101 916×916 in 1.65s
+[    8.6s]   shaded Columns_-1_0_-1_111 136×136 in 0.04s
+[   11.0s]   shaded Dirt_0_-1_0_110 1004×1004 in 2.28s
+[   11.5s]   shaded Dirt_0_-1_0_100_100 444×444 in 0.55s
+[   11.9s]   shaded Dirt_0_-1_0_100_001 432×432 in 0.29s
+[   12.1s]   shaded Dirt_0_-1_0_100_010 384×384 in 0.22s
+[   12.5s]   shaded Dirt_0_-1_0_100_000 520×520 in 0.42s
+[   13.6s]   shaded Dirt_0_-1_0_001 768×768 in 1.05s
+[   15.1s]   shaded Dirt_-1_0_0_110 896×896 in 1.41s
+[   15.5s]   shaded Dirt_-1_0_0_100 496×496 in 0.34s
+[   17.2s]   shaded Dirt_-1_0_0_000 1004×1004 in 1.64s
+[   17.8s]   shaded Dirt_-1_-1_0_111 588×588 in 0.60s
+[   18.3s]   shaded Dirt_-1_-1_0_010_000 392×392 in 0.46s
+[   18.5s]   shaded Dirt_-1_-1_0_010_010 296×296 in 0.22s
+[   18.6s]   shaded Dirt_0_-2_0 264×264 in 0.13s
+[   18.7s]   shaded Dirt_0_0_-1 212×212 in 0.09s
+[   19.3s]   shaded Grass_-1_0_0_000 668×668 in 0.54s
+[   20.3s]   shaded Grass_-1_0_0_010 792×792 in 0.92s
+[   20.3s] built HubSectionEnd 1 x part 3/4: 28 parts in 20.1s
+[   20.5s] cached HubSectionEnd 1 x part 3/4
+[   20.5s] building Bridge4 210 180 0
+[   21.1s]   shaded Deck 1024×1024 in 0.57s
+[   21.2s]   shaded HazardYellow 148×148 in 0.05s
+[   21.3s]   shaded HazardBlack 148×148 in 0.05s
+[   21.7s]   shaded Girders 1024×1024 in 0.40s
+[   21.8s]   shaded Posts 212×212 in 0.08s
+[   22.0s]   shaded Rail 1024×1024 in 0.22s
+[   22.0s]   shaded KerbEnds 104×104 in 0.02s
+[   22.0s]   shaded EndPosts 60×60 in 0.01s
+[   22.2s]   shaded Abutments 372×372 in 0.18s
+[   22.2s]   shaded JointPlate 152×152 in 0.01s
+[   22.3s]   shaded Apron 184×184 in 0.05s
+[   22.3s] built Bridge4 210 180 0: 11 parts in 1.8s
+[   22.3s] writing ServerMap.glb and 67 textures
+[   23.0s] chunk ServerMap_S3_01.glb: 56 parts, 8.2 MB
+[   23.0s] chunk ServerMap_S3_02.glb: 11 parts, 3.0 MB
+ServerMap: 67 parts, script 22.32s, total 23.24s
+SHARD_COST	HubSectionEnd 1 x	80.221
+SHARD_COST	HubSectionEnd 1 x #split	1
+SHARD_COST	slab Bridge4	1.803
+SHARD_COST	slab Bridge4 #split	1
+upload ServerMap: starting in 3.3s
+upload ServerMap: uploading ServerMapS3_01 (7.9M)
+upload ServerMap: ServerMapS3_01 is asset 107618743326676
+upload ServerMap: uploading ServerMapS3_02 (2.9M)
+upload ServerMap: ServerMapS3_02 is asset 116950380592610
+upload ServerMap: shard upload done: 2 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
