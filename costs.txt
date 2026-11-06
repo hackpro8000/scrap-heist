@@ -1,12 +1,16 @@
-YardFooting 1.037037037037037 x x1.5	0.063
-YardFooting 1.037037037037037 x x1.5 #split	1
-YardFence 1 x x1.5	0.181
-YardFence 1 x x1.5 #split	1
-slab Yard3_Bay2	0.166
+YardPathStub 0.75 y x2	0.197
+YardPathStub 0.75 y x2 #split	1
+slab Yard3_Bay2	0.064
 slab Yard3_Bay2 #split	1
-slab Spoke3	0.077
-slab Spoke3 #split	1
-slab Yard4_Bay2	0.160
-slab Yard4_Bay2 #split	1
-slab Plot5	4.835
-slab Plot5 #split	1
+YardFenceHalf 1 x x1.5	0.151
+YardFenceHalf 1 x x1.5 #split	1
+PadKitchen 1 x x1.6666666666666667	0.192
+PadKitchen 1 x x1.6666666666666667 #split	1
+YardFooting 1 x x1.5	0.061
+YardFooting 1 x x1.5 #split	1
+slab Spoke4	0.076
+slab Spoke4 #split	1
+slab Yard5_Bay2	0.165
+slab Yard5_Bay2 #split	1
+slab Plot6	4.848
+slab Plot6 #split	1
