@@ -8,6 +8,9 @@ local placeScale = 1
 local placeLabel = ""
 local RealMesh, realPart = Mesh, model.part
 
+-- Set further down, with the shard deal: whether this shard paints a part.
+local paintsPart: (name: string) -> boolean
+
 local function unwrapMesh(mesh)
 	return if type(mesh) == "table" and mesh._mesh then mesh._mesh else mesh
 end
@@ -27,6 +30,10 @@ Mesh = {
 				return real:vertex(x * c - y * s + ox, x * s + y * c + oy, z * scale + oz)
 			end,
 			paintShading = function(_, image, options)
+				-- A model split across shards paints only this shard's parts.
+				if options and options.name and not paintsPart(options.name) then
+					return
+				end
 				for _, list in { "occluders", "group" } do
 					if options and options[list] then
 						local real = {}
@@ -90,25 +97,90 @@ local slabKeys = {}
 -- between them the shards build each placement once. A placement inside
 -- another one's build belongs to it, and isn't dealt: whether it runs depends
 -- on that build being cached.
+--
+-- A model build costing well over an even share, and marked "#split" (most of
+-- its parts are shaded through a named paint, as finishParts does), is split
+-- across the least-loaded shards instead: each builds the geometry, which is
+-- cheap, but paints and keeps only the parts whose name hashes to it. Placing
+-- that model again goes to the same shards, each keeping the same parts.
 local REPEAT_COST = 0.01
-local shardLoads, shardModels = {}, {}
-local medianCost = 1
+local SPLIT_ABOVE = 1.25
+local shardLoads, shardModels, splitModels = {}, {}, {}
+local medianCost, totalCost = 1, 0
 do
 	local costs = {}
-	for _, seconds in SHARD_COSTS do
-		table.insert(costs, seconds)
+	for key, seconds in SHARD_COSTS do
+		if not string.find(key, " #split$") then
+			table.insert(costs, seconds)
+			totalCost += seconds
+		end
 	end
 	table.sort(costs)
 	if #costs > 0 then
 		medianCost = costs[(#costs + 1) // 2]
 	end
 end
--- `reuses`, when given, names the model build this placement reuses.
-local function inThisShard(costKey: string, reuses: string?): boolean
+
+-- While a split model builds: this shard's share of its parts.
+local partShare: { index: number, count: number }? = nil
+-- Parts seen while building, and how many were shaded through a named paint,
+-- so a build can tell whether splitting it would save any paint.
+local partsEmitted, partsGated = 0, 0
+local function ownsPartNamed(name: string): boolean
+	if not partShare then
+		return true
+	end
+	local hash = 5381
+	for i = 1, #name do
+		hash = (hash * 33 + string.byte(name, i)) % 4294967296
+	end
+	return hash % partShare.count + 1 == partShare.index
+end
+-- Every named shading paint (finishParts in common.luau passes the part's
+-- name) asks this first, through the Mesh wrapper above.
+paintsPart = function(name: string): boolean
+	partsGated += 1
+	return ownsPartNamed(name)
+end
+
+-- The shards a split takes, and which of them this one is.
+local function shareOf(shards: { number }): (boolean, number?, number?)
+	local index = table.find(shards, SHARD_INDEX)
+	return index ~= nil, index, #shards
+end
+
+-- Deals one placement: whether this shard builds it, and for a split model
+-- which share of its parts this shard keeps, out of how many. `reuses`, when
+-- given, names the model build this placement reuses.
+local function inThisShard(costKey: string, reuses: string?): (boolean, number?, number?)
 	if builtParts or SHARD_COUNT == nil then
 		return true
 	end
 	local cost = SHARD_COSTS[costKey] or medianCost
+	local split = reuses and splitModels[reuses]
+	if split then
+		for _, shard in split do
+			shardLoads[shard] = (shardLoads[shard] or 0) + REPEAT_COST
+		end
+		return shareOf(split)
+	end
+	local fairShare = if totalCost > 0 then totalCost / SHARD_COUNT else medianCost
+	if reuses and SHARD_COSTS[`{costKey} #split`] and cost > fairShare * SPLIT_ABOVE then
+		local order = {}
+		for shard = 1, SHARD_COUNT do
+			order[shard] = shard
+		end
+		table.sort(order, function(a, b)
+			local loadA, loadB = shardLoads[a] or 0, shardLoads[b] or 0
+			return if loadA ~= loadB then loadA < loadB else a < b
+		end)
+		split = table.move(order, 1, math.min(SHARD_COUNT, math.ceil(cost / fairShare)), 1, {})
+		for _, shard in split do
+			shardLoads[shard] = (shardLoads[shard] or 0) + cost / #split
+		end
+		splitModels[reuses] = split
+		return shareOf(split)
+	end
 	local best, bestLoad = 1, math.huge
 	for shard = 1, SHARD_COUNT do
 		shardModels[shard] = shardModels[shard] or {}
@@ -125,15 +197,22 @@ local function inThisShard(costKey: string, reuses: string?): boolean
 	return best == SHARD_INDEX
 end
 
--- Times a cached build when sharding, printing a line the build workflow
--- gathers into <Layout>Costs.txt for the next deal.
+-- Times a cached build when sharding, printing lines the build workflow
+-- gathers into <Layout>Costs.txt for the next deal: its time (scaled up to
+-- the whole model when this shard painted only a share), and "#split" when
+-- most of its parts are shaded through a named paint, so splitting pays.
 local function timedBuild(costKey: string, build: () -> any): any
 	if SHARD_COUNT == nil then
 		return build()
 	end
-	local started = os.clock()
+	local started, emitted, gated = os.clock(), partsEmitted, partsGated
 	local result = build()
-	print(string.format("SHARD_COST\t%s\t%.3f", costKey, os.clock() - started))
+	local seconds = (os.clock() - started) * (if partShare then partShare.count else 1)
+	print(string.format("SHARD_COST\t%s\t%.3f", costKey, seconds))
+	emitted, gated = partsEmitted - emitted, partsGated - gated
+	if emitted > 0 and gated * 2 >= emitted then
+		print(string.format("SHARD_COST\t%s #split\t1", costKey))
+	end
 	return result
 end
 
@@ -147,7 +226,8 @@ end
 model.part = function(name, mesh, image, options)
 	local preview = if options and options.preview ~= nil then options.preview else true
 	if builtParts then
-		if skipPart(name) then
+		partsEmitted += 1
+		if skipPart(name) or not ownsPartNamed(name) then
 			return
 		end
 		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview, emissive = options and options.emissive })
@@ -178,7 +258,8 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 	-- Costs are keyed by model name, not source hash, so an edited model keeps
 	-- its last measured cost until it's measured again.
 	local costKey = `{string.match(key, "^(.-)%-%x+$") or key} {variant}`
-	if not inThisShard(costKey, `{key} {variant}`) then
+	local owns, share, shares = inThisShard(costKey, `{key} {variant}`)
+	if not owns then
 		return
 	end
 	placeLabel = label
@@ -188,9 +269,15 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 	if previewBand then
 		key = `{key} band {previewBand(x, y, z or 0)}`
 	end
+	-- A split build keeps only its share of the parts, so it caches apart.
+	if share then
+		key = `{key} part {share}/{shares}`
+	end
 	local x0, y0, z0, turn0 = placeX, placeY, placeZ, placeTurn
 	for _, part in model.cached(key, function()
-		return timedBuild(costKey, function()
+		local outerShare = partShare
+		partShare = if share then { index = share, count = shares :: number } else outerShare
+		local built = timedBuild(costKey, function()
 			placeX, placeY, placeZ, placeTurn = 0, 0, 0, 0
 			if previewPlacing then
 				previewPlacing(x0, y0, z0, turn0)
@@ -204,6 +291,8 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 			builtParts = nil
 			return built
 		end)
+		partShare = outerShare
+		return built
 	end) do
 		addPart(part.name, part.mesh:moved(turn0, x0, y0, z0), part.image, part.preview, part.emissive)
 	end
