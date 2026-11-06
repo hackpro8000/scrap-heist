@@ -1,7 +1,0 @@
-Shop_Container_-1_0_0_000
-Shop_CounterIron
-Shop_SignBolts_-1_-1_1_010_111_100
-Shop_SignBolts_-1_-1_1_010_111_101
-Shop_SignBolts_-1_-1_1_111_011
-Shop_SignJaw
-Shop_Wire
