@@ -1,0 +1,32 @@
+slab Spawn	0.289
+slab Spawn #split	1
+slab Avenue1	2.294
+slab Avenue1 #split	1
+slab Pad4	0.563
+slab Pad4 #split	1
+MarketIsland 1 x	53.352
+MarketIsland 1 x #split	1
+slab Plot2	1.391
+slab Plot2 #split	1
+slab Plot3	1.345
+slab Plot3 #split	1
+slab Spoke3	0.148
+slab Spoke3 #split	1
+GroundTile 1 x x1.5	0.188
+GroundTile 1 x x1.5 #split	1
+MachinePad 1 x x1.5	0.189
+MachinePad 1 x x1.5 #split	1
+YardPath 1 x x1.5	0.225
+YardPath 1 x x1.5 #split	1
+YardPathStub 1 x x1.5	0.183
+YardPathStub 1 x x1.5 #split	1
+YardFooting 1 x x1.5	0.061
+YardFooting 1 x x1.5 #split	1
+slab Bridge4	1.314
+slab Bridge4 #split	1
+YardFooting 0.5 x x1.5	0.066
+YardFooting 0.5 x x1.5 #split	1
+YardGate 1 x x1.5	0.253
+YardGate 1 x x1.5 #split	1
+slab Plot8	1.388
+slab Plot8 #split	1
