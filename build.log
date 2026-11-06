@@ -40,6 +40,17 @@ assemble ServerMap: uses JunkrotMuffleroTossetto (key 51cde1cc6e30d9fd)
 assemble ServerMap: uses JunkrotRadioloFruscio (key 9ad8ba65324bc486)
 assemble ServerMap: uses JunkrotFanettoWobblino (key 8243f260a8b0b6e8)
 assemble ServerMap: uses JunkrotClockoTictacco (key 124e3e812d14c4c3)
+assemble ServerMap: uses JunkrotFrostboxGelatone (key 742ce98836c68599)
+assemble ServerMap: uses JunkrotMicrondoBippetto (key 798f3f9c3acd3eb1)
+assemble ServerMap: uses JunkrotMixerellaVroom (key 344b44f12cb08348)
+assemble ServerMap: uses JunkrotMopaMopetta (key 447fd9d8fa5b6092)
+assemble ServerMap: uses JunkrotDrilloTrapanino (key e89c88ad79e9c60b)
+assemble ServerMap: uses JunkrotGrindellaScintilla (key 34447cb98f0a6877)
+assemble ServerMap: uses JunkrotTelefonoRingaling (key c46bacb116919010)
+assemble ServerMap: uses JunkrotTypewrittoClackini (key fe49253052fa6f56)
+assemble ServerMap: uses JunkrotCamerinoFlashetto (key 2d8422ee9636d2d3)
+assemble ServerMap: uses JunkrotDrippiDroppi (key b006345a7aeeab08)
+assemble ServerMap: uses JunkrotDingDingDingDongo (key 1d1e1e950c96e4e4)
 assemble ServerMap: slab at ServerMap.luau:278-468 (key cf7e96091024d5cc)
 assemble ServerMap: slab at ServerMap.luau:548-577 (key 7ded6fc62f8b67a3)
 assemble ServerMap: slab at ServerMap.luau:580-584 (key 2f5b4070ee3aa512)
@@ -48,16 +59,16 @@ assemble ServerMap: slab at ServerMap.luau:668-677 (key 107c5c30239027da)
 assemble ServerMap: slab at ServerMap.luau:685-715 (key 18845c9c8b69ea54)
 assemble ServerMap: slab at ServerMap.luau:790-801 (key 363b6dc9a40b12d8)
 assemble ServerMap: slab at ServerMap.luau:814-867 (key f4e0427155be5973)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 43712 lines, in 1s
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 53240 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.9s] cached HubSectionA 1 x part 1/4
 [    1.0s] cached HubSectionA 1 x part 1/4
-[    1.0s] cached YardFence 1 x x1.5
-[    1.0s] cached YardFence 1 x x1.5
-[    1.0s] cached YardFence 1 x x1.5
-[    1.0s] cached YardFence 1 x x1.5
-[    1.0s] cached YardFence 1 x x1.5
-[    1.0s] cached YardFence 1 x x1.5
+[    1.1s] cached HubSectionA 1 x part 1/4
+[    1.1s] cached YardFence 1 x x1.5
+[    1.1s] cached YardFence 1 x x1.5
+[    1.1s] cached YardFence 1 x x1.5
+[    1.1s] cached YardFence 1 x x1.5
+[    1.1s] cached YardFence 1 x x1.5
+[    1.1s] cached YardFence 1 x x1.5
 [    1.1s] cached YardFence 1 x x1.5
 [    1.1s] cached YardFence 1 x x1.5
 [    1.1s] cached YardFence 1 x x1.5
@@ -75,10 +86,10 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 43712 lines, in 1s
 [    1.1s] cached YardFence 1.037037037037037 x x1.5
 [    1.1s] building Approach5 -210 0 180
 [    1.2s] baking on CPU (no GPU)
-[    1.3s]   shaded Ramp 468×468 in 0.15s
-[    1.4s]   shaded Walls 488×488 in 0.15s
-[    1.5s]   shaded WallCaps 468×468 in 0.05s
-[    1.5s] built Approach5 -210 0 180: 3 parts in 0.4s
+[    1.3s]   shaded Ramp 468×468 in 0.17s
+[    1.4s]   shaded Walls 488×488 in 0.05s
+[    1.4s]   shaded WallCaps 468×468 in 0.03s
+[    1.4s] built Approach5 -210 0 180: 3 parts in 0.3s
 [    1.5s] cached YardFence 1.037037037037037 x x1.5
 [    1.5s] cached YardFence 1.037037037037037 x x1.5
 [    1.5s] cached YardFence 1.037037037037037 x x1.5
@@ -111,19 +122,19 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 43712 lines, in 1s
 [    1.5s] cached YardFooting 1.037037037037037 x x1.5
 [    1.5s] cached YardFooting 1.037037037037037 x x1.5
 [    1.5s] building Plot8 210 -180 180
-[    2.6s]   shaded Ground_-1_-1_0 816×816 in 0.91s
+[    2.6s]   shaded Ground_-1_-1_0 816×816 in 0.92s
 [    2.8s]   shaded Ground_-1_0_0_000 540×540 in 0.19s
-[    3.1s]   shaded Ground_-1_0_0_010 544×544 in 0.22s
-[    3.5s]   shaded Ground_-1_0_0_100 540×540 in 0.38s
-[    4.0s]   shaded Ground_-1_0_0_110 544×544 in 0.38s
-[    5.0s]   shaded Ground_0_-1_0 816×816 in 0.91s
-[    5.5s]   shaded Ground_0_0_0_000 540×540 in 0.37s
-[    5.9s]   shaded Ground_0_0_0_010 544×544 in 0.37s
-[    6.1s]   shaded Ground_0_0_0_100 540×540 in 0.19s
-[    6.4s]   shaded Ground_0_0_0_110 544×544 in 0.19s
-[    6.4s] built Plot8 210 -180 180: 10 parts in 4.8s
-[    6.4s] writing ServerMap.glb and 222 textures
-ServerMap: 222 parts, script 6.43s, total 7.09s
+[    3.0s]   shaded Ground_-1_0_0_010 544×544 in 0.19s
+[    3.4s]   shaded Ground_-1_0_0_100 540×540 in 0.37s
+[    3.9s]   shaded Ground_-1_0_0_110 544×544 in 0.37s
+[    4.9s]   shaded Ground_0_-1_0 816×816 in 0.91s
+[    5.4s]   shaded Ground_0_0_0_000 540×540 in 0.37s
+[    5.8s]   shaded Ground_0_0_0_010 544×544 in 0.37s
+[    6.0s]   shaded Ground_0_0_0_100 540×540 in 0.19s
+[    6.3s]   shaded Ground_0_0_0_110 544×544 in 0.19s
+[    6.3s] built Plot8 210 -180 180: 10 parts in 4.8s
+[    6.3s] writing ServerMap.glb and 222 textures
+ServerMap: 222 parts, script 6.34s, total 7.11s
 PLACED	HubSection2	0	HubSectionA-a8313e4a55d56339 1 x part 1/4
 PLACED	HubSection4	180	HubSectionA-a8313e4a55d56339 1 x part 1/4
 PLACED	Yard3_FenceFront1	0	YardFence-fe3d5de848852dd7 1 x x1.5
@@ -147,8 +158,8 @@ PLACED	Yard5_FenceRight4	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
 PLACED	Yard5_FenceLeft6	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
 PLACED	Yard5_FenceRight7	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
 PLACED	Yard5_FenceLeft9	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
-PLACED	Approach5	0	d85c17ddde731d72-18845c9c8b69ea54 Approach5 -210 0 180
-SHARD_COST	slab Approach5	0.409
+PLACED	Approach5	0	fc0c5e558eaf305d-18845c9c8b69ea54 Approach5 -210 0 180
+SHARD_COST	slab Approach5	0.298
 SHARD_COST	slab Approach5 #split	1
 PLACED	Yard6_FenceLeft1	450	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
 PLACED	Yard6_FenceRight1	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
@@ -181,7 +192,7 @@ PLACED	Yard7_FootingLeft5	270	YardFooting-5c7b334d7913a1ed 1.037037037037037 x x
 PLACED	Yard7_FootingRight6	270	YardFooting-5c7b334d7913a1ed 1.037037037037037 x x1.5
 PLACED	Yard7_FootingLeft8	270	YardFooting-5c7b334d7913a1ed 1.037037037037037 x x1.5
 PLACED	Yard7_FootingRight9	270	YardFooting-5c7b334d7913a1ed 1.037037037037037 x x1.5
-PLACED	Plot8	0	d85c17ddde731d72-7b25a7aa2539d602 Plot8 210 -180 180
-SHARD_COST	slab Plot8	4.834
+PLACED	Plot8	0	fc0c5e558eaf305d-7b25a7aa2539d602 Plot8 210 -180 180
+SHARD_COST	slab Plot8	4.799
 SHARD_COST	slab Plot8 #split	1
 export ServerMap: 8 objects (16.0 MB) for 56 placements
