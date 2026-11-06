@@ -1,2 +1,0 @@
-ShopConceptContainer 1 x	11.938
-ShopConceptContainer 1 x #split	1
