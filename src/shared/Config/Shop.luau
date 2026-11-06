@@ -36,7 +36,7 @@ Shop.BOOSTS = {
 	{
 		name = "Overdrive",
 		displayName = "OVERDRIVE",
-		description = "Machines run twice as fast",
+		description = "Junkrots earn twice as fast",
 		icon = "IconOverdrive",
 		price = 3000,
 		seconds = 10 * 60,

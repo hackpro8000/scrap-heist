@@ -6,7 +6,7 @@ local describe, it, expect = Test.describe, Test.it, Test.expect
 
 local Belt = Source.require("src/shared/Config/Belt")
 local Junkrots = Source.require("src/shared/Config/Junkrots")
-local BeltRules = Source.require("src/server/Tycoon/BeltRules")
+local BeltRules = Source.require("src/shared/Belt/BeltRules")
 
 local function rollsOf(values: { number }): () -> number
 	local index = 0

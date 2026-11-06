@@ -58,7 +58,12 @@ Junkrots.TIER_INFO = {
 	Salvaged = { capsule = "Lunchbox", priceSeconds = 60, hatchSeconds = 10, color = Color3.fromRGB(120, 150, 110) },
 	Refurbished = { capsule = "Toolbox", priceSeconds = 120, hatchSeconds = 20, color = Color3.fromRGB(200, 70, 60) },
 	Factory = { capsule = "Shipping box", priceSeconds = 240, hatchSeconds = 40, color = Color3.fromRGB(200, 160, 100) },
-	Precision = { capsule = "Flight case", priceSeconds = 480, hatchSeconds = 75, color = Color3.fromRGB(180, 190, 200) },
+	Precision = {
+		capsule = "Flight case",
+		priceSeconds = 480,
+		hatchSeconds = 75,
+		color = Color3.fromRGB(180, 190, 200),
+	},
 	Prototype = { capsule = "Lab pod", priceSeconds = 960, hatchSeconds = 120, color = Color3.fromRGB(110, 220, 230) },
 	Secret = { capsule = "Monolith", priceSeconds = 1920, hatchSeconds = 180, color = Color3.fromRGB(25, 25, 30) },
 } :: { [string]: TierInfo }

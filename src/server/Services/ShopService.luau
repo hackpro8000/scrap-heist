@@ -23,7 +23,6 @@
 		ShopService.boostActive(player, boostName): boolean
 		ShopService.ownsWeapon(player, weaponName): boolean
 		ShopService.scrapMultiplier(player): number
-		ShopService.crateCapacity(player): number
 		ShopService.productionMultiplier(player): number
 		ShopService.syncShield(player)
 		ShopService.weaponsChanged: Signal(player)
@@ -33,7 +32,6 @@ local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Economy = require(ReplicatedStorage.Shared.Config.Economy)
 local Notify = require(ReplicatedStorage.Shared.Net.Notify)
 local Remotes = require(ReplicatedStorage.Shared.Net.Shop)
 local Shop = require(ReplicatedStorage.Shared.Config.Shop)
@@ -84,11 +82,6 @@ function ShopService.scrapMultiplier(player: Player): number
 		multiplier *= Shop.VIP_SCRAP
 	end
 	return multiplier
-end
-
-function ShopService.crateCapacity(player: Player): number
-	local capacity = Economy.CRATE_CAPACITY
-	return if ShopService.hasPass(player, "BigCrate") then math.floor(capacity * Shop.BIG_CRATE) else capacity
 end
 
 function ShopService.productionMultiplier(player: Player): number

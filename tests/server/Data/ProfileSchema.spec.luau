@@ -22,17 +22,18 @@ describe("ProfileSchema.reconcile", function()
 		expect(oldSave.scrap).toBe(750)
 		expect(oldSave.inventory.stacks).toEqual({ RustyGear = 3 })
 		expect(oldSave.inventory.uniques["guid-1"].itemId).toBe("GoldenCog")
-		expect(oldSave.yard).toEqual({ machines = {}, crateParts = 0 })
+		expect(oldSave.yard).toEqual({ objects = {}, nextObjectId = 1, crateScrap = 0 })
 		expect(oldSave.stats.raidsWon).toBe(0)
 	end)
 
 	it("fills missing fields inside nested tables", function()
-		local save = { yard = { machines = { Pad1 = { level = 2 } } } }
+		local save = { yard = { crateScrap = 40 } }
 
 		ProfileSchema.reconcile(save)
 
-		expect(save.yard.crateParts).toBe(0)
-		expect(save.yard.machines).toEqual({ Pad1 = { level = 2 } })
+		expect(save.yard.crateScrap).toBe(40)
+		expect(save.yard.objects).toEqual({})
+		expect(save.yard.nextObjectId).toBe(1)
 	end)
 
 	it("changes nothing when run twice", function()
@@ -91,6 +92,22 @@ describe("ProfileSchema.migrate", function()
 		expect(function()
 			ProfileSchema.migrate({ version = 1 }, {}, 2)
 		end).toThrow("no migration from version 1")
+	end)
+
+	it("drops old machines for the new yard but keeps what was in the crate", function()
+		local save = ProfileSchema.migrate({
+			version = 1,
+			scrap = 900,
+			yard = { machines = { Pad1 = { level = 2 } }, crateParts = 120 },
+			tutorial = { Welcome = true },
+		})
+		ProfileSchema.reconcile(save)
+
+		expect(save.version).toBe(ProfileSchema.VERSION)
+		expect(save.scrap).toBe(900)
+		expect(save.yard).toEqual({ objects = {}, nextObjectId = 1, crateScrap = 120 })
+		expect(save.tutorial).toBe(nil)
+		expect(save.rank).toBe(0)
 	end)
 
 	it("has a migration for every version below the current one", function()

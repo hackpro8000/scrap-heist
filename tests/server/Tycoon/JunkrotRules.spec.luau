@@ -56,7 +56,9 @@ describe("JunkrotRules capsules", function()
 	end)
 
 	it("refunds a share of the price", function()
-		expect(JunkrotRules.refund(TOASTER.id)).toBe(math.floor(JunkrotRules.capsulePrice(TOASTER.id) * Junkrots.SCRAP_REFUND))
+		expect(JunkrotRules.refund(TOASTER.id)).toBe(
+			math.floor(JunkrotRules.capsulePrice(TOASTER.id) * Junkrots.SCRAP_REFUND)
+		)
 	end)
 end)
 

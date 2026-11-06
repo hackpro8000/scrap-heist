@@ -4,7 +4,9 @@
 
 	Pure maths for the capsule belt: how often a capsule drops, what it
 	holds, and where a capsule that has ridden some distance is. Randomness
-	comes in as rolls from 0 to 1, so tests can pick them.
+	comes in as rolls from 0 to 1, so tests can pick them. Shared, because
+	the client moves the capsules it sees along the same path between the
+	server's updates.
 
 	Public API:
 		BeltRules.spawnSeconds(playerCount, isStorm): number

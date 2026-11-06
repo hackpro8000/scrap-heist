@@ -13,11 +13,12 @@
 	and the spatial hitbox query.
 
 	Other services use it to:
-	- register NPCs as fighters (BotService, DummyService),
+	- register NPCs as fighters (DummyService),
 	- start NPC swings with CombatService.attack,
-	- slow fighters down (RaidService slows bundle carriers),
+	- slow fighters down (RaidService and CapsuleService slow carriers),
 	- buff defenders (RaidService's raid defense buff),
-	- react to hits through hitLanded (LootService counts damage).
+	- stun fighters (StormService's lightning),
+	- react to hits through hitLanded (CapsuleService knocks capsules loose).
 
 	Public API:
 		CombatService.register(model, weaponName)
@@ -29,6 +30,7 @@
 		CombatService.equip(model, weaponName): reason?
 		CombatService.setSpeedMultiplier(model, key, multiplier?)
 		CombatService.setDamageTakenMultiplier(model, multiplier)
+		CombatService.stun(model, seconds)
 		CombatService.hitLanded: Signal(attackerModel, targetModel, HitResult)
 		CombatService.swingChecked: Signal(boxCFrame, boxSize)   -- for the debug overlay
 		CombatService.weaponChanged: Signal(model, weaponName?)   -- nil when put away
@@ -305,6 +307,15 @@ function CombatService.setSpeedMultiplier(model: Model, key: string, multiplier:
 	local fighter = fighters[model]
 	if fighter then
 		fighter.speedMultipliers[key] = multiplier
+	end
+end
+
+-- Stuns a fighter from outside a fight (lightning): they can't swing and
+-- walk at the stunned speed until it passes.
+function CombatService.stun(model: Model, seconds: number)
+	local fighter = fighters[model]
+	if fighter then
+		fighter.combatant.stunnedUntil = math.max(fighter.combatant.stunnedUntil, os.clock() + seconds)
 	end
 end
 

@@ -30,12 +30,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Economy = require(ReplicatedStorage.Shared.Config.Economy)
 local InventoryTypes = require(ReplicatedStorage.Shared.Inventory.InventoryTypes)
+local YardGrid = require(ReplicatedStorage.Shared.Yard.YardGrid)
 
 local ProfileSchema = {}
-
-export type MachineSave = {
-	level: number,
-}
 
 export type TradeLogEntry = {
 	at: number,
@@ -50,21 +47,32 @@ export type ProfileData = {
 	inventory: InventoryTypes.Inventory,
 	tradeLog: { TradeLogEntry },
 	yard: {
-		machines: { [string]: MachineSave },
-		-- Parts waiting in the storage crate (raiders can steal these).
-		crateParts: number,
+		-- Everything the player has built, and where (Shared/Yard/YardGrid):
+		-- pads with the junkrots on them, bays with the capsules in them,
+		-- the crate, the mound and the press. Empty until the starter
+		-- layout is placed.
+		objects: { YardGrid.Object },
+		-- The id the next thing built gets; ids are never reused.
+		nextObjectId: number,
+		-- Scrap waiting in the storage crate (raiders can steal this).
+		crateScrap: number,
 	},
+	-- Rebirth rank ("Scrap the Yard"), 0 to Rebirth.MAX_RANK.
+	rank: number,
+	-- Parts for junkrot stars, from storms and the junk mound.
+	parts: number,
+	-- Junkrots hatched at least once, by id.
+	logbook: { [string]: boolean },
 	stats: {
 		raidsWon: number,
 		timesRaided: number,
-		stormsSurvived: number,
+		capsulesHatched: number,
+		capsulesStolen: number,
 	},
 	-- os.time() until which this player's yard can't be raided.
 	raidShieldUntil: number,
 	-- os.time() when the player last left, for offline earnings.
 	lastSeenAt: number,
-	-- Tutorial steps finished, by step name.
-	tutorial: { [string]: boolean },
 	-- Player weapons owned, by WeaponConfig name.
 	weapons: { [string]: boolean },
 	-- os.time() until which each shop boost runs, by boost name.
@@ -90,7 +98,7 @@ export type Settings = {
 	hitPause: boolean,
 }
 
-ProfileSchema.VERSION = 1
+ProfileSchema.VERSION = 2
 
 ProfileSchema.TEMPLATE = {
 	version = ProfileSchema.VERSION,
@@ -101,17 +109,21 @@ ProfileSchema.TEMPLATE = {
 	},
 	tradeLog = {},
 	yard = {
-		machines = {},
-		crateParts = 0,
+		objects = {},
+		nextObjectId = 1,
+		crateScrap = 0,
 	},
+	rank = 0,
+	parts = 0,
+	logbook = {},
 	stats = {
 		raidsWon = 0,
 		timesRaided = 0,
-		stormsSurvived = 0,
+		capsulesHatched = 0,
+		capsulesStolen = 0,
 	},
 	raidShieldUntil = 0,
 	lastSeenAt = 0,
-	tutorial = {},
 	weapons = { Bat = true },
 	boosts = {},
 	settings = {
@@ -131,10 +143,18 @@ ProfileSchema.TEMPLATE = {
 	purchases = {},
 } :: ProfileData
 
--- MIGRATIONS[n] upgrades a save from version n to n + 1. Example for a
--- future version 2 that renames `scrap` to `credits`:
---   [1] = function(data) data.credits = data.scrap; data.scrap = nil; return data end
-ProfileSchema.MIGRATIONS = {} :: { [number]: (any) -> any }
+-- MIGRATIONS[n] upgrades a save from version n to n + 1.
+ProfileSchema.MIGRATIONS = {
+	-- Version 2: salvage machines on four fixed pads became junkrots on
+	-- pads the player lays out. The old machines are dropped (their yard
+	-- starts again from the starter layout); what was in the crate stays.
+	[1] = function(data)
+		local crate = if type(data.yard) == "table" then tonumber(data.yard.crateParts) else nil
+		data.yard = { objects = {}, nextObjectId = 1, crateScrap = crate or 0 }
+		data.tutorial = nil
+		return data
+	end,
+} :: { [number]: (any) -> any }
 
 local function deepCopy(value: any): any
 	if type(value) ~= "table" then

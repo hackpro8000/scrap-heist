@@ -15,8 +15,6 @@
 
 local Yard = {}
 
-export type Kind = "Pad" | "Bay" | "Crate" | "Mound" | "Press"
-
 -- Studs per grid cell. Things snap to cells and turn in quarter turns.
 Yard.CELL = 2
 -- The plot in cells: 96 x 112 studs.
@@ -49,7 +47,7 @@ Yard.FOOTPRINTS = {
 	Crate = { width = 4, depth = 4 },
 	Mound = { width = 5, depth = 5 },
 	Press = { width = 8, depth = 4 },
-} :: { [Kind]: { width: number, depth: number } }
+} :: { [string]: { width: number, depth: number } }
 
 -- Things a player must be able to walk to from the gate.
 Yard.MUST_REACH = { Pad = true, Bay = true, Crate = true, Mound = true, Press = true } :: { [string]: boolean }
@@ -74,7 +72,7 @@ Yard.STARTER_LAYOUT = {
 	{ kind = "Bay", x = 12, z = 50, turn = 0 },
 	{ kind = "Press", x = 29, z = 50, turn = 0 },
 	{ kind = "Mound", x = 40, z = 50, turn = 0 },
-} :: { { kind: Kind, family: string?, x: number, z: number, turn: number } }
+} :: { { kind: string, family: string?, x: number, z: number, turn: number } }
 
 -- How high above the plot's floor still counts as "in the yard", and how
 -- far below it.

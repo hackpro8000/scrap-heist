@@ -34,8 +34,24 @@ Belt.STORM_SPEED = 2
 -- Percent chance of each tier, by zone tier. Only the hub (zone 1) is
 -- built so far.
 Belt.ODDS = {
-	[1] = { Scrap = 72, Salvaged = 22, Refurbished = 5.2, Factory = 0.75, Precision = 0.05, Prototype = 0, Secret = 0.002 },
-	[2] = { Scrap = 30, Salvaged = 42, Refurbished = 22, Factory = 5.4, Precision = 0.6, Prototype = 0.03, Secret = 0.002 },
+	[1] = {
+		Scrap = 72,
+		Salvaged = 22,
+		Refurbished = 5.2,
+		Factory = 0.75,
+		Precision = 0.05,
+		Prototype = 0,
+		Secret = 0.002,
+	},
+	[2] = {
+		Scrap = 30,
+		Salvaged = 42,
+		Refurbished = 22,
+		Factory = 5.4,
+		Precision = 0.6,
+		Prototype = 0.03,
+		Secret = 0.002,
+	},
 	[3] = { Scrap = 8, Salvaged = 30, Refurbished = 38, Factory = 20, Precision = 4, Prototype = 0.1, Secret = 0.002 },
 } :: { [number]: { [string]: number } }
 

@@ -25,7 +25,6 @@ local Notify = require(ReplicatedStorage.Shared.Net.Notify)
 local Remotes = require(ReplicatedStorage.Shared.Net.Showcase)
 local Validate = require(ReplicatedStorage.Shared.Util.Validate)
 
-local BotService = require(script.Parent.BotService)
 local CombatService = require(script.Parent.CombatService)
 local DebugService = require(script.Parent.DebugService)
 local DummyService = require(script.Parent.DummyService)
@@ -113,14 +112,6 @@ function ShowcaseService.start()
 	CombatService.swingChecked:connect(function(boxCFrame: CFrame, size: Vector3)
 		toWatchers("Hitbox", { cframe = boxCFrame, size = size })
 	end)
-	BotService.pathComputed:connect(function(_model: Model, waypoints: { PathWaypoint })
-		local positions = {}
-		for _, waypoint in waypoints do
-			table.insert(positions, waypoint.Position)
-		end
-		toWatchers("Path", { positions = positions })
-	end)
-
 	task.spawn(function()
 		while true do
 			task.wait(STATS_INTERVAL)

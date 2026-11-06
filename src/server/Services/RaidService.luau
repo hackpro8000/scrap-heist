@@ -2,31 +2,37 @@
 --[[
 	RaidService
 
-	The steal mechanic. A raider walks into someone else's yard, grabs a
-	bundle of parts from their storage crate, and carries it home. Carrying
-	slows them down; if they die on the way, the bundle drops where they
-	fell and anyone can pick it up. The owner gets it straight back into
-	their crate; another raider can carry it on. Reaching their own yard
-	banks the bundle as scrap.
+	Stealing scrap, and keeping thieves out.
+
+	Crate raids: a raider walks into someone else's yard, grabs a bundle of
+	scrap from their storage crate, and carries it home. Carrying slows
+	them down; if they die on the way, the bundle drops where they fell and
+	anyone can pick it up. The owner gets it straight back into their
+	crate; another raider can carry it on. Reaching their own yard banks
+	the bundle. In a blackout a grab takes twice the share.
 
 	Every step is validated here from the server's view (Tycoon/RaidRules):
-	in the yard, close to the crate, not already carrying, the yard not
-	shielded, the level gap fair, raids not paused for a storm.
+	in the yard, close to the crate, hands free, the yard not shielded, the
+	crate worth raiding.
 
-	Anti-grief (Config/Raid): a raided yard is shielded for a while, players
-	can't raid yards far below their level, and while raiders are inside a
-	yard its owner is alerted and takes less damage.
+	Anti-grief (Config/Raid): a raided yard is shielded for a while, and
+	while raiders are inside a yard its owner is alerted and takes less
+	damage.
 
-	Showcase mode can stage a fake raid: an NPC raider walks to a player's
-	crate, grabs a bundle and runs for the gate, so the defend-and-recover
-	loop can be recorded solo.
+	Gates: each yard's gate has a barrier its owner can lock for a while
+	(Config/Yard), then must wait before locking again. It stops everyone
+	on the server; the owner's own client lets them through
+	(PlotController). The blackout drops every barrier and keeps them down.
+	The yard's model says until when it is locked (GateLockedUntil, in
+	server time).
+
+	Players carrying a bundle have the attribute CarryingScrap.
 
 	Public API:
-		RaidService.startFakeRaid(owner): reason?
-		RaidService.setPaused(paused)          -- also paused automatically during storms
 		RaidService.isCarrying(player): boolean
-		RaidService.raidBanked: Signal(raider, parts)
-		RaidService.bundleRecovered: Signal(owner, parts)
+		RaidService.hasIntruders(yard): boolean
+		RaidService.raidBanked: Signal(raider, scrap)
+		RaidService.bundleRecovered: Signal(owner, scrap)
 ]]
 
 local Players = game:GetService("Players")
@@ -34,59 +40,60 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local ServerStorage = game:GetService("ServerStorage")
 
-local Economy = require(ReplicatedStorage.Shared.Config.Economy)
+local Format = require(ReplicatedStorage.Shared.Util.Format)
 local Notify = require(ReplicatedStorage.Shared.Net.Notify)
 local RaidConfig = require(ReplicatedStorage.Shared.Config.Raid)
 local Remotes = require(ReplicatedStorage.Shared.Net.Raid)
 local Shop = require(ReplicatedStorage.Shared.Config.Shop)
 local Signal = require(ReplicatedStorage.Shared.Util.Signal)
+local Storm = require(ReplicatedStorage.Shared.Config.Storm)
 local Trove = require(ReplicatedStorage.Shared.Util.Trove)
+local YardConfig = require(ReplicatedStorage.Shared.Config.Yard)
+local YardGrid = require(ReplicatedStorage.Shared.Yard.YardGrid)
 
 local CombatService = require(script.Parent.CombatService)
 local DataService = require(script.Parent.DataService)
-local DebugService = require(script.Parent.DebugService)
-local MachineRules = require(script.Parent.Parent.Tycoon.MachineRules)
-local NpcRig = require(script.Parent.Parent.Npc.NpcRig)
 local PlotService = require(script.Parent.PlotService)
 local RaidRules = require(script.Parent.Parent.Tycoon.RaidRules)
 local ShopService = require(script.Parent.ShopService)
 local RemoteGuard = require(script.Parent.Parent.Security.RemoteGuard)
 local RoundService = require(script.Parent.RoundService)
-local YardLayout = require(script.Parent.Parent.Tycoon.YardLayout)
 
 local SYSTEM = "Raid"
 local BUNDLE_MODEL_NAME = "PartBundle"
 local BUNDLE_COLOR = Color3.fromRGB(150, 120, 70)
 local CARRY_SPEED_KEY = "CarryingBundle"
-
--- Fake raid (showcase mode).
-local FAKE_RAIDER_LOOK: NpcRig.Look = {
-	size = Vector3.new(2, 5, 1.5),
-	color = Color3.fromRGB(190, 60, 60),
-	maxHealth = 100,
-}
-local FAKE_RAIDER_WEAPON = "Bat"
-local FAKE_RAID_SECONDS = 40
 -- How full a dropped bundle counts as for its pickup burst (Juice.collectPieces).
 local LOOT_BURST_FILL = 0.3
--- Parts put in an empty crate so a fake raid always has something to take.
-local FAKE_RAID_CRATE_PARTS = 400
--- Yard-space offsets: where the raider appears, and where it runs to.
-local FAKE_RAIDER_START = Vector3.new(0, 3, 26)
-local FAKE_RAIDER_ESCAPE = Vector3.new(0, 3, 60)
-local FAKE_RAID_STEP_SECONDS = 0.25
+-- The gate barrier: how tall and thick it is, and its colour when locked.
+local BARRIER_HEIGHT = 14
+local BARRIER_THICKNESS = 1.5
+local BARRIER_COLOR = Color3.fromRGB(255, 80, 60)
+-- Where the gate's lock stands, in yard space: just inside, beside the opening.
+local LOCK_OFFSET = Vector3.new(YardConfig.GATE_WIDTH / 2 + 2, 3, YardGrid.DEPTH / 2 - 3)
 
 type Carry = {
-	parts: number,
-	-- Where the parts came from, so they can go back if never banked.
+	scrap: number,
+	-- Where the scrap came from, so it can go back if never banked.
 	fromUserId: number,
+	-- How full the bundle looks, 0-1: its share of the crate it came from.
+	fill: number,
 	trove: Trove.Trove,
 }
 
 type Drop = {
-	parts: number,
+	scrap: number,
 	fromUserId: number,
+	fill: number,
 	part: BasePart,
+}
+
+type Gate = {
+	barrier: BasePart,
+	prompt: ProximityPrompt,
+	-- os.clock() times.
+	lockedUntil: number,
+	readyAt: number,
 }
 
 local RaidService = {}
@@ -94,11 +101,11 @@ local RaidService = {}
 RaidService.raidBanked = Signal.new()
 RaidService.bundleRecovered = Signal.new()
 
-local paused = false
 local carries: { [Player]: Carry } = {}
 local drops: { [Drop]: boolean } = {}
 -- Raiders currently inside each yard, by yard.
 local intruders: { [any]: { [Player]: boolean } } = {}
+local gates: { [PlotService.Yard]: Gate } = {}
 
 local function rootOf(player: Player): BasePart?
 	local character = player.Character
@@ -110,31 +117,25 @@ local function playerByUserId(userId: number): Player?
 	return Players:GetPlayerByUserId(userId)
 end
 
-local function yardLevelOf(player: Player): number
-	local data = DataService.getData(player)
-	return if data then MachineRules.yardLevel(data.yard.machines) else 0
-end
-
--- Sends parts back to the crate they were stolen from, if its owner is
--- still here. Otherwise they're gone; the owner's crate was already empty
--- of them and they left before getting them back.
-local function returnToOwner(fromUserId: number, parts: number)
+-- Sends scrap back to the crate it was stolen from, if its owner is still
+-- here. Otherwise it's gone; the owner left before getting it back.
+local function returnToOwner(fromUserId: number, scrap: number)
 	local owner = playerByUserId(fromUserId)
 	if owner and PlotService.yardOf(owner) then
-		PlotService.addToCrate(owner, parts)
-		RaidService.bundleRecovered:fire(owner, parts)
+		PlotService.addToCrate(owner, scrap)
+		RaidService.bundleRecovered:fire(owner, scrap)
 	end
 end
 
--- The sack for `parts`, from ServerStorage.PartBundle: a Model holding one
+-- The sack for a bundle, from ServerStorage.PartBundle: a Model holding one
 -- Sack_<n> model per fill level, emptiest first, each pivoted at its middle.
-local function sackFor(parts: number): Model?
+local function sackFor(fill: number): Model?
 	local template = ServerStorage:FindFirstChild(BUNDLE_MODEL_NAME)
 	if not (template and template:IsA("Model")) then
 		return nil
 	end
 	local levels = #template:GetChildren()
-	local level = math.clamp(math.ceil(parts / RaidConfig.BUNDLE_MAX * levels), 1, levels)
+	local level = math.clamp(math.ceil(fill * levels), 1, levels)
 	local sack = template:FindFirstChild(`Sack_{level}`)
 	return if sack and sack:IsA("Model") then sack:Clone() else nil
 end
@@ -142,9 +143,9 @@ end
 -- A bundle is one part, so it can be carried, dropped and picked up as a
 -- unit: the sack art welded inside an invisible box, or a plain ball when
 -- there's no art.
-local function newBundlePart(parts: number): BasePart
+local function newBundlePart(fill: number): BasePart
 	-- Bigger bundles look bigger, so a fat haul is worth chasing.
-	local scale = 1.5 + math.min(1.5, parts / RaidConfig.BUNDLE_MAX * 1.5)
+	local scale = 1.5 + math.clamp(fill, 0, 1) * 1.5
 
 	local part = Instance.new("Part")
 	part.Name = "Bundle"
@@ -152,7 +153,7 @@ local function newBundlePart(parts: number): BasePart
 	part.CanQuery = false
 	part.Massless = true
 
-	local sack = sackFor(parts)
+	local sack = sackFor(fill)
 	if sack then
 		local _, size = sack:GetBoundingBox()
 		sack:ScaleTo(sack:GetScale() * scale / math.max(size.X, size.Z))
@@ -191,7 +192,7 @@ local function stopCarrying(player: Player): Carry?
 
 	carries[player] = nil
 	carry.trove:destroy()
-	player:SetAttribute("CarryingParts", nil)
+	player:SetAttribute("CarryingScrap", nil)
 	if player.Character then
 		CombatService.setSpeedMultiplier(player.Character, CARRY_SPEED_KEY, nil)
 	end
@@ -199,24 +200,24 @@ local function stopCarrying(player: Player): Carry?
 	return carry
 end
 
-local spawnDrop: (position: Vector3, parts: number, fromUserId: number) -> ()
+local spawnDrop: (position: Vector3, scrap: number, fromUserId: number, fill: number) -> ()
 
-local function startCarrying(player: Player, parts: number, fromUserId: number)
+local function startCarrying(player: Player, scrap: number, fromUserId: number, fill: number)
 	local character = player.Character
 	local root = rootOf(player)
 	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 	if not character or not root or not humanoid then
-		returnToOwner(fromUserId, parts)
+		returnToOwner(fromUserId, scrap)
 		return
 	end
 
 	local trove = Trove.new()
-	carries[player] = { parts = parts, fromUserId = fromUserId, trove = trove }
-	player:SetAttribute("CarryingParts", parts)
+	carries[player] = { scrap = scrap, fromUserId = fromUserId, fill = fill, trove = trove }
+	player:SetAttribute("CarryingScrap", scrap)
 	CombatService.setSpeedMultiplier(character, CARRY_SPEED_KEY, RaidConfig.CARRY_SPEED_MULTIPLIER)
 
 	-- The bundle rides on the carrier's back so everyone can see who to chase.
-	local bundle = newBundlePart(parts)
+	local bundle = newBundlePart(fill)
 	bundle.CFrame = root.CFrame * CFrame.new(0, 0.5, root.Size.Z / 2 + bundle.Size.Z / 2)
 	local weld = Instance.new("WeldConstraint")
 	weld.Part0 = root
@@ -228,24 +229,24 @@ local function startCarrying(player: Player, parts: number, fromUserId: number)
 	trove:connect(humanoid.Died, function()
 		local carry = stopCarrying(player)
 		if carry then
-			spawnDrop(root.Position, carry.parts, carry.fromUserId)
+			spawnDrop(root.Position, carry.scrap, carry.fromUserId, carry.fill)
 		end
 	end)
 end
 
-spawnDrop = function(position: Vector3, parts: number, fromUserId: number)
-	local part = newBundlePart(parts)
+spawnDrop = function(position: Vector3, scrap: number, fromUserId: number, fill: number)
+	local part = newBundlePart(fill)
 	part.Anchored = true
 	part.CanQuery = true
 	part.Position = position
 	part.Parent = workspace
 
-	local drop: Drop = { parts = parts, fromUserId = fromUserId, part = part }
+	local drop: Drop = { scrap = scrap, fromUserId = fromUserId, fill = fill, part = part }
 	drops[drop] = true
 
 	local prompt = Instance.new("ProximityPrompt")
 	prompt.ActionText = "Pick up"
-	prompt.ObjectText = `{parts} parts`
+	prompt.ObjectText = `{Format.short(scrap)} scrap`
 	prompt.HoldDuration = 0.5
 	prompt.MaxActivationDistance = RaidConfig.PICKUP_DISTANCE
 	prompt.RequiresLineOfSight = false
@@ -271,27 +272,27 @@ spawnDrop = function(position: Vector3, parts: number, fromUserId: number)
 		-- The bundle arcs into whoever picks it up.
 		local from = part.Position
 		if player.UserId == fromUserId then
-			Notify.ScrapBurst:FireClient(player, from, parts, LOOT_BURST_FILL)
+			Notify.ScrapBurst:FireClient(player, from, scrap, LOOT_BURST_FILL)
 			remove()
-			returnToOwner(fromUserId, parts)
-			Notify.Message:FireClient(player, `Recovered {parts} parts`)
+			returnToOwner(fromUserId, scrap)
+			Notify.Message:FireClient(player, `Recovered {Format.short(scrap)} scrap`)
 			Notify.Sound:FireClient(player, "Collect")
 			return
 		end
 
-		if carries[player] or paused or not PlotService.yardOf(player) then
+		if carries[player] or player:GetAttribute("CarryingCapsule") ~= nil or not PlotService.yardOf(player) then
 			RemoteGuard.reject(SYSTEM, "CantPickUp")
 			return
 		end
-		Notify.ScrapBurst:FireClient(player, from, parts, LOOT_BURST_FILL)
+		Notify.ScrapBurst:FireClient(player, from, scrap, LOOT_BURST_FILL)
 		remove()
-		startCarrying(player, parts, fromUserId)
+		startCarrying(player, scrap, fromUserId, fill)
 	end)
 
 	task.delay(RaidConfig.DROP_EXPIRE_SECONDS, function()
 		if drops[drop] then
 			remove()
-			returnToOwner(fromUserId, parts)
+			returnToOwner(fromUserId, scrap)
 		end
 	end)
 end
@@ -303,15 +304,14 @@ local function bank(player: Player)
 		return
 	end
 
-	local scrap = carry.parts * Economy.PART_VALUE
-	DataService.addScrap(player, scrap)
+	DataService.addScrap(player, carry.scrap)
 	data.stats.raidsWon += 1
-	Notify.Message:FireClient(player, `Banked {scrap} scrap from your raid!`)
+	Notify.Message:FireClient(player, `Banked {Format.short(carry.scrap)} scrap from your raid!`)
 	Notify.Sound:FireClient(player, "Bank")
-	RaidService.raidBanked:fire(player, carry.parts)
+	RaidService.raidBanked:fire(player, carry.scrap)
 end
 
-local function onGrabTriggered(player: Player, yard: PlotService.Yard)
+local function onGrabTriggered(player: Player, yard: PlotService.Yard, crate: BasePart)
 	local owner = yard.owner
 	local ownerData = owner and DataService.getData(owner)
 	local root = rootOf(player)
@@ -321,16 +321,15 @@ local function onGrabTriggered(player: Player, yard: PlotService.Yard)
 	end
 
 	local now = os.time()
+	local crateScrap = ownerData.yard.crateScrap
 	local reason = RaidRules.canGrab({
 		isOwner = owner == player,
 		raiderHasYard = PlotService.yardOf(player) ~= nil,
 		raiderInsideYard = PlotService.yardAt(root.Position) == yard,
-		distance = (root.Position - yard.crate.Position).Magnitude,
-		alreadyCarrying = carries[player] ~= nil,
-		raidsPaused = paused,
-		crateParts = ownerData.yard.crateParts,
-		raiderLevel = yardLevelOf(player),
-		ownerLevel = yardLevelOf(owner),
+		distance = (root.Position - crate.Position).Magnitude,
+		alreadyCarrying = carries[player] ~= nil or player:GetAttribute("CarryingCapsule") ~= nil,
+		crateScrap = crateScrap,
+		crateCapacity = PlotService.crateCapacity(owner),
 		ownerShieldUntil = ownerData.raidShieldUntil,
 		now = now,
 	})
@@ -340,7 +339,9 @@ local function onGrabTriggered(player: Player, yard: PlotService.Yard)
 		return
 	end
 
-	local taken = PlotService.takeFromCrate(owner, RaidRules.bundleSize(ownerData.yard.crateParts))
+	-- In the blackout the crate is unlocked: a grab takes twice the share.
+	local multiplier = if RoundService.getPhase() == "Blackout" then Storm.BLACKOUT_RAID_MULTIPLIER else 1
+	local taken = PlotService.takeFromCrate(owner, RaidRules.bundleSize(crateScrap, multiplier))
 	if taken <= 0 then
 		return
 	end
@@ -350,10 +351,10 @@ local function onGrabTriggered(player: Player, yard: PlotService.Yard)
 	ownerData.raidShieldUntil = math.max(ownerData.raidShieldUntil, RaidRules.shieldUntil(now, shieldSeconds))
 	ShopService.syncShield(owner)
 	ownerData.stats.timesRaided += 1
-	startCarrying(player, taken, owner.UserId)
+	startCarrying(player, taken, owner.UserId, taken / math.max(1, PlotService.crateCapacity(owner)))
 
-	Remotes.Alert:FireClient(owner, "Grabbed", `{player.DisplayName} stole {taken} parts! Stop them!`)
-	Notify.Message:FireClient(player, `Grabbed {taken} parts. Get them home!`)
+	Remotes.Alert:FireClient(owner, "Grabbed", `{player.DisplayName} stole {Format.short(taken)} scrap! Stop them!`)
+	Notify.Message:FireClient(player, `Grabbed {Format.short(taken)} scrap. Get it home!`)
 	Notify.Sound:FireClient(player, "Grab")
 end
 
@@ -401,123 +402,159 @@ local function checkYards()
 	intruders = current
 end
 
-local function walkUntil(humanoid: Humanoid, root: BasePart, goal: Vector3, closeEnough: number, deadline: number)
-	while humanoid.Health > 0 and os.clock() < deadline and (root.Position - goal).Magnitude > closeEnough do
-		humanoid:MoveTo(goal)
-		task.wait(FAKE_RAID_STEP_SECONDS)
-	end
-end
-
-function RaidService.startFakeRaid(owner: Player): string?
-	local yard = PlotService.yardOf(owner)
-	if not yard then
-		return "You need a yard"
-	end
-	if PlotService.getCrateParts(owner) < RaidConfig.MIN_CRATE_PARTS then
-		PlotService.setCrateParts(owner, FAKE_RAID_CRATE_PARTS)
-	end
-
-	local model = NpcRig.build("FakeRaider", FAKE_RAIDER_LOOK)
-	local humanoid = model:FindFirstChildOfClass("Humanoid") :: Humanoid
-	local root = model.PrimaryPart :: BasePart
-	model:PivotTo(CFrame.new(YardLayout.toWorld(yard.origin, yard.yaw, FAKE_RAIDER_START)))
-	model.Parent = workspace
-	root:SetNetworkOwner(nil)
-	CombatService.register(model, FAKE_RAIDER_WEAPON)
-
-	Remotes.Alert:FireClient(owner, "Intruder", "A raider is heading for your crate!")
-
-	task.spawn(function()
-		local deadline = os.clock() + FAKE_RAID_SECONDS
-		walkUntil(humanoid, root, yard.crate.Position, RaidConfig.GRAB_DISTANCE - 2, deadline)
-
-		local carried = 0
-		if humanoid.Health > 0 and os.clock() < deadline then
-			carried = PlotService.takeFromCrate(owner, RaidRules.bundleSize(PlotService.getCrateParts(owner)))
-			local bundle = newBundlePart(carried)
-			bundle.CFrame = root.CFrame * CFrame.new(0, 0.5, root.Size.Z / 2 + bundle.Size.Z / 2)
-			local weld = Instance.new("WeldConstraint")
-			weld.Part0 = root
-			weld.Part1 = bundle
-			weld.Parent = bundle
-			bundle.Parent = model
-			CombatService.setSpeedMultiplier(model, CARRY_SPEED_KEY, RaidConfig.CARRY_SPEED_MULTIPLIER)
-			Remotes.Alert:FireClient(owner, "Grabbed", `A raider stole {carried} parts! Stop them!`)
-
-			local escape = YardLayout.toWorld(yard.origin, yard.yaw, FAKE_RAIDER_ESCAPE)
-			walkUntil(humanoid, root, escape, 4, deadline)
-		end
-
-		if carried > 0 then
-			if humanoid.Health <= 0 then
-				spawnDrop(root.Position, carried, owner.UserId)
-			else
-				-- It's only a showcase: an escaped fake raider gives the parts back.
-				returnToOwner(owner.UserId, carried)
-				Notify.Message:FireClient(owner, "The raider got away (showcase: parts returned)")
-			end
-		end
-
-		task.wait(2)
-		model:Destroy()
-	end)
-
-	return nil
-end
-
 function RaidService.isCarrying(player: Player): boolean
 	return carries[player] ~= nil
 end
 
-function RaidService.setPaused(isPaused: boolean)
-	paused = isPaused
-	if not isPaused then
+function RaidService.hasIntruders(yard: PlotService.Yard): boolean
+	return intruders[yard] ~= nil and next(intruders[yard]) ~= nil
+end
+
+local function showGate(yard: PlotService.Yard)
+	local gate = gates[yard]
+	local now = os.clock()
+	local locked = now < gate.lockedUntil
+	gate.barrier.CanCollide = locked
+	gate.barrier.Transparency = if locked then 0.45 else 1
+	-- Server time, so clients can count the lock down.
+	local left = gate.lockedUntil - now
+	yard.model:SetAttribute("GateLockedUntil", if locked then workspace:GetServerTimeNow() + left else 0)
+
+	local blackout = RoundService.getPhase() == "Blackout"
+	gate.prompt:SetAttribute("Available", not locked and not blackout and now >= gate.readyAt)
+end
+
+local function unlockGate(yard: PlotService.Yard)
+	gates[yard].lockedUntil = 0
+	showGate(yard)
+end
+
+local function onLockTriggered(player: Player, yard: PlotService.Yard)
+	local gate = gates[yard]
+	local now = os.clock()
+	if yard.owner ~= player then
+		RemoteGuard.reject(SYSTEM, "NotOwner")
+		return
+	end
+	if RoundService.getPhase() == "Blackout" then
+		Notify.Message:FireClient(player, "The power's out. The gate won't lock!")
+		return
+	end
+	if now < gate.readyAt then
+		Notify.Message:FireClient(player, `The lock needs {math.ceil(gate.readyAt - now)}s to recharge`)
 		return
 	end
 
-	-- Storms make yards safe: every bundle in flight goes home.
-	for player, carry in carries do
-		stopCarrying(player)
-		returnToOwner(carry.fromUserId, carry.parts)
+	gate.lockedUntil = now + YardConfig.LOCK_SECONDS
+	gate.readyAt = gate.lockedUntil + YardConfig.LOCK_COOLDOWN_SECONDS
+	showGate(yard)
+	Notify.Message:FireClient(player, `Gate locked for {YardConfig.LOCK_SECONDS}s`)
+	Notify.Sound:FireClient(player, "Purchase")
+
+	task.delay(YardConfig.LOCK_SECONDS, function()
+		showGate(yard)
+	end)
+	task.delay(YardConfig.LOCK_SECONDS + YardConfig.LOCK_COOLDOWN_SECONDS, function()
+		showGate(yard)
+	end)
+end
+
+local function buildGate(yard: PlotService.Yard): Gate
+	local turned = CFrame.Angles(0, yard.yaw, 0)
+	local function at(offset: Vector3): CFrame
+		return CFrame.new(YardGrid.toWorld(yard.origin, yard.yaw, offset)) * turned
 	end
-	for drop in drops do
-		drops[drop] = nil
-		drop.part:Destroy()
-		returnToOwner(drop.fromUserId, drop.parts)
+
+	local barrier = Instance.new("Part")
+	barrier.Name = "GateBarrier"
+	barrier.Size = Vector3.new(YardConfig.GATE_WIDTH, BARRIER_HEIGHT, BARRIER_THICKNESS)
+	barrier.CFrame = at(YardGrid.GATE_OFFSET + Vector3.new(0, BARRIER_HEIGHT / 2, 0))
+	barrier.Color = BARRIER_COLOR
+	barrier.Material = Enum.Material.ForceField
+	barrier.Anchored = true
+	barrier.CanCollide = false
+	barrier.CanQuery = false
+	barrier.Transparency = 1
+	barrier.Parent = yard.model
+
+	local lock = Instance.new("Part")
+	lock.Name = "GateLock"
+	lock.Size = Vector3.new(1.5, 1.5, 1.5)
+	lock.CFrame = at(LOCK_OFFSET)
+	lock.Color = BARRIER_COLOR
+	lock.Material = Enum.Material.Neon
+	lock.Anchored = true
+	lock.CanCollide = false
+	lock.Parent = yard.model
+
+	local prompt = Instance.new("ProximityPrompt")
+	prompt.ActionText = "Lock gate"
+	prompt.ObjectText = `{YardConfig.LOCK_SECONDS}s`
+	prompt.HoldDuration = 0.3
+	prompt.MaxActivationDistance = 12
+	prompt.RequiresLineOfSight = false
+	prompt.Style = Enum.ProximityPromptStyle.Custom
+	prompt:SetAttribute("OwnerOnly", true)
+	prompt.Parent = lock
+	prompt.Triggered:Connect(function(player: Player)
+		onLockTriggered(player, yard)
+	end)
+
+	return { barrier = barrier, prompt = prompt, lockedUntil = 0, readyAt = 0 }
+end
+
+-- The crate gets a "Grab scrap" prompt for everyone but its owner.
+local function onThingBuilt(yard: PlotService.Yard, object: PlotService.Object, model: Model)
+	local hook = model.PrimaryPart
+	if object.kind ~= "Crate" or not hook then
+		return
 	end
+
+	local prompt = Instance.new("ProximityPrompt")
+	prompt.ActionText = "Grab scrap"
+	prompt.ObjectText = "Raid"
+	prompt.HoldDuration = 1
+	prompt.MaxActivationDistance = RaidConfig.GRAB_DISTANCE
+	prompt.RequiresLineOfSight = false
+	prompt.Style = Enum.ProximityPromptStyle.Custom
+	-- The client shows this one to everyone except the owner.
+	prompt:SetAttribute("RaiderOnly", true)
+	prompt.Parent = hook
+	prompt.Triggered:Connect(function(player)
+		onGrabTriggered(player, yard, hook)
+	end)
 end
 
 function RaidService.init()
-	DebugService.register("fakeraid", "/fakeraid", function(player)
-		return RaidService.startFakeRaid(player) or "Fake raid started"
-	end)
-
 	for _, yard in PlotService.getYards() do
-		local prompt = Instance.new("ProximityPrompt")
-		prompt.ActionText = "Grab parts"
-		prompt.ObjectText = "Raid"
-		prompt.HoldDuration = 1
-		prompt.MaxActivationDistance = RaidConfig.GRAB_DISTANCE
-		prompt.RequiresLineOfSight = false
-		prompt.Style = Enum.ProximityPromptStyle.Custom
-		-- The client shows this one to everyone except the owner.
-		prompt:SetAttribute("RaiderOnly", true)
-		prompt.Parent = yard.crate
-		prompt.Triggered:Connect(function(player)
-			onGrabTriggered(player, yard)
-		end)
+		gates[yard] = buildGate(yard)
+		showGate(yard)
 	end
 end
 
 function RaidService.start()
+	PlotService.forEachThing(onThingBuilt)
+
+	-- The blackout drops every gate; coming out of it the locks work again.
 	RoundService.phaseChanged:connect(function(phase)
-		RaidService.setPaused(phase == "Storm")
+		for _, yard in PlotService.getYards() do
+			if phase == "Blackout" then
+				unlockGate(yard)
+			else
+				showGate(yard)
+			end
+		end
+	end)
+	-- A yard changing hands starts with its gate open and its lock ready.
+	PlotService.yardReleased:connect(function(_player: Player, yard: PlotService.Yard)
+		gates[yard].readyAt = 0
+		unlockGate(yard)
 	end)
 
 	Players.PlayerRemoving:Connect(function(player)
 		local carry = stopCarrying(player)
 		if carry then
-			returnToOwner(carry.fromUserId, carry.parts)
+			returnToOwner(carry.fromUserId, carry.scrap)
 		end
 	end)
 
