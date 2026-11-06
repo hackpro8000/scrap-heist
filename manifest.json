@@ -10,8 +10,8 @@
 			"parts": 28
 		},
 		{
-			"id": "04734c9f03e6e8b5",
-			"key": "115ac3a755887f11-107c5c30239027da Spoke2 -70 180 0",
+			"id": "7b3ea9470cb8d37e",
+			"key": "1cc43e4ea4bd80d5-107c5c30239027da Spoke2 -70 180 0",
 			"piece": 1,
 			"label": "Spoke2",
 			"turn": 0.0,
@@ -19,8 +19,8 @@
 			"parts": 1
 		},
 		{
-			"id": "04673b2ca11fdecd",
-			"key": "115ac3a755887f11-7b25a7aa2539d602 Plot3 70 180 0",
+			"id": "c37bab6a35fb7ebf",
+			"key": "1cc43e4ea4bd80d5-7b25a7aa2539d602 Plot3 70 180 0",
 			"piece": 1,
 			"label": "Plot3",
 			"turn": 0.0,
@@ -42,7 +42,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotBulboFulminato",
 			"turn": 0.0,
-			"bytes": 552476,
+			"bytes": 552472,
 			"parts": 6
 		},
 		{
@@ -51,7 +51,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotMicrondoBippetto",
 			"turn": 0.0,
-			"bytes": 772924,
+			"bytes": 772948,
 			"parts": 8
 		},
 		{
@@ -60,7 +60,25 @@
 			"piece": 1,
 			"label": "Kit_JunkrotDishwashinoSplashetto",
 			"turn": 0.0,
-			"bytes": 809128,
+			"bytes": 809132,
+			"parts": 9
+		},
+		{
+			"id": "91c6ea1d7c34728d",
+			"key": "JunkrotTrashaleroTrashala-18a099d48482ff37 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotTrashaleroTrashala",
+			"turn": 0.0,
+			"bytes": 757788,
+			"parts": 9
+		},
+		{
+			"id": "4bfb7bb1d475df6c",
+			"key": "JunkrotBoilerdiroCrockpotilo-748a5e56f0959c15 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotBoilerdiroCrockpotilo",
+			"turn": 0.0,
+			"bytes": 888696,
 			"parts": 9
 		}
 	],
@@ -112,7 +130,7 @@
 			]
 		},
 		{
-			"asset": "04734c9f03e6e8b5",
+			"asset": "7b3ea9470cb8d37e",
 			"label": "Spoke2",
 			"turn": 0.0,
 			"anchors": [
@@ -127,7 +145,7 @@
 			]
 		},
 		{
-			"asset": "04673b2ca11fdecd",
+			"asset": "c37bab6a35fb7ebf",
 			"label": "Plot3",
 			"turn": 0.0,
 			"anchors": [
@@ -157,7 +175,7 @@
 				{
 					"name": "Seam",
 					"position": [
-						-336.0,
+						-588.0,
 						-148.3,
 						0.0
 					]
@@ -172,7 +190,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						-119.967331,
+						-371.967335,
 						-147.958,
 						0.91999998
 					]
@@ -180,7 +198,7 @@
 				{
 					"name": "Soot",
 					"position": [
-						-119.8837375,
+						-371.883745,
 						-147.259235,
 						-0.0444378
 					]
@@ -195,7 +213,7 @@
 				{
 					"name": "Glass",
 					"position": [
-						143.58316000000002,
+						-108.416835,
 						-148.40697,
 						0.920871885
 					]
@@ -203,7 +221,7 @@
 				{
 					"name": "Keys",
 					"position": [
-						145.069965,
+						-106.930033,
 						-148.43573500000002,
 						0.965924865
 					]
@@ -218,7 +236,7 @@
 				{
 					"name": "Cabinet",
 					"position": [
-						432.0,
+						180.0,
 						-147.95,
 						-0.10000000000000003
 					]
@@ -226,9 +244,55 @@
 				{
 					"name": "Handle",
 					"position": [
-						431.990815,
+						179.990825,
 						-147.40997,
 						1.3807363000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "91c6ea1d7c34728d",
+			"label": "Kit_JunkrotTrashaleroTrashala",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Teeth",
+					"position": [
+						469.475,
+						-148.18,
+						0.19999999750000003
+					]
+				},
+				{
+					"name": "ThirdLeg",
+					"position": [
+						467.015545,
+						-149.254835,
+						-0.00988397299999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "4bfb7bb1d475df6c",
+			"label": "Kit_JunkrotBoilerdiroCrockpotilo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Boiler",
+					"position": [
+						779.81132,
+						-148.39942000000002,
+						0.021297385000000058
+					]
+				},
+				{
+					"name": "Teeth",
+					"position": [
+						782.18815,
+						-148.08476,
+						-0.005226774999999989
 					]
 				}
 			]

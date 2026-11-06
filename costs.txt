@@ -1,6 +1,8 @@
-slab Spoke2	0.051
+slab Spoke2	0.050
 slab Spoke2 #split	1
-slab Plot3	2.978
+slab Plot3	3.117
 slab Plot3 #split	1
-JunkrotDishwashinoSplashetto 1 x	0.610
-JunkrotDishwashinoSplashetto 1 x #split	1
+JunkrotTrashaleroTrashala 1 x	0.452
+JunkrotTrashaleroTrashala 1 x #split	1
+JunkrotBoilerdiroCrockpotilo 1 x	0.562
+JunkrotBoilerdiroCrockpotilo 1 x #split	1
