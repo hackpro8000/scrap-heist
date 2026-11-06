@@ -1,4 +1,16 @@
-HubSectionEnd 1 x	58.133
-HubSectionEnd 1 x #split	1
-slab Plot4	3.528
-slab Plot4 #split	1
+YardPathStub 0.75 y x2	0.155
+YardPathStub 0.75 y x2 #split	1
+slab Yard2_Bay1	0.128
+slab Yard2_Bay1 #split	1
+slab Yard3_Press	0.127
+slab Yard3_Press #split	1
+slab Bridge3	1.303
+slab Bridge3 #split	1
+slab Yard6_Bay3	0.123
+slab Yard6_Bay3 #split	1
+YardFooting 1 x x1.5	0.047
+YardFooting 1 x x1.5 #split	1
+YardFenceHalf 1 x x1.5	0.121
+YardFenceHalf 1 x x1.5 #split	1
+slab Plot7	3.813
+slab Plot7 #split	1
