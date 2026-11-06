@@ -563,8 +563,9 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 	progress::say(&format!("running {name}/model.luau"));
 	lua.load(source).set_name(format!("@{}", script.display())).exec().map_err(|e| e.to_string())?;
 	// A shard uses only part of the cache, so pruning would throw away the
-	// other shards' entries.
-	if shard.is_none() {
+	// other shards' entries, unless the cache is the shard's own
+	// (MODELKIT_PRUNE=1, as the build-map-shards workflow sets).
+	if shard.is_none() || std::env::var("MODELKIT_PRUNE").is_ok_and(|v| v == "1") {
 		cache::prune(dir, &used.borrow());
 	}
 	let scripted = started.elapsed();

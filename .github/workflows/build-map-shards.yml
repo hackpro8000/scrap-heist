@@ -8,6 +8,11 @@
 # ROBLOX_CREATOR_ID; without them the shards are built and checked only.
 # Only small results (part lists, manifests, IDs, previews) are kept as
 # artifacts, for a day: the .glb chunks go straight to Roblox.
+#
+# Each machine keeps its build cache between runs, so a run rebuilds only
+# what changed. That works while the deal of placements to machines stays
+# put: it moves when the costs file changes (refresh_costs) or when the
+# layout adds or removes placements, and the next run rebuilds what moved.
 name: Build map shards
 
 on:
@@ -20,45 +25,67 @@ on:
         description: Layout to build
         default: ServerMap
       shards:
-        description: Number of machines
+        description: Number of machines (1-16)
         default: "8"
+      refresh_costs:
+        description: Write this run's build times to the costs file (re-deals the shards, so the next run rebuilds what moved)
+        type: boolean
+        default: false
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  plan:
-    runs-on: ubuntu-24.04
-    outputs:
-      shards: ${{ steps.plan.outputs.shards }}
-    steps:
-      - id: plan
-        run: echo "shards=$(seq -s, 1 "${{ inputs.shards }}" | sed 's/^/[/; s/$/]/')" >> "$GITHUB_OUTPUT"
-
   build:
-    needs: plan
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+        # A lookup instead of a planning job, which would cost a machine start.
+        shard: ${{ fromJSON('{"1":[1],"2":[1,2],"3":[1,2,3],"4":[1,2,3,4],"5":[1,2,3,4,5],"6":[1,2,3,4,5,6],"7":[1,2,3,4,5,6,7],"8":[1,2,3,4,5,6,7,8],"9":[1,2,3,4,5,6,7,8,9],"10":[1,2,3,4,5,6,7,8,9,10],"11":[1,2,3,4,5,6,7,8,9,10,11],"12":[1,2,3,4,5,6,7,8,9,10,11,12],"13":[1,2,3,4,5,6,7,8,9,10,11,12,13],"14":[1,2,3,4,5,6,7,8,9,10,11,12,13,14],"15":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],"16":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]}')[inputs.shards] }}
     env:
       LAYOUT: ${{ inputs.layout }}
       SHARE: ${{ matrix.shard }}/${{ inputs.shards }}
+      # This machine's cache holds only its own share, so pruning it is safe.
+      MODELKIT_PRUNE: "1"
       ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
       ROBLOX_CREATOR_ID: ${{ secrets.ROBLOX_CREATOR_ID }}
     steps:
+      # Only what a build reads: no concept art, docs or game code.
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref }}
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /scripts/
+            /art/src/
+            /art/models/*/model.luau
+            /tools/modelkit/
+      - name: Restore this shard's build cache
+        uses: actions/cache/restore@v4
+        with:
+          path: art/models/${{ inputs.layout }}/.cache
+          key: shard-cache-${{ inputs.layout }}-${{ inputs.shards }}-${{ matrix.shard }}-${{ github.run_id }}
+          restore-keys: shard-cache-${{ inputs.layout }}-${{ inputs.shards }}-${{ matrix.shard }}-
       - name: Build shard ${{ matrix.shard }}
         run: |
+          cache="art/models/$LAYOUT/.cache"
+          mkdir -p "$cache"
+          echo "CACHE_BEFORE=$(ls "$cache" | sha1sum | cut -c1-16)" >> "$GITHUB_ENV"
+          echo "CACHE_ENTRIES=$(ls "$cache" | wc -l)" >> "$GITHUB_ENV"
           scripts/assemble-model.sh "$LAYOUT"
           start=$SECONDS
           set -o pipefail
           scripts/build-model.sh "$LAYOUT" -- --chunks --shard "$SHARE" 2>&1 | tee build.log
           echo "BUILD_SECONDS=$((SECONDS - start))" >> "$GITHUB_ENV"
+          echo "CACHE_AFTER=$(ls "$cache" | sha1sum | cut -c1-16)" >> "$GITHUB_ENV"
+      - name: Save this shard's build cache
+        if: env.CACHE_AFTER != env.CACHE_BEFORE
+        uses: actions/cache/save@v4
+        with:
+          path: art/models/${{ inputs.layout }}/.cache
+          key: shard-cache-${{ inputs.layout }}-${{ inputs.shards }}-${{ matrix.shard }}-${{ github.run_id }}
       - name: Collect results
         run: |
           out="results/S${{ matrix.shard }}"
@@ -72,7 +99,7 @@ jobs:
           EOF
           cp "art/models/$LAYOUT/chunks/${LAYOUT}Chunks.luau" "$out/"
           cp "art/models/$LAYOUT/preview.png" "$out/" || true
-          # Each placement's build time, for dealing the next run's shards.
+          # Each placement's build time (only what was rebuilt), for dealing shards.
           awk -F'\t' '$1 == "SHARD_COST" { print $2 "\t" $3 }' build.log > "$out/costs.txt"
       - name: Upload chunks to Roblox
         if: env.ROBLOX_API_KEY != '' && env.ROBLOX_CREATOR_ID != ''
@@ -85,8 +112,8 @@ jobs:
         if: always()
         run: |
           echo "### Shard $SHARE" >> "$GITHUB_STEP_SUMMARY"
-          awk -F'\t' '{ s += $2 } END { printf "measured work: %.0fs over %d builds\n", s, NR }' "results/S${{ matrix.shard }}/costs.txt" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
-          echo "build ${BUILD_SECONDS:--}s, upload ${UPLOAD_SECONDS:-skipped}${UPLOAD_SECONDS:+s}, $(wc -l < "results/S${{ matrix.shard }}/parts.txt" 2>/dev/null || echo 0) parts" >> "$GITHUB_STEP_SUMMARY"
+          echo "build ${BUILD_SECONDS:--}s (cache had ${CACHE_ENTRIES:-0} entries), upload ${UPLOAD_SECONDS:-skipped}${UPLOAD_SECONDS:+s}, $(wc -l < "results/S${{ matrix.shard }}/parts.txt" 2>/dev/null || echo 0) parts" >> "$GITHUB_STEP_SUMMARY"
+          awk -F'\t' '{ s += $2 } END { printf "rebuilt: %.0fs of work over %d builds\n", s, NR }' "results/S${{ matrix.shard }}/costs.txt" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
       - uses: actions/upload-artifact@v4
         with:
           name: shard-${{ matrix.shard }}
@@ -102,6 +129,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref }}
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /scripts/
+            /art/src/layouts/
+            /src/shared/
       - uses: actions/download-artifact@v4
         with:
           path: shards
@@ -113,27 +145,30 @@ jobs:
           twice=$(cat shards/shard-*/parts.txt | sort | uniq -d)
           [ -z "$twice" ] || { echo "parts built by more than one shard:"; echo "$twice" | head; exit 1; }
           echo "$(cat shards/shard-*/parts.txt | wc -l) parts across $count shards, none built twice" | tee -a "$GITHUB_STEP_SUMMARY"
-      - name: Merge costs and chunk IDs, open a PR
+      - name: Merge chunk IDs (and costs, if asked), open a PR
         run: |
-          # Build times: this run's measurements (the slowest where a model was
-          # built on more than one shard), plus older ones it didn't measure.
           costs="art/src/layouts/${LAYOUT}Costs.txt"
-          touch "$costs"
-          cat shards/shard-*/costs.txt | awk -F'\t' '!($1 in t) || $2 > t[$1] { t[$1] = $2 } END { for (k in t) print k "\t" t[k] }' > new-costs.txt
-          awk -F'\t' 'NR == FNR { seen[$1] = 1; print; next } !($1 in seen)' new-costs.txt "$costs" | LC_ALL=C sort > "$costs.new"
-          mv "$costs.new" "$costs"
-          echo "$(wc -l < new-costs.txt) build times measured" >> "$GITHUB_STEP_SUMMARY"
-          what="build times"
+          what=""
+          if [ "${{ inputs.refresh_costs }}" = "true" ]; then
+            # This run's measurements (the slowest where a model was built on
+            # more than one shard), plus older ones it didn't measure.
+            touch "$costs"
+            cat shards/shard-*/costs.txt | awk -F'\t' '!($1 in t) || $2 > t[$1] { t[$1] = $2 } END { for (k in t) print k "\t" t[k] }' > new-costs.txt
+            awk -F'\t' 'NR == FNR { seen[$1] = 1; print; next } !($1 in seen)' new-costs.txt "$costs" | LC_ALL=C sort > "$costs.new"
+            mv "$costs.new" "$costs"
+            echo "$(wc -l < new-costs.txt) build times measured" >> "$GITHUB_STEP_SUMMARY"
+            what="build times"
+          fi
           if ls shards/shard-*/"${LAYOUT}AssetIds.txt" > /dev/null 2>&1; then
             scripts/merge-shards.sh "$LAYOUT" $(ls -d shards/shard-* | sort -V)
-            what="chunks and build times"
+            what="chunks${what:+ and $what}"
           else
-            echo "No chunks were uploaded (no Roblox secrets); the PR carries build times only." | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "No chunks were uploaded (no Roblox secrets)." | tee -a "$GITHUB_STEP_SUMMARY"
           fi
           # Staged first, so a costs file that didn't exist before counts as a change.
-          git add -A src/shared "$costs"
+          git add -A src/shared "$costs" 2> /dev/null || true
           if git diff --cached --quiet; then
-            echo "Nothing changed." | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "Nothing to commit." | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           branch="map-build/${{ github.run_id }}"
