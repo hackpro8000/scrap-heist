@@ -25,106 +25,19 @@ assemble ServerMap: slab at ServerMap.luau:1351-1359 (key 84939f33a0cb0864)
 assemble ServerMap: slab at ServerMap.luau:1404-1426 (key dfbe27eb7d68389c)
 assemble ServerMap: wrote art/models/ServerMap/model.luau, 22621 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.3s] building Beacon 0 0 0
-[    0.4s] baking on CPU (no GPU)
-[    0.5s]   shaded Plinth 496×496 in 0.18s
-[    0.6s]   shaded PlinthStripe 460×460 in 0.03s
-[    0.9s]   shaded Mast 880×880 in 0.26s
-[    0.9s]   shaded CoreMount 248×248 in 0.04s
-[    0.9s]   shaded CoreCage 172×172 in 0.02s
-[    0.9s] built Beacon 0 0 0: 6 parts in 0.6s
-[    0.9s] building HubSectionB 1 x part 1/5
-[    2.6s]   shaded Columns_-1_0_0_010 80×80 in 0.01s
-[    4.4s]   shaded Columns_0_-1_-1_011 1016×1016 in 1.65s
-[    5.0s]   shaded Columns_-1_0_-1_100 604×604 in 0.55s
-[    6.2s]   shaded Columns_-1_-1_0 904×904 in 1.18s
-[    7.5s]   shaded Columns_-1_-1_-1_111 908×908 in 1.14s
-[    7.5s]   shaded Columns_-1_-1_-1_011 204×204 in 0.06s
-[    7.6s]   shaded Dirt_-1_0_0_100 148×148 in 0.04s
-[    7.8s]   shaded Dirt_-1_0_0_111 348×348 in 0.19s
-[    9.1s]   shaded Dirt_-1_-1_0_010 940×940 in 1.26s
-[    9.3s]   shaded Dirt_-1_-1_0_000_010 292×292 in 0.18s
-[    9.5s]   shaded Dirt_-1_-1_0_000_011 428×428 in 0.24s
-[    9.9s]   shaded Dirt_-1_-1_0_101 504×504 in 0.31s
-[   10.0s]   shaded Dirt_0_-1_0_100_101 352×352 in 0.15s
-[   10.3s]   shaded Dirt_0_-1_0_100_001 476×476 in 0.25s
-[   11.2s]   shaded Dirt_0_-1_0_110 800×800 in 0.89s
-[   11.6s]   shaded Dirt_0_-1_0_011 564×564 in 0.36s
-[   12.0s]   shaded Dirt_0_-1_0_000_111 672×672 in 0.39s
-[   12.1s]   shaded Pebbles_0_-1_0 284×284 in 0.10s
-[   12.1s]   shaded Pebbles_-1_-1_-1 48×48 in 0.01s
-[   12.5s]   shaded Grass_0_-1_0_110 640×640 in 0.37s
-[   12.8s]   shaded Grass_0_0_0_010 408×408 in 0.30s
-[   12.8s] built HubSectionB 1 x part 1/5: 21 parts in 11.9s
-[   12.9s] building Spoke3 70 180 0
-[   13.0s]   shaded Road 304×304 in 0.06s
-[   13.0s] built Spoke3 70 180 0: 1 parts in 0.1s
-[   13.0s] building Bridge3 70 180 0
-[   13.5s]   shaded Deck 1024×1024 in 0.46s
-[   13.6s]   shaded HazardYellow 148×148 in 0.04s
-[   13.6s]   shaded HazardBlack 148×148 in 0.03s
-[   14.0s]   shaded Girders 1024×1024 in 0.31s
-[   14.0s]   shaded Posts 212×212 in 0.05s
-[   14.2s]   shaded Rail 1024×1024 in 0.17s
-[   14.2s]   shaded KerbEnds 104×104 in 0.01s
-[   14.2s]   shaded EndPosts 60×60 in 0.01s
-[   14.3s]   shaded Abutments 372×372 in 0.13s
-[   14.4s]   shaded JointPlate 152×152 in 0.01s
-[   14.4s]   shaded Apron 184×184 in 0.04s
-[   14.4s] built Bridge3 70 180 0: 11 parts in 1.4s
-[   14.4s] building Bridge6 -70 -180 180
-[   14.9s]   shaded Deck 1024×1024 in 0.41s
-[   15.0s]   shaded HazardYellow 148×148 in 0.03s
-[   15.0s]   shaded HazardBlack 148×148 in 0.03s
-[   15.3s]   shaded Girders 1024×1024 in 0.27s
-[   15.3s]   shaded Posts 212×212 in 0.05s
-[   15.5s]   shaded Rail 1024×1024 in 0.15s
-[   15.5s]   shaded KerbEnds 104×104 in 0.01s
-[   15.5s]   shaded EndPosts 60×60 in 0.01s
-[   15.7s]   shaded Abutments 372×372 in 0.13s
-[   15.7s]   shaded JointPlate 152×152 in 0.01s
-[   15.7s]   shaded Apron 184×184 in 0.04s
-[   15.7s] built Bridge6 -70 -180 180: 11 parts in 1.3s
-[   15.8s] building Side4 -140 -150 -90
-[   16.0s]   shaded Deck 508×508 in 0.21s
-[   16.0s]   shaded HazardYellow 100×100 in 0.01s
-[   16.0s]   shaded HazardBlack 92×92 in 0.01s
-[   16.2s]   shaded Girders 640×640 in 0.19s
-[   16.3s]   shaded Posts 124×124 in 0.02s
-[   16.3s]   shaded Rail 416×416 in 0.04s
-[   16.3s]   shaded KerbEnds 148×148 in 0.02s
-[   16.4s]   shaded EndPosts 80×80 in 0.01s
-[   16.5s]   shaded Abutments 368×368 in 0.11s
-[   16.5s] built Side4 -140 -150 -90: 9 parts in 0.7s
-[   16.5s] building CrushedCar 1 x x2.5
-[   16.6s]   shaded Body 256×256 in 0.07s
-[   16.6s]   shaded Glass 256×256 in 0.03s
-[   16.6s]   shaded Wheels 256×256 in 0.03s
-[   16.7s]   shaded Bumpers 256×256 in 0.02s
-[   16.7s] built CrushedCar 1 x x2.5: 4 parts in 0.2s
-[   16.7s] building Dumpster 1 x x2.2
-[   16.7s]   shaded Bin 256×256 in 0.08s
-[   16.8s]   shaded Frame 256×256 in 0.03s
-[   16.8s]   shaded Wheels 256×256 in 0.05s
-[   16.9s]   shaded Bags 256×256 in 0.03s
-[   16.9s] built Dumpster 1 x x2.2: 4 parts in 0.2s
-[   16.9s] cached StreetlightBroken 1 x x2
-[   16.9s] writing ServerMap.glb and 71 textures
-[   17.5s] chunk ServerMap_S4_01.glb: 71 parts, 17.0 MB
-ServerMap: 71 parts, script 16.91s, total 17.62s
-SHARD_COST	slab Beacon	0.634
-SHARD_COST	slab Beacon #split	1
-SHARD_COST	HubSectionB 1 x	59.522
-SHARD_COST	HubSectionB 1 x #split	1
-SHARD_COST	slab Spoke3	0.072
-SHARD_COST	slab Spoke3 #split	1
-SHARD_COST	slab Bridge3	1.416
-SHARD_COST	slab Bridge3 #split	1
-SHARD_COST	slab Bridge6	1.286
-SHARD_COST	slab Bridge6 #split	1
-SHARD_COST	slab Side4	0.722
-SHARD_COST	slab Side4 #split	1
-SHARD_COST	CrushedCar 1 x x2.5	0.166
-SHARD_COST	CrushedCar 1 x x2.5 #split	1
-SHARD_COST	Dumpster 1 x x2.2	0.220
-SHARD_COST	Dumpster 1 x x2.2 #split	1
+[    0.3s] cached Beacon 0 0 0
+[    0.4s] cached HubSectionB 1 x part 1/5
+[    0.4s] cached Spoke3 70 180 0
+[    0.4s] cached Bridge3 70 180 0
+[    0.5s] cached Bridge6 -70 -180 180
+[    0.5s] cached Side4 -140 -150 -90
+[    0.5s] cached CrushedCar 1 x x2.5
+[    0.5s] cached Dumpster 1 x x2.2
+[    0.5s] cached StreetlightBroken 1 x x2
+[    0.5s] writing ServerMap.glb and 71 textures
+[    1.0s] chunk ServerMap_S4_01.glb: 71 parts, 17.0 MB
+ServerMap: 71 parts, script 517.78ms, total 1.25s
+upload ServerMap: starting in 1.3s
+upload ServerMap: uploading ServerMapS4_01 (17M)
+upload ServerMap: ServerMapS4_01 is asset 90614740215707
+upload ServerMap: shard upload done: 1 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
