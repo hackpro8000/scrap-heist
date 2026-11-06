@@ -1,8 +1,0 @@
-HubSectionEnd 1 x	70.305
-HubSectionEnd 1 x #split	1
-YardGate 1 x x1.5	0.075
-YardGate 1 x x1.5 #split	1
-slab Spoke3	0.074
-slab Spoke3 #split	1
-slab Plot4	4.840
-slab Plot4 #split	1
