@@ -1,0 +1,16 @@
+slab Approach2	0.412
+slab Approach2 #split	1
+slab Approach4	0.387
+slab Approach4 #split	1
+slab Spoke5	0.073
+slab Spoke5 #split	1
+slab Spoke7	0.078
+slab Spoke7 #split	1
+slab Bridge7	1.592
+slab Bridge7 #split	1
+CapsuleSalvaged 1 x	0.275
+CapsuleSalvaged 1 x #split	1
+JunkrotKettlinaDentata 1 x	0.579
+JunkrotKettlinaDentata 1 x #split	1
+JunkrotBlendroCigolante 1 x	0.660
+JunkrotBlendroCigolante 1 x #split	1
