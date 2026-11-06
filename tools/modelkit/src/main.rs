@@ -655,6 +655,12 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 		}
 	}
 	eprintln!("{name}: {} parts, script {:.2?}, total {:.2?}", parts.len(), scripted, started.elapsed());
+	if std::env::var("MODELKIT_PROFILE").is_ok_and(|v| v == "1") {
+		for (layer, label) in bake::PROFILE_LAYERS.iter().enumerate() {
+			let seconds = bake::PROFILE[layer].load(std::sync::atomic::Ordering::Relaxed) as f64 / 1e6;
+			eprintln!("  {label}: {seconds:.2}s");
+		}
+	}
 	Ok(())
 }
 
