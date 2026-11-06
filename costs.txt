@@ -1,0 +1,14 @@
+ArenaDrone 1 x	66.914
+ArenaDrone 1 x #split	1
+ShopConceptContainer 1 x x2.5	71.240
+ShopConceptContainer 1 x x2.5 #split	1
+GroundTile 1 x x1.5	0.142
+GroundTile 1 x x1.5 #split	1
+MachinePad 1 x x1.5	0.143
+MachinePad 1 x x1.5 #split	1
+YardFooting 1 x x1.5	0.048
+YardFooting 1 x x1.5 #split	1
+slab Plot3	1.036
+slab Plot3 #split	1
+slab Bridge7	0.920
+slab Bridge7 #split	1
