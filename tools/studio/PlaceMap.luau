@@ -56,6 +56,10 @@ local TOLERANCE = 0.05
 -- its sorter. Matched against the part's full name before regrouping.
 local NO_COLLIDE = { "_Gate_Doors", "_Gate_Padlock", "_Gate_Hardware", "^Kit_Capsule", "^Kit_Junkrot" }
 
+-- Asset IDs are long; an "ID" below this is a texture slot the importer
+-- failed to swap for an asset.
+local REAL_ASSET_IDS_FROM = 1e6
+
 -- Where each kind of kit model goes: a name prefix, the ServerStorage
 -- folder, and whether the prefix is dropped from the model's name there.
 local KIT_NAME = "Kit"
@@ -123,7 +127,10 @@ local function place(model: Model, anchors: { Anchor }, turn: number): (boolean,
 	return true, "placed"
 end
 
--- Anchors every part and turns collision off where NO_COLLIDE says.
+-- Anchors every part, turns collision off where NO_COLLIDE says, and
+-- mends the glow of glowing parts: the importer leaves their emissive mask
+-- pointing at a texture slot in the upload ("rbxassetid://19") instead of
+-- an asset, so the part's own colour map stands in for it.
 local function prepare(model: Model)
 	for _, descendant in model:GetDescendants() do
 		if descendant:IsA("BasePart") then
@@ -133,6 +140,11 @@ local function prepare(model: Model)
 					descendant.CanCollide = false
 					break
 				end
+			end
+		elseif descendant:IsA("SurfaceAppearance") then
+			local mask = tonumber(string.match(descendant.EmissiveMaskContent.Uri or "", "%d+$"))
+			if mask and mask < REAL_ASSET_IDS_FROM then
+				descendant.EmissiveMaskContent = Content.fromUri(descendant.ColorMap)
 			end
 		end
 	end
