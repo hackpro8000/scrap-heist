@@ -24,6 +24,13 @@ pub struct CachedPart {
 	pub image: Image,
 }
 
+// MODELKIT_NO_CACHE=1 builds as if nothing were cached and writes nothing,
+// for timing a truly cold build without filling the disk.
+pub fn disabled() -> bool {
+	static DISABLED: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+	*DISABLED.get_or_init(|| std::env::var("MODELKIT_NO_CACHE").is_ok_and(|v| v == "1"))
+}
+
 pub fn path(dir: &Path, key: &str) -> PathBuf {
 	let mut hasher = DefaultHasher::new();
 	(VERSION, key).hash(&mut hasher);
@@ -31,6 +38,9 @@ pub fn path(dir: &Path, key: &str) -> PathBuf {
 }
 
 pub fn save(path: &Path, parts: &[(String, bool, f32, &Mesh, &Image)]) -> std::io::Result<()> {
+	if disabled() {
+		return Ok(());
+	}
 	let mut out = Vec::new();
 	put_u32(&mut out, VERSION);
 	put_u32(&mut out, parts.len() as u32);
@@ -75,6 +85,9 @@ pub fn save(path: &Path, parts: &[(String, bool, f32, &Mesh, &Image)]) -> std::i
 
 // None when the file is missing, from another version or damaged.
 pub fn load(path: &Path) -> Option<Vec<CachedPart>> {
+	if disabled() {
+		return None;
+	}
 	let bytes = std::fs::read(path).ok()?;
 	let mut r = Reader { bytes: &bytes, at: 0 };
 	if r.u32()? != VERSION {
@@ -119,6 +132,10 @@ pub fn load(path: &Path) -> Option<Vec<CachedPart>> {
 
 // Deletes cache files this build didn't use.
 pub fn prune(dir: &Path, used: &[PathBuf]) {
+	// Nothing was read, so nothing counts as used: keep the cache as it is.
+	if disabled() {
+		return;
+	}
 	let Ok(entries) = std::fs::read_dir(dir.join(".cache")) else { return };
 	for entry in entries.flatten() {
 		if !used.contains(&entry.path()) {
@@ -227,6 +244,9 @@ fn hash_mesh(hasher: &mut DefaultHasher, mesh: &Mesh) {
 
 // Saves a layer's images, one after another.
 pub fn save_layers(path: &Path, images: &[&Image]) -> std::io::Result<()> {
+	if disabled() {
+		return Ok(());
+	}
 	let mut out = Vec::new();
 	put_u32(&mut out, VERSION);
 	put_u32(&mut out, images.len() as u32);
@@ -243,6 +263,9 @@ pub fn save_layers(path: &Path, images: &[&Image]) -> std::io::Result<()> {
 
 // None when the file is missing, from another version or damaged.
 pub fn load_layers(path: &Path) -> Option<Vec<Image>> {
+	if disabled() {
+		return None;
+	}
 	let bytes = std::fs::read(path).ok()?;
 	let mut r = Reader { bytes: &bytes, at: 0 };
 	if r.u32()? != VERSION {
