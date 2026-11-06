@@ -1,12 +1,12 @@
 {
 	"assets": [
 		{
-			"id": "2cf085572a941cc2",
-			"key": "115ac3a755887f11-2f5b4070ee3aa512 Spawn -250 0 0",
+			"id": "63fbd45eea50e0e2",
+			"key": "1cc43e4ea4bd80d5-2f5b4070ee3aa512 Spawn -250 0 0",
 			"piece": 1,
 			"label": "Spawn",
 			"turn": 0.0,
-			"bytes": 183720,
+			"bytes": 183772,
 			"parts": 1
 		},
 		{
@@ -15,7 +15,7 @@
 			"piece": 1,
 			"label": "Island1",
 			"turn": 0.0,
-			"bytes": 6241664,
+			"bytes": 6241720,
 			"parts": 21
 		},
 		{
@@ -24,7 +24,7 @@
 			"piece": 1,
 			"label": "Yard1_FootingBack1",
 			"turn": 0.0,
-			"bytes": 120228,
+			"bytes": 120284,
 			"parts": 1
 		},
 		{
@@ -33,7 +33,7 @@
 			"piece": 1,
 			"label": "Yard1_FenceLeft1",
 			"turn": 270.0,
-			"bytes": 420716,
+			"bytes": 420768,
 			"parts": 3
 		},
 		{
@@ -42,7 +42,7 @@
 			"piece": 1,
 			"label": "Yard1_PlotMarker",
 			"turn": 0.0,
-			"bytes": 394528,
+			"bytes": 394580,
 			"parts": 4
 		},
 		{
@@ -51,7 +51,7 @@
 			"piece": 1,
 			"label": "Yard2_FenceBack1",
 			"turn": 180.0,
-			"bytes": 417696,
+			"bytes": 417752,
 			"parts": 3
 		},
 		{
@@ -60,16 +60,16 @@
 			"piece": 1,
 			"label": "Yard2_FootingFrontHalf1",
 			"turn": 0.0,
-			"bytes": 127356,
+			"bytes": 127408,
 			"parts": 1
 		},
 		{
-			"id": "3533419e6f583181",
-			"key": "115ac3a755887f11-7b25a7aa2539d602 Plot5 -210 -180 180",
+			"id": "20714920075567dd",
+			"key": "1cc43e4ea4bd80d5-7b25a7aa2539d602 Plot5 -210 -180 180",
 			"piece": 1,
 			"label": "Plot5",
 			"turn": 0.0,
-			"bytes": 5857924,
+			"bytes": 5857976,
 			"parts": 10
 		},
 		{
@@ -78,7 +78,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotMuffleroTossetto",
 			"turn": 0.0,
-			"bytes": 558100,
+			"bytes": 558168,
 			"parts": 6
 		},
 		{
@@ -87,7 +87,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotTypewrittoClackini",
 			"turn": 0.0,
-			"bytes": 750436,
+			"bytes": 750480,
 			"parts": 8
 		},
 		{
@@ -96,13 +96,31 @@
 			"piece": 1,
 			"label": "Kit_JunkrotRobovaccoGirotondo",
 			"turn": 0.0,
-			"bytes": 620828,
+			"bytes": 620884,
 			"parts": 8
+		},
+		{
+			"id": "38928d11711c0bb7",
+			"key": "JunkrotLaserlevelLineo-72fe0c3e9bfc4ac2 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotLaserlevelLineo",
+			"turn": 0.0,
+			"bytes": 549176,
+			"parts": 8
+		},
+		{
+			"id": "a15012abbdd5f0ec",
+			"key": "JunkrotUnitZero-cf5027927a7e9ceb 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotUnitZero",
+			"turn": 0.0,
+			"bytes": 145176,
+			"parts": 4
 		}
 	],
 	"placements": [
 		{
-			"asset": "2cf085572a941cc2",
+			"asset": "63fbd45eea50e0e2",
 			"label": "Spawn",
 			"turn": 0.0,
 			"anchors": [
@@ -2167,7 +2185,7 @@
 			]
 		},
 		{
-			"asset": "3533419e6f583181",
+			"asset": "20714920075567dd",
 			"label": "Plot5",
 			"turn": 0.0,
 			"anchors": [
@@ -2266,7 +2284,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						24.022669999999998,
+						-227.977325,
 						-148.308,
 						0.85521353
 					]
@@ -2274,7 +2292,7 @@
 				{
 					"name": "Soot",
 					"position": [
-						24.661958,
+						-227.338045,
 						-146.155,
 						-0.01195774999999999
 					]
@@ -2289,7 +2307,7 @@
 				{
 					"name": "Paper",
 					"position": [
-						288.0,
+						36.0,
 						-146.95,
 						-0.89
 					]
@@ -2297,7 +2315,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						288.02218,
+						36.022169,
 						-147.9565,
 						0.85021353
 					]
@@ -2312,7 +2330,7 @@
 				{
 					"name": "Brush",
 					"position": [
-						577.2048,
+						325.2048,
 						-149.19719500000002,
 						0.2
 					]
@@ -2320,8 +2338,54 @@
 				{
 					"name": "Bumper",
 					"position": [
-						576.0,
+						324.0,
 						-148.05,
+						0.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "38928d11711c0bb7",
+			"label": "Kit_JunkrotLaserlevelLineo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Beam",
+					"position": [
+						614.255,
+						-147.65,
+						0.0
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						611.9177850000001,
+						-147.70499999999998,
+						0.636809
+					]
+				}
+			]
+		},
+		{
+			"asset": "a15012abbdd5f0ec",
+			"label": "Kit_JunkrotUnitZero",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Eye",
+					"position": [
+						924.0,
+						-147.65,
+						1.1600000000000001
+					]
+				},
+				{
+					"name": "Rings",
+					"position": [
+						924.0,
+						-147.8,
 						0.0
 					]
 				}
