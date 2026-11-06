@@ -1,0 +1,79 @@
+slab Pad1	0.544
+slab Pad1 #split	1
+slab Avenue2	1.946
+slab Avenue2 #split	1
+slab MarketIsland	4.385
+slab MarketIsland #split	1
+slab LandmarkPlanter	0.061
+slab LandmarkPlanter #split	1
+ScrapTreeLamppost 1 x x1.5	0.208
+ScrapTreeLamppost 1 x x1.5 #split	1
+VendingMachine 1 x x2	5.971
+VendingMachine 1 x x2 #split	1
+slab Plot1	1.264
+slab Plot1 #split	1
+GroundTile 1 x x1.5	0.172
+GroundTile 1 x x1.5 #split	1
+MachinePad 1 x x1.5	0.172
+MachinePad 1 x x1.5 #split	1
+StorageCrate 1 x x1.5	9.657
+YardPath 1 x x1.5	0.213
+YardPath 1 x x1.5 #split	1
+YardPathStub 1 x x1.5	0.175
+YardPathStub 1 x x1.5 #split	1
+YardFence 1 x x1.5	0.169
+YardFence 1 x x1.5 #split	1
+YardFooting 1 x x1.5	0.057
+YardFooting 1 x x1.5 #split	1
+YardFenceHalf 1 x x1.5	0.151
+YardFenceHalf 1 x x1.5 #split	1
+YardFooting 0.5 x x1.5	0.060
+YardFooting 0.5 x x1.5 #split	1
+YardGate 1 x x1.5	0.241
+YardGate 1 x x1.5 #split	1
+PlotMarker 1 x x1.5	0.379
+PlotMarker 1 x x1.5 #split	1
+slab Spoke1	0.143
+slab Spoke1 #split	1
+slab Bridge1	1.198
+slab Bridge1 #split	1
+slab Plot2	1.247
+slab Plot2 #split	1
+slab Spoke2	0.144
+slab Spoke2 #split	1
+slab Bridge2	1.239
+slab Bridge2 #split	1
+slab Plot3	1.245
+slab Plot3 #split	1
+slab Spoke3	0.146
+slab Spoke3 #split	1
+slab Bridge3	1.163
+slab Bridge3 #split	1
+slab Plot4	1.215
+slab Plot4 #split	1
+slab Spoke4	0.146
+slab Spoke4 #split	1
+slab Bridge4	1.199
+slab Bridge4 #split	1
+slab Plot5	1.241
+slab Plot5 #split	1
+slab Spoke5	0.144
+slab Spoke5 #split	1
+slab Bridge5	1.209
+slab Bridge5 #split	1
+slab Plot6	1.226
+slab Plot6 #split	1
+slab Spoke6	0.144
+slab Spoke6 #split	1
+slab Bridge6	1.185
+slab Bridge6 #split	1
+slab Plot7	1.237
+slab Plot7 #split	1
+slab Plot8	1.296
+slab Plot8 #split	1
+slab Bridge8	1.212
+slab Bridge8 #split	1
+Pallets 1 x x1.4	0.184
+Pallets 1 x x1.4 #split	1
+slab Hatch4	0.127
+slab Hatch4 #split	1
