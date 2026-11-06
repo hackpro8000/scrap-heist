@@ -1,8 +1,16 @@
-slab Spawn	0.064
+slab Spawn	0.066
 slab Spawn #split	1
-slab Yard1_Bay1	0.071
-slab Yard1_Bay1 #split	1
-slab Plot3	4.804
-slab Plot3 #split	1
-slab Approach8	0.396
-slab Approach8 #split	1
+YardIsland 1 x	72.727
+YardIsland 1 x #split	1
+YardFooting 1 x x1.5	0.060
+YardFooting 1 x x1.5 #split	1
+YardFence 1.037037037037037 x x1.5	0.176
+YardFence 1.037037037037037 x x1.5 #split	1
+PlotMarker 1 x x1.5	0.383
+PlotMarker 1 x x1.5 #split	1
+YardFence 1 x x1.5	0.180
+YardFence 1 x x1.5 #split	1
+YardFooting 0.5 x x1.5	0.065
+YardFooting 0.5 x x1.5 #split	1
+slab Plot5	4.763
+slab Plot5 #split	1
