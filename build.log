@@ -1,0 +1,171 @@
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses ArenaDrone (key 18c26b39db37ce48)
+assemble ServerMap: uses PadIsland (key ad355357363725be)
+assemble ServerMap: uses MarketIsland (key 58b70b8346d6706b)
+assemble ServerMap: uses YardIsland (key be1c30b602492195)
+assemble ServerMap: uses ShopConceptContainer (key 9ee92800396676e9)
+assemble ServerMap: uses ScrapTreeLamppost (key b3e052fdd1a45c7d)
+assemble ServerMap: uses VendingMachine (key 55132b4a4e17f7ee)
+assemble ServerMap: uses ParkBench (key d65d521fbd51e74e)
+assemble ServerMap: uses ScrapPalm (key bc26bcde0b991a3c)
+assemble ServerMap: uses ShippingContainer (key 73425303442244cc)
+assemble ServerMap: uses CarStack (key 1912a227749426f1)
+assemble ServerMap: uses CrushedCar (key 84922847a5d2e7d3)
+assemble ServerMap: uses Barrels (key 20f10dd7a3bbfd04)
+assemble ServerMap: uses TyreStack (key ea3538f3f9bd9168)
+assemble ServerMap: uses JunkWall (key 89d5c4dffb1bf1f0)
+assemble ServerMap: uses Dumpster (key 199a3d23fa2e58d5)
+assemble ServerMap: uses Pallets (key 401baee6f4b12367)
+assemble ServerMap: uses StreetlightBroken (key 5e75827a147fa2b6)
+assemble ServerMap: uses TrafficCones (key 58b2d450da747efc)
+assemble ServerMap: uses GroundTile (key a713e47036ae92fa)
+assemble ServerMap: uses MachinePad (key e6d1359742642e5d)
+assemble ServerMap: uses YardFence (key c5864b7c62510696)
+assemble ServerMap: uses YardFenceHalf (key 2a87c7bf28eacfe9)
+assemble ServerMap: uses YardFooting (key 00779c259122496a)
+assemble ServerMap: uses YardGate (key 2ac4a4f2fd86ba8f)
+assemble ServerMap: uses PlotMarker (key 85ffb29778baceb2)
+assemble ServerMap: uses StorageCrate (key 47fb8c7d90a885c1)
+assemble ServerMap: uses YardPath (key b119f649b51de6a2)
+assemble ServerMap: uses YardPathStub (key 7de93e5e96f9b326)
+assemble ServerMap: slab at ServerMap.luau:746-763 (key 0c960e1f862726f4)
+assemble ServerMap: slab at ServerMap.luau:832-836 (key 13efa5a1845e203d)
+assemble ServerMap: slab at ServerMap.luau:843-892 (key 041aab4d823cacfb)
+assemble ServerMap: slab at ServerMap.luau:897-921 (key e1d53c436615f36a)
+assemble ServerMap: slab at ServerMap.luau:955-970 (key f4f9015cc7a52d81)
+assemble ServerMap: slab at ServerMap.luau:1050-1243 (key f80a5011da1b57d2)
+assemble ServerMap: slab at ServerMap.luau:1325-1332 (key 2b2b51e4886723fb)
+assemble ServerMap: slab at ServerMap.luau:1355-1359 (key 886388888fe59ef3)
+assemble ServerMap: slab at ServerMap.luau:1362-1370 (key 209bd5af05ec8c81)
+assemble ServerMap: slab at ServerMap.luau:1402-1424 (key c8fbb33a2805dfaf)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 33582 lines, in 1s
+[    0.0s] running ServerMap/model.luau
+[    0.6s] building PadIsland 1 x
+[    2.3s] baking on CPU (no GPU)
+[    2.9s]   shaded Columns_-1_-1_0 640×640 in 0.65s
+[    3.5s]   shaded Columns_0_-1_0 588×588 in 0.56s
+[    4.1s]   shaded Columns_-1_0_0 588×588 in 0.58s
+[    4.8s]   shaded Columns_0_0_0 636×636 in 0.66s
+[    5.9s]   shaded Dirt_0_0_0 812×812 in 1.03s
+[    6.7s]   shaded Dirt_0_-1_0 728×728 in 0.81s
+[    7.9s]   shaded Dirt_-1_-1_0 828×828 in 1.10s
+[    9.0s]   shaded Dirt_-1_0_0 788×788 in 1.06s
+[    9.0s]   shaded Pebbles_0_0_0 124×124 in 0.04s
+[    9.1s]   shaded Pebbles_-1_-1_0 124×124 in 0.04s
+[    9.1s]   shaded Pebbles_0_-1_0 116×116 in 0.04s
+[    9.1s]   shaded Pebbles_-1_0_0 112×112 in 0.03s
+[    9.7s]   shaded Grass_0_-1_0 800×800 in 0.55s
+[   10.4s]   shaded Grass_-1_-1_0 772×772 in 0.65s
+[   11.0s]   shaded Grass_-1_0_0 788×788 in 0.57s
+[   11.7s]   shaded Grass_0_0_0 836×836 in 0.66s
+[   11.7s] built PadIsland 1 x: 16 parts in 11.1s
+[   11.9s] cached PadIsland 1 x
+[   12.0s] cached PadIsland 1 x
+[   12.1s] cached PadIsland 1 x
+[   12.1s] building ParkBench 1 x x1.85
+[   12.2s]   shaded Frame 256×256 in 0.05s
+[   12.2s]   shaded Slats 256×256 in 0.03s
+[   12.2s] built ParkBench 1 x x1.85: 2 parts in 0.1s
+[   12.2s] building Palm1Planter 662.3223304703363 17.67766952966369 0
+[   12.2s]   shaded Box 172×172 in 0.03s
+[   12.3s]   shaded Soil 156×156 in 0.02s
+[   12.3s] built Palm1Planter 662.3223304703363 17.67766952966369 0: 2 parts in 0.1s
+[   12.3s] building ScrapPalm 1 x x1.5
+[   12.3s]   shaded Trunk 256×256 in 0.03s
+[   12.3s]   shaded Couplings 256×256 in 0.04s
+[   12.4s]   shaded Fronds 256×256 in 0.04s
+[   12.4s]   shaded Cans 256×256 in 0.05s
+[   12.4s] built ScrapPalm 1 x x1.5: 4 parts in 0.2s
+[   12.5s] building Palm2Planter 662.3223304703363 -17.67766952966369 0
+[   12.5s]   shaded Box 172×172 in 0.03s
+[   12.5s]   shaded Soil 156×156 in 0.02s
+[   12.5s] built Palm2Planter 662.3223304703363 -17.67766952966369 0: 2 parts in 0.1s
+[   12.5s] cached ScrapPalm 1 x x1.5
+[   12.5s] building YardIsland 1 x
+[   14.6s]   shaded Columns_-1_0_0_000 296×296 in 0.12s
+[   16.0s]   shaded Columns_-1_0_0_101 908×908 in 1.32s
+[   16.2s]   shaded Columns_-1_0_0_100 308×308 in 0.17s
+[   16.3s]   shaded Columns_-1_0_0_001 284×284 in 0.10s
+[   16.3s]   shaded Columns_-1_0_0_110 236×236 in 0.06s
+[   17.9s]   shaded Columns_-1_-1_0 924×924 in 1.46s
+[   19.3s]   shaded Columns_0_0_0 940×940 in 1.31s
+[   20.1s]   shaded Columns_-1_-1_-1 632×632 in 0.75s
+[   20.9s]   shaded Columns_-1_0_-1 676×676 in 0.79s
+[   22.6s]   shaded Columns_0_-1_0_011 972×972 in 1.66s
+[   22.7s]   shaded Columns_0_-1_0_111 192×192 in 0.04s
+[   22.8s]   shaded Columns_0_-1_0_110 236×236 in 0.07s
+[   23.0s]   shaded Columns_0_-1_0_010 348×348 in 0.19s
+[   23.9s]   shaded Columns_0_-1_-1 684×684 in 0.86s
+[   24.7s]   shaded Columns_0_0_-1 656×656 in 0.82s
+[   25.8s]   shaded Dirt_0_0_0_100 800×800 in 1.04s
+[   26.8s]   shaded Dirt_0_0_0_000 804×804 in 0.99s
+[   27.4s]   shaded Dirt_0_0_0_001 592×592 in 0.53s
+[   28.5s]   shaded Dirt_0_0_0_010 736×736 in 1.11s
+[   28.7s]   shaded Dirt_0_0_0_110 232×232 in 0.18s
+[   30.0s]   shaded Dirt_0_-1_0_010 848×848 in 1.20s
+[   30.6s]   shaded Dirt_0_-1_0_110 588×588 in 0.67s
+[   31.5s]   shaded Dirt_0_-1_0_000 656×656 in 0.86s
+[   32.6s]   shaded Dirt_0_-1_0_011 744×744 in 1.05s
+[   33.5s]   shaded Dirt_-1_0_0_000 656×656 in 0.87s
+[   34.7s]   shaded Dirt_-1_0_0_100 816×816 in 1.07s
+[   35.2s]   shaded Dirt_-1_0_0_101 596×596 in 0.53s
+[   36.0s]   shaded Dirt_-1_0_0_110 572×572 in 0.76s
+[   36.8s]   shaded Dirt_-1_-1_0_010 704×704 in 0.82s
+[   37.9s]   shaded Dirt_-1_-1_0_100 768×768 in 0.96s
+[   37.9s]   shaded Dirt_-1_-1_0_000 104×104 in 0.05s
+[   39.0s]   shaded Dirt_-1_-1_0_110 820×820 in 1.02s
+[   39.4s]   shaded Dirt_-1_-1_0_111 528×528 in 0.42s
+[   39.5s]   shaded Dirt_-1_-1_0_101 240×240 in 0.09s
+[   39.7s]   shaded Pebbles_0_0_0 328×328 in 0.20s
+[   39.8s]   shaded Pebbles_0_-1_0 228×228 in 0.09s
+[   39.9s]   shaded Pebbles_-1_-1_0 216×216 in 0.09s
+[   40.0s]   shaded Pebbles_-1_0_0 156×156 in 0.05s
+[   40.4s]   shaded Grass_0_-1_0_110 604×604 in 0.46s
+[   41.3s]   shaded Grass_0_-1_0_010 628×628 in 0.85s
+[   42.1s]   shaded Grass_0_-1_0_000 764×764 in 0.71s
+[   43.1s]   shaded Grass_-1_-1_0_100 780×780 in 0.94s
+[   43.2s]   shaded Grass_-1_-1_0_000 208×208 in 0.09s
+[   44.0s]   shaded Grass_-1_-1_0_010 736×736 in 0.76s
+[   44.8s]   shaded Grass_-1_-1_0_110 540×540 in 0.77s
+[   45.5s]   shaded Grass_-1_0_0_000 692×692 in 0.66s
+[   46.4s]   shaded Grass_-1_0_0_100 628×628 in 0.83s
+[   47.0s]   shaded Grass_-1_0_0_110 664×664 in 0.57s
+[   48.0s]   shaded Grass_0_0_0_010 684×684 in 0.95s
+[   48.2s]   shaded Grass_0_0_0_110 324×324 in 0.17s
+[   49.1s]   shaded Grass_0_0_0_100 752×752 in 0.80s
+[   49.9s]   shaded Grass_0_0_0_000 540×540 in 0.76s
+[   49.9s] built YardIsland 1 x: 52 parts in 37.4s
+[   50.5s] cached YardIsland 1 x
+[   50.8s] cached YardIsland 1 x
+[   51.1s] cached YardIsland 1 x
+[   51.4s] cached YardIsland 1 x
+[   51.7s] cached YardIsland 1 x
+[   52.1s] cached YardIsland 1 x
+[   52.4s] cached YardIsland 1 x
+[   52.4s] writing ServerMap.glb and 494 textures
+[   57.8s] chunk ServerMap_S6_01.glb: 32 parts, 7.9 MB
+[   57.8s] chunk ServerMap_S6_02.glb: 51 parts, 10.3 MB
+[   57.8s] chunk ServerMap_S6_03.glb: 43 parts, 17.1 MB
+[   57.8s] chunk ServerMap_S6_04.glb: 45 parts, 17.0 MB
+[   57.8s] chunk ServerMap_S6_05.glb: 40 parts, 16.9 MB
+[   57.8s] chunk ServerMap_S6_06.glb: 44 parts, 17.0 MB
+[   57.8s] chunk ServerMap_S6_07.glb: 44 parts, 16.6 MB
+[   57.8s] chunk ServerMap_S6_08.glb: 45 parts, 16.9 MB
+[   57.8s] chunk ServerMap_S6_09.glb: 44 parts, 16.9 MB
+[   57.9s] chunk ServerMap_S6_10.glb: 45 parts, 17.0 MB
+[   57.9s] chunk ServerMap_S6_11.glb: 40 parts, 16.7 MB
+[   57.9s] chunk ServerMap_S6_12.glb: 21 parts, 7.6 MB
+[   59.5s] rendering preview of 494 parts
+ServerMap: 494 parts, script 52.38s, total 60.90s
+SHARD_COST	PadIsland 1 x	11.137
+SHARD_COST	PadIsland 1 x #split	1
+SHARD_COST	ParkBench 1 x x1.85	0.083
+SHARD_COST	ParkBench 1 x x1.85 #split	1
+SHARD_COST	slab Palm1Planter	0.061
+SHARD_COST	slab Palm1Planter #split	1
+SHARD_COST	ScrapPalm 1 x x1.5	0.177
+SHARD_COST	ScrapPalm 1 x x1.5 #split	1
+SHARD_COST	slab Palm2Planter	0.062
+SHARD_COST	slab Palm2Planter #split	1
+SHARD_COST	YardIsland 1 x	37.367
+SHARD_COST	YardIsland 1 x #split	1
