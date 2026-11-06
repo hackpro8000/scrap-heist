@@ -1,0 +1,37 @@
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses HubSectionA (key a8313e4a55d56339)
+assemble ServerMap: uses HubSectionB (key afc962b93a377a4a)
+assemble ServerMap: uses HubSectionEnd (key 48c8eb7545b33eb2)
+assemble ServerMap: uses YardIsland (key f7a297dc299e1e15)
+assemble ServerMap: uses YardFence (key fe3d5de848852dd7)
+assemble ServerMap: uses YardFenceHalf (key 18c1a8760a959e18)
+assemble ServerMap: uses YardFooting (key 5c7b334d7913a1ed)
+assemble ServerMap: uses YardGate (key 6a909dbc533c5385)
+assemble ServerMap: uses PlotMarker (key 1dcfac604b3fab76)
+assemble ServerMap: slab at ServerMap.luau:274-464 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:544-573 (key 7ded6fc62f8b67a3)
+assemble ServerMap: slab at ServerMap.luau:576-580 (key 2f5b4070ee3aa512)
+assemble ServerMap: slab at ServerMap.luau:656-662 (key 7b25a7aa2539d602)
+assemble ServerMap: slab at ServerMap.luau:664-673 (key 107c5c30239027da)
+assemble ServerMap: slab at ServerMap.luau:681-711 (key 18845c9c8b69ea54)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
+[    0.0s] running ServerMap/model.luau
+[    0.3s] cached HubSectionEnd 1 x part 2/4
+[    0.3s] cached HubSectionEnd 1 x part 2/4
+[    0.3s] cached YardGate 1 x x1.5
+[    0.4s] cached YardGate 1 x x1.5
+[    0.4s] cached Spoke3 70 180 0
+[    0.4s] cached Plot4 210 180 0
+[    0.4s] writing ServerMap.glb and 77 textures
+ServerMap: 77 parts, script 385.84ms, total 677.12ms
+PLACED	HubSection1	180	HubSectionEnd-48c8eb7545b33eb2 1 x part 2/4
+PLACED	HubSection5	0	HubSectionEnd-48c8eb7545b33eb2 1 x part 2/4
+PLACED	Yard2_Gate	0	YardGate-6a909dbc533c5385 1 x x1.5
+PLACED	Yard3_Gate	0	YardGate-6a909dbc533c5385 1 x x1.5
+PLACED	Spoke3	0	abb4bc7b898fe3b1-107c5c30239027da Spoke3 70 180 0
+PLACED	Plot4	0	abb4bc7b898fe3b1-7b25a7aa2539d602 Plot4 210 180 0
+export ServerMap: 4 objects (14.8 MB) for 6 placements
+remote: 
+remote: Create a pull request for 'build-objects/s2' on GitHub by visiting:        
+remote:      https://github.com/hackpro8000/scrap-heist/pull/new/build-objects/s2        
+remote: 

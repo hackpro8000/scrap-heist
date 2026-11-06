@@ -1,0 +1,156 @@
+{
+	"assets": [
+		{
+			"id": "27f6cb00d7d1df7c",
+			"key": "HubSectionEnd-48c8eb7545b33eb2 1 x part 2/4",
+			"piece": 1,
+			"label": "HubSection1",
+			"turn": 180.0,
+			"bytes": 8302816,
+			"parts": 29
+		},
+		{
+			"id": "0d9fdbe00f9a47e3",
+			"key": "YardGate-6a909dbc533c5385 1 x x1.5",
+			"piece": 1,
+			"label": "Yard2_Gate",
+			"turn": 0.0,
+			"bytes": 540472,
+			"parts": 4
+		},
+		{
+			"id": "59ea4ac5e359d933",
+			"key": "abb4bc7b898fe3b1-107c5c30239027da Spoke3 70 180 0",
+			"piece": 1,
+			"label": "Spoke3",
+			"turn": 0.0,
+			"bytes": 121892,
+			"parts": 1
+		},
+		{
+			"id": "5d22e8b1caf5c7a1",
+			"key": "abb4bc7b898fe3b1-7b25a7aa2539d602 Plot4 210 180 0",
+			"piece": 1,
+			"label": "Plot4",
+			"turn": 0.0,
+			"bytes": 5862360,
+			"parts": 10
+		}
+	],
+	"placements": [
+		{
+			"asset": "27f6cb00d7d1df7c",
+			"label": "HubSection1",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Grass_-1_-1_0_000",
+					"position": [
+						-171.87365499999999,
+						-1.6778608499999998,
+						-47.959548500000004
+					]
+				},
+				{
+					"name": "Grass_0_1_0",
+					"position": [
+						-248.08397,
+						-2.09715615,
+						65.7629665
+					]
+				}
+			]
+		},
+		{
+			"asset": "27f6cb00d7d1df7c",
+			"label": "HubSection5",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-1_-1_0_000",
+					"position": [
+						171.87365499999999,
+						-1.6778608499999998,
+						47.959548500000004
+					]
+				},
+				{
+					"name": "Grass_0_1_0",
+					"position": [
+						248.08397,
+						-2.09715615,
+						-65.7629665
+					]
+				}
+			]
+		},
+		{
+			"asset": "0d9fdbe00f9a47e3",
+			"label": "Yard2_Gate",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Doors",
+					"position": [
+						-70.02294,
+						9.64123565,
+						-124.02267499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "0d9fdbe00f9a47e3",
+			"label": "Yard3_Gate",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Doors",
+					"position": [
+						69.97706,
+						9.64123565,
+						-124.02267499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "59ea4ac5e359d933",
+			"label": "Spoke3",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Road",
+					"position": [
+						69.99824699999999,
+						6.050334449999999,
+						-119.757243
+					]
+				}
+			]
+		},
+		{
+			"asset": "5d22e8b1caf5c7a1",
+			"label": "Plot4",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_-1_0",
+					"position": [
+						186.0,
+						5.865,
+						-148.0
+					]
+				},
+				{
+					"name": "Ground_0_0_0_110",
+					"position": [
+						250.0,
+						5.865,
+						-220.0
+					]
+				}
+			]
+		}
+	]
+}
