@@ -41,17 +41,16 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 22621 lines, in 0s
 [    3.8s] chunk ServerMap_S11_03.glb: 42 parts, 7.5 MB
 [    3.8s] chunk ServerMap_S11_04.glb: 42 parts, 7.5 MB
 [    3.8s] chunk ServerMap_S11_05.glb: 42 parts, 7.5 MB
-ServerMap: 214 parts, script 1.70s, total 4.64s
-upload ServerMap: starting in 1.3s
+ServerMap: 214 parts, script 1.66s, total 4.60s
+upload ServerMap: starting in 1.8s
 upload ServerMap: uploading ServerMapS11_01 (6.5M)
-upload ServerMap: ServerMapS11_01 is asset 130786778180655
+upload ServerMap: ServerMapS11_01 is asset 89848345547873
 upload ServerMap: uploading ServerMapS11_02 (7.2M)
-upload ServerMap: ServerMapS11_02 is asset 131266049340604
+upload ServerMap: ServerMapS11_02 is asset 113114093266677
 upload ServerMap: uploading ServerMapS11_03 (7.2M)
-upload ServerMap: ServerMapS11_03 is asset 134936029797910
+upload ServerMap: ServerMapS11_03 is asset 92241297923573
 upload ServerMap: uploading ServerMapS11_04 (7.2M)
-upload ServerMap: ServerMapS11_04 failed: {"path":"operations/1a7c31f9-45b7-43d2-9877-05924d47bccf","operationId":"1a7c31f9-45b7-43d2-9877-05924d47bccf","done":true,"error":{"code":"Unknown","message":"Unknown Error","details":[]}}
+upload ServerMap: ServerMapS11_04 is asset 137276191442442
 upload ServerMap: uploading ServerMapS11_05 (7.2M)
-upload ServerMap: ServerMapS11_05 is asset 107278307102542
-upload ServerMap: FAILED: 1 of 5 chunks have no usable ID: ServerMapS11_04 
-upload ServerMap: nothing was written to src/shared; see the errors above, then run again to retry just these
+upload ServerMap: ServerMapS11_05 is asset 118117045631351
+upload ServerMap: shard upload done: 5 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
