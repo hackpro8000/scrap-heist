@@ -17,13 +17,13 @@ assemble ServerMap: slab at ServerMap.luau:681-711 (key 18845c9c8b69ea54)
 assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
 [    0.0s] running ServerMap/model.luau
 [    0.3s] cached HubSectionEnd 1 x part 2/4
-[    0.3s] cached HubSectionEnd 1 x part 2/4
-[    0.3s] cached YardGate 1 x x1.5
+[    0.4s] cached HubSectionEnd 1 x part 2/4
+[    0.4s] cached YardGate 1 x x1.5
 [    0.4s] cached YardGate 1 x x1.5
 [    0.4s] cached Spoke3 70 180 0
 [    0.4s] cached Plot4 210 180 0
 [    0.4s] writing ServerMap.glb and 77 textures
-ServerMap: 77 parts, script 385.84ms, total 677.12ms
+ServerMap: 77 parts, script 401.76ms, total 808.89ms
 PLACED	HubSection1	180	HubSectionEnd-48c8eb7545b33eb2 1 x part 2/4
 PLACED	HubSection5	0	HubSectionEnd-48c8eb7545b33eb2 1 x part 2/4
 PLACED	Yard2_Gate	0	YardGate-6a909dbc533c5385 1 x x1.5
@@ -31,7 +31,3 @@ PLACED	Yard3_Gate	0	YardGate-6a909dbc533c5385 1 x x1.5
 PLACED	Spoke3	0	abb4bc7b898fe3b1-107c5c30239027da Spoke3 70 180 0
 PLACED	Plot4	0	abb4bc7b898fe3b1-7b25a7aa2539d602 Plot4 210 180 0
 export ServerMap: 4 objects (14.8 MB) for 6 placements
-remote: 
-remote: Create a pull request for 'build-objects/s2' on GitHub by visiting:        
-remote:      https://github.com/hackpro8000/scrap-heist/pull/new/build-objects/s2        
-remote: 
