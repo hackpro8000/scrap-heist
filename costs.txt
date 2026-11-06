@@ -1,18 +1,12 @@
-slab Spoke1	0.065
+slab Spoke1	0.049
 slab Spoke1 #split	1
-slab Approach1	0.244
+slab Approach1	0.169
 slab Approach1 #split	1
-slab Spoke4	0.049
+slab Spoke4	0.051
 slab Spoke4 #split	1
-slab Bridge6	1.022
+slab Bridge6	0.858
 slab Bridge6 #split	1
-slab Approach8	0.256
+slab Approach8	0.174
 slab Approach8 #split	1
-PadGarage 1 x x1.6666666666666667	0.115
-PadGarage 1 x x1.6666666666666667 #split	1
-RebirthPress 1 x	0.289
-RebirthPress 1 x #split	1
-CapsulePrototype 1 x	0.167
-CapsulePrototype 1 x #split	1
-JunkrotCabloTanglino 1 x	0.387
-JunkrotCabloTanglino 1 x #split	1
+JunkrotFrostboxGelatone 1 x	0.404
+JunkrotFrostboxGelatone 1 x #split	1

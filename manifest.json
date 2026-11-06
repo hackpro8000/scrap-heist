@@ -28,8 +28,8 @@
 			"parts": 1
 		},
 		{
-			"id": "fe6e43ca7de1f472",
-			"key": "d85c17ddde731d72-107c5c30239027da Spoke1 -210 180 0",
+			"id": "3f0695d3ffe3e334",
+			"key": "fc0c5e558eaf305d-107c5c30239027da Spoke1 -210 180 0",
 			"piece": 1,
 			"label": "Spoke1",
 			"turn": 0.0,
@@ -37,8 +37,8 @@
 			"parts": 1
 		},
 		{
-			"id": "4399abb4d0e479be",
-			"key": "d85c17ddde731d72-18845c9c8b69ea54 Approach1 -210 0 0",
+			"id": "79e384627c591476",
+			"key": "fc0c5e558eaf305d-18845c9c8b69ea54 Approach1 -210 0 0",
 			"piece": 1,
 			"label": "Approach1",
 			"turn": 0.0,
@@ -55,8 +55,8 @@
 			"parts": 3
 		},
 		{
-			"id": "8eb03491d781673c",
-			"key": "d85c17ddde731d72-107c5c30239027da Spoke4 210 180 0",
+			"id": "ed7ef589494b3c20",
+			"key": "fc0c5e558eaf305d-107c5c30239027da Spoke4 210 180 0",
 			"piece": 1,
 			"label": "Spoke4",
 			"turn": 0.0,
@@ -91,8 +91,8 @@
 			"parts": 4
 		},
 		{
-			"id": "33e01b1e7d52ac53",
-			"key": "d85c17ddde731d72-cf7e96091024d5cc Bridge6 -70 -180 180",
+			"id": "98825bb1a8a92eb1",
+			"key": "fc0c5e558eaf305d-cf7e96091024d5cc Bridge6 -70 -180 180",
 			"piece": 1,
 			"label": "Bridge6",
 			"turn": 0.0,
@@ -100,8 +100,8 @@
 			"parts": 11
 		},
 		{
-			"id": "9d4e05590785097b",
-			"key": "d85c17ddde731d72-18845c9c8b69ea54 Approach8 210 0 180",
+			"id": "01ab1f021f868042",
+			"key": "fc0c5e558eaf305d-18845c9c8b69ea54 Approach8 210 0 180",
 			"piece": 1,
 			"label": "Approach8",
 			"turn": 0.0,
@@ -132,7 +132,7 @@
 			"piece": 1,
 			"label": "Kit_CapsulePrototype",
 			"turn": 0.0,
-			"bytes": 340252,
+			"bytes": 340256,
 			"parts": 4
 		},
 		{
@@ -143,6 +143,15 @@
 			"turn": 0.0,
 			"bytes": 588196,
 			"parts": 6
+		},
+		{
+			"id": "03f6b02cbcb7d4ea",
+			"key": "JunkrotFrostboxGelatone-742ce98836c68599 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotFrostboxGelatone",
+			"turn": 0.0,
+			"bytes": 605824,
+			"parts": 7
 		}
 	],
 	"placements": [
@@ -650,7 +659,7 @@
 			]
 		},
 		{
-			"asset": "fe6e43ca7de1f472",
+			"asset": "3f0695d3ffe3e334",
 			"label": "Spoke1",
 			"turn": 0.0,
 			"anchors": [
@@ -665,7 +674,7 @@
 			]
 		},
 		{
-			"asset": "4399abb4d0e479be",
+			"asset": "79e384627c591476",
 			"label": "Approach1",
 			"turn": 0.0,
 			"anchors": [
@@ -1837,7 +1846,7 @@
 			]
 		},
 		{
-			"asset": "8eb03491d781673c",
+			"asset": "ed7ef589494b3c20",
 			"label": "Spoke4",
 			"turn": 0.0,
 			"anchors": [
@@ -3008,7 +3017,7 @@
 			]
 		},
 		{
-			"asset": "33e01b1e7d52ac53",
+			"asset": "98825bb1a8a92eb1",
 			"label": "Bridge6",
 			"turn": 0.0,
 			"anchors": [
@@ -3167,7 +3176,7 @@
 			]
 		},
 		{
-			"asset": "9d4e05590785097b",
+			"asset": "01ab1f021f868042",
 			"label": "Approach8",
 			"turn": 0.0,
 			"anchors": [
@@ -3197,7 +3206,7 @@
 				{
 					"name": "Hardware",
 					"position": [
-						-336.00894,
+						-468.00894,
 						-149.07463,
 						-1.15015185
 					]
@@ -3205,7 +3214,7 @@
 				{
 					"name": "Plate",
 					"position": [
-						-336.01166,
+						-468.01166,
 						-149.691015,
 						0.006314500000000223
 					]
@@ -3220,7 +3229,7 @@
 				{
 					"name": "Bolts",
 					"position": [
-						-242.04766999999998,
+						-374.04767000000004,
 						-145.832325,
 						-0.39704344999999996
 					]
@@ -3228,7 +3237,7 @@
 				{
 					"name": "Button",
 					"position": [
-						-233.60000000000002,
+						-365.6,
 						-146.38,
 						2.5999999999999996
 					]
@@ -3243,7 +3252,7 @@
 				{
 					"name": "Rings",
 					"position": [
-						-72.0097675,
+						-204.00976500000002,
 						-148.495115,
 						-0.0030170500000000766
 					]
@@ -3251,7 +3260,7 @@
 				{
 					"name": "Tag",
 					"position": [
-						-71.45,
+						-203.45,
 						-147.43,
 						0.9
 					]
@@ -3266,7 +3275,7 @@
 				{
 					"name": "Plug",
 					"position": [
-						145.289655,
+						13.289656,
 						-148.19236,
 						-0.71517855
 					]
@@ -3274,9 +3283,32 @@
 				{
 					"name": "Pupils",
 					"position": [
-						144.032165,
+						12.032169,
 						-148.4065,
 						0.935000005
+					]
+				}
+			]
+		},
+		{
+			"asset": "03f6b02cbcb7d4ea",
+			"label": "Kit_JunkrotFrostboxGelatone",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Cabinet",
+					"position": [
+						275.985765,
+						-147.76837999999998,
+						-0.00899551500000001
+					]
+				},
+				{
+					"name": "Magnet",
+					"position": [
+						276.49278000000004,
+						-148.415055,
+						0.84559132
 					]
 				}
 			]
