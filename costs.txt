@@ -1,4 +1,4 @@
-slab Approach5	0.298
+slab Approach5	0.273
 slab Approach5 #split	1
-slab Plot8	4.799
+slab Plot8	4.753
 slab Plot8 #split	1
