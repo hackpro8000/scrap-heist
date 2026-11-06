@@ -1,0 +1,183 @@
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses ArenaDrone (key 18c26b39db37ce48)
+assemble ServerMap: uses PadIsland (key ad355357363725be)
+assemble ServerMap: uses MarketIsland (key 58b70b8346d6706b)
+assemble ServerMap: uses YardIsland (key be1c30b602492195)
+assemble ServerMap: uses ShopConceptContainer (key 9ee92800396676e9)
+assemble ServerMap: uses ScrapTreeLamppost (key b3e052fdd1a45c7d)
+assemble ServerMap: uses VendingMachine (key 55132b4a4e17f7ee)
+assemble ServerMap: uses ParkBench (key d65d521fbd51e74e)
+assemble ServerMap: uses ScrapPalm (key bc26bcde0b991a3c)
+assemble ServerMap: uses ShippingContainer (key 73425303442244cc)
+assemble ServerMap: uses CarStack (key 1912a227749426f1)
+assemble ServerMap: uses CrushedCar (key 84922847a5d2e7d3)
+assemble ServerMap: uses Barrels (key 20f10dd7a3bbfd04)
+assemble ServerMap: uses TyreStack (key ea3538f3f9bd9168)
+assemble ServerMap: uses JunkWall (key 89d5c4dffb1bf1f0)
+assemble ServerMap: uses Dumpster (key 199a3d23fa2e58d5)
+assemble ServerMap: uses Pallets (key 401baee6f4b12367)
+assemble ServerMap: uses StreetlightBroken (key 5e75827a147fa2b6)
+assemble ServerMap: uses TrafficCones (key 58b2d450da747efc)
+assemble ServerMap: uses GroundTile (key a713e47036ae92fa)
+assemble ServerMap: uses MachinePad (key e6d1359742642e5d)
+assemble ServerMap: uses YardFence (key c5864b7c62510696)
+assemble ServerMap: uses YardFenceHalf (key 2a87c7bf28eacfe9)
+assemble ServerMap: uses YardFooting (key 00779c259122496a)
+assemble ServerMap: uses YardGate (key 2ac4a4f2fd86ba8f)
+assemble ServerMap: uses PlotMarker (key 85ffb29778baceb2)
+assemble ServerMap: uses StorageCrate (key 47fb8c7d90a885c1)
+assemble ServerMap: uses YardPath (key b119f649b51de6a2)
+assemble ServerMap: uses YardPathStub (key 7de93e5e96f9b326)
+assemble ServerMap: slab at ServerMap.luau:746-763 (key 0c960e1f862726f4)
+assemble ServerMap: slab at ServerMap.luau:832-836 (key 13efa5a1845e203d)
+assemble ServerMap: slab at ServerMap.luau:843-892 (key 041aab4d823cacfb)
+assemble ServerMap: slab at ServerMap.luau:897-921 (key e1d53c436615f36a)
+assemble ServerMap: slab at ServerMap.luau:955-970 (key f4f9015cc7a52d81)
+assemble ServerMap: slab at ServerMap.luau:1050-1243 (key f80a5011da1b57d2)
+assemble ServerMap: slab at ServerMap.luau:1325-1332 (key 2b2b51e4886723fb)
+assemble ServerMap: slab at ServerMap.luau:1355-1359 (key 886388888fe59ef3)
+assemble ServerMap: slab at ServerMap.luau:1362-1370 (key 209bd5af05ec8c81)
+assemble ServerMap: slab at ServerMap.luau:1402-1424 (key c8fbb33a2805dfaf)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 33582 lines, in 0s
+[    0.0s] running ServerMap/model.luau
+[    0.6s] building Beacon 0 0 0
+[    0.7s] baking on CPU (no GPU)
+[    0.9s]   shaded Plinth 496×496 in 0.23s
+[    0.9s]   shaded PlinthStripe 460×460 in 0.04s
+[    1.3s]   shaded Mast 880×880 in 0.33s
+[    1.3s]   shaded CoreMount 248×248 in 0.06s
+[    1.4s]   shaded CoreCage 172×172 in 0.02s
+[    1.4s] built Beacon 0 0 0: 6 parts in 0.8s
+[    1.4s] building Avenue3 343 0 -90
+[    2.2s]   shaded Deck 1024×1024 in 0.65s
+[    2.2s]   shaded HazardYellow 192×192 in 0.03s
+[    2.3s]   shaded HazardBlack 188×188 in 0.03s
+[    2.8s]   shaded Girders 1024×1024 in 0.55s
+[    2.9s]   shaded Posts 280×280 in 0.08s
+[    3.2s]   shaded Rail 1024×1024 in 0.22s
+[    3.2s]   shaded KerbEnds 152×152 in 0.05s
+[    3.2s]   shaded EndPosts 76×76 in 0.02s
+[    3.4s]   shaded Abutments 368×368 in 0.16s
+[    3.4s] built Avenue3 343 0 -90: 9 parts in 2.0s
+[    3.5s] building Avenue5 567 0 -90
+[    4.2s]   shaded Deck 1024×1024 in 0.64s
+[    4.3s]   shaded HazardYellow 188×188 in 0.03s
+[    4.3s]   shaded HazardBlack 188×188 in 0.03s
+[    4.9s]   shaded Girders 1024×1024 in 0.50s
+[    5.0s]   shaded Posts 272×272 in 0.08s
+[    5.2s]   shaded Rail 1024×1024 in 0.21s
+[    5.2s]   shaded KerbEnds 152×152 in 0.04s
+[    5.2s]   shaded EndPosts 76×76 in 0.02s
+[    5.4s]   shaded Abutments 368×368 in 0.14s
+[    5.4s] built Avenue5 567 0 -90: 9 parts in 1.9s
+[    5.4s] building ShopConceptContainer 1 x x2.5 part 2/3
+[    7.1s]   shaded Container_-1_0_0_100_000 896×896 in 0.62s
+[    7.3s]   shaded Container_-1_0_0_100_001_011 528×528 in 0.22s
+[    7.5s]   shaded Container_-1_0_0_100_001_010 540×540 in 0.14s
+[    7.6s]   shaded Container_-1_0_0_100_001_001 384×384 in 0.08s
+[    8.2s]   shaded Container_-1_0_0_101_001 864×864 in 0.58s
+[    8.4s]   shaded Container_-1_0_0_101_101_011 420×420 in 0.13s
+[    8.5s]   shaded Container_-1_0_0_101_101_010 400×400 in 0.12s
+[    8.8s]   shaded Container_-1_0_0_101_100_001 636×636 in 0.30s
+[    9.2s]   shaded Container_-1_0_0_101_100_101 648×648 in 0.31s
+[    9.4s]   shaded Container_-1_0_0_001 544×544 in 0.20s
+[    9.9s]   shaded Container_-1_0_0_000 792×792 in 0.40s
+[   10.0s]   shaded Container_0_0_0_000_001_111 400×400 in 0.12s
+[   10.3s]   shaded Container_0_0_0_000_001_110 576×576 in 0.26s
+[   10.5s]   shaded Container_0_0_0_001_001_111 444×444 in 0.14s
+[   10.6s]   shaded Container_0_0_0_001_000_111 468×468 in 0.14s
+[   10.8s]   shaded Container_0_0_0_001_000_011 488×488 in 0.13s
+[   11.4s]   shaded Container_0_0_0_001_100_001 772×772 in 0.52s
+[   12.0s]   shaded Container_0_0_0_001_100_101 800×800 in 0.55s
+[   12.5s]   shaded Container_-1_-1_0_111_011 724×724 in 0.41s
+[   12.7s]   shaded Container_-1_-1_0_111_010_001 552×552 in 0.19s
+[   13.2s]   shaded Container_-1_-1_0_111_010_011 776×776 in 0.46s
+[   13.4s]   shaded Container_-1_-1_0_111_010_101 528×528 in 0.20s
+[   13.9s]   shaded Container_-1_-1_0_111_010_111 668×668 in 0.43s
+[   14.6s]   shaded Container_0_-1_0_010_110 876×876 in 0.55s
+[   14.9s]   shaded Container_0_-1_0_011_011 684×684 in 0.24s
+[   15.0s]   shaded Container_0_-1_0_011_010_001 460×460 in 0.15s
+[   15.2s]   shaded Container_0_-1_0_011_110_101 520×520 in 0.18s
+[   15.8s]   shaded Container_0_-1_0_011_110_111 700×700 in 0.45s
+[   16.6s]   shaded Doors 1024×1024 in 0.73s
+[   17.0s]   shaded Frame_-1_-1_0_110_010 796×796 in 0.37s
+[   17.1s]   shaded Frame_-1_-1_0_110_011 428×428 in 0.09s
+[   17.3s]   shaded Frame_-1_-1_0_111_010 676×676 in 0.18s
+[   17.6s]   shaded Frame_0_-1_0_010_010 724×724 in 0.25s
+[   17.7s]   shaded Frame_0_-1_0_010_111 396×396 in 0.08s
+[   17.9s]   shaded Frame_0_-1_0_110_010 604×604 in 0.21s
+[   18.0s]   shaded Frame_0_-1_0_110_011_000 276×276 in 0.08s
+[   18.2s]   shaded Frame_0_-1_0_011_110 672×672 in 0.22s
+[   18.4s]   shaded Frame_-1_0_0_101_000 672×672 in 0.15s
+[   18.5s]   shaded Frame_-1_0_0_101_100 684×684 in 0.13s
+[   18.8s]   shaded Frame_0_0_0_000_100 732×732 in 0.24s
+[   18.8s]   shaded Frame_0_0_0_000_101 264×264 in 0.02s
+[   18.9s]   shaded Frame_0_0_0_100_001_010 212×212 in 0.03s
+[   18.9s]   shaded Frame_0_0_0_100_001_000 144×144 in 0.03s
+[   18.9s]   shaded Frame_0_0_0_100_001_101 24×24 in 0.00s
+[   19.0s]   shaded Frame_0_0_0_001_000 664×664 in 0.11s
+[   19.4s]   shaded Frame_0_0_0_101_001_001 656×656 in 0.35s
+[   19.5s]   shaded Interior_-1_-1_0_110_000 332×332 in 0.06s
+[   20.0s]   shaded Interior_-1_0_0_100_000 896×896 in 0.49s
+[   20.6s]   shaded Interior_-1_0_0_101 928×928 in 0.49s
+[   20.7s]   shaded Interior_0_-1_0_010_100 320×320 in 0.06s
+[   20.9s]   shaded Interior_0_-1_0_010_110 660×660 in 0.18s
+[   21.0s]   shaded Interior_0_-1_0_110_000 340×340 in 0.06s
+[   21.2s]   shaded Interior_0_-1_0_110_010 692×692 in 0.20s
+[   21.2s]   shaded Flap_-1_-1_0_001_100 208×208 in 0.02s
+[   21.5s]   shaded Flap_-1_-1_0_001_111_100 952×952 in 0.30s
+[   21.9s]   shaded Flap_-1_-1_0_101_011_000 976×976 in 0.30s
+[   22.2s]   shaded Flap_-1_-1_0_101_011_100 980×980 in 0.30s
+[   22.2s]   shaded Flap_-1_-1_0_101_001 200×200 in 0.02s
+[   22.6s]   shaded Flap_-1_-1_0_101_111_001 984×984 in 0.31s
+[   23.0s]   shaded Flap_-1_-1_0_101_111_100 1008×1008 in 0.38s
+[   23.0s]   shaded Flap_-1_-1_0_101_101 104×104 in 0.01s
+[   23.0s]   shaded Flap_0_-1_0_001_000 208×208 in 0.03s
+[   23.4s]   shaded Flap_0_-1_0_001_011_101 1012×1012 in 0.34s
+[   23.4s]   shaded Flap_0_-1_0_001_100 212×212 in 0.02s
+[   23.8s]   shaded Flap_0_-1_0_001_111_001 968×968 in 0.30s
+[   24.1s]   shaded Flap_0_-1_0_001_111_100 992×992 in 0.33s
+[   24.1s]   shaded Flap_0_-1_0_001_101 112×112 in 0.01s
+[   24.3s]   shaded Flap_0_-1_0_101_011_101 700×700 in 0.12s
+[   24.3s]   shaded Flap_0_-1_0_101_000 108×108 in 0.01s
+[   24.4s]   shaded FlapFrame_-1_-1_0_111_011 228×228 in 0.08s
+[   24.6s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_110_111_100 1024×1024 in 0.18s
+[   24.6s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_110_111_101 164×164 in 0.02s
+[   24.6s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_110_100 164×164 in 0.01s
+[   24.6s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_111_101 132×132 in 0.01s
+[   24.7s]   shaded FlapFrame_-1_-1_0_111_001_100 364×364 in 0.11s
+[   24.9s]   shaded FlapFrame_-1_-1_0_111_001_111_010 192×192 in 0.19s
+[   25.1s]   shaded FlapFrame_-1_-1_0_111_001_101 232×232 in 0.24s
+[   25.4s]   shaded FlapFrame_-1_-1_0_111_010 272×272 in 0.26s
+[   25.5s]   shaded FlapFrame_-1_-1_0_111_110 208×208 in 0.06s
+[   25.7s]   shaded FlapFrame_0_-1_0_011_101_011_101 904×904 in 0.20s
+[   25.9s]   shaded FlapFrame_0_-1_0_011_001 1024×1024 in 0.23s
+[   26.2s]   shaded FlapFrame_0_-1_0_011_110 256×256 in 0.23s
+[   26.2s]   shaded FlapFrame_0_-1_0_011_100 76×76 in 0.03s
+[   26.5s]   shaded FlapFrame_0_-1_0_010 844×844 in 0.31s
+[   26.8s]   shaded Counter_0_-1_0_011_001 572×572 in 0.23s
+[   27.3s]   shaded Counter_0_-1_0_011_101 844×844 in 0.43s
+[   27.8s]   shaded Counter_-1_0_0_101 864×864 in 0.45s
+[   28.1s]   shaded CounterIron 1024×1024 in 0.28s
+[   28.3s]   shaded Wire 1024×1024 in 0.21s
+[   29.5s]   shaded Blades 812×812 in 1.18s
+[   29.9s]   shaded SignJaw 1024×1024 in 0.34s
+[   30.1s]   shaded SignBolts_-1_-1_1_010_111_100 1024×1024 in 0.17s
+[   30.3s]   shaded SignBolts_-1_-1_1_111_110 1024×1024 in 0.17s
+[   31.4s]   shaded SignSockets 1024×1024 in 1.01s
+[   32.0s]   shaded Drum 1024×1024 in 0.59s
+[   32.0s] built ShopConceptContainer 1 x x2.5 part 2/3: 97 parts in 26.6s
+[   32.6s] writing ServerMap.glb and 121 textures
+[   34.1s] chunk ServerMap_S3_01.glb: 41 parts, 16.6 MB
+[   34.1s] chunk ServerMap_S3_02.glb: 67 parts, 17.0 MB
+[   34.1s] chunk ServerMap_S3_03.glb: 13 parts, 6.2 MB
+[   34.5s] rendering preview of 121 parts
+ServerMap: 121 parts, script 32.59s, total 34.98s
+SHARD_COST	slab Beacon	0.801
+SHARD_COST	slab Beacon #split	1
+SHARD_COST	slab Avenue3	2.037
+SHARD_COST	slab Avenue3 #split	1
+SHARD_COST	slab Avenue5	1.910
+SHARD_COST	slab Avenue5 #split	1
+SHARD_COST	ShopConceptContainer 1 x x2.5	79.711
+SHARD_COST	ShopConceptContainer 1 x x2.5 #split	1
