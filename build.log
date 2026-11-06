@@ -38,252 +38,259 @@ assemble ServerMap: slab at ServerMap.luau:1325-1332 (key 2b2b51e4886723fb)
 assemble ServerMap: slab at ServerMap.luau:1355-1359 (key 886388888fe59ef3)
 assemble ServerMap: slab at ServerMap.luau:1362-1370 (key 209bd5af05ec8c81)
 assemble ServerMap: slab at ServerMap.luau:1402-1424 (key c8fbb33a2805dfaf)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 33582 lines, in 0s
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 33582 lines, in 1s
 [    0.0s] running ServerMap/model.luau
-[    0.4s] building Pad1 220 0 0
-[    0.4s] baking on CPU (no GPU)
-[    0.5s]   shaded Plaza_0_0_0 388×388 in 0.09s
-[    0.5s]   shaded Plaza_-1_0_0 376×376 in 0.07s
-[    0.6s]   shaded Plaza_-1_-1_0 376×376 in 0.06s
-[    0.7s]   shaded Plaza_0_-1_0 388×388 in 0.07s
-[    0.7s]   shaded Kerb_0_0_0 208×208 in 0.01s
-[    0.7s]   shaded Kerb_-1_0_0 208×208 in 0.01s
-[    0.7s]   shaded Kerb_-1_-1_0 212×212 in 0.01s
-[    0.7s]   shaded Kerb_0_-1_0 208×208 in 0.01s
-[    0.7s] built Pad1 220 0 0: 8 parts in 0.4s
-[    0.7s] building Pad2 332 0 0
-[    0.8s]   shaded Plaza_0_0_0 388×388 in 0.07s
-[    0.9s]   shaded Plaza_-1_0_0 376×376 in 0.07s
-[    1.0s]   shaded Plaza_-1_-1_0 376×376 in 0.06s
-[    1.0s]   shaded Plaza_0_-1_0 388×388 in 0.07s
-[    1.0s]   shaded Kerb_0_0_0 208×208 in 0.01s
-[    1.1s]   shaded Kerb_-1_0_0 208×208 in 0.01s
-[    1.1s]   shaded Kerb_-1_-1_0 212×212 in 0.01s
-[    1.1s]   shaded Kerb_0_-1_0 208×208 in 0.01s
-[    1.1s] built Pad2 332 0 0: 8 parts in 0.3s
-[    1.1s] building Pad3 444 0 0
-[    1.2s]   shaded Plaza_0_0_0 388×388 in 0.07s
-[    1.2s]   shaded Plaza_-1_0_0 376×376 in 0.07s
-[    1.3s]   shaded Plaza_-1_-1_0 376×376 in 0.06s
-[    1.4s]   shaded Plaza_0_-1_0 388×388 in 0.07s
+[    0.5s] building Pad1 220 0 0
+[    0.6s] baking on CPU (no GPU)
+[    0.6s]   shaded Plaza_0_0_0 388×388 in 0.14s
+[    0.7s]   shaded Plaza_-1_0_0 376×376 in 0.09s
+[    0.8s]   shaded Plaza_-1_-1_0 376×376 in 0.08s
+[    0.9s]   shaded Plaza_0_-1_0 388×388 in 0.09s
+[    0.9s]   shaded Kerb_0_0_0 208×208 in 0.01s
+[    0.9s]   shaded Kerb_-1_0_0 208×208 in 0.01s
+[    0.9s]   shaded Kerb_-1_-1_0 212×212 in 0.01s
+[    1.0s]   shaded Kerb_0_-1_0 208×208 in 0.01s
+[    1.0s] built Pad1 220 0 0: 8 parts in 0.5s
+[    1.0s] building Pad2 332 0 0
+[    1.1s]   shaded Plaza_0_0_0 388×388 in 0.10s
+[    1.2s]   shaded Plaza_-1_0_0 376×376 in 0.08s
+[    1.3s]   shaded Plaza_-1_-1_0 376×376 in 0.08s
+[    1.4s]   shaded Plaza_0_-1_0 388×388 in 0.09s
 [    1.4s]   shaded Kerb_0_0_0 208×208 in 0.01s
 [    1.4s]   shaded Kerb_-1_0_0 208×208 in 0.01s
 [    1.4s]   shaded Kerb_-1_-1_0 212×212 in 0.01s
 [    1.4s]   shaded Kerb_0_-1_0 208×208 in 0.01s
-[    1.4s] built Pad3 444 0 0: 8 parts in 0.3s
-[    1.4s] building Avenue3 343 0 -90
-[    1.9s]   shaded Deck 1024×1024 in 0.42s
-[    2.0s]   shaded HazardYellow 192×192 in 0.02s
-[    2.0s]   shaded HazardBlack 188×188 in 0.02s
-[    2.4s]   shaded Girders 1024×1024 in 0.34s
-[    2.4s]   shaded Posts 280×280 in 0.05s
-[    2.5s]   shaded Rail 1024×1024 in 0.12s
-[    2.6s]   shaded KerbEnds 152×152 in 0.03s
-[    2.6s]   shaded EndPosts 76×76 in 0.01s
-[    2.7s]   shaded Abutments 368×368 in 0.09s
-[    2.7s] built Avenue3 343 0 -90: 9 parts in 1.3s
-[    2.7s] building MarketIsland 680 0 0
-[    2.7s]   shaded Plaza_0_0_0_100 244×244 in 0.01s
-[    3.3s]   shaded Plaza_0_0_0_000 1024×1024 in 0.56s
-[    3.4s]   shaded Plaza_0_0_0_110 52×52 in 0.00s
-[    3.4s]   shaded Plaza_0_0_0_010 252×252 in 0.01s
-[    3.9s]   shaded Plaza_-1_0_0 1008×1008 in 0.50s
-[    4.5s]   shaded Plaza_-1_-1_0 1008×1008 in 0.49s
-[    4.5s]   shaded Plaza_0_-1_0_000 252×252 in 0.01s
-[    5.1s]   shaded Plaza_0_-1_0_010 1024×1024 in 0.55s
-[    5.1s]   shaded Plaza_0_-1_0_100 52×52 in 0.00s
-[    5.1s]   shaded Plaza_0_-1_0_110 244×244 in 0.01s
-[    5.3s]   shaded Kerb_-1_-1_0 912×912 in 0.11s
-[    5.3s]   shaded Kerb_0_-1_0_000 276×276 in 0.02s
-[    5.3s]   shaded Kerb_0_-1_0_100 372×372 in 0.02s
-[    5.3s]   shaded Kerb_0_-1_0_110 312×312 in 0.02s
-[    5.3s]   shaded Kerb_0_0_0_100 332×332 in 0.02s
-[    5.4s]   shaded Kerb_0_0_0_110 372×372 in 0.02s
-[    5.4s]   shaded Kerb_0_0_0_010 276×276 in 0.02s
-[    5.5s]   shaded Kerb_-1_0_0 888×888 in 0.11s
-[    5.5s] built MarketIsland 680 0 0: 18 parts in 2.8s
-[    5.5s] building ShopConceptContainer 1 x x2.5 part 3/3
-[    6.3s]   shaded Container_-1_0_0_100_001_110 416×416 in 0.06s
-[    6.3s]   shaded Container_-1_0_0_100_001_000 392×392 in 0.05s
-[    6.4s]   shaded Container_-1_0_0_101_101_110 396×396 in 0.06s
-[    6.4s]   shaded Container_-1_0_0_101_101_001 360×360 in 0.05s
-[    6.5s]   shaded Container_-1_0_0_101_101_101 364×364 in 0.05s
-[    6.6s]   shaded Container_-1_0_0_101_000_011 520×520 in 0.12s
-[    7.0s]   shaded Container_-1_0_0_101_000_101 768×768 in 0.33s
-[    7.1s]   shaded Container_-1_0_0_101_000_111 548×548 in 0.11s
-[    7.2s]   shaded Container_-1_0_0_101_100_011 456×456 in 0.09s
-[    7.3s]   shaded Container_-1_0_0_101_100_111 464×464 in 0.07s
-[    7.7s]   shaded Container_0_0_0_000_000 852×852 in 0.32s
-[    7.7s]   shaded Container_0_0_0_000_001_011 412×412 in 0.06s
-[    7.9s]   shaded Container_0_0_0_000_001_010 516×516 in 0.12s
-[    8.2s]   shaded Container_0_0_0_000_100 804×804 in 0.27s
-[    8.7s]   shaded Container_0_0_0_000_101 896×896 in 0.42s
-[    8.7s]   shaded Container_0_0_0_001_001_001 368×368 in 0.05s
-[    8.9s]   shaded Container_0_0_0_001_000_101 660×660 in 0.19s
-[    9.0s]   shaded Container_0_0_0_001_100_011 528×528 in 0.10s
-[    9.2s]   shaded Container_0_0_0_001_100_111 536×536 in 0.12s
-[    9.2s]   shaded Container_0_0_0_101 132×132 in 0.01s
-[    9.6s]   shaded Container_-1_-1_0_010 928×928 in 0.36s
-[    9.8s]   shaded Container_-1_-1_0_111_111 688×688 in 0.17s
-[   10.0s]   shaded Container_0_-1_0_011_111 544×544 in 0.24s
-[   10.2s]   shaded Container_0_-1_0_011_010_111 628×628 in 0.17s
-[   10.5s]   shaded Container_0_-1_0_011_110_011 696×696 in 0.27s
-[   10.7s]   shaded Frame_-1_-1_0_110_110 720×720 in 0.15s
-[   10.8s]   shaded Frame_-1_-1_0_110_111 708×708 in 0.06s
-[   10.9s]   shaded Frame_-1_-1_0_111_011 676×676 in 0.14s
-[   11.1s]   shaded Frame_-1_-1_0_111_110 728×728 in 0.13s
-[   11.2s]   shaded Frame_-1_-1_0_011 668×668 in 0.15s
-[   11.6s]   shaded Frame_0_-1_0_010_110 880×880 in 0.30s
-[   11.6s]   shaded Frame_0_-1_0_110_011_001 192×192 in 0.02s
-[   11.7s]   shaded Frame_0_-1_0_110_011_010 952×952 in 0.14s
-[   11.8s]   shaded Frame_0_-1_0_110_011_011 212×212 in 0.02s
-[   11.9s]   shaded Frame_0_-1_0_011_011 732×732 in 0.13s
-[   12.1s]   shaded Frame_0_-1_0_011_111 660×660 in 0.18s
-[   12.4s]   shaded Frame_-1_0_0_100_000 796×796 in 0.27s
-[   12.4s]   shaded Frame_-1_0_0_101_101 680×680 in 0.05s
-[   12.6s]   shaded Frame_-1_0_0_001 672×672 in 0.14s
-[   12.6s]   shaded Frame_0_0_0_100_001_011 168×168 in 0.01s
-[   12.7s]   shaded Frame_0_0_0_001_001 656×656 in 0.05s
-[   12.7s]   shaded Frame_0_0_0_101_000 608×608 in 0.06s
-[   12.8s]   shaded Frame_0_0_0_101_001_010 428×428 in 0.05s
-[   12.8s]   shaded Frame_0_0_0_101_001_101 80×80 in 0.02s
-[   13.0s]   shaded DoorProp 1024×1024 in 0.14s
-[   13.0s]   shaded CastingHoles 312×312 in 0.07s
-[   13.1s]   shaded Interior_-1_-1_0_010_100 336×336 in 0.04s
-[   13.2s]   shaded Interior_-1_-1_0_010_110 688×688 in 0.13s
-[   13.5s]   shaded Interior_-1_0_0_100_100 868×868 in 0.28s
-[   13.9s]   shaded Interior_-1_0_0_100_101 808×808 in 0.29s
-[   13.9s]   shaded Interior_0_-1_0_010_000 332×332 in 0.04s
-[   14.1s]   shaded Interior_0_-1_0_010_010 676×676 in 0.14s
-[   14.2s]   shaded Interior_0_-1_0_110_110 652×652 in 0.12s
-[   14.5s]   shaded Interior_0_0_0_000_100 880×880 in 0.28s
-[   14.7s]   shaded Flap_-1_-1_0_001_111_101 956×956 in 0.20s
-[   14.7s]   shaded Flap_-1_-1_0_001_101 104×104 in 0.01s
-[   14.8s]   shaded Flap_-1_-1_0_110 212×212 in 0.03s
-[   14.8s]   shaded Flap_0_-1_0_010 228×228 in 0.04s
-[   15.0s]   shaded Flap_0_-1_0_001_011_001 976×976 in 0.20s
-[   15.2s]   shaded Flap_0_-1_0_001_011_000 980×980 in 0.19s
-[   15.5s]   shaded Flap_0_-1_0_001_011_100 1012×1012 in 0.20s
-[   15.7s]   shaded Flap_0_-1_0_001_111_101 992×992 in 0.20s
-[   15.7s]   shaded Flap_0_-1_0_011 208×208 in 0.02s
-[   16.0s]   shaded Flap_0_-1_0_101_011_001 1008×1008 in 0.24s
-[   16.3s]   shaded Flap_0_-1_0_101_011_000 984×984 in 0.23s
-[   16.5s]   shaded Flap_0_-1_0_101_011_100 840×840 in 0.17s
-[   16.5s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_110_111_110 132×132 in 0.01s
-[   16.5s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_110_101 164×164 in 0.01s
-[   16.6s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_111_100 1024×1024 in 0.11s
-[   16.6s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_100 128×128 in 0.01s
-[   16.6s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_010 80×80 in 0.01s
-[   16.6s]   shaded FlapFrame_-1_-1_0_111_111_101_100_010 24×24 in 0.00s
-[   16.7s]   shaded FlapFrame_-1_-1_0_111_001_111_001 924×924 in 0.12s
-[   16.9s]   shaded FlapFrame_-1_-1_0_110 864×864 in 0.18s
-[   17.1s]   shaded FlapFrame_0_-1_0_011_101_011_100 196×196 in 0.13s
-[   17.1s]   shaded FlapFrame_0_-1_0_011_011 212×212 in 0.04s
-[   17.1s]   shaded FlapFrame_0_-1_0_011_010 208×208 in 0.04s
-[   17.2s]   shaded Counter_-1_-1_0_001 244×244 in 0.04s
-[   17.3s]   shaded Counter_-1_-1_0_101_111 1024×1024 in 0.11s
-[   17.6s]   shaded Counter_-1_-1_0_011 780×780 in 0.25s
-[   17.7s]   shaded Counter_-1_-1_0_010 496×496 in 0.08s
-[   17.7s]   shaded Counter_-1_-1_0_110 268×268 in 0.01s
-[   17.7s]   shaded Counter_0_-1_0_001_111 448×448 in 0.06s
-[   17.8s]   shaded Counter_0_-1_0_101 260×260 in 0.04s
-[   17.9s]   shaded Counter_0_-1_0_111 564×564 in 0.15s
-[   18.0s]   shaded Counter_0_-1_0_110 308×308 in 0.02s
-[   18.0s]   shaded Counter_0_-1_0_100 44×44 in 0.00s
-[   18.0s]   shaded Counter_-1_0_0_100_001_100 320×320 in 0.04s
-[   18.2s]   shaded Counter_-1_0_0_100_001_001 600×600 in 0.17s
-[   18.4s]   shaded Counter_-1_0_0_100_000 788×788 in 0.19s
-[   19.2s]   shaded Wares 1024×1024 in 0.67s
-[   19.3s]   shaded SignFrame 1024×1024 in 0.17s
-[   19.8s]   shaded SignHousing 1024×1024 in 0.42s
-[   19.9s]   shaded SignBolts_0_-1_1 216×216 in 0.03s
-[   19.9s]   shaded SignBolts_-1_-1_1_010_010 32×32 in 0.00s
-[   20.0s]   shaded SignBolts_-1_-1_1_010_111_101 1024×1024 in 0.10s
-[   20.1s]   shaded SignBolts_-1_-1_1_111_111 1024×1024 in 0.10s
-[   20.6s]   shaded Yard 1024×1024 in 0.49s
-[   21.1s]   shaded Steps 1024×1024 in 0.41s
-[   21.1s] built ShopConceptContainer 1 x x2.5 part 3/3: 99 parts in 15.6s
-[   21.5s] building Spoke7 556 84 0
-[   21.5s]   shaded Road 300×300 in 0.08s
-[   21.5s] built Spoke7 556 84 0: 1 parts in 0.1s
-[   21.6s] building MachinePad 1 x x1.5
-[   21.6s]   shaded Plate 256×256 in 0.05s
-[   21.6s]   shaded Stripes 256×256 in 0.02s
-[   21.7s]   shaded Hardware 256×256 in 0.02s
-[   21.7s] built MachinePad 1 x x1.5: 3 parts in 0.1s
-[   21.7s] building YardFooting 1 x x1.5
-[   21.7s]   shaded Footing 256×256 in 0.03s
-[   21.7s] built YardFooting 1 x x1.5: 1 parts in 0.0s
-[   21.7s] cached YardFooting 1 x x1.5
-[   21.7s] cached YardFooting 1 x x1.5
-[   21.7s] cached YardFooting 1 x x1.5
-[   21.7s] cached YardFooting 1 x x1.5
-[   21.7s] cached YardFooting 1 x x1.5
-[   21.7s] cached YardFooting 1 x x1.5
-[   21.7s] cached YardFooting 1 x x1.5
-[   21.7s] cached YardFooting 1 x x1.5
-[   21.7s] cached YardFooting 1 x x1.5
-[   21.7s] cached YardFooting 1 x x1.5
-[   21.7s] cached YardFooting 1 x x1.5
-[   21.7s] cached YardFooting 1 x x1.5
-[   21.7s] cached YardFooting 1 x x1.5
-[   21.7s] building Spoke8 556 -84 180
-[   21.8s]   shaded Road 300×300 in 0.08s
-[   21.8s] built Spoke8 556 -84 180: 1 parts in 0.1s
-[   21.8s] building TrafficCones 1 x x1.8
-[   21.8s]   shaded Cones 256×256 in 0.05s
-[   21.9s]   shaded Bases 256×256 in 0.03s
-[   21.9s]   shaded Stripes 256×256 in 0.03s
-[   21.9s] built TrafficCones 1 x x1.8: 3 parts in 0.1s
-[   21.9s] cached TrafficCones 1 x x1.8
-[   21.9s] cached TrafficCones 1 x x1.8
-[   21.9s] cached TrafficCones 1 x x1.8
-[   21.9s] cached TrafficCones 1 x x1.8
-[   21.9s] cached TrafficCones 1 x x1.8
-[   21.9s] cached TrafficCones 1 x x1.8
-[   21.9s] cached TrafficCones 1 x x1.8
-[   21.9s] building Barrels 1 x x1.9
-[   21.9s]   shaded RustDrums 256×256 in 0.03s
-[   22.0s]   shaded BlueDrum 256×256 in 0.03s
-[   22.0s]   shaded Hoops 256×256 in 0.02s
-[   22.0s]   shaded Slick 256×256 in 0.03s
-[   22.0s] built Barrels 1 x x1.9: 4 parts in 0.1s
-[   22.0s] building Hatch1 23.558928079037813 9.75842752530979 22.5
-[   22.0s]   shaded Rim 312×312 in 0.02s
-[   22.1s]   shaded Frame 260×260 in 0.02s
-[   22.1s]   shaded Pit 212×212 in 0.02s
-[   22.1s]   shaded Grate 284×284 in 0.02s
-[   22.1s] built Hatch1 23.558928079037813 9.75842752530979 22.5: 4 parts in 0.1s
-[   22.1s] cached StreetlightBroken 1 x x2
-[   22.1s] writing ServerMap.glb and 205 textures
-[   23.7s] chunk ServerMap_S8_01.glb: 71 parts, 17.1 MB
-[   23.7s] chunk ServerMap_S8_02.glb: 70 parts, 17.1 MB
-[   23.7s] chunk ServerMap_S8_03.glb: 64 parts, 9.0 MB
-[   24.0s] rendering preview of 205 parts
-ServerMap: 205 parts, script 22.13s, total 24.28s
-SHARD_COST	slab Pad1	0.372
+[    1.4s] built Pad2 332 0 0: 8 parts in 0.5s
+[    1.4s] building Pad3 444 0 0
+[    1.5s]   shaded Plaza_0_0_0 388×388 in 0.09s
+[    1.6s]   shaded Plaza_-1_0_0 376×376 in 0.09s
+[    1.7s]   shaded Plaza_-1_-1_0 376×376 in 0.08s
+[    1.8s]   shaded Plaza_0_-1_0 388×388 in 0.09s
+[    1.8s]   shaded Kerb_0_0_0 208×208 in 0.01s
+[    1.8s]   shaded Kerb_-1_0_0 208×208 in 0.01s
+[    1.9s]   shaded Kerb_-1_-1_0 212×212 in 0.01s
+[    1.9s]   shaded Kerb_0_-1_0 208×208 in 0.01s
+[    1.9s] built Pad3 444 0 0: 8 parts in 0.5s
+[    1.9s] building Avenue3 343 0 -90
+[    2.6s]   shaded Deck 1024×1024 in 0.56s
+[    2.6s]   shaded HazardYellow 192×192 in 0.03s
+[    2.6s]   shaded HazardBlack 188×188 in 0.03s
+[    3.2s]   shaded Girders 1024×1024 in 0.53s
+[    3.3s]   shaded Posts 280×280 in 0.07s
+[    3.5s]   shaded Rail 1024×1024 in 0.16s
+[    3.5s]   shaded KerbEnds 152×152 in 0.04s
+[    3.5s]   shaded EndPosts 76×76 in 0.02s
+[    3.7s]   shaded Abutments 368×368 in 0.13s
+[    3.7s] built Avenue3 343 0 -90: 9 parts in 1.8s
+[    3.7s] building MarketIsland 680 0 0
+[    3.7s]   shaded Plaza_0_0_0_100 244×244 in 0.01s
+[    4.6s]   shaded Plaza_0_0_0_000 1024×1024 in 0.73s
+[    4.6s]   shaded Plaza_0_0_0_110 52×52 in 0.00s
+[    4.6s]   shaded Plaza_0_0_0_010 252×252 in 0.02s
+[    5.4s]   shaded Plaza_-1_0_0 1008×1008 in 0.69s
+[    6.2s]   shaded Plaza_-1_-1_0 1008×1008 in 0.67s
+[    6.2s]   shaded Plaza_0_-1_0_000 252×252 in 0.01s
+[    7.0s]   shaded Plaza_0_-1_0_010 1024×1024 in 0.71s
+[    7.0s]   shaded Plaza_0_-1_0_100 52×52 in 0.00s
+[    7.0s]   shaded Plaza_0_-1_0_110 244×244 in 0.01s
+[    7.2s]   shaded Kerb_-1_-1_0 912×912 in 0.14s
+[    7.2s]   shaded Kerb_0_-1_0_000 276×276 in 0.02s
+[    7.2s]   shaded Kerb_0_-1_0_100 372×372 in 0.03s
+[    7.3s]   shaded Kerb_0_-1_0_110 312×312 in 0.02s
+[    7.3s]   shaded Kerb_0_0_0_100 332×332 in 0.03s
+[    7.3s]   shaded Kerb_0_0_0_110 372×372 in 0.03s
+[    7.3s]   shaded Kerb_0_0_0_010 276×276 in 0.02s
+[    7.5s]   shaded Kerb_-1_0_0 888×888 in 0.14s
+[    7.5s] built MarketIsland 680 0 0: 18 parts in 3.8s
+[    7.6s] building ShopConceptContainer 1 x x2.5 part 3/3
+[    8.4s]   shaded Container_-1_0_0_100_001_110 416×416 in 0.08s
+[    8.5s]   shaded Container_-1_0_0_100_001_000 392×392 in 0.07s
+[    8.6s]   shaded Container_-1_0_0_101_101_110 396×396 in 0.08s
+[    8.7s]   shaded Container_-1_0_0_101_101_001 360×360 in 0.07s
+[    8.7s]   shaded Container_-1_0_0_101_101_101 364×364 in 0.07s
+[    8.9s]   shaded Container_-1_0_0_101_000_011 520×520 in 0.16s
+[    9.4s]   shaded Container_-1_0_0_101_000_101 768×768 in 0.43s
+[    9.6s]   shaded Container_-1_0_0_101_000_111 548×548 in 0.17s
+[    9.7s]   shaded Container_-1_0_0_101_100_011 456×456 in 0.11s
+[    9.8s]   shaded Container_-1_0_0_101_100_111 464×464 in 0.10s
+[   10.3s]   shaded Container_0_0_0_000_000 852×852 in 0.41s
+[   10.4s]   shaded Container_0_0_0_000_001_011 412×412 in 0.08s
+[   10.6s]   shaded Container_0_0_0_000_001_010 516×516 in 0.16s
+[   11.0s]   shaded Container_0_0_0_000_100 804×804 in 0.36s
+[   11.7s]   shaded Container_0_0_0_000_101 896×896 in 0.55s
+[   11.7s]   shaded Container_0_0_0_001_001_001 368×368 in 0.07s
+[   12.0s]   shaded Container_0_0_0_001_000_101 660×660 in 0.24s
+[   12.1s]   shaded Container_0_0_0_001_100_011 528×528 in 0.14s
+[   12.3s]   shaded Container_0_0_0_001_100_111 536×536 in 0.16s
+[   12.3s]   shaded Container_0_0_0_101 132×132 in 0.01s
+[   12.9s]   shaded Container_-1_-1_0_010 928×928 in 0.47s
+[   13.1s]   shaded Container_-1_-1_0_111_111 688×688 in 0.22s
+[   13.5s]   shaded Container_0_-1_0_011_111 544×544 in 0.31s
+[   13.7s]   shaded Container_0_-1_0_011_010_111 628×628 in 0.22s
+[   14.1s]   shaded Container_0_-1_0_011_110_011 696×696 in 0.35s
+[   14.3s]   shaded Frame_-1_-1_0_110_110 720×720 in 0.19s
+[   14.4s]   shaded Frame_-1_-1_0_110_111 708×708 in 0.07s
+[   14.6s]   shaded Frame_-1_-1_0_111_011 676×676 in 0.17s
+[   14.8s]   shaded Frame_-1_-1_0_111_110 728×728 in 0.17s
+[   14.9s]   shaded Frame_-1_-1_0_011 668×668 in 0.18s
+[   15.4s]   shaded Frame_0_-1_0_010_110 880×880 in 0.39s
+[   15.4s]   shaded Frame_0_-1_0_110_011_001 192×192 in 0.03s
+[   15.6s]   shaded Frame_0_-1_0_110_011_010 952×952 in 0.19s
+[   15.7s]   shaded Frame_0_-1_0_110_011_011 212×212 in 0.03s
+[   15.8s]   shaded Frame_0_-1_0_011_011 732×732 in 0.18s
+[   16.1s]   shaded Frame_0_-1_0_011_111 660×660 in 0.23s
+[   16.5s]   shaded Frame_-1_0_0_100_000 796×796 in 0.34s
+[   16.6s]   shaded Frame_-1_0_0_101_101 680×680 in 0.07s
+[   16.8s]   shaded Frame_-1_0_0_001 672×672 in 0.18s
+[   16.8s]   shaded Frame_0_0_0_100_001_011 168×168 in 0.02s
+[   16.9s]   shaded Frame_0_0_0_001_001 656×656 in 0.06s
+[   16.9s]   shaded Frame_0_0_0_101_000 608×608 in 0.09s
+[   17.0s]   shaded Frame_0_0_0_101_001_010 428×428 in 0.07s
+[   17.0s]   shaded Frame_0_0_0_101_001_101 80×80 in 0.03s
+[   17.2s]   shaded DoorProp 1024×1024 in 0.19s
+[   17.3s]   shaded CastingHoles 312×312 in 0.09s
+[   17.4s]   shaded Interior_-1_-1_0_010_100 336×336 in 0.05s
+[   17.6s]   shaded Interior_-1_-1_0_010_110 688×688 in 0.17s
+[   18.0s]   shaded Interior_-1_0_0_100_100 868×868 in 0.37s
+[   18.5s]   shaded Interior_-1_0_0_100_101 808×808 in 0.40s
+[   18.5s]   shaded Interior_0_-1_0_010_000 332×332 in 0.06s
+[   18.7s]   shaded Interior_0_-1_0_010_010 676×676 in 0.16s
+[   18.9s]   shaded Interior_0_-1_0_110_110 652×652 in 0.16s
+[   19.3s]   shaded Interior_0_0_0_000_100 880×880 in 0.37s
+[   19.6s]   shaded Flap_-1_-1_0_001_111_101 956×956 in 0.26s
+[   19.6s]   shaded Flap_-1_-1_0_001_101 104×104 in 0.01s
+[   19.6s]   shaded Flap_-1_-1_0_110 212×212 in 0.04s
+[   19.7s]   shaded Flap_0_-1_0_010 228×228 in 0.05s
+[   20.0s]   shaded Flap_0_-1_0_001_011_001 976×976 in 0.26s
+[   20.2s]   shaded Flap_0_-1_0_001_011_000 980×980 in 0.25s
+[   20.5s]   shaded Flap_0_-1_0_001_011_100 1012×1012 in 0.26s
+[   20.8s]   shaded Flap_0_-1_0_001_111_101 992×992 in 0.26s
+[   20.9s]   shaded Flap_0_-1_0_011 208×208 in 0.03s
+[   21.2s]   shaded Flap_0_-1_0_101_011_001 1008×1008 in 0.32s
+[   21.6s]   shaded Flap_0_-1_0_101_011_000 984×984 in 0.30s
+[   21.8s]   shaded Flap_0_-1_0_101_011_100 840×840 in 0.23s
+[   21.8s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_110_111_110 132×132 in 0.01s
+[   21.8s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_110_101 164×164 in 0.01s
+[   22.0s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_111_100 1024×1024 in 0.14s
+[   22.0s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_100 128×128 in 0.01s
+[   22.0s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_010 80×80 in 0.01s
+[   22.0s]   shaded FlapFrame_-1_-1_0_111_111_101_100_010 24×24 in 0.00s
+[   22.2s]   shaded FlapFrame_-1_-1_0_111_001_111_001 924×924 in 0.16s
+[   22.4s]   shaded FlapFrame_-1_-1_0_110 864×864 in 0.25s
+[   22.6s]   shaded FlapFrame_0_-1_0_011_101_011_100 196×196 in 0.16s
+[   22.7s]   shaded FlapFrame_0_-1_0_011_011 212×212 in 0.05s
+[   22.7s]   shaded FlapFrame_0_-1_0_011_010 208×208 in 0.05s
+[   22.8s]   shaded Counter_-1_-1_0_001 244×244 in 0.05s
+[   22.9s]   shaded Counter_-1_-1_0_101_111 1024×1024 in 0.14s
+[   23.3s]   shaded Counter_-1_-1_0_011 780×780 in 0.33s
+[   23.4s]   shaded Counter_-1_-1_0_010 496×496 in 0.10s
+[   23.4s]   shaded Counter_-1_-1_0_110 268×268 in 0.01s
+[   23.5s]   shaded Counter_0_-1_0_001_111 448×448 in 0.07s
+[   23.6s]   shaded Counter_0_-1_0_101 260×260 in 0.05s
+[   23.8s]   shaded Counter_0_-1_0_111 564×564 in 0.19s
+[   23.8s]   shaded Counter_0_-1_0_110 308×308 in 0.03s
+[   23.8s]   shaded Counter_0_-1_0_100 44×44 in 0.01s
+[   23.9s]   shaded Counter_-1_0_0_100_001_100 320×320 in 0.05s
+[   24.1s]   shaded Counter_-1_0_0_100_001_001 600×600 in 0.22s
+[   24.4s]   shaded Counter_-1_0_0_100_000 788×788 in 0.26s
+[   25.3s]   shaded Wares 1024×1024 in 0.85s
+[   25.6s]   shaded SignFrame 1024×1024 in 0.22s
+[   26.2s]   shaded SignHousing 1024×1024 in 0.55s
+[   26.2s]   shaded SignBolts_0_-1_1 216×216 in 0.04s
+[   26.2s]   shaded SignBolts_-1_-1_1_010_010 32×32 in 0.00s
+[   26.4s]   shaded SignBolts_-1_-1_1_010_111_101 1024×1024 in 0.13s
+[   26.5s]   shaded SignBolts_-1_-1_1_111_111 1024×1024 in 0.13s
+[   27.2s]   shaded Yard 1024×1024 in 0.65s
+[   27.8s]   shaded Steps 1024×1024 in 0.53s
+[   27.8s] built ShopConceptContainer 1 x x2.5 part 3/3: 99 parts in 20.3s
+[   28.6s] building Spoke7 556 84 0
+[   28.7s]   shaded Road 300×300 in 0.11s
+[   28.7s] built Spoke7 556 84 0: 1 parts in 0.1s
+[   28.7s] building MachinePad 1 x x1.5
+[   28.8s]   shaded Plate 256×256 in 0.07s
+[   28.8s]   shaded Stripes 256×256 in 0.03s
+[   28.8s]   shaded Hardware 256×256 in 0.03s
+[   28.8s] built MachinePad 1 x x1.5: 3 parts in 0.2s
+[   28.8s] building YardFooting 1 x x1.5
+[   28.9s]   shaded Footing 256×256 in 0.05s
+[   28.9s] built YardFooting 1 x x1.5: 1 parts in 0.0s
+[   28.9s] cached YardFooting 1 x x1.5
+[   28.9s] cached YardFooting 1 x x1.5
+[   28.9s] cached YardFooting 1 x x1.5
+[   28.9s] cached YardFooting 1 x x1.5
+[   28.9s] cached YardFooting 1 x x1.5
+[   28.9s] cached YardFooting 1 x x1.5
+[   28.9s] cached YardFooting 1 x x1.5
+[   28.9s] cached YardFooting 1 x x1.5
+[   28.9s] cached YardFooting 1 x x1.5
+[   28.9s] cached YardFooting 1 x x1.5
+[   28.9s] cached YardFooting 1 x x1.5
+[   28.9s] cached YardFooting 1 x x1.5
+[   28.9s] cached YardFooting 1 x x1.5
+[   28.9s] building Spoke8 556 -84 180
+[   29.0s]   shaded Road 300×300 in 0.11s
+[   29.0s] built Spoke8 556 -84 180: 1 parts in 0.1s
+[   29.0s] building TrafficCones 1 x x1.8
+[   29.1s]   shaded Cones 256×256 in 0.06s
+[   29.1s]   shaded Bases 256×256 in 0.04s
+[   29.2s]   shaded Stripes 256×256 in 0.05s
+[   29.2s] built TrafficCones 1 x x1.8: 3 parts in 0.2s
+[   29.2s] cached TrafficCones 1 x x1.8
+[   29.2s] cached TrafficCones 1 x x1.8
+[   29.2s] cached TrafficCones 1 x x1.8
+[   29.2s] cached TrafficCones 1 x x1.8
+[   29.2s] cached TrafficCones 1 x x1.8
+[   29.2s] cached TrafficCones 1 x x1.8
+[   29.2s] cached TrafficCones 1 x x1.8
+[   29.2s] building Barrels 1 x x1.9
+[   29.2s]   shaded RustDrums 256×256 in 0.04s
+[   29.3s]   shaded BlueDrum 256×256 in 0.04s
+[   29.3s]   shaded Hoops 256×256 in 0.02s
+[   29.3s]   shaded Slick 256×256 in 0.04s
+[   29.3s] built Barrels 1 x x1.9: 4 parts in 0.2s
+[   29.3s] building Hatch1 23.558928079037813 9.75842752530979 22.5
+[   29.4s]   shaded Rim 312×312 in 0.02s
+[   29.4s]   shaded Frame 260×260 in 0.02s
+[   29.4s]   shaded Pit 212×212 in 0.03s
+[   29.4s]   shaded Grate 284×284 in 0.02s
+[   29.4s] built Hatch1 23.558928079037813 9.75842752530979 22.5: 4 parts in 0.1s
+[   29.4s] building StreetlightBroken 1 x x2
+[   29.5s]   shaded Pole 256×256 in 0.02s
+[   29.5s]   shaded Head 256×256 in 0.03s
+[   29.5s]   shaded Glass 256×256 in 0.03s
+[   29.5s]   shaded Wires 256×256 in 0.01s
+[   29.5s] built StreetlightBroken 1 x x2: 4 parts in 0.1s
+[   29.5s] writing ServerMap.glb and 205 textures
+[   30.9s] chunk ServerMap_S8_01.glb: 71 parts, 17.1 MB
+[   31.0s] chunk ServerMap_S8_02.glb: 70 parts, 17.1 MB
+[   31.0s] chunk ServerMap_S8_03.glb: 64 parts, 9.0 MB
+[   31.4s] rendering preview of 205 parts
+ServerMap: 205 parts, script 29.55s, total 31.71s
+SHARD_COST	slab Pad1	0.501
 SHARD_COST	slab Pad1 #split	1
-SHARD_COST	slab Pad2	0.347
+SHARD_COST	slab Pad2	0.452
 SHARD_COST	slab Pad2 #split	1
-SHARD_COST	slab Pad3	0.340
+SHARD_COST	slab Pad3	0.451
 SHARD_COST	slab Pad3 #split	1
-SHARD_COST	slab Avenue3	1.262
+SHARD_COST	slab Avenue3	1.785
 SHARD_COST	slab Avenue3 #split	1
-SHARD_COST	slab MarketIsland	2.781
+SHARD_COST	slab MarketIsland	3.791
 SHARD_COST	slab MarketIsland #split	1
-SHARD_COST	ShopConceptContainer 1 x x2.5	46.674
+SHARD_COST	ShopConceptContainer 1 x x2.5	60.831
 SHARD_COST	ShopConceptContainer 1 x x2.5 #split	1
-SHARD_COST	slab Spoke7	0.089
+SHARD_COST	slab Spoke7	0.118
 SHARD_COST	slab Spoke7 #split	1
-SHARD_COST	MachinePad 1 x x1.5	0.110
+SHARD_COST	MachinePad 1 x x1.5	0.151
 SHARD_COST	MachinePad 1 x x1.5 #split	1
-SHARD_COST	YardFooting 1 x x1.5	0.037
+SHARD_COST	YardFooting 1 x x1.5	0.050
 SHARD_COST	YardFooting 1 x x1.5 #split	1
-SHARD_COST	slab Spoke8	0.089
+SHARD_COST	slab Spoke8	0.121
 SHARD_COST	slab Spoke8 #split	1
-SHARD_COST	TrafficCones 1 x x1.8	0.117
+SHARD_COST	TrafficCones 1 x x1.8	0.155
 SHARD_COST	TrafficCones 1 x x1.8 #split	1
-SHARD_COST	Barrels 1 x x1.9	0.117
+SHARD_COST	Barrels 1 x x1.9	0.157
 SHARD_COST	Barrels 1 x x1.9 #split	1
-SHARD_COST	slab Hatch1	0.082
+SHARD_COST	slab Hatch1	0.107
 SHARD_COST	slab Hatch1 #split	1
+SHARD_COST	StreetlightBroken 1 x x2	0.103
+SHARD_COST	StreetlightBroken 1 x x2 #split	1
