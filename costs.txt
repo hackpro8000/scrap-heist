@@ -1,6 +1,0 @@
-slab Plot1	3.088
-slab Plot1 #split	1
-slab Bridge8	0.824
-slab Bridge8 #split	1
-JunkrotTickworthPocketti 1 x	0.488
-JunkrotTickworthPocketti 1 x #split	1
