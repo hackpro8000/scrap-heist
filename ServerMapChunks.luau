@@ -3,6 +3,5 @@
 -- with two anchor parts and where their middles stand (studs, Y up).
 return {
 	{ key = "ServerMapS4_01", file = "ServerMap_S4_01.glb", parts = 60, anchors = { { name = "HubSection5_Grass_1_-1_0", position = Vector3.new(284.3075, -1.3838092, 20.928522) }, { name = "HubSection1_Grass_1_-1_0", position = Vector3.new(-284.3075, -1.3838092, -20.928522) } } },
-	{ key = "ServerMapS4_02", file = "ServerMap_S4_02.glb", parts = 82, anchors = { { name = "Yard1_FootingFrontHalf1_Footing", position = Vector3.new(-255.00108, 6.266335, -124.03322) }, { name = "Yard4_FenceBack8_Sheets", position = Vector3.new(252.02193, 9.821013, -236.03192) } } },
-	{ key = "ServerMapS4_03", file = "ServerMap_S4_03.glb", parts = 10, anchors = { { name = "Plot5_Ground_0_-1_0", position = Vector3.new(-234, 5.865, 148) }, { name = "Plot5_Ground_-1_0_0_010", position = Vector3.new(-170, 5.865, 220) } } },
+	{ key = "ServerMapS4_02", file = "ServerMap_S4_02.glb", parts = 53, anchors = { { name = "Bridge2_Apron", position = Vector3.new(-70.0084, 6.0594187, -118.016205) }, { name = "Yard8_FenceFrontHalf1_Posts", position = Vector3.new(254.97035, 9.974667, 124.12845) } } },
 }
