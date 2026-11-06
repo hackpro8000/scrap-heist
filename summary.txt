@@ -1,5 +1,3 @@
 status=DONE
-build=1
-upload=handed 0
-total=3
-parts=184
+uploaded=9
+total=24
