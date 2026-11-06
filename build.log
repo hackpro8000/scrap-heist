@@ -1,162 +1,152 @@
 assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
-assemble ServerMap: uses HubSectionA (key a8617627bbdcd357)
-assemble ServerMap: uses HubSectionB (key 13537df3661bc8d8)
-assemble ServerMap: uses HubSectionEnd (key 992b2af78b33b635)
-assemble ServerMap: uses YardIsland (key bc4b87ee7c370e94)
-assemble ServerMap: uses PadKitchen (key 201c589c6c586358)
-assemble ServerMap: uses PadGarage (key 877760826c06ae21)
-assemble ServerMap: uses PadGadget (key 7aefb0ce0a83beaa)
-assemble ServerMap: uses YardFence (key 122ba19da15d7e80)
-assemble ServerMap: uses YardFenceHalf (key 76101fa539bb054b)
-assemble ServerMap: uses YardFooting (key 5f7c0e3c30ab293e)
-assemble ServerMap: uses YardGate (key 692a8cf69b44f092)
-assemble ServerMap: uses PlotMarker (key f406cb0c06262f89)
-assemble ServerMap: uses StorageCrate (key 5d99f3bcd3db5fca)
-assemble ServerMap: uses YardPath (key f096c7510747dcc8)
-assemble ServerMap: uses YardPathStub (key 9d6e97b27d7f04b9)
-assemble ServerMap: uses JunkMound (key 1fc541ce300d6d84)
-assemble ServerMap: uses BillboardFrame (key 7c418c4bc122e3a8)
-assemble ServerMap: slab at ServerMap.luau:277-467 (key cf7e96091024d5cc)
-assemble ServerMap: slab at ServerMap.luau:547-576 (key 7ded6fc62f8b67a3)
-assemble ServerMap: slab at ServerMap.luau:579-583 (key 2f5b4070ee3aa512)
-assemble ServerMap: slab at ServerMap.luau:641-659 (key ec88fbc68c01cf27)
-assemble ServerMap: slab at ServerMap.luau:662-672 (key 6ecf17da3fae12b3)
-assemble ServerMap: slab at ServerMap.luau:725-731 (key 7b25a7aa2539d602)
-assemble ServerMap: slab at ServerMap.luau:733-742 (key 107c5c30239027da)
-assemble ServerMap: slab at ServerMap.luau:750-780 (key 18845c9c8b69ea54)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 22704 lines, in 0s
+assemble ServerMap: uses HubSectionA (key aba92d994c6f0c69)
+assemble ServerMap: uses HubSectionB (key 9d1e1b9f547142af)
+assemble ServerMap: uses HubSectionEnd (key 2e7b86a45fce066c)
+assemble ServerMap: uses YardIsland (key 2027f38b95772bdb)
+assemble ServerMap: uses YardFence (key c88183b0d565bac1)
+assemble ServerMap: uses YardFenceHalf (key 6733b008ab2c3356)
+assemble ServerMap: uses YardFooting (key c64b2631e78d1f3f)
+assemble ServerMap: uses YardGate (key c36f5c84837b0df9)
+assemble ServerMap: uses PlotMarker (key 53a9068aea07f9ec)
+assemble ServerMap: slab at ServerMap.luau:274-464 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:544-573 (key 7ded6fc62f8b67a3)
+assemble ServerMap: slab at ServerMap.luau:576-580 (key 2f5b4070ee3aa512)
+assemble ServerMap: slab at ServerMap.luau:656-662 (key 7b25a7aa2539d602)
+assemble ServerMap: slab at ServerMap.luau:664-673 (key 107c5c30239027da)
+assemble ServerMap: slab at ServerMap.luau:681-711 (key 18845c9c8b69ea54)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 16456 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.4s] building Line 0 0 0
-[    0.6s] baking on CPU (no GPU)
-[    0.8s]   shaded Walk_-5_0_0 556×556 in 0.25s
-[    1.3s]   shaded Walk_-4_0_0_010 524×524 in 0.39s
-[    1.5s]   shaded Walk_-4_0_0_000 528×528 in 0.26s
-[    2.0s]   shaded Walk_-4_0_0_110 524×524 in 0.39s
-[    2.0s]   shaded Walk_-4_0_0_100 516×516 in 0.03s
+[    0.3s] building Line 0 0 0
+[    0.5s] baking on CPU (no GPU)
+[    0.7s]   shaded Walk_-5_0_0 556×556 in 0.25s
+[    1.2s]   shaded Walk_-4_0_0_010 524×524 in 0.39s
+[    1.5s]   shaded Walk_-4_0_0_000 528×528 in 0.27s
+[    1.9s]   shaded Walk_-4_0_0_110 524×524 in 0.40s
+[    1.9s]   shaded Walk_-4_0_0_100 516×516 in 0.03s
 [    2.4s]   shaded Walk_-3_0_0_010 524×524 in 0.39s
-[    2.5s]   shaded Walk_-3_0_0_000 516×516 in 0.03s
-[    2.9s]   shaded Walk_-3_0_0_110 524×524 in 0.39s
-[    3.0s]   shaded Walk_-3_0_0_100 516×516 in 0.03s
-[    3.4s]   shaded Walk_-2_0_0_010 524×524 in 0.39s
-[    3.4s]   shaded Walk_-2_0_0_000 516×516 in 0.03s
+[    2.4s]   shaded Walk_-3_0_0_000 516×516 in 0.03s
+[    2.8s]   shaded Walk_-3_0_0_110 524×524 in 0.40s
+[    2.9s]   shaded Walk_-3_0_0_100 516×516 in 0.03s
+[    3.3s]   shaded Walk_-2_0_0_010 524×524 in 0.39s
+[    3.3s]   shaded Walk_-2_0_0_000 516×516 in 0.03s
 [    3.8s]   shaded Walk_-2_0_0_110 524×524 in 0.39s
-[    3.9s]   shaded Walk_-2_0_0_100 516×516 in 0.03s
-[    4.3s]   shaded Walk_-1_0_0_010 524×524 in 0.39s
+[    3.8s]   shaded Walk_-2_0_0_100 516×516 in 0.03s
+[    4.2s]   shaded Walk_-1_0_0_010 524×524 in 0.39s
 [    4.3s]   shaded Walk_-1_0_0_000 516×516 in 0.03s
-[    4.8s]   shaded Walk_-1_0_0_110 524×524 in 0.39s
-[    4.8s]   shaded Walk_-1_0_0_100 516×516 in 0.03s
-[    5.2s]   shaded Walk_0_0_0_010 524×524 in 0.39s
-[    5.3s]   shaded Walk_0_0_0_000 516×516 in 0.03s
-[    5.7s]   shaded Walk_0_0_0_110 524×524 in 0.39s
+[    4.7s]   shaded Walk_-1_0_0_110 524×524 in 0.40s
+[    4.7s]   shaded Walk_-1_0_0_100 516×516 in 0.03s
+[    5.2s]   shaded Walk_0_0_0_010 524×524 in 0.40s
+[    5.2s]   shaded Walk_0_0_0_000 516×516 in 0.03s
+[    5.6s]   shaded Walk_0_0_0_110 524×524 in 0.39s
 [    5.7s]   shaded Walk_0_0_0_100 516×516 in 0.03s
-[    6.1s]   shaded Walk_1_0_0_010 524×524 in 0.39s
-[    6.2s]   shaded Walk_1_0_0_000 516×516 in 0.03s
+[    6.1s]   shaded Walk_1_0_0_010 524×524 in 0.40s
+[    6.1s]   shaded Walk_1_0_0_000 516×516 in 0.03s
 [    6.6s]   shaded Walk_1_0_0_110 524×524 in 0.39s
 [    6.6s]   shaded Walk_1_0_0_100 516×516 in 0.03s
-[    7.1s]   shaded Walk_2_0_0_010 524×524 in 0.39s
+[    7.0s]   shaded Walk_2_0_0_010 524×524 in 0.39s
 [    7.1s]   shaded Walk_2_0_0_000 516×516 in 0.03s
 [    7.5s]   shaded Walk_2_0_0_110 524×524 in 0.39s
-[    7.6s]   shaded Walk_2_0_0_100 516×516 in 0.03s
-[    8.0s]   shaded Walk_3_0_0_010 524×524 in 0.39s
+[    7.5s]   shaded Walk_2_0_0_100 516×516 in 0.03s
+[    7.9s]   shaded Walk_3_0_0_010 524×524 in 0.40s
 [    8.0s]   shaded Walk_3_0_0_000 516×516 in 0.03s
-[    8.5s]   shaded Walk_3_0_0_110 524×524 in 0.39s
-[    8.8s]   shaded Walk_3_0_0_100 528×528 in 0.26s
-[    9.0s]   shaded Walk_4_0_0 556×556 in 0.26s
-[    9.3s]   shaded Walk_-5_-1_0 556×556 in 0.24s
+[    8.4s]   shaded Walk_3_0_0_110 524×524 in 0.39s
+[    8.7s]   shaded Walk_3_0_0_100 528×528 in 0.26s
+[    9.0s]   shaded Walk_4_0_0 556×556 in 0.25s
+[    9.3s]   shaded Walk_-5_-1_0 556×556 in 0.25s
 [    9.7s]   shaded Walk_-4_-1_0_000 524×524 in 0.39s
-[   10.0s]   shaded Walk_-4_-1_0_010 528×528 in 0.27s
-[   10.5s]   shaded Walk_-4_-1_0_100 524×524 in 0.39s
+[   10.0s]   shaded Walk_-4_-1_0_010 528×528 in 0.26s
+[   10.4s]   shaded Walk_-4_-1_0_100 524×524 in 0.39s
 [   10.5s]   shaded Walk_-4_-1_0_110 516×516 in 0.03s
-[   10.9s]   shaded Walk_-3_-1_0_000 524×524 in 0.39s
-[   11.0s]   shaded Walk_-3_-1_0_010 516×516 in 0.03s
-[   11.4s]   shaded Walk_-3_-1_0_100 524×524 in 0.39s
+[   10.9s]   shaded Walk_-3_-1_0_000 524×524 in 0.38s
+[   10.9s]   shaded Walk_-3_-1_0_010 516×516 in 0.03s
+[   11.3s]   shaded Walk_-3_-1_0_100 524×524 in 0.38s
 [   11.4s]   shaded Walk_-3_-1_0_110 516×516 in 0.03s
-[   11.9s]   shaded Walk_-2_-1_0_000 524×524 in 0.39s
-[   11.9s]   shaded Walk_-2_-1_0_010 516×516 in 0.03s
-[   12.3s]   shaded Walk_-2_-1_0_100 524×524 in 0.39s
-[   12.4s]   shaded Walk_-2_-1_0_110 516×516 in 0.03s
-[   12.8s]   shaded Walk_-1_-1_0_000 524×524 in 0.39s
-[   12.8s]   shaded Walk_-1_-1_0_010 516×516 in 0.03s
-[   13.3s]   shaded Walk_-1_-1_0_100 524×524 in 0.39s
-[   13.3s]   shaded Walk_-1_-1_0_110 516×516 in 0.03s
-[   13.7s]   shaded Walk_0_-1_0_000 524×524 in 0.39s
-[   13.8s]   shaded Walk_0_-1_0_010 516×516 in 0.03s
-[   14.2s]   shaded Walk_0_-1_0_100 524×524 in 0.39s
-[   14.2s]   shaded Walk_0_-1_0_110 516×516 in 0.03s
-[   14.7s]   shaded Walk_1_-1_0_000 524×524 in 0.39s
-[   14.7s]   shaded Walk_1_-1_0_010 516×516 in 0.03s
-[   15.1s]   shaded Walk_1_-1_0_100 524×524 in 0.39s
-[   15.2s]   shaded Walk_1_-1_0_110 516×516 in 0.03s
-[   15.6s]   shaded Walk_2_-1_0_000 524×524 in 0.39s
-[   15.6s]   shaded Walk_2_-1_0_010 516×516 in 0.03s
-[   16.1s]   shaded Walk_2_-1_0_100 524×524 in 0.39s
-[   16.1s]   shaded Walk_2_-1_0_110 516×516 in 0.03s
-[   16.5s]   shaded Walk_3_-1_0_000 524×524 in 0.39s
-[   16.6s]   shaded Walk_3_-1_0_010 516×516 in 0.03s
-[   17.0s]   shaded Walk_3_-1_0_100 524×524 in 0.39s
-[   17.3s]   shaded Walk_3_-1_0_110 528×528 in 0.26s
-[   17.6s]   shaded Walk_4_-1_0 556×556 in 0.25s
-[   18.0s]   shaded Bed_-4_-1_0 528×528 in 0.35s
-[   18.4s]   shaded Bed_-4_0_0 528×528 in 0.35s
-[   18.8s]   shaded Bed_-3_-1_0_010 524×524 in 0.35s
-[   19.2s]   shaded Bed_-3_-1_0_110 524×524 in 0.35s
-[   19.5s]   shaded Bed_-3_0_0_000 524×524 in 0.35s
-[   19.9s]   shaded Bed_-3_0_0_100 524×524 in 0.34s
-[   20.3s]   shaded Bed_-2_-1_0_010 524×524 in 0.35s
-[   20.7s]   shaded Bed_-2_-1_0_110 524×524 in 0.35s
-[   21.1s]   shaded Bed_-2_0_0_000 524×524 in 0.35s
-[   21.5s]   shaded Bed_-2_0_0_100 524×524 in 0.34s
-[   21.9s]   shaded Bed_-1_-1_0_010 524×524 in 0.35s
-[   22.3s]   shaded Bed_-1_-1_0_110 524×524 in 0.35s
-[   22.7s]   shaded Bed_-1_0_0_000 524×524 in 0.34s
-[   23.0s]   shaded Bed_-1_0_0_100 524×524 in 0.34s
-[   23.4s]   shaded Bed_0_-1_0_010 524×524 in 0.34s
-[   23.8s]   shaded Bed_0_-1_0_110 524×524 in 0.35s
-[   24.2s]   shaded Bed_0_0_0_000 524×524 in 0.34s
-[   24.6s]   shaded Bed_0_0_0_100 524×524 in 0.35s
-[   25.0s]   shaded Bed_1_-1_0_010 524×524 in 0.35s
-[   25.4s]   shaded Bed_1_-1_0_110 524×524 in 0.35s
-[   25.8s]   shaded Bed_1_0_0_000 524×524 in 0.35s
-[   26.2s]   shaded Bed_1_0_0_100 524×524 in 0.35s
-[   26.6s]   shaded Bed_2_-1_0_010 524×524 in 0.35s
-[   27.0s]   shaded Bed_2_-1_0_110 524×524 in 0.35s
-[   27.4s]   shaded Bed_2_0_0_000 524×524 in 0.35s
-[   27.8s]   shaded Bed_2_0_0_100 524×524 in 0.34s
-[   28.4s]   shaded Bed_3_-1_0 800×800 in 0.55s
-[   29.1s]   shaded Bed_3_0_0 800×800 in 0.57s
-[   29.1s]   shaded Kerb_-5_-1_0 444×444 in 0.03s
-[   29.1s]   shaded Kerb_-4_-1_0 248×248 in 0.02s
-[   29.1s]   shaded Kerb_-3_-1_0 264×264 in 0.02s
-[   29.2s]   shaded Kerb_-2_-1_0 260×260 in 0.02s
-[   29.2s]   shaded Kerb_-1_-1_0 308×308 in 0.02s
-[   29.2s]   shaded Kerb_0_-1_0 252×252 in 0.02s
-[   29.2s]   shaded Kerb_1_-1_0 260×260 in 0.02s
-[   29.2s]   shaded Kerb_2_-1_0 264×264 in 0.02s
-[   29.2s]   shaded Kerb_3_-1_0 256×256 in 0.02s
-[   29.3s]   shaded Kerb_4_-1_0 448×448 in 0.03s
-[   29.3s]   shaded Kerb_-5_0_0 444×444 in 0.03s
-[   29.3s]   shaded Kerb_-4_0_0 252×252 in 0.02s
-[   29.4s]   shaded Kerb_-3_0_0 256×256 in 0.02s
-[   29.4s]   shaded Kerb_-2_0_0 264×264 in 0.02s
-[   29.4s]   shaded Kerb_-1_0_0 312×312 in 0.02s
-[   29.4s]   shaded Kerb_0_0_0 264×264 in 0.02s
-[   29.4s]   shaded Kerb_1_0_0 256×256 in 0.02s
-[   29.4s]   shaded Kerb_2_0_0 264×264 in 0.02s
-[   29.5s]   shaded Kerb_3_0_0 252×252 in 0.02s
-[   29.5s]   shaded Kerb_4_0_0 448×448 in 0.03s
-[   29.5s] built Line 0 0 0: 116 parts in 29.1s
-[   29.8s] writing ServerMap.glb and 116 textures
-[   30.9s] chunk ServerMap_S13_01.glb: 51 parts, 16.6 MB
-[   30.9s] chunk ServerMap_S13_02.glb: 40 parts, 16.7 MB
-[   30.9s] chunk ServerMap_S13_03.glb: 25 parts, 3.7 MB
-ServerMap: 116 parts, script 29.83s, total 31.28s
-SHARD_COST	slab Line	29.112
+[   11.8s]   shaded Walk_-2_-1_0_000 524×524 in 0.38s
+[   11.8s]   shaded Walk_-2_-1_0_010 516×516 in 0.03s
+[   12.2s]   shaded Walk_-2_-1_0_100 524×524 in 0.38s
+[   12.3s]   shaded Walk_-2_-1_0_110 516×516 in 0.03s
+[   12.7s]   shaded Walk_-1_-1_0_000 524×524 in 0.38s
+[   12.7s]   shaded Walk_-1_-1_0_010 516×516 in 0.03s
+[   13.1s]   shaded Walk_-1_-1_0_100 524×524 in 0.38s
+[   13.2s]   shaded Walk_-1_-1_0_110 516×516 in 0.03s
+[   13.6s]   shaded Walk_0_-1_0_000 524×524 in 0.38s
+[   13.6s]   shaded Walk_0_-1_0_010 516×516 in 0.03s
+[   14.0s]   shaded Walk_0_-1_0_100 524×524 in 0.38s
+[   14.1s]   shaded Walk_0_-1_0_110 516×516 in 0.03s
+[   14.5s]   shaded Walk_1_-1_0_000 524×524 in 0.39s
+[   14.5s]   shaded Walk_1_-1_0_010 516×516 in 0.03s
+[   15.0s]   shaded Walk_1_-1_0_100 524×524 in 0.38s
+[   15.0s]   shaded Walk_1_-1_0_110 516×516 in 0.03s
+[   15.4s]   shaded Walk_2_-1_0_000 524×524 in 0.38s
+[   15.4s]   shaded Walk_2_-1_0_010 516×516 in 0.03s
+[   15.9s]   shaded Walk_2_-1_0_100 524×524 in 0.38s
+[   15.9s]   shaded Walk_2_-1_0_110 516×516 in 0.03s
+[   16.3s]   shaded Walk_3_-1_0_000 524×524 in 0.39s
+[   16.3s]   shaded Walk_3_-1_0_010 516×516 in 0.03s
+[   16.8s]   shaded Walk_3_-1_0_100 524×524 in 0.38s
+[   17.1s]   shaded Walk_3_-1_0_110 528×528 in 0.26s
+[   17.3s]   shaded Walk_4_-1_0 556×556 in 0.25s
+[   17.7s]   shaded Bed_-4_-1_0 528×528 in 0.34s
+[   18.1s]   shaded Bed_-4_0_0 528×528 in 0.34s
+[   18.5s]   shaded Bed_-3_-1_0_010 524×524 in 0.34s
+[   18.8s]   shaded Bed_-3_-1_0_110 524×524 in 0.34s
+[   19.2s]   shaded Bed_-3_0_0_000 524×524 in 0.34s
+[   19.6s]   shaded Bed_-3_0_0_100 524×524 in 0.34s
+[   20.0s]   shaded Bed_-2_-1_0_010 524×524 in 0.34s
+[   20.4s]   shaded Bed_-2_-1_0_110 524×524 in 0.34s
+[   20.7s]   shaded Bed_-2_0_0_000 524×524 in 0.34s
+[   21.1s]   shaded Bed_-2_0_0_100 524×524 in 0.34s
+[   21.5s]   shaded Bed_-1_-1_0_010 524×524 in 0.34s
+[   21.9s]   shaded Bed_-1_-1_0_110 524×524 in 0.34s
+[   22.3s]   shaded Bed_-1_0_0_000 524×524 in 0.34s
+[   22.6s]   shaded Bed_-1_0_0_100 524×524 in 0.34s
+[   23.0s]   shaded Bed_0_-1_0_010 524×524 in 0.34s
+[   23.4s]   shaded Bed_0_-1_0_110 524×524 in 0.34s
+[   23.8s]   shaded Bed_0_0_0_000 524×524 in 0.34s
+[   24.1s]   shaded Bed_0_0_0_100 524×524 in 0.34s
+[   24.5s]   shaded Bed_1_-1_0_010 524×524 in 0.34s
+[   24.9s]   shaded Bed_1_-1_0_110 524×524 in 0.34s
+[   25.3s]   shaded Bed_1_0_0_000 524×524 in 0.34s
+[   25.6s]   shaded Bed_1_0_0_100 524×524 in 0.34s
+[   26.0s]   shaded Bed_2_-1_0_010 524×524 in 0.34s
+[   26.4s]   shaded Bed_2_-1_0_110 524×524 in 0.34s
+[   26.8s]   shaded Bed_2_0_0_000 524×524 in 0.34s
+[   27.2s]   shaded Bed_2_0_0_100 524×524 in 0.34s
+[   27.8s]   shaded Bed_3_-1_0 800×800 in 0.57s
+[   28.5s]   shaded Bed_3_0_0 800×800 in 0.56s
+[   28.5s]   shaded Kerb_-5_-1_0 444×444 in 0.03s
+[   28.5s]   shaded Kerb_-4_-1_0 248×248 in 0.01s
+[   28.5s]   shaded Kerb_-3_-1_0 264×264 in 0.01s
+[   28.5s]   shaded Kerb_-2_-1_0 260×260 in 0.01s
+[   28.6s]   shaded Kerb_-1_-1_0 308×308 in 0.01s
+[   28.6s]   shaded Kerb_0_-1_0 252×252 in 0.01s
+[   28.6s]   shaded Kerb_1_-1_0 260×260 in 0.01s
+[   28.6s]   shaded Kerb_2_-1_0 264×264 in 0.01s
+[   28.6s]   shaded Kerb_3_-1_0 256×256 in 0.01s
+[   28.6s]   shaded Kerb_4_-1_0 448×448 in 0.03s
+[   28.7s]   shaded Kerb_-5_0_0 444×444 in 0.03s
+[   28.7s]   shaded Kerb_-4_0_0 252×252 in 0.01s
+[   28.7s]   shaded Kerb_-3_0_0 256×256 in 0.01s
+[   28.7s]   shaded Kerb_-2_0_0 264×264 in 0.01s
+[   28.7s]   shaded Kerb_-1_0_0 312×312 in 0.01s
+[   28.7s]   shaded Kerb_0_0_0 264×264 in 0.01s
+[   28.7s]   shaded Kerb_1_0_0 256×256 in 0.01s
+[   28.8s]   shaded Kerb_2_0_0 264×264 in 0.01s
+[   28.8s]   shaded Kerb_3_0_0 252×252 in 0.01s
+[   28.8s]   shaded Kerb_4_0_0 448×448 in 0.03s
+[   28.8s] built Line 0 0 0: 116 parts in 28.5s
+[   29.1s] writing ServerMap.glb and 116 textures
+[   30.2s] chunk ServerMap_S13_01.glb: 51 parts, 16.6 MB
+[   30.2s] chunk ServerMap_S13_02.glb: 40 parts, 16.7 MB
+[   30.2s] chunk ServerMap_S13_03.glb: 25 parts, 3.7 MB
+ServerMap: 116 parts, script 29.13s, total 30.58s
+SHARD_COST	slab Line	28.518
 SHARD_COST	slab Line #split	1
-upload ServerMap: starting in 2.3s
+upload ServerMap: starting in 1.5s
 upload ServerMap: uploading ServerMapS13_01 (16M)
 upload ServerMap: uploading ServerMapS13_02 (16M)
 upload ServerMap: uploading ServerMapS13_03 (3.6M)
-upload ServerMap: ServerMapS13_02 is asset 140107807142159
-upload ServerMap: ServerMapS13_03 is asset 139288397418900
-upload ServerMap: ServerMapS13_01 is asset 100201819723925
+upload ServerMap: ServerMapS13_03 is asset 126949488391461
+upload ServerMap: ServerMapS13_01 is asset 92795730630946
+upload ServerMap: ServerMapS13_02 is asset 132506795257941
 upload ServerMap: shard upload done: 3 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
