@@ -1,5 +1,5 @@
 status=DONE
-build=5
+build=0
 upload=skipped
-total=5
+total=0
 parts=10
