@@ -1,0 +1,13 @@
+slab Pad2	0.440
+slab Pad2 #split	1
+slab Avenue3	1.569
+slab Avenue3 #split	1
+MarketIsland 1 x	46.270
+MarketIsland 1 x #split	1
+slab Plot1	1.019
+slab Plot1 #split	1
+GroundTile 1 x x1.5	0.141
+GroundTile 1 x x1.5 #split	1
+MachinePad 1 x x1.5	0.143
+MachinePad 1 x x1.5 #split	1
+StorageCrate 1 x x1.5	7.902
