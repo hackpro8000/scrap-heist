@@ -1,0 +1,9 @@
+Shop_Container_0_-1_0_010
+Shop_Container_0_-1_0_011
+Shop_Counter_-1_-1_0
+Shop_DoorProp
+Shop_Flap_0_-1_0_001
+Shop_Frame_0_0_0
+Shop_SignBolts_-1_-1_0
+Shop_SignBolts_0_-1_1
+Shop_Stencil
