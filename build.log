@@ -2,92 +2,79 @@ assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
 assemble ServerMap: uses HubSectionA (key a8617627bbdcd357)
 assemble ServerMap: uses HubSectionB (key 13537df3661bc8d8)
 assemble ServerMap: uses HubSectionEnd (key 992b2af78b33b635)
-assemble ServerMap: uses YardIsland (key 7ddd7ac889cc7658)
-assemble ServerMap: slab at ServerMap.luau:260-450 (key cf7e96091024d5cc)
-assemble ServerMap: slab at ServerMap.luau:530-559 (key 7ded6fc62f8b67a3)
-assemble ServerMap: slab at ServerMap.luau:562-566 (key 2f5b4070ee3aa512)
-assemble ServerMap: slab at ServerMap.luau:578-582 (key 014f342f2182a798)
-assemble ServerMap: slab at ServerMap.luau:584-592 (key 84939f33a0cb0864)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 12141 lines, in 0s
+assemble ServerMap: uses YardIsland (key bc4b87ee7c370e94)
+assemble ServerMap: uses PadKitchen (key 201c589c6c586358)
+assemble ServerMap: uses PadGarage (key 877760826c06ae21)
+assemble ServerMap: uses PadGadget (key 7aefb0ce0a83beaa)
+assemble ServerMap: uses YardFence (key 122ba19da15d7e80)
+assemble ServerMap: uses YardFenceHalf (key 76101fa539bb054b)
+assemble ServerMap: uses YardFooting (key 5f7c0e3c30ab293e)
+assemble ServerMap: uses YardGate (key 692a8cf69b44f092)
+assemble ServerMap: uses PlotMarker (key f406cb0c06262f89)
+assemble ServerMap: uses StorageCrate (key 5d99f3bcd3db5fca)
+assemble ServerMap: uses YardPath (key f096c7510747dcc8)
+assemble ServerMap: uses YardPathStub (key 9d6e97b27d7f04b9)
+assemble ServerMap: uses JunkMound (key 1fc541ce300d6d84)
+assemble ServerMap: uses BillboardFrame (key 7c418c4bc122e3a8)
+assemble ServerMap: slab at ServerMap.luau:269-459 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:539-574 (key 5f070fd414250023)
+assemble ServerMap: slab at ServerMap.luau:577-581 (key 2f5b4070ee3aa512)
+assemble ServerMap: slab at ServerMap.luau:639-657 (key ec88fbc68c01cf27)
+assemble ServerMap: slab at ServerMap.luau:660-670 (key 6ecf17da3fae12b3)
+assemble ServerMap: slab at ServerMap.luau:722-728 (key 7b25a7aa2539d602)
+assemble ServerMap: slab at ServerMap.luau:730-739 (key 107c5c30239027da)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 22663 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.2s] building HubSectionB 1 x part 1/4
-[    1.9s] baking on CPU (no GPU)
-[    2.7s]   shaded Columns_-1_0_0_001 692×692 in 0.77s
-[    2.8s]   shaded Columns_-1_0_0_000 240×240 in 0.11s
-[    4.8s]   shaded Columns_0_-1_-1_011 1016×1016 in 1.92s
-[    6.6s]   shaded Columns_0_-1_0 952×952 in 1.64s
-[    6.8s]   shaded Columns_-1_0_-1_111 372×372 in 0.19s
-[    6.8s]   shaded Columns_-1_0_-1_001 120×120 in 0.02s
-[    8.3s]   shaded Columns_-1_-1_0 904×904 in 1.39s
-[    8.8s]   shaded Columns_-1_-1_-1_110 528×528 in 0.49s
-[    9.8s]   shaded Dirt_-1_1_0 620×620 in 1.02s
-[    9.9s]   shaded Dirt_0_0_0_110_010 188×188 in 0.06s
-[   10.4s]   shaded Dirt_0_0_0_110_001 612×612 in 0.45s
-[   10.7s]   shaded Dirt_-1_-1_0_000_101 496×496 in 0.27s
-[   10.7s]   shaded Dirt_-1_-1_0_110 112×112 in 0.04s
-[   11.1s]   shaded Dirt_0_-1_0_100_100 396×396 in 0.38s
-[   11.3s]   shaded Dirt_0_-1_0_100_110 252×252 in 0.18s
-[   11.5s]   shaded Dirt_0_-1_0_100_101 352×352 in 0.18s
-[   11.9s]   shaded Dirt_0_-1_0_100_011 440×440 in 0.37s
-[   13.0s]   shaded Dirt_0_-1_0_110 800×800 in 1.10s
-[   13.5s]   shaded Dirt_0_-1_0_011 564×564 in 0.44s
-[   13.9s]   shaded Dirt_0_-1_0_000_111 672×672 in 0.46s
-[   14.3s]   shaded Dirt_0_-1_0_000_101 448×448 in 0.30s
-[   14.5s]   shaded Dirt_0_-1_0_001 348×348 in 0.22s
-[   14.6s]   shaded Pebbles_0_0_0 288×288 in 0.14s
-[   15.7s]   shaded Grass_-1_-2_0 940×940 in 1.04s
-[   16.6s]   shaded Grass_-1_1_0 900×900 in 0.88s
-[   16.6s] built HubSectionB 1 x part 1/4: 25 parts in 16.4s
-[   16.7s] building YardIsland 1 x part 4/5
-[   20.2s]   shaded Columns_-1_-1_0 980×980 in 1.66s
-[   20.5s]   shaded Columns_-1_-1_-1_011 420×420 in 0.30s
-[   21.5s]   shaded Columns_-1_0_0 808×808 in 0.97s
-[   22.3s]   shaded Columns_0_-1_0_011 656×656 in 0.74s
-[   22.4s]   shaded Columns_0_-1_0_000 164×164 in 0.05s
-[   22.4s]   shaded Columns_-1_-2_0 40×40 in 0.00s
-[   23.9s]   shaded Dirt_0_0_0_100 952×952 in 1.51s
-[   24.3s]   shaded Dirt_0_0_0_001 460×460 in 0.36s
-[   24.5s]   shaded Dirt_0_0_0_000 332×332 in 0.20s
-[   25.0s]   shaded Dirt_0_0_0_101 596×596 in 0.46s
-[   25.6s]   shaded Dirt_0_-1_0_111 580×580 in 0.54s
-[   25.6s]   shaded Dirt_-1_-1_0_000_110 172×172 in 0.06s
-[   27.5s]   shaded Dirt_-1_0_0_000 996×996 in 1.73s
-[   27.9s]   shaded Dirt_-1_0_0_101 488×488 in 0.47s
-[   28.3s]   shaded Dirt_-1_0_0_010_010 332×332 in 0.32s
-[   28.6s]   shaded Dirt_-1_0_0_010_000 292×292 in 0.28s
-[   30.0s]   shaded Dirt_0_1_0 752×752 in 1.37s
-[   30.0s]   shaded Dirt_0_0_-1 20×20 in 0.03s
-[   31.2s]   shaded Grass_-1_-1_0_000 880×880 in 1.10s
-[   32.4s]   shaded Grass_-1_0_0_010 872×872 in 1.16s
-[   32.8s]   shaded Grass_0_0_0_010 408×408 in 0.33s
-[   32.8s] built YardIsland 1 x part 4/5: 21 parts in 16.0s
-[   32.9s] cached YardIsland 1 x part 4/5
-[   33.0s] cached YardIsland 1 x part 4/5
-[   33.1s] cached YardIsland 1 x part 4/5
-[   33.2s] cached YardIsland 1 x part 4/5
-[   33.3s] cached YardIsland 1 x part 4/5
-[   33.4s] cached YardIsland 1 x part 4/5
-[   33.5s] cached YardIsland 1 x part 4/5
-[   33.5s] writing ServerMap.glb and 193 textures
-[   35.7s] chunk ServerMap_S9_01.glb: 46 parts, 15.0 MB
-[   35.7s] chunk ServerMap_S9_02.glb: 42 parts, 7.5 MB
-[   35.7s] chunk ServerMap_S9_03.glb: 42 parts, 7.5 MB
-[   35.7s] chunk ServerMap_S9_04.glb: 42 parts, 7.5 MB
-[   35.7s] chunk ServerMap_S9_05.glb: 21 parts, 7.3 MB
-ServerMap: 193 parts, script 33.49s, total 36.36s
-SHARD_COST	HubSectionB 1 x	65.728
-SHARD_COST	HubSectionB 1 x #split	1
-SHARD_COST	YardIsland 1 x	80.104
+[    0.5s] cached HubSectionB 1 x part 1/4
+[    0.5s] building YardIsland 1 x part 4/5
+[    2.5s] baking on CPU (no GPU)
+[    3.4s]   shaded Columns_-1_-1_0_111 852×852 in 0.96s
+[    3.5s]   shaded Columns_-1_-1_0_001 120×120 in 0.03s
+[    4.9s]   shaded Columns_-1_0_0 904×904 in 1.35s
+[    4.9s]   shaded Columns_-1_0_-1_001 132×132 in 0.02s
+[    5.4s]   shaded Dirt_0_0_0_100_011 520×520 in 0.47s
+[    5.7s]   shaded Dirt_0_0_0_100_111 396×396 in 0.26s
+[    6.0s]   shaded Dirt_0_0_0_010_110 484×484 in 0.31s
+[    6.6s]   shaded Dirt_0_0_0_010_101 660×660 in 0.58s
+[    6.8s]   shaded Dirt_0_0_0_010_111 336×336 in 0.19s
+[    8.6s]   shaded Dirt_0_-1_0_100 988×988 in 1.71s
+[    8.7s]   shaded Dirt_-1_-1_0_110 220×220 in 0.07s
+[    8.9s]   shaded Dirt_-1_-1_0_101 368×368 in 0.20s
+[   10.7s]   shaded Dirt_-1_0_0_110 976×976 in 1.71s
+[   11.1s]   shaded Dirt_-1_0_0_010_111 548×548 in 0.35s
+[   11.3s]   shaded Dirt_-1_0_0_010_001 460×460 in 0.20s
+[   12.7s]   shaded Dirt_0_1_0 740×740 in 1.34s
+[   13.8s]   shaded Dirt_-1_1_0 608×608 in 1.09s
+[   14.0s]   shaded Dirt_-1_-1_-1 316×316 in 0.19s
+[   14.0s]   shaded Pebbles_-1_0_-1 48×48 in 0.01s
+[   14.3s]   shaded Grass_-1_-1_0_100 408×408 in 0.33s
+[   15.4s]   shaded Grass_-1_0_0_000 896×896 in 1.03s
+[   15.4s] built YardIsland 1 x part 4/5: 21 parts in 15.0s
+[   15.6s] cached YardIsland 1 x part 4/5
+[   15.7s] cached YardIsland 1 x part 4/5
+[   15.8s] cached YardIsland 1 x part 4/5
+[   15.8s] cached YardIsland 1 x part 4/5
+[   15.9s] cached YardIsland 1 x part 4/5
+[   16.0s] cached YardIsland 1 x part 4/5
+[   16.1s] cached YardIsland 1 x part 4/5
+[   16.2s] writing ServerMap.glb and 193 textures
+[   18.2s] chunk ServerMap_S9_01.glb: 46 parts, 13.7 MB
+[   18.2s] chunk ServerMap_S9_02.glb: 42 parts, 6.2 MB
+[   18.2s] chunk ServerMap_S9_03.glb: 42 parts, 6.2 MB
+[   18.2s] chunk ServerMap_S9_04.glb: 42 parts, 6.2 MB
+[   18.2s] chunk ServerMap_S9_05.glb: 21 parts, 6.0 MB
+ServerMap: 193 parts, script 16.16s, total 18.87s
+SHARD_COST	YardIsland 1 x	74.761
 SHARD_COST	YardIsland 1 x #split	1
-upload ServerMap: starting in 2.5s
-upload ServerMap: uploading ServerMapS9_01 (15M)
-upload ServerMap: ServerMapS9_01 is asset 80772796930677
-upload ServerMap: uploading ServerMapS9_02 (7.2M)
-upload ServerMap: ServerMapS9_02 is asset 133241774345557
-upload ServerMap: uploading ServerMapS9_03 (7.2M)
-upload ServerMap: ServerMapS9_03 is asset 123863381453287
-upload ServerMap: uploading ServerMapS9_04 (7.2M)
-upload ServerMap: ServerMapS9_04 is asset 90423429692231
-upload ServerMap: uploading ServerMapS9_05 (7.0M)
-upload ServerMap: ServerMapS9_05 is asset 104734374284702
+upload ServerMap: starting in 2.8s
+upload ServerMap: uploading ServerMapS9_01 (14M)
+upload ServerMap: uploading ServerMapS9_02 (6.0M)
+upload ServerMap: uploading ServerMapS9_03 (6.0M)
+upload ServerMap: uploading ServerMapS9_04 (6.0M)
+upload ServerMap: ServerMapS9_02 is asset 126223767350822
+upload ServerMap: uploading ServerMapS9_05 (5.8M)
+upload ServerMap: ServerMapS9_03 is asset 112102363983518
+upload ServerMap: ServerMapS9_04 is asset 119816524537935
+upload ServerMap: ServerMapS9_01 is asset 78875947675566
+upload ServerMap: ServerMapS9_05 is asset 131931975345514
 upload ServerMap: shard upload done: 5 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
