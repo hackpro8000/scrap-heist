@@ -2,84 +2,114 @@ assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
 assemble ServerMap: uses HubSectionA (key a8617627bbdcd357)
 assemble ServerMap: uses HubSectionB (key 13537df3661bc8d8)
 assemble ServerMap: uses HubSectionEnd (key 992b2af78b33b635)
-assemble ServerMap: uses YardIsland (key 7ddd7ac889cc7658)
-assemble ServerMap: slab at ServerMap.luau:260-450 (key cf7e96091024d5cc)
-assemble ServerMap: slab at ServerMap.luau:530-559 (key 7ded6fc62f8b67a3)
-assemble ServerMap: slab at ServerMap.luau:562-566 (key 2f5b4070ee3aa512)
-assemble ServerMap: slab at ServerMap.luau:578-582 (key 014f342f2182a798)
-assemble ServerMap: slab at ServerMap.luau:584-592 (key 84939f33a0cb0864)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 12141 lines, in 0s
+assemble ServerMap: uses YardIsland (key bc4b87ee7c370e94)
+assemble ServerMap: uses PadKitchen (key 201c589c6c586358)
+assemble ServerMap: uses PadGarage (key 877760826c06ae21)
+assemble ServerMap: uses PadGadget (key 7aefb0ce0a83beaa)
+assemble ServerMap: uses YardFence (key 122ba19da15d7e80)
+assemble ServerMap: uses YardFenceHalf (key 76101fa539bb054b)
+assemble ServerMap: uses YardFooting (key 5f7c0e3c30ab293e)
+assemble ServerMap: uses YardGate (key 692a8cf69b44f092)
+assemble ServerMap: uses PlotMarker (key f406cb0c06262f89)
+assemble ServerMap: uses StorageCrate (key 5d99f3bcd3db5fca)
+assemble ServerMap: uses YardPath (key f096c7510747dcc8)
+assemble ServerMap: uses YardPathStub (key 9d6e97b27d7f04b9)
+assemble ServerMap: uses JunkMound (key 1fc541ce300d6d84)
+assemble ServerMap: uses BillboardFrame (key 7c418c4bc122e3a8)
+assemble ServerMap: slab at ServerMap.luau:269-459 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:539-574 (key 5f070fd414250023)
+assemble ServerMap: slab at ServerMap.luau:577-581 (key 2f5b4070ee3aa512)
+assemble ServerMap: slab at ServerMap.luau:639-657 (key ec88fbc68c01cf27)
+assemble ServerMap: slab at ServerMap.luau:660-670 (key 6ecf17da3fae12b3)
+assemble ServerMap: slab at ServerMap.luau:722-728 (key 7b25a7aa2539d602)
+assemble ServerMap: slab at ServerMap.luau:730-739 (key 107c5c30239027da)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 22663 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.2s] building HubSectionA 1 x part 3/4
-[    1.9s] baking on CPU (no GPU)
-[    2.0s]   shaded Columns_-1_0_0_110 184×184 in 0.05s
-[    3.1s]   shaded Columns_-1_0_0_001 820×820 in 1.11s
-[    3.7s]   shaded Columns_-1_-1_-1_110 516×516 in 0.50s
-[    4.0s]   shaded Columns_-1_-1_0_011 472×472 in 0.27s
-[    4.6s]   shaded Columns_-1_-1_0_101 604×604 in 0.60s
-[    4.6s]   shaded Columns_-1_-1_0_110 40×40 in 0.00s
-[    4.8s]   shaded Columns_0_-1_0_110 280×280 in 0.15s
-[    5.7s]   shaded Columns_0_0_0_001 744×744 in 0.89s
-[    5.8s]   shaded Columns_0_0_0_100 264×264 in 0.08s
-[    6.2s]   shaded Columns_0_0_-1_000 516×516 in 0.45s
-[    6.4s]   shaded Dirt_-1_0_0_010_110 196×196 in 0.11s
-[    6.6s]   shaded Dirt_-1_0_0_010_000 296×296 in 0.27s
-[    6.7s]   shaded Dirt_-1_0_0_010_011 388×388 in 0.09s
-[    7.0s]   shaded Dirt_-1_0_0_001 396×396 in 0.23s
-[    8.5s]   shaded Dirt_-1_-1_0_100 944×944 in 1.49s
-[    8.9s]   shaded Dirt_-1_-1_0_101 568×568 in 0.35s
-[    9.1s]   shaded Dirt_0_0_0_110_111 360×360 in 0.21s
-[   10.7s]   shaded Dirt_-1_1_0 692×692 in 1.53s
-[   10.8s]   shaded Dirt_0_-1_0_100_101 324×324 in 0.13s
-[   11.1s]   shaded Dirt_0_-1_0_100_110 340×340 in 0.30s
-[   11.7s]   shaded Dirt_0_-1_0_110_100 416×416 in 0.53s
-[   13.3s]   shaded Dirt_0_-1_0_000 968×968 in 1.49s
-[   13.3s]   shaded Dirt_-1_-2_0 100×100 in 0.05s
-[   13.4s]   shaded Dirt_-2_0_0 136×136 in 0.08s
-[   13.5s]   shaded Dirt_0_-1_-1 192×192 in 0.08s
-[   13.8s]   shaded Pebbles_-1_-1_0 432×432 in 0.31s
-[   14.3s]   shaded Grass_0_-1_0_110 616×616 in 0.48s
-[   15.2s]   shaded Grass_-1_-2_0 896×896 in 0.89s
-[   15.6s]   shaded Grass_-1_-1_0_100 408×408 in 0.36s
-[   15.8s]   shaded Grass_-1_0_0_000 544×544 in 0.18s
-[   16.3s]   shaded Grass_-2_0_0 652×652 in 0.44s
-[   17.3s]   shaded Grass_0_1_0 880×880 in 0.99s
-[   17.3s] built HubSectionA 1 x part 3/4: 32 parts in 17.1s
-[   17.6s] cached HubSectionA 1 x part 3/4
-[   17.6s] building Spoke6 -70 -180 180
-[   17.7s]   shaded Road 304×304 in 0.08s
-[   17.7s] built Spoke6 -70 -180 180: 1 parts in 0.1s
-[   17.7s] building Spoke7 70 -180 180
-[   17.7s]   shaded Road 304×304 in 0.08s
-[   17.7s] built Spoke7 70 -180 180: 1 parts in 0.1s
-[   17.7s] building Bridge7 70 -180 180
-[   18.4s]   shaded Deck 1024×1024 in 0.51s
-[   18.4s]   shaded HazardYellow 148×148 in 0.04s
-[   18.5s]   shaded HazardBlack 148×148 in 0.04s
-[   18.9s]   shaded Girders 1024×1024 in 0.36s
-[   18.9s]   shaded Posts 212×212 in 0.07s
-[   19.2s]   shaded Rail 1024×1024 in 0.22s
-[   19.2s]   shaded KerbEnds 104×104 in 0.02s
-[   19.2s]   shaded EndPosts 60×60 in 0.01s
-[   19.4s]   shaded Abutments 372×372 in 0.17s
-[   19.4s]   shaded JointPlate 152×152 in 0.01s
-[   19.4s]   shaded Apron 184×184 in 0.05s
-[   19.4s] built Bridge7 70 -180 180: 11 parts in 1.7s
-[   19.5s] writing ServerMap.glb and 77 textures
-[   20.1s] chunk ServerMap_S7_01.glb: 66 parts, 7.7 MB
-[   20.1s] chunk ServerMap_S7_02.glb: 11 parts, 3.0 MB
-ServerMap: 77 parts, script 19.51s, total 20.28s
-SHARD_COST	HubSectionA 1 x	68.321
-SHARD_COST	HubSectionA 1 x #split	1
-SHARD_COST	slab Spoke6	0.091
-SHARD_COST	slab Spoke6 #split	1
-SHARD_COST	slab Spoke7	0.086
-SHARD_COST	slab Spoke7 #split	1
-SHARD_COST	slab Bridge7	1.702
-SHARD_COST	slab Bridge7 #split	1
-upload ServerMap: starting in 4.8s
-upload ServerMap: uploading ServerMapS7_01 (7.4M)
-upload ServerMap: ServerMapS7_01 is asset 111841055861332
-upload ServerMap: uploading ServerMapS7_02 (2.9M)
-upload ServerMap: ServerMapS7_02 is asset 94573699953037
+[    0.5s] cached HubSectionA 1 x part 3/4
+[    0.7s] cached HubSectionA 1 x part 3/4
+[    0.7s] building YardFooting 1.037037037037037 x x1.5
+[    0.7s] baking on CPU (no GPU)
+[    0.7s]   shaded Footing 256×256 in 0.06s
+[    0.7s] built YardFooting 1.037037037037037 x x1.5: 1 parts in 0.1s
+[    0.8s] cached YardFooting 1.037037037037037 x x1.5
+[    0.8s] cached YardFooting 1.037037037037037 x x1.5
+[    0.8s] building YardFence 1 x x1.5
+[    0.8s]   shaded Posts 256×256 in 0.03s
+[    0.9s]   shaded Sheets 256×256 in 0.07s
+[    0.9s]   shaded Fittings 256×256 in 0.06s
+[    0.9s] built YardFence 1 x x1.5: 3 parts in 0.2s
+[    0.9s] cached YardFence 1 x x1.5
+[    0.9s] cached YardFence 1 x x1.5
+[    0.9s] cached YardFence 1 x x1.5
+[    0.9s] cached YardFooting 1.037037037037037 x x1.5
+[    0.9s] cached YardFooting 1.037037037037037 x x1.5
+[    0.9s] cached YardFooting 1.037037037037037 x x1.5
+[    0.9s] cached YardFooting 1.037037037037037 x x1.5
+[    0.9s] cached YardFooting 1.037037037037037 x x1.5
+[    0.9s] cached YardFooting 1.037037037037037 x x1.5
+[    0.9s] cached YardFooting 1.037037037037037 x x1.5
+[    0.9s] cached YardFooting 1.037037037037037 x x1.5
+[    0.9s] cached YardFooting 1.037037037037037 x x1.5
+[    0.9s] cached YardFence 1 x x1.5
+[    0.9s] building Yard3_Bay2 45 134 0
+[    1.1s]   shaded Plinth 336×336 in 0.10s
+[    1.1s]   shaded Frame 272×272 in 0.03s
+[    1.1s]   shaded Marks 104×104 in 0.02s
+[    1.1s] built Yard3_Bay2 45 134 0: 3 parts in 0.2s
+[    1.1s] cached YardFooting 1.037037037037037 x x1.5
+[    1.1s] cached YardFooting 1.037037037037037 x x1.5
+[    1.1s] cached YardFooting 1.037037037037037 x x1.5
+[    1.1s] cached YardFooting 1.037037037037037 x x1.5
+[    1.1s] cached YardFence 1 x x1.5
+[    1.1s] cached YardFence 1 x x1.5
+[    1.1s] cached YardFence 1 x x1.5
+[    1.1s] cached YardFence 1 x x1.5
+[    1.1s] building Spoke3 70 180 0
+[    1.2s]   shaded Road 300×300 in 0.07s
+[    1.2s] built Spoke3 70 180 0: 1 parts in 0.1s
+[    1.2s] building Yard4_Bay2 185 134 0
+[    1.3s]   shaded Plinth 336×336 in 0.09s
+[    1.3s]   shaded Frame 272×272 in 0.03s
+[    1.4s]   shaded Marks 104×104 in 0.02s
+[    1.4s] built Yard4_Bay2 185 134 0: 3 parts in 0.2s
+[    1.4s] cached YardFooting 1.037037037037037 x x1.5
+[    1.4s] cached YardFooting 1.037037037037037 x x1.5
+[    1.4s] cached YardFooting 1.037037037037037 x x1.5
+[    1.4s] cached YardFooting 1.037037037037037 x x1.5
+[    1.4s] cached YardFooting 1.037037037037037 x x1.5
+[    1.4s] cached YardFooting 1.037037037037037 x x1.5
+[    1.4s] cached YardFooting 1.037037037037037 x x1.5
+[    1.4s] building Plot5 -210 -180 180
+[    2.5s]   shaded Ground_-1_-1_0 816×816 in 0.95s
+[    2.7s]   shaded Ground_-1_0_0_000 540×540 in 0.19s
+[    2.9s]   shaded Ground_-1_0_0_010 544×544 in 0.20s
+[    3.4s]   shaded Ground_-1_0_0_100 540×540 in 0.39s
+[    3.8s]   shaded Ground_-1_0_0_110 544×544 in 0.38s
+[    4.9s]   shaded Ground_0_-1_0 816×816 in 0.93s
+[    5.3s]   shaded Ground_0_0_0_000 540×540 in 0.37s
+[    5.7s]   shaded Ground_0_0_0_010 544×544 in 0.36s
+[    6.0s]   shaded Ground_0_0_0_100 540×540 in 0.19s
+[    6.2s]   shaded Ground_0_0_0_110 544×544 in 0.20s
+[    6.2s] built Plot5 -210 -180 180: 10 parts in 4.8s
+[    6.3s] writing ServerMap.glb and 131 textures
+[    7.0s] chunk ServerMap_S7_01.glb: 67 parts, 7.6 MB
+[    7.0s] chunk ServerMap_S7_02.glb: 64 parts, 8.2 MB
+ServerMap: 131 parts, script 6.29s, total 7.32s
+SHARD_COST	YardFooting 1.037037037037037 x x1.5	0.063
+SHARD_COST	YardFooting 1.037037037037037 x x1.5 #split	1
+SHARD_COST	YardFence 1 x x1.5	0.181
+SHARD_COST	YardFence 1 x x1.5 #split	1
+SHARD_COST	slab Yard3_Bay2	0.166
+SHARD_COST	slab Yard3_Bay2 #split	1
+SHARD_COST	slab Spoke3	0.077
+SHARD_COST	slab Spoke3 #split	1
+SHARD_COST	slab Yard4_Bay2	0.160
+SHARD_COST	slab Yard4_Bay2 #split	1
+SHARD_COST	slab Plot5	4.835
+SHARD_COST	slab Plot5 #split	1
+upload ServerMap: starting in 2.3s
+upload ServerMap: uploading ServerMapS7_01 (7.3M)
+upload ServerMap: uploading ServerMapS7_02 (7.8M)
+upload ServerMap: ServerMapS7_02 is asset 125532070058645
+upload ServerMap: ServerMapS7_01 is asset 109040380683023
 upload ServerMap: shard upload done: 2 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
