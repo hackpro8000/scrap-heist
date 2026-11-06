@@ -10,8 +10,8 @@
 			"parts": 28
 		},
 		{
-			"id": "6f1ebaa8e690f75b",
-			"key": "fc0c5e558eaf305d-107c5c30239027da Spoke2 -70 180 0",
+			"id": "04734c9f03e6e8b5",
+			"key": "115ac3a755887f11-107c5c30239027da Spoke2 -70 180 0",
 			"piece": 1,
 			"label": "Spoke2",
 			"turn": 0.0,
@@ -19,8 +19,8 @@
 			"parts": 1
 		},
 		{
-			"id": "2429d50153ff008c",
-			"key": "fc0c5e558eaf305d-7b25a7aa2539d602 Plot3 70 180 0",
+			"id": "04673b2ca11fdecd",
+			"key": "115ac3a755887f11-7b25a7aa2539d602 Plot3 70 180 0",
 			"piece": 1,
 			"label": "Plot3",
 			"turn": 0.0,
@@ -42,7 +42,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotBulboFulminato",
 			"turn": 0.0,
-			"bytes": 552452,
+			"bytes": 552476,
 			"parts": 6
 		},
 		{
@@ -51,8 +51,17 @@
 			"piece": 1,
 			"label": "Kit_JunkrotMicrondoBippetto",
 			"turn": 0.0,
-			"bytes": 772920,
+			"bytes": 772924,
 			"parts": 8
+		},
+		{
+			"id": "8855be22b80c74b0",
+			"key": "JunkrotDishwashinoSplashetto-683d7dad7d3db771 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotDishwashinoSplashetto",
+			"turn": 0.0,
+			"bytes": 809128,
+			"parts": 9
 		}
 	],
 	"placements": [
@@ -103,7 +112,7 @@
 			]
 		},
 		{
-			"asset": "6f1ebaa8e690f75b",
+			"asset": "04734c9f03e6e8b5",
 			"label": "Spoke2",
 			"turn": 0.0,
 			"anchors": [
@@ -118,7 +127,7 @@
 			]
 		},
 		{
-			"asset": "2429d50153ff008c",
+			"asset": "04673b2ca11fdecd",
 			"label": "Plot3",
 			"turn": 0.0,
 			"anchors": [
@@ -148,7 +157,7 @@
 				{
 					"name": "Seam",
 					"position": [
-						-180.0,
+						-336.0,
 						-148.3,
 						0.0
 					]
@@ -163,7 +172,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						36.032671,
+						-119.967331,
 						-147.958,
 						0.91999998
 					]
@@ -171,7 +180,7 @@
 				{
 					"name": "Soot",
 					"position": [
-						36.1162615,
+						-119.8837375,
 						-147.259235,
 						-0.0444378
 					]
@@ -186,7 +195,7 @@
 				{
 					"name": "Glass",
 					"position": [
-						299.58316,
+						143.58316000000002,
 						-148.40697,
 						0.920871885
 					]
@@ -194,9 +203,32 @@
 				{
 					"name": "Keys",
 					"position": [
-						301.069975,
+						145.069965,
 						-148.43573500000002,
 						0.965924865
+					]
+				}
+			]
+		},
+		{
+			"asset": "8855be22b80c74b0",
+			"label": "Kit_JunkrotDishwashinoSplashetto",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Cabinet",
+					"position": [
+						432.0,
+						-147.95,
+						-0.10000000000000003
+					]
+				},
+				{
+					"name": "Handle",
+					"position": [
+						431.990815,
+						-147.40997,
+						1.3807363000000001
 					]
 				}
 			]

@@ -51,6 +51,19 @@ assemble ServerMap: uses JunkrotTypewrittoClackini (key fe49253052fa6f56)
 assemble ServerMap: uses JunkrotCamerinoFlashetto (key 2d8422ee9636d2d3)
 assemble ServerMap: uses JunkrotDrippiDroppi (key b006345a7aeeab08)
 assemble ServerMap: uses JunkrotDingDingDingDongo (key 1d1e1e950c96e4e4)
+assemble ServerMap: uses JunkrotGrindoBeanbasher (key 5a476970c2b89efc)
+assemble ServerMap: uses JunkrotAirfryoCroccante (key fe378a5846949e34)
+assemble ServerMap: uses JunkrotDishwashinoSplashetto (key 683d7dad7d3db771)
+assemble ServerMap: uses JunkrotLawnmowoRuggito (key 108da303884eadb8)
+assemble ServerMap: uses JunkrotLeafblowaWhooshini (key f2ce0e8b9e3edeaa)
+assemble ServerMap: uses JunkrotPressurwashoSprizzo (key 87ac2472b45f7495)
+assemble ServerMap: uses JunkrotConsoloJoypaddino (key 191abffb1bf801ba)
+assemble ServerMap: uses JunkrotSpeakeroneBoomba (key 3bbfbd68ef1f5c85)
+assemble ServerMap: uses JunkrotRobovaccoGirotondo (key 45bdee1d4d860040)
+assemble ServerMap: uses JunkrotClankClankClankScrapur (key a30fc840bf59b273)
+assemble ServerMap: uses JunkrotVrrVrrPatatrim (key c5f05967943ccfb5)
+assemble ServerMap: uses JunkrotChimneyziniSpannerini (key 16b899b9c5febdc7)
+assemble ServerMap: uses JunkrotRusteliRustela (key 41867bade3ceb8a9)
 assemble ServerMap: slab at ServerMap.luau:278-468 (key cf7e96091024d5cc)
 assemble ServerMap: slab at ServerMap.luau:548-577 (key 7ded6fc62f8b67a3)
 assemble ServerMap: slab at ServerMap.luau:580-584 (key 2f5b4070ee3aa512)
@@ -59,51 +72,54 @@ assemble ServerMap: slab at ServerMap.luau:668-677 (key 107c5c30239027da)
 assemble ServerMap: slab at ServerMap.luau:685-715 (key 18845c9c8b69ea54)
 assemble ServerMap: slab at ServerMap.luau:790-801 (key 363b6dc9a40b12d8)
 assemble ServerMap: slab at ServerMap.luau:814-867 (key f4e0427155be5973)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 53240 lines, in 0s
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 64511 lines, in 0s
 [    0.0s] running ServerMap/model.luau
 [    0.6s] cached HubSectionEnd 1 x part 3/4
 [    0.7s] cached HubSectionEnd 1 x part 3/4
 [    0.7s] building Spoke2 -70 180 0
 [    0.7s] baking on CPU (no GPU)
-[    0.7s]   shaded Road 300×300 in 0.04s
-[    0.7s] built Spoke2 -70 180 0: 1 parts in 0.0s
-[    0.7s] building Plot3 70 180 0
-[    1.4s]   shaded Ground_-1_-1_0 816×816 in 0.54s
-[    1.5s]   shaded Ground_-1_0_0_000 540×540 in 0.11s
-[    1.6s]   shaded Ground_-1_0_0_010 544×544 in 0.11s
-[    1.9s]   shaded Ground_-1_0_0_100 540×540 in 0.23s
-[    2.2s]   shaded Ground_-1_0_0_110 544×544 in 0.24s
-[    2.9s]   shaded Ground_0_-1_0 816×816 in 0.55s
+[    0.8s]   shaded Road 300×300 in 0.04s
+[    0.8s] built Spoke2 -70 180 0: 1 parts in 0.1s
+[    0.8s] building Plot3 70 180 0
+[    1.4s]   shaded Ground_-1_-1_0 816×816 in 0.56s
+[    1.6s]   shaded Ground_-1_0_0_000 540×540 in 0.12s
+[    1.7s]   shaded Ground_-1_0_0_010 544×544 in 0.12s
+[    2.0s]   shaded Ground_-1_0_0_100 540×540 in 0.23s
+[    2.3s]   shaded Ground_-1_0_0_110 544×544 in 0.23s
+[    2.9s]   shaded Ground_0_-1_0 816×816 in 0.56s
 [    3.2s]   shaded Ground_0_0_0_000 540×540 in 0.23s
-[    3.4s]   shaded Ground_0_0_0_010 544×544 in 0.23s
+[    3.5s]   shaded Ground_0_0_0_010 544×544 in 0.23s
 [    3.6s]   shaded Ground_0_0_0_100 540×540 in 0.12s
 [    3.7s]   shaded Ground_0_0_0_110 544×544 in 0.12s
 [    3.7s] built Plot3 70 180 0: 10 parts in 3.0s
-[    3.7s] cached CapsuleSecret 1 x
-[    3.7s] cached JunkrotBulboFulminato 1 x
-[    3.7s] building JunkrotMicrondoBippetto 1 x
-[    3.8s]   shaded Case 256×256 in 0.04s
-[    3.8s]   shaded Glass 256×256 in 0.04s
-[    3.9s]   shaded Keypad 256×256 in 0.05s
-[    4.0s]   shaded Keys 256×256 in 0.09s
-[    4.0s]   shaded Plate 256×256 in 0.03s
-[    4.1s]   shaded Eyes 256×256 in 0.08s
-[    4.2s]   shaded Pupils 256×256 in 0.11s
-[    4.2s]   shaded Legs 256×256 in 0.04s
-[    4.2s] built JunkrotMicrondoBippetto 1 x: 8 parts in 0.5s
-[    4.2s] writing ServerMap.glb and 83 textures
-ServerMap: 83 parts, script 4.23s, total 4.62s
+[    3.8s] cached CapsuleSecret 1 x
+[    3.8s] cached JunkrotBulboFulminato 1 x
+[    3.8s] cached JunkrotMicrondoBippetto 1 x
+[    3.8s] building JunkrotDishwashinoSplashetto 1 x
+[    3.8s]   shaded Cabinet 256×256 in 0.03s
+[    3.9s]   shaded Door 256×256 in 0.06s
+[    3.9s]   shaded Panel 256×256 in 0.04s
+[    4.0s]   shaded Lights 256×256 in 0.08s
+[    4.1s]   shaded Plates 256×256 in 0.05s
+[    4.1s]   shaded Handle 256×256 in 0.03s
+[    4.2s]   shaded Eyes 256×256 in 0.10s
+[    4.3s]   shaded Pupils 256×256 in 0.15s
+[    4.4s]   shaded Legs 256×256 in 0.04s
+[    4.4s] built JunkrotDishwashinoSplashetto 1 x: 9 parts in 0.6s
+[    4.4s] writing ServerMap.glb and 92 textures
+ServerMap: 92 parts, script 4.39s, total 4.79s
 PLACED	HubSection1	180	HubSectionEnd-48c8eb7545b33eb2 1 x part 3/4
 PLACED	HubSection5	0	HubSectionEnd-48c8eb7545b33eb2 1 x part 3/4
-PLACED	Spoke2	0	fc0c5e558eaf305d-107c5c30239027da Spoke2 -70 180 0
-SHARD_COST	slab Spoke2	0.048
+PLACED	Spoke2	0	115ac3a755887f11-107c5c30239027da Spoke2 -70 180 0
+SHARD_COST	slab Spoke2	0.051
 SHARD_COST	slab Spoke2 #split	1
-PLACED	Plot3	0	fc0c5e558eaf305d-7b25a7aa2539d602 Plot3 70 180 0
-SHARD_COST	slab Plot3	2.973
+PLACED	Plot3	0	115ac3a755887f11-7b25a7aa2539d602 Plot3 70 180 0
+SHARD_COST	slab Plot3	2.978
 SHARD_COST	slab Plot3 #split	1
 PLACED	Kit_CapsuleSecret	0	CapsuleSecret-09ca92fc3f995992 1 x
 PLACED	Kit_JunkrotBulboFulminato	0	JunkrotBulboFulminato-d3d88c8d1be348d5 1 x
 PLACED	Kit_JunkrotMicrondoBippetto	0	JunkrotMicrondoBippetto-798f3f9c3acd3eb1 1 x
-SHARD_COST	JunkrotMicrondoBippetto 1 x	0.495
-SHARD_COST	JunkrotMicrondoBippetto 1 x #split	1
-export ServerMap: 6 objects (15.4 MB) for 7 placements
+PLACED	Kit_JunkrotDishwashinoSplashetto	0	JunkrotDishwashinoSplashetto-683d7dad7d3db771 1 x
+SHARD_COST	JunkrotDishwashinoSplashetto 1 x	0.610
+SHARD_COST	JunkrotDishwashinoSplashetto 1 x #split	1
+export ServerMap: 7 objects (16.2 MB) for 8 placements
