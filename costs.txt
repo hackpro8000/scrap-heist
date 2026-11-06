@@ -1,0 +1,16 @@
+HubSectionA 1 x	70.611
+HubSectionA 1 x #split	1
+slab Spoke1	0.088
+slab Spoke1 #split	1
+slab Spoke2	0.084
+slab Spoke2 #split	1
+slab Plot3	4.819
+slab Plot3 #split	1
+slab Bridge5	1.530
+slab Bridge5 #split	1
+slab Bridge8	1.524
+slab Bridge8 #split	1
+slab Hatch1	0.126
+slab Hatch1 #split	1
+StreetlightBroken 1 x x2	0.120
+StreetlightBroken 1 x x2 #split	1
