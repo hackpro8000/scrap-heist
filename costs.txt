@@ -1,6 +1,0 @@
-HubIsland 1 x	180.740
-HubIsland 1 x #split	1
-JunkWall 1 x x1.75	0.188
-JunkWall 1 x x1.75 #split	1
-ShopConceptContainer 1 x x2.5	59.218
-ShopConceptContainer 1 x x2.5 #split	1

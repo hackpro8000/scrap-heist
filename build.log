@@ -40,107 +40,16 @@ assemble ServerMap: slab at ServerMap.luau:1418-1426 (key 209bd5af05ec8c81)
 assemble ServerMap: slab at ServerMap.luau:1470-1492 (key dfbe27eb7d68389c)
 assemble ServerMap: wrote art/models/ServerMap/model.luau, 31115 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.4s] building HubIsland 1 x part 8/16
-[    2.4s] baking on CPU (no GPU)
-[    2.5s]   shaded Columns_-1_0_-1_110_101 284×284 in 0.07s
-[    2.7s]   shaded Columns_-1_0_-1_110_010 512×512 in 0.26s
-[    3.7s]   shaded Columns_-1_-1_-1_101 816×816 in 0.86s
-[    4.3s]   shaded Columns_-1_-2_-1_010 740×740 in 0.59s
-[    4.4s]   shaded Columns_0_-1_-1_100_001 368×368 in 0.12s
-[    4.6s]   shaded Columns_0_-1_-1_100_111 568×568 in 0.23s
-[    5.1s]   shaded Columns_1_-1_-1 652×652 in 0.46s
-[    5.3s]   shaded Columns_0_0_-1_110_101 428×428 in 0.14s
-[    5.6s]   shaded Columns_0_0_-1_110_010 524×524 in 0.28s
-[    5.7s]   shaded Columns_0_0_-1_111 444×444 in 0.12s
-[    5.8s]   shaded Columns_0_-2_0_111 240×240 in 0.07s
-[    6.0s]   shaded Columns_1_0_-1_001 592×592 in 0.23s
-[    6.8s]   shaded Dirt_1_0_0_110 836×836 in 0.74s
-[    7.9s]   shaded Dirt_-2_0_0_101 964×964 in 1.03s
-[    8.6s]   shaded Dirt_1_-2_0_110 644×644 in 0.70s
-[    8.7s]   shaded Dirt_-1_-2_-1_101 44×44 in 0.11s
-[    9.4s]   shaded Dirt_0_0_0 712×712 in 0.64s
-[    9.4s]   shaded Pebbles_0_0_0 172×172 in 0.04s
-[    9.4s]   shaded Pebbles_-2_0_-1 140×140 in 0.03s
-[    9.6s]   shaded Grass_-2_-1_0_000_000 356×356 in 0.17s
-[   10.3s]   shaded Grass_-3_-1_0 908×908 in 0.65s
-[   11.0s]   shaded Grass_-2_0_0_110 540×540 in 0.62s
-[   11.0s]   shaded Grass_1_0_0_110_101 284×284 in 0.03s
-[   11.7s]   shaded Grass_0_-1_0_100 540×540 in 0.62s
-[   11.7s] built HubIsland 1 x part 8/16: 24 parts in 11.3s
-[   11.8s] building JunkWall 1 x x1.75
-[   11.8s]   shaded Fridges 256×256 in 0.05s
-[   11.9s]   shaded Doors 256×256 in 0.05s
-[   11.9s]   shaded Drums 256×256 in 0.04s
-[   12.0s]   shaded Handles 256×256 in 0.03s
-[   12.0s] built JunkWall 1 x x1.75: 4 parts in 0.2s
-[   12.0s] building ShopConceptContainer 1 x x2.5 part 3/5
-[   12.7s]   shaded Container_-1_0_0_100_001_010 540×540 in 0.10s
-[   12.8s]   shaded Container_-1_0_0_100_001_110 416×416 in 0.08s
-[   12.9s]   shaded Container_-1_0_0_101_101_010 400×400 in 0.10s
-[   12.9s]   shaded Container_-1_0_0_101_101_110 396×396 in 0.08s
-[   13.1s]   shaded Container_-1_0_0_101_101_111 432×432 in 0.10s
-[   13.3s]   shaded Container_0_0_0_000_001_110 576×576 in 0.21s
-[   13.4s]   shaded Container_0_0_0_001_000_011 488×488 in 0.10s
-[   13.8s]   shaded Container_-1_-1_0_110_011 784×784 in 0.40s
-[   14.0s]   shaded Container_-1_-1_0_111_010_001 552×552 in 0.15s
-[   14.5s]   shaded Container_0_-1_0_010_010 916×916 in 0.45s
-[   14.9s]   shaded Container_0_-1_0_010_111 776×776 in 0.39s
-[   15.1s]   shaded Container_0_-1_0_011_110_001 572×572 in 0.17s
-[   15.3s]   shaded Frame_-1_-1_0_110_110 720×720 in 0.18s
-[   15.4s]   shaded Frame_-1_-1_0_111_011 676×676 in 0.18s
-[   15.6s]   shaded Frame_-1_-1_0_111_111 724×724 in 0.15s
-[   15.6s]   shaded Frame_0_-1_0_010_011 488×488 in 0.04s
-[   15.7s]   shaded Frame_0_-1_0_110_011_001 192×192 in 0.03s
-[   15.7s]   shaded Frame_0_-1_0_110_011_000 276×276 in 0.07s
-[   15.9s]   shaded Frame_0_-1_0_011_010 684×684 in 0.15s
-[   16.0s]   shaded Frame_0_0_0_000_000 664×664 in 0.12s
-[   16.3s]   shaded Frame_0_0_0_100_000 696×696 in 0.21s
-[   16.3s]   shaded Frame_0_0_0_100_001_000 144×144 in 0.02s
-[   16.3s]   shaded Frame_0_0_0_001_001 656×656 in 0.05s
-[   16.4s]   shaded Frame_0_0_0_001_000 664×664 in 0.09s
-[   16.6s]   shaded DoorProp 1024×1024 in 0.16s
-[   16.8s]   shaded Interior_-1_-1_0_010_010 648×648 in 0.15s
-[   17.2s]   shaded Interior_-1_0_0_100_000 896×896 in 0.36s
-[   17.5s]   shaded Interior_-1_0_0_100_100 868×868 in 0.33s
-[   17.7s]   shaded Interior_-1_0_0_100_001 528×528 in 0.13s
-[   17.7s]   shaded Interior_0_-1_0_010_000 332×332 in 0.05s
-[   17.9s]   shaded Interior_0_-1_0_010_010 676×676 in 0.14s
-[   18.3s]   shaded Interior_0_0_0_000_001 800×800 in 0.37s
-[   18.5s]   shaded Flap_-1_-1_0_001_111_101 956×956 in 0.22s
-[   18.8s]   shaded Flap_-1_-1_0_101_011_001 976×976 in 0.23s
-[   19.0s]   shaded Flap_-1_-1_0_101_111_000 984×984 in 0.23s
-[   19.3s]   shaded Flap_-1_-1_0_101_111_001 984×984 in 0.22s
-[   19.3s]   shaded Flap_-1_-1_0_101_100 204×204 in 0.02s
-[   19.3s]   shaded Flap_-1_-1_0_101_101 104×104 in 0.01s
-[   19.3s]   shaded Flap_0_-1_0_001_000 208×208 in 0.02s
-[   19.6s]   shaded Flap_0_-1_0_001_011_100 1012×1012 in 0.22s
-[   19.6s]   shaded Flap_0_-1_0_001_100 212×212 in 0.02s
-[   19.6s]   shaded Flap_0_-1_0_101_000 108×108 in 0.01s
-[   19.7s]   shaded FlapFrame_-1_-1_0_111_011 228×228 in 0.06s
-[   19.7s]   shaded FlapFrame_-1_-1_0_111_111_101_100_110_110_110 164×164 in 0.02s
-[   19.7s]   shaded FlapFrame_-1_-1_0_111_111_101_100_010 24×24 in 0.00s
-[   19.9s]   shaded FlapFrame_-1_-1_0_111_001_101 232×232 in 0.19s
-[   20.0s]   shaded FlapFrame_0_-1_0_011_101_000 368×368 in 0.08s
-[   20.1s]   shaded FlapFrame_0_-1_0_011_001 1024×1024 in 0.15s
-[   20.1s]   shaded Counter_-1_-1_0_110 268×268 in 0.01s
-[   20.5s]   shaded Counter_0_-1_0_011_101 844×844 in 0.32s
-[   20.5s]   shaded Counter_-1_0_0_100_001_100 320×320 in 0.05s
-[   20.9s]   shaded Counter_0_0_0_000 868×868 in 0.33s
-[   21.4s]   shaded Roof 1024×1024 in 0.44s
-[   22.3s]   shaded Blades 812×812 in 0.96s
-[   22.9s]   shaded SignHousing 1024×1024 in 0.50s
-[   22.9s]   shaded SignBolts_-1_-1_1_010_010 32×32 in 0.00s
-[   23.0s]   shaded SignBolts_-1_-1_1_111_110 1024×1024 in 0.10s
-[   23.0s]   shaded SignBolts_-1_-1_0 32×32 in 0.00s
-[   23.8s]   shaded Stock 1024×1024 in 0.75s
-[   23.8s] built ShopConceptContainer 1 x x2.5 part 3/5: 60 parts in 11.8s
-[   24.3s] writing ServerMap.glb and 88 textures
-[   25.0s] chunk ServerMap_S14_01.glb: 64 parts, 17.1 MB
-[   25.0s] chunk ServerMap_S14_02.glb: 24 parts, 6.6 MB
-ServerMap: 88 parts, script 24.27s, total 25.23s
-SHARD_COST	HubIsland 1 x	180.740
-SHARD_COST	HubIsland 1 x #split	1
-SHARD_COST	JunkWall 1 x x1.75	0.188
-SHARD_COST	JunkWall 1 x x1.75 #split	1
-SHARD_COST	ShopConceptContainer 1 x x2.5	59.218
-SHARD_COST	ShopConceptContainer 1 x x2.5 #split	1
+[    0.5s] cached HubIsland 1 x part 8/16
+[    0.5s] cached JunkWall 1 x x1.75
+[    0.7s] cached ShopConceptContainer 1 x x2.5 part 3/5
+[    0.9s] writing ServerMap.glb and 88 textures
+[    1.6s] chunk ServerMap_S14_01.glb: 64 parts, 17.1 MB
+[    1.6s] chunk ServerMap_S14_02.glb: 24 parts, 6.6 MB
+ServerMap: 88 parts, script 859.22ms, total 1.91s
+upload ServerMap: starting in 4.9s
+upload ServerMap: uploading ServerMapS14_01 (17M)
+upload ServerMap: ServerMapS14_01 is asset 139642461977309
+upload ServerMap: uploading ServerMapS14_02 (6.4M)
+upload ServerMap: ServerMapS14_02 is asset 123724734127493
+upload ServerMap: shard upload done: 2 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
