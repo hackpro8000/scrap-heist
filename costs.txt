@@ -1,8 +1,10 @@
-HubSectionEnd 1 x	70.838
-HubSectionEnd 1 x #split	1
-slab Spoke4	0.089
-slab Spoke4 #split	1
-slab Spoke5	0.085
-slab Spoke5 #split	1
-slab Plot7	4.908
-slab Plot7 #split	1
+YardFence 1 x x1.5	0.182
+YardFence 1 x x1.5 #split	1
+YardFenceHalf 1 x x1.5	0.155
+YardFenceHalf 1 x x1.5 #split	1
+slab Spoke1	0.078
+slab Spoke1 #split	1
+slab Plot2	4.876
+slab Plot2 #split	1
+slab Bridge8	1.599
+slab Bridge8 #split	1
