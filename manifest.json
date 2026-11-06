@@ -28,8 +28,8 @@
 			"parts": 1
 		},
 		{
-			"id": "3de67cd7cdaa38b2",
-			"key": "fc0c5e558eaf305d-18845c9c8b69ea54 Approach3 70 0 0",
+			"id": "cb28181827907de0",
+			"key": "115ac3a755887f11-18845c9c8b69ea54 Approach3 70 0 0",
 			"piece": 1,
 			"label": "Approach3",
 			"turn": 0.0,
@@ -46,8 +46,8 @@
 			"parts": 3
 		},
 		{
-			"id": "da67f20ac64069a5",
-			"key": "fc0c5e558eaf305d-cf7e96091024d5cc Bridge5 -210 -180 180",
+			"id": "7812ea6d6da1c935",
+			"key": "115ac3a755887f11-cf7e96091024d5cc Bridge5 -210 -180 180",
 			"piece": 1,
 			"label": "Bridge5",
 			"turn": 0.0,
@@ -55,8 +55,8 @@
 			"parts": 11
 		},
 		{
-			"id": "4b92530024b4def3",
-			"key": "fc0c5e558eaf305d-107c5c30239027da Spoke8 210 -180 180",
+			"id": "615abe14061456b3",
+			"key": "115ac3a755887f11-107c5c30239027da Spoke8 210 -180 180",
 			"piece": 1,
 			"label": "Spoke8",
 			"turn": 0.0,
@@ -64,8 +64,8 @@
 			"parts": 1
 		},
 		{
-			"id": "025217a63e1a30b1",
-			"key": "fc0c5e558eaf305d-363b6dc9a40b12d8 Belt 0 0 0",
+			"id": "9a967b10f0b043a9",
+			"key": "115ac3a755887f11-363b6dc9a40b12d8 Belt 0 0 0",
 			"piece": 1,
 			"label": "Belt",
 			"turn": 0.0,
@@ -105,7 +105,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotPannettoPatchato",
 			"turn": 0.0,
-			"bytes": 516972,
+			"bytes": 516984,
 			"parts": 6
 		},
 		{
@@ -115,6 +115,15 @@
 			"label": "Kit_JunkrotMopaMopetta",
 			"turn": 0.0,
 			"bytes": 755652,
+			"parts": 8
+		},
+		{
+			"id": "d435c2edf3dcf127",
+			"key": "JunkrotLeafblowaWhooshini-f2ce0e8b9e3edeaa 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotLeafblowaWhooshini",
+			"turn": 0.0,
+			"bytes": 639680,
 			"parts": 8
 		}
 	],
@@ -211,7 +220,7 @@
 			]
 		},
 		{
-			"asset": "3de67cd7cdaa38b2",
+			"asset": "cb28181827907de0",
 			"label": "Approach3",
 			"turn": 0.0,
 			"anchors": [
@@ -324,7 +333,7 @@
 			]
 		},
 		{
-			"asset": "da67f20ac64069a5",
+			"asset": "7812ea6d6da1c935",
 			"label": "Bridge5",
 			"turn": 0.0,
 			"anchors": [
@@ -737,7 +746,7 @@
 			]
 		},
 		{
-			"asset": "4b92530024b4def3",
+			"asset": "615abe14061456b3",
 			"label": "Spoke8",
 			"turn": 0.0,
 			"anchors": [
@@ -752,7 +761,7 @@
 			]
 		},
 		{
-			"asset": "025217a63e1a30b1",
+			"asset": "9a967b10f0b043a9",
 			"label": "Belt",
 			"turn": 0.0,
 			"anchors": [
@@ -782,7 +791,7 @@
 				{
 					"name": "Hardware",
 					"position": [
-						-444.00894,
+						-600.0089250000001,
 						-149.07463,
 						-1.15015185
 					]
@@ -790,7 +799,7 @@
 				{
 					"name": "Plate",
 					"position": [
-						-444.01166,
+						-600.011675,
 						-149.691015,
 						0.006314500000000223
 					]
@@ -805,7 +814,7 @@
 				{
 					"name": "Can",
 					"position": [
-						-324.007295,
+						-480.007295,
 						-148.7712,
 						0.010462399999999983
 					]
@@ -820,7 +829,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						-131.96983,
+						-287.96983,
 						-147.5505,
 						0.41021353
 					]
@@ -828,7 +837,7 @@
 				{
 					"name": "Stain",
 					"position": [
-						-131.795815,
+						-287.79580999999996,
 						-147.23425500000002,
 						-0.11728888100000001
 					]
@@ -843,7 +852,7 @@
 				{
 					"name": "Handle",
 					"position": [
-						85.50422,
+						-70.49578,
 						-146.99375,
 						0.026629172500000006
 					]
@@ -851,7 +860,7 @@
 				{
 					"name": "Legs",
 					"position": [
-						83.992345,
+						-72.007655,
 						-149.66916500000002,
 						0.17192995499999997
 					]
@@ -866,7 +875,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						348.672165,
+						192.67217499999998,
 						-147.75650000000002,
 						0.630213495
 					]
@@ -874,9 +883,32 @@
 				{
 					"name": "Seat",
 					"position": [
-						347.13777500000003,
+						191.137755,
 						-147.641415,
 						-0.006764660000000006
+					]
+				}
+			]
+		},
+		{
+			"asset": "d435c2edf3dcf127",
+			"label": "Kit_JunkrotLeafblowaWhooshini",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Leaves",
+					"position": [
+						483.21000000000004,
+						-148.84,
+						0.0
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						479.59767,
+						-148.15800000000002,
+						0.85521353
 					]
 				}
 			]
