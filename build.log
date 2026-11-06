@@ -51,6 +51,19 @@ assemble ServerMap: uses JunkrotTypewrittoClackini (key fe49253052fa6f56)
 assemble ServerMap: uses JunkrotCamerinoFlashetto (key 2d8422ee9636d2d3)
 assemble ServerMap: uses JunkrotDrippiDroppi (key b006345a7aeeab08)
 assemble ServerMap: uses JunkrotDingDingDingDongo (key 1d1e1e950c96e4e4)
+assemble ServerMap: uses JunkrotGrindoBeanbasher (key 5a476970c2b89efc)
+assemble ServerMap: uses JunkrotAirfryoCroccante (key fe378a5846949e34)
+assemble ServerMap: uses JunkrotDishwashinoSplashetto (key 683d7dad7d3db771)
+assemble ServerMap: uses JunkrotLawnmowoRuggito (key 108da303884eadb8)
+assemble ServerMap: uses JunkrotLeafblowaWhooshini (key f2ce0e8b9e3edeaa)
+assemble ServerMap: uses JunkrotPressurwashoSprizzo (key 87ac2472b45f7495)
+assemble ServerMap: uses JunkrotConsoloJoypaddino (key 191abffb1bf801ba)
+assemble ServerMap: uses JunkrotSpeakeroneBoomba (key 3bbfbd68ef1f5c85)
+assemble ServerMap: uses JunkrotRobovaccoGirotondo (key 45bdee1d4d860040)
+assemble ServerMap: uses JunkrotClankClankClankScrapur (key a30fc840bf59b273)
+assemble ServerMap: uses JunkrotVrrVrrPatatrim (key c5f05967943ccfb5)
+assemble ServerMap: uses JunkrotChimneyziniSpannerini (key 16b899b9c5febdc7)
+assemble ServerMap: uses JunkrotRusteliRustela (key 41867bade3ceb8a9)
 assemble ServerMap: slab at ServerMap.luau:278-468 (key cf7e96091024d5cc)
 assemble ServerMap: slab at ServerMap.luau:548-577 (key 7ded6fc62f8b67a3)
 assemble ServerMap: slab at ServerMap.luau:580-584 (key 2f5b4070ee3aa512)
@@ -59,9 +72,9 @@ assemble ServerMap: slab at ServerMap.luau:668-677 (key 107c5c30239027da)
 assemble ServerMap: slab at ServerMap.luau:685-715 (key 18845c9c8b69ea54)
 assemble ServerMap: slab at ServerMap.luau:790-801 (key 363b6dc9a40b12d8)
 assemble ServerMap: slab at ServerMap.luau:814-867 (key f4e0427155be5973)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 53240 lines, in 0s
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 64511 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.6s] building Spawn -250 0 0
+[    0.7s] building Spawn -250 0 0
 [    0.7s]   shaded Pad 608×608 in 0.04s
 [    0.7s] built Spawn -250 0 0: 1 parts in 0.0s
 [    0.8s] cached YardIsland 1 x part 3/5
@@ -191,44 +204,45 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 53240 lines, in 0s
 [    1.1s] cached YardFence 1.037037037037037 x x1.5
 [    1.1s] cached YardFence 1.037037037037037 x x1.5
 [    1.1s] cached YardFence 1.037037037037037 x x1.5
-[    1.1s] cached YardFence 1.037037037037037 x x1.5
-[    1.1s] cached YardFence 1.037037037037037 x x1.5
-[    1.1s] cached YardFence 1.037037037037037 x x1.5
-[    1.1s] cached YardFence 1.037037037037037 x x1.5
-[    1.1s] cached YardFence 1.037037037037037 x x1.5
-[    1.1s] cached PlotMarker 1 x x1.5
+[    1.2s] cached YardFence 1.037037037037037 x x1.5
+[    1.2s] cached YardFence 1.037037037037037 x x1.5
+[    1.2s] cached YardFence 1.037037037037037 x x1.5
+[    1.2s] cached YardFence 1.037037037037037 x x1.5
+[    1.2s] cached YardFence 1.037037037037037 x x1.5
+[    1.2s] cached PlotMarker 1 x x1.5
 [    1.2s] cached YardIsland 1 x part 3/5
 [    1.2s] building Plot5 -210 -180 180
-[    1.4s] baking on CPU (no GPU)
-[    2.1s]   shaded Ground_-1_-1_0 816×816 in 0.74s
-[    2.3s]   shaded Ground_-1_0_0_000 540×540 in 0.15s
-[    2.5s]   shaded Ground_-1_0_0_010 544×544 in 0.15s
+[    1.5s] baking on CPU (no GPU)
+[    2.1s]   shaded Ground_-1_-1_0 816×816 in 0.73s
+[    2.3s]   shaded Ground_-1_0_0_000 540×540 in 0.16s
+[    2.5s]   shaded Ground_-1_0_0_010 544×544 in 0.16s
 [    2.8s]   shaded Ground_-1_0_0_100 540×540 in 0.31s
 [    3.2s]   shaded Ground_-1_0_0_110 544×544 in 0.30s
-[    4.1s]   shaded Ground_0_-1_0 816×816 in 0.74s
-[    4.4s]   shaded Ground_0_0_0_000 540×540 in 0.30s
+[    4.0s]   shaded Ground_0_-1_0 816×816 in 0.73s
+[    4.4s]   shaded Ground_0_0_0_000 540×540 in 0.33s
 [    4.8s]   shaded Ground_0_0_0_010 544×544 in 0.30s
 [    5.0s]   shaded Ground_0_0_0_100 540×540 in 0.16s
-[    5.1s]   shaded Ground_0_0_0_110 544×544 in 0.16s
-[    5.1s] built Plot5 -210 -180 180: 10 parts in 3.9s
-[    5.2s] cached YardIsland 1 x part 3/5
+[    5.2s]   shaded Ground_0_0_0_110 544×544 in 0.16s
+[    5.2s] built Plot5 -210 -180 180: 10 parts in 3.9s
 [    5.3s] cached YardIsland 1 x part 3/5
 [    5.4s] cached YardIsland 1 x part 3/5
+[    5.4s] cached YardIsland 1 x part 3/5
 [    5.4s] cached JunkrotMuffleroTossetto 1 x
-[    5.4s] building JunkrotTypewrittoClackini 1 x
-[    5.4s]   shaded Body 256×256 in 0.04s
-[    5.6s]   shaded Keys 256×256 in 0.14s
-[    5.6s]   shaded Roller 256×256 in 0.03s
-[    5.7s]   shaded Paper 256×256 in 0.04s
-[    5.7s]   shaded Lever 256×256 in 0.04s
-[    5.8s]   shaded Eyes 256×256 in 0.09s
+[    5.4s] cached JunkrotTypewrittoClackini 1 x
+[    5.4s] building JunkrotRobovaccoGirotondo 1 x
+[    5.5s]   shaded Disc 256×256 in 0.03s
+[    5.5s]   shaded Bumper 256×256 in 0.02s
+[    5.5s]   shaded Turret 256×256 in 0.04s
+[    5.6s]   shaded Button 256×256 in 0.06s
+[    5.6s]   shaded Brush 256×256 in 0.02s
+[    5.7s]   shaded Eyes 256×256 in 0.10s
 [    5.9s]   shaded Pupils 256×256 in 0.14s
-[    6.0s]   shaded Legs 256×256 in 0.05s
-[    6.0s] built JunkrotTypewrittoClackini 1 x: 8 parts in 0.6s
-[    6.0s] writing ServerMap.glb and 498 textures
-ServerMap: 498 parts, script 5.99s, total 7.72s
-PLACED	Spawn	0	fc0c5e558eaf305d-2f5b4070ee3aa512 Spawn -250 0 0
-SHARD_COST	slab Spawn	0.045
+[    5.9s]   shaded Legs 256×256 in 0.05s
+[    5.9s] built JunkrotRobovaccoGirotondo 1 x: 8 parts in 0.5s
+[    5.9s] writing ServerMap.glb and 506 textures
+ServerMap: 506 parts, script 5.95s, total 7.69s
+PLACED	Spawn	0	115ac3a755887f11-2f5b4070ee3aa512 Spawn -250 0 0
+SHARD_COST	slab Spawn	0.042
 SHARD_COST	slab Spawn #split	1
 PLACED	Island1	0	YardIsland-f7a297dc299e1e15 1 x part 3/5
 PLACED	Yard1_FootingBack1	0	YardFooting-5c7b334d7913a1ed 1 x x1.5
@@ -364,14 +378,15 @@ PLACED	Yard4_FenceLeft9	270	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
 PLACED	Yard4_FenceRight9	90	YardFence-fe3d5de848852dd7 1.037037037037037 x x1.5
 PLACED	Yard4_PlotMarker	0	PlotMarker-1dcfac604b3fab76 1 x x1.5
 PLACED	Island5	180	YardIsland-f7a297dc299e1e15 1 x part 3/5
-PLACED	Plot5	0	fc0c5e558eaf305d-7b25a7aa2539d602 Plot5 -210 -180 180
-SHARD_COST	slab Plot5	3.913
+PLACED	Plot5	0	115ac3a755887f11-7b25a7aa2539d602 Plot5 -210 -180 180
+SHARD_COST	slab Plot5	3.930
 SHARD_COST	slab Plot5 #split	1
 PLACED	Island6	180	YardIsland-f7a297dc299e1e15 1 x part 3/5
 PLACED	Island7	180	YardIsland-f7a297dc299e1e15 1 x part 3/5
 PLACED	Island8	180	YardIsland-f7a297dc299e1e15 1 x part 3/5
 PLACED	Kit_JunkrotMuffleroTossetto	0	JunkrotMuffleroTossetto-51cde1cc6e30d9fd 1 x
 PLACED	Kit_JunkrotTypewrittoClackini	0	JunkrotTypewrittoClackini-fe49253052fa6f56 1 x
-SHARD_COST	JunkrotTypewrittoClackini 1 x	0.605
-SHARD_COST	JunkrotTypewrittoClackini 1 x #split	1
-export ServerMap: 10 objects (15.1 MB) for 141 placements
+PLACED	Kit_JunkrotRobovaccoGirotondo	0	JunkrotRobovaccoGirotondo-45bdee1d4d860040 1 x
+SHARD_COST	JunkrotRobovaccoGirotondo 1 x	0.498
+SHARD_COST	JunkrotRobovaccoGirotondo 1 x #split	1
+export ServerMap: 11 objects (15.7 MB) for 142 placements

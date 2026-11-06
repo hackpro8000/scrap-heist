@@ -1,6 +1,6 @@
-slab Spawn	0.045
+slab Spawn	0.042
 slab Spawn #split	1
-slab Plot5	3.913
+slab Plot5	3.930
 slab Plot5 #split	1
-JunkrotTypewrittoClackini 1 x	0.605
-JunkrotTypewrittoClackini 1 x #split	1
+JunkrotRobovaccoGirotondo 1 x	0.498
+JunkrotRobovaccoGirotondo 1 x #split	1

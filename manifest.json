@@ -1,8 +1,8 @@
 {
 	"assets": [
 		{
-			"id": "4fd2f6cd061daf9c",
-			"key": "fc0c5e558eaf305d-2f5b4070ee3aa512 Spawn -250 0 0",
+			"id": "2cf085572a941cc2",
+			"key": "115ac3a755887f11-2f5b4070ee3aa512 Spawn -250 0 0",
 			"piece": 1,
 			"label": "Spawn",
 			"turn": 0.0,
@@ -64,8 +64,8 @@
 			"parts": 1
 		},
 		{
-			"id": "d7fd67539ab4f3db",
-			"key": "fc0c5e558eaf305d-7b25a7aa2539d602 Plot5 -210 -180 180",
+			"id": "3533419e6f583181",
+			"key": "115ac3a755887f11-7b25a7aa2539d602 Plot5 -210 -180 180",
 			"piece": 1,
 			"label": "Plot5",
 			"turn": 0.0,
@@ -89,11 +89,20 @@
 			"turn": 0.0,
 			"bytes": 750436,
 			"parts": 8
+		},
+		{
+			"id": "16f83d17a8f83a12",
+			"key": "JunkrotRobovaccoGirotondo-45bdee1d4d860040 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotRobovaccoGirotondo",
+			"turn": 0.0,
+			"bytes": 620828,
+			"parts": 8
 		}
 	],
 	"placements": [
 		{
-			"asset": "4fd2f6cd061daf9c",
+			"asset": "2cf085572a941cc2",
 			"label": "Spawn",
 			"turn": 0.0,
 			"anchors": [
@@ -2158,7 +2167,7 @@
 			]
 		},
 		{
-			"asset": "d7fd67539ab4f3db",
+			"asset": "3533419e6f583181",
 			"label": "Plot5",
 			"turn": 0.0,
 			"anchors": [
@@ -2257,7 +2266,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						180.022675,
+						24.022669999999998,
 						-148.308,
 						0.85521353
 					]
@@ -2265,7 +2274,7 @@
 				{
 					"name": "Soot",
 					"position": [
-						180.661955,
+						24.661958,
 						-146.155,
 						-0.01195774999999999
 					]
@@ -2280,7 +2289,7 @@
 				{
 					"name": "Paper",
 					"position": [
-						444.0,
+						288.0,
 						-146.95,
 						-0.89
 					]
@@ -2288,9 +2297,32 @@
 				{
 					"name": "Pupils",
 					"position": [
-						444.02218,
+						288.02218,
 						-147.9565,
 						0.85021353
+					]
+				}
+			]
+		},
+		{
+			"asset": "16f83d17a8f83a12",
+			"label": "Kit_JunkrotRobovaccoGirotondo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Brush",
+					"position": [
+						577.2048,
+						-149.19719500000002,
+						0.2
+					]
+				},
+				{
+					"name": "Bumper",
+					"position": [
+						576.0,
+						-148.05,
+						0.0
 					]
 				}
 			]
