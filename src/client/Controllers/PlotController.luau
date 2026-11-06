@@ -10,7 +10,8 @@
 	- A red sign that drops in under the raid strip when someone raids your
 	  yard ("ROOK IS RAIDING!"), hazard signs wobbling at its ends, and a
 	  green one once it's safe.
-	- A "carrying" bar while you haul a stolen bundle home.
+	- A "carrying" bar while you haul a stolen bundle or a capsule home.
+	- Lets you through your own locked gate.
 
 	The scrap counter lives in HudController.
 
@@ -22,6 +23,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SoundService = game:GetService("SoundService")
 
 local Assets = require(ReplicatedStorage.Shared.Assets)
+local Format = require(ReplicatedStorage.Shared.Util.Format)
 local React = require(ReplicatedStorage.Packages.React)
 local Remotes = require(ReplicatedStorage.Shared.Net.Raid)
 
@@ -32,6 +34,7 @@ local PlotScreen = require(script.Parent.Parent.UI.Screens.Plot)
 local localPlayer = Players.LocalPlayer
 
 local ALERT_SECONDS = 6
+local GATE_BARRIER_NAME = "GateBarrier"
 
 -- Matches the sign's spot under the raid strip in UI/Screens/Plot.
 local ALERT_BOTTOM = 66 + 50
@@ -42,11 +45,23 @@ local root: Kit.Root
 local alert: PlotScreen.Alert? = nil
 local alertCount = 0
 
+-- What the player is hauling, as the bar at the bottom says it.
+local function carryText(): string?
+	local scrap = localPlayer:GetAttribute("CarryingScrap")
+	local capsule = localPlayer:GetAttribute("CarryingCapsule")
+	if type(scrap) == "number" then
+		return `Carrying {Format.short(scrap)} scrap. Get back to your yard!`
+	elseif type(capsule) == "string" then
+		return `Carrying a {capsule} capsule. Get it to your build bay!`
+	end
+
+	return nil
+end
+
 local function render()
-	local parts = localPlayer:GetAttribute("CarryingParts")
 	root.render(React.createElement(PlotScreen, {
 		alert = alert,
-		carrying = if type(parts) == "number" then parts else nil,
+		carrying = carryText(),
 	}))
 end
 
@@ -97,17 +112,31 @@ local function refreshYard(yard: Instance)
 	end
 end
 
-local function watchYard(yard: Instance)
-	for _, descendant in yard:GetDescendants() do
-		if descendant:IsA("ProximityPrompt") then
-			watchPrompt(descendant)
+-- A locked gate stops everyone on the server; its owner walks through,
+-- because their own client stops it colliding for them.
+local function passOwnGate(yard: Instance, barrier: BasePart)
+	local function pass()
+		if yard:GetAttribute("OwnerUserId") == localPlayer.UserId and barrier.CanCollide then
+			barrier.CanCollide = false
 		end
 	end
-	yard.DescendantAdded:Connect(function(descendant)
+	barrier:GetPropertyChangedSignal("CanCollide"):Connect(pass)
+	yard:GetAttributeChangedSignal("OwnerUserId"):Connect(pass)
+	pass()
+end
+
+local function watchYard(yard: Instance)
+	local function watch(descendant: Instance)
 		if descendant:IsA("ProximityPrompt") then
 			watchPrompt(descendant)
+		elseif descendant.Name == GATE_BARRIER_NAME and descendant:IsA("BasePart") then
+			passOwnGate(yard, descendant)
 		end
-	end)
+	end
+	for _, descendant in yard:GetDescendants() do
+		watch(descendant)
+	end
+	yard.DescendantAdded:Connect(watch)
 	yard:GetAttributeChangedSignal("OwnerUserId"):Connect(function()
 		refreshYard(yard)
 	end)
@@ -164,7 +193,8 @@ function PlotController.start()
 		end
 	end)
 
-	localPlayer:GetAttributeChangedSignal("CarryingParts"):Connect(render)
+	localPlayer:GetAttributeChangedSignal("CarryingScrap"):Connect(render)
+	localPlayer:GetAttributeChangedSignal("CarryingCapsule"):Connect(render)
 end
 
 return PlotController

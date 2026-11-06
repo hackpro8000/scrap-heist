@@ -13,6 +13,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
+local Format = require(ReplicatedStorage.Shared.Util.Format)
 local React = require(ReplicatedStorage.Packages.React)
 
 local Kit = require(script.Parent.Parent.Kit)
@@ -151,6 +152,8 @@ end
 
 export type Props = {
 	scrap: number?,
+	-- Rank, income and parts, on one line beside the scrap plank.
+	stats: string?,
 	buttons: { MenuButton },
 }
 
@@ -174,7 +177,7 @@ local function Hud(props: Props)
 		}, {
 			-- Centred between the bolt and the nail at the plank's right end.
 			Scrap = e(Kit.Text, {
-				text = if props.scrap then tostring(math.floor(props.scrap)) else "...",
+				text = if props.scrap then Format.short(math.floor(props.scrap)) else "...",
 				textSize = 38,
 				align = Enum.TextXAlignment.Center,
 				position = UDim2.fromOffset(SCRAP_TEXT_LEFT, 6),
@@ -182,6 +185,15 @@ local function Hud(props: Props)
 			}),
 		}),
 		Bolt = e(Kit.Image, { element = "IconScrap", size = SCRAP_ICON, zIndex = 2 }),
+		Stats = if props.stats
+			then e(Kit.Text, {
+				text = props.stats,
+				textSize = 20,
+				fit = true,
+				height = PLANK_SIZE.Y,
+				position = UDim2.fromOffset(PLANK_POSITION.X + PLANK_SIZE.X + 10, PLANK_POSITION.Y),
+			})
+			else nil,
 		Menu = e("Frame", {
 			BackgroundTransparency = 1,
 			Position = UDim2.fromOffset(MENU_LEFT, MENU_TOP),

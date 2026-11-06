@@ -14,6 +14,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Format = require(ReplicatedStorage.Shared.Util.Format)
 local React = require(ReplicatedStorage.Packages.React)
 
 local Kit = require(script.Parent.Parent.UI.Kit)
@@ -26,10 +27,23 @@ local HudController = {}
 local root: Kit.Root
 local buttons: { HudScreen.MenuButton } = {}
 
+-- "RANK 2 · 1.2K/S · 34 PARTS", once the server has said what they are.
+local function statsText(): string?
+	local rank = localPlayer:GetAttribute("Rank")
+	local income = localPlayer:GetAttribute("Income")
+	local parts = localPlayer:GetAttribute("Parts")
+	if type(rank) ~= "number" or type(income) ~= "number" or type(parts) ~= "number" then
+		return nil
+	end
+
+	return `RANK {rank}  ·  {Format.short(income)}/S  ·  {Format.short(parts)} PARTS`
+end
+
 local function render()
 	local scrap = localPlayer:GetAttribute("Scrap")
 	root.render(React.createElement(HudScreen, {
 		scrap = if type(scrap) == "number" then scrap else nil,
+		stats = statsText(),
 		buttons = buttons,
 	}))
 end
@@ -46,7 +60,9 @@ end
 
 function HudController.start()
 	render()
-	localPlayer:GetAttributeChangedSignal("Scrap"):Connect(render)
+	for _, name in { "Scrap", "Rank", "Income", "Parts" } do
+		localPlayer:GetAttributeChangedSignal(name):Connect(render)
+	end
 end
 
 return HudController

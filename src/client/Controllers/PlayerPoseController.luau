@@ -12,7 +12,7 @@
 	  windup and recovery, so the blow lands as the hit is checked.
 	- Block: arms up across the chest while the character's Blocking
 	  attribute is true.
-	- Carry: hands gripping the straps of the bundle on the back while the player's CarryingParts
+	- Carry: hands gripping the straps of the bundle on the back while the player's CarryingScrap
 	  attribute is set.
 	- Stagger: a short lean back when guard-broken, or when parried as the
 	  attacker.
@@ -225,7 +225,7 @@ local function targetOf(model: Model, entry: Posed, now: number, joint: string):
 		return BLOCK[joint] or Vector3.zero
 	end
 	local player = Players:GetPlayerFromCharacter(model)
-	if player and player:GetAttribute("CarryingParts") ~= nil then
+	if player and player:GetAttribute("CarryingScrap") ~= nil then
 		return CARRY[joint] or Vector3.zero
 	end
 	return Vector3.zero
@@ -284,7 +284,7 @@ local function step(deltaTime: number)
 		if
 			character
 			and not posed[character]
-			and (character:GetAttribute("Blocking") == true or player:GetAttribute("CarryingParts") ~= nil)
+			and (character:GetAttribute("Blocking") == true or player:GetAttribute("CarryingScrap") ~= nil)
 		then
 			track(character)
 		end

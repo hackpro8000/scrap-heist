@@ -5,7 +5,7 @@
 	The yard HUD:
 	- A sign that drops in under the raid strip when someone raids your yard,
 	  red with hazard signs rocking at its ends, or green once it's safe.
-	- A "carrying" tag while you haul a stolen bundle home.
+	- A "carrying" tag while you haul a stolen bundle or a capsule home.
 
 	Props: alert ({ id, kind, text }?, nil lifts the sign away), carrying
 	(parts, or nil)
@@ -45,7 +45,7 @@ export type Alert = { id: number, kind: string, text: string }
 
 export type Props = {
 	alert: Alert?,
-	carrying: number?,
+	carrying: string?,
 }
 
 -- A hazard sign over one end of the board, rocking while it's up.
@@ -134,7 +134,7 @@ local function Plot(props: Props)
 				Corner = e("UICorner", { CornerRadius = UDim.new(0, 12) }),
 				Padding = e("UIPadding", { PaddingLeft = UDim.new(0, 16), PaddingRight = UDim.new(0, 16) }),
 				Text = e(Kit.Text, {
-					text = `Carrying {props.carrying} parts. Get back to your yard!`,
+					text = props.carrying,
 					textSize = 20,
 					color = Theme.Colors.Accent,
 					fit = true,
