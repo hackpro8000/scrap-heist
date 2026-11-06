@@ -1,4 +1,0 @@
-HubSectionEnd 1 x	73.222
-HubSectionEnd 1 x #split	1
-YardIsland 1 x	83.475
-YardIsland 1 x #split	1

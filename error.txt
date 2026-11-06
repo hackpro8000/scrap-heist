@@ -1,0 +1,30 @@
+[    0.5s] cached HubSectionEnd 1 x part 5/5
+[    0.6s] cached HubSectionEnd 1 x part 5/5
+[    0.8s] cached YardIsland 1 x part 4/5
+[    0.9s] cached YardIsland 1 x part 4/5
+[    1.0s] cached YardIsland 1 x part 4/5
+[    1.1s] cached YardIsland 1 x part 4/5
+[    1.3s] cached YardIsland 1 x part 4/5
+[    1.4s] cached YardIsland 1 x part 4/5
+[    1.5s] cached YardIsland 1 x part 4/5
+[    1.7s] cached YardIsland 1 x part 4/5
+[    1.7s] writing ServerMap.glb and 214 textures
+[    3.8s] chunk ServerMap_S11_01.glb: 46 parts, 6.8 MB
+[    3.8s] chunk ServerMap_S11_02.glb: 42 parts, 7.5 MB
+[    3.8s] chunk ServerMap_S11_03.glb: 42 parts, 7.5 MB
+[    3.8s] chunk ServerMap_S11_04.glb: 42 parts, 7.5 MB
+[    3.8s] chunk ServerMap_S11_05.glb: 42 parts, 7.5 MB
+ServerMap: 214 parts, script 1.70s, total 4.64s
+upload ServerMap: starting in 1.3s
+upload ServerMap: uploading ServerMapS11_01 (6.5M)
+upload ServerMap: ServerMapS11_01 is asset 130786778180655
+upload ServerMap: uploading ServerMapS11_02 (7.2M)
+upload ServerMap: ServerMapS11_02 is asset 131266049340604
+upload ServerMap: uploading ServerMapS11_03 (7.2M)
+upload ServerMap: ServerMapS11_03 is asset 134936029797910
+upload ServerMap: uploading ServerMapS11_04 (7.2M)
+upload ServerMap: ServerMapS11_04 failed: {"path":"operations/1a7c31f9-45b7-43d2-9877-05924d47bccf","operationId":"1a7c31f9-45b7-43d2-9877-05924d47bccf","done":true,"error":{"code":"Unknown","message":"Unknown Error","details":[]}}
+upload ServerMap: uploading ServerMapS11_05 (7.2M)
+upload ServerMap: ServerMapS11_05 is asset 107278307102542
+upload ServerMap: FAILED: 1 of 5 chunks have no usable ID: ServerMapS11_04 
+upload ServerMap: nothing was written to src/shared; see the errors above, then run again to retry just these
