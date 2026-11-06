@@ -1,6 +1,6 @@
-slab Bridge3	1.487
+slab Bridge3	1.251
 slab Bridge3 #split	1
-slab Plot7	4.660
+slab Plot7	4.856
 slab Plot7 #split	1
-JunkrotRadioloFruscio 1 x	0.619
-JunkrotRadioloFruscio 1 x #split	1
+JunkrotCamerinoFlashetto 1 x	0.688
+JunkrotCamerinoFlashetto 1 x #split	1

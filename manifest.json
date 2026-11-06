@@ -19,8 +19,8 @@
 			"parts": 1
 		},
 		{
-			"id": "223a6dc53c6b1c48",
-			"key": "d85c17ddde731d72-cf7e96091024d5cc Bridge3 70 180 0",
+			"id": "73cbb1c7ea2fe873",
+			"key": "fc0c5e558eaf305d-cf7e96091024d5cc Bridge3 70 180 0",
 			"piece": 1,
 			"label": "Bridge3",
 			"turn": 0.0,
@@ -46,8 +46,8 @@
 			"parts": 4
 		},
 		{
-			"id": "d1651811326eaf23",
-			"key": "d85c17ddde731d72-7b25a7aa2539d602 Plot7 70 -180 180",
+			"id": "6bec385c62a0db69",
+			"key": "fc0c5e558eaf305d-7b25a7aa2539d602 Plot7 70 -180 180",
 			"piece": 1,
 			"label": "Plot7",
 			"turn": 0.0,
@@ -62,6 +62,15 @@
 			"turn": 0.0,
 			"bytes": 661452,
 			"parts": 7
+		},
+		{
+			"id": "de6679575348b6d4",
+			"key": "JunkrotCamerinoFlashetto-2d8422ee9636d2d3 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotCamerinoFlashetto",
+			"turn": 0.0,
+			"bytes": 700408,
+			"parts": 8
 		}
 	],
 	"placements": [
@@ -187,7 +196,7 @@
 			]
 		},
 		{
-			"asset": "223a6dc53c6b1c48",
+			"asset": "73cbb1c7ea2fe873",
 			"label": "Bridge3",
 			"turn": 0.0,
 			"anchors": [
@@ -315,7 +324,7 @@
 			]
 		},
 		{
-			"asset": "d1651811326eaf23",
+			"asset": "6bec385c62a0db69",
 			"label": "Plot7",
 			"turn": 0.0,
 			"anchors": [
@@ -345,7 +354,7 @@
 				{
 					"name": "Aerial",
 					"position": [
-						336.33914000000004,
+						204.33913,
 						-146.67401999999998,
 						-0.114168403
 					]
@@ -353,9 +362,32 @@
 				{
 					"name": "Pupils",
 					"position": [
-						336.026565,
+						204.026565,
 						-147.958,
 						0.6436180250000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "de6679575348b6d4",
+			"label": "Kit_JunkrotCamerinoFlashetto",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Flash",
+					"position": [
+						467.384155,
+						-147.339295,
+						0.013302329999999973
+					]
+				},
+				{
+					"name": "LensGlass",
+					"position": [
+						468.0,
+						-148.65,
+						1.21999995
 					]
 				}
 			]
