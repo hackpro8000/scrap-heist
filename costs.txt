@@ -1,8 +1,0 @@
-slab Beacon	0.801
-slab Beacon #split	1
-slab Avenue3	2.037
-slab Avenue3 #split	1
-slab Avenue5	1.910
-slab Avenue5 #split	1
-ShopConceptContainer 1 x x2.5	79.711
-ShopConceptContainer 1 x x2.5 #split	1
