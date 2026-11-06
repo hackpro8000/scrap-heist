@@ -1,0 +1,36 @@
+slab Beacon	0.612
+slab Beacon #split	1
+slab Avenue1	1.769
+slab Avenue1 #split	1
+slab Avenue3	1.609
+slab Avenue3 #split	1
+MarketIsland 1 x	44.996
+MarketIsland 1 x #split	1
+ParkBench 1 x x1.85	0.072
+ParkBench 1 x x1.85 #split	1
+slab Palm1Planter	0.053
+slab Palm1Planter #split	1
+ScrapPalm 1 x x1.5	0.148
+ScrapPalm 1 x x1.5 #split	1
+slab Palm2Planter	0.052
+slab Palm2Planter #split	1
+YardIsland 1 x	34.689
+YardIsland 1 x #split	1
+GroundTile 1 x x1.5	0.149
+GroundTile 1 x x1.5 #split	1
+YardFooting 1 x x1.5	0.051
+YardFooting 1 x x1.5 #split	1
+YardFenceHalf 1 x x1.5	0.126
+YardFenceHalf 1 x x1.5 #split	1
+slab Plot5	1.022
+slab Plot5 #split	1
+YardFooting 0.5 x x1.5	0.053
+YardFooting 0.5 x x1.5 #split	1
+slab Bridge7	1.013
+slab Bridge7 #split	1
+Barrels 1 x x1.9	0.157
+Barrels 1 x x1.9 #split	1
+Pallets 1 x x1.4	0.155
+Pallets 1 x x1.4 #split	1
+StreetlightBroken 1 x x2	0.102
+StreetlightBroken 1 x x2 #split	1
