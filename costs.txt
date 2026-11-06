@@ -1,0 +1,26 @@
+slab Pad1	0.372
+slab Pad1 #split	1
+slab Pad2	0.347
+slab Pad2 #split	1
+slab Pad3	0.340
+slab Pad3 #split	1
+slab Avenue3	1.262
+slab Avenue3 #split	1
+slab MarketIsland	2.781
+slab MarketIsland #split	1
+ShopConceptContainer 1 x x2.5	46.674
+ShopConceptContainer 1 x x2.5 #split	1
+slab Spoke7	0.089
+slab Spoke7 #split	1
+MachinePad 1 x x1.5	0.110
+MachinePad 1 x x1.5 #split	1
+YardFooting 1 x x1.5	0.037
+YardFooting 1 x x1.5 #split	1
+slab Spoke8	0.089
+slab Spoke8 #split	1
+TrafficCones 1 x x1.8	0.117
+TrafficCones 1 x x1.8 #split	1
+Barrels 1 x x1.9	0.117
+Barrels 1 x x1.9 #split	1
+slab Hatch1	0.082
+slab Hatch1 #split	1
