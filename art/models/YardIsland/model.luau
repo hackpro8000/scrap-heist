@@ -1,4 +1,4 @@
-local CACHE_KEY = "YardIsland-4e2be22217e2850d"
+local CACHE_KEY = "YardIsland-a20f5454b9eeafc4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -806,26 +806,35 @@ local function finishParts()
 end
 -- Yard Island: the floating island a player's yard stands on, from the
 -- shared column generator (shared/ColumnIsland.luau).
-local RADIUS = 42
-local PEAK = 53
+local RADIUS = 51.7
+local PEAK = 65
 local SEED = 11
--- The yard (YardLayout.luau) is a YARD_HALF-stud half square on the top,
--- turned YARD_TURN degrees against the island so the island's lobes sit
--- under the fence corners, with its gate toward -y and a track TRACK_HALF
--- studs either side of the middle running from the gate to the rim.
-local YARD_HALF = 24
-local YARD_TURN = 305
-local TRACK_HALF = 4
+-- The yard (YardLayout.luau) is a plot YARD_HALF_WIDTH by YARD_HALF_DEPTH
+-- studs either side of the middle, with its gate toward -y and a track
+-- TRACK_HALF studs either side of the middle running from the gate to the
+-- rim.
+local YARD_HALF_WIDTH, YARD_HALF_DEPTH = 48, 56
+local TRACK_HALF = 4.5
+-- The rim is a rounded rectangle that leaves at least 6 studs of grass
+-- outside the fence along each side and 10 at the front and back, once the
+-- rim's wobble is taken off. The sides are kept narrow so neighbouring yard
+-- islands stand too far apart to jump between.
+local RIM_WOBBLE = 0.05
+local HALF_WIDTH, HALF_DEPTH = 54, 66
+local function rimShape(angle: number): number
+	local c, s = math.abs(math.cos(angle)) / HALF_WIDTH, math.abs(math.sin(angle)) / HALF_DEPTH
+	return (c ^ 8 + s ^ 8) ^ (-1 / 8) / HALF_WIDTH
+end
 
--- How far a point lies outside the yard's square (with rounded corners) or
--- the gate's track, in the yard's own frame.
+-- The plot's ground buries the turf under it.
+local COVER_INSET = 2
+-- How far a point lies outside the plot (with rounded corners) or the
+-- gate's track.
 local function wornDistance(x: number, y: number): number
-	local c, s = math.cos(math.rad(YARD_TURN)), math.sin(math.rad(YARD_TURN))
-	local u, v = x * c - y * s, x * s + y * c
-	local du, dv = math.abs(u) - YARD_HALF, math.abs(v) - YARD_HALF
-	local outside = if du > 0 and dv > 0 then math.sqrt(du * du + dv * dv) else math.max(du, dv)
-	if v < 0 then
-		outside = math.min(outside, math.max(math.abs(u) - TRACK_HALF, 0))
+	local dx, dy = math.abs(x) - YARD_HALF_WIDTH, math.abs(y) - YARD_HALF_DEPTH
+	local outside = if dx > 0 and dy > 0 then math.sqrt(dx * dx + dy * dy) else math.max(dx, dy)
+	if y < 0 then
+		outside = math.min(outside, math.max(math.abs(x) - TRACK_HALF, 0))
 	end
 	return outside
 end
@@ -850,7 +859,14 @@ end
 --   SEED          which scatter of stones it gets;
 --   wornDistance(x, y)  how far a point on the top lies outside the ground
 --                 worn by what stands on it (math.huge where nothing does);
---                 the grass wears to dirt within about APRON_WIDTH of it.
+--                 the grass wears to dirt within about APRON_WIDTH of it;
+--   COVER_INSET   turf lying more than this many studs inside the worn
+--                 ground is buried under what stands there and left out
+--                 (math.huge keeps it all);
+--   RIM_WOBBLE    how far the rim swells and dips, as a share of its radius;
+--   rimShape(angle)  how far out the rim stands at an angle, as a multiple
+--                 of the round rim: 1 all round for a round island, never
+--                 under 1, more toward the corners of a squarer one.
 -- Stone sizes at the summit and at the foot, as shares of the radius, so
 -- a bigger island has bigger stones rather than more of them.
 local SMALLEST, LARGEST = 0.055 * RADIUS, 0.34 * RADIUS
@@ -861,9 +877,9 @@ local SMALLEST, LARGEST = 0.055 * RADIUS, 0.34 * RADIUS
 local DETAIL = LARGEST / 4.5
 -- The rim the columns are trimmed to: a circle of RIM_PUSH * RADIUS
 -- swelling and dipping by up to RIM_WOBBLE of it in broad waves, so the top
--- is a dependable surface rather than sharp lobes and bays. RIM_SIDES flat
--- facets make it up, so the rim stones end in cut faces.
-local RIM_WOBBLE = 0.16
+-- is a dependable surface rather than sharp lobes and bays, and standing
+-- rimShape times as far out at each angle. RIM_SIDES flat facets make it up,
+-- so the rim stones end in cut faces.
 local RIM_SIDES = 192
 -- The rim stands RIM_PUSH times RADIUS out.
 local RIM_PUSH = 1.1
@@ -873,7 +889,11 @@ local RIM_PUSH = 1.1
 local DIRT_CONFORM = 1.5 * DETAIL
 -- Stones are scattered a stone's width past the rim, so rim cells close
 -- on real neighbours before they are trimmed to it.
-local SCATTER = RIM_PUSH * RADIUS + LARGEST
+local RIM_REACH = 1
+for i = 0, RIM_SIDES - 1 do
+	RIM_REACH = math.max(RIM_REACH, rimShape(i / RIM_SIDES * 2 * math.pi))
+end
+local SCATTER = RIM_PUSH * RADIUS * RIM_REACH + LARGEST
 -- Shortest a column hangs, so the rim stones read as a thick slab; a
 -- share of the radius like the stone sizes.
 local MIN_LENGTH = 0.2 * RADIUS
@@ -1089,7 +1109,7 @@ end
 local function rimAt(angle: number): number
 	local phase = SEED * 1.7
 	local wave = 0.5 * math.sin(2 * angle + phase) + 0.3 * math.sin(3 * angle + 2 * phase) + 0.2 * math.sin(5 * angle + 3 * phase)
-	return RIM_PUSH * RADIUS * (1 + RIM_WOBBLE * wave)
+	return RIM_PUSH * RADIUS * rimShape(angle) * (1 + RIM_WOBBLE * wave)
 end
 
 -- Stones scattered by dart throwing, none crowding another, sized by how
@@ -2227,7 +2247,7 @@ local function grassRim()
 	-- The rim the stones are trimmed to, walked clockwise seen from above
 	-- in GRASS_STEP strides, so the grass follows it exactly.
 	local points = {}
-	local steps = math.ceil(TAU * RIM_PUSH * RADIUS * (1 + RIM_WOBBLE) / GRASS_STEP)
+	local steps = math.ceil(TAU * RIM_PUSH * RADIUS * RIM_REACH * (1 + RIM_WOBBLE) / GRASS_STEP)
 	for k = 0, steps - 1 do
 		local angle = -k / steps * TAU
 		local r = rimAt(angle)
@@ -2497,13 +2517,22 @@ chunkedPart("Grass", nil, GRASS, function(mesh)
 			low[axis], high[axis] = math.min(low[axis], p[axis]), math.max(high[axis], p[axis])
 		end
 	end
+	-- A piece is buried when every corner of it lies deep in the worn ground.
+	local function buried(piece): boolean
+		for _, p in piece do
+			if wornDistance(p[1], p[2]) > -COVER_INSET then
+				return false
+			end
+		end
+		return true
+	end
 	for cx = math.floor(low[1] / GRASS_TOP_CELL), math.floor(high[1] / GRASS_TOP_CELL) do
 		for cy = math.floor(low[2] / GRASS_TOP_CELL), math.floor(high[2] / GRASS_TOP_CELL) do
 			local piece = clipped(outline, 1, cx * GRASS_TOP_CELL, false)
 			piece = clipped(piece, 1, (cx + 1) * GRASS_TOP_CELL, true)
 			piece = clipped(piece, 2, cy * GRASS_TOP_CELL, false)
 			piece = clipped(piece, 2, (cy + 1) * GRASS_TOP_CELL, true)
-			if #piece >= 3 then
+			if #piece >= 3 and not buried(piece) then
 				local corners = {}
 				for i, p in piece do
 					corners[i] = cornerOf[p] or mesh:vertex(p[1], p[2], GRASS_HEIGHT)

@@ -1,149 +1,169 @@
-ArenaDrone 1 x	91.158
+ArenaDrone 1 x	50.373
 ArenaDrone 1 x #split	1
-Barrels 1 x x1.9	0.383
+Barrels 1 x x1.9	0.183
 Barrels 1 x x1.9 #split	1
-CarStack 1 x x2.5	0.310
+CarStack 1 x x2.5	0.332
 CarStack 1 x x2.5 #split	1
-CrushedCar 1 x x2.5	0.276
+CrushedCar 1 x x2.5	0.166
 CrushedCar 1 x x2.5 #split	1
-Dumpster 1 x x2.2	0.446
+Dumpster 1 x x2.2	0.220
 Dumpster 1 x x2.2 #split	1
-GroundTile 1 x x1.5	0.302
+GroundTile 1 x x1.5	0.179
 GroundTile 1 x x1.5 #split	1
-JunkWall 1 x x1.75	0.320
+HubSectionA 1 x	75.171
+HubSectionA 1 x #split	1
+HubSectionB 1 x	70.434
+HubSectionB 1 x #split	1
+HubSectionEnd 1 x	74.559
+HubSectionEnd 1 x #split	1
+JunkWall 1 x x1.75	0.236
 JunkWall 1 x x1.75 #split	1
-MachinePad 1 x x1.5	0.326
+MachinePad 1 x x1.5	0.182
 MachinePad 1 x x1.5 #split	1
-MarketIsland 1 x	116.937
+MarketIsland 1 x	53.344
 MarketIsland 1 x #split	1
-PadIsland 1 x	14.843
+PadIsland 1 x	11.137
 PadIsland 1 x #split	1
-Pallets 1 x x1.4	0.440
+Pallets 1 x x1.4	0.185
 Pallets 1 x x1.4 #split	1
-ParkBench 1 x x1.85	0.207
+ParkBench 1 x x1.85	0.083
 ParkBench 1 x x1.85 #split	1
-PlotMarker 1 x x1.5	1.050
+PlotMarker 1 x x1.5	0.379
 PlotMarker 1 x x1.5 #split	1
-ScrapPalm 1 x x1.5	0.421
+ScrapPalm 1 x x1.5	0.177
 ScrapPalm 1 x x1.5 #split	1
-ScrapTreeLamppost 1 x x1.5	0.438
+ScrapTreeLamppost 1 x x1.5	0.208
 ScrapTreeLamppost 1 x x1.5 #split	1
-ShippingContainer 1 x x1.5	0.391
+ShippingContainer 1 x x1.5	0.307
 ShippingContainer 1 x x1.5 #split	1
-ShopConceptContainer 1 x x2.5	218.190
+ShopConceptContainer 1 x x2.5	79.711
 ShopConceptContainer 1 x x2.5 #split	1
-StorageCrate 1 x x1.5	17.524
-StreetlightBroken 1 x x2	0.248
+StorageCrate 1 x x1.5	9.657
+StreetlightBroken 1 x x2	0.120
 StreetlightBroken 1 x x2 #split	1
-TrafficCones 1 x x1.8	0.585
+TrafficCones 1 x x1.8	0.155
 TrafficCones 1 x x1.8 #split	1
-TyreStack 1 x x1.8	0.221
+TyreStack 1 x x1.8	0.113
 TyreStack 1 x x1.8 #split	1
-VendingMachine 1 x x2	9.217
+VendingMachine 1 x x2	5.971
 VendingMachine 1 x x2 #split	1
-YardFence 1 x x1.5	0.329
+YardFence 1 x x1.5	0.169
 YardFence 1 x x1.5 #split	1
-YardFenceHalf 1 x x1.5	0.287
+YardFenceHalf 1 x x1.5	0.151
 YardFenceHalf 1 x x1.5 #split	1
-YardFooting 0.5 x x1.5	0.142
+YardFooting 0.5 x x1.5	0.066
 YardFooting 0.5 x x1.5 #split	1
-YardFooting 1 x x1.5	0.128
+YardFooting 1 x x1.5	0.059
 YardFooting 1 x x1.5 #split	1
-YardGate 1 x x1.5	0.568
+YardGate 1 x x1.5	0.241
 YardGate 1 x x1.5 #split	1
-YardIsland 1 x	56.071
+YardIsland 1 x	83.475
 YardIsland 1 x #split	1
-YardPath 1 x x1.5	0.445
+YardPath 1 x x1.5	0.213
 YardPath 1 x x1.5 #split	1
-YardPathStub 1 x x1.5	0.380
+YardPathStub 1 x x1.5	0.175
 YardPathStub 1 x x1.5 #split	1
-slab ArenaWall	2.394
+slab ArenaWall	1.698
 slab ArenaWall #split	1
-slab Avenue1	2.612
+slab Avenue1	1.371
 slab Avenue1 #split	1
-slab Avenue2	2.306
+slab Avenue2	1.946
 slab Avenue2 #split	1
-slab Avenue3	1.929
+slab Avenue3	2.037
 slab Avenue3 #split	1
-slab Avenue4	2.262
+slab Avenue4	2.055
 slab Avenue4 #split	1
-slab Avenue5	2.938
+slab Avenue5	1.910
 slab Avenue5 #split	1
-slab Beacon	1.052
+slab Beacon	0.634
 slab Beacon #split	1
-slab Bridge1	1.642
+slab Bridge1	1.695
 slab Bridge1 #split	1
-slab Bridge2	1.686
+slab Bridge2	1.720
 slab Bridge2 #split	1
-slab Bridge3	1.659
+slab Bridge3	1.416
 slab Bridge3 #split	1
-slab Bridge4	1.620
+slab Bridge4	1.591
 slab Bridge4 #split	1
-slab Bridge5	2.023
+slab Bridge5	1.530
 slab Bridge5 #split	1
-slab Bridge6	1.625
+slab Bridge6	1.286
 slab Bridge6 #split	1
-slab Bridge7	1.961
+slab Bridge7	1.597
 slab Bridge7 #split	1
-slab Bridge8	1.679
+slab Bridge8	1.524
 slab Bridge8 #split	1
-slab Hatch1	0.201
+slab Hatch1	0.126
 slab Hatch1 #split	1
-slab Hatch2	0.201
+slab Hatch2	0.131
 slab Hatch2 #split	1
-slab Hatch3	0.247
+slab Hatch3	0.124
 slab Hatch3 #split	1
-slab Hatch4	0.247
+slab Hatch4	0.131
 slab Hatch4 #split	1
-slab LandmarkPlanter	0.065
+slab LandmarkPlanter	0.061
 slab LandmarkPlanter #split	1
-slab MarketIsland	4.474
+slab Line	33.177
+slab Line #split	1
+slab MarketIsland	4.385
 slab MarketIsland #split	1
-slab Pad1	0.595
+slab Pad1	0.544
 slab Pad1 #split	1
-slab Pad2	0.528
+slab Pad2	0.537
 slab Pad2 #split	1
-slab Pad3	0.477
+slab Pad3	0.540
 slab Pad3 #split	1
-slab Pad4	0.544
+slab Pad4	0.541
 slab Pad4 #split	1
-slab Palm1Planter	0.062
+slab Palm1Planter	0.061
 slab Palm1Planter #split	1
 slab Palm2Planter	0.062
 slab Palm2Planter #split	1
-slab Plot1	1.023
+slab Plot1	4.136
 slab Plot1 #split	1
-slab Plot2	1.243
+slab Plot2	5.108
 slab Plot2 #split	1
-slab Plot3	1.000
+slab Plot3	4.819
 slab Plot3 #split	1
-slab Plot4	1.018
+slab Plot4	4.919
 slab Plot4 #split	1
-slab Plot5	1.158
+slab Plot5	5.103
 slab Plot5 #split	1
-slab Plot6	1.032
+slab Plot6	5.076
 slab Plot6 #split	1
-slab Plot7	1.004
+slab Plot7	3.650
 slab Plot7 #split	1
-slab Plot8	0.955
+slab Plot8	4.779
 slab Plot8 #split	1
-slab Ramps	7.201
+slab Ramps	4.571
 slab Ramps #split	1
-slab Spawn	0.280
+slab Side1	0.894
+slab Side1 #split	1
+slab Side2	0.880
+slab Side2 #split	1
+slab Side3	0.926
+slab Side3 #split	1
+slab Side4	0.722
+slab Side4 #split	1
+slab Side5	0.888
+slab Side5 #split	1
+slab Side6	0.877
+slab Side6 #split	1
+slab Spawn	0.093
 slab Spawn #split	1
-slab Spoke1	0.151
+slab Spoke1	0.088
 slab Spoke1 #split	1
-slab Spoke2	0.120
+slab Spoke2	0.084
 slab Spoke2 #split	1
-slab Spoke3	0.146
+slab Spoke3	0.072
 slab Spoke3 #split	1
-slab Spoke4	0.128
+slab Spoke4	0.086
 slab Spoke4 #split	1
-slab Spoke5	0.156
+slab Spoke5	0.085
 slab Spoke5 #split	1
-slab Spoke6	0.159
+slab Spoke6	0.070
 slab Spoke6 #split	1
-slab Spoke7	0.157
+slab Spoke7	0.084
 slab Spoke7 #split	1
-slab Spoke8	0.151
+slab Spoke8	0.087
 slab Spoke8 #split	1

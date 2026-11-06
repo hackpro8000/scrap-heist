@@ -14,4 +14,11 @@ local function wornDistance(x: number, y: number): number
 	return math.sqrt(x * x + y * y) * math.cos(sector) - PLAZA
 end
 
+-- A round island with a lobed rim, all its turf kept.
+local COVER_INSET = math.huge
+local RIM_WOBBLE = 0.16
+local function rimShape(_angle: number): number
+	return 1
+end
+
 -- include: ColumnIsland
