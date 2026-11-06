@@ -16,92 +16,158 @@ assemble ServerMap: uses YardPath (key f096c7510747dcc8)
 assemble ServerMap: uses YardPathStub (key 9d6e97b27d7f04b9)
 assemble ServerMap: uses JunkMound (key 1fc541ce300d6d84)
 assemble ServerMap: uses BillboardFrame (key 7c418c4bc122e3a8)
-assemble ServerMap: slab at ServerMap.luau:269-459 (key cf7e96091024d5cc)
-assemble ServerMap: slab at ServerMap.luau:539-574 (key 5f070fd414250023)
-assemble ServerMap: slab at ServerMap.luau:577-581 (key 2f5b4070ee3aa512)
-assemble ServerMap: slab at ServerMap.luau:639-657 (key ec88fbc68c01cf27)
-assemble ServerMap: slab at ServerMap.luau:660-670 (key 6ecf17da3fae12b3)
-assemble ServerMap: slab at ServerMap.luau:722-728 (key 7b25a7aa2539d602)
-assemble ServerMap: slab at ServerMap.luau:730-739 (key 107c5c30239027da)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 22663 lines, in 0s
+assemble ServerMap: slab at ServerMap.luau:277-467 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:547-576 (key 7ded6fc62f8b67a3)
+assemble ServerMap: slab at ServerMap.luau:579-583 (key 2f5b4070ee3aa512)
+assemble ServerMap: slab at ServerMap.luau:641-659 (key ec88fbc68c01cf27)
+assemble ServerMap: slab at ServerMap.luau:662-672 (key 6ecf17da3fae12b3)
+assemble ServerMap: slab at ServerMap.luau:725-731 (key 7b25a7aa2539d602)
+assemble ServerMap: slab at ServerMap.luau:733-742 (key 107c5c30239027da)
+assemble ServerMap: slab at ServerMap.luau:750-780 (key 18845c9c8b69ea54)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 22704 lines, in 0s
 [    0.0s] running ServerMap/model.luau
 [    0.5s] cached HubSectionEnd 1 x part 2/4
 [    0.7s] cached HubSectionEnd 1 x part 2/4
-[    0.7s] building YardFence 1 x x1.5
+[    0.7s] cached YardFence 1 x x1.5
+[    0.7s] cached YardFence 1 x x1.5
+[    0.7s] cached YardFence 1 x x1.5
+[    0.7s] cached YardFence 1 x x1.5
+[    0.7s] cached YardFence 1 x x1.5
+[    0.7s] cached YardFence 1 x x1.5
+[    0.7s] cached YardFence 1 x x1.5
+[    0.7s] cached YardFenceHalf 1 x x1.5
+[    0.7s] cached YardFence 1 x x1.5
+[    0.7s] cached YardFenceHalf 1 x x1.5
+[    0.7s] building Spoke1 -210 180 0
 [    0.7s] baking on CPU (no GPU)
-[    0.7s]   shaded Posts 256×256 in 0.04s
-[    0.8s]   shaded Sheets 256×256 in 0.06s
-[    0.9s]   shaded Fittings 256×256 in 0.06s
-[    0.9s] built YardFence 1 x x1.5: 3 parts in 0.2s
-[    0.9s] cached YardFence 1 x x1.5
-[    0.9s] cached YardFence 1 x x1.5
-[    0.9s] cached YardFence 1 x x1.5
-[    0.9s] cached YardFence 1 x x1.5
-[    0.9s] cached YardFence 1 x x1.5
-[    0.9s] cached YardFence 1 x x1.5
-[    0.9s] building YardFenceHalf 1 x x1.5
-[    0.9s]   shaded Posts 256×256 in 0.03s
-[    1.0s]   shaded Sheets 256×256 in 0.05s
-[    1.0s]   shaded Fittings 256×256 in 0.06s
-[    1.0s] built YardFenceHalf 1 x x1.5: 3 parts in 0.2s
-[    1.0s] cached YardFence 1 x x1.5
-[    1.0s] cached YardFenceHalf 1 x x1.5
-[    1.0s] building Spoke1 -210 180 0
-[    1.1s]   shaded Road 300×300 in 0.07s
-[    1.1s] built Spoke1 -210 180 0: 1 parts in 0.1s
-[    1.1s] building Plot2 -70 180 0
-[    2.2s]   shaded Ground_-1_-1_0 816×816 in 0.93s
-[    2.5s]   shaded Ground_-1_0_0_000 540×540 in 0.19s
-[    2.7s]   shaded Ground_-1_0_0_010 544×544 in 0.20s
-[    3.1s]   shaded Ground_-1_0_0_100 540×540 in 0.38s
-[    3.6s]   shaded Ground_-1_0_0_110 544×544 in 0.39s
-[    4.7s]   shaded Ground_0_-1_0 816×816 in 0.92s
-[    5.1s]   shaded Ground_0_0_0_000 540×540 in 0.38s
-[    5.5s]   shaded Ground_0_0_0_010 544×544 in 0.37s
-[    5.8s]   shaded Ground_0_0_0_100 540×540 in 0.19s
-[    6.0s]   shaded Ground_0_0_0_110 544×544 in 0.19s
-[    6.0s] built Plot2 -70 180 0: 10 parts in 4.9s
-[    6.1s] cached YardFence 1 x x1.5
-[    6.1s] cached YardFence 1 x x1.5
-[    6.1s] cached YardFence 1 x x1.5
-[    6.1s] cached YardFence 1 x x1.5
-[    6.1s] cached YardFence 1 x x1.5
-[    6.1s] cached YardFenceHalf 1 x x1.5
-[    6.1s] cached YardFence 1 x x1.5
-[    6.1s] cached YardFence 1 x x1.5
-[    6.1s] cached YardFence 1 x x1.5
-[    6.1s] cached YardFenceHalf 1 x x1.5
-[    6.1s] building Bridge8 210 -180 180
-[    6.7s]   shaded Deck 1024×1024 in 0.51s
-[    6.7s]   shaded HazardYellow 144×144 in 0.04s
-[    6.8s]   shaded HazardBlack 140×140 in 0.03s
-[    7.1s]   shaded Girders 1024×1024 in 0.35s
-[    7.2s]   shaded Posts 192×192 in 0.06s
-[    7.4s]   shaded Rail 1024×1024 in 0.19s
-[    7.4s]   shaded KerbEnds 108×108 in 0.02s
-[    7.4s]   shaded EndPosts 60×60 in 0.01s
-[    7.6s]   shaded Abutments 392×392 in 0.16s
-[    7.6s]   shaded JointPlate 152×152 in 0.01s
-[    7.7s]   shaded Apron 184×184 in 0.05s
-[    7.7s] built Bridge8 210 -180 180: 11 parts in 1.6s
-[    7.7s] writing ServerMap.glb and 140 textures
-[    8.6s] chunk ServerMap_S2_01.glb: 58 parts, 8.7 MB
-[    8.6s] chunk ServerMap_S2_02.glb: 82 parts, 11.4 MB
-ServerMap: 140 parts, script 7.75s, total 8.95s
-SHARD_COST	YardFence 1 x x1.5	0.182
-SHARD_COST	YardFence 1 x x1.5 #split	1
-SHARD_COST	YardFenceHalf 1 x x1.5	0.155
-SHARD_COST	YardFenceHalf 1 x x1.5 #split	1
-SHARD_COST	slab Spoke1	0.078
+[    0.8s]   shaded Road 300×300 in 0.07s
+[    0.8s] built Spoke1 -210 180 0: 1 parts in 0.1s
+[    0.8s] building Approach1 -210 0 0
+[    1.0s]   shaded Ramp 468×468 in 0.16s
+[    1.2s]   shaded Walls 488×488 in 0.15s
+[    1.2s]   shaded WallCaps 468×468 in 0.05s
+[    1.2s] built Approach1 -210 0 0: 3 parts in 0.4s
+[    1.2s] cached YardFenceHalf 1 x x1.5
+[    1.2s] cached YardFenceHalf 1 x x1.5
+[    1.2s] building PadGarage 1 x x1.6666666666666667
+[    1.3s]   shaded Plate 256×256 in 0.10s
+[    1.4s]   shaded Stripes 256×256 in 0.03s
+[    1.4s]   shaded Hardware 256×256 in 0.04s
+[    1.4s] built PadGarage 1 x x1.6666666666666667: 3 parts in 0.2s
+[    1.4s] cached PadGarage 1 x x1.6666666666666667
+[    1.4s] cached PadGarage 1 x x1.6666666666666667
+[    1.4s] cached PadGarage 1 x x1.6666666666666667
+[    1.4s] cached PadGarage 1 x x1.6666666666666667
+[    1.4s] cached PadGarage 1 x x1.6666666666666667
+[    1.4s] cached PadGarage 1 x x1.6666666666666667
+[    1.4s] building JunkMound 1 x x2.3
+[    2.0s]   shaded  256×256 in 0.16s
+[    2.0s]   shaded  256×256 in 0.03s
+[    2.0s]   shaded  256×256 in 0.03s
+[    2.1s]   shaded  256×256 in 0.03s
+[    2.1s] built JunkMound 1 x x2.3: 4 parts in 0.7s
+[    2.1s] cached PadGarage 1 x x1.6666666666666667
+[    2.1s] cached PadGarage 1 x x1.6666666666666667
+[    2.1s] cached PadGarage 1 x x1.6666666666666667
+[    2.1s] cached PadGarage 1 x x1.6666666666666667
+[    2.1s] cached PadGarage 1 x x1.6666666666666667
+[    2.1s] cached PadGarage 1 x x1.6666666666666667
+[    2.1s] cached PadGarage 1 x x1.6666666666666667
+[    2.1s] building Yard4_Bay3 197 134 0
+[    2.2s]   shaded Plinth 336×336 in 0.09s
+[    2.2s]   shaded Frame 272×272 in 0.03s
+[    2.2s]   shaded Marks 104×104 in 0.02s
+[    2.2s] built Yard4_Bay3 197 134 0: 3 parts in 0.2s
+[    2.2s] cached PadGarage 1 x x1.6666666666666667
+[    2.2s] cached PadGarage 1 x x1.6666666666666667
+[    2.2s] cached PadGarage 1 x x1.6666666666666667
+[    2.2s] cached PadGarage 1 x x1.6666666666666667
+[    2.2s] cached PadGarage 1 x x1.6666666666666667
+[    2.2s] cached PadGarage 1 x x1.6666666666666667
+[    2.2s] cached PadGarage 1 x x1.6666666666666667
+[    2.2s] building Yard5_Bay1 -173 -134 180
+[    2.3s]   shaded Plinth 336×336 in 0.09s
+[    2.4s]   shaded Frame 272×272 in 0.03s
+[    2.4s]   shaded Marks 104×104 in 0.02s
+[    2.4s] built Yard5_Bay1 -173 -134 180: 3 parts in 0.2s
+[    2.4s] cached JunkMound 1 x x2.3
+[    2.4s] building Bridge5 -210 -180 180
+[    3.0s]   shaded Deck 932×932 in 0.50s
+[    3.1s]   shaded HazardYellow 132×132 in 0.02s
+[    3.1s]   shaded HazardBlack 132×132 in 0.02s
+[    3.5s]   shaded Girders 1024×1024 in 0.35s
+[    3.5s]   shaded Posts 192×192 in 0.05s
+[    3.7s]   shaded Rail 996×996 in 0.18s
+[    3.7s]   shaded KerbEnds 108×108 in 0.02s
+[    3.7s]   shaded EndPosts 60×60 in 0.01s
+[    3.9s]   shaded Abutments 368×368 in 0.16s
+[    3.9s]   shaded JointPlate 152×152 in 0.01s
+[    4.0s]   shaded Apron 184×184 in 0.05s
+[    4.0s] built Bridge5 -210 -180 180: 11 parts in 1.6s
+[    4.0s] cached JunkMound 1 x x2.3
+[    4.0s] cached YardFence 1 x x1.5
+[    4.0s] cached YardFence 1 x x1.5
+[    4.0s] cached YardFence 1 x x1.5
+[    4.0s] cached YardFence 1 x x1.5
+[    4.0s] cached YardFence 1 x x1.5
+[    4.0s] cached YardFence 1 x x1.5
+[    4.0s] cached YardFence 1 x x1.5
+[    4.0s] cached YardFence 1 x x1.5
+[    4.0s] cached YardFence 1 x x1.5
+[    4.0s] cached YardFenceHalf 1 x x1.5
+[    4.0s] cached YardFence 1 x x1.5
+[    4.0s] cached YardFence 1 x x1.5
+[    4.0s] cached YardFence 1 x x1.5
+[    4.0s] cached YardFenceHalf 1 x x1.5
+[    4.0s] building YardGate 1 x x1.5
+[    4.1s]   shaded Frame 256×256 in 0.04s
+[    4.1s]   shaded Doors 256×256 in 0.04s
+[    4.2s]   shaded Padlock 256×256 in 0.09s
+[    4.3s]   shaded Hardware 256×256 in 0.05s
+[    4.3s] built YardGate 1 x x1.5: 4 parts in 0.2s
+[    4.3s] cached PadGarage 1 x x1.6666666666666667
+[    4.3s] cached PadGarage 1 x x1.6666666666666667
+[    4.3s] cached PadGarage 1 x x1.6666666666666667
+[    4.3s] cached PadGarage 1 x x1.6666666666666667
+[    4.3s] cached PadGarage 1 x x1.6666666666666667
+[    4.3s] cached PadGarage 1 x x1.6666666666666667
+[    4.3s] cached PadGarage 1 x x1.6666666666666667
+[    4.3s] building Yard8_Bay2 235 -134 180
+[    4.4s]   shaded Plinth 336×336 in 0.09s
+[    4.4s]   shaded Frame 272×272 in 0.03s
+[    4.4s]   shaded Marks 104×104 in 0.02s
+[    4.4s] built Yard8_Bay2 235 -134 180: 3 parts in 0.2s
+[    4.5s] cached JunkMound 1 x x2.3
+[    4.5s] cached YardFenceHalf 1 x x1.5
+[    4.5s] cached YardFenceHalf 1 x x1.5
+[    4.5s] cached YardGate 1 x x1.5
+[    4.5s] writing ServerMap.glb and 274 textures
+[    5.6s] chunk ServerMap_S2_01.glb: 58 parts, 8.7 MB
+[    5.6s] chunk ServerMap_S2_02.glb: 117 parts, 5.3 MB
+[    5.6s] chunk ServerMap_S2_03.glb: 99 parts, 7.6 MB
+ServerMap: 274 parts, script 4.47s, total 6.04s
+SHARD_COST	slab Spoke1	0.079
 SHARD_COST	slab Spoke1 #split	1
-SHARD_COST	slab Plot2	4.876
-SHARD_COST	slab Plot2 #split	1
-SHARD_COST	slab Bridge8	1.599
-SHARD_COST	slab Bridge8 #split	1
-upload ServerMap: starting in 0.6s
+SHARD_COST	slab Approach1	0.412
+SHARD_COST	slab Approach1 #split	1
+SHARD_COST	PadGarage 1 x x1.6666666666666667	0.188
+SHARD_COST	PadGarage 1 x x1.6666666666666667 #split	1
+SHARD_COST	JunkMound 1 x x2.3	0.659
+SHARD_COST	slab Yard4_Bay3	0.153
+SHARD_COST	slab Yard4_Bay3 #split	1
+SHARD_COST	slab Yard5_Bay1	0.160
+SHARD_COST	slab Yard5_Bay1 #split	1
+SHARD_COST	slab Bridge5	1.573
+SHARD_COST	slab Bridge5 #split	1
+SHARD_COST	YardGate 1 x x1.5	0.242
+SHARD_COST	YardGate 1 x x1.5 #split	1
+SHARD_COST	slab Yard8_Bay2	0.163
+SHARD_COST	slab Yard8_Bay2 #split	1
+upload ServerMap: starting in 0.7s
 upload ServerMap: uploading ServerMapS2_01 (8.3M)
-upload ServerMap: uploading ServerMapS2_02 (11M)
-upload ServerMap: HTTP 500, retrying in 1.1s (try 1 of 8)
-upload ServerMap: ServerMapS2_01 is asset 87769427093324
-upload ServerMap: ServerMapS2_02 is asset 113018833183821
-upload ServerMap: shard upload done: 2 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
+upload ServerMap: uploading ServerMapS2_02 (5.1M)
+upload ServerMap: uploading ServerMapS2_03 (7.3M)
+upload ServerMap: ServerMapS2_03 is asset 137846059881181
+upload ServerMap: ServerMapS2_01 is asset 124838493212275
+upload ServerMap: ServerMapS2_02 is asset 137735283570447
+upload ServerMap: shard upload done: 3 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
