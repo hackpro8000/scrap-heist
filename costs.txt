@@ -1,8 +1,0 @@
-HubIsland 1 x	196.034
-HubIsland 1 x #split	1
-Dumpster 1 x x2.2	0.218
-Dumpster 1 x x2.2 #split	1
-slab Market	1.398
-slab Market #split	1
-YardIsland 1 x	26.794
-YardIsland 1 x #split	1
