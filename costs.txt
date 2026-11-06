@@ -1,0 +1,18 @@
+slab Spawn	0.267
+slab Spawn #split	1
+slab Pad1	0.544
+slab Pad1 #split	1
+slab Pad2	0.551
+slab Pad2 #split	1
+slab Avenue2	1.806
+slab Avenue2 #split	1
+MarketIsland 1 x	40.654
+MarketIsland 1 x #split	1
+slab LandmarkPlanter	0.063
+slab LandmarkPlanter #split	1
+ScrapTreeLamppost 1 x x1.5	0.214
+ScrapTreeLamppost 1 x x1.5 #split	1
+VendingMachine 1 x x2	5.989
+VendingMachine 1 x x2 #split	1
+YardIsland 1 x	42.136
+YardIsland 1 x #split	1
