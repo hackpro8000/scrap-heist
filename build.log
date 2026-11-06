@@ -40,230 +40,230 @@ assemble ServerMap: slab at ServerMap.luau:1362-1370 (key 209bd5af05ec8c81)
 assemble ServerMap: slab at ServerMap.luau:1402-1424 (key c8fbb33a2805dfaf)
 assemble ServerMap: wrote art/models/ServerMap/model.luau, 33588 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.5s] building Beacon 0 0 0
+[    0.6s] building Beacon 0 0 0
 [    0.6s] baking on CPU (no GPU)
-[    0.7s]   shaded Plinth 496×496 in 0.17s
-[    0.7s]   shaded PlinthStripe 460×460 in 0.03s
-[    1.0s]   shaded Mast 880×880 in 0.27s
-[    1.1s]   shaded CoreMount 248×248 in 0.05s
-[    1.1s]   shaded CoreCage 172×172 in 0.02s
-[    1.1s] built Beacon 0 0 0: 6 parts in 0.6s
-[    1.1s] building Avenue1 90 0 -90
-[    1.8s]   shaded Deck 1024×1024 in 0.60s
-[    1.9s]   shaded HazardYellow 236×236 in 0.04s
-[    1.9s]   shaded HazardBlack 236×236 in 0.04s
-[    2.5s]   shaded Girders 1024×1024 in 0.53s
-[    2.6s]   shaded Posts 352×352 in 0.09s
-[    2.8s]   shaded Rail 1024×1024 in 0.18s
-[    2.8s]   shaded KerbEnds 156×156 in 0.04s
-[    2.8s]   shaded EndPosts 76×76 in 0.02s
-[    2.9s]   shaded Abutments 304×304 in 0.06s
-[    2.9s] built Avenue1 90 0 -90: 9 parts in 1.8s
-[    2.9s] building Avenue3 343 0 -90
-[    3.5s]   shaded Deck 1024×1024 in 0.53s
-[    3.6s]   shaded HazardYellow 192×192 in 0.03s
-[    3.6s]   shaded HazardBlack 188×188 in 0.03s
-[    4.1s]   shaded Girders 1024×1024 in 0.44s
-[    4.1s]   shaded Posts 280×280 in 0.07s
-[    4.3s]   shaded Rail 1024×1024 in 0.17s
-[    4.4s]   shaded KerbEnds 152×152 in 0.04s
-[    4.4s]   shaded EndPosts 76×76 in 0.01s
-[    4.5s]   shaded Abutments 368×368 in 0.12s
-[    4.5s] built Avenue3 343 0 -90: 9 parts in 1.6s
-[    4.5s] building MarketIsland 1 x part 2/3
-[    5.8s]   shaded Columns_0_0_-1_101 280×280 in 0.06s
-[    7.5s]   shaded Columns_0_-1_-1 1000×1000 in 1.60s
-[    8.9s]   shaded Columns_-1_-1_0 1012×1012 in 1.33s
-[    9.2s]   shaded Columns_0_0_0_011 424×424 in 0.21s
-[    9.2s]   shaded Columns_0_0_0_010 264×264 in 0.06s
-[   10.5s]   shaded Columns_0_-1_0 932×932 in 1.21s
-[   10.7s]   shaded Dirt_-1_-1_0_110 324×324 in 0.15s
-[   11.1s]   shaded Dirt_-1_-1_0_000 564×564 in 0.41s
-[   12.7s]   shaded Dirt_0_0_0_100 964×964 in 1.51s
-[   12.7s]   shaded Dirt_0_0_0_011 168×168 in 0.03s
-[   13.0s]   shaded Dirt_-1_0_0_001 528×528 in 0.30s
-[   13.8s]   shaded Dirt_0_-1_0_000 584×584 in 0.75s
-[   14.1s]   shaded Dirt_0_-1_0_010 464×464 in 0.31s
-[   14.7s]   shaded Dirt_0_-1_0_011 636×636 in 0.61s
-[   15.0s]   shaded Dirt_0_-1_0_111 416×416 in 0.22s
-[   15.2s]   shaded Dirt_-1_-1_-1 348×348 in 0.24s
-[   15.2s]   shaded Dirt_-1_0_-1 60×60 in 0.01s
-[   15.3s]   shaded Pebbles_-1_-1_0 164×164 in 0.04s
-[   15.3s]   shaded Pebbles_-1_-1_-1 56×56 in 0.01s
-[   16.0s]   shaded Grass_0_-1_0_010 540×540 in 0.64s
-[   16.9s]   shaded Grass_-1_0_0_000 868×868 in 0.83s
-[   17.7s]   shaded Grass_-1_0_0_110 776×776 in 0.77s
-[   18.8s]   shaded Grass_0_0_0_100 892×892 in 1.02s
-[   19.5s]   shaded Grass_0_0_0_000 540×540 in 0.64s
-[   19.5s] built MarketIsland 1 x part 2/3: 24 parts in 15.0s
-[   19.6s] building ParkBench 1 x x1.85
-[   19.7s]   shaded Frame 256×256 in 0.04s
-[   19.7s]   shaded Slats 256×256 in 0.02s
-[   19.7s] built ParkBench 1 x x1.85: 2 parts in 0.1s
-[   19.7s] building Palm1Planter 662.3223304703363 17.67766952966369 0
-[   19.7s]   shaded Box 172×172 in 0.03s
-[   19.8s]   shaded Soil 156×156 in 0.02s
-[   19.8s] built Palm1Planter 662.3223304703363 17.67766952966369 0: 2 parts in 0.1s
-[   19.8s] building ScrapPalm 1 x x1.5
-[   19.8s]   shaded Trunk 256×256 in 0.02s
-[   19.8s]   shaded Couplings 256×256 in 0.03s
-[   19.9s]   shaded Fronds 256×256 in 0.04s
-[   19.9s]   shaded Cans 256×256 in 0.04s
-[   19.9s] built ScrapPalm 1 x x1.5: 4 parts in 0.1s
-[   19.9s] building Palm2Planter 662.3223304703363 -17.67766952966369 0
-[   19.9s]   shaded Box 172×172 in 0.03s
-[   20.0s]   shaded Soil 156×156 in 0.02s
-[   20.0s] built Palm2Planter 662.3223304703363 -17.67766952966369 0: 2 parts in 0.1s
-[   20.0s] cached ScrapPalm 1 x x1.5
-[   20.0s] building YardIsland 1 x part 1/3
-[   21.5s]   shaded Columns_-1_0_0_100 308×308 in 0.14s
-[   22.1s]   shaded Columns_-1_-1_-1 632×632 in 0.63s
-[   23.6s]   shaded Columns_0_-1_0_011 972×972 in 1.35s
-[   23.6s]   shaded Columns_0_-1_0_110 236×236 in 0.06s
-[   24.4s]   shaded Columns_0_-1_-1 684×684 in 0.72s
-[   25.3s]   shaded Dirt_0_0_0_000 804×804 in 0.83s
-[   26.1s]   shaded Dirt_0_-1_0_011 744×744 in 0.84s
-[   26.8s]   shaded Dirt_-1_0_0_110 572×572 in 0.63s
-[   27.6s]   shaded Dirt_-1_-1_0_010 704×704 in 0.73s
-[   28.5s]   shaded Dirt_-1_-1_0_110 820×820 in 0.86s
-[   28.7s]   shaded Pebbles_0_0_0 328×328 in 0.17s
-[   28.7s]   shaded Pebbles_-1_-1_0 216×216 in 0.08s
-[   29.5s]   shaded Grass_-1_-1_0_100 780×780 in 0.74s
-[   29.6s]   shaded Grass_-1_-1_0_000 208×208 in 0.07s
-[   30.3s]   shaded Grass_-1_-1_0_110 540×540 in 0.64s
-[   31.0s]   shaded Grass_-1_0_0_100 628×628 in 0.68s
-[   31.5s]   shaded Grass_-1_0_0_110 664×664 in 0.45s
-[   31.5s] built YardIsland 1 x part 1/3: 17 parts in 11.6s
-[   31.7s] cached YardIsland 1 x part 1/3
-[   31.7s] cached YardIsland 1 x part 1/3
-[   31.8s] cached YardIsland 1 x part 1/3
-[   31.8s] building GroundTile 1 x x1.5
-[   31.9s]   shaded Dirt 256×256 in 0.06s
-[   31.9s]   shaded Slabs 256×256 in 0.04s
-[   31.9s]   shaded Scrap 256×256 in 0.03s
-[   31.9s] built GroundTile 1 x x1.5: 3 parts in 0.1s
-[   31.9s] cached GroundTile 1 x x1.5
-[   31.9s] cached GroundTile 1 x x1.5
-[   31.9s] cached GroundTile 1 x x1.5
-[   31.9s] cached GroundTile 1 x x1.5
-[   31.9s] cached GroundTile 1 x x1.5
-[   31.9s] cached GroundTile 1 x x1.5
-[   31.9s] building YardFooting 1 x x1.5
-[   32.0s]   shaded Footing 256×256 in 0.05s
-[   32.0s] built YardFooting 1 x x1.5: 1 parts in 0.1s
-[   32.0s] cached YardFooting 1 x x1.5
-[   32.0s] cached YardFooting 1 x x1.5
-[   32.0s] cached YardFooting 1 x x1.5
-[   32.0s] cached YardFooting 1 x x1.5
-[   32.0s] cached YardFooting 1 x x1.5
-[   32.0s] cached YardFooting 1 x x1.5
-[   32.0s] cached YardFooting 1 x x1.5
-[   32.0s] building YardFenceHalf 1 x x1.5
-[   32.0s]   shaded Posts 256×256 in 0.03s
-[   32.1s]   shaded Sheets 256×256 in 0.04s
-[   32.1s]   shaded Fittings 256×256 in 0.05s
-[   32.1s] built YardFenceHalf 1 x x1.5: 3 parts in 0.1s
-[   32.1s] cached YardFenceHalf 1 x x1.5
-[   32.2s] cached YardIsland 1 x part 1/3
-[   32.2s] building Plot5 444 84 0
-[   33.2s]   shaded Slab 1024×1024 in 0.88s
-[   33.2s] built Plot5 444 84 0: 1 parts in 1.0s
-[   33.3s] cached YardIsland 1 x part 1/3
-[   33.3s] cached YardIsland 1 x part 1/3
-[   33.3s] cached GroundTile 1 x x1.5
-[   33.3s] cached YardFooting 1 x x1.5
-[   33.3s] cached YardFooting 1 x x1.5
-[   33.3s] cached YardFooting 1 x x1.5
-[   33.3s] cached YardFooting 1 x x1.5
-[   33.3s] cached YardFooting 1 x x1.5
-[   33.3s] cached YardFooting 1 x x1.5
-[   33.3s] cached YardFooting 1 x x1.5
-[   33.3s] cached YardFooting 1 x x1.5
-[   33.3s] cached YardFooting 1 x x1.5
-[   33.3s] cached YardFooting 1 x x1.5
-[   33.3s] cached YardFooting 1 x x1.5
-[   33.3s] cached YardFooting 1 x x1.5
-[   33.4s] cached YardFenceHalf 1 x x1.5
-[   33.4s] cached YardFooting 1 x x1.5
-[   33.4s] building YardFooting 0.5 x x1.5
-[   33.4s]   shaded Footing 256×256 in 0.05s
-[   33.4s] built YardFooting 0.5 x x1.5: 1 parts in 0.1s
-[   33.4s] cached YardFenceHalf 1 x x1.5
-[   33.4s] building Bridge7 556 84 0
-[   33.7s]   shaded Deck 712×712 in 0.26s
-[   33.8s]   shaded HazardYellow 112×112 in 0.02s
-[   33.8s]   shaded HazardBlack 104×104 in 0.02s
-[   34.0s]   shaded Girders 1024×1024 in 0.24s
-[   34.1s]   shaded Posts 144×144 in 0.03s
-[   34.2s]   shaded Rail 976×976 in 0.13s
-[   34.2s]   shaded KerbEnds 108×108 in 0.01s
-[   34.2s]   shaded EndPosts 64×64 in 0.01s
-[   34.4s]   shaded Abutments 372×372 in 0.13s
-[   34.4s]   shaded JointPlate 152×152 in 0.01s
-[   34.4s]   shaded Apron 184×184 in 0.04s
-[   34.4s] built Bridge7 556 84 0: 11 parts in 1.0s
-[   34.5s] cached YardIsland 1 x part 1/3
-[   34.5s] building Barrels 1 x x1.9
-[   34.6s]   shaded RustDrums 256×256 in 0.05s
-[   34.6s]   shaded BlueDrum 256×256 in 0.04s
-[   34.6s]   shaded Hoops 256×256 in 0.02s
-[   34.7s]   shaded Slick 256×256 in 0.04s
-[   34.7s] built Barrels 1 x x1.9: 4 parts in 0.2s
-[   34.7s] building Pallets 1 x x1.4
-[   34.7s]   shaded Wood 256×256 in 0.08s
-[   34.8s]   shaded Nails 256×256 in 0.07s
-[   34.8s] built Pallets 1 x x1.4: 2 parts in 0.2s
-[   34.8s] building StreetlightBroken 1 x x2
-[   34.8s]   shaded Pole 256×256 in 0.02s
-[   34.9s]   shaded Head 256×256 in 0.03s
-[   34.9s]   shaded Glass 256×256 in 0.03s
-[   34.9s]   shaded Wires 256×256 in 0.01s
-[   34.9s] built StreetlightBroken 1 x x2: 4 parts in 0.1s
-[   34.9s] cached StreetlightBroken 1 x x2
-[   34.9s] cached StreetlightBroken 1 x x2
-[   34.9s] writing ServerMap.glb and 286 textures
-[   37.1s] chunk ServerMap_S5_01.glb: 24 parts, 9.8 MB
-[   37.2s] chunk ServerMap_S5_02.glb: 38 parts, 10.3 MB
-[   37.2s] chunk ServerMap_S5_03.glb: 34 parts, 7.5 MB
-[   37.2s] chunk ServerMap_S5_04.glb: 34 parts, 7.5 MB
-[   37.2s] chunk ServerMap_S5_05.glb: 53 parts, 9.4 MB
-[   37.2s] chunk ServerMap_S5_06.glb: 57 parts, 8.7 MB
-[   37.2s] chunk ServerMap_S5_07.glb: 46 parts, 10.7 MB
-[   37.8s] rendering preview of 286 parts
-ServerMap: 286 parts, script 34.93s, total 38.34s
-SHARD_COST	slab Beacon	0.612
+[    0.8s]   shaded Plinth 496×496 in 0.21s
+[    0.9s]   shaded PlinthStripe 460×460 in 0.04s
+[    1.2s]   shaded Mast 880×880 in 0.32s
+[    1.3s]   shaded CoreMount 248×248 in 0.05s
+[    1.3s]   shaded CoreCage 172×172 in 0.02s
+[    1.3s] built Beacon 0 0 0: 6 parts in 0.7s
+[    1.3s] building Avenue1 90 0 -90
+[    2.2s]   shaded Deck 1024×1024 in 0.73s
+[    2.2s]   shaded HazardYellow 236×236 in 0.05s
+[    2.3s]   shaded HazardBlack 236×236 in 0.04s
+[    2.9s]   shaded Girders 1024×1024 in 0.59s
+[    3.0s]   shaded Posts 352×352 in 0.10s
+[    3.2s]   shaded Rail 1024×1024 in 0.21s
+[    3.3s]   shaded KerbEnds 156×156 in 0.05s
+[    3.3s]   shaded EndPosts 76×76 in 0.02s
+[    3.4s]   shaded Abutments 304×304 in 0.07s
+[    3.4s] built Avenue1 90 0 -90: 9 parts in 2.1s
+[    3.4s] building Avenue3 343 0 -90
+[    4.2s]   shaded Deck 1024×1024 in 0.66s
+[    4.3s]   shaded HazardYellow 192×192 in 0.03s
+[    4.3s]   shaded HazardBlack 188×188 in 0.03s
+[    4.9s]   shaded Girders 1024×1024 in 0.54s
+[    5.0s]   shaded Posts 280×280 in 0.08s
+[    5.2s]   shaded Rail 1024×1024 in 0.20s
+[    5.3s]   shaded KerbEnds 152×152 in 0.04s
+[    5.3s]   shaded EndPosts 76×76 in 0.02s
+[    5.4s]   shaded Abutments 368×368 in 0.15s
+[    5.4s] built Avenue3 343 0 -90: 9 parts in 2.0s
+[    5.5s] building MarketIsland 1 x part 2/3
+[    7.2s]   shaded Columns_0_0_-1_101 280×280 in 0.08s
+[    9.1s]   shaded Columns_0_-1_-1 1000×1000 in 1.85s
+[   10.8s]   shaded Columns_-1_-1_0 1012×1012 in 1.58s
+[   11.0s]   shaded Columns_0_0_0_011 424×424 in 0.25s
+[   11.1s]   shaded Columns_0_0_0_010 264×264 in 0.07s
+[   12.7s]   shaded Columns_0_-1_0 932×932 in 1.48s
+[   12.9s]   shaded Dirt_-1_-1_0_110 324×324 in 0.18s
+[   13.4s]   shaded Dirt_-1_-1_0_000 564×564 in 0.51s
+[   15.3s]   shaded Dirt_0_0_0_100 964×964 in 1.80s
+[   15.3s]   shaded Dirt_0_0_0_011 168×168 in 0.04s
+[   15.7s]   shaded Dirt_-1_0_0_001 528×528 in 0.37s
+[   16.7s]   shaded Dirt_0_-1_0_000 584×584 in 0.93s
+[   17.0s]   shaded Dirt_0_-1_0_010 464×464 in 0.36s
+[   17.8s]   shaded Dirt_0_-1_0_011 636×636 in 0.72s
+[   18.1s]   shaded Dirt_0_-1_0_111 416×416 in 0.26s
+[   18.4s]   shaded Dirt_-1_-1_-1 348×348 in 0.29s
+[   18.4s]   shaded Dirt_-1_0_-1 60×60 in 0.01s
+[   18.4s]   shaded Pebbles_-1_-1_0 164×164 in 0.05s
+[   18.4s]   shaded Pebbles_-1_-1_-1 56×56 in 0.02s
+[   19.3s]   shaded Grass_0_-1_0_010 540×540 in 0.77s
+[   20.4s]   shaded Grass_-1_0_0_000 868×868 in 1.03s
+[   21.4s]   shaded Grass_-1_0_0_110 776×776 in 0.94s
+[   22.8s]   shaded Grass_0_0_0_100 892×892 in 1.34s
+[   23.7s]   shaded Grass_0_0_0_000 540×540 in 0.77s
+[   23.7s] built MarketIsland 1 x part 2/3: 24 parts in 18.2s
+[   23.8s] building ParkBench 1 x x1.85
+[   23.9s]   shaded Frame 256×256 in 0.05s
+[   23.9s]   shaded Slats 256×256 in 0.03s
+[   23.9s] built ParkBench 1 x x1.85: 2 parts in 0.1s
+[   23.9s] building Palm1Planter 662.3223304703363 17.67766952966369 0
+[   23.9s]   shaded Box 172×172 in 0.03s
+[   24.0s]   shaded Soil 156×156 in 0.02s
+[   24.0s] built Palm1Planter 662.3223304703363 17.67766952966369 0: 2 parts in 0.1s
+[   24.0s] building ScrapPalm 1 x x1.5
+[   24.0s]   shaded Trunk 256×256 in 0.03s
+[   24.1s]   shaded Couplings 256×256 in 0.04s
+[   24.1s]   shaded Fronds 256×256 in 0.04s
+[   24.1s]   shaded Cans 256×256 in 0.05s
+[   24.1s] built ScrapPalm 1 x x1.5: 4 parts in 0.2s
+[   24.2s] building Palm2Planter 662.3223304703363 -17.67766952966369 0
+[   24.2s]   shaded Box 172×172 in 0.03s
+[   24.2s]   shaded Soil 156×156 in 0.02s
+[   24.2s] built Palm2Planter 662.3223304703363 -17.67766952966369 0: 2 parts in 0.1s
+[   24.2s] cached ScrapPalm 1 x x1.5
+[   24.2s] building YardIsland 1 x part 1/3
+[   26.1s]   shaded Columns_-1_0_0_100 308×308 in 0.17s
+[   27.0s]   shaded Columns_-1_-1_-1 632×632 in 0.78s
+[   28.8s]   shaded Columns_0_-1_0_011 972×972 in 1.78s
+[   28.9s]   shaded Columns_0_-1_0_110 236×236 in 0.07s
+[   29.8s]   shaded Columns_0_-1_-1 684×684 in 0.86s
+[   30.9s]   shaded Dirt_0_0_0_000 804×804 in 1.06s
+[   32.0s]   shaded Dirt_0_-1_0_011 744×744 in 1.02s
+[   32.8s]   shaded Dirt_-1_0_0_110 572×572 in 0.76s
+[   33.6s]   shaded Dirt_-1_-1_0_010 704×704 in 0.82s
+[   34.7s]   shaded Dirt_-1_-1_0_110 820×820 in 1.08s
+[   35.0s]   shaded Pebbles_0_0_0 328×328 in 0.20s
+[   35.1s]   shaded Pebbles_-1_-1_0 216×216 in 0.09s
+[   36.1s]   shaded Grass_-1_-1_0_100 780×780 in 0.98s
+[   36.2s]   shaded Grass_-1_-1_0_000 208×208 in 0.09s
+[   37.0s]   shaded Grass_-1_-1_0_110 540×540 in 0.77s
+[   37.9s]   shaded Grass_-1_0_0_100 628×628 in 0.83s
+[   38.6s]   shaded Grass_-1_0_0_110 664×664 in 0.57s
+[   38.6s] built YardIsland 1 x part 1/3: 17 parts in 14.3s
+[   38.7s] cached YardIsland 1 x part 1/3
+[   38.9s] cached YardIsland 1 x part 1/3
+[   39.0s] cached YardIsland 1 x part 1/3
+[   39.0s] building GroundTile 1 x x1.5
+[   39.0s]   shaded Dirt 256×256 in 0.07s
+[   39.1s]   shaded Slabs 256×256 in 0.05s
+[   39.1s]   shaded Scrap 256×256 in 0.03s
+[   39.1s] built GroundTile 1 x x1.5: 3 parts in 0.2s
+[   39.1s] cached GroundTile 1 x x1.5
+[   39.1s] cached GroundTile 1 x x1.5
+[   39.1s] cached GroundTile 1 x x1.5
+[   39.1s] cached GroundTile 1 x x1.5
+[   39.1s] cached GroundTile 1 x x1.5
+[   39.1s] cached GroundTile 1 x x1.5
+[   39.1s] building YardFooting 1 x x1.5
+[   39.2s]   shaded Footing 256×256 in 0.01s
+[   39.2s] built YardFooting 1 x x1.5: 1 parts in 0.0s
+[   39.2s] cached YardFooting 1 x x1.5
+[   39.2s] cached YardFooting 1 x x1.5
+[   39.2s] cached YardFooting 1 x x1.5
+[   39.2s] cached YardFooting 1 x x1.5
+[   39.2s] cached YardFooting 1 x x1.5
+[   39.2s] cached YardFooting 1 x x1.5
+[   39.2s] cached YardFooting 1 x x1.5
+[   39.2s] building YardFenceHalf 1 x x1.5
+[   39.2s]   shaded Posts 256×256 in 0.01s
+[   39.2s]   shaded Sheets 256×256 in 0.01s
+[   39.2s]   shaded Fittings 256×256 in 0.01s
+[   39.2s] built YardFenceHalf 1 x x1.5: 3 parts in 0.1s
+[   39.2s] cached YardFenceHalf 1 x x1.5
+[   39.3s] cached YardIsland 1 x part 1/3
+[   39.3s] building Plot5 444 84 0
+[   40.6s]   shaded Slab 1024×1024 in 1.09s
+[   40.6s] built Plot5 444 84 0: 1 parts in 1.3s
+[   40.7s] cached YardIsland 1 x part 1/3
+[   40.8s] cached YardIsland 1 x part 1/3
+[   40.8s] cached GroundTile 1 x x1.5
+[   40.8s] cached YardFooting 1 x x1.5
+[   40.8s] cached YardFooting 1 x x1.5
+[   40.8s] cached YardFooting 1 x x1.5
+[   40.8s] cached YardFooting 1 x x1.5
+[   40.8s] cached YardFooting 1 x x1.5
+[   40.8s] cached YardFooting 1 x x1.5
+[   40.8s] cached YardFooting 1 x x1.5
+[   40.8s] cached YardFooting 1 x x1.5
+[   40.8s] cached YardFooting 1 x x1.5
+[   40.8s] cached YardFooting 1 x x1.5
+[   40.8s] cached YardFooting 1 x x1.5
+[   40.8s] cached YardFooting 1 x x1.5
+[   40.8s] cached YardFenceHalf 1 x x1.5
+[   40.8s] cached YardFooting 1 x x1.5
+[   40.8s] building YardFooting 0.5 x x1.5
+[   40.9s]   shaded Footing 256×256 in 0.06s
+[   40.9s] built YardFooting 0.5 x x1.5: 1 parts in 0.1s
+[   40.9s] cached YardFenceHalf 1 x x1.5
+[   40.9s] building Bridge7 556 84 0
+[   41.2s]   shaded Deck 712×712 in 0.30s
+[   41.3s]   shaded HazardYellow 112×112 in 0.02s
+[   41.3s]   shaded HazardBlack 104×104 in 0.02s
+[   41.6s]   shaded Girders 1024×1024 in 0.29s
+[   41.7s]   shaded Posts 144×144 in 0.04s
+[   41.8s]   shaded Rail 976×976 in 0.16s
+[   41.8s]   shaded KerbEnds 108×108 in 0.02s
+[   41.8s]   shaded EndPosts 64×64 in 0.01s
+[   42.0s]   shaded Abutments 372×372 in 0.16s
+[   42.0s]   shaded JointPlate 152×152 in 0.01s
+[   42.1s]   shaded Apron 184×184 in 0.05s
+[   42.1s] built Bridge7 556 84 0: 11 parts in 1.2s
+[   42.2s] cached YardIsland 1 x part 1/3
+[   42.2s] building Barrels 1 x x1.9
+[   42.3s]   shaded RustDrums 256×256 in 0.05s
+[   42.3s]   shaded BlueDrum 256×256 in 0.05s
+[   42.4s]   shaded Hoops 256×256 in 0.02s
+[   42.4s]   shaded Slick 256×256 in 0.04s
+[   42.4s] built Barrels 1 x x1.9: 4 parts in 0.2s
+[   42.4s] building Pallets 1 x x1.4
+[   42.5s]   shaded Wood 256×256 in 0.09s
+[   42.6s]   shaded Nails 256×256 in 0.08s
+[   42.6s] built Pallets 1 x x1.4: 2 parts in 0.2s
+[   42.6s] building StreetlightBroken 1 x x2
+[   42.6s]   shaded Pole 256×256 in 0.02s
+[   42.7s]   shaded Head 256×256 in 0.04s
+[   42.7s]   shaded Glass 256×256 in 0.04s
+[   42.7s]   shaded Wires 256×256 in 0.01s
+[   42.7s] built StreetlightBroken 1 x x2: 4 parts in 0.1s
+[   42.7s] cached StreetlightBroken 1 x x2
+[   42.7s] cached StreetlightBroken 1 x x2
+[   42.9s] writing ServerMap.glb and 286 textures
+[   45.3s] chunk ServerMap_S5_01.glb: 24 parts, 9.8 MB
+[   45.3s] chunk ServerMap_S5_02.glb: 38 parts, 10.3 MB
+[   45.3s] chunk ServerMap_S5_03.glb: 34 parts, 7.5 MB
+[   45.3s] chunk ServerMap_S5_04.glb: 34 parts, 7.5 MB
+[   45.3s] chunk ServerMap_S5_05.glb: 53 parts, 9.4 MB
+[   45.3s] chunk ServerMap_S5_06.glb: 57 parts, 8.7 MB
+[   45.4s] chunk ServerMap_S5_07.glb: 46 parts, 10.7 MB
+[   46.1s] rendering preview of 286 parts
+ServerMap: 286 parts, script 42.92s, total 46.79s
+SHARD_COST	slab Beacon	0.733
 SHARD_COST	slab Beacon #split	1
-SHARD_COST	slab Avenue1	1.769
+SHARD_COST	slab Avenue1	2.080
 SHARD_COST	slab Avenue1 #split	1
-SHARD_COST	slab Avenue3	1.609
+SHARD_COST	slab Avenue3	1.992
 SHARD_COST	slab Avenue3 #split	1
-SHARD_COST	MarketIsland 1 x	44.996
+SHARD_COST	MarketIsland 1 x	54.693
 SHARD_COST	MarketIsland 1 x #split	1
-SHARD_COST	ParkBench 1 x x1.85	0.072
+SHARD_COST	ParkBench 1 x x1.85	0.081
 SHARD_COST	ParkBench 1 x x1.85 #split	1
-SHARD_COST	slab Palm1Planter	0.053
+SHARD_COST	slab Palm1Planter	0.062
 SHARD_COST	slab Palm1Planter #split	1
-SHARD_COST	ScrapPalm 1 x x1.5	0.148
+SHARD_COST	ScrapPalm 1 x x1.5	0.176
 SHARD_COST	ScrapPalm 1 x x1.5 #split	1
-SHARD_COST	slab Palm2Planter	0.052
+SHARD_COST	slab Palm2Planter	0.062
 SHARD_COST	slab Palm2Planter #split	1
-SHARD_COST	YardIsland 1 x	34.689
+SHARD_COST	YardIsland 1 x	43.000
 SHARD_COST	YardIsland 1 x #split	1
-SHARD_COST	GroundTile 1 x x1.5	0.149
+SHARD_COST	GroundTile 1 x x1.5	0.178
 SHARD_COST	GroundTile 1 x x1.5 #split	1
-SHARD_COST	YardFooting 1 x x1.5	0.051
+SHARD_COST	YardFooting 1 x x1.5	0.019
 SHARD_COST	YardFooting 1 x x1.5 #split	1
-SHARD_COST	YardFenceHalf 1 x x1.5	0.126
+SHARD_COST	YardFenceHalf 1 x x1.5	0.051
 SHARD_COST	YardFenceHalf 1 x x1.5 #split	1
-SHARD_COST	slab Plot5	1.022
+SHARD_COST	slab Plot5	1.274
 SHARD_COST	slab Plot5 #split	1
-SHARD_COST	YardFooting 0.5 x x1.5	0.053
+SHARD_COST	YardFooting 0.5 x x1.5	0.064
 SHARD_COST	YardFooting 0.5 x x1.5 #split	1
-SHARD_COST	slab Bridge7	1.013
+SHARD_COST	slab Bridge7	1.216
 SHARD_COST	slab Bridge7 #split	1
-SHARD_COST	Barrels 1 x x1.9	0.157
+SHARD_COST	Barrels 1 x x1.9	0.186
 SHARD_COST	Barrels 1 x x1.9 #split	1
-SHARD_COST	Pallets 1 x x1.4	0.155
+SHARD_COST	Pallets 1 x x1.4	0.190
 SHARD_COST	Pallets 1 x x1.4 #split	1
-SHARD_COST	StreetlightBroken 1 x x2	0.102
+SHARD_COST	StreetlightBroken 1 x x2	0.124
 SHARD_COST	StreetlightBroken 1 x x2 #split	1
