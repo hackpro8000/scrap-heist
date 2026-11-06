@@ -1,84 +1,90 @@
-# Tycoon loop and raiding
+# Capsules, junkrots, yards and raiding
 
-Build salvage machines in your yard, collect what they make, and steal
-from everyone else's yards while defending your own.
+Buy a mystery capsule off the belt, carry it home, hatch it into a junkrot
+that earns scrap, lay your yard out the way you like, and steal from
+everyone else while defending your own. The full design and its numbers
+are in `docs/plans/gameplay-content.md`.
 
 ## The loop
 
-1. Every player gets a **yard** when their profile loads (8 per server).
-2. Each yard has four **pads**. Buy a salvage machine on a pad, then
-   upgrade it twice (three tiers). Later pads cost more.
-3. Machines produce **parts** into the yard's **storage crate** every
-   second, up to its capacity.
-4. **Collect** the crate to turn parts into scrap.
-5. Coming back after time away pays **offline earnings**: half rate, capped
+1. Every player gets a **yard** when their profile loads (8 per server). A
+   new player's yard comes laid out: six pads, a build bay, the crate, the
+   junk mound and the rebirth press.
+2. Capsules ride the **belt** round the Line (`BeltService`). Each holds a
+   junkrot rolled when it dropped; its tier shows, the junkrot doesn't.
+   Nobody buys it in one lap and it's crushed.
+3. **Buy** one with scrap and you carry it, slowed. A landed blow, death or
+   lightning knocks it out of your hands; anyone can pick it up
+   (`CapsuleService`).
+4. Walk up to an empty **build bay** in your own yard and the capsule loads.
+   It hatches over time, faster while you whack it. Until it hatches, a
+   raider in your yard can steal it out of the bay.
+5. The **junkrot** goes on a pad: an empty one of its family first, then any
+   empty one, else it replaces your weakest earner (which is scrapped for a
+   quarter of its price) or is scrapped itself if it is the weakest
+   (`JunkrotRules.choosePad`).
+6. Junkrots earn **scrap** into the yard's **crate** every second, up to its
+   capacity (ten minutes of the yard's income). **Collect** the crate to
+   bank it. Parts add **stars** to a junkrot; each star doubles it.
+7. The **rebirth press** takes the next rank when the junkrots it asks for
+   stand on your pads and you have the scrap (`RebirthRules`). Your scrap
+   goes to 0; income rises, land is cleared and another pad is allowed.
+8. Coming back after time away pays **offline earnings**: half rate, capped
    at two hours, straight into your scrap (so it can't be raided).
 
-All income is calculated on the server from the machines saved in the
-profile (`MachineRules.incomePerSecond`). The client never says how much it
-earned. Buying uses `DataService.trySpend`, so it fails cleanly without
-enough scrap.
+All income is calculated on the server from the junkrots saved in the
+profile (`JunkrotRules.yardIncome`). The client never says how much it
+earned or what a capsule holds.
+
+## Yards and build mode
+
+A yard is a 96 x 112 stud plot inside a fixed fence, laid out on a 2-stud
+grid (`Shared/Config/Yard`, `Shared/Yard/YardGrid`). Everything in it is
+saved in the profile as a list of things and where they stand
+(`yard.objects`); `PlotService` builds them, from `ServerStorage.YardKit`
+when the art is there and as plain blocks when it isn't.
+
+In **build mode** (the HUD's Build button, `BuildController`) the owner
+moves things and places the pads and bays their rank has earned. The rules
+(`Shared/Yard/BuildRules`), checked by the client for the ghost and again
+by the server (`BuildService`):
+
+- everything stands on the plot, on cleared land, and nothing overlaps
+- the doorstep inside the gate stays clear
+- every pad, bay, crate, mound and press can be walked to from the gate
+  along a way 4 studs wide, so nothing can be walled in
+- no building in a storm, with a raider in the yard, or with a capsule in
+  hand
+
+Land: the plot is 12 parcels. The front row is clear from the start; ranks
+1, 2, 3, 4, 6, 8, 10, 12 and 14 each clear one more, in a fixed order for
+now. Uncleared parcels lie under rubble that can be walked over.
 
 ## Raiding
 
-1. Walk into another player's yard and hold **Grab parts** at their crate.
-2. You take a bundle (a quarter of the crate, within limits) and carry it
-   on your back. You're slowed while carrying.
-3. Reach **your own** yard to bank the bundle as scrap.
+1. Walk into another player's yard and hold **Grab scrap** at their crate.
+2. You take a bundle (a quarter of the crate; half in a blackout) and carry
+   it on your back, slowed.
+3. Reach **your own** yard to bank it.
 4. Die on the way and the bundle drops. The owner can pick it up to put it
    straight back in their crate. Another raider can carry it on. Left
    alone, it returns to the crate after 30 seconds.
 
-### Server checks for a grab
+`RaidRules.canGrab` checks every grab on the server: not the owner, has a
+yard, inside that yard and near the crate, hands free, the yard not
+shielded, and the crate worth raiding (1% full or more).
 
-`RaidRules.canGrab` checks every one of these on the server:
+Defences: a raided yard is **shielded** for five minutes; the owner is
+alerted and takes less damage while raiders are inside; and the owner can
+**lock the gate** for 30 seconds (then waits a minute to lock it again). A
+locked gate stops everyone but its owner. The blackout drops every gate.
 
-- you're not the owner, and you have a yard to bring it home to
-- raids aren't paused (they pause during storms)
-- you're inside that yard and within grab distance of the crate
-- you're not already carrying a bundle
-- the yard isn't shielded
-- the level gap is fair
-- the crate holds enough to steal
+## Where things live
 
-### Anti-grief (Config/Raid)
-
-- **Raid shield:** a raided yard can't be raided again for 5 minutes.
-- **Level gap:** you can't raid a yard more than 4 levels below yours
-  (yard level = total machine levels). Weaker players can always raid up.
-- **Defender's edge:** while raiders are in your yard you get an alert and
-  take 30% less damage.
-
-## Files
-
-- `src/server/Tycoon/MachineRules.luau`, `RaidRules.luau`, `YardLayout.luau`:
-  rules and geometry, all unit tested
-- `src/server/Services/PlotService.luau`: yards, spawns, crate contents
-- `src/server/Services/MachineService.luau`: buying, upgrades, production,
-  collecting, offline earnings
-- `src/server/Services/RaidService.luau`: grab, carry, drop, bank, alerts
-- `src/client/Controllers/PlotController.luau`: prompt filtering, raid banner
-- Config: `src/shared/Config/Economy.luau`, `Raid.luau`, `Game.luau`
-
-## Art drop-in points
-
-- `ServerStorage.YardTemplate`: a Model with parts or models named
-  `Pad1`-`Pad4`, `Crate`, `PlotMarker`
-- `workspace.YardSpots`: parts named `Yard1`..`Yard8` to place yards on the
-  real map (otherwise yards form a ring around the centre)
-
-On the Server Map, `tools/studio/PlaceMap.luau` builds both from the placed
-map: a spot on each plot facing its gate, and a template of invisible pads,
-crate and marker where the map's yard art has them. It also sets
-`workspace.Arena` on the drone's fight floor and a SpawnLocation on the
-spawn pad.
-- `ServerStorage.MachineModels.SalvageMachine1`..`3`: one model per tier
-- `ServerStorage.CrateFills.Fill_1`..`6`: the crate's heap of scrap, emptiest
-  first, each pivoted where it sits on the template's Crate. The yard shows
-  none while the crate is empty, then the level that matches how full it is
-- `ServerStorage.PartBundle`: a Model holding `Sack_1`-`Sack_6` (fill levels,
-  emptiest first) for carried and dropped bundles
-
-`tools/studio/PlaceModels.luau` loads the machine tiers, crate fills and the
-part bundle from their uploaded art (the crate fills after PlaceMap, since
-they're lined up on the placed map's Yard1 crate).
+| | |
+|---|---|
+| Numbers | `src/shared/Config/`: `Junkrots`, `Belt`, `Yard`, `Rebirth`, `Raid`, `Economy` |
+| Rules (pure, unit tested) | `src/server/Tycoon/`: `JunkrotRules`, `RebirthRules`, `RaidRules`; `src/shared/Belt/BeltRules`; `src/shared/Yard/BuildRules` |
+| Services | `PlotService` (yards, things, crate), `JunkrotService` (income, stars, collect, mound), `BeltService`, `CapsuleService`, `BuildService`, `RebirthService`, `RaidService` (crate grabs, gates) |
+| Client | `BuildController`, `BeltController` (smooth capsules), `PlotController` (owner-only prompts, alerts, own gate), `HudController` |
+| Debug commands | `/drop [id]`, `/capsule [id]`, `/junkrot <id> [limited]`, `/parts <n>`, `/rank <n>`, `/fillcrate`, `/givescrap <n>` |

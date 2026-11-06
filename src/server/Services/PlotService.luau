@@ -53,6 +53,7 @@ local ServerStorage = game:GetService("ServerStorage")
 
 local BuildRules = require(ReplicatedStorage.Shared.Yard.BuildRules)
 local Game = require(ReplicatedStorage.Shared.Config.Game)
+local Notify = require(ReplicatedStorage.Shared.Net.Notify)
 local Shop = require(ReplicatedStorage.Shared.Config.Shop)
 local Signal = require(ReplicatedStorage.Shared.Util.Signal)
 local YardConfig = require(ReplicatedStorage.Shared.Config.Yard)
@@ -66,6 +67,7 @@ local ShopService = require(script.Parent.ShopService)
 local YARD_KIT_FOLDER = "YardKit"
 local YARD_SPOTS_FOLDER = "YardSpots"
 local FREE_YARD_TEXT = "Free yard"
+local WELCOME_TEXT = "Welcome! Buy a capsule off the belt, carry it home to your build bay and hatch it"
 local RUBBLE_FOLDER = "Rubble"
 local RUBBLE_THICKNESS = 0.3
 local RUBBLE_COLOR = Color3.fromRGB(95, 85, 72)
@@ -503,6 +505,7 @@ local function assignYard(player: Player, data: any)
 			if #data.yard.objects == 0 then
 				data.yard.objects = BuildRules.starterObjects()
 				data.yard.nextObjectId = #data.yard.objects + 1
+				Notify.Message:FireClient(player, WELCOME_TEXT)
 			end
 
 			yard.owner = player

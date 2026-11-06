@@ -8,8 +8,8 @@ page and links to the code.
 | Combat kit | [combat.md](combat.md) | Combos, block, parry, server-side hit validation |
 | Player data | [data.md](data.md) | Session locking, safe saves, no duplication |
 | Inventory and trading | [inventory-trading.md](inventory-trading.md) | Unique items, atomic two-player trades |
-| Tycoon and raiding | [tycoon-raiding.md](tycoon-raiding.md) | Plots, machines, income, steal mechanic, anti-grief |
-| Storm rounds and bots | [rounds-ai.md](rounds-ai.md) | Round state machine, pathfinding bots, loot tables |
+| Capsules, yards and raiding | [tycoon-raiding.md](tycoon-raiding.md) | The belt, capsules, junkrots, build mode, rebirth, steal mechanic, anti-grief |
+| Storm rounds | [rounds-ai.md](rounds-ai.md) | Round clock, the rich belt, parts rain, lightning, the blackout |
 
 ## How the code is organised
 
@@ -33,5 +33,5 @@ page and links to the code.
 - Every anti-exploit check is marked `-- SECURITY:` and every anti-dupe
   step `-- DUPE-SAFE:`. Search for them to walk a client through the
   protections: `rg "SECURITY:|DUPE-SAFE:" src`.
-- The debug overlay (showcase mode) shows server hitboxes, bot paths and
-  live rejection counts on screen.
+- The debug overlay (showcase mode) shows server hitboxes and live
+  rejection counts on screen.
