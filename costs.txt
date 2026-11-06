@@ -1,0 +1,18 @@
+HubSectionA 1 x	69.525
+HubSectionA 1 x #split	1
+slab Plot2	5.108
+slab Plot2 #split	1
+slab Spoke4	0.086
+slab Spoke4 #split	1
+slab Plot5	5.103
+slab Plot5 #split	1
+slab Spoke8	0.087
+slab Spoke8 #split	1
+slab Side1	0.894
+slab Side1 #split	1
+slab Side5	0.888
+slab Side5 #split	1
+TyreStack 1 x x1.8	0.113
+TyreStack 1 x x1.8 #split	1
+JunkWall 1 x x1.75	0.236
+JunkWall 1 x x1.75 #split	1
