@@ -1,22 +1,25 @@
 --!strict
 --[[
 	PlaceMap: run in Studio's command bar (edit mode, Rojo synced) to bring
-	the uploaded map chunks into workspace.Map, each where it belongs.
+	the uploaded map into workspace.Map, every piece where it belongs.
 
-	The map is too big for one Open Cloud upload, so `modelkit --chunks`
-	splits it into several models (scripts/upload-chunks.sh uploads them and
-	writes their IDs into Assets.MapChunks). Roblox may move, turn or scale a
-	model when it converts the upload, so each chunk carries two anchor
-	parts and where their middles must stand (Config.MapChunks). After
-	loading a chunk this script scales it so the anchors are the right
-	distance apart, turns it about the vertical so they line up, and moves
-	it so the first anchor lands exactly in place.
+	The map travels as one upload per object (scripts/export-objects.py):
+	a model placed eight times is uploaded once. Assets.MapChunks holds each
+	object's asset ID and Config.MapChunks every placement: which object,
+	the label its parts take, how far to turn it from the way it was
+	uploaded, and one or two anchor parts with where their middles must
+	stand. Roblox may move or scale a model when it converts the upload, so
+	after copying an object for a placement this script lines it up by its
+	anchors: with two, it scales the copy so they are the right distance
+	apart and turns it about the vertical so they line up; with one, it
+	turns the copy by the placement's turn. Then it moves the copy so the
+	first anchor lands exactly in place.
 
-	The upload chunks are only how the map travels. Once placed, every part
-	is regrouped by its name into one model per object, so each is easy to
-	select: "Pad1_Plaza_1_0_0" goes to Map > Pad1 > Plaza as "1_0_0" (the
-	numbered pieces of a chunked mesh stay together), and "Yard1_Gate_Frame"
-	to Map > Yard1 > Gate as "Frame".
+	Once placed, every part takes its placement's label in front of its
+	name and is regrouped by that name into one model per object, so each
+	is easy to select: "Line_Walk_1_0_0" goes to Map > Line > Walk as
+	"1_0_0" (the numbered pieces of a chunked mesh stay together), and
+	"Yard1_Gate_Frame" to Map > Yard1 > Gate as "Frame".
 
 	Then it hooks the map up to the game, rebuilding from the placed map the
 	pieces the game's systems look for outside workspace.Map:
@@ -27,23 +30,24 @@
 	  prompts and machines on, so the art is what players see;
 	- workspace.Arena: an invisible disc on the drone's fight floor
 	  (RoundService takes the arena's centre and size from it);
-	- a SpawnLocation on the spawn pad round the beacon, for the moment
-	  before PlotService moves a character home, or a player with no yard.
+	- a SpawnLocation in the middle of the spawn ring on the hub's west
+	  plaza, for the moment before PlotService moves a character home, or a
+	  player with no yard.
 
 	Re-running rebuilds all of it from scratch. Save the place afterwards.
 ]]
 
-local InsertService = game:GetService("InsertService")
+local AssetService = game:GetService("AssetService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 
 -- The command bar keeps what a module returned the first time it was
 -- required, even after Rojo syncs new source into it, so require fresh
--- copies to pick up chunks uploaded since.
+-- copies to pick up objects uploaded since.
 local Assets = require(ReplicatedStorage.Shared.Assets:Clone())
 local MapChunks = require(ReplicatedStorage.Shared.Config.MapChunks:Clone())
 
--- How far off an anchor may land, in studs, before the chunk is flagged.
+-- How far off an anchor may land, in studs, before the placement is flagged.
 local TOLERANCE = 0.05
 
 -- Parts that nothing should bump into: the drone's propellers turn over
@@ -54,9 +58,6 @@ local NO_COLLIDE = { "^ArenaDrone_Prop", "_Gate_Doors", "_Gate_Padlock", "_Gate_
 -- Radius of the drone's flat fight floor inside the ramps (ARENA_FLOOR in
 -- art/src/layouts/ServerMap.luau).
 local ARENA_FLOOR_RADIUS = 54
--- How far from the beacon's middle the spawn point stands: clear of the
--- 14-stud beacon plinth, on the 26-stud spawn pad round it.
-local SPAWN_FROM_BEACON = 10
 -- The yard pieces the game hangs its prompts and machines on.
 local YARD_PIECES = { "Pad1", "Pad2", "Pad3", "Pad4", "Crate", "PlotMarker" }
 
@@ -75,7 +76,7 @@ local function findAnchor(model: Model, anchor: Anchor): BasePart?
 	return nil
 end
 
-local function place(model: Model, anchors: { Anchor }): (boolean, string)
+local function place(model: Model, anchors: { Anchor }, turn: number): (boolean, string)
 	local first = findAnchor(model, anchors[1])
 	if not first then
 		return false, `anchor {anchors[1].name} not found`
@@ -98,9 +99,12 @@ local function place(model: Model, anchors: { Anchor }): (boolean, string)
 		local flatExpected = Vector3.new(expected.X, 0, expected.Z)
 		local flatActual = Vector3.new(actual.X, 0, actual.Z)
 		if flatExpected.Magnitude > 1e-3 and flatActual.Magnitude > 1e-3 then
-			local turn = heading(flatExpected) - heading(flatActual)
-			model:PivotTo(CFrame.Angles(0, turn, 0) * model:GetPivot())
+			local offBy = heading(flatExpected) - heading(flatActual)
+			model:PivotTo(CFrame.Angles(0, offBy, 0) * model:GetPivot())
 		end
+	elseif turn ~= 0 then
+		-- One anchor can't give a heading, so trust the placement's turn.
+		model:PivotTo(CFrame.Angles(0, math.rad(turn), 0) * model:GetPivot())
 	end
 
 	model:PivotTo(model:GetPivot() + (anchors[1].position - first.Position))
@@ -280,7 +284,7 @@ local function buildArena(map: Instance): Part?
 	)
 end
 
--- A neutral SpawnLocation on the spawn pad, beside the beacon.
+-- A neutral SpawnLocation in the middle of the spawn ring.
 local function buildSpawn(map: Instance): SpawnLocation?
 	local pad = map:FindFirstChild("Spawn")
 	if not (pad and pad:IsA("Model")) then
@@ -290,7 +294,7 @@ local function buildSpawn(map: Instance): SpawnLocation?
 	local spawn = Instance.new("SpawnLocation")
 	spawn.Name = "MapSpawn"
 	spawn.Size = Vector3.new(4, 0.2, 4)
-	spawn.CFrame = CFrame.new(cframe.Position + Vector3.new(0, size.Y / 2 - 0.1, SPAWN_FROM_BEACON))
+	spawn.CFrame = CFrame.new(cframe.Position + Vector3.new(0, size.Y / 2 - 0.1, 0))
 	spawn.Anchored = true
 	spawn.Transparency = 1
 	spawn.CanCollide = false
@@ -307,44 +311,79 @@ local folder = Instance.new("Folder")
 folder.Name = "Map"
 folder.Parent = workspace
 
+-- Every object loads at once, each on its own thread, since a load is
+-- mostly waiting on the network. (AssetService loads objects uploaded with
+-- an API key, which InsertService:LoadAsset refuses.)
 local placed, failed = 0, 0
-for _, chunk in MapChunks do
-	local id = (Assets.MapChunks :: any)[chunk.key]
+local loaded: { [string]: Instance } = {}
+local wanted: { [string]: boolean } = {}
+local loading = 0
+for _, placement in MapChunks do
+	if wanted[placement.asset] then
+		continue
+	end
+	wanted[placement.asset] = true
+	local id = (Assets.MapChunks :: any)[placement.asset]
 	if not Assets.isSet(id) then
-		warn(`PlaceMap: {chunk.key} has no asset ID in Assets.MapChunks; skipped`)
-		failed += 1
+		warn(`PlaceMap: object {placement.asset} ({placement.label}) has no asset ID in Assets.MapChunks; skipped`)
 		continue
 	end
-	local ok, container = pcall(InsertService.LoadAsset, InsertService, tonumber(string.match(id, "%d+")))
-	if not ok then
-		warn(`PlaceMap: {chunk.key} failed to load: {container}`)
-		failed += 1
-		continue
-	end
-	-- LoadAsset wraps the asset in a model; gather what's inside into one.
-	local model = Instance.new("Model")
-	model.Name = chunk.key
-	for _, child in container:GetChildren() do
-		child.Parent = model
-	end
-	container:Destroy()
+	loading += 1
+	task.spawn(function()
+		local ok, container = pcall(AssetService.LoadAssetAsync, AssetService, tonumber(string.match(id, "%d+")))
+		if ok then
+			loaded[placement.asset] = container
+		else
+			warn(`PlaceMap: object {placement.asset} ({placement.label}) failed to load: {container}`)
+		end
+		loading -= 1
+	end)
+end
+while loading > 0 do
+	task.wait()
+end
 
-	local done, message = place(model, chunk.anchors)
-	prepare(model)
+for index, placement in MapChunks do
+	local container = loaded[placement.asset]
+	if not container then
+		failed += 1
+		continue
+	end
+	-- The load wraps the asset in a model; copy what's inside into one.
+	local model = Instance.new("Model")
+	model.Name = placement.label
+	for _, child in container:GetChildren() do
+		child:Clone().Parent = model
+	end
+
+	local done, message = place(model, placement.anchors, placement.turn)
 	if done then
 		placed += 1
 	else
-		warn(`PlaceMap: {chunk.key}: {message}; left where it loaded, check it by eye`)
+		warn(`PlaceMap: {placement.label}: {message}; left where it loaded, check it by eye`)
 		failed += 1
 	end
+	for _, descendant in model:GetDescendants() do
+		if descendant:IsA("BasePart") then
+			descendant.Name = `{placement.label}_{descendant.Name}`
+		end
+	end
+	prepare(model)
 	for _, descendant in model:GetDescendants() do
 		if descendant:IsA("BasePart") then
 			file(folder, descendant)
 		end
 	end
 	model:Destroy()
+	-- Let Studio breathe every so often.
+	if index % 25 == 0 then
+		task.wait()
+	end
 end
-print(`PlaceMap: {placed} chunks placed, {failed} need attention`)
+for _, container in loaded do
+	container:Destroy()
+end
+print(`PlaceMap: {placed} placements made, {failed} need attention`)
 
 -- Pin every object's pivot to its middle. Left unset, a model works its
 -- pivot out from whatever parts it has, which on a streaming client is

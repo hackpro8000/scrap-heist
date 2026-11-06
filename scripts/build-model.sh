@@ -50,7 +50,14 @@ for name in "${models[@]}"; do
 		echo "no model script: ${dir}/model.luau" >&2
 		exit 1
 	fi
-	"${modelkit}" "${dir}" "${flags[@]}"
+	# What the model's script prints (a layout's placements and build times)
+	# is kept whole in build.out and shown once the build ends. Sent straight
+	# to a log that the engine's progress also goes to, its lines get cut
+	# where a progress message lands.
+	status=0
+	"${modelkit}" "${dir}" "${flags[@]}" > "${dir}/build.out" || status=$?
+	cat "${dir}/build.out"
+	[ "${status}" -eq 0 ] || exit "${status}"
 	# A rigged model's clips go to the game as a module the client plays
 	# (src/client/Controllers/BotAnimationController.luau).
 	if [ -f "${dir}/${name}Clips.luau" ]; then

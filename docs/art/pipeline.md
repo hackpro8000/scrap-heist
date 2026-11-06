@@ -140,44 +140,45 @@ reference.
      WeaponConfig weapon (StarterWeapon is the Bat, BigSpanner the Spanner)
      with a `Grip` attachment, for `HeldWeaponService`.
 
-### Layouts too big for one upload (the Server Map)
+### Layouts (the Server Map)
 
-Open Cloud takes at most 20 MB per upload, so a layout is exported in
-chunks and put back together in Studio:
+A layout is uploaded one object at a time, and only the objects that changed:
 
-1. `scripts/build-model.sh ServerMap -- --chunks` writes
-   `art/models/ServerMap/chunks/ServerMap_NN.glb`, each under 19 MB, and
-   `ServerMapChunks.luau`, which names two anchor parts per chunk and where
-   their middles stand.
-2. `ROBLOX_API_KEY=... ROBLOX_CREATOR_ID=<user id> scripts/upload-chunks.sh ServerMap`
-   uploads each chunk as a Model (the key needs `asset:write`), writes the IDs
-   into `Assets.MapChunks` and copies the anchors to
-   `src/shared/Config/MapChunks.luau`. Commit both. Re-running skips chunks
-   already uploaded. Each run throttles itself so several machines can upload
-   at once: a random start delay, one upload in flight (`UPLOAD_JOBS`), and
-   rate limits (429) and server errors waited out using Retry-After or a
-   jittered backoff. The knobs are listed at the top of the script.
+1. The build machines (`docs/builds/workers.md`, `scripts/standby.sh`) each
+   build their shard, then `scripts/export-objects.py ServerMap` cuts the
+   built map into `art/models/ServerMap/objects/<id>.glb`, one per object,
+   with a `manifest.json` of every placement. An object is a placed model or
+   a slab, known by the key its build is cached under, so copies of a model
+   (the eight yard islands, every fence panel) are one object. An object over
+   Open Cloud's 20 MB limit is cut into several. An object's id comes from
+   its cache key, and the ledger `art/src/layouts/ServerMapUploads.tsv` says
+   which ids already have an asset; each machine hands over only the objects
+   that don't (`scripts/standby-task.sh`).
+2. Once every build is in, `scripts/send-build.sh` has one machine, shard 1,
+   upload everything handed over with `scripts/upload-objects.py` (the key
+   needs `asset:write`). One machine sends it all so one throttle sees every
+   answer: it starts with 8 uploads in flight, allows one more after each
+   success up to 64, and halves the number and waits whenever Roblox turns a
+   request away. A build after a small change uploads a few small files.
+3. `scripts/merge-shards.sh ServerMap .standby-results/<task>/S*` adds the new
+   uploads to the ledger and writes `Assets.MapChunks` (each object's asset
+   ID) and `src/shared/Config/MapChunks.luau` (every placement). Commit all
+   three. It prints the new asset IDs: the game is owned by a group and the
+   uploads by a user, so each new asset needs the game's permission to use
+   it (Open Cloud `asset-permissions-api`, at most 50 per request) before
+   Studio can load it.
+4. In Studio, with Rojo synced, paste `tools/studio/PlaceMap.luau` into the
+   command bar. It loads every object once, copies it to each of its
+   placements, lines each copy up by its anchors, anchors the parts, and
+   files every part under `workspace.Map` by object: `Map > Line > Walk > 1_0_0`,
+   `Map > Yard1 > Gate > Frame`. It turns collision off on the yard gates,
+   then hooks the map up to the game: `YardSpots`, `ServerStorage.YardTemplate`
+   and a SpawnLocation (see `docs/systems/tycoon-raiding.md`). Save the place.
 
-   To split a build across machines, give each one
-   `scripts/build-model.sh ServerMap -- --chunks --shard <i>/<n>`. Each builds
-   every n-th placement (in the order the layout places them) and writes
-   `ServerMap_S<i>_NN.glb`, keyed `ServerMapS<i>_NN`. Uploading a shard leaves
-   `src/shared` alone; its `ServerMapAssetIds.txt` and `ServerMapChunks.luau`
-   are merged with the other shards' afterwards. A shard build never prunes
-   the cache. Cloud build workers run these as jobs (`docs/builds/workers.md`).
-3. In Studio, with Rojo synced, paste `tools/studio/PlaceMap.luau` into the
-   command bar. It loads every chunk, scales, turns and moves it so its
-   anchors land in place, anchors the parts, gives the propeller blur discs
-   a Transparency of 0.02 so their texture's alpha blends, and files every
-   part under
-   `workspace.Map` by object: `Map > Pad1 > Plaza > 1_0_0`,
-   `Map > Yard1 > Gate > Frame`. It turns collision off on the propellers
-   and the yard gates, then hooks the map up to the game: `YardSpots`,
-   `ServerStorage.YardTemplate`, `workspace.Arena` and a SpawnLocation (see
-   `docs/systems/tycoon-raiding.md`). Save the place.
-
-Rebuilding the chunks makes new files, so upload them again and commit the new
-IDs and anchors together.
+The older whole-map path (`modelkit --chunks`, `scripts/upload-chunks.sh`,
+`scripts/worker-job.sh`, the build-map-shards workflow) packs parts into
+chunks by size and uploads all of them every time. `scripts/merge-shards.sh`
+no longer reads its output.
 
 ## Quick tweaks
 

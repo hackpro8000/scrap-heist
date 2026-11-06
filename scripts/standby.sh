@@ -1,21 +1,22 @@
 #!/usr/bin/env bash
 # Keeps one shard machine of the build-standby workflow online: once it's up
-# (checked out, cache restored) it says so, then waits for build tasks on the
-# build-queue branch and builds its shard of each, with its cache already on
-# disk. It stays up while tasks keep coming: each task restarts the idle
-# countdown, and it exits after <idle minutes> without one, or at <max
-# minutes> whatever happens.
+# (checked out, cache restored) it says so, then waits for tasks on the
+# build-queue branch and runs each with its cache already on disk. It stays
+# up while tasks keep coming: each task restarts the idle countdown, and it
+# exits after <idle minutes> without one, or at <max minutes> whatever
+# happens.
 #
 #   scripts/standby.sh <Layout> <index> <count> <idle minutes> [max minutes]
 #
 # The queue is a branch of task files, tasks/<task id>.txt, each holding
-# `ref=<full commit hash>` and optionally `upload=no`; scripts/send-build.sh
-# adds them. Every task
-# posted since this machine came up (STANDBY_SINCE) is built once, oldest
-# first. Results go to results/<task id>/ and are pushed to
-# build-results/s<index> as a new commit on top of the earlier ones, its
-# message naming the task. Uploads run when ROBLOX_API_KEY and
-# ROBLOX_CREATOR_ID are set.
+# `ref=<full commit hash>` and whatever else the task needs;
+# scripts/send-build.sh adds them. Every task posted since this machine came
+# up (STANDBY_SINCE) is run once, oldest first: the machine checks the task's
+# commit out and hands the task to that commit's scripts/standby-task.sh, so
+# what a task does can change without restarting standby. Results go to
+# results/<task id>/ and, when the task left a summary.txt there, are pushed
+# to build-results/s<index> as a new commit on top of the earlier ones, its
+# message naming the task.
 
 set -uo pipefail
 
@@ -35,51 +36,6 @@ say() {
 
 queue_head() {
 	git ls-remote origin refs/heads/build-queue | cut -f1
-}
-
-# Builds this machine's shard of whatever is checked out into `out`, writing
-# build.log, parts.txt, the chunk manifest, costs.txt and summary.txt, and
-# uploads its chunks unless `upload` is "no".
-build_shard() {
-	local out="$1" upload_chunks="${2:-yes}" started=${SECONDS} status="DONE" build_seconds="-" upload="skipped"
-	mkdir -p "${out}"
-	{
-		scripts/assemble-model.sh "${layout}" &&
-			{
-				local build_started=${SECONDS}
-				scripts/build-model.sh "${layout}" -- --chunks --shard "${index}/${count}" &&
-					build_seconds=$((SECONDS - build_started))
-			}
-	} >> "${out}/build.log" 2>&1 || status="FAILED"
-	if [ "${status}" = "DONE" ]; then
-		python3 - "art/models/${layout}/${layout}.glb" > "${out}/parts.txt" << 'EOF' || status="FAILED"
-import json, struct, sys
-data = open(sys.argv[1], "rb").read()
-length = struct.unpack_from("<I", data, 12)[0]
-names = [node["name"] for node in json.loads(data[20:20 + length])["nodes"] if "mesh" in node]
-print("\n".join(sorted(names)))
-EOF
-		cp "art/models/${layout}/chunks/${layout}Chunks.luau" "${out}/" 2>> "${out}/build.log" || status="FAILED"
-		awk -F'\t' '$1 == "SHARD_COST" { print $2 "\t" $3 }' "${out}/build.log" > "${out}/costs.txt"
-	fi
-	if [ "${status}" = "DONE" ] && [ "${upload_chunks}" != "no" ] && [ -n "${ROBLOX_API_KEY:-}" ] && [ -n "${ROBLOX_CREATOR_ID:-}" ]; then
-		local upload_started=${SECONDS}
-		if scripts/upload-chunks.sh "${layout}" >> "${out}/build.log" 2>&1; then
-			cp "art/models/${layout}/chunks/${layout}AssetIds.txt" "${out}/"
-			upload="$((SECONDS - upload_started))s"
-		else
-			status="FAILED"
-		fi
-	fi
-	{
-		echo "status=${status}"
-		echo "build=${build_seconds}"
-		echo "upload=${upload}"
-		echo "total=$((SECONDS - started))"
-		echo "parts=$(wc -l < "${out}/parts.txt" 2>/dev/null || echo 0)"
-	} > "${out}/summary.txt"
-	[ "${status}" = "DONE" ] || tail -n 30 "${out}/build.log" > "${out}/error.txt"
-	echo "${status} in $((SECONDS - started))s (build ${build_seconds}s)"
 }
 
 # Pushes a results folder as a new commit on this shard's results branch,
@@ -102,17 +58,19 @@ push_results() {
 }
 
 run_task() {
-	local id="$1" ref="$2" upload_chunks="$3" out="results/$1" result
+	local id="$1" ref="$2" out="results/$1" result
 	mkdir -p "${out}"
-	say "task ${id}: building ${ref}"
+	say "task ${id}: checking out ${ref}"
 	if git fetch -q --depth=1 origin "${ref}" > "${out}/build.log" 2>&1 && git checkout -q -f FETCH_HEAD >> "${out}/build.log" 2>&1; then
-		result="$(build_shard "${out}" "${upload_chunks}")"
+		result="$(scripts/standby-task.sh "${layout}" "${index}" "${count}" "${out}")"
 	else
-		{ echo "status=FAILED"; echo "build=-"; echo "upload=skipped"; echo "total=0"; echo "parts=0"; } > "${out}/summary.txt"
+		{ echo "status=FAILED"; echo "build=-"; echo "upload=-"; echo "total=0"; echo "parts=0"; } > "${out}/summary.txt"
 		tail -n 30 "${out}/build.log" > "${out}/error.txt"
 		result="FAILED: could not check out ${ref}"
 	fi
-	push_results "${id}" "${out}" || say "task ${id}: could not push results"
+	if [ -f "${out}/summary.txt" ]; then
+		push_results "${id}" "${out}" || say "task ${id}: could not push results"
+	fi
 	say "task ${id}: ${result}"
 }
 
@@ -140,12 +98,13 @@ while [ "${SECONDS}" -lt "${idle_until}" ] && [ "${SECONDS}" -lt "${hard_stop}" 
 			built[${id}]=1
 			task="$(git show "${head}:${file}")"
 			ref="$(sed -n 's/^ref=//p' <<< "${task}")"
-			upload_chunks="$(sed -n 's/^upload=//p' <<< "${task}")"
 			if [ -z "${ref}" ]; then
 				say "task ${id} has no ref"
 				continue
 			fi
-			run_task "${id}" "${ref}" "${upload_chunks:-yes}"
+			mkdir -p "results/${id}"
+			echo "${task}" > "results/${id}/task.txt"
+			run_task "${id}" "${ref}"
 			idle_until=$((SECONDS + idle_minutes * 60))
 		done
 	fi

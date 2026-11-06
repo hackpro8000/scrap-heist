@@ -9,7 +9,21 @@ local placeLabel = ""
 local RealMesh, realPart = Mesh, model.part
 
 -- Set further down, with the shard deal: whether this shard paints a part.
-local paintsPart: (name: string) -> boolean
+local paintsPart: (name: string, image: any) -> boolean
+
+-- While a split model builds, every image it creates is noted in order, so
+-- its parts can be dealt by texels before any is painted (see ownsPart).
+local RealImage = Image
+local splitImages: { any }? = nil
+Image = setmetatable({
+	new = function(...)
+		local image = RealImage.new(...)
+		if splitImages then
+			table.insert(splitImages, image)
+		end
+		return image
+	end,
+}, { __index = RealImage })
 
 local function unwrapMesh(mesh)
 	return if type(mesh) == "table" and mesh._mesh then mesh._mesh else mesh
@@ -31,7 +45,7 @@ Mesh = {
 			end,
 			paintShading = function(_, image, options)
 				-- A model split across shards paints only this shard's parts.
-				if options and options.name and not paintsPart(options.name) then
+				if options and options.name and not paintsPart(options.name, image) then
 					return
 				end
 				for _, list in { "occluders", "group" } do
@@ -98,12 +112,20 @@ local slabKeys = {}
 -- another one's build belongs to it, and isn't dealt: whether it runs depends
 -- on that build being cached.
 --
--- A model build costing well over an even share, and marked "#split" (most of
--- its parts are shaded through a named paint, as finishParts does), is split
--- across the least-loaded shards instead: each builds the geometry, which is
--- cheap, but paints and keeps only the parts whose name hashes to it. Placing
+-- A model build costing well over half an even share, and marked "#split"
+-- (most of its parts are shaded through a named paint, as finishParts does),
+-- is split into pieces of about half an even share across the least-loaded
+-- shards: small pieces leave the deal room to even the shards out. Each piece's
+-- shard builds the geometry, which is cheap, but paints and keeps only its
+-- share of the parts. Parts are dealt by
+-- texels: a build creates every image before painting any, so the images are
+-- sorted largest first and each goes to the share with the fewest texels so
+-- far. Every shard in the split deals the same images the same way. Placing
 -- that model again goes to the same shards, each keeping the same parts.
 local REPEAT_COST = 0.01
+-- Pieces are about this much of an even share; a model splits once it costs
+-- a quarter more than one piece.
+local SPLIT_PIECE = 0.5
 local SPLIT_ABOVE = 1.25
 local shardLoads, shardModels, splitModels = {}, {}, {}
 local medianCost, totalCost = 1, 0
@@ -121,14 +143,61 @@ do
 	end
 end
 
--- While a split model builds: this shard's share of its parts.
-local partShare: { index: number, count: number }? = nil
+-- While a split model builds: this shard's share, out of how many, and once
+-- its images are dealt, which share keeps each image and each share's texels.
+type PartShare = { index: number, count: number, owners: { [any]: number }?, texels: { number } }
+local partShare: PartShare? = nil
 -- Parts seen while building, and how many were shaded through a named paint,
 -- so a build can tell whether splitting it would save any paint.
 local partsEmitted, partsGated = 0, 0
-local function ownsPartNamed(name: string): boolean
+
+local function texelsOf(image: any): number
+	local width, height = image:size()
+	return width * height
+end
+
+-- Gives an image to the share with the fewest texels so far.
+local function dealImage(share: PartShare, image: any, texels: number): number
+	local lightest = 1
+	for index = 2, share.count do
+		if share.texels[index] < share.texels[lightest] then
+			lightest = index
+		end
+	end
+	(share.owners :: { [any]: number })[image] = lightest
+	share.texels[lightest] += texels
+	return lightest
+end
+
+-- Deals every image the split build has made, largest first; ties go by the
+-- order they were made, so every shard deals them alike.
+local function dealImages(share: PartShare)
+	local images = {}
+	for order, image in splitImages or {} do
+		table.insert(images, { image = image, texels = texelsOf(image), order = order })
+	end
+	table.sort(images, function(a, b)
+		return if a.texels ~= b.texels then a.texels > b.texels else a.order < b.order
+	end)
+	share.owners = {}
+	for _, entry in images do
+		dealImage(share, entry.image, entry.texels)
+	end
+end
+
+-- Whether this shard keeps a part of the split model being built: by its
+-- texture's share when it has one (an image made after the deal goes to the
+-- lightest share then), else by a hash of its name.
+local function ownsPart(name: string, image: any?): boolean
 	if not partShare then
 		return true
+	end
+	if image then
+		if not partShare.owners then
+			dealImages(partShare)
+		end
+		local owner = (partShare.owners :: { [any]: number })[image] or dealImage(partShare, image, texelsOf(image))
+		return owner == partShare.index
 	end
 	local hash = 5381
 	for i = 1, #name do
@@ -138,9 +207,9 @@ local function ownsPartNamed(name: string): boolean
 end
 -- Every named shading paint (finishParts in common.luau passes the part's
 -- name) asks this first, through the Mesh wrapper above.
-paintsPart = function(name: string): boolean
+paintsPart = function(name: string, image: any): boolean
 	partsGated += 1
-	return ownsPartNamed(name)
+	return ownsPart(name, image)
 end
 
 -- The shards a split takes, and which of them this one is.
@@ -165,7 +234,8 @@ local function inThisShard(costKey: string, reuses: string?): (boolean, number?,
 		return shareOf(split)
 	end
 	local fairShare = if totalCost > 0 then totalCost / SHARD_COUNT else medianCost
-	if reuses and SHARD_COSTS[`{costKey} #split`] and cost > fairShare * SPLIT_ABOVE then
+	local piece = fairShare * SPLIT_PIECE
+	if reuses and SHARD_COSTS[`{costKey} #split`] and cost > piece * SPLIT_ABOVE then
 		local order = {}
 		for shard = 1, SHARD_COUNT do
 			order[shard] = shard
@@ -174,7 +244,7 @@ local function inThisShard(costKey: string, reuses: string?): (boolean, number?,
 			local loadA, loadB = shardLoads[a] or 0, shardLoads[b] or 0
 			return if loadA ~= loadB then loadA < loadB else a < b
 		end)
-		split = table.move(order, 1, math.min(SHARD_COUNT, math.ceil(cost / fairShare)), 1, {})
+		split = table.move(order, 1, math.min(SHARD_COUNT, math.ceil(cost / piece)), 1, {})
 		for _, shard in split do
 			shardLoads[shard] = (shardLoads[shard] or 0) + cost / #split
 		end
@@ -198,17 +268,30 @@ local function inThisShard(costKey: string, reuses: string?): (boolean, number?,
 end
 
 -- Times a cached build when sharding, printing lines the build workflow
--- gathers into <Layout>Costs.txt for the next deal: its time (scaled up to
--- the whole model when this shard painted only a share), and "#split" when
--- most of its parts are shaded through a named paint, so splitting pays.
-local function timedBuild(costKey: string, build: () -> any): any
+-- gathers into <Layout>Costs.txt for the next deal: its time, and "#split"
+-- when most of its parts are shaded through a named paint, so splitting pays.
+-- A split's own build (`splitHere`) paints only its share, so its time is
+-- scaled up by its share of the texels; builds nested in a split aren't timed.
+local function timedBuild(costKey: string, build: () -> any, splitHere: boolean?): any
 	if SHARD_COUNT == nil then
 		return build()
 	end
 	local started, emitted, gated = os.clock(), partsEmitted, partsGated
 	local result = build()
-	local seconds = (os.clock() - started) * (if partShare then partShare.count else 1)
-	print(string.format("SHARD_COST\t%s\t%.3f", costKey, seconds))
+	local seconds = os.clock() - started
+	if splitHere and partShare then
+		local all = 0
+		for _, texels in partShare.texels do
+			all += texels
+		end
+		local mine = partShare.texels[partShare.index]
+		seconds = if mine > 0 then seconds * all / mine else -1
+	elseif partShare then
+		seconds = -1
+	end
+	if seconds >= 0 then
+		print(string.format("SHARD_COST\t%s\t%.3f", costKey, seconds))
+	end
 	emitted, gated = partsEmitted - emitted, partsGated - gated
 	if emitted > 0 and gated * 2 >= emitted then
 		print(string.format("SHARD_COST\t%s #split\t1", costKey))
@@ -227,13 +310,24 @@ model.part = function(name, mesh, image, options)
 	local preview = if options and options.preview ~= nil then options.preview else true
 	if builtParts then
 		partsEmitted += 1
-		if skipPart(name) or not ownsPartNamed(name) then
+		if skipPart(name) or not ownsPart(name, image) then
 			return
 		end
 		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview, emissive = options and options.emissive })
 		return
 	end
 	addPart(name, unwrapMesh(mesh), image, preview, options and options.emissive)
+end
+
+-- Says which object a placement is, for the upload (scripts/export-objects.py
+-- reads these lines from the build's output): its label, its turn in
+-- degrees, and the key its build is cached under, or "-" when it has none.
+-- Placements with one key are copies of one object, uploaded once. A
+-- placement inside another's build is part of that object, and isn't told.
+local function tellPlacement(label: string, turn: number, key: string)
+	if not builtParts then
+		print(string.format("PLACED\t%s\t%s\t%s", label, tostring(turn), key))
+	end
 end
 
 -- `scale` builds the model that many times its own size, so its textures
@@ -244,6 +338,7 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 		if not inThisShard(`place {label}`) then
 			return
 		end
+		tellPlacement(label, turn or 0, "-")
 		placeLabel = label
 		placeX, placeY, placeZ, placeTurn = x, y, z or 0, math.rad(turn or 0)
 		placeStretch, placeAxis, placeScale = stretch or 1, axis or "x", scale or 1
@@ -269,14 +364,19 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 	if previewBand then
 		key = `{key} band {previewBand(x, y, z or 0)}`
 	end
-	-- A split build keeps only its share of the parts, so it caches apart.
+	-- A split build keeps only its share of the parts, so it caches apart. The
+	-- texel deal follows from the model's source, already in the key.
 	if share then
 		key = `{key} part {share}/{shares}`
 	end
+	tellPlacement(label, turn or 0, key)
 	local x0, y0, z0, turn0 = placeX, placeY, placeZ, placeTurn
 	for _, part in model.cached(key, function()
-		local outerShare = partShare
-		partShare = if share then { index = share, count = shares :: number } else outerShare
+		local outerShare, outerImages = partShare, splitImages
+		if share then
+			partShare = { index = share, count = shares :: number, texels = table.create(shares :: number, 0) }
+			splitImages = {}
+		end
 		local built = timedBuild(costKey, function()
 			placeX, placeY, placeZ, placeTurn = 0, 0, 0, 0
 			if previewPlacing then
@@ -290,8 +390,8 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 			local built = builtParts
 			builtParts = nil
 			return built
-		end)
-		partShare = outerShare
+		end, share ~= nil)
+		partShare, splitImages = outerShare, outerImages
 		return built
 	end) do
 		addPart(part.name, part.mesh:moved(turn0, x0, y0, z0), part.image, part.preview, part.emissive)
@@ -312,6 +412,8 @@ local function placeSlab(label: string, build: () -> (), x: number, y: number, t
 	if not inThisShard(costKey) then
 		return
 	end
+	-- A slab is built where it stands, so it is its own object, unturned.
+	tellPlacement(label, 0, `{key} {label} {x} {y} {turn or 0}`)
 	placeLabel = label
 	placeX, placeY, placeZ, placeTurn = x, y, 0, math.rad(turn or 0)
 	placeStretch, placeAxis, placeScale = 1, "x", 1

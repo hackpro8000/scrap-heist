@@ -15,7 +15,7 @@
 # coordination: it waits a random moment before starting, keeps UPLOAD_JOBS
 # uploads in flight, and waits out rate limits on every request.
 #
-#   UPLOAD_JOBS=1             uploads in flight at once
+#   UPLOAD_JOBS=4             uploads in flight at once
 #   UPLOAD_STAGGER=5          most seconds to wait before the first upload
 #   UPLOAD_TRIES=8            attempts per request before giving up
 #   UPLOAD_MAX_BACKOFF=60     longest backoff between attempts, in seconds
@@ -32,7 +32,7 @@ ids="${chunks}/${name}AssetIds.txt"
 assets="${root}/src/shared/Assets.luau"
 # Overridable so the throttling can be tested against a fake server.
 api="${ROBLOX_ASSETS_API:-https://apis.roblox.com/assets/v1}"
-jobs_max="${UPLOAD_JOBS:-1}"
+jobs_max="${UPLOAD_JOBS:-4}"
 stagger="${UPLOAD_STAGGER:-5}"
 tries_max="${UPLOAD_TRIES:-8}"
 backoff_max="${UPLOAD_MAX_BACKOFF:-60}"
