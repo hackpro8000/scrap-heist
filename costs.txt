@@ -1,0 +1,6 @@
+HubIsland 1 x	198.466
+HubIsland 1 x #split	1
+slab Spawn	0.242
+slab Spawn #split	1
+ShopConceptContainer 1 x x2.5	52.002
+ShopConceptContainer 1 x x2.5 #split	1
