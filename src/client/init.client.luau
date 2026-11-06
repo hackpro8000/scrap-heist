@@ -24,6 +24,7 @@ local CONTROLLERS: { Boot.Entry } = {
 	{ name = "RoundController", module = require(Controllers.RoundController) },
 	{ name = "BeltController", module = require(Controllers.BeltController) },
 	{ name = "BuildController", module = require(Controllers.BuildController) },
+	{ name = "JunkrotController", module = require(Controllers.JunkrotController) },
 	{ name = "ShowcaseController", module = require(Controllers.ShowcaseController) },
 	{ name = "CombatController", module = require(Controllers.CombatController) },
 	{ name = "JuiceController", module = require(Controllers.JuiceController) },
