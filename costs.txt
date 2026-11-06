@@ -1,18 +1,18 @@
-YardFooting 1.037037037037037 x x1.5	0.041
-YardFooting 1.037037037037037 x x1.5 #split	1
-slab Yard2_Press	0.109
-slab Yard2_Press #split	1
-YardFooting 1 x x1.5	0.040
-YardFooting 1 x x1.5 #split	1
-YardFence 1.037037037037037 x x1.5	0.121
-YardFence 1.037037037037037 x x1.5 #split	1
-slab Yard5_Bay3	0.119
-slab Yard5_Bay3 #split	1
-slab Yard6_Bay1	0.114
-slab Yard6_Bay1 #split	1
-slab Spoke6	0.054
+slab Yard2_Bay3	0.114
+slab Yard2_Bay3 #split	1
+YardFenceHalf 1 x x1.5	0.104
+YardFenceHalf 1 x x1.5 #split	1
+PadKitchen 1 x x1.6666666666666667	0.050
+PadKitchen 1 x x1.6666666666666667 #split	1
+YardFooting 0.5 x x1.5	0.040
+YardFooting 0.5 x x1.5 #split	1
+slab Approach4	0.269
+slab Approach4 #split	1
+slab Spoke5	0.068
+slab Spoke5 #split	1
+slab Yard6_Bay2	0.106
+slab Yard6_Bay2 #split	1
+slab Spoke6	0.051
 slab Spoke6 #split	1
-PadGarage 1 x x1.6666666666666667	0.134
-PadGarage 1 x x1.6666666666666667 #split	1
-JunkMound 1 x x2.3	0.475
-StorageCrate 1 x x2	5.784
+slab Plot7	3.328
+slab Plot7 #split	1

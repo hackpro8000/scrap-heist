@@ -16,264 +16,146 @@ assemble ServerMap: uses YardPath (key f096c7510747dcc8)
 assemble ServerMap: uses YardPathStub (key 9d6e97b27d7f04b9)
 assemble ServerMap: uses JunkMound (key 1fc541ce300d6d84)
 assemble ServerMap: uses BillboardFrame (key 7c418c4bc122e3a8)
-assemble ServerMap: slab at ServerMap.luau:269-459 (key cf7e96091024d5cc)
-assemble ServerMap: slab at ServerMap.luau:539-574 (key 5f070fd414250023)
-assemble ServerMap: slab at ServerMap.luau:577-581 (key 2f5b4070ee3aa512)
-assemble ServerMap: slab at ServerMap.luau:639-657 (key ec88fbc68c01cf27)
-assemble ServerMap: slab at ServerMap.luau:660-670 (key 6ecf17da3fae12b3)
-assemble ServerMap: slab at ServerMap.luau:722-728 (key 7b25a7aa2539d602)
-assemble ServerMap: slab at ServerMap.luau:730-739 (key 107c5c30239027da)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 22663 lines, in 1s
+assemble ServerMap: slab at ServerMap.luau:277-467 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:547-576 (key 7ded6fc62f8b67a3)
+assemble ServerMap: slab at ServerMap.luau:579-583 (key 2f5b4070ee3aa512)
+assemble ServerMap: slab at ServerMap.luau:641-659 (key ec88fbc68c01cf27)
+assemble ServerMap: slab at ServerMap.luau:662-672 (key 6ecf17da3fae12b3)
+assemble ServerMap: slab at ServerMap.luau:725-731 (key 7b25a7aa2539d602)
+assemble ServerMap: slab at ServerMap.luau:733-742 (key 107c5c30239027da)
+assemble ServerMap: slab at ServerMap.luau:750-780 (key 18845c9c8b69ea54)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 22704 lines, in 0s
 [    0.0s] running ServerMap/model.luau
 [    0.3s] cached HubSectionA 1 x part 1/4
 [    0.4s] cached HubSectionA 1 x part 1/4
-[    0.4s] building YardFooting 1.037037037037037 x x1.5
+[    0.4s] cached YardFooting 1.037037037037037 x x1.5
+[    0.4s] cached YardFooting 1.037037037037037 x x1.5
+[    0.4s] cached YardFooting 1.037037037037037 x x1.5
+[    0.4s] building Yard2_Bay3 -83 134 0
 [    0.4s] baking on CPU (no GPU)
-[    0.4s]   shaded Footing 256×256 in 0.04s
-[    0.4s] built YardFooting 1.037037037037037 x x1.5: 1 parts in 0.0s
-[    0.4s] cached YardFooting 1.037037037037037 x x1.5
-[    0.4s] cached YardFooting 1.037037037037037 x x1.5
-[    0.4s] building Yard2_Press -70 230 0
-[    0.5s]   shaded Base 308×308 in 0.08s
-[    0.6s]   shaded Stripes 252×252 in 0.02s
-[    0.6s] built Yard2_Press -70 230 0: 2 parts in 0.1s
-[    0.6s] building YardFooting 1 x x1.5
-[    0.6s]   shaded Footing 256×256 in 0.04s
-[    0.6s] built YardFooting 1 x x1.5: 1 parts in 0.0s
-[    0.6s] cached YardFooting 1 x x1.5
-[    0.6s] cached YardFooting 1 x x1.5
-[    0.6s] cached YardFooting 1 x x1.5
-[    0.6s] cached YardFooting 1 x x1.5
-[    0.6s] cached YardFooting 1 x x1.5
-[    0.6s] cached YardFooting 1 x x1.5
-[    0.6s] cached YardFooting 1 x x1.5
-[    0.6s] building YardFence 1.037037037037037 x x1.5
+[    0.5s]   shaded Plinth 336×336 in 0.07s
+[    0.5s]   shaded Frame 272×272 in 0.02s
+[    0.5s]   shaded Marks 104×104 in 0.01s
+[    0.5s] built Yard2_Bay3 -83 134 0: 3 parts in 0.1s
+[    0.5s] cached YardFooting 1.037037037037037 x x1.5
+[    0.5s] cached YardFooting 1.037037037037037 x x1.5
+[    0.5s] cached YardFooting 1.037037037037037 x x1.5
+[    0.5s] cached YardFooting 1.037037037037037 x x1.5
+[    0.5s] cached StorageCrate 1 x x2
+[    0.5s] cached YardFooting 1.037037037037037 x x1.5
+[    0.5s] cached YardFooting 1.037037037037037 x x1.5
+[    0.5s] cached YardFooting 1.037037037037037 x x1.5
+[    0.5s] building YardFenceHalf 1 x x1.5
 [    0.6s]   shaded Posts 256×256 in 0.02s
-[    0.7s]   shaded Sheets 256×256 in 0.04s
-[    0.7s]   shaded Fittings 256×256 in 0.04s
-[    0.7s] built YardFence 1.037037037037037 x x1.5: 3 parts in 0.1s
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFooting 1 x x1.5
-[    0.7s] cached YardFooting 1 x x1.5
-[    0.7s] cached YardFooting 1 x x1.5
-[    0.7s] cached YardFooting 1 x x1.5
-[    0.7s] cached YardFooting 1 x x1.5
-[    0.7s] cached YardFooting 1 x x1.5
-[    0.7s] cached YardFooting 1 x x1.5
-[    0.7s] cached YardFooting 1 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
+[    0.6s]   shaded Sheets 256×256 in 0.03s
+[    0.6s]   shaded Fittings 256×256 in 0.04s
+[    0.6s] built YardFenceHalf 1 x x1.5: 3 parts in 0.1s
+[    0.7s] building PadKitchen 1 x x1.6666666666666667
+[    0.7s]   shaded Plate 256×256 in 0.01s
+[    0.7s]   shaded Stripes 256×256 in 0.02s
+[    0.7s]   shaded Hardware 256×256 in 0.01s
+[    0.7s] built PadKitchen 1 x x1.6666666666666667: 3 parts in 0.1s
+[    0.7s] cached PadKitchen 1 x x1.6666666666666667
+[    0.7s] cached StorageCrate 1 x x2
 [    0.7s] cached YardFooting 1.037037037037037 x x1.5
 [    0.7s] cached YardFooting 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.7s] cached YardFence 1.037037037037037 x x1.5
-[    0.8s] cached YardFence 1.037037037037037 x x1.5
-[    0.8s] cached YardFence 1.037037037037037 x x1.5
-[    0.8s] cached YardFence 1.037037037037037 x x1.5
-[    0.8s] cached YardFence 1.037037037037037 x x1.5
-[    0.8s] cached YardFence 1.037037037037037 x x1.5
-[    0.8s] cached YardFence 1.037037037037037 x x1.5
-[    0.8s] building Yard5_Bay3 -197 -134 180
-[    0.8s]   shaded Plinth 336×336 in 0.06s
-[    0.9s]   shaded Frame 272×272 in 0.03s
-[    0.9s]   shaded Marks 104×104 in 0.01s
-[    0.9s] built Yard5_Bay3 -197 -134 180: 3 parts in 0.1s
-[    0.9s] cached YardFooting 1.037037037037037 x x1.5
-[    0.9s] cached YardFooting 1.037037037037037 x x1.5
-[    0.9s] cached YardFooting 1.037037037037037 x x1.5
-[    0.9s] cached YardFooting 1.037037037037037 x x1.5
-[    0.9s] cached YardFooting 1.037037037037037 x x1.5
-[    0.9s] cached YardFooting 1.037037037037037 x x1.5
-[    0.9s] cached YardFooting 1.037037037037037 x x1.5
-[    0.9s] building Yard6_Bay1 -32.99999999999999 -134 180
-[    1.0s]   shaded Plinth 336×336 in 0.07s
-[    1.0s]   shaded Frame 272×272 in 0.02s
-[    1.0s]   shaded Marks 104×104 in 0.01s
-[    1.0s] built Yard6_Bay1 -32.99999999999999 -134 180: 3 parts in 0.1s
-[    1.0s] cached YardFooting 1 x x1.5
-[    1.0s] cached YardFooting 1 x x1.5
-[    1.0s] cached YardFooting 1 x x1.5
-[    1.0s] cached YardFooting 1 x x1.5
-[    1.0s] cached YardFooting 1 x x1.5
-[    1.0s] cached YardFooting 1 x x1.5
-[    1.0s] cached YardFooting 1 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFence 1.037037037037037 x x1.5
-[    1.0s] cached YardFooting 1 x x1.5
-[    1.0s] cached YardFooting 1 x x1.5
-[    1.0s] building Spoke6 -70 -180 180
-[    1.1s]   shaded Road 300×300 in 0.05s
-[    1.1s] built Spoke6 -70 -180 180: 1 parts in 0.1s
-[    1.1s] building PadGarage 1 x x1.6666666666666667
-[    1.1s]   shaded Plate 256×256 in 0.07s
-[    1.2s]   shaded Stripes 256×256 in 0.03s
-[    1.2s]   shaded Hardware 256×256 in 0.03s
-[    1.2s] built PadGarage 1 x x1.6666666666666667: 3 parts in 0.1s
-[    1.2s] cached PadGarage 1 x x1.6666666666666667
-[    1.2s] building JunkMound 1 x x2.3
-[    1.6s]   shaded  256×256 in 0.13s
-[    1.6s]   shaded  256×256 in 0.02s
-[    1.7s]   shaded  256×256 in 0.02s
-[    1.7s]   shaded  256×256 in 0.02s
-[    1.7s] built JunkMound 1 x x2.3: 4 parts in 0.5s
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached YardFence 1.037037037037037 x x1.5
-[    1.7s] cached PadGarage 1 x x1.6666666666666667
-[    1.7s] cached PadGarage 1 x x1.6666666666666667
-[    1.7s] cached PadGarage 1 x x1.6666666666666667
-[    1.7s] cached PadGarage 1 x x1.6666666666666667
-[    1.7s] cached PadGarage 1 x x1.6666666666666667
-[    1.7s] cached PadGarage 1 x x1.6666666666666667
-[    1.7s] building StorageCrate 1 x x2
-[    2.2s]   shaded  1024×1024 in 0.38s
-[    2.2s]   shaded  512×512 in 0.06s
-[    2.3s]   shaded  512×512 in 0.04s
-[    2.3s]   shaded  256×256 in 0.04s
-[    2.4s]   shaded  1024×64 in 0.03s
-[    2.7s]   shaded  1024×1024 in 0.30s
-[    2.8s]   shaded  256×256 in 0.02s
-[    3.2s]   shaded  1024×1024 in 0.30s
-[    3.3s]   shaded  256×256 in 0.02s
-[    3.4s]   shaded  256×256 in 0.02s
-[    3.8s]   shaded  1024×1024 in 0.33s
-[    3.9s]   shaded  256×256 in 0.02s
-[    4.0s]   shaded  256×256 in 0.02s
-[    4.1s]   shaded  256×256 in 0.05s
-[    4.1s]   shaded  256×256 in 0.02s
-[    4.6s]   shaded  1024×1024 in 0.33s
-[    4.7s]   shaded  256×256 in 0.02s
-[    4.7s]   shaded  256×256 in 0.02s
-[    4.8s]   shaded  256×256 in 0.05s
-[    4.9s]   shaded  256×256 in 0.02s
-[    5.0s]   shaded  256×256 in 0.03s
-[    5.0s]   shaded  256×256 in 0.03s
-[    5.5s]   shaded  1024×1024 in 0.35s
-[    5.6s]   shaded  256×256 in 0.02s
-[    5.7s]   shaded  256×256 in 0.03s
-[    5.8s]   shaded  256×256 in 0.05s
-[    5.9s]   shaded  256×256 in 0.02s
-[    5.9s]   shaded  256×256 in 0.03s
-[    6.0s]   shaded  256×256 in 0.03s
-[    6.1s]   shaded  256×256 in 0.02s
-[    6.1s]   shaded  256×256 in 0.02s
-[    6.6s]   shaded  1024×1024 in 0.34s
-[    6.7s]   shaded  256×256 in 0.02s
-[    6.8s]   shaded  256×256 in 0.02s
-[    6.9s]   shaded  256×256 in 0.05s
-[    6.9s]   shaded  256×256 in 0.02s
-[    7.0s]   shaded  256×256 in 0.03s
-[    7.1s]   shaded  256×256 in 0.03s
-[    7.2s]   shaded  256×256 in 0.03s
-[    7.2s]   shaded  256×256 in 0.02s
-[    7.3s]   shaded  256×256 in 0.04s
-[    7.4s]   shaded  256×256 in 0.03s
-[    7.5s]   shaded  256×256 in 0.03s
-[    7.5s] built StorageCrate 1 x x2: 5 parts in 5.8s
-[    7.5s] cached YardFence 1.037037037037037 x x1.5
-[    7.5s] cached YardFence 1.037037037037037 x x1.5
-[    7.5s] cached YardFence 1.037037037037037 x x1.5
-[    7.5s] cached YardFence 1.037037037037037 x x1.5
-[    7.5s] cached YardFence 1.037037037037037 x x1.5
-[    7.5s] cached YardFence 1.037037037037037 x x1.5
-[    7.5s] cached YardFence 1.037037037037037 x x1.5
-[    7.5s] cached YardFence 1.037037037037037 x x1.5
-[    7.5s] cached YardFence 1.037037037037037 x x1.5
-[    7.5s] cached YardFence 1.037037037037037 x x1.5
-[    7.5s] cached YardFence 1.037037037037037 x x1.5
-[    7.5s] cached YardFence 1.037037037037037 x x1.5
-[    7.5s] writing ServerMap.glb and 397 textures
-[    8.7s] chunk ServerMap_S5_01.glb: 71 parts, 8.5 MB
-[    8.7s] chunk ServerMap_S5_02.glb: 62 parts, 2.3 MB
-[    8.7s] chunk ServerMap_S5_03.glb: 74 parts, 2.9 MB
-[    8.7s] chunk ServerMap_S5_04.glb: 67 parts, 2.8 MB
-[    8.7s] chunk ServerMap_S5_05.glb: 64 parts, 3.0 MB
-[    8.7s] chunk ServerMap_S5_06.glb: 59 parts, 3.9 MB
-ServerMap: 397 parts, script 7.54s, total 9.02s
-SHARD_COST	YardFooting 1.037037037037037 x x1.5	0.041
-SHARD_COST	YardFooting 1.037037037037037 x x1.5 #split	1
-SHARD_COST	slab Yard2_Press	0.109
-SHARD_COST	slab Yard2_Press #split	1
-SHARD_COST	YardFooting 1 x x1.5	0.040
-SHARD_COST	YardFooting 1 x x1.5 #split	1
-SHARD_COST	YardFence 1.037037037037037 x x1.5	0.121
-SHARD_COST	YardFence 1.037037037037037 x x1.5 #split	1
-SHARD_COST	slab Yard5_Bay3	0.119
-SHARD_COST	slab Yard5_Bay3 #split	1
-SHARD_COST	slab Yard6_Bay1	0.114
-SHARD_COST	slab Yard6_Bay1 #split	1
-SHARD_COST	slab Spoke6	0.054
+[    0.7s] cached YardFooting 1.037037037037037 x x1.5
+[    0.7s] cached YardFooting 1.037037037037037 x x1.5
+[    0.7s] cached YardFooting 1.037037037037037 x x1.5
+[    0.7s] cached YardFooting 1.037037037037037 x x1.5
+[    0.7s] cached YardFooting 1.037037037037037 x x1.5
+[    0.7s] cached YardFooting 1.037037037037037 x x1.5
+[    0.7s] cached YardFooting 1.037037037037037 x x1.5
+[    0.7s] cached YardFenceHalf 1 x x1.5
+[    0.7s] building YardFooting 0.5 x x1.5
+[    0.8s]   shaded Footing 256×256 in 0.04s
+[    0.8s] built YardFooting 0.5 x x1.5: 1 parts in 0.0s
+[    0.8s] cached YardFooting 0.5 x x1.5
+[    0.8s] building Approach4 210 0 0
+[    0.9s]   shaded Ramp 468×468 in 0.10s
+[    1.0s]   shaded Walls 488×488 in 0.10s
+[    1.0s]   shaded WallCaps 468×468 in 0.04s
+[    1.0s] built Approach4 210 0 0: 3 parts in 0.3s
+[    1.0s] cached StorageCrate 1 x x2
+[    1.0s] cached YardFooting 1.037037037037037 x x1.5
+[    1.0s] cached YardFooting 1.037037037037037 x x1.5
+[    1.0s] cached YardFooting 1.037037037037037 x x1.5
+[    1.0s] cached YardFooting 1.037037037037037 x x1.5
+[    1.0s] cached YardFooting 1.037037037037037 x x1.5
+[    1.0s] cached YardFooting 1.037037037037037 x x1.5
+[    1.0s] cached YardFenceHalf 1 x x1.5
+[    1.0s] cached YardFooting 0.5 x x1.5
+[    1.0s] cached YardFenceHalf 1 x x1.5
+[    1.0s] cached YardFooting 0.5 x x1.5
+[    1.0s] building Spoke5 -210 -180 180
+[    1.1s]   shaded Road 300×300 in 0.06s
+[    1.1s] built Spoke5 -210 -180 180: 1 parts in 0.1s
+[    1.1s] cached PadKitchen 1 x x1.6666666666666667
+[    1.1s] cached PadKitchen 1 x x1.6666666666666667
+[    1.1s] building Yard6_Bay2 -44.99999999999999 -134 180
+[    1.2s]   shaded Plinth 336×336 in 0.06s
+[    1.2s]   shaded Frame 272×272 in 0.02s
+[    1.2s]   shaded Marks 104×104 in 0.01s
+[    1.2s] built Yard6_Bay2 -44.99999999999999 -134 180: 3 parts in 0.1s
+[    1.2s] cached StorageCrate 1 x x2
+[    1.2s] cached YardFooting 1.037037037037037 x x1.5
+[    1.2s] cached YardFooting 1.037037037037037 x x1.5
+[    1.2s] cached YardFooting 1.037037037037037 x x1.5
+[    1.2s] cached YardFooting 1.037037037037037 x x1.5
+[    1.2s] cached YardFooting 1.037037037037037 x x1.5
+[    1.2s] cached YardFooting 1.037037037037037 x x1.5
+[    1.2s] cached YardFooting 1.037037037037037 x x1.5
+[    1.2s] cached YardFooting 1.037037037037037 x x1.5
+[    1.2s] cached YardFooting 1.037037037037037 x x1.5
+[    1.2s] cached YardFooting 1.037037037037037 x x1.5
+[    1.2s] cached YardFooting 1.037037037037037 x x1.5
+[    1.2s] cached YardFenceHalf 1 x x1.5
+[    1.2s] cached YardFooting 0.5 x x1.5
+[    1.2s] cached YardFenceHalf 1 x x1.5
+[    1.2s] cached YardFooting 0.5 x x1.5
+[    1.2s] building Spoke6 -70 -180 180
+[    1.3s]   shaded Road 300×300 in 0.04s
+[    1.3s] built Spoke6 -70 -180 180: 1 parts in 0.1s
+[    1.3s] building Plot7 70 -180 180
+[    2.0s]   shaded Ground_-1_-1_0 816×816 in 0.61s
+[    2.2s]   shaded Ground_-1_0_0_000 540×540 in 0.13s
+[    2.4s]   shaded Ground_-1_0_0_010 544×544 in 0.13s
+[    2.7s]   shaded Ground_-1_0_0_100 540×540 in 0.25s
+[    2.9s]   shaded Ground_-1_0_0_110 544×544 in 0.24s
+[    3.7s]   shaded Ground_0_-1_0 816×816 in 0.61s
+[    4.0s]   shaded Ground_0_0_0_000 540×540 in 0.26s
+[    4.3s]   shaded Ground_0_0_0_010 544×544 in 0.27s
+[    4.5s]   shaded Ground_0_0_0_100 540×540 in 0.13s
+[    4.6s]   shaded Ground_0_0_0_110 544×544 in 0.13s
+[    4.6s] built Plot7 70 -180 180: 10 parts in 3.3s
+[    4.7s] writing ServerMap.glb and 179 textures
+[    5.5s] chunk ServerMap_S5_01.glb: 76 parts, 8.5 MB
+[    5.5s] chunk ServerMap_S5_02.glb: 93 parts, 5.2 MB
+[    5.5s] chunk ServerMap_S5_03.glb: 10 parts, 5.8 MB
+ServerMap: 179 parts, script 4.70s, total 5.74s
+SHARD_COST	slab Yard2_Bay3	0.114
+SHARD_COST	slab Yard2_Bay3 #split	1
+SHARD_COST	YardFenceHalf 1 x x1.5	0.104
+SHARD_COST	YardFenceHalf 1 x x1.5 #split	1
+SHARD_COST	PadKitchen 1 x x1.6666666666666667	0.050
+SHARD_COST	PadKitchen 1 x x1.6666666666666667 #split	1
+SHARD_COST	YardFooting 0.5 x x1.5	0.040
+SHARD_COST	YardFooting 0.5 x x1.5 #split	1
+SHARD_COST	slab Approach4	0.269
+SHARD_COST	slab Approach4 #split	1
+SHARD_COST	slab Spoke5	0.068
+SHARD_COST	slab Spoke5 #split	1
+SHARD_COST	slab Yard6_Bay2	0.106
+SHARD_COST	slab Yard6_Bay2 #split	1
+SHARD_COST	slab Spoke6	0.051
 SHARD_COST	slab Spoke6 #split	1
-SHARD_COST	PadGarage 1 x x1.6666666666666667	0.134
-SHARD_COST	PadGarage 1 x x1.6666666666666667 #split	1
-SHARD_COST	JunkMound 1 x x2.3	0.475
-SHARD_COST	StorageCrate 1 x x2	5.784
-upload ServerMap: starting in 3.3s
-upload ServerMap: uploading ServerMapS5_01 (8.1M)
-upload ServerMap: uploading ServerMapS5_02 (2.3M)
-upload ServerMap: uploading ServerMapS5_03 (2.8M)
-upload ServerMap: uploading ServerMapS5_04 (2.7M)
-upload ServerMap: ServerMapS5_02 is asset 129658606533545
-upload ServerMap: uploading ServerMapS5_05 (2.9M)
-upload ServerMap: ServerMapS5_04 is asset 111847125407319
-upload ServerMap: uploading ServerMapS5_06 (3.8M)
-upload ServerMap: ServerMapS5_03 is asset 138853749910332
-upload ServerMap: ServerMapS5_01 is asset 80493512617178
-upload ServerMap: ServerMapS5_06 is asset 92592747006769
-upload ServerMap: ServerMapS5_05 is asset 130686809028275
-upload ServerMap: shard upload done: 6 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
+SHARD_COST	slab Plot7	3.328
+SHARD_COST	slab Plot7 #split	1
+upload ServerMap: starting in 0.3s
+upload ServerMap: uploading ServerMapS5_01 (8.2M)
+upload ServerMap: uploading ServerMapS5_02 (5.0M)
+upload ServerMap: uploading ServerMapS5_03 (5.6M)
+upload ServerMap: ServerMapS5_03 is asset 86534253905319
+upload ServerMap: ServerMapS5_01 is asset 135743887887148
+upload ServerMap: ServerMapS5_02 is asset 87792867260174
+upload ServerMap: shard upload done: 3 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
