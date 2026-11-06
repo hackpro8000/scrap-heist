@@ -1,12 +1,9 @@
 assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
 assemble ServerMap: uses ArenaDrone (key 3feaec12b72c179a)
-assemble ServerMap: uses HubIsland (key 6021be3c8a87dbbc)
-assemble ServerMap: uses YardIsland (key 11c6adb69c9d778d)
-assemble ServerMap: uses ShopConceptContainer (key 3bd24aa005fdec59)
-assemble ServerMap: uses ScrapTreeLamppost (key 3721cdc5289a1227)
-assemble ServerMap: uses VendingMachine (key 8c8c9e54c0152446)
-assemble ServerMap: uses ParkBench (key 644aec5ddc470126)
-assemble ServerMap: uses ScrapPalm (key 71b29a81d57ca962)
+assemble ServerMap: uses HubSectionA (key a8617627bbdcd357)
+assemble ServerMap: uses HubSectionB (key 13537df3661bc8d8)
+assemble ServerMap: uses HubSectionEnd (key 992b2af78b33b635)
+assemble ServerMap: uses YardIsland (key 7ddd7ac889cc7658)
 assemble ServerMap: uses ShippingContainer (key b4618da1e6c8e874)
 assemble ServerMap: uses CarStack (key 18868d27bbadf854)
 assemble ServerMap: uses CrushedCar (key cb21a631053a549a)
@@ -17,32 +14,45 @@ assemble ServerMap: uses Dumpster (key 5705b07a41a863a8)
 assemble ServerMap: uses Pallets (key af2bcdda5ec40e79)
 assemble ServerMap: uses StreetlightBroken (key 860caef50018b787)
 assemble ServerMap: uses TrafficCones (key 878424fc7df50b09)
-assemble ServerMap: uses GroundTile (key 43a80920e4c5168b)
-assemble ServerMap: uses MachinePad (key 1b6d00719513f1f7)
-assemble ServerMap: uses YardFence (key 122ba19da15d7e80)
-assemble ServerMap: uses YardFenceHalf (key 76101fa539bb054b)
-assemble ServerMap: uses YardFooting (key 5f7c0e3c30ab293e)
-assemble ServerMap: uses YardGate (key 692a8cf69b44f092)
-assemble ServerMap: uses PlotMarker (key f406cb0c06262f89)
-assemble ServerMap: uses StorageCrate (key 5d99f3bcd3db5fca)
-assemble ServerMap: uses YardPath (key f096c7510747dcc8)
-assemble ServerMap: uses YardPathStub (key 9d6e97b27d7f04b9)
-assemble ServerMap: slab at ServerMap.luau:822-871 (key 5c7ab7c43edf108b)
-assemble ServerMap: slab at ServerMap.luau:876-900 (key e1d53c436615f36a)
-assemble ServerMap: slab at ServerMap.luau:934-949 (key f4f9015cc7a52d81)
-assemble ServerMap: slab at ServerMap.luau:1028-1218 (key cf7e96091024d5cc)
-assemble ServerMap: slab at ServerMap.luau:1281-1285 (key cd506193dae2c60f)
-assemble ServerMap: slab at ServerMap.luau:1314-1335 (key 1db25ee55eaf429a)
-assemble ServerMap: slab at ServerMap.luau:1348-1365 (key 492adbf74c50ddf1)
-assemble ServerMap: slab at ServerMap.luau:1381-1388 (key 2b2b51e4886723fb)
-assemble ServerMap: slab at ServerMap.luau:1411-1415 (key 886388888fe59ef3)
-assemble ServerMap: slab at ServerMap.luau:1418-1426 (key 209bd5af05ec8c81)
-assemble ServerMap: slab at ServerMap.luau:1470-1492 (key dfbe27eb7d68389c)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 31115 lines, in 0s
+assemble ServerMap: slab at ServerMap.luau:821-870 (key 5c7ab7c43edf108b)
+assemble ServerMap: slab at ServerMap.luau:875-899 (key e1d53c436615f36a)
+assemble ServerMap: slab at ServerMap.luau:933-948 (key f4f9015cc7a52d81)
+assemble ServerMap: slab at ServerMap.luau:1027-1217 (key cf7e96091024d5cc)
+assemble ServerMap: slab at ServerMap.luau:1297-1326 (key 7ded6fc62f8b67a3)
+assemble ServerMap: slab at ServerMap.luau:1329-1333 (key 2f5b4070ee3aa512)
+assemble ServerMap: slab at ServerMap.luau:1345-1349 (key 014f342f2182a798)
+assemble ServerMap: slab at ServerMap.luau:1351-1359 (key 84939f33a0cb0864)
+assemble ServerMap: slab at ServerMap.luau:1404-1426 (key dfbe27eb7d68389c)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 22621 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.7s] cached ArenaDrone 1 x part 2/3
-[    0.9s] cached HubIsland 1 x part 15/16
-[    0.9s] writing ServerMap.glb and 78 textures
-[    1.4s] chunk ServerMap_S2_01.glb: 55 parts, 12.1 MB
-[    1.4s] chunk ServerMap_S2_02.glb: 23 parts, 6.1 MB
-ServerMap: 78 parts, script 868.03ms, total 1.60s
+[    0.6s] cached ArenaDrone 1 x part 2/3
+[    0.6s] building HubSectionB 1 x part 5/5
+[    2.6s] baking on CPU (no GPU)
+[    3.3s]   shaded Columns_-1_0_0_001 692×692 in 0.81s
+[    5.0s]   shaded Columns_0_0_-1_001 980×980 in 1.60s
+[    5.2s]   shaded Columns_-1_0_-1_111 372×372 in 0.19s
+[    5.3s]   shaded Columns_-1_-1_-1_101 220×220 in 0.09s
+[    6.3s]   shaded Dirt_-1_1_0 620×620 in 0.99s
+[    7.9s]   shaded Dirt_-1_0_0_010 976×976 in 1.53s
+[    8.1s]   shaded Dirt_-1_0_0_101 332×332 in 0.15s
+[    8.5s]   shaded Dirt_0_0_0_110_110 388×388 in 0.38s
+[    8.6s]   shaded Dirt_0_0_0_110_101 312×312 in 0.17s
+[    8.9s]   shaded Dirt_0_0_0_110_011 452×452 in 0.27s
+[    9.6s]   shaded Dirt_-1_-1_0_000_111 600×600 in 0.60s
+[    9.8s]   shaded Dirt_-1_-1_0_000_101 496×496 in 0.26s
+[   10.0s]   shaded Dirt_0_-1_0_100_110 252×252 in 0.19s
+[   10.4s]   shaded Dirt_0_-1_0_100_011 440×440 in 0.39s
+[   10.5s]   shaded Dirt_0_-1_0_000_100 36×36 in 0.02s
+[   11.9s]   shaded Dirt_-1_-2_0 744×744 in 1.44s
+[   12.0s]   shaded Dirt_0_0_-1 160×160 in 0.05s
+[   12.0s]   shaded Pebbles_-1_-2_0 72×72 in 0.01s
+[   13.1s]   shaded Grass_0_-2_0 920×920 in 1.10s
+[   13.7s]   shaded Grass_-1_0_0_000 652×652 in 0.53s
+[   14.7s]   shaded Grass_-1_1_0 900×900 in 0.93s
+[   14.7s] built HubSectionB 1 x part 5/5: 21 parts in 14.1s
+[   14.8s] writing ServerMap.glb and 76 textures
+[   15.3s] chunk ServerMap_S2_01.glb: 55 parts, 12.1 MB
+[   15.3s] chunk ServerMap_S2_02.glb: 21 parts, 5.6 MB
+ServerMap: 76 parts, script 14.77s, total 15.50s
+SHARD_COST	HubSectionB 1 x	70.434
+SHARD_COST	HubSectionB 1 x #split	1

@@ -3,5 +3,5 @@
 -- with two anchor parts and where their middles stand (studs, Y up).
 return {
 	{ key = "ServerMapS2_01", file = "ServerMap_S2_01.glb", parts = 55, anchors = { { name = "ArenaDrone_MotorTrim1", position = Vector3.new(123.00413, 136.73737, -122.99854) }, { name = "ArenaDrone_MotorTrim3", position = Vector3.new(-122.985855, 136.73422, 123.00458) } } },
-	{ key = "ServerMapS2_02", file = "ServerMap_S2_02.glb", parts = 23, anchors = { { name = "HubIsland_Dirt_-2_0_0_000", position = Vector3.new(-119.290405, -13.296215, -15.698779) }, { name = "HubIsland_Dirt_1_-1_0_111", position = Vector3.new(106.62345, -20.31733, 23.617182) } } },
+	{ key = "ServerMapS2_02", file = "ServerMap_S2_02.glb", parts = 21, anchors = { { name = "HubSection3_Dirt_0_0_0_110_110", position = Vector3.new(52.239063, -4.944063, -56.955704) }, { name = "HubSection3_Dirt_-1_-1_0_000_101", position = Vector3.new(-38.74975, -10.934761, 58.800163) } } },
 }
