@@ -1,0 +1,16 @@
+slab Approach3	0.448
+slab Approach3 #split	1
+slab Bridge5	1.687
+slab Bridge5 #split	1
+slab Spoke8	0.084
+slab Spoke8 #split	1
+slab Belt	5.502
+slab Belt #split	1
+PadGadget 1 x x1.6666666666666667	0.196
+PadGadget 1 x x1.6666666666666667 #split	1
+CapsuleScrap 1 x	0.200
+CapsuleScrap 1 x #split	1
+JunkrotSpoonzoBentolo 1 x	0.612
+JunkrotSpoonzoBentolo 1 x #split	1
+JunkrotPannettoPatchato 1 x	0.552
+JunkrotPannettoPatchato 1 x #split	1
