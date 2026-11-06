@@ -28,8 +28,8 @@
 			"parts": 1
 		},
 		{
-			"id": "3f0695d3ffe3e334",
-			"key": "fc0c5e558eaf305d-107c5c30239027da Spoke1 -210 180 0",
+			"id": "67252ad64c068880",
+			"key": "115ac3a755887f11-107c5c30239027da Spoke1 -210 180 0",
 			"piece": 1,
 			"label": "Spoke1",
 			"turn": 0.0,
@@ -37,8 +37,8 @@
 			"parts": 1
 		},
 		{
-			"id": "79e384627c591476",
-			"key": "fc0c5e558eaf305d-18845c9c8b69ea54 Approach1 -210 0 0",
+			"id": "2f1c7b70cc15fc7b",
+			"key": "115ac3a755887f11-18845c9c8b69ea54 Approach1 -210 0 0",
 			"piece": 1,
 			"label": "Approach1",
 			"turn": 0.0,
@@ -55,8 +55,8 @@
 			"parts": 3
 		},
 		{
-			"id": "ed7ef589494b3c20",
-			"key": "fc0c5e558eaf305d-107c5c30239027da Spoke4 210 180 0",
+			"id": "7daa8c30f3d68e55",
+			"key": "115ac3a755887f11-107c5c30239027da Spoke4 210 180 0",
 			"piece": 1,
 			"label": "Spoke4",
 			"turn": 0.0,
@@ -91,8 +91,8 @@
 			"parts": 4
 		},
 		{
-			"id": "98825bb1a8a92eb1",
-			"key": "fc0c5e558eaf305d-cf7e96091024d5cc Bridge6 -70 -180 180",
+			"id": "15a9d15f1979985f",
+			"key": "115ac3a755887f11-cf7e96091024d5cc Bridge6 -70 -180 180",
 			"piece": 1,
 			"label": "Bridge6",
 			"turn": 0.0,
@@ -100,8 +100,8 @@
 			"parts": 11
 		},
 		{
-			"id": "01ab1f021f868042",
-			"key": "fc0c5e558eaf305d-18845c9c8b69ea54 Approach8 210 0 180",
+			"id": "a556c2882d16e74d",
+			"key": "115ac3a755887f11-18845c9c8b69ea54 Approach8 210 0 180",
 			"piece": 1,
 			"label": "Approach8",
 			"turn": 0.0,
@@ -114,7 +114,7 @@
 			"piece": 1,
 			"label": "Kit_PadGarage",
 			"turn": 0.0,
-			"bytes": 360636,
+			"bytes": 360632,
 			"parts": 3
 		},
 		{
@@ -123,7 +123,7 @@
 			"piece": 1,
 			"label": "Kit_Press",
 			"turn": 0.0,
-			"bytes": 777412,
+			"bytes": 777404,
 			"parts": 8
 		},
 		{
@@ -141,7 +141,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotCabloTanglino",
 			"turn": 0.0,
-			"bytes": 588196,
+			"bytes": 588208,
 			"parts": 6
 		},
 		{
@@ -150,8 +150,17 @@
 			"piece": 1,
 			"label": "Kit_JunkrotFrostboxGelatone",
 			"turn": 0.0,
-			"bytes": 605824,
+			"bytes": 605828,
 			"parts": 7
+		},
+		{
+			"id": "6dd58b5eb03aba9e",
+			"key": "JunkrotAirfryoCroccante-fe378a5846949e34 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotAirfryoCroccante",
+			"turn": 0.0,
+			"bytes": 609132,
+			"parts": 8
 		}
 	],
 	"placements": [
@@ -659,7 +668,7 @@
 			]
 		},
 		{
-			"asset": "3f0695d3ffe3e334",
+			"asset": "67252ad64c068880",
 			"label": "Spoke1",
 			"turn": 0.0,
 			"anchors": [
@@ -674,7 +683,7 @@
 			]
 		},
 		{
-			"asset": "79e384627c591476",
+			"asset": "2f1c7b70cc15fc7b",
 			"label": "Approach1",
 			"turn": 0.0,
 			"anchors": [
@@ -1846,7 +1855,7 @@
 			]
 		},
 		{
-			"asset": "ed7ef589494b3c20",
+			"asset": "7daa8c30f3d68e55",
 			"label": "Spoke4",
 			"turn": 0.0,
 			"anchors": [
@@ -3017,7 +3026,7 @@
 			]
 		},
 		{
-			"asset": "98825bb1a8a92eb1",
+			"asset": "15a9d15f1979985f",
 			"label": "Bridge6",
 			"turn": 0.0,
 			"anchors": [
@@ -3176,7 +3185,7 @@
 			]
 		},
 		{
-			"asset": "01ab1f021f868042",
+			"asset": "a556c2882d16e74d",
 			"label": "Approach8",
 			"turn": 0.0,
 			"anchors": [
@@ -3206,7 +3215,7 @@
 				{
 					"name": "Hardware",
 					"position": [
-						-468.00894,
+						-624.0089250000001,
 						-149.07463,
 						-1.15015185
 					]
@@ -3214,7 +3223,7 @@
 				{
 					"name": "Plate",
 					"position": [
-						-468.01166,
+						-624.011675,
 						-149.691015,
 						0.006314500000000223
 					]
@@ -3229,7 +3238,7 @@
 				{
 					"name": "Bolts",
 					"position": [
-						-374.04767000000004,
+						-530.04768,
 						-145.832325,
 						-0.39704344999999996
 					]
@@ -3237,7 +3246,7 @@
 				{
 					"name": "Button",
 					"position": [
-						-365.6,
+						-521.5999999999999,
 						-146.38,
 						2.5999999999999996
 					]
@@ -3252,7 +3261,7 @@
 				{
 					"name": "Rings",
 					"position": [
-						-204.00976500000002,
+						-360.009775,
 						-148.495115,
 						-0.0030170500000000766
 					]
@@ -3260,7 +3269,7 @@
 				{
 					"name": "Tag",
 					"position": [
-						-203.45,
+						-359.45,
 						-147.43,
 						0.9
 					]
@@ -3275,7 +3284,7 @@
 				{
 					"name": "Plug",
 					"position": [
-						13.289656,
+						-142.710345,
 						-148.19236,
 						-0.71517855
 					]
@@ -3283,7 +3292,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						12.032169,
+						-143.967835,
 						-148.4065,
 						0.935000005
 					]
@@ -3298,7 +3307,7 @@
 				{
 					"name": "Cabinet",
 					"position": [
-						275.985765,
+						119.98575500000001,
 						-147.76837999999998,
 						-0.00899551500000001
 					]
@@ -3306,9 +3315,32 @@
 				{
 					"name": "Magnet",
 					"position": [
-						276.49278000000004,
+						120.49279,
 						-148.415055,
 						0.84559132
+					]
+				}
+			]
+		},
+		{
+			"asset": "6dd58b5eb03aba9e",
+			"label": "Kit_JunkrotAirfryoCroccante",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Body",
+					"position": [
+						408.0,
+						-147.89999999999998,
+						0.0
+					]
+				},
+				{
+					"name": "Handle",
+					"position": [
+						407.99361999999996,
+						-148.427665,
+						1.2858595
 					]
 				}
 			]

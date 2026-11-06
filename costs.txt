@@ -1,12 +1,12 @@
-slab Spoke1	0.049
+slab Spoke1	0.048
 slab Spoke1 #split	1
-slab Approach1	0.169
+slab Approach1	0.157
 slab Approach1 #split	1
-slab Spoke4	0.051
+slab Spoke4	0.048
 slab Spoke4 #split	1
-slab Bridge6	0.858
+slab Bridge6	0.811
 slab Bridge6 #split	1
-slab Approach8	0.174
+slab Approach8	0.166
 slab Approach8 #split	1
-JunkrotFrostboxGelatone 1 x	0.404
-JunkrotFrostboxGelatone 1 x #split	1
+JunkrotAirfryoCroccante 1 x	0.394
+JunkrotAirfryoCroccante 1 x #split	1
