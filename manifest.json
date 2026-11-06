@@ -6,7 +6,7 @@
 			"piece": 1,
 			"label": "HubSection2",
 			"turn": 0.0,
-			"bytes": 7435932,
+			"bytes": 7435988,
 			"parts": 32
 		},
 		{
@@ -15,16 +15,16 @@
 			"piece": 1,
 			"label": "Yard3_FootingFront1",
 			"turn": 0.0,
-			"bytes": 120228,
+			"bytes": 120280,
 			"parts": 1
 		},
 		{
-			"id": "f8cf7ced29441515",
-			"key": "115ac3a755887f11-cf7e96091024d5cc Bridge3 70 180 0",
+			"id": "6c4e340aa2bde504",
+			"key": "1cc43e4ea4bd80d5-cf7e96091024d5cc Bridge3 70 180 0",
 			"piece": 1,
 			"label": "Bridge3",
 			"turn": 0.0,
-			"bytes": 3183024,
+			"bytes": 3183076,
 			"parts": 11
 		},
 		{
@@ -33,7 +33,7 @@
 			"piece": 1,
 			"label": "Yard6_FenceFront1",
 			"turn": 180.0,
-			"bytes": 417692,
+			"bytes": 417744,
 			"parts": 3
 		},
 		{
@@ -42,16 +42,16 @@
 			"piece": 1,
 			"label": "Yard6_Gate",
 			"turn": 180.0,
-			"bytes": 540464,
+			"bytes": 540516,
 			"parts": 4
 		},
 		{
-			"id": "42f89cc5d7c2113f",
-			"key": "115ac3a755887f11-7b25a7aa2539d602 Plot7 70 -180 180",
+			"id": "b32bcabbdad1f650",
+			"key": "1cc43e4ea4bd80d5-7b25a7aa2539d602 Plot7 70 -180 180",
 			"piece": 1,
 			"label": "Plot7",
 			"turn": 0.0,
-			"bytes": 5830912,
+			"bytes": 5830964,
 			"parts": 10
 		},
 		{
@@ -60,7 +60,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotRadioloFruscio",
 			"turn": 0.0,
-			"bytes": 661448,
+			"bytes": 661516,
 			"parts": 7
 		},
 		{
@@ -69,7 +69,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotCamerinoFlashetto",
 			"turn": 0.0,
-			"bytes": 700408,
+			"bytes": 700460,
 			"parts": 8
 		},
 		{
@@ -78,8 +78,17 @@
 			"piece": 1,
 			"label": "Kit_JunkrotClankClankClankScrapur",
 			"turn": 0.0,
-			"bytes": 733540,
+			"bytes": 733596,
 			"parts": 8
+		},
+		{
+			"id": "a7f96e16b51694d7",
+			"key": "JunkrotWeldettaSparkalot-c11aed715eb587cc 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotWeldettaSparkalot",
+			"turn": 0.0,
+			"bytes": 715180,
+			"parts": 9
 		}
 	],
 	"placements": [
@@ -205,7 +214,7 @@
 			]
 		},
 		{
-			"asset": "f8cf7ced29441515",
+			"asset": "6c4e340aa2bde504",
 			"label": "Bridge3",
 			"turn": 0.0,
 			"anchors": [
@@ -333,7 +342,7 @@
 			]
 		},
 		{
-			"asset": "42f89cc5d7c2113f",
+			"asset": "b32bcabbdad1f650",
 			"label": "Plot7",
 			"turn": 0.0,
 			"anchors": [
@@ -363,7 +372,7 @@
 				{
 					"name": "Aerial",
 					"position": [
-						48.339138500000004,
+						-203.66087,
 						-146.67401999999998,
 						-0.114168403
 					]
@@ -371,7 +380,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						48.02656,
+						-203.973435,
 						-147.958,
 						0.6436180250000001
 					]
@@ -386,7 +395,7 @@
 				{
 					"name": "Flash",
 					"position": [
-						311.384155,
+						59.384157,
 						-147.339295,
 						0.013302329999999973
 					]
@@ -394,7 +403,7 @@
 				{
 					"name": "LensGlass",
 					"position": [
-						312.0,
+						60.0,
 						-148.65,
 						1.21999995
 					]
@@ -409,7 +418,7 @@
 				{
 					"name": "Bat",
 					"position": [
-						601.268155,
+						349.268155,
 						-146.33733999999998,
 						-0.11063585999999997
 					]
@@ -417,9 +426,32 @@
 				{
 					"name": "Pupils",
 					"position": [
-						600.03655,
+						348.036565,
 						-147.258,
 						0.88361803
+					]
+				}
+			]
+		},
+		{
+			"asset": "a7f96e16b51694d7",
+			"label": "Kit_JunkrotWeldettaSparkalot",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Arc",
+					"position": [
+						637.7521999999999,
+						-146.95161000000002,
+						0.65714494
+					]
+				},
+				{
+					"name": "Case",
+					"position": [
+						636.00087,
+						-148.28562,
+						-0.0029323499999999725
 					]
 				}
 			]
