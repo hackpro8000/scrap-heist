@@ -1,0 +1,6 @@
+HubIsland 1 x	165.084
+HubIsland 1 x #split	1
+CarStack 1 x x2.5	0.215
+CarStack 1 x x2.5 #split	1
+ShopConceptContainer 1 x x2.5	48.426
+ShopConceptContainer 1 x x2.5 #split	1
