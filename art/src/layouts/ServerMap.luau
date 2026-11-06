@@ -1,4 +1,4 @@
--- uses: HubSectionA HubSectionB HubSectionEnd YardIsland YardFence YardFenceHalf YardFooting YardGate PlotMarker PadKitchen PadGarage PadGadget BuildBay ScrapCrate RebirthPress JunkMound CapsuleScrap CapsuleSalvaged CapsuleRefurbished CapsuleFactory CapsulePrecision CapsulePrototype CapsuleSecret JunkrotCanettoRustini JunkrotSpoonzoBentolo JunkrotKettlinaDentata JunkrotTyroFlattino JunkrotBoltoloLonelo JunkrotHubcappaWobbla JunkrotRemotinoMuto JunkrotCabloTanglino JunkrotBulboFulminato JunkrotCrumboPoppalot JunkrotPannettoPatchato JunkrotBlendroCigolante JunkrotJackoloCrickato JunkrotOilcannaGluglu JunkrotMuffleroTossetto JunkrotRadioloFruscio JunkrotFanettoWobblino JunkrotClockoTictacco
+-- uses: HubSectionA HubSectionB HubSectionEnd YardIsland YardFence YardFenceHalf YardFooting YardGate PlotMarker PadKitchen PadGarage PadGadget BuildBay ScrapCrate RebirthPress JunkMound CapsuleScrap CapsuleSalvaged CapsuleRefurbished CapsuleFactory CapsulePrecision CapsulePrototype CapsuleSecret JunkrotCanettoRustini JunkrotSpoonzoBentolo JunkrotKettlinaDentata JunkrotTyroFlattino JunkrotBoltoloLonelo JunkrotHubcappaWobbla JunkrotRemotinoMuto JunkrotCabloTanglino JunkrotBulboFulminato JunkrotCrumboPoppalot JunkrotPannettoPatchato JunkrotBlendroCigolante JunkrotJackoloCrickato JunkrotOilcannaGluglu JunkrotMuffleroTossetto JunkrotRadioloFruscio JunkrotFanettoWobblino JunkrotClockoTictacco JunkrotFrostboxGelatone JunkrotMicrondoBippetto JunkrotMixerellaVroom JunkrotMopaMopetta JunkrotDrilloTrapanino JunkrotGrindellaScintilla JunkrotTelefonoRingaling JunkrotTypewrittoClackini JunkrotCamerinoFlashetto JunkrotDrippiDroppi JunkrotDingDingDingDongo
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands laid out along a line (the Scrap Line). The hub is a long
 -- island running along x, five sections in a row, paved from end to end: a
@@ -909,6 +909,17 @@ local KIT = {
 	{ "JunkrotRadioloFruscio", buildJunkrotRadioloFruscio, 1 },
 	{ "JunkrotFanettoWobblino", buildJunkrotFanettoWobblino, 1 },
 	{ "JunkrotClockoTictacco", buildJunkrotClockoTictacco, 1 },
+	{ "JunkrotFrostboxGelatone", buildJunkrotFrostboxGelatone, 1 },
+	{ "JunkrotMicrondoBippetto", buildJunkrotMicrondoBippetto, 1 },
+	{ "JunkrotMixerellaVroom", buildJunkrotMixerellaVroom, 1 },
+	{ "JunkrotMopaMopetta", buildJunkrotMopaMopetta, 1 },
+	{ "JunkrotDrilloTrapanino", buildJunkrotDrilloTrapanino, 1 },
+	{ "JunkrotGrindellaScintilla", buildJunkrotGrindellaScintilla, 1 },
+	{ "JunkrotTelefonoRingaling", buildJunkrotTelefonoRingaling, 1 },
+	{ "JunkrotTypewrittoClackini", buildJunkrotTypewrittoClackini, 1 },
+	{ "JunkrotCamerinoFlashetto", buildJunkrotCamerinoFlashetto, 1 },
+	{ "JunkrotDrippiDroppi", buildJunkrotDrippiDroppi, 1 },
+	{ "JunkrotDingDingDingDongo", buildJunkrotDingDingDingDongo, 1 },
 }
 useTexelDensity(KIT_DENSITY)
 for index, entry in KIT do
