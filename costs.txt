@@ -1,8 +1,8 @@
-slab Bridge4	0.775
+slab Bridge4	0.761
 slab Bridge4 #split	1
-slab Approach7	0.152
+slab Approach7	0.158
 slab Approach7 #split	1
-slab Sorter	0.173
+slab Sorter	0.171
 slab Sorter #split	1
-JunkrotGrindellaScintilla 1 x	0.391
-JunkrotGrindellaScintilla 1 x #split	1
+JunkrotConsoloJoypaddino 1 x	0.492
+JunkrotConsoloJoypaddino 1 x #split	1

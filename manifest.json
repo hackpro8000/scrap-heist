@@ -37,8 +37,8 @@
 			"parts": 1
 		},
 		{
-			"id": "9f049505ca1f7e05",
-			"key": "fc0c5e558eaf305d-cf7e96091024d5cc Bridge4 210 180 0",
+			"id": "5fd31e94f5f3b7ca",
+			"key": "115ac3a755887f11-cf7e96091024d5cc Bridge4 210 180 0",
 			"piece": 1,
 			"label": "Bridge4",
 			"turn": 0.0,
@@ -55,8 +55,8 @@
 			"parts": 1
 		},
 		{
-			"id": "93ccdcc4dbb284eb",
-			"key": "fc0c5e558eaf305d-18845c9c8b69ea54 Approach7 70 0 180",
+			"id": "a4451de9d955ee6a",
+			"key": "115ac3a755887f11-18845c9c8b69ea54 Approach7 70 0 180",
 			"piece": 1,
 			"label": "Approach7",
 			"turn": 0.0,
@@ -64,8 +64,8 @@
 			"parts": 3
 		},
 		{
-			"id": "3314de72f17d43fc",
-			"key": "fc0c5e558eaf305d-f4e0427155be5973 Sorter -202 16 0",
+			"id": "283b24f9e61566ae",
+			"key": "115ac3a755887f11-f4e0427155be5973 Sorter -202 16 0",
 			"piece": 1,
 			"label": "Sorter",
 			"turn": 0.0,
@@ -96,7 +96,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotTyroFlattino",
 			"turn": 0.0,
-			"bytes": 549544,
+			"bytes": 549552,
 			"parts": 6
 		},
 		{
@@ -105,7 +105,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotJackoloCrickato",
 			"turn": 0.0,
-			"bytes": 570280,
+			"bytes": 570288,
 			"parts": 6
 		},
 		{
@@ -114,8 +114,17 @@
 			"piece": 1,
 			"label": "Kit_JunkrotGrindellaScintilla",
 			"turn": 0.0,
-			"bytes": 717964,
+			"bytes": 717968,
 			"parts": 8
+		},
+		{
+			"id": "7dec67c4be48aeab",
+			"key": "JunkrotConsoloJoypaddino-191abffb1bf801ba 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotConsoloJoypaddino",
+			"turn": 0.0,
+			"bytes": 753660,
+			"parts": 9
 		}
 	],
 	"placements": [
@@ -436,7 +445,7 @@
 			]
 		},
 		{
-			"asset": "9f049505ca1f7e05",
+			"asset": "5fd31e94f5f3b7ca",
 			"label": "Bridge4",
 			"turn": 0.0,
 			"anchors": [
@@ -594,7 +603,7 @@
 			]
 		},
 		{
-			"asset": "93ccdcc4dbb284eb",
+			"asset": "a4451de9d955ee6a",
 			"label": "Approach7",
 			"turn": 0.0,
 			"anchors": [
@@ -617,7 +626,7 @@
 			]
 		},
 		{
-			"asset": "3314de72f17d43fc",
+			"asset": "283b24f9e61566ae",
 			"label": "Sorter",
 			"turn": 0.0,
 			"anchors": [
@@ -647,7 +656,7 @@
 				{
 					"name": "Deck",
 					"position": [
-						-420.006925,
+						-576.0069249999999,
 						-149.80111,
 						0.0005628999999998108
 					]
@@ -655,7 +664,7 @@
 				{
 					"name": "Rack",
 					"position": [
-						-419.981,
+						-575.98098,
 						-148.90030000000002,
 						-4.71155935
 					]
@@ -670,7 +679,7 @@
 				{
 					"name": "Box",
 					"position": [
-						-276.00169,
+						-432.00169,
 						-149.40106,
 						-0.004411985000000007
 					]
@@ -685,7 +694,7 @@
 				{
 					"name": "Nail",
 					"position": [
-						-83.14522,
+						-239.145215,
 						-147.263805,
 						0.177136401
 					]
@@ -693,7 +702,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						-83.9778275,
+						-239.977835,
 						-148.25650000000002,
 						0.550213515
 					]
@@ -708,7 +717,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						132.022165,
+						-23.977831,
 						-147.3865,
 						0.430213525
 					]
@@ -716,7 +725,7 @@
 				{
 					"name": "Screw",
 					"position": [
-						132.329315,
+						-23.670682,
 						-148.26735000000002,
 						-0.011748239999999993
 					]
@@ -731,7 +740,7 @@
 				{
 					"name": "Handle",
 					"position": [
-						395.38745,
+						239.38745,
 						-148.378335,
 						-0.5333064000000001
 					]
@@ -739,9 +748,32 @@
 				{
 					"name": "Sparks",
 					"position": [
-						398.597735,
+						242.597735,
 						-148.70037000000002,
 						0.69901257
+					]
+				}
+			]
+		},
+		{
+			"asset": "7dec67c4be48aeab",
+			"label": "Kit_JunkrotConsoloJoypaddino",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Buttons",
+					"position": [
+						528.0384300000001,
+						-148.15,
+						1.12
+					]
+				},
+				{
+					"name": "Core",
+					"position": [
+						528.0,
+						-147.9,
+						0.0
 					]
 				}
 			]
