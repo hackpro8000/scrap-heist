@@ -40,132 +40,22 @@ assemble ServerMap: slab at ServerMap.luau:1362-1370 (key 209bd5af05ec8c81)
 assemble ServerMap: slab at ServerMap.luau:1402-1424 (key c8fbb33a2805dfaf)
 assemble ServerMap: wrote art/models/ServerMap/model.luau, 33582 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.3s] building Avenue1 90 0 -90
-[    0.6s] baking on CPU (no GPU)
-[    0.9s]   shaded Deck 1024×1024 in 0.49s
-[    1.0s]   shaded HazardYellow 236×236 in 0.03s
-[    1.0s]   shaded HazardBlack 236×236 in 0.03s
-[    1.4s]   shaded Girders 1024×1024 in 0.37s
-[    1.5s]   shaded Posts 352×352 in 0.07s
-[    1.6s]   shaded Rail 1024×1024 in 0.14s
-[    1.6s]   shaded KerbEnds 156×156 in 0.03s
-[    1.7s]   shaded EndPosts 76×76 in 0.01s
-[    1.7s]   shaded Abutments 304×304 in 0.04s
-[    1.7s] built Avenue1 90 0 -90: 9 parts in 1.4s
-[    1.7s] building MarketIsland 1 x part 2/2
-[    3.0s]   shaded Columns_0_0_-1_000 476×476 in 0.26s
-[    3.8s]   shaded Columns_0_0_-1_001 884×884 in 0.79s
-[    3.9s]   shaded Columns_0_0_-1_101 280×280 in 0.05s
-[    5.1s]   shaded Columns_0_-1_-1 1000×1000 in 1.23s
-[    6.1s]   shaded Columns_-1_-1_0 1012×1012 in 0.91s
-[    7.2s]   shaded Columns_-1_0_0 1008×1008 in 0.95s
-[    7.8s]   shaded Columns_0_0_0_001 792×792 in 0.59s
-[    7.8s]   shaded Columns_0_0_0_100 292×292 in 0.06s
-[    8.0s]   shaded Columns_0_0_0_011 424×424 in 0.15s
-[    8.3s]   shaded Columns_0_0_0_101 532×532 in 0.25s
-[    8.3s]   shaded Columns_0_0_0_000 240×240 in 0.04s
-[    8.4s]   shaded Columns_0_0_0_010 264×264 in 0.04s
-[    9.4s]   shaded Dirt_-1_-1_0_010 964×964 in 0.96s
-[    9.7s]   shaded Dirt_-1_-1_0_111 628×628 in 0.36s
-[   10.0s]   shaded Dirt_0_0_0_110 428×428 in 0.21s
-[   10.9s]   shaded Dirt_0_0_0_010 804×804 in 0.90s
-[   10.9s]   shaded Dirt_0_0_0_101 192×192 in 0.04s
-[   11.7s]   shaded Dirt_-1_0_0_000 964×964 in 0.78s
-[   12.0s]   shaded Dirt_-1_0_0_001 528×528 in 0.21s
-[   12.1s]   shaded Dirt_-1_0_0_111 392×392 in 0.15s
-[   12.7s]   shaded Dirt_0_-1_0_000 584×584 in 0.54s
-[   12.9s]   shaded Dirt_0_-1_0_010 464×464 in 0.21s
-[   13.1s]   shaded Dirt_0_-1_0_111 416×416 in 0.15s
-[   13.1s]   shaded Dirt_0_-1_-1 144×144 in 0.02s
-[   13.1s]   shaded Dirt_0_0_-1 116×116 in 0.02s
-[   13.3s]   shaded Dirt_-1_-1_-1 348×348 in 0.18s
-[   13.3s]   shaded Dirt_-1_0_-1 60×60 in 0.01s
-[   13.3s]   shaded Pebbles_-1_-1_0 164×164 in 0.03s
-[   14.2s]   shaded Grass_0_-1_0_110 900×900 in 0.83s
-[   14.5s]   shaded Grass_0_-1_0_100 552×552 in 0.26s
-[   15.0s]   shaded Grass_0_-1_0_000 640×640 in 0.48s
-[   15.5s]   shaded Grass_0_-1_0_010 540×540 in 0.49s
-[   16.5s]   shaded Grass_-1_-1_0_010 920×920 in 0.89s
-[   17.0s]   shaded Grass_-1_0_0_100 540×540 in 0.48s
-[   17.6s]   shaded Grass_0_0_0_010 712×712 in 0.54s
-[   17.6s] built MarketIsland 1 x part 2/2: 35 parts in 15.9s
-[   17.7s] building YardFooting 0.5 x x1.5
-[   17.8s]   shaded Footing 256×256 in 0.03s
-[   17.8s] built YardFooting 0.5 x x1.5: 1 parts in 0.0s
-[   17.8s] building Bridge7 556 84 0
-[   18.0s]   shaded Deck 712×712 in 0.19s
-[   18.0s]   shaded HazardYellow 112×112 in 0.01s
-[   18.0s]   shaded HazardBlack 104×104 in 0.01s
-[   18.2s]   shaded Girders 1024×1024 in 0.18s
-[   18.2s]   shaded Posts 144×144 in 0.02s
-[   18.4s]   shaded Rail 976×976 in 0.11s
-[   18.4s]   shaded KerbEnds 108×108 in 0.01s
-[   18.4s]   shaded EndPosts 64×64 in 0.01s
-[   18.5s]   shaded Abutments 372×372 in 0.10s
-[   18.5s]   shaded JointPlate 152×152 in 0.01s
-[   18.5s]   shaded Apron 184×184 in 0.03s
-[   18.5s] built Bridge7 556 84 0: 11 parts in 0.8s
-[   18.5s] building CarStack 1 x x2.5
-[   18.6s]   shaded Car1 256×256 in 0.04s
-[   18.6s]   shaded Car2 256×256 in 0.04s
-[   18.7s]   shaded Car3 256×256 in 0.04s
-[   18.7s]   shaded Wheels 256×256 in 0.02s
-[   18.7s]   shaded Glass 256×256 in 0.02s
-[   18.7s] built CarStack 1 x x2.5: 5 parts in 0.2s
-[   18.7s] building CrushedCar 1 x x2.5
-[   18.8s]   shaded Body 256×256 in 0.05s
-[   18.8s]   shaded Glass 256×256 in 0.02s
-[   18.9s]   shaded Wheels 256×256 in 0.02s
-[   18.9s]   shaded Bumpers 256×256 in 0.01s
-[   18.9s] built CrushedCar 1 x x2.5: 4 parts in 0.1s
-[   18.9s] building TyreStack 1 x x1.8
-[   18.9s]   shaded Tyres 256×256 in 0.04s
-[   18.9s]   shaded Rim 256×256 in 0.03s
-[   18.9s] built TyreStack 1 x x1.8: 2 parts in 0.1s
-[   18.9s] building Dumpster 1 x x2.2
-[   19.0s]   shaded Bin 256×256 in 0.06s
-[   19.0s]   shaded Frame 256×256 in 0.02s
-[   19.1s]   shaded Wheels 256×256 in 0.04s
-[   19.1s]   shaded Bags 256×256 in 0.03s
-[   19.1s] built Dumpster 1 x x2.2: 4 parts in 0.2s
-[   19.1s] building Hatch2 -9.758427525309788 23.558928079037813 112.5
-[   19.1s]   shaded Rim 312×312 in 0.02s
-[   19.1s]   shaded Frame 260×260 in 0.02s
-[   19.2s]   shaded Pit 212×212 in 0.02s
-[   19.2s]   shaded Grate 300×300 in 0.02s
-[   19.2s] built Hatch2 -9.758427525309788 23.558928079037813 112.5: 4 parts in 0.1s
-[   19.2s] building StreetlightBroken 1 x x2
-[   19.2s]   shaded Pole 256×256 in 0.02s
-[   19.2s]   shaded Head 256×256 in 0.02s
-[   19.3s]   shaded Glass 256×256 in 0.02s
-[   19.3s]   shaded Wires 256×256 in 0.01s
-[   19.3s] built StreetlightBroken 1 x x2: 4 parts in 0.1s
-[   19.3s] cached StreetlightBroken 1 x x2
-[   19.3s] cached StreetlightBroken 1 x x2
-[   19.3s] cached StreetlightBroken 1 x x2
-[   19.3s] writing ServerMap.glb and 91 textures
-[   19.8s] chunk ServerMap_S8_01.glb: 9 parts, 4.1 MB
-[   19.8s] chunk ServerMap_S8_02.glb: 56 parts, 17.1 MB
-[   19.8s] chunk ServerMap_S8_03.glb: 26 parts, 1.4 MB
-[   19.9s] rendering preview of 91 parts
-ServerMap: 91 parts, script 19.27s, total 20.01s
-SHARD_COST	slab Avenue1	1.371
-SHARD_COST	slab Avenue1 #split	1
-SHARD_COST	MarketIsland 1 x	31.718
-SHARD_COST	MarketIsland 1 x #split	1
-SHARD_COST	YardFooting 0.5 x x1.5	0.038
-SHARD_COST	YardFooting 0.5 x x1.5 #split	1
-SHARD_COST	slab Bridge7	0.763
-SHARD_COST	slab Bridge7 #split	1
-SHARD_COST	CarStack 1 x x2.5	0.199
-SHARD_COST	CarStack 1 x x2.5 #split	1
-SHARD_COST	CrushedCar 1 x x2.5	0.122
-SHARD_COST	CrushedCar 1 x x2.5 #split	1
-SHARD_COST	TyreStack 1 x x1.8	0.069
-SHARD_COST	TyreStack 1 x x1.8 #split	1
-SHARD_COST	Dumpster 1 x x2.2	0.163
-SHARD_COST	Dumpster 1 x x2.2 #split	1
-SHARD_COST	slab Hatch2	0.081
-SHARD_COST	slab Hatch2 #split	1
-SHARD_COST	StreetlightBroken 1 x x2	0.075
-SHARD_COST	StreetlightBroken 1 x x2 #split	1
+[    0.4s] cached Avenue1 90 0 -90
+[    0.5s] cached MarketIsland 1 x part 2/2
+[    0.5s] cached YardFooting 0.5 x x1.5
+[    0.6s] cached Bridge7 556 84 0
+[    0.6s] cached CarStack 1 x x2.5
+[    0.6s] cached CrushedCar 1 x x2.5
+[    0.6s] cached TyreStack 1 x x1.8
+[    0.6s] cached Dumpster 1 x x2.2
+[    0.6s] cached Hatch2 -9.758427525309788 23.558928079037813 112.5
+[    0.6s] cached StreetlightBroken 1 x x2
+[    0.6s] cached StreetlightBroken 1 x x2
+[    0.6s] cached StreetlightBroken 1 x x2
+[    0.6s] cached StreetlightBroken 1 x x2
+[    0.6s] writing ServerMap.glb and 91 textures
+[    1.2s] chunk ServerMap_S8_01.glb: 9 parts, 4.1 MB
+[    1.2s] chunk ServerMap_S8_02.glb: 56 parts, 17.1 MB
+[    1.2s] chunk ServerMap_S8_03.glb: 26 parts, 1.4 MB
+[    1.4s] rendering preview of 91 parts
+ServerMap: 91 parts, script 638.26ms, total 1.57s
