@@ -1,9 +1,0 @@
-assemble ShopTest: layout: prelude, rarity, shared helpers, used models, layout
-assemble ShopTest: uses ShopConceptContainer (key ea4f346237b0dbb0)
-assemble ShopTest: wrote art/models/ShopTest/model.luau, 2716 lines, in 0s
-[    0.0s] running ShopTest/model.luau
-[    0.1s] cached ShopConceptContainer 1 x part 7/8
-[    0.1s] writing ShopTest.glb and 9 textures
-[    0.1s] chunk ShopTest_S7_01.glb: 9 parts, 3.5 MB
-[    0.2s] rendering preview of 9 parts
-ShopTest: 9 parts, script 66.21ms, total 244.46ms
