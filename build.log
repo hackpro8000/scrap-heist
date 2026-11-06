@@ -14,7 +14,7 @@ assemble ServerMap: slab at ServerMap.luau:576-580 (key 2f5b4070ee3aa512)
 assemble ServerMap: slab at ServerMap.luau:656-662 (key 7b25a7aa2539d602)
 assemble ServerMap: slab at ServerMap.luau:664-673 (key 107c5c30239027da)
 assemble ServerMap: slab at ServerMap.luau:681-711 (key 18845c9c8b69ea54)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 1s
 [    0.0s] running ServerMap/model.luau
 [    0.3s] cached HubSectionB 1 x part 2/4
 [    0.4s] cached YardIsland 1 x part 5/5
@@ -26,7 +26,7 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
 [    0.9s] cached YardIsland 1 x part 5/5
 [    1.0s] cached YardIsland 1 x part 5/5
 [    1.0s] writing ServerMap.glb and 202 textures
-ServerMap: 202 parts, script 971.97ms, total 1.98s
+ServerMap: 202 parts, script 967.37ms, total 2.13s
 PLACED	HubSection3	0	HubSectionB-afc962b93a377a4a 1 x part 2/4
 PLACED	Island1	0	YardIsland-f7a297dc299e1e15 1 x part 5/5
 PLACED	Island2	0	YardIsland-f7a297dc299e1e15 1 x part 5/5
@@ -37,7 +37,3 @@ PLACED	Island6	180	YardIsland-f7a297dc299e1e15 1 x part 5/5
 PLACED	Island7	180	YardIsland-f7a297dc299e1e15 1 x part 5/5
 PLACED	Island8	180	YardIsland-f7a297dc299e1e15 1 x part 5/5
 export ServerMap: 2 objects (13.5 MB) for 9 placements
-remote: 
-remote: Create a pull request for 'build-objects/s10' on GitHub by visiting:        
-remote:      https://github.com/hackpro8000/scrap-heist/pull/new/build-objects/s10        
-remote: 
