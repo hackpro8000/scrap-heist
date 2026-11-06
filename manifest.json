@@ -1,0 +1,231 @@
+{
+	"assets": [
+		{
+			"id": "919c8b231bc23bf6",
+			"key": "HubSectionB-afc962b93a377a4a 1 x part 1/4",
+			"piece": 1,
+			"label": "HubSection3",
+			"turn": 0.0,
+			"bytes": 7637828,
+			"parts": 25
+		},
+		{
+			"id": "edf1b9b9d1e214f9",
+			"key": "YardIsland-f7a297dc299e1e15 1 x part 4/5",
+			"piece": 1,
+			"label": "Island1",
+			"turn": 0.0,
+			"bytes": 6035916,
+			"parts": 21
+		}
+	],
+	"placements": [
+		{
+			"asset": "919c8b231bc23bf6",
+			"label": "HubSection3",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_-1_0_100_100",
+					"position": [
+						54.1097865,
+						-4.7336350000000005,
+						55.4117315
+					]
+				},
+				{
+					"name": "Grass_-1_1_0",
+					"position": [
+						-26.91542879,
+						-1.9154655,
+						-66.79647
+					]
+				}
+			]
+		},
+		{
+			"asset": "edf1b9b9d1e214f9",
+			"label": "Island1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_1_0",
+					"position": [
+						-184.00526000000002,
+						-1.1612147,
+						-245.794715
+					]
+				},
+				{
+					"name": "Grass_-1_-1_0_100",
+					"position": [
+						-226.0,
+						5.9978,
+						-124.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "edf1b9b9d1e214f9",
+			"label": "Island2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_1_0",
+					"position": [
+						-44.005265,
+						-1.1612147,
+						-245.794715
+					]
+				},
+				{
+					"name": "Grass_-1_-1_0_100",
+					"position": [
+						-86.0,
+						5.9978,
+						-124.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "edf1b9b9d1e214f9",
+			"label": "Island3",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_1_0",
+					"position": [
+						95.99473499999999,
+						-1.1612147,
+						-245.794715
+					]
+				},
+				{
+					"name": "Grass_-1_-1_0_100",
+					"position": [
+						54.0,
+						5.9978,
+						-124.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "edf1b9b9d1e214f9",
+			"label": "Island4",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_1_0",
+					"position": [
+						235.99473999999998,
+						-1.1612147,
+						-245.794715
+					]
+				},
+				{
+					"name": "Grass_-1_-1_0_100",
+					"position": [
+						194.0,
+						5.9978,
+						-124.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "edf1b9b9d1e214f9",
+			"label": "Island5",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_1_0",
+					"position": [
+						-235.99473999999998,
+						-1.1612147,
+						245.794715
+					]
+				},
+				{
+					"name": "Grass_-1_-1_0_100",
+					"position": [
+						-194.0,
+						5.9978,
+						124.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "edf1b9b9d1e214f9",
+			"label": "Island6",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_1_0",
+					"position": [
+						-95.99473499999999,
+						-1.1612147,
+						245.794715
+					]
+				},
+				{
+					"name": "Grass_-1_-1_0_100",
+					"position": [
+						-54.0,
+						5.9978,
+						124.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "edf1b9b9d1e214f9",
+			"label": "Island7",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_1_0",
+					"position": [
+						44.005265,
+						-1.1612147,
+						245.794715
+					]
+				},
+				{
+					"name": "Grass_-1_-1_0_100",
+					"position": [
+						86.0,
+						5.9978,
+						124.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "edf1b9b9d1e214f9",
+			"label": "Island8",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_1_0",
+					"position": [
+						184.00526000000002,
+						-1.1612147,
+						245.794715
+					]
+				},
+				{
+					"name": "Grass_-1_-1_0_100",
+					"position": [
+						226.0,
+						5.9978,
+						124.0
+					]
+				}
+			]
+		}
+	]
+}
