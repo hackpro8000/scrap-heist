@@ -6,7 +6,7 @@
 			"piece": 1,
 			"label": "HubSection3",
 			"turn": 0.0,
-			"bytes": 7971468,
+			"bytes": 7971524,
 			"parts": 26
 		},
 		{
@@ -15,7 +15,7 @@
 			"piece": 1,
 			"label": "Yard1_FootingFrontHalf1",
 			"turn": 0.0,
-			"bytes": 127352,
+			"bytes": 127408,
 			"parts": 1
 		},
 		{
@@ -24,16 +24,16 @@
 			"piece": 1,
 			"label": "Yard1_Gate",
 			"turn": 0.0,
-			"bytes": 540476,
+			"bytes": 540528,
 			"parts": 4
 		},
 		{
-			"id": "915b2dd7cc059578",
-			"key": "115ac3a755887f11-7b25a7aa2539d602 Plot2 -70 180 0",
+			"id": "6eef7cea3f8b1a5e",
+			"key": "1cc43e4ea4bd80d5-7b25a7aa2539d602 Plot2 -70 180 0",
 			"piece": 1,
 			"label": "Plot2",
 			"turn": 0.0,
-			"bytes": 5838600,
+			"bytes": 5838652,
 			"parts": 10
 		},
 		{
@@ -42,7 +42,7 @@
 			"piece": 1,
 			"label": "Kit_Mound",
 			"turn": 0.0,
-			"bytes": 450292,
+			"bytes": 450340,
 			"parts": 4
 		},
 		{
@@ -51,7 +51,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotCanettoRustini",
 			"turn": 0.0,
-			"bytes": 581464,
+			"bytes": 581512,
 			"parts": 6
 		},
 		{
@@ -60,7 +60,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotCrumboPoppalot",
 			"turn": 0.0,
-			"bytes": 726552,
+			"bytes": 726620,
 			"parts": 8
 		},
 		{
@@ -69,7 +69,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotMixerellaVroom",
 			"turn": 0.0,
-			"bytes": 712840,
+			"bytes": 712896,
 			"parts": 8
 		},
 		{
@@ -78,8 +78,26 @@
 			"piece": 1,
 			"label": "Kit_JunkrotLawnmowoRuggito",
 			"turn": 0.0,
-			"bytes": 782384,
+			"bytes": 782436,
 			"parts": 9
+		},
+		{
+			"id": "3336b07b6332ec08",
+			"key": "JunkrotSockettoSeiSette-676d9911a0746861 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotSockettoSeiSette",
+			"turn": 0.0,
+			"bytes": 886288,
+			"parts": 10
+		},
+		{
+			"id": "902990582bc7a2c5",
+			"key": "JunkrotSnackomaticPrototipo-580bc970b9d2684c 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotSnackomaticPrototipo",
+			"turn": 0.0,
+			"bytes": 542056,
+			"parts": 8
 		}
 	],
 	"placements": [
@@ -152,7 +170,7 @@
 			]
 		},
 		{
-			"asset": "915b2dd7cc059578",
+			"asset": "6eef7cea3f8b1a5e",
 			"label": "Plot2",
 			"turn": 0.0,
 			"anchors": [
@@ -182,7 +200,7 @@
 				{
 					"name": "Bits",
 					"position": [
-						-504.30946500000005,
+						-756.30945,
 						-148.10022500000002,
 						0.6443587500000001
 					]
@@ -190,7 +208,7 @@
 				{
 					"name": "Plates",
 					"position": [
-						-504.29238499999997,
+						-756.292385,
 						-149.040635,
 						-0.47066074999999996
 					]
@@ -205,7 +223,7 @@
 				{
 					"name": "Lid",
 					"position": [
-						-311.96340999999995,
+						-563.9634,
 						-147.214905,
 						-0.40655548
 					]
@@ -213,7 +231,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						-311.96345,
+						-563.96343,
 						-148.258,
 						0.8636180499999999
 					]
@@ -228,7 +246,7 @@
 				{
 					"name": "Lever",
 					"position": [
-						-94.642743,
+						-346.64273000000003,
 						-148.29405,
 						0.012467160000000005
 					]
@@ -236,7 +254,7 @@
 				{
 					"name": "Patch",
 					"position": [
-						-96.74721299999999,
+						-348.74721999999997,
 						-148.72824,
 						-0.72210983
 					]
@@ -251,7 +269,7 @@
 				{
 					"name": "Knob",
 					"position": [
-						168.71328499999998,
+						-83.2867175,
 						-147.09494,
 						-0.194373715
 					]
@@ -259,7 +277,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						168.022165,
+						-83.9778275,
 						-147.00650000000002,
 						1.1302135500000001
 					]
@@ -274,7 +292,7 @@
 				{
 					"name": "Bag",
 					"position": [
-						456.01074,
+						204.010725,
 						-148.604505,
 						-1.4984757
 					]
@@ -282,9 +300,55 @@
 				{
 					"name": "Pupils",
 					"position": [
-						456.022675,
+						204.022665,
 						-148.808,
 						1.4352135000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "3336b07b6332ec08",
+			"label": "Kit_JunkrotSockettoSeiSette",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Sockets",
+					"position": [
+						492.03612,
+						-148.457385,
+						0.89186285
+					]
+				},
+				{
+					"name": "TailRings",
+					"position": [
+						492.255,
+						-148.64,
+						-1.4849999999999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "902990582bc7a2c5",
+			"label": "Kit_JunkrotSnackomaticPrototipo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Cabinet",
+					"position": [
+						804.0,
+						-147.85000000000002,
+						0.0
+					]
+				},
+				{
+					"name": "Tag",
+					"position": [
+						804.75,
+						-147.04000000000002,
+						0.8200000000000001
 					]
 				}
 			]

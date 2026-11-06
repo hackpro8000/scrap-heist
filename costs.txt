@@ -1,4 +1,6 @@
-slab Plot2	4.736
+slab Plot2	4.783
 slab Plot2 #split	1
-JunkrotLawnmowoRuggito 1 x	0.659
-JunkrotLawnmowoRuggito 1 x #split	1
+JunkrotSockettoSeiSette 1 x	1.098
+JunkrotSockettoSeiSette 1 x #split	1
+JunkrotSnackomaticPrototipo 1 x	0.696
+JunkrotSnackomaticPrototipo 1 x #split	1
