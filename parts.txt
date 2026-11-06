@@ -1,0 +1,11 @@
+Shop_Bulbs
+Shop_CastingHoles
+Shop_Container_-1_0_0_100
+Shop_Counter_0_-1_0
+Shop_Drum
+Shop_Flap_-1_-1_0_111
+Shop_Flap_0_-1_0_110
+Shop_Interior_-1_0_0
+Shop_Interior_0_-1_0
+Shop_SignLeds
+Shop_Steps
