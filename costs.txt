@@ -1,8 +1,6 @@
-slab Spoke2	0.094
+slab Spoke2	0.048
 slab Spoke2 #split	1
-slab Plot3	3.244
+slab Plot3	2.973
 slab Plot3 #split	1
-CapsuleSecret 1 x	0.060
-CapsuleSecret 1 x #split	1
-JunkrotBulboFulminato 1 x	0.362
-JunkrotBulboFulminato 1 x #split	1
+JunkrotMicrondoBippetto 1 x	0.495
+JunkrotMicrondoBippetto 1 x #split	1

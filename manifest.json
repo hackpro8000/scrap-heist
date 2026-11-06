@@ -10,8 +10,8 @@
 			"parts": 28
 		},
 		{
-			"id": "07f962966ea91871",
-			"key": "d85c17ddde731d72-107c5c30239027da Spoke2 -70 180 0",
+			"id": "6f1ebaa8e690f75b",
+			"key": "fc0c5e558eaf305d-107c5c30239027da Spoke2 -70 180 0",
 			"piece": 1,
 			"label": "Spoke2",
 			"turn": 0.0,
@@ -19,8 +19,8 @@
 			"parts": 1
 		},
 		{
-			"id": "5f4f06f9ab7454eb",
-			"key": "d85c17ddde731d72-7b25a7aa2539d602 Plot3 70 180 0",
+			"id": "2429d50153ff008c",
+			"key": "fc0c5e558eaf305d-7b25a7aa2539d602 Plot3 70 180 0",
 			"piece": 1,
 			"label": "Plot3",
 			"turn": 0.0,
@@ -33,7 +33,7 @@
 			"piece": 1,
 			"label": "Kit_CapsuleSecret",
 			"turn": 0.0,
-			"bytes": 108620,
+			"bytes": 108624,
 			"parts": 2
 		},
 		{
@@ -42,8 +42,17 @@
 			"piece": 1,
 			"label": "Kit_JunkrotBulboFulminato",
 			"turn": 0.0,
-			"bytes": 552460,
+			"bytes": 552452,
 			"parts": 6
+		},
+		{
+			"id": "6b8832ff1555e00d",
+			"key": "JunkrotMicrondoBippetto-798f3f9c3acd3eb1 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotMicrondoBippetto",
+			"turn": 0.0,
+			"bytes": 772920,
+			"parts": 8
 		}
 	],
 	"placements": [
@@ -94,7 +103,7 @@
 			]
 		},
 		{
-			"asset": "07f962966ea91871",
+			"asset": "6f1ebaa8e690f75b",
 			"label": "Spoke2",
 			"turn": 0.0,
 			"anchors": [
@@ -109,7 +118,7 @@
 			]
 		},
 		{
-			"asset": "5f4f06f9ab7454eb",
+			"asset": "2429d50153ff008c",
 			"label": "Plot3",
 			"turn": 0.0,
 			"anchors": [
@@ -139,7 +148,7 @@
 				{
 					"name": "Seam",
 					"position": [
-						-48.0,
+						-180.0,
 						-148.3,
 						0.0
 					]
@@ -154,7 +163,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						168.03267,
+						36.032671,
 						-147.958,
 						0.91999998
 					]
@@ -162,9 +171,32 @@
 				{
 					"name": "Soot",
 					"position": [
-						168.116265,
+						36.1162615,
 						-147.259235,
 						-0.0444378
+					]
+				}
+			]
+		},
+		{
+			"asset": "6b8832ff1555e00d",
+			"label": "Kit_JunkrotMicrondoBippetto",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Glass",
+					"position": [
+						299.58316,
+						-148.40697,
+						0.920871885
+					]
+				},
+				{
+					"name": "Keys",
+					"position": [
+						301.069975,
+						-148.43573500000002,
+						0.965924865
 					]
 				}
 			]
