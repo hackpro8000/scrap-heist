@@ -1,9 +1,0 @@
-slab Bridge2	0.823
-slab Bridge2 #split	1
-slab Spoke6	0.046
-slab Spoke6 #split	1
-slab Approach6	0.160
-slab Approach6 #split	1
-JunkrotTorquoWrenchelli 1 x	0.555
-JunkrotTorquoWrenchelli 1 x #split	1
-JunkrotTheMonolito 1 x	0.045
