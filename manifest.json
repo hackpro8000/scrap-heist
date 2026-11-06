@@ -1,8 +1,8 @@
 {
 	"assets": [
 		{
-			"id": "5f93079641e51084",
-			"key": "115ac3a755887f11-7ded6fc62f8b67a3 Line 0 0 0",
+			"id": "aa5bdba8039a90a9",
+			"key": "1cc43e4ea4bd80d5-7ded6fc62f8b67a3 Line 0 0 0",
 			"piece": 1,
 			"label": "Line",
 			"turn": 0.0,
@@ -10,8 +10,8 @@
 			"parts": 55
 		},
 		{
-			"id": "ebacd09c88fec108",
-			"key": "115ac3a755887f11-7ded6fc62f8b67a3 Line 0 0 0",
+			"id": "d51a0f12e1e21918",
+			"key": "1cc43e4ea4bd80d5-7ded6fc62f8b67a3 Line 0 0 0",
 			"piece": 2,
 			"label": "Line",
 			"turn": 0.0,
@@ -19,8 +19,8 @@
 			"parts": 51
 		},
 		{
-			"id": "72d3494c420393d7",
-			"key": "115ac3a755887f11-7ded6fc62f8b67a3 Line 0 0 0",
+			"id": "ce3bf8160a5dccfd",
+			"key": "1cc43e4ea4bd80d5-7ded6fc62f8b67a3 Line 0 0 0",
 			"piece": 3,
 			"label": "Line",
 			"turn": 0.0,
@@ -30,7 +30,7 @@
 	],
 	"placements": [
 		{
-			"asset": "5f93079641e51084",
+			"asset": "aa5bdba8039a90a9",
 			"label": "Line",
 			"turn": 0.0,
 			"anchors": [
@@ -53,7 +53,7 @@
 			]
 		},
 		{
-			"asset": "ebacd09c88fec108",
+			"asset": "d51a0f12e1e21918",
 			"label": "Line",
 			"turn": 0.0,
 			"anchors": [
@@ -76,7 +76,7 @@
 			]
 		},
 		{
-			"asset": "72d3494c420393d7",
+			"asset": "ce3bf8160a5dccfd",
 			"label": "Line",
 			"turn": 0.0,
 			"anchors": [
