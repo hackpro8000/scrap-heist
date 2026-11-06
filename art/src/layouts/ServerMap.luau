@@ -1,4 +1,4 @@
--- uses: HubSectionA HubSectionB HubSectionEnd YardIsland YardFence YardFenceHalf YardFooting YardGate PlotMarker
+-- uses: HubSectionA HubSectionB HubSectionEnd YardIsland YardFence YardFenceHalf YardFooting YardGate PlotMarker PadKitchen PadGarage PadGadget BuildBay ScrapCrate RebirthPress JunkMound CapsuleScrap CapsuleSalvaged CapsuleRefurbished CapsuleFactory CapsulePrecision CapsulePrototype CapsuleSecret JunkrotCanettoRustini JunkrotSpoonzoBentolo JunkrotKettlinaDentata JunkrotTyroFlattino JunkrotBoltoloLonelo JunkrotHubcappaWobbla JunkrotRemotinoMuto JunkrotCabloTanglino JunkrotBulboFulminato
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands laid out along a line (the Scrap Line). The hub is a long
 -- island running along x, five sections in a row, paved from end to end: a
@@ -11,11 +11,15 @@
 -- Each plot carries only a yard's shell (yardShell() below): players lay
 -- their yards out themselves, so pads, bays, the crate and the rest are
 -- placed by the game.
--- Labels: HubSection1-HubSection5, Line, Spawn, Island1-Island8,
+-- The capsule belt loops round the bed down the Line's middle, through the
+-- sorter at its west end. One of each model the game places itself (the
+-- kit) is built here too, out of sight, so it uploads with the map.
+-- Labels: HubSection1-HubSection5, Line, Belt, Sorter, Spawn, Island1-Island8,
 -- Plot1-Plot8 (1-4 along the north row from the west, 5-8 along the south),
 -- Approach1-Approach8, Spoke1-Spoke8, Bridge1-Bridge8 and
 -- Yard1_<piece>-Yard8_<piece>, where the
--- pieces are Gate, PlotMarker, and Fence and Footing pieces.
+-- pieces are Gate, PlotMarker, and Fence and Footing pieces; and Kit_<model>
+-- for each kit model (see KIT at the end).
 
 -- Every map part is textured at one density so nothing reads sharper or
 -- blurrier than its neighbours. Props keep their own texture sizes.
@@ -710,3 +714,196 @@ for i = 1, 8 do
 		end, nil, 0.3)
 	end, x, y - (if i <= 4 then YARD_ROW else -YARD_ROW), degrees - 90)
 end
+
+-- The capsule belt: a rubber tread 5 studs wide between two low steel rails,
+-- looping round the bed as a stadium (the game's Config/Belt gives the same
+-- path: straights BELT_HALF_LENGTH either side of the middle at y = +-BELT_TURN,
+-- joined by half circles). Its top is 0.6 over the deck, low enough to step
+-- over anywhere; the rails stand 0.35 above it to keep the capsules on.
+local BELT_HALF_LENGTH, BELT_TURN = 200, 16
+local BELT_HALF_WIDTH = 2.5
+local BELT_TOP = DECK + 0.6
+local BELT_STEP = 4
+local BELT_RUBBER = { 0.16, 0.16, 0.17 }
+
+-- The belt's middle line as points { x, y, headingX, headingY }, BELT_STEP
+-- apart at most, running east along the north straight first, as the
+-- capsules do.
+local function beltPath(): { { number } }
+	local straight, turn = 2 * BELT_HALF_LENGTH, math.pi * BELT_TURN
+	local length = 2 * straight + 2 * turn
+	local count = math.ceil(length / BELT_STEP)
+	local points = {}
+	for i = 0, count do
+		local along = i / count * length
+		if along < straight then
+			table.insert(points, { -BELT_HALF_LENGTH + along, BELT_TURN, 1, 0 })
+		elseif along < straight + turn then
+			local a = (along - straight) / BELT_TURN
+			table.insert(points, { BELT_HALF_LENGTH + math.sin(a) * BELT_TURN, math.cos(a) * BELT_TURN, math.cos(a), -math.sin(a) })
+		elseif along < 2 * straight + turn then
+			table.insert(points, { BELT_HALF_LENGTH - (along - straight - turn), -BELT_TURN, -1, 0 })
+		else
+			local a = (along - 2 * straight - turn) / BELT_TURN
+			table.insert(points, { -BELT_HALF_LENGTH - math.sin(a) * BELT_TURN, -math.cos(a) * BELT_TURN, -math.cos(a), math.sin(a) })
+		end
+	end
+	return points
+end
+
+-- A strip along the belt between `from` and `to` studs left of its middle
+-- line (negative is right), from `bottom` up to `top`: its top and both
+-- sides. It lies on the bed, so it has no underside.
+local function beltStrip(mesh, path: { { number } }, from: number, to: number, bottom: number, top: number)
+	local rows = {}
+	for i, point in path do
+		local leftX, leftY = -point[4], point[3]
+		local function at(offset: number, z: number)
+			return mesh:vertex(point[1] + leftX * offset, point[2] + leftY * offset, z)
+		end
+		rows[i] = { lowR = at(from, bottom), highR = at(from, top), lowL = at(to, bottom), highL = at(to, top) }
+	end
+	for i = 1, #rows - 1 do
+		local a, b = rows[i], rows[i + 1]
+		mesh:face({ a.highR, b.highR, b.highL, a.highL })
+		mesh:face({ a.lowR, b.lowR, b.highR, a.highR })
+		mesh:face({ b.lowL, a.lowL, a.highL, b.highL })
+	end
+end
+
+-- Ribbed rubber: a darker cleat across the tread every 2 studs along it,
+-- under scuffs and dust.
+local function beltTread(x: number, y: number): (number, number, number)
+	local along = x
+	if math.abs(x) > BELT_HALF_LENGTH then
+		local side = if x > 0 then 1 else -1
+		along = math.atan2(y, (x - side * BELT_HALF_LENGTH) * side) * BELT_TURN
+	end
+	local k = 1 + fbm(x / 3, y / 3, 61) * 0.25
+	if along % 2 < 0.3 then
+		k -= 0.35
+	end
+	k += math.max(0, warpedFbm(x / 6, y / 6, 62) - 0.2) * 1.2
+	return BELT_RUBBER[1] * k, BELT_RUBBER[2] * k, BELT_RUBBER[3] * k
+end
+
+slab("Belt", function()
+	local path = beltPath()
+	chunkedPart("Tread", nil, BELT_RUBBER, function(mesh)
+		beltStrip(mesh, path, -BELT_HALF_WIDTH, BELT_HALF_WIDTH, DECK, BELT_TOP)
+	end, nil, function(px, py)
+		return beltTread(px, py)
+	end, true)
+	chunkedPart("Rails", nil, STEEL, function(mesh)
+		beltStrip(mesh, path, -BELT_HALF_WIDTH - 0.6, -BELT_HALF_WIDTH, DECK, BELT_TOP + 0.35)
+		beltStrip(mesh, path, BELT_HALF_WIDTH, BELT_HALF_WIDTH + 0.6, DECK, BELT_TOP + 0.35)
+	end, nil, 0.55, true)
+end, 0, 0)
+
+-- The sorter: the shed the belt runs through where its lap ends and
+-- begins. Capsules nobody bought go in the west mouth to be crushed, and
+-- new ones come out of the east mouth, dropped in through the hopper on
+-- the roof by the magnet crane. Its legs stand clear of the belt, which is
+-- still curving as it comes in; strip curtains hang over both mouths. A
+-- capsule is 3.4 studs tall at most and rides 0.6 up: the roof clears it by
+-- 3 studs, and a player (5.5 tall) walks under too.
+local SORTER_X, SORTER_Y = -202, BELT_TURN
+local SORTER_HALF_LENGTH, SORTER_HALF_WIDTH = 7, 8
+local SORTER_ROOF = DECK + 7
+local SORTER_PAINT = { 0.26, 0.4, 0.46 }
+slab("Sorter", function()
+	part("Legs", nil, SORTER_PAINT, function(mesh)
+		for _, x in { -SORTER_HALF_LENGTH, SORTER_HALF_LENGTH } do
+			for _, y in { -SORTER_HALF_WIDTH, SORTER_HALF_WIDTH } do
+				box(mesh, x, y, DECK, 1, 1, SORTER_ROOF - DECK)
+				box(mesh, x, y, DECK, 1.8, 1.8, 0.3)
+			end
+		end
+	end, nil, 0.5)
+	part("Roof", nil, SORTER_PAINT, function(mesh)
+		box(mesh, 0, 0, SORTER_ROOF, 2 * SORTER_HALF_LENGTH + 1.6, 2 * SORTER_HALF_WIDTH + 1.6, 0.8)
+	end, nil, 0.5)
+	part("Fascia", nil, MARK, function(mesh)
+		for _, y in { -SORTER_HALF_WIDTH, SORTER_HALF_WIDTH } do
+			box(mesh, 0, y, SORTER_ROOF - 2.4, 2 * SORTER_HALF_LENGTH - 1, 0.3, 2.4)
+		end
+	end, nil, 0.4)
+	part("FasciaStripes", nil, { 0.1, 0.1, 0.11 }, function(mesh)
+		for _, y in { -SORTER_HALF_WIDTH - 0.17, SORTER_HALF_WIDTH + 0.17 } do
+			for k = -3, 3 do
+				box(mesh, k * 1.8, y, SORTER_ROOF - 2.2, 0.7, 0.05, 2.0)
+			end
+		end
+	end, nil, 0.3)
+	part("Curtains", nil, RUBBER_BLACK, function(mesh)
+		-- Strips over each mouth, from the roof down to just over the rails.
+		for _, x in { -SORTER_HALF_LENGTH, SORTER_HALF_LENGTH } do
+			for k = -6, 6 do
+				box(mesh, x, k * 1.05, BELT_TOP + 0.6, 0.12, 0.85, SORTER_ROOF - BELT_TOP - 0.6)
+			end
+		end
+	end, nil, RUBBER)
+	part("Hopper", nil, DARK_STEEL, function(mesh)
+		box(mesh, 1, 0, SORTER_ROOF + 0.8, 5, 5, 1.2)
+		box(mesh, 1, 0, SORTER_ROOF + 2.0, 6.4, 6.4, 0.5)
+	end, nil, 0.6)
+	part("Crane", nil, MARK, function(mesh)
+		box(mesh, -5, 4, SORTER_ROOF + 0.8, 1, 1, 7)
+		strut(mesh, -5, 4, SORTER_ROOF + 7.4, 3, 0, SORTER_ROOF + 8.6, 0.7)
+		strut(mesh, -5, 4, SORTER_ROOF + 4.5, -1, 2, SORTER_ROOF + 8.0, 0.4)
+	end, nil, 0.5)
+	part("Magnet", nil, DARK_STEEL, function(mesh)
+		tube(mesh, { { 2.6, 0.2, SORTER_ROOF + 8.5 }, { 2.4, 0.1, SORTER_ROOF + 5.6 } }, 0.08, 6)
+		cylinder(mesh, 2.4, 0.1, SORTER_ROOF + 5.3, 1.3, 0.6, "z", 16)
+		cylinder(mesh, 2.4, 0.1, SORTER_ROOF + 5.75, 0.5, 0.4, "z", 10)
+	end, nil, 0.55)
+	part("Beacons", nil, { 1.0, 0.6, 0.15 }, function(mesh)
+		for _, x in { -SORTER_HALF_LENGTH, SORTER_HALF_LENGTH } do
+			for _, y in { -SORTER_HALF_WIDTH, SORTER_HALF_WIDTH } do
+				sphere(mesh, x, y, SORTER_ROOF + 1.1, 0.4, 0.4, 0.4, 6, 10)
+			end
+		end
+	end, true, 0, nil, 1.5)
+end, SORTER_X, SORTER_Y)
+
+-- The kit: one of each model the game places itself (yard things, capsules
+-- and junkrots), built here so they upload with the map. They stand in a
+-- row far under the hub; tools/studio/PlaceMap.luau takes them out of the
+-- map and files them where the game clones them from. Yard things are
+-- built to their plot footprint (pads and the mound are modelled 6 studs
+-- across and stand 10), and everything at KIT_DENSITY, finer than the
+-- map's, as players stand right next to them.
+local KIT_DENSITY = 40
+local KIT_Z = -150
+local KIT_SPACING = 24
+local KIT = {
+	{ "PadKitchen", buildPadKitchen, 10 / 6 },
+	{ "PadGarage", buildPadGarage, 10 / 6 },
+	{ "PadGadget", buildPadGadget, 10 / 6 },
+	{ "Bay", buildBuildBay, 1 },
+	{ "Crate", buildScrapCrate, 1 },
+	{ "Press", buildRebirthPress, 1 },
+	{ "Mound", buildJunkMound, 10 / 6 },
+	{ "CapsuleScrap", buildCapsuleScrap, 1 },
+	{ "CapsuleSalvaged", buildCapsuleSalvaged, 1 },
+	{ "CapsuleRefurbished", buildCapsuleRefurbished, 1 },
+	{ "CapsuleFactory", buildCapsuleFactory, 1 },
+	{ "CapsulePrecision", buildCapsulePrecision, 1 },
+	{ "CapsulePrototype", buildCapsulePrototype, 1 },
+	{ "CapsuleSecret", buildCapsuleSecret, 1 },
+	{ "JunkrotCanettoRustini", buildJunkrotCanettoRustini, 1 },
+	{ "JunkrotSpoonzoBentolo", buildJunkrotSpoonzoBentolo, 1 },
+	{ "JunkrotKettlinaDentata", buildJunkrotKettlinaDentata, 1 },
+	{ "JunkrotTyroFlattino", buildJunkrotTyroFlattino, 1 },
+	{ "JunkrotBoltoloLonelo", buildJunkrotBoltoloLonelo, 1 },
+	{ "JunkrotHubcappaWobbla", buildJunkrotHubcappaWobbla, 1 },
+	{ "JunkrotRemotinoMuto", buildJunkrotRemotinoMuto, 1 },
+	{ "JunkrotCabloTanglino", buildJunkrotCabloTanglino, 1 },
+	{ "JunkrotBulboFulminato", buildJunkrotBulboFulminato, 1 },
+}
+useTexelDensity(KIT_DENSITY)
+for index, entry in KIT do
+	place(`Kit_{entry[1]}`, entry[2], (index - #KIT / 2) * KIT_SPACING, 0, KIT_Z, 0, nil, nil, entry[3])
+	useTexelDensity(KIT_DENSITY)
+end
+useTexelDensity(MAP_DENSITY)

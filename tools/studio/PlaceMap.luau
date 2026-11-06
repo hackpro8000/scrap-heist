@@ -25,11 +25,12 @@
 	pieces the game's systems look for outside workspace.Map:
 	- workspace.YardSpots: one part per plot, at its floor and turned so its
 	  +Z faces the yard's gate (PlotService places and spawns yards there);
-	- ServerStorage.YardTemplate: invisible Pad1-Pad4, Crate and PlotMarker
-	  where Yard1's art has them, for PlotService and MachineService to hang
-	  prompts and machines on, so the art is what players see;
-	- workspace.Arena: an invisible disc on the drone's fight floor
-	  (RoundService takes the arena's centre and size from it);
+	- the kit: the layout builds one of each model the game places itself
+	  under the label Kit (Kit_PadKitchen, Kit_CapsuleScrap, ...). They are
+	  taken out of the map and filed where the game clones them from:
+	  Capsule<Tier> to ServerStorage.Capsules as <Tier>, Junkrot<Id> to
+	  ServerStorage.Junkrots as <Id>, and the rest (pads, bay, crate, mound,
+	  press) to ServerStorage.YardKit under their own names;
 	- a SpawnLocation in the middle of the spawn ring on the hub's west
 	  plaza, for the moment before PlotService moves a character home, or a
 	  player with no yard.
@@ -50,16 +51,19 @@ local MapChunks = require(ReplicatedStorage.Shared.Config.MapChunks:Clone())
 -- How far off an anchor may land, in studs, before the placement is flagged.
 local TOLERANCE = 0.05
 
--- Parts that nothing should bump into: the drone's propellers turn over
--- the gangway, and yard gates stand open so owners and raiders can walk
--- in and out. Matched against the part's full name before regrouping.
-local NO_COLLIDE = { "^ArenaDrone_Prop", "_Gate_Doors", "_Gate_Padlock", "_Gate_Hardware" }
+-- Parts that nothing should bump into: yard gates stand open so owners
+-- and raiders can walk in and out, and the belt's capsules ride through
+-- its sorter. Matched against the part's full name before regrouping.
+local NO_COLLIDE = { "_Gate_Doors", "_Gate_Padlock", "_Gate_Hardware", "^Kit_Capsule", "^Kit_Junkrot" }
 
--- Radius of the drone's flat fight floor inside the ramps (ARENA_FLOOR in
--- art/src/layouts/ServerMap.luau).
-local ARENA_FLOOR_RADIUS = 54
--- The yard pieces the game hangs its prompts and machines on.
-local YARD_PIECES = { "Pad1", "Pad2", "Pad3", "Pad4", "Crate", "PlotMarker" }
+-- Where each kind of kit model goes: a name prefix, the ServerStorage
+-- folder, and whether the prefix is dropped from the model's name there.
+local KIT_NAME = "Kit"
+local KIT_FOLDERS = {
+	{ prefix = "Capsule", folder = "Capsules", strip = true },
+	{ prefix = "Junkrot", folder = "Junkrots", strip = true },
+	{ prefix = "", folder = "YardKit", strip = false },
+}
 
 type Anchor = { name: string, position: Vector3 }
 
@@ -119,11 +123,7 @@ local function place(model: Model, anchors: { Anchor }, turn: number): (boolean,
 	return true, "placed"
 end
 
--- Anchors every part, turns collision off where NO_COLLIDE says, and lets
--- the see-through ones (the propeller blur discs) blend. The importer
--- gives most meshes a plain TextureID rather than a SurfaceAppearance, and
--- Roblox only blends a MeshPart texture's alpha once the part itself is a
--- little transparent.
+-- Anchors every part and turns collision off where NO_COLLIDE says.
 local function prepare(model: Model)
 	for _, descendant in model:GetDescendants() do
 		if descendant:IsA("BasePart") then
@@ -133,14 +133,6 @@ local function prepare(model: Model)
 					descendant.CanCollide = false
 					break
 				end
-			end
-			if string.find(descendant.Name, "PropDisc", 1, true) then
-				descendant.Transparency = 0.02
-			end
-		elseif descendant:IsA("SurfaceAppearance") then
-			local parent = descendant.Parent
-			if parent and string.find(parent.Name, "PropDisc", 1, true) then
-				descendant.AlphaMode = Enum.AlphaMode.Transparency
 			end
 		end
 	end
@@ -236,52 +228,39 @@ local function buildYardSpots(map: Instance): Folder
 	return spots
 end
 
--- Yard1's pieces as invisible parts, placed relative to its spot, so the
--- template lands on every yard's art the same way.
-local function buildYardTemplate(map: Instance, spots: Folder): Model?
-	local yard = map:FindFirstChild("Yard1")
-	local spot = spots:FindFirstChild("Yard1") :: BasePart?
-	if not (yard and spot) then
-		return nil
+-- Takes the kit out of the map and files each model where the game
+-- clones it from, replacing what was there. Returns how many were filed.
+local function fileKit(map: Instance): number
+	local kit = map:FindFirstChild(KIT_NAME)
+	if not kit then
+		return 0
 	end
-	local template = Instance.new("Model")
-	template.Name = "YardTemplate"
-	for _, name in YARD_PIECES do
-		local piece = yard:FindFirstChild(name)
-		if not (piece and piece:IsA("Model")) then
-			warn(`PlaceMap: Yard1 has no {name}; YardTemplate left as it was`)
-			return nil
-		end
-		local cframe, size = piece:GetBoundingBox()
-		hookPart(name, size, spot.CFrame:ToObjectSpace(cframe), template)
-	end
-	template.WorldPivot = CFrame.new()
-	return template
-end
 
--- The drone's fight floor, found by dropping a ray onto it between the
--- beacon and the ramps.
-local function buildArena(map: Instance): Part?
-	local drone = map:FindFirstChild("ArenaDrone")
-	if not (drone and drone:IsA("Model")) then
-		return nil
+	local folders: { [string]: Folder } = {}
+	local count = 0
+	for _, model in kit:GetChildren() do
+		for _, kind in KIT_FOLDERS do
+			if string.sub(model.Name, 1, #kind.prefix) == kind.prefix then
+				local folder = folders[kind.folder]
+				if not folder then
+					folder = Instance.new("Folder")
+					folder.Name = kind.folder
+					folders[kind.folder] = folder
+				end
+				if kind.strip then
+					model.Name = string.sub(model.Name, #kind.prefix + 1)
+				end
+				model.Parent = folder
+				count += 1
+				break
+			end
+		end
 	end
-	local centre = drone:GetBoundingBox().Position
-	local params = RaycastParams.new()
-	params.FilterType = Enum.RaycastFilterType.Include
-	params.FilterDescendantsInstances = { drone }
-	local probe = Vector3.new(centre.X + ARENA_FLOOR_RADIUS / 2, centre.Y + 100, centre.Z)
-	local hit = workspace:Raycast(probe, Vector3.new(0, -200, 0), params)
-	if not hit then
-		return nil
+	kit:Destroy()
+	for _, folder in folders do
+		replace(ServerStorage, folder)
 	end
-	local floor = Vector3.new(centre.X, hit.Position.Y, centre.Z)
-	return hookPart(
-		"Arena",
-		Vector3.new(ARENA_FLOOR_RADIUS * 2, 1, ARENA_FLOOR_RADIUS * 2),
-		CFrame.new(floor - Vector3.new(0, 0.5, 0)),
-		workspace
-	)
+	return count
 end
 
 -- A neutral SpawnLocation in the middle of the spawn ring.
@@ -387,8 +366,7 @@ print(`PlaceMap: {placed} placements made, {failed} need attention`)
 
 -- Pin every object's pivot to its middle. Left unset, a model works its
 -- pivot out from whatever parts it has, which on a streaming client is
--- only the ones streamed in (PropellerController turns propellers about
--- the drone's).
+-- only the ones streamed in.
 for _, descendant in folder:GetDescendants() do
 	if descendant:IsA("Model") then
 		descendant.WorldPivot = descendant:GetBoundingBox()
@@ -397,20 +375,12 @@ end
 
 local spots = buildYardSpots(folder)
 replace(workspace, spots)
-local template = buildYardTemplate(folder, spots)
-if template then
-	replace(ServerStorage, template)
-end
-local arena = buildArena(folder)
-if arena then
-	replace(workspace, arena)
-end
+local kitCount = fileKit(folder)
 local spawn = buildSpawn(folder)
 if spawn then
 	replace(workspace, spawn)
 end
 print(
-	`PlaceMap: hooked up {#spots:GetChildren()} yard spots, `
-		.. `{if template then "the yard template" else "NO yard template"}, `
-		.. `{if arena then "the arena" else "NO arena"} and {if spawn then "the spawn" else "NO spawn"}`
+	`PlaceMap: hooked up {#spots:GetChildren()} yard spots, filed {kitCount} kit models `
+		.. `and {if spawn then "placed the spawn" else "found NO spawn"}`
 )
