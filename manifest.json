@@ -28,8 +28,8 @@
 			"parts": 4
 		},
 		{
-			"id": "0914de0adaba713c",
-			"key": "fc0c5e558eaf305d-7b25a7aa2539d602 Plot2 -70 180 0",
+			"id": "915b2dd7cc059578",
+			"key": "115ac3a755887f11-7b25a7aa2539d602 Plot2 -70 180 0",
 			"piece": 1,
 			"label": "Plot2",
 			"turn": 0.0,
@@ -51,7 +51,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotCanettoRustini",
 			"turn": 0.0,
-			"bytes": 581468,
+			"bytes": 581464,
 			"parts": 6
 		},
 		{
@@ -60,7 +60,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotCrumboPoppalot",
 			"turn": 0.0,
-			"bytes": 726548,
+			"bytes": 726552,
 			"parts": 8
 		},
 		{
@@ -69,8 +69,17 @@
 			"piece": 1,
 			"label": "Kit_JunkrotMixerellaVroom",
 			"turn": 0.0,
-			"bytes": 712836,
+			"bytes": 712840,
 			"parts": 8
+		},
+		{
+			"id": "0a63f34b8b08f42c",
+			"key": "JunkrotLawnmowoRuggito-108da303884eadb8 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotLawnmowoRuggito",
+			"turn": 0.0,
+			"bytes": 782384,
+			"parts": 9
 		}
 	],
 	"placements": [
@@ -143,7 +152,7 @@
 			]
 		},
 		{
-			"asset": "0914de0adaba713c",
+			"asset": "915b2dd7cc059578",
 			"label": "Plot2",
 			"turn": 0.0,
 			"anchors": [
@@ -173,7 +182,7 @@
 				{
 					"name": "Bits",
 					"position": [
-						-348.30946500000005,
+						-504.30946500000005,
 						-148.10022500000002,
 						0.6443587500000001
 					]
@@ -181,7 +190,7 @@
 				{
 					"name": "Plates",
 					"position": [
-						-348.29238499999997,
+						-504.29238499999997,
 						-149.040635,
 						-0.47066074999999996
 					]
@@ -196,7 +205,7 @@
 				{
 					"name": "Lid",
 					"position": [
-						-155.96341,
+						-311.96340999999995,
 						-147.214905,
 						-0.40655548
 					]
@@ -204,7 +213,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						-155.96344,
+						-311.96345,
 						-148.258,
 						0.8636180499999999
 					]
@@ -219,7 +228,7 @@
 				{
 					"name": "Lever",
 					"position": [
-						61.357258,
+						-94.642743,
 						-148.29405,
 						0.012467160000000005
 					]
@@ -227,7 +236,7 @@
 				{
 					"name": "Patch",
 					"position": [
-						59.252787,
+						-96.74721299999999,
 						-148.72824,
 						-0.72210983
 					]
@@ -242,7 +251,7 @@
 				{
 					"name": "Knob",
 					"position": [
-						324.713265,
+						168.71328499999998,
 						-147.09494,
 						-0.194373715
 					]
@@ -250,9 +259,32 @@
 				{
 					"name": "Pupils",
 					"position": [
-						324.02217,
+						168.022165,
 						-147.00650000000002,
 						1.1302135500000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "0a63f34b8b08f42c",
+			"label": "Kit_JunkrotLawnmowoRuggito",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Bag",
+					"position": [
+						456.01074,
+						-148.604505,
+						-1.4984757
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						456.022675,
+						-148.808,
+						1.4352135000000001
 					]
 				}
 			]

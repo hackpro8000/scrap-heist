@@ -51,6 +51,19 @@ assemble ServerMap: uses JunkrotTypewrittoClackini (key fe49253052fa6f56)
 assemble ServerMap: uses JunkrotCamerinoFlashetto (key 2d8422ee9636d2d3)
 assemble ServerMap: uses JunkrotDrippiDroppi (key b006345a7aeeab08)
 assemble ServerMap: uses JunkrotDingDingDingDongo (key 1d1e1e950c96e4e4)
+assemble ServerMap: uses JunkrotGrindoBeanbasher (key 5a476970c2b89efc)
+assemble ServerMap: uses JunkrotAirfryoCroccante (key fe378a5846949e34)
+assemble ServerMap: uses JunkrotDishwashinoSplashetto (key 683d7dad7d3db771)
+assemble ServerMap: uses JunkrotLawnmowoRuggito (key 108da303884eadb8)
+assemble ServerMap: uses JunkrotLeafblowaWhooshini (key f2ce0e8b9e3edeaa)
+assemble ServerMap: uses JunkrotPressurwashoSprizzo (key 87ac2472b45f7495)
+assemble ServerMap: uses JunkrotConsoloJoypaddino (key 191abffb1bf801ba)
+assemble ServerMap: uses JunkrotSpeakeroneBoomba (key 3bbfbd68ef1f5c85)
+assemble ServerMap: uses JunkrotRobovaccoGirotondo (key 45bdee1d4d860040)
+assemble ServerMap: uses JunkrotClankClankClankScrapur (key a30fc840bf59b273)
+assemble ServerMap: uses JunkrotVrrVrrPatatrim (key c5f05967943ccfb5)
+assemble ServerMap: uses JunkrotChimneyziniSpannerini (key 16b899b9c5febdc7)
+assemble ServerMap: uses JunkrotRusteliRustela (key 41867bade3ceb8a9)
 assemble ServerMap: slab at ServerMap.luau:278-468 (key cf7e96091024d5cc)
 assemble ServerMap: slab at ServerMap.luau:548-577 (key 7ded6fc62f8b67a3)
 assemble ServerMap: slab at ServerMap.luau:580-584 (key 2f5b4070ee3aa512)
@@ -59,51 +72,54 @@ assemble ServerMap: slab at ServerMap.luau:668-677 (key 107c5c30239027da)
 assemble ServerMap: slab at ServerMap.luau:685-715 (key 18845c9c8b69ea54)
 assemble ServerMap: slab at ServerMap.luau:790-801 (key 363b6dc9a40b12d8)
 assemble ServerMap: slab at ServerMap.luau:814-867 (key f4e0427155be5973)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 53240 lines, in 1s
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 64511 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.9s] cached HubSectionB 1 x part 4/4
-[    0.9s] cached YardFooting 0.5 x x1.5
-[    0.9s] cached YardFooting 0.5 x x1.5
-[    0.9s] cached YardGate 1 x x1.5
-[    0.9s] building Plot2 -70 180 0
-[    1.2s] baking on CPU (no GPU)
-[    2.0s]   shaded Ground_-1_-1_0 816×816 in 0.91s
+[    1.0s] cached HubSectionB 1 x part 4/4
+[    1.0s] cached YardFooting 0.5 x x1.5
+[    1.0s] cached YardFooting 0.5 x x1.5
+[    1.0s] cached YardGate 1 x x1.5
+[    1.0s] building Plot2 -70 180 0
+[    1.3s] baking on CPU (no GPU)
+[    2.1s]   shaded Ground_-1_-1_0 816×816 in 0.91s
 [    2.3s]   shaded Ground_-1_0_0_000 540×540 in 0.19s
 [    2.5s]   shaded Ground_-1_0_0_010 544×544 in 0.19s
-[    2.9s]   shaded Ground_-1_0_0_100 540×540 in 0.38s
-[    3.3s]   shaded Ground_-1_0_0_110 544×544 in 0.37s
-[    4.4s]   shaded Ground_0_-1_0 816×816 in 0.91s
+[    2.9s]   shaded Ground_-1_0_0_100 540×540 in 0.37s
+[    3.4s]   shaded Ground_-1_0_0_110 544×544 in 0.37s
+[    4.4s]   shaded Ground_0_-1_0 816×816 in 0.90s
 [    4.9s]   shaded Ground_0_0_0_000 540×540 in 0.37s
-[    5.3s]   shaded Ground_0_0_0_010 544×544 in 0.39s
+[    5.3s]   shaded Ground_0_0_0_010 544×544 in 0.37s
 [    5.5s]   shaded Ground_0_0_0_100 540×540 in 0.19s
-[    5.8s]   shaded Ground_0_0_0_110 544×544 in 0.19s
-[    5.8s] built Plot2 -70 180 0: 10 parts in 4.8s
+[    5.7s]   shaded Ground_0_0_0_110 544×544 in 0.19s
+[    5.7s] built Plot2 -70 180 0: 10 parts in 4.7s
 [    5.8s] cached JunkMound 1 x x1.6666666666666667
 [    5.8s] cached JunkrotCanettoRustini 1 x
 [    5.8s] cached JunkrotCrumboPoppalot 1 x
-[    5.8s] building JunkrotMixerellaVroom 1 x
-[    5.9s]   shaded Stand 256×256 in 0.05s
-[    5.9s]   shaded Head 256×256 in 0.04s
-[    6.0s]   shaded Bowl 256×256 in 0.04s
-[    6.0s]   shaded Whisk 256×256 in 0.02s
-[    6.1s]   shaded Knob 256×256 in 0.09s
-[    6.2s]   shaded Eyes 256×256 in 0.14s
+[    5.8s] cached JunkrotMixerellaVroom 1 x
+[    5.8s] building JunkrotLawnmowoRuggito 1 x
+[    5.9s]   shaded Deck 256×256 in 0.06s
+[    5.9s]   shaded Wheels 256×256 in 0.04s
+[    6.0s]   shaded Engine 256×256 in 0.06s
+[    6.0s]   shaded Cord 256×256 in 0.05s
+[    6.0s]   shaded Bars 256×256 in 0.02s
+[    6.1s]   shaded Bag 256×256 in 0.04s
+[    6.2s]   shaded Eyes 256×256 in 0.12s
 [    6.4s]   shaded Pupils 256×256 in 0.17s
-[    6.5s]   shaded Legs 256×256 in 0.06s
-[    6.5s] built JunkrotMixerellaVroom 1 x: 8 parts in 0.6s
-[    6.5s] writing ServerMap.glb and 68 textures
-ServerMap: 68 parts, script 6.49s, total 6.84s
+[    6.4s]   shaded Legs 256×256 in 0.07s
+[    6.4s] built JunkrotLawnmowoRuggito 1 x: 9 parts in 0.7s
+[    6.5s] writing ServerMap.glb and 77 textures
+ServerMap: 77 parts, script 6.46s, total 6.82s
 PLACED	HubSection3	0	HubSectionB-afc962b93a377a4a 1 x part 4/4
 PLACED	Yard1_FootingFrontHalf1	0	YardFooting-5c7b334d7913a1ed 0.5 x x1.5
 PLACED	Yard1_FootingFrontHalf2	0	YardFooting-5c7b334d7913a1ed 0.5 x x1.5
 PLACED	Yard1_Gate	0	YardGate-6a909dbc533c5385 1 x x1.5
-PLACED	Plot2	0	fc0c5e558eaf305d-7b25a7aa2539d602 Plot2 -70 180 0
-SHARD_COST	slab Plot2	4.816
+PLACED	Plot2	0	115ac3a755887f11-7b25a7aa2539d602 Plot2 -70 180 0
+SHARD_COST	slab Plot2	4.736
 SHARD_COST	slab Plot2 #split	1
 PLACED	Kit_Mound	0	JunkMound-7fa771084b98236c 1 x x1.6666666666666667
 PLACED	Kit_JunkrotCanettoRustini	0	JunkrotCanettoRustini-cb0c7bded31f7246 1 x
 PLACED	Kit_JunkrotCrumboPoppalot	0	JunkrotCrumboPoppalot-407b76145c5b25df 1 x
 PLACED	Kit_JunkrotMixerellaVroom	0	JunkrotMixerellaVroom-344b44f12cb08348 1 x
-SHARD_COST	JunkrotMixerellaVroom 1 x	0.649
-SHARD_COST	JunkrotMixerellaVroom 1 x #split	1
-export ServerMap: 8 objects (16.9 MB) for 9 placements
+PLACED	Kit_JunkrotLawnmowoRuggito	0	JunkrotLawnmowoRuggito-108da303884eadb8 1 x
+SHARD_COST	JunkrotLawnmowoRuggito 1 x	0.659
+SHARD_COST	JunkrotLawnmowoRuggito 1 x #split	1
+export ServerMap: 9 objects (17.7 MB) for 10 placements
