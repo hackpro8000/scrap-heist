@@ -28,8 +28,8 @@
 			"parts": 1
 		},
 		{
-			"id": "29820d988000120a",
-			"key": "d85c17ddde731d72-18845c9c8b69ea54 Approach3 70 0 0",
+			"id": "3de67cd7cdaa38b2",
+			"key": "fc0c5e558eaf305d-18845c9c8b69ea54 Approach3 70 0 0",
 			"piece": 1,
 			"label": "Approach3",
 			"turn": 0.0,
@@ -46,8 +46,8 @@
 			"parts": 3
 		},
 		{
-			"id": "af1d9a70ca54dd72",
-			"key": "d85c17ddde731d72-cf7e96091024d5cc Bridge5 -210 -180 180",
+			"id": "da67f20ac64069a5",
+			"key": "fc0c5e558eaf305d-cf7e96091024d5cc Bridge5 -210 -180 180",
 			"piece": 1,
 			"label": "Bridge5",
 			"turn": 0.0,
@@ -55,8 +55,8 @@
 			"parts": 11
 		},
 		{
-			"id": "a1a5d9336e9ef359",
-			"key": "d85c17ddde731d72-107c5c30239027da Spoke8 210 -180 180",
+			"id": "4b92530024b4def3",
+			"key": "fc0c5e558eaf305d-107c5c30239027da Spoke8 210 -180 180",
 			"piece": 1,
 			"label": "Spoke8",
 			"turn": 0.0,
@@ -64,8 +64,8 @@
 			"parts": 1
 		},
 		{
-			"id": "a74d014eefc9392f",
-			"key": "d85c17ddde731d72-363b6dc9a40b12d8 Belt 0 0 0",
+			"id": "025217a63e1a30b1",
+			"key": "fc0c5e558eaf305d-363b6dc9a40b12d8 Belt 0 0 0",
 			"piece": 1,
 			"label": "Belt",
 			"turn": 0.0,
@@ -105,8 +105,17 @@
 			"piece": 1,
 			"label": "Kit_JunkrotPannettoPatchato",
 			"turn": 0.0,
-			"bytes": 516980,
+			"bytes": 516972,
 			"parts": 6
+		},
+		{
+			"id": "5341fe4bf9ab676a",
+			"key": "JunkrotMopaMopetta-447fd9d8fa5b6092 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotMopaMopetta",
+			"turn": 0.0,
+			"bytes": 755652,
+			"parts": 8
 		}
 	],
 	"placements": [
@@ -202,7 +211,7 @@
 			]
 		},
 		{
-			"asset": "29820d988000120a",
+			"asset": "3de67cd7cdaa38b2",
 			"label": "Approach3",
 			"turn": 0.0,
 			"anchors": [
@@ -315,7 +324,7 @@
 			]
 		},
 		{
-			"asset": "af1d9a70ca54dd72",
+			"asset": "da67f20ac64069a5",
 			"label": "Bridge5",
 			"turn": 0.0,
 			"anchors": [
@@ -728,7 +737,7 @@
 			]
 		},
 		{
-			"asset": "a1a5d9336e9ef359",
+			"asset": "4b92530024b4def3",
 			"label": "Spoke8",
 			"turn": 0.0,
 			"anchors": [
@@ -743,7 +752,7 @@
 			]
 		},
 		{
-			"asset": "a74d014eefc9392f",
+			"asset": "025217a63e1a30b1",
 			"label": "Belt",
 			"turn": 0.0,
 			"anchors": [
@@ -773,7 +782,7 @@
 				{
 					"name": "Hardware",
 					"position": [
-						-312.00894,
+						-444.00894,
 						-149.07463,
 						-1.15015185
 					]
@@ -781,7 +790,7 @@
 				{
 					"name": "Plate",
 					"position": [
-						-312.01166,
+						-444.01166,
 						-149.691015,
 						0.006314500000000223
 					]
@@ -796,7 +805,7 @@
 				{
 					"name": "Can",
 					"position": [
-						-192.00729,
+						-324.007295,
 						-148.7712,
 						0.010462399999999983
 					]
@@ -811,7 +820,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						0.030169620000000008,
+						-131.96983,
 						-147.5505,
 						0.41021353
 					]
@@ -819,7 +828,7 @@
 				{
 					"name": "Stain",
 					"position": [
-						0.204188555,
+						-131.795815,
 						-147.23425500000002,
 						-0.11728888100000001
 					]
@@ -834,7 +843,7 @@
 				{
 					"name": "Handle",
 					"position": [
-						217.50422,
+						85.50422,
 						-146.99375,
 						0.026629172500000006
 					]
@@ -842,9 +851,32 @@
 				{
 					"name": "Legs",
 					"position": [
-						215.992345,
+						83.992345,
 						-149.66916500000002,
 						0.17192995499999997
+					]
+				}
+			]
+		},
+		{
+			"asset": "5341fe4bf9ab676a",
+			"label": "Kit_JunkrotMopaMopetta",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pupils",
+					"position": [
+						348.672165,
+						-147.75650000000002,
+						0.630213495
+					]
+				},
+				{
+					"name": "Seat",
+					"position": [
+						347.13777500000003,
+						-147.641415,
+						-0.006764660000000006
 					]
 				}
 			]
