@@ -1,18 +1,10 @@
-slab Yard1_Bay2	0.070
-slab Yard1_Bay2 #split	1
-YardFence 1 x x1.5	0.181
-YardFence 1 x x1.5 #split	1
-slab Bridge2	1.615
-slab Bridge2 #split	1
-slab Yard5_Bay3	0.163
-slab Yard5_Bay3 #split	1
-PadGarage 1 x x1.6666666666666667	0.190
-PadGarage 1 x x1.6666666666666667 #split	1
-YardPathStub 0.75 y x2	0.180
-YardPathStub 0.75 y x2 #split	1
-slab Yard7_Press	0.152
-slab Yard7_Press #split	1
-slab Spoke7	0.074
-slab Spoke7 #split	1
-slab Plot8	4.826
-slab Plot8 #split	1
+HubSectionB 1 x	67.493
+HubSectionB 1 x #split	1
+YardFenceHalf 1 x x1.5	0.154
+YardFenceHalf 1 x x1.5 #split	1
+slab Bridge1	1.539
+slab Bridge1 #split	1
+YardFence 1.037037037037037 x x1.5	0.178
+YardFence 1.037037037037037 x x1.5 #split	1
+slab Plot6	4.872
+slab Plot6 #split	1
