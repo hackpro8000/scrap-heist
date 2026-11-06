@@ -1,4 +1,0 @@
-ArenaDrone 1 x	40.168
-ArenaDrone 1 x #split	1
-HubIsland 1 x	200.889
-HubIsland 1 x #split	1

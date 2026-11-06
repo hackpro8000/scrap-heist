@@ -40,90 +40,15 @@ assemble ServerMap: slab at ServerMap.luau:1418-1426 (key 209bd5af05ec8c81)
 assemble ServerMap: slab at ServerMap.luau:1470-1492 (key dfbe27eb7d68389c)
 assemble ServerMap: wrote art/models/ServerMap/model.luau, 31115 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.5s] building ArenaDrone 1 x part 1/3
-[    2.7s] baking on CPU (no GPU)
-[    2.9s]   shaded Plating_0_0_0_010_001 612×612 in 0.21s
-[    2.9s]   shaded Plating_0_0_0_010_111 248×248 in 0.03s
-[    3.1s]   shaded Plating_0_0_0_110_100 692×692 in 0.19s
-[    3.2s]   shaded Plating_0_0_0_110_001 416×416 in 0.06s
-[    3.2s]   shaded Plating_0_0_0_100_011 632×632 in 0.04s
-[    3.4s]   shaded Plating_0_0_0_000_011 468×468 in 0.11s
-[    3.6s]   shaded Plating_0_0_0_000_111 720×720 in 0.23s
-[    3.8s]   shaded Plating_-1_0_0_110_010 492×492 in 0.11s
-[    3.8s]   shaded Plating_-1_0_0_000_101 612×612 in 0.04s
-[    4.0s]   shaded Plating_-1_0_0_000_111 632×632 in 0.17s
-[    4.1s]   shaded Plating_-1_0_0_010_010 252×252 in 0.04s
-[    4.2s]   shaded Plating_-2_0_0 804×804 in 0.08s
-[    4.3s]   shaded Plating_-1_-1_0_010_010 352×352 in 0.09s
-[    4.3s]   shaded Plating_-1_-1_0_010_001 288×288 in 0.03s
-[    4.4s]   shaded Plating_-1_-1_0_010_011 344×344 in 0.07s
-[    4.6s]   shaded Plating_-1_-1_0_110_011 528×528 in 0.14s
-[    4.8s]   shaded Plating_-1_-1_0_110_001 720×720 in 0.23s
-[    4.9s]   shaded Plating_-1_-1_0_100_101 340×340 in 0.08s
-[    5.1s]   shaded Plating_-1_-1_0_000_110 676×676 in 0.16s
-[    5.3s]   shaded Plating_-1_-1_0_000_100 692×692 in 0.20s
-[    5.6s]   shaded Plating_-1_-2_0 632×632 in 0.31s
-[    5.7s]   shaded Plating_0_-1_0_000_101 248×248 in 0.04s
-[    5.7s]   shaded Plating_0_-1_0_000_001 280×280 in 0.01s
-[    5.8s]   shaded Plating_0_-1_0_010_011 596×596 in 0.04s
-[    5.9s]   shaded Plating_0_-1_0_010_001 476×476 in 0.11s
-[    6.0s]   shaded Plating_0_-1_0_110_100 612×612 in 0.15s
-[    6.3s]   shaded Plating_0_-1_0_110_011 592×592 in 0.20s
-[    6.4s]   shaded Plating_0_-1_0_110_110 352×352 in 0.09s
-[    6.6s]   shaded Plating_0_-1_0_100_000 692×692 in 0.19s
-[    6.6s]   shaded Plating_0_-1_0_100_011 416×416 in 0.06s
-[    6.9s]   shaded Plating_0_-2_0 632×632 in 0.26s
-[    7.3s]   shaded Grating3 256×256 in 0.35s
-[    7.5s]   shaded Grating6 256×256 in 0.19s
-[    7.5s]   shaded GratingRim1 256×256 in 0.06s
-[    7.6s]   shaded GratingRim4 256×256 in 0.06s
-[    7.7s]   shaded GratingRim7 256×256 in 0.05s
-[    8.2s]   shaded Girder2 512×512 in 0.57s
-[    8.3s]   shaded Girder5 512×512 in 0.05s
-[    8.9s]   shaded Girder8 512×512 in 0.55s
-[    9.0s]   shaded Motor1 256×256 in 0.15s
-[    9.1s]   shaded Prop1 512×512 in 0.07s
-[    9.2s]   shaded MotorCollar2 256×256 in 0.12s
-[    9.3s]   shaded MotorTrim2 256×256 in 0.08s
-[    9.3s]   shaded PropTips2 128×128 in 0.03s
-[    9.4s]   shaded PropHub2 128×128 in 0.03s
-[    9.7s]   shaded Cable2 256×256 in 0.31s
-[    9.7s]   shaded Arm3 512×512 in 0.05s
-[   10.6s]   shaded Arm4 512×512 in 0.87s
-[   13.2s]   shaded Battery 512×512 in 2.59s
-[   13.7s]   shaded Skids 256×256 in 0.50s
-[   13.8s] built ArenaDrone 1 x part 1/3: 51 parts in 13.3s
-[   13.9s] building HubIsland 1 x part 14/16
-[   15.7s]   shaded Columns_-1_1_-1_000 88×88 in 0.00s
-[   15.7s]   shaded Columns_-2_-1_0 120×120 in 0.02s
-[   16.1s]   shaded Columns_-1_-1_-1_011 536×536 in 0.36s
-[   16.4s]   shaded Columns_-1_-2_-1_101 488×488 in 0.26s
-[   16.6s]   shaded Columns_0_-1_-1_111 600×600 in 0.26s
-[   17.3s]   shaded Columns_0_-1_-1_010 744×744 in 0.66s
-[   17.7s]   shaded Columns_0_0_-1_110_110 640×640 in 0.34s
-[   18.2s]   shaded Dirt_1_-1_0_100_001 840×840 in 0.46s
-[   18.4s]   shaded Dirt_-1_1_-1_011 332×332 in 0.19s
-[   18.5s]   shaded Dirt_-2_0_0_010_100 220×220 in 0.15s
-[   18.9s]   shaded Dirt_-2_-1_0_011_011 556×556 in 0.43s
-[   19.8s]   shaded Dirt_-2_-1_0_000 704×704 in 0.87s
-[   20.5s]   shaded Dirt_0_1_0_011 660×660 in 0.62s
-[   21.9s]   shaded Dirt_-1_-2_-1_111 948×948 in 1.31s
-[   22.6s]   shaded Grass_1_-1_0_000 540×540 in 0.64s
-[   23.6s]   shaded Grass_0_-2_0_100 812×812 in 0.95s
-[   23.9s]   shaded Grass_-2_-2_0_110_010 404×404 in 0.23s
-[   24.0s]   shaded Grass_-2_-1_0_000_110 272×272 in 0.15s
-[   24.1s]   shaded Grass_-2_1_0_110 192×192 in 0.04s
-[   25.1s]   shaded Grass_-1_1_0_110 924×924 in 0.94s
-[   25.3s]   shaded Grass_1_1_0_100 396×396 in 0.17s
-[   25.4s]   shaded Grass_1_0_0_110_110 304×304 in 0.11s
-[   25.8s]   shaded Grass_1_0_0_110_100 476×476 in 0.36s
-[   26.4s]   shaded Grass_-1_-1_0_000 540×540 in 0.63s
-[   26.4s] built HubIsland 1 x part 14/16: 24 parts in 12.6s
-[   26.7s] writing ServerMap.glb and 75 textures
-[   27.2s] chunk ServerMap_S1_01.glb: 51 parts, 12.8 MB
-[   27.2s] chunk ServerMap_S1_02.glb: 24 parts, 6.7 MB
-ServerMap: 75 parts, script 26.71s, total 27.40s
-SHARD_COST	ArenaDrone 1 x	40.168
-SHARD_COST	ArenaDrone 1 x #split	1
-SHARD_COST	HubIsland 1 x	200.889
-SHARD_COST	HubIsland 1 x #split	1
+[    0.6s] cached ArenaDrone 1 x part 1/3
+[    0.7s] cached HubIsland 1 x part 14/16
+[    0.7s] writing ServerMap.glb and 75 textures
+[    1.3s] chunk ServerMap_S1_01.glb: 51 parts, 12.8 MB
+[    1.3s] chunk ServerMap_S1_02.glb: 24 parts, 6.7 MB
+ServerMap: 75 parts, script 736.66ms, total 1.52s
+upload ServerMap: starting in 1.2s
+upload ServerMap: uploading ServerMapS1_01 (13M)
+upload ServerMap: ServerMapS1_01 is asset 136951980508659
+upload ServerMap: uploading ServerMapS1_02 (6.4M)
+upload ServerMap: ServerMapS1_02 is asset 123582405428623
+upload ServerMap: shard upload done: 2 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
