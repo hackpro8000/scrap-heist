@@ -6,7 +6,7 @@
 			"piece": 1,
 			"label": "HubSection2",
 			"turn": 0.0,
-			"bytes": 7728304,
+			"bytes": 7728356,
 			"parts": 33
 		},
 		{
@@ -15,7 +15,7 @@
 			"piece": 1,
 			"label": "Yard3_FenceFront1",
 			"turn": 0.0,
-			"bytes": 417692,
+			"bytes": 417744,
 			"parts": 3
 		},
 		{
@@ -24,7 +24,7 @@
 			"piece": 1,
 			"label": "Yard4_FenceFrontHalf1",
 			"turn": 0.0,
-			"bytes": 362356,
+			"bytes": 362412,
 			"parts": 3
 		},
 		{
@@ -33,7 +33,7 @@
 			"piece": 1,
 			"label": "Yard4_Gate",
 			"turn": 0.0,
-			"bytes": 540468,
+			"bytes": 540520,
 			"parts": 4
 		},
 		{
@@ -42,16 +42,16 @@
 			"piece": 1,
 			"label": "Yard5_FenceLeft3",
 			"turn": 450.0,
-			"bytes": 420708,
+			"bytes": 420764,
 			"parts": 3
 		},
 		{
-			"id": "cb153426e195c0da",
-			"key": "115ac3a755887f11-18845c9c8b69ea54 Approach5 -210 0 180",
+			"id": "ca5fd483f9a981c9",
+			"key": "1cc43e4ea4bd80d5-18845c9c8b69ea54 Approach5 -210 0 180",
 			"piece": 1,
 			"label": "Approach5",
 			"turn": 0.0,
-			"bytes": 596804,
+			"bytes": 596856,
 			"parts": 3
 		},
 		{
@@ -60,17 +60,26 @@
 			"piece": 1,
 			"label": "Yard7_FootingRight1",
 			"turn": 270.0,
-			"bytes": 115912,
+			"bytes": 115964,
 			"parts": 1
 		},
 		{
-			"id": "bb3420092172daba",
-			"key": "115ac3a755887f11-7b25a7aa2539d602 Plot8 210 -180 180",
+			"id": "a09f8f5082493906",
+			"key": "1cc43e4ea4bd80d5-7b25a7aa2539d602 Plot8 210 -180 180",
 			"piece": 1,
 			"label": "Plot8",
 			"turn": 0.0,
-			"bytes": 5847552,
+			"bytes": 5847604,
 			"parts": 10
+		},
+		{
+			"id": "d173b2b5d4f81251",
+			"key": "JunkrotGascaniniHonkini-f8b07ed06063b0f4 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotGascaniniHonkini",
+			"turn": 0.0,
+			"bytes": 654728,
+			"parts": 8
 		}
 	],
 	"placements": [
@@ -436,7 +445,7 @@
 			]
 		},
 		{
-			"asset": "cb153426e195c0da",
+			"asset": "ca5fd483f9a981c9",
 			"label": "Approach5",
 			"turn": 0.0,
 			"anchors": [
@@ -924,7 +933,7 @@
 			]
 		},
 		{
-			"asset": "bb3420092172daba",
+			"asset": "a09f8f5082493906",
 			"label": "Plot8",
 			"turn": 0.0,
 			"anchors": [
@@ -942,6 +951,29 @@
 						170.0,
 						5.865,
 						220.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "d173b2b5d4f81251",
+			"label": "Kit_JunkrotGascaniniHonkini",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Beak",
+					"position": [
+						731.98853,
+						-146.852445,
+						1.3537403000000001
+					]
+				},
+				{
+					"name": "Jets",
+					"position": [
+						732.0,
+						-148.5,
+						-1.0
 					]
 				}
 			]
