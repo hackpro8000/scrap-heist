@@ -28,14 +28,14 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
 [    0.5s] cached YardFooting 1 x x1.5
 [    0.5s] cached YardFooting 1 x x1.5
 [    0.5s] cached YardFooting 1 x x1.5
-[    0.5s] cached YardFooting 0.5 x x1.5
-[    0.5s] cached YardFence 1 x x1.5
-[    0.5s] cached YardFooting 1 x x1.5
-[    0.5s] cached YardFence 1 x x1.5
-[    0.5s] cached YardFooting 1 x x1.5
-[    0.5s] cached YardFence 1 x x1.5
-[    0.5s] cached YardFooting 1 x x1.5
-[    0.5s] cached YardFooting 0.5 x x1.5
+[    0.6s] cached YardFooting 0.5 x x1.5
+[    0.6s] cached YardFence 1 x x1.5
+[    0.6s] cached YardFooting 1 x x1.5
+[    0.6s] cached YardFence 1 x x1.5
+[    0.6s] cached YardFooting 1 x x1.5
+[    0.6s] cached YardFence 1 x x1.5
+[    0.6s] cached YardFooting 1 x x1.5
+[    0.6s] cached YardFooting 0.5 x x1.5
 [    0.6s] cached Bridge4 210 180 0
 [    0.6s] cached YardFence 1 x x1.5
 [    0.6s] cached YardFooting 1 x x1.5
@@ -48,7 +48,7 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
 [    0.6s] cached YardFooting 1.037037037037037 x x1.5
 [    0.6s] cached Approach7 70 0 180
 [    0.6s] writing ServerMap.glb and 123 textures
-ServerMap: 123 parts, script 605.24ms, total 1.10s
+ServerMap: 123 parts, script 616.85ms, total 1.15s
 PLACED	HubSection2	0	HubSectionA-a8313e4a55d56339 1 x part 3/4
 PLACED	HubSection4	180	HubSectionA-a8313e4a55d56339 1 x part 3/4
 PLACED	Yard3_FenceFront2	0	YardFence-fe3d5de848852dd7 1 x x1.5
@@ -81,7 +81,3 @@ PLACED	Yard7_FootingLeft7	270	YardFooting-5c7b334d7913a1ed 1.037037037037037 x x
 PLACED	Yard7_FootingRight8	270	YardFooting-5c7b334d7913a1ed 1.037037037037037 x x1.5
 PLACED	Approach7	0	abb4bc7b898fe3b1-18845c9c8b69ea54 Approach7 70 0 180
 export ServerMap: 7 objects (11.7 MB) for 31 placements
-remote: 
-remote: Create a pull request for 'build-objects/s7' on GitHub by visiting:        
-remote:      https://github.com/hackpro8000/scrap-heist/pull/new/build-objects/s7        
-remote: 
