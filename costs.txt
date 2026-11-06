@@ -1,0 +1,8 @@
+HubSectionB 1 x	15.930
+HubSectionB 1 x #split	1
+YardFooting 0.5 x x1.5	0.016
+YardFooting 0.5 x x1.5 #split	1
+YardGate 1 x x1.5	0.068
+YardGate 1 x x1.5 #split	1
+slab Plot2	4.770
+slab Plot2 #split	1
