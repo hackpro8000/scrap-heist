@@ -25,102 +25,24 @@ assemble ServerMap: slab at ServerMap.luau:1351-1359 (key 84939f33a0cb0864)
 assemble ServerMap: slab at ServerMap.luau:1404-1426 (key dfbe27eb7d68389c)
 assemble ServerMap: wrote art/models/ServerMap/model.luau, 22621 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.4s] building HubSectionA 1 x part 3/5
-[    2.1s] baking on CPU (no GPU)
-[    2.4s]   shaded Columns_-1_0_0_111 440×440 in 0.37s
-[    3.9s]   shaded Columns_-1_-1_-1_111 848×848 in 1.38s
-[    4.1s]   shaded Columns_-1_-1_-1_101 288×288 in 0.18s
-[    4.3s]   shaded Columns_-1_-1_0_011 472×472 in 0.27s
-[    5.8s]   shaded Columns_0_-1_-1_011 920×920 in 1.42s
-[    6.5s]   shaded Columns_0_0_0_011 732×732 in 0.66s
-[    6.6s]   shaded Dirt_-1_0_0_010_011 388×388 in 0.09s
-[    6.9s]   shaded Dirt_-1_0_0_001 396×396 in 0.22s
-[    6.9s]   shaded Dirt_-1_-1_0_110 188×188 in 0.07s
-[    7.1s]   shaded Dirt_-1_-1_0_001 264×264 in 0.14s
-[    7.3s]   shaded Dirt_0_0_0_110_111 360×360 in 0.20s
-[    7.8s]   shaded Dirt_0_0_0_110_001 544×544 in 0.45s
-[    8.4s]   shaded Dirt_0_0_0_001 648×648 in 0.65s
-[    8.9s]   shaded Dirt_0_0_0_101 584×584 in 0.49s
-[    9.7s]   shaded Dirt_0_0_0_011 668×668 in 0.77s
-[   10.1s]   shaded Dirt_0_-1_0_100_110 340×340 in 0.30s
-[   10.7s]   shaded Dirt_0_-1_0_100_000 552×552 in 0.57s
-[   11.1s]   shaded Dirt_0_-1_0_100_111 524×524 in 0.46s
-[   11.2s]   shaded Dirt_0_-1_0_110_000 76×76 in 0.03s
-[   11.3s]   shaded Dirt_0_-1_0_011 176×176 in 0.07s
-[   12.8s]   shaded Dirt_0_-1_0_000 968×968 in 1.47s
-[   12.9s]   shaded Dirt_0_-1_0_001 148×148 in 0.04s
-[   12.9s]   shaded Dirt_-1_-1_-1 52×52 in 0.03s
-[   13.1s]   shaded Pebbles_0_0_0 300×300 in 0.17s
-[   13.4s]   shaded Grass_0_-1_0_000 408×408 in 0.36s
-[   14.5s]   shaded Grass_0_1_0 880×880 in 1.03s
-[   14.5s] built HubSectionA 1 x part 3/5: 26 parts in 14.1s
-[   14.7s] cached HubSectionA 1 x part 3/5
-[   14.7s] building Spoke1 -210 180 0
-[   14.8s]   shaded Road 304×304 in 0.08s
-[   14.8s] built Spoke1 -210 180 0: 1 parts in 0.1s
-[   14.8s] building Spoke2 -70 180 0
-[   14.9s]   shaded Road 304×304 in 0.08s
-[   14.9s] built Spoke2 -70 180 0: 1 parts in 0.1s
-[   14.9s] building Plot3 70 180 0
-[   19.7s]   shaded Slab 1024×1024 in 4.56s
-[   19.7s] built Plot3 70 180 0: 1 parts in 4.8s
-[   19.7s] building Bridge5 -210 -180 180
-[   20.3s]   shaded Deck 1024×1024 in 0.49s
-[   20.4s]   shaded HazardYellow 148×148 in 0.04s
-[   20.4s]   shaded HazardBlack 148×148 in 0.04s
-[   20.7s]   shaded Girders 1024×1024 in 0.33s
-[   20.8s]   shaded Posts 212×212 in 0.07s
-[   21.0s]   shaded Rail 1024×1024 in 0.18s
-[   21.0s]   shaded KerbEnds 104×104 in 0.02s
-[   21.0s]   shaded EndPosts 60×60 in 0.01s
-[   21.2s]   shaded Abutments 372×372 in 0.16s
-[   21.2s]   shaded JointPlate 152×152 in 0.01s
-[   21.3s]   shaded Apron 184×184 in 0.05s
-[   21.3s] built Bridge5 -210 -180 180: 11 parts in 1.5s
-[   21.3s] building Bridge8 210 -180 180
-[   21.9s]   shaded Deck 1024×1024 in 0.49s
-[   21.9s]   shaded HazardYellow 148×148 in 0.04s
-[   21.9s]   shaded HazardBlack 148×148 in 0.04s
-[   22.3s]   shaded Girders 1024×1024 in 0.33s
-[   22.4s]   shaded Posts 212×212 in 0.07s
-[   22.5s]   shaded Rail 1024×1024 in 0.18s
-[   22.6s]   shaded KerbEnds 104×104 in 0.02s
-[   22.6s]   shaded EndPosts 60×60 in 0.01s
-[   22.7s]   shaded Abutments 372×372 in 0.16s
-[   22.8s]   shaded JointPlate 152×152 in 0.01s
-[   22.8s]   shaded Apron 184×184 in 0.05s
-[   22.8s] built Bridge8 210 -180 180: 11 parts in 1.5s
-[   22.8s] building Hatch1 23.558928079037813 9.75842752530979 22.5
-[   22.9s]   shaded Rim 312×312 in 0.03s
-[   22.9s]   shaded Frame 260×260 in 0.03s
-[   22.9s]   shaded Pit 212×212 in 0.03s
-[   23.0s]   shaded Grate 284×284 in 0.03s
-[   23.0s] built Hatch1 23.558928079037813 9.75842752530979 22.5: 4 parts in 0.1s
-[   23.0s] building StreetlightBroken 1 x x2
-[   23.0s]   shaded Pole 256×256 in 0.02s
-[   23.0s]   shaded Head 256×256 in 0.04s
-[   23.1s]   shaded Glass 256×256 in 0.04s
-[   23.1s]   shaded Wires 256×256 in 0.01s
-[   23.1s] built StreetlightBroken 1 x x2: 4 parts in 0.1s
-[   23.1s] cached StreetlightBroken 1 x x2
-[   23.1s] cached StreetlightBroken 1 x x2
-[   23.2s] writing ServerMap.glb and 93 textures
-[   23.8s] chunk ServerMap_S14_01.glb: 66 parts, 10.8 MB
-[   23.8s] chunk ServerMap_S14_02.glb: 27 parts, 3.6 MB
-ServerMap: 93 parts, script 23.15s, total 24.00s
-SHARD_COST	HubSectionA 1 x	70.611
-SHARD_COST	HubSectionA 1 x #split	1
-SHARD_COST	slab Spoke1	0.088
-SHARD_COST	slab Spoke1 #split	1
-SHARD_COST	slab Spoke2	0.084
-SHARD_COST	slab Spoke2 #split	1
-SHARD_COST	slab Plot3	4.819
-SHARD_COST	slab Plot3 #split	1
-SHARD_COST	slab Bridge5	1.530
-SHARD_COST	slab Bridge5 #split	1
-SHARD_COST	slab Bridge8	1.524
-SHARD_COST	slab Bridge8 #split	1
-SHARD_COST	slab Hatch1	0.126
-SHARD_COST	slab Hatch1 #split	1
-SHARD_COST	StreetlightBroken 1 x x2	0.120
-SHARD_COST	StreetlightBroken 1 x x2 #split	1
+[    0.5s] cached HubSectionA 1 x part 3/5
+[    0.6s] cached HubSectionA 1 x part 3/5
+[    0.6s] cached Spoke1 -210 180 0
+[    0.6s] cached Spoke2 -70 180 0
+[    0.6s] cached Plot3 70 180 0
+[    0.7s] cached Bridge5 -210 -180 180
+[    0.7s] cached Bridge8 210 -180 180
+[    0.7s] cached Hatch1 23.558928079037813 9.75842752530979 22.5
+[    0.7s] cached StreetlightBroken 1 x x2
+[    0.7s] cached StreetlightBroken 1 x x2
+[    0.7s] cached StreetlightBroken 1 x x2
+[    0.8s] writing ServerMap.glb and 93 textures
+[    1.5s] chunk ServerMap_S14_01.glb: 66 parts, 10.8 MB
+[    1.5s] chunk ServerMap_S14_02.glb: 27 parts, 3.6 MB
+ServerMap: 93 parts, script 790.22ms, total 1.70s
+upload ServerMap: starting in 1.0s
+upload ServerMap: uploading ServerMapS14_01 (11M)
+upload ServerMap: ServerMapS14_01 is asset 97434699841834
+upload ServerMap: uploading ServerMapS14_02 (3.5M)
+upload ServerMap: ServerMapS14_02 is asset 133581568741970
+upload ServerMap: shard upload done: 2 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
