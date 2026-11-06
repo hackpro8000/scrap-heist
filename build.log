@@ -42,200 +42,200 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 33582 lines, in 0s
 [    0.0s] running ServerMap/model.luau
 [    0.6s] building ArenaDrone 1 x part 2/2
 [    3.3s] baking on CPU (no GPU)
-[    3.4s]   shaded Plating_0_0_0_010_010 352×352 in 0.12s
+[    3.4s]   shaded Plating_0_0_0_010_010 352×352 in 0.13s
 [    3.5s]   shaded Plating_0_0_0_010_011 340×340 in 0.09s
 [    3.7s]   shaded Plating_0_0_0_110_010 692×692 in 0.23s
 [    3.8s]   shaded Plating_0_0_0_110_001 416×416 in 0.07s
-[    4.0s]   shaded Plating_0_0_0_100_110 612×612 in 0.18s
+[    4.0s]   shaded Plating_0_0_0_100_110 612×612 in 0.19s
 [    4.1s]   shaded Plating_0_0_0_100_111 288×288 in 0.04s
 [    4.1s]   shaded Plating_0_0_0_100_101 344×344 in 0.08s
 [    4.4s]   shaded Plating_0_0_0_000_001 616×616 in 0.24s
-[    4.5s]   shaded Plating_0_0_0_000_011 468×468 in 0.14s
+[    4.6s]   shaded Plating_0_0_0_000_011 468×468 in 0.14s
 [    4.9s]   shaded Plating_0_0_0_000_111 720×720 in 0.28s
-[    5.2s]   shaded Plating_0_1_0 632×632 in 0.31s
+[    5.2s]   shaded Plating_0_1_0 632×632 in 0.32s
 [    5.4s]   shaded Plating_-1_0_0_110_010 492×492 in 0.13s
 [    5.5s]   shaded Plating_-1_0_0_110_110 352×352 in 0.12s
-[    5.5s]   shaded Plating_-1_0_0_110_011 248×248 in 0.03s
+[    5.6s]   shaded Plating_-1_0_0_110_011 248×248 in 0.03s
 [    5.6s]   shaded Plating_-1_0_0_110_111 280×280 in 0.07s
-[    6.0s]   shaded Plating_-1_0_0_100_101 684×684 in 0.40s
-[    6.2s]   shaded Plating_-1_0_0_100_111 468×468 in 0.14s
+[    6.1s]   shaded Plating_-1_0_0_100_101 684×684 in 0.40s
+[    6.2s]   shaded Plating_-1_0_0_100_111 468×468 in 0.15s
 [    6.4s]   shaded Plating_-1_0_0_100_001 536×536 in 0.16s
-[    6.6s]   shaded Plating_-1_0_0_000_010 608×608 in 0.17s
-[    6.8s]   shaded Plating_-1_0_0_000_101 612×612 in 0.23s
-[    7.0s]   shaded Plating_-1_0_0_000_111 632×632 in 0.20s
-[    7.2s]   shaded Plating_-1_0_0_010_100 676×676 in 0.19s
+[    6.6s]   shaded Plating_-1_0_0_000_010 608×608 in 0.18s
+[    6.9s]   shaded Plating_-1_0_0_000_101 612×612 in 0.24s
+[    7.1s]   shaded Plating_-1_0_0_000_111 632×632 in 0.20s
+[    7.3s]   shaded Plating_-1_0_0_010_100 676×676 in 0.19s
 [    7.5s]   shaded Plating_-1_0_0_010_000 692×692 in 0.22s
-[    7.5s]   shaded Plating_-1_0_0_010_010 252×252 in 0.04s
+[    7.6s]   shaded Plating_-1_0_0_010_010 252×252 in 0.05s
 [    7.7s]   shaded Plating_-1_-1_0_010_010 352×352 in 0.11s
-[    7.7s]   shaded Plating_-1_-1_0_010_001 288×288 in 0.04s
+[    7.8s]   shaded Plating_-1_-1_0_010_001 288×288 in 0.04s
 [    7.8s]   shaded Plating_-1_-1_0_010_011 344×344 in 0.08s
 [    8.1s]   shaded Plating_-1_-1_0_110_001 720×720 in 0.27s
-[    8.3s]   shaded Plating_-1_-1_0_100_111 552×552 in 0.21s
-[    8.5s]   shaded Plating_-1_-1_0_100_011 632×632 in 0.20s
+[    8.4s]   shaded Plating_-1_-1_0_100_111 552×552 in 0.21s
+[    8.6s]   shaded Plating_-1_-1_0_100_011 632×632 in 0.20s
 [    8.8s]   shaded Plating_-1_-1_0_000_100 692×692 in 0.22s
-[    8.8s]   shaded Plating_-1_-1_0_000_111 416×416 in 0.07s
-[    9.3s]   shaded Plating_-2_-1_0 780×780 in 0.44s
-[    9.5s]   shaded Plating_0_-1_0_000_100 492×492 in 0.15s
-[    9.6s]   shaded Plating_0_-1_0_000_000 352×352 in 0.14s
-[    9.9s]   shaded Plating_0_-1_0_000_011 612×612 in 0.27s
-[   10.2s]   shaded Plating_0_-1_0_000_111 632×632 in 0.20s
-[   10.2s]   shaded Plating_0_-1_0_000_101 248×248 in 0.03s
+[    8.9s]   shaded Plating_-1_-1_0_000_111 416×416 in 0.07s
+[    9.4s]   shaded Plating_-2_-1_0 780×780 in 0.44s
+[    9.5s]   shaded Plating_0_-1_0_000_100 492×492 in 0.13s
+[    9.7s]   shaded Plating_0_-1_0_000_000 352×352 in 0.12s
+[    9.9s]   shaded Plating_0_-1_0_000_011 612×612 in 0.24s
+[   10.1s]   shaded Plating_0_-1_0_000_111 632×632 in 0.20s
+[   10.2s]   shaded Plating_0_-1_0_000_101 248×248 in 0.04s
 [   10.4s]   shaded Plating_0_-1_0_010_011 596×596 in 0.22s
 [   10.6s]   shaded Plating_0_-1_0_010_111 528×528 in 0.17s
 [   10.9s]   shaded Plating_0_-1_0_110_011 592×592 in 0.23s
 [   11.1s]   shaded Plating_0_-1_0_100_010 676×676 in 0.19s
 [   11.3s]   shaded Plating_0_-1_0_100_110 692×692 in 0.22s
-[   11.4s]   shaded Plating_0_-1_0_100_100 252×252 in 0.04s
+[   11.4s]   shaded Plating_0_-1_0_100_100 252×252 in 0.05s
 [   11.7s]   shaded Plating_0_-2_0 632×632 in 0.31s
 [   12.2s]   shaded Plating_1_-1_0 804×804 in 0.45s
-[   12.8s]   shaded Grating1 256×256 in 0.55s
-[   13.3s]   shaded Grating3 256×256 in 0.54s
-[   13.8s]   shaded Grating5 256×256 in 0.48s
-[   14.3s]   shaded Grating7 256×256 in 0.50s
-[   14.4s]   shaded GratingRim1 256×256 in 0.07s
-[   14.4s]   shaded GratingRim3 256×256 in 0.07s
-[   14.5s]   shaded GratingRim5 256×256 in 0.07s
-[   14.6s]   shaded GratingRim7 256×256 in 0.07s
-[   15.3s]   shaded Girder2 512×512 in 0.69s
-[   15.9s]   shaded Girder4 512×512 in 0.66s
-[   16.6s]   shaded Girder6 512×512 in 0.68s
-[   17.3s]   shaded Girder8 512×512 in 0.67s
-[   18.4s]   shaded Arm1 512×512 in 1.07s
-[   18.5s]   shaded MotorCollar1 256×256 in 0.13s
+[   12.7s]   shaded Grating1 256×256 in 0.50s
+[   13.2s]   shaded Grating3 256×256 in 0.48s
+[   13.6s]   shaded Grating5 256×256 in 0.48s
+[   14.1s]   shaded Grating7 256×256 in 0.49s
+[   14.2s]   shaded GratingRim1 256×256 in 0.07s
+[   14.3s]   shaded GratingRim3 256×256 in 0.07s
+[   14.3s]   shaded GratingRim5 256×256 in 0.07s
+[   14.4s]   shaded GratingRim7 256×256 in 0.07s
+[   15.1s]   shaded Girder2 512×512 in 0.69s
+[   15.8s]   shaded Girder4 512×512 in 0.67s
+[   16.5s]   shaded Girder6 512×512 in 0.69s
+[   17.2s]   shaded Girder8 512×512 in 0.67s
+[   18.3s]   shaded Arm1 512×512 in 1.09s
+[   18.4s]   shaded MotorCollar1 256×256 in 0.15s
 [   18.6s]   shaded MotorTrim1 256×256 in 0.09s
-[   18.7s]   shaded PropHub1 128×128 in 0.03s
-[   19.1s]   shaded Cable1 256×256 in 0.39s
-[   20.1s]   shaded Arm2 512×512 in 1.04s
+[   18.6s]   shaded PropHub1 128×128 in 0.03s
+[   19.0s]   shaded Cable1 256×256 in 0.43s
+[   20.1s]   shaded Arm2 512×512 in 1.09s
 [   20.2s]   shaded MotorTrim2 256×256 in 0.09s
-[   20.2s]   shaded PropTips2 128×128 in 0.04s
+[   20.3s]   shaded PropTips2 128×128 in 0.04s
 [   20.3s]   shaded PropHub2 128×128 in 0.03s
-[   20.7s]   shaded Cable2 256×256 in 0.38s
-[   21.7s]   shaded Arm3 512×512 in 1.03s
-[   21.9s]   shaded Prop3 512×512 in 0.20s
-[   22.1s]   shaded MotorCollar4 256×256 in 0.13s
-[   22.2s]   shaded Motor4 256×256 in 0.17s
-[   22.3s]   shaded MotorTrim4 256×256 in 0.09s
-[   22.4s]   shaded PropTips4 128×128 in 0.03s
-[   22.4s]   shaded PropHub4 128×128 in 0.03s
-[   22.8s]   shaded Cable4 256×256 in 0.39s
-[   25.9s]   shaded Battery 512×512 in 3.09s
-[   26.5s]   shaded MainCables 256×256 in 0.60s
-[   26.9s]   shaded SkidLegs 512×512 in 0.31s
-[   26.9s] built ArenaDrone 1 x part 2/2: 81 parts in 26.3s
-[   27.1s] building GroundTile 1 x x1.5
-[   27.2s]   shaded Dirt 256×256 in 0.07s
-[   27.3s]   shaded Slabs 256×256 in 0.05s
-[   27.3s]   shaded Scrap 256×256 in 0.03s
-[   27.3s] built GroundTile 1 x x1.5: 3 parts in 0.2s
-[   27.3s] cached GroundTile 1 x x1.5
-[   27.3s] cached GroundTile 1 x x1.5
-[   27.3s] cached GroundTile 1 x x1.5
-[   27.3s] cached GroundTile 1 x x1.5
-[   27.3s] cached GroundTile 1 x x1.5
-[   27.3s] cached GroundTile 1 x x1.5
-[   27.3s] cached GroundTile 1 x x1.5
-[   27.3s] cached GroundTile 1 x x1.5
-[   27.3s] cached GroundTile 1 x x1.5
-[   27.3s] cached GroundTile 1 x x1.5
-[   27.3s] cached GroundTile 1 x x1.5
-[   27.3s] cached GroundTile 1 x x1.5
-[   27.3s] cached GroundTile 1 x x1.5
-[   27.3s] cached GroundTile 1 x x1.5
-[   27.3s] cached GroundTile 1 x x1.5
-[   27.3s] building MachinePad 1 x x1.5
-[   27.4s]   shaded Plate 256×256 in 0.09s
-[   27.4s]   shaded Stripes 256×256 in 0.03s
-[   27.5s]   shaded Hardware 256×256 in 0.04s
-[   27.5s] built MachinePad 1 x x1.5: 3 parts in 0.2s
-[   27.5s] cached MachinePad 1 x x1.5
-[   27.5s] cached MachinePad 1 x x1.5
-[   27.5s] cached MachinePad 1 x x1.5
-[   27.5s] building StorageCrate 1 x x1.5
-[   28.0s]   shaded  1024×1024 in 0.49s
-[   28.2s]   shaded  512×512 in 0.11s
-[   28.2s]   shaded  512×512 in 0.06s
-[   28.3s]   shaded  256×256 in 0.07s
-[   28.3s]   shaded  1024×64 in 0.04s
-[   28.9s]   shaded  1024×1024 in 0.46s
-[   29.0s]   shaded  256×256 in 0.04s
-[   29.5s]   shaded  1024×1024 in 0.43s
-[   29.7s]   shaded  256×256 in 0.04s
-[   29.8s]   shaded  256×256 in 0.06s
-[   30.4s]   shaded  1024×1024 in 0.45s
-[   30.5s]   shaded  256×256 in 0.04s
-[   30.7s]   shaded  256×256 in 0.05s
-[   30.9s]   shaded  256×256 in 0.12s
-[   31.0s]   shaded  256×256 in 0.03s
-[   31.6s]   shaded  1024×1024 in 0.49s
-[   31.8s]   shaded  256×256 in 0.04s
-[   31.9s]   shaded  256×256 in 0.05s
-[   32.2s]   shaded  256×256 in 0.12s
-[   32.3s]   shaded  256×256 in 0.03s
-[   32.4s]   shaded  256×256 in 0.07s
-[   32.5s]   shaded  256×256 in 0.07s
-[   33.2s]   shaded  1024×1024 in 0.56s
-[   33.4s]   shaded  256×256 in 0.04s
-[   33.5s]   shaded  256×256 in 0.05s
-[   33.8s]   shaded  256×256 in 0.12s
-[   33.9s]   shaded  256×256 in 0.03s
-[   34.0s]   shaded  256×256 in 0.07s
-[   34.1s]   shaded  256×256 in 0.07s
+[   20.7s]   shaded Cable2 256×256 in 0.42s
+[   21.8s]   shaded Arm3 512×512 in 1.08s
+[   22.0s]   shaded Prop3 512×512 in 0.20s
+[   22.2s]   shaded MotorCollar4 256×256 in 0.13s
+[   22.4s]   shaded Motor4 256×256 in 0.17s
+[   22.5s]   shaded MotorTrim4 256×256 in 0.09s
+[   22.5s]   shaded PropTips4 128×128 in 0.03s
+[   22.5s]   shaded PropHub4 128×128 in 0.03s
+[   23.0s]   shaded Cable4 256×256 in 0.42s
+[   26.2s]   shaded Battery 512×512 in 3.18s
+[   26.9s]   shaded MainCables 256×256 in 0.66s
+[   27.2s]   shaded SkidLegs 512×512 in 0.32s
+[   27.2s] built ArenaDrone 1 x part 2/2: 81 parts in 26.6s
+[   27.4s] building GroundTile 1 x x1.5
+[   27.5s]   shaded Dirt 256×256 in 0.07s
+[   27.6s]   shaded Slabs 256×256 in 0.05s
+[   27.6s]   shaded Scrap 256×256 in 0.03s
+[   27.6s] built GroundTile 1 x x1.5: 3 parts in 0.2s
+[   27.6s] cached GroundTile 1 x x1.5
+[   27.6s] cached GroundTile 1 x x1.5
+[   27.6s] cached GroundTile 1 x x1.5
+[   27.6s] cached GroundTile 1 x x1.5
+[   27.6s] cached GroundTile 1 x x1.5
+[   27.6s] cached GroundTile 1 x x1.5
+[   27.6s] cached GroundTile 1 x x1.5
+[   27.6s] cached GroundTile 1 x x1.5
+[   27.6s] cached GroundTile 1 x x1.5
+[   27.6s] cached GroundTile 1 x x1.5
+[   27.6s] cached GroundTile 1 x x1.5
+[   27.6s] cached GroundTile 1 x x1.5
+[   27.6s] cached GroundTile 1 x x1.5
+[   27.6s] cached GroundTile 1 x x1.5
+[   27.6s] cached GroundTile 1 x x1.5
+[   27.6s] building MachinePad 1 x x1.5
+[   27.7s]   shaded Plate 256×256 in 0.08s
+[   27.8s]   shaded Stripes 256×256 in 0.03s
+[   27.8s]   shaded Hardware 256×256 in 0.04s
+[   27.8s] built MachinePad 1 x x1.5: 3 parts in 0.2s
+[   27.8s] cached MachinePad 1 x x1.5
+[   27.8s] cached MachinePad 1 x x1.5
+[   27.8s] cached MachinePad 1 x x1.5
+[   27.8s] building StorageCrate 1 x x1.5
+[   28.4s]   shaded  1024×1024 in 0.51s
+[   28.5s]   shaded  512×512 in 0.11s
+[   28.6s]   shaded  512×512 in 0.06s
+[   28.7s]   shaded  256×256 in 0.07s
+[   28.7s]   shaded  1024×64 in 0.04s
+[   29.3s]   shaded  1024×1024 in 0.46s
+[   29.4s]   shaded  256×256 in 0.04s
+[   30.0s]   shaded  1024×1024 in 0.47s
+[   30.2s]   shaded  256×256 in 0.04s
+[   30.3s]   shaded  256×256 in 0.05s
+[   31.0s]   shaded  1024×1024 in 0.49s
+[   31.1s]   shaded  256×256 in 0.04s
+[   31.3s]   shaded  256×256 in 0.06s
+[   31.5s]   shaded  256×256 in 0.12s
+[   31.6s]   shaded  256×256 in 0.03s
+[   32.3s]   shaded  1024×1024 in 0.55s
+[   32.4s]   shaded  256×256 in 0.04s
+[   32.6s]   shaded  256×256 in 0.05s
+[   32.8s]   shaded  256×256 in 0.12s
+[   32.9s]   shaded  256×256 in 0.03s
+[   33.1s]   shaded  256×256 in 0.07s
+[   33.2s]   shaded  256×256 in 0.07s
+[   34.0s]   shaded  1024×1024 in 0.59s
+[   34.1s]   shaded  256×256 in 0.04s
 [   34.3s]   shaded  256×256 in 0.05s
-[   34.4s]   shaded  256×256 in 0.03s
-[   35.1s]   shaded  1024×1024 in 0.55s
-[   35.3s]   shaded  256×256 in 0.04s
-[   35.4s]   shaded  256×256 in 0.05s
-[   35.6s]   shaded  256×256 in 0.12s
-[   35.7s]   shaded  256×256 in 0.03s
-[   35.9s]   shaded  256×256 in 0.07s
-[   36.0s]   shaded  256×256 in 0.07s
+[   34.5s]   shaded  256×256 in 0.12s
+[   34.6s]   shaded  256×256 in 0.03s
+[   34.8s]   shaded  256×256 in 0.07s
+[   34.9s]   shaded  256×256 in 0.07s
+[   35.1s]   shaded  256×256 in 0.05s
+[   35.2s]   shaded  256×256 in 0.03s
+[   35.9s]   shaded  1024×1024 in 0.59s
+[   36.1s]   shaded  256×256 in 0.04s
 [   36.2s]   shaded  256×256 in 0.05s
-[   36.3s]   shaded  256×256 in 0.03s
-[   36.4s]   shaded  256×256 in 0.09s
-[   36.6s]   shaded  256×256 in 0.06s
-[   36.8s]   shaded  256×256 in 0.07s
-[   36.8s] built StorageCrate 1 x x1.5: 5 parts in 9.3s
-[   36.8s] cached StorageCrate 1 x x1.5
-[   36.8s] cached StorageCrate 1 x x1.5
-[   36.8s] cached StorageCrate 1 x x1.5
-[   36.8s] cached StorageCrate 1 x x1.5
-[   36.8s] cached StorageCrate 1 x x1.5
-[   36.8s] cached StorageCrate 1 x x1.5
-[   36.8s] cached StorageCrate 1 x x1.5
-[   36.8s] building CrushedCar 1 x x2.5
-[   36.9s]   shaded Body 256×256 in 0.08s
-[   36.9s]   shaded Glass 256×256 in 0.03s
-[   37.0s]   shaded Wheels 256×256 in 0.04s
-[   37.0s]   shaded Bumpers 256×256 in 0.02s
-[   37.0s] built CrushedCar 1 x x2.5: 4 parts in 0.2s
-[   37.0s] building JunkWall 1 x x1.75
-[   37.1s]   shaded Fridges 256×256 in 0.06s
-[   37.1s]   shaded Doors 256×256 in 0.06s
-[   37.2s]   shaded Drums 256×256 in 0.04s
-[   37.2s]   shaded Handles 256×256 in 0.04s
-[   37.2s] built JunkWall 1 x x1.75: 4 parts in 0.2s
-[   37.2s] building Hatch4 9.758427525309795 -23.55892807903781 292.5
-[   37.3s]   shaded Rim 312×312 in 0.03s
-[   37.3s]   shaded Frame 260×260 in 0.03s
-[   37.3s]   shaded Pit 212×212 in 0.03s
-[   37.4s]   shaded Grate 300×300 in 0.03s
-[   37.4s] built Hatch4 9.758427525309795 -23.55892807903781 292.5: 4 parts in 0.1s
-[   37.4s] writing ServerMap.glb and 193 textures
-[   38.4s] chunk ServerMap_S2_01.glb: 70 parts, 17.1 MB
-[   38.4s] chunk ServerMap_S2_02.glb: 96 parts, 6.3 MB
-[   38.4s] chunk ServerMap_S2_03.glb: 27 parts, 3.1 MB
-[   38.8s] rendering preview of 193 parts
-ServerMap: 193 parts, script 37.37s, total 39.02s
-SHARD_COST	ArenaDrone 1 x	52.542
+[   36.5s]   shaded  256×256 in 0.12s
+[   36.6s]   shaded  256×256 in 0.03s
+[   36.7s]   shaded  256×256 in 0.07s
+[   36.9s]   shaded  256×256 in 0.07s
+[   37.0s]   shaded  256×256 in 0.06s
+[   37.1s]   shaded  256×256 in 0.03s
+[   37.3s]   shaded  256×256 in 0.09s
+[   37.5s]   shaded  256×256 in 0.06s
+[   37.7s]   shaded  256×256 in 0.07s
+[   37.7s] built StorageCrate 1 x x1.5: 5 parts in 9.8s
+[   37.7s] cached StorageCrate 1 x x1.5
+[   37.7s] cached StorageCrate 1 x x1.5
+[   37.7s] cached StorageCrate 1 x x1.5
+[   37.7s] cached StorageCrate 1 x x1.5
+[   37.7s] cached StorageCrate 1 x x1.5
+[   37.7s] cached StorageCrate 1 x x1.5
+[   37.7s] cached StorageCrate 1 x x1.5
+[   37.7s] building CrushedCar 1 x x2.5
+[   37.8s]   shaded Body 256×256 in 0.08s
+[   37.9s]   shaded Glass 256×256 in 0.03s
+[   37.9s]   shaded Wheels 256×256 in 0.04s
+[   37.9s]   shaded Bumpers 256×256 in 0.02s
+[   37.9s] built CrushedCar 1 x x2.5: 4 parts in 0.2s
+[   37.9s] building JunkWall 1 x x1.75
+[   38.0s]   shaded Fridges 256×256 in 0.07s
+[   38.1s]   shaded Doors 256×256 in 0.06s
+[   38.1s]   shaded Drums 256×256 in 0.05s
+[   38.2s]   shaded Handles 256×256 in 0.04s
+[   38.2s] built JunkWall 1 x x1.75: 4 parts in 0.2s
+[   38.2s] building Hatch4 9.758427525309795 -23.55892807903781 292.5
+[   38.2s]   shaded Rim 312×312 in 0.03s
+[   38.3s]   shaded Frame 260×260 in 0.03s
+[   38.3s]   shaded Pit 212×212 in 0.03s
+[   38.3s]   shaded Grate 300×300 in 0.03s
+[   38.3s] built Hatch4 9.758427525309795 -23.55892807903781 292.5: 4 parts in 0.1s
+[   38.4s] writing ServerMap.glb and 193 textures
+[   39.5s] chunk ServerMap_S2_01.glb: 70 parts, 17.1 MB
+[   39.5s] chunk ServerMap_S2_02.glb: 96 parts, 6.3 MB
+[   39.5s] chunk ServerMap_S2_03.glb: 27 parts, 3.1 MB
+[   39.8s] rendering preview of 193 parts
+ServerMap: 193 parts, script 38.36s, total 40.10s
+SHARD_COST	ArenaDrone 1 x	53.188
 SHARD_COST	ArenaDrone 1 x #split	1
 SHARD_COST	GroundTile 1 x x1.5	0.175
 SHARD_COST	GroundTile 1 x x1.5 #split	1
 SHARD_COST	MachinePad 1 x x1.5	0.174
 SHARD_COST	MachinePad 1 x x1.5 #split	1
-SHARD_COST	StorageCrate 1 x x1.5	9.288
-SHARD_COST	CrushedCar 1 x x2.5	0.191
+SHARD_COST	StorageCrate 1 x x1.5	9.844
+SHARD_COST	CrushedCar 1 x x2.5	0.207
 SHARD_COST	CrushedCar 1 x x2.5 #split	1
-SHARD_COST	JunkWall 1 x x1.75	0.227
+SHARD_COST	JunkWall 1 x x1.75	0.243
 SHARD_COST	JunkWall 1 x x1.75 #split	1
-SHARD_COST	slab Hatch4	0.126
+SHARD_COST	slab Hatch4	0.135
 SHARD_COST	slab Hatch4 #split	1
