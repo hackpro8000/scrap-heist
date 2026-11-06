@@ -21,13 +21,9 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
 [    0.6s] cached Spoke2 -70 180 0
 [    0.7s] cached Plot3 70 180 0
 [    0.7s] writing ServerMap.glb and 67 textures
-ServerMap: 67 parts, script 665.80ms, total 1.11s
+ServerMap: 67 parts, script 664.89ms, total 1.14s
 PLACED	HubSection1	180	HubSectionEnd-48c8eb7545b33eb2 1 x part 3/4
 PLACED	HubSection5	0	HubSectionEnd-48c8eb7545b33eb2 1 x part 3/4
 PLACED	Spoke2	0	abb4bc7b898fe3b1-107c5c30239027da Spoke2 -70 180 0
 PLACED	Plot3	0	abb4bc7b898fe3b1-7b25a7aa2539d602 Plot3 70 180 0
 export ServerMap: 3 objects (14.0 MB) for 4 placements
-remote: 
-remote: Create a pull request for 'build-objects/s3' on GitHub by visiting:        
-remote:      https://github.com/hackpro8000/scrap-heist/pull/new/build-objects/s3        
-remote: 
