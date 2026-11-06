@@ -2,9 +2,11 @@
 # Keeps one shard machine of the build-standby workflow online: once it's up
 # (checked out, cache restored) it says so, then waits for build tasks on the
 # build-queue branch and builds its shard of each, with its cache already on
-# disk, until no time is left.
+# disk. It stays up while tasks keep coming: each task restarts the idle
+# countdown, and it exits after <idle minutes> without one, or at <max
+# minutes> whatever happens.
 #
-#   scripts/standby.sh <Layout> <index> <count> <minutes>
+#   scripts/standby.sh <Layout> <index> <count> <idle minutes> [max minutes]
 #
 # The queue is a branch of task files, tasks/<task id>.txt, each holding
 # `ref=<full commit hash>` and optionally `upload=no`; scripts/send-build.sh
@@ -20,8 +22,10 @@ set -uo pipefail
 layout="${1:?layout required}"
 index="${2:?shard index required}"
 count="${3:?shard count required}"
-minutes="${4:?minutes required}"
-deadline=$((SECONDS + minutes * 60))
+idle_minutes="${4:?idle minutes required}"
+max_minutes="${5:-60}"
+idle_until=$((SECONDS + idle_minutes * 60))
+hard_stop=$((SECONDS + max_minutes * 60))
 since="${STANDBY_SINCE:-$(date +%s)}"
 results_branch="build-results/s${index}"
 
@@ -119,8 +123,8 @@ push_results "ready-${GITHUB_RUN_ID:-local}" results/ready || say "could not pus
 
 declare -A built=()
 seen=""
-say "waiting ${minutes} min for tasks posted since $(date -d "@${since}" +%T)"
-while [ "${SECONDS}" -lt "${deadline}" ]; do
+say "waiting for tasks posted since $(date -d "@${since}" +%T); up until ${idle_minutes} idle min, at most ${max_minutes} min"
+while [ "${SECONDS}" -lt "${idle_until}" ] && [ "${SECONDS}" -lt "${hard_stop}" ]; do
 	head="$(queue_head)"
 	if [ -n "${head}" ] && [ "${head}" != "${seen}" ] && git fetch -q --depth=1 origin "${head}"; then
 		seen="${head}"
@@ -142,6 +146,7 @@ while [ "${SECONDS}" -lt "${deadline}" ]; do
 				continue
 			fi
 			run_task "${id}" "${ref}" "${upload_chunks:-yes}"
+			idle_until=$((SECONDS + idle_minutes * 60))
 		done
 	fi
 	sleep 3
