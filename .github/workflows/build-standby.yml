@@ -2,10 +2,11 @@
 # scripts/send-build.sh as it arrives (scripts/standby.sh). One cold start,
 # then every task skips machine start, checkout and cache restore. Machines
 # stay up while tasks keep coming: each task restarts the idle countdown
-# (`minutes`, at most 15), and standby ends at `max_minutes` regardless (or
-# when the run is cancelled). Each machine saves its cache when it ends.
+# (`minutes`, at most 60), and standby ends at `max_minutes` regardless (or
+# when the run is cancelled). Each machine saves its cache when it ends. The
+# defaults keep machines warm for an hour.
 #
-#   gh workflow run build-standby.yml -f shards=8 -f minutes=15 -f max_minutes=60
+#   gh workflow run build-standby.yml -f ref=wip/coordinator -f shards=16
 name: Build standby
 # The run's title carries its settings, so scripts/standby-status.sh can read
 # them from the run list (workflow inputs aren't in the runs API).
@@ -24,8 +25,8 @@ on:
         description: Number of machines (1-16)
         default: "8"
       minutes:
-        description: Idle minutes before standby ends; each task restarts the countdown (1-15)
-        default: "15"
+        description: Idle minutes before standby ends; each task restarts the countdown (1-60)
+        default: "60"
       max_minutes:
         description: Most minutes standby stays up, tasks or not (1-300)
         default: "60"
@@ -72,7 +73,7 @@ jobs:
           restore-keys: shard-cache-${{ inputs.layout }}-${{ inputs.shards }}-${{ matrix.shard }}-
       - name: Wait for tasks
         run: |
-          minutes=$(( ${{ inputs.minutes }} > 15 ? 15 : ${{ inputs.minutes }} ))
+          minutes=$(( ${{ inputs.minutes }} > 60 ? 60 : ${{ inputs.minutes }} ))
           max_minutes=$(( ${{ inputs.max_minutes }} > 300 ? 300 : ${{ inputs.max_minutes }} ))
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
