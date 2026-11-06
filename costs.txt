@@ -1,8 +1,8 @@
-slab Bridge2	0.792
+slab Bridge2	0.823
 slab Bridge2 #split	1
-slab Spoke6	0.046
+slab Spoke6	0.045
 slab Spoke6 #split	1
-slab Approach6	0.155
+slab Approach6	0.152
 slab Approach6 #split	1
-JunkrotTelefonoRingaling 1 x	0.581
-JunkrotTelefonoRingaling 1 x #split	1
+JunkrotSpeakeroneBoomba 1 x	0.440
+JunkrotSpeakeroneBoomba 1 x #split	1

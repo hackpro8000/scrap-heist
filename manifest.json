@@ -10,8 +10,8 @@
 			"parts": 30
 		},
 		{
-			"id": "322773302dc6aca4",
-			"key": "fc0c5e558eaf305d-cf7e96091024d5cc Bridge2 -70 180 0",
+			"id": "c4cbe79ca92778a4",
+			"key": "115ac3a755887f11-cf7e96091024d5cc Bridge2 -70 180 0",
 			"piece": 1,
 			"label": "Bridge2",
 			"turn": 0.0,
@@ -37,8 +37,8 @@
 			"parts": 1
 		},
 		{
-			"id": "d380301f003ae64a",
-			"key": "fc0c5e558eaf305d-107c5c30239027da Spoke6 -70 -180 180",
+			"id": "ecaf1957e87e6bf0",
+			"key": "115ac3a755887f11-107c5c30239027da Spoke6 -70 -180 180",
 			"piece": 1,
 			"label": "Spoke6",
 			"turn": 0.0,
@@ -46,8 +46,8 @@
 			"parts": 1
 		},
 		{
-			"id": "90223630b8f4393a",
-			"key": "fc0c5e558eaf305d-18845c9c8b69ea54 Approach6 -70 0 180",
+			"id": "ffa244dc56620470",
+			"key": "115ac3a755887f11-18845c9c8b69ea54 Approach6 -70 0 180",
 			"piece": 1,
 			"label": "Approach6",
 			"turn": 0.0,
@@ -96,7 +96,7 @@
 			"piece": 1,
 			"label": "Kit_Crate",
 			"turn": 0.0,
-			"bytes": 736032,
+			"bytes": 736024,
 			"parts": 5
 		},
 		{
@@ -114,7 +114,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotBoltoloLonelo",
 			"turn": 0.0,
-			"bytes": 604612,
+			"bytes": 604616,
 			"parts": 6
 		},
 		{
@@ -123,7 +123,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotOilcannaGluglu",
 			"turn": 0.0,
-			"bytes": 596344,
+			"bytes": 596356,
 			"parts": 7
 		},
 		{
@@ -134,6 +134,15 @@
 			"turn": 0.0,
 			"bytes": 829552,
 			"parts": 9
+		},
+		{
+			"id": "23fb8a0f6e8fee61",
+			"key": "JunkrotSpeakeroneBoomba-3bbfbd68ef1f5c85 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotSpeakeroneBoomba",
+			"turn": 0.0,
+			"bytes": 645172,
+			"parts": 8
 		}
 	],
 	"placements": [
@@ -184,7 +193,7 @@
 			]
 		},
 		{
-			"asset": "322773302dc6aca4",
+			"asset": "c4cbe79ca92778a4",
 			"label": "Bridge2",
 			"turn": 0.0,
 			"anchors": [
@@ -312,7 +321,7 @@
 			]
 		},
 		{
-			"asset": "d380301f003ae64a",
+			"asset": "ecaf1957e87e6bf0",
 			"label": "Spoke6",
 			"turn": 0.0,
 			"anchors": [
@@ -327,7 +336,7 @@
 			]
 		},
 		{
-			"asset": "90223630b8f4393a",
+			"asset": "ffa244dc56620470",
 			"label": "Approach6",
 			"turn": 0.0,
 			"anchors": [
@@ -612,7 +621,7 @@
 				{
 					"name": "Hardware",
 					"position": [
-						-492.00894,
+						-648.0089250000001,
 						-149.07463,
 						-1.15015185
 					]
@@ -620,7 +629,7 @@
 				{
 					"name": "Plate",
 					"position": [
-						-492.01166,
+						-648.011675,
 						-149.691015,
 						0.006314500000000223
 					]
@@ -635,7 +644,7 @@
 				{
 					"name": "Bands",
 					"position": [
-						-396.00622999999996,
+						-552.00623,
 						-147.8929,
 						-0.0017450000000001076
 					]
@@ -650,7 +659,7 @@
 				{
 					"name": "Label",
 					"position": [
-						-252.6,
+						-408.6,
 						-149.25,
 						1.31
 					]
@@ -658,7 +667,7 @@
 				{
 					"name": "Tape",
 					"position": [
-						-252.0,
+						-408.0,
 						-148.015,
 						0.0
 					]
@@ -673,7 +682,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						-59.983219000000005,
+						-215.98322000000002,
 						-148.502,
 						0.56680905
 					]
@@ -681,7 +690,7 @@
 				{
 					"name": "Thread",
 					"position": [
-						-60.005276,
+						-216.00527499999998,
 						-149.054925,
 						-0.013263684999999997
 					]
@@ -696,7 +705,7 @@
 				{
 					"name": "Drip",
 					"position": [
-						157.257555,
+						1.2575528,
 						-148.045,
 						0.40574845499999995
 					]
@@ -704,7 +713,7 @@
 				{
 					"name": "Pump",
 					"position": [
-						155.556275,
+						-0.44372678499999996,
 						-147.464765,
 						-0.008621589999999998
 					]
@@ -719,7 +728,7 @@
 				{
 					"name": "Cord",
 					"position": [
-						418.311155,
+						262.311155,
 						-148.755525,
 						-0.41160947
 					]
@@ -727,9 +736,32 @@
 				{
 					"name": "Pupils",
 					"position": [
-						420.02117499999997,
+						264.02117499999997,
 						-148.2535,
 						1.14021355
+					]
+				}
+			]
+		},
+		{
+			"asset": "23fb8a0f6e8fee61",
+			"label": "Kit_JunkrotSpeakeroneBoomba",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Handle",
+					"position": [
+						552.01368,
+						-146.105925,
+						-0.001983104999999999
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						552.0211750000001,
+						-146.80349999999999,
+						0.8402135
 					]
 				}
 			]
