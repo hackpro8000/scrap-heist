@@ -1,0 +1,706 @@
+{
+	"assets": [
+		{
+			"id": "6a05d885f1227d7f",
+			"key": "HubSectionEnd-48c8eb7545b33eb2 1 x part 4/4",
+			"piece": 1,
+			"label": "HubSection1",
+			"turn": 180.0,
+			"bytes": 8020624,
+			"parts": 30
+		},
+		{
+			"id": "541c502ff98307ec",
+			"key": "d85c17ddde731d72-cf7e96091024d5cc Bridge2 -70 180 0",
+			"piece": 1,
+			"label": "Bridge2",
+			"turn": 0.0,
+			"bytes": 3181420,
+			"parts": 11
+		},
+		{
+			"id": "d919a85cf314d23f",
+			"key": "YardFooting-5c7b334d7913a1ed 1 x x1.5",
+			"piece": 1,
+			"label": "Yard6_FootingFront1",
+			"turn": 180.0,
+			"bytes": 120228,
+			"parts": 1
+		},
+		{
+			"id": "9d83c1886dbf3768",
+			"key": "YardFooting-5c7b334d7913a1ed 0.5 x x1.5",
+			"piece": 1,
+			"label": "Yard6_FootingFrontHalf1",
+			"turn": 180.0,
+			"bytes": 127352,
+			"parts": 1
+		},
+		{
+			"id": "25693814675c01b3",
+			"key": "d85c17ddde731d72-107c5c30239027da Spoke6 -70 -180 180",
+			"piece": 1,
+			"label": "Spoke6",
+			"turn": 0.0,
+			"bytes": 121108,
+			"parts": 1
+		},
+		{
+			"id": "92905dbbf6d97276",
+			"key": "d85c17ddde731d72-18845c9c8b69ea54 Approach6 -70 0 180",
+			"piece": 1,
+			"label": "Approach6",
+			"turn": 0.0,
+			"bytes": 600372,
+			"parts": 3
+		},
+		{
+			"id": "cb9c52a2b176239d",
+			"key": "YardFenceHalf-18c1a8760a959e18 1 x x1.5",
+			"piece": 1,
+			"label": "Yard7_FenceFrontHalf1",
+			"turn": 180.0,
+			"bytes": 362352,
+			"parts": 3
+		},
+		{
+			"id": "a6d7e55422710315",
+			"key": "PlotMarker-1dcfac604b3fab76 1 x x1.5",
+			"piece": 1,
+			"label": "Yard7_PlotMarker",
+			"turn": 180.0,
+			"bytes": 394504,
+			"parts": 4
+		},
+		{
+			"id": "0d9fdbe00f9a47e3",
+			"key": "YardGate-6a909dbc533c5385 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_Gate",
+			"turn": 180.0,
+			"bytes": 540460,
+			"parts": 4
+		},
+		{
+			"id": "cebac720fa07a132",
+			"key": "PadKitchen-b26111bb8c8fc355 1 x x1.6666666666666667",
+			"piece": 1,
+			"label": "Kit_PadKitchen",
+			"turn": 0.0,
+			"bytes": 358864,
+			"parts": 3
+		},
+		{
+			"id": "3b6775511fd9413e",
+			"key": "ScrapCrate-313add4f147967e6 1 x",
+			"piece": 1,
+			"label": "Kit_Crate",
+			"turn": 0.0,
+			"bytes": 736032,
+			"parts": 5
+		},
+		{
+			"id": "bd690f43047be01e",
+			"key": "CapsuleFactory-23e7ef6e39d8fcb9 1 x",
+			"piece": 1,
+			"label": "Kit_CapsuleFactory",
+			"turn": 0.0,
+			"bytes": 419080,
+			"parts": 4
+		},
+		{
+			"id": "f23cfdbea9125de3",
+			"key": "JunkrotBoltoloLonelo-dc5359b2301236fb 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotBoltoloLonelo",
+			"turn": 0.0,
+			"bytes": 604600,
+			"parts": 6
+		},
+		{
+			"id": "04630d27f899157d",
+			"key": "JunkrotOilcannaGluglu-da992b0b4928a820 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotOilcannaGluglu",
+			"turn": 0.0,
+			"bytes": 596344,
+			"parts": 7
+		}
+	],
+	"placements": [
+		{
+			"asset": "6a05d885f1227d7f",
+			"label": "HubSection1",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Columns_0_0_0_110",
+					"position": [
+						-261.206855,
+						-11.021905349999999,
+						55.56724
+					]
+				},
+				{
+					"name": "Pebbles_-1_-2_0",
+					"position": [
+						-187.872825,
+						-5.523811,
+						-66.7772875
+					]
+				}
+			]
+		},
+		{
+			"asset": "6a05d885f1227d7f",
+			"label": "HubSection5",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Columns_0_0_0_110",
+					"position": [
+						261.206855,
+						-11.021905349999999,
+						-55.56724
+					]
+				},
+				{
+					"name": "Pebbles_-1_-2_0",
+					"position": [
+						187.872825,
+						-5.523811,
+						66.7772875
+					]
+				}
+			]
+		},
+		{
+			"asset": "541c502ff98307ec",
+			"label": "Bridge2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Apron",
+					"position": [
+						-70.0084,
+						6.059419,
+						-118.016205
+					]
+				},
+				{
+					"name": "EndPosts",
+					"position": [
+						-70.01269500000001,
+						6.89372,
+						-63.023643
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard6_FootingFront1",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-57.99783,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard6_FootingFront2",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-45.99783,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard6_FootingFront3",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-33.99783,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "9d83c1886dbf3768",
+			"label": "Yard6_FootingFrontHalf1",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-24.998914499999998,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard6_FootingFront4",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-81.99783,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard6_FootingFront6",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-105.99783,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "9d83c1886dbf3768",
+			"label": "Yard6_FootingFrontHalf2",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-114.9989175,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "25693814675c01b3",
+			"label": "Spoke6",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Road",
+					"position": [
+						-69.99824699999999,
+						6.050334449999999,
+						119.757243
+					]
+				}
+			]
+		},
+		{
+			"asset": "92905dbbf6d97276",
+			"label": "Approach6",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ramp",
+					"position": [
+						-70.0,
+						3.7,
+						54.7
+					]
+				},
+				{
+					"name": "Walls",
+					"position": [
+						-70.0061,
+						4.34630485,
+						54.189201
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard7_FootingFront1",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						82.00217,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard7_FootingFront2",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						94.00217,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard7_FootingFront3",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						106.00217,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "cb9c52a2b176239d",
+			"label": "Yard7_FenceFrontHalf1",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						114.993973,
+						9.33787235,
+						123.999375
+					]
+				}
+			]
+		},
+		{
+			"asset": "cb9c52a2b176239d",
+			"label": "Yard7_FenceFrontHalf2",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						24.993972999999997,
+						9.33787235,
+						123.999375
+					]
+				}
+			]
+		},
+		{
+			"asset": "a6d7e55422710315",
+			"label": "Yard7_PlotMarker",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						61.011185,
+						7.71755765,
+						121.73723000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard8_FootingFront1",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						222.002165,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard8_FootingFront2",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						234.002165,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard8_FootingFront3",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						246.002165,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "cb9c52a2b176239d",
+			"label": "Yard8_FenceFrontHalf1",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						254.993965,
+						9.33787235,
+						123.999375
+					]
+				}
+			]
+		},
+		{
+			"asset": "9d83c1886dbf3768",
+			"label": "Yard8_FootingFrontHalf1",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						255.00108500000002,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard8_FootingFront4",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						198.002165,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard8_FootingFront5",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						186.002165,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard8_FootingFront6",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						174.002165,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "cb9c52a2b176239d",
+			"label": "Yard8_FenceFrontHalf2",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						164.993975,
+						9.33787235,
+						123.999375
+					]
+				}
+			]
+		},
+		{
+			"asset": "9d83c1886dbf3768",
+			"label": "Yard8_FootingFrontHalf2",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						165.001085,
+						6.266335,
+						124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "0d9fdbe00f9a47e3",
+			"label": "Yard8_Gate",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Doors",
+					"position": [
+						210.02294,
+						9.64123565,
+						124.02267499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "cebac720fa07a132",
+			"label": "Kit_PadKitchen",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Hardware",
+					"position": [
+						-360.00894,
+						-149.07463,
+						-1.15015185
+					]
+				},
+				{
+					"name": "Plate",
+					"position": [
+						-360.01166,
+						-149.691015,
+						0.006314500000000223
+					]
+				}
+			]
+		},
+		{
+			"asset": "3b6775511fd9413e",
+			"label": "Kit_Crate",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Bands",
+					"position": [
+						-264.00622999999996,
+						-147.8929,
+						-0.0017450000000001076
+					]
+				}
+			]
+		},
+		{
+			"asset": "bd690f43047be01e",
+			"label": "Kit_CapsuleFactory",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Label",
+					"position": [
+						-120.6,
+						-149.25,
+						1.31
+					]
+				},
+				{
+					"name": "Tape",
+					"position": [
+						-120.0,
+						-148.015,
+						0.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "f23cfdbea9125de3",
+			"label": "Kit_JunkrotBoltoloLonelo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pupils",
+					"position": [
+						72.01678100000001,
+						-148.502,
+						0.56680905
+					]
+				},
+				{
+					"name": "Thread",
+					"position": [
+						71.9947245,
+						-149.054925,
+						-0.013263684999999997
+					]
+				}
+			]
+		},
+		{
+			"asset": "04630d27f899157d",
+			"label": "Kit_JunkrotOilcannaGluglu",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Drip",
+					"position": [
+						289.25755,
+						-148.045,
+						0.40574845499999995
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						287.55626,
+						-147.464765,
+						-0.008621589999999998
+					]
+				}
+			]
+		}
+	]
+}
