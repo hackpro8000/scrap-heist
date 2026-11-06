@@ -1,0 +1,14 @@
+HubSectionA 1 x	15.153
+HubSectionA 1 x #split	1
+YardFence 1 x x1.5	0.067
+YardFence 1 x x1.5 #split	1
+YardFooting 1 x x1.5	0.021
+YardFooting 1 x x1.5 #split	1
+YardFooting 0.5 x x1.5	0.019
+YardFooting 0.5 x x1.5 #split	1
+slab Bridge4	1.377
+slab Bridge4 #split	1
+YardFooting 1.037037037037037 x x1.5	0.017
+YardFooting 1.037037037037037 x x1.5 #split	1
+slab Approach7	0.268
+slab Approach7 #split	1
