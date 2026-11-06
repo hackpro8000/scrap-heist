@@ -1,0 +1,10 @@
+slab Ramps	6.830
+slab Ramps #split	1
+ShopConceptContainer 1 x x2.5	78.360
+ShopConceptContainer 1 x x2.5 #split	1
+YardFenceHalf 1 x x1.5	0.149
+YardFenceHalf 1 x x1.5 #split	1
+slab Bridge6	1.132
+slab Bridge6 #split	1
+slab Hatch2	0.128
+slab Hatch2 #split	1
