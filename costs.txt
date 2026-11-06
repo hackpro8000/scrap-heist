@@ -1,0 +1,10 @@
+slab Plot1	2.982
+slab Plot1 #split	1
+slab Bridge8	0.991
+slab Bridge8 #split	1
+CapsulePrecision 1 x	0.241
+CapsulePrecision 1 x #split	1
+JunkrotRemotinoMuto 1 x	0.669
+JunkrotRemotinoMuto 1 x #split	1
+JunkrotClockoTictacco 1 x	0.395
+JunkrotClockoTictacco 1 x #split	1
