@@ -26,33 +26,14 @@ assemble ServerMap: slab at ServerMap.luau:1404-1426 (key dfbe27eb7d68389c)
 assemble ServerMap: wrote art/models/ServerMap/model.luau, 22621 lines, in 0s
 [    0.0s] running ServerMap/model.luau
 [    0.6s] cached ArenaDrone 1 x part 2/3
-[    0.6s] building HubSectionB 1 x part 5/5
-[    2.6s] baking on CPU (no GPU)
-[    3.3s]   shaded Columns_-1_0_0_001 692×692 in 0.81s
-[    5.0s]   shaded Columns_0_0_-1_001 980×980 in 1.60s
-[    5.2s]   shaded Columns_-1_0_-1_111 372×372 in 0.19s
-[    5.3s]   shaded Columns_-1_-1_-1_101 220×220 in 0.09s
-[    6.3s]   shaded Dirt_-1_1_0 620×620 in 0.99s
-[    7.9s]   shaded Dirt_-1_0_0_010 976×976 in 1.53s
-[    8.1s]   shaded Dirt_-1_0_0_101 332×332 in 0.15s
-[    8.5s]   shaded Dirt_0_0_0_110_110 388×388 in 0.38s
-[    8.6s]   shaded Dirt_0_0_0_110_101 312×312 in 0.17s
-[    8.9s]   shaded Dirt_0_0_0_110_011 452×452 in 0.27s
-[    9.6s]   shaded Dirt_-1_-1_0_000_111 600×600 in 0.60s
-[    9.8s]   shaded Dirt_-1_-1_0_000_101 496×496 in 0.26s
-[   10.0s]   shaded Dirt_0_-1_0_100_110 252×252 in 0.19s
-[   10.4s]   shaded Dirt_0_-1_0_100_011 440×440 in 0.39s
-[   10.5s]   shaded Dirt_0_-1_0_000_100 36×36 in 0.02s
-[   11.9s]   shaded Dirt_-1_-2_0 744×744 in 1.44s
-[   12.0s]   shaded Dirt_0_0_-1 160×160 in 0.05s
-[   12.0s]   shaded Pebbles_-1_-2_0 72×72 in 0.01s
-[   13.1s]   shaded Grass_0_-2_0 920×920 in 1.10s
-[   13.7s]   shaded Grass_-1_0_0_000 652×652 in 0.53s
-[   14.7s]   shaded Grass_-1_1_0 900×900 in 0.93s
-[   14.7s] built HubSectionB 1 x part 5/5: 21 parts in 14.1s
-[   14.8s] writing ServerMap.glb and 76 textures
-[   15.3s] chunk ServerMap_S2_01.glb: 55 parts, 12.1 MB
-[   15.3s] chunk ServerMap_S2_02.glb: 21 parts, 5.6 MB
-ServerMap: 76 parts, script 14.77s, total 15.50s
-SHARD_COST	HubSectionB 1 x	70.434
-SHARD_COST	HubSectionB 1 x #split	1
+[    0.7s] cached HubSectionB 1 x part 5/5
+[    0.7s] writing ServerMap.glb and 76 textures
+[    1.3s] chunk ServerMap_S2_01.glb: 55 parts, 12.1 MB
+[    1.3s] chunk ServerMap_S2_02.glb: 21 parts, 5.6 MB
+ServerMap: 76 parts, script 723.34ms, total 1.47s
+upload ServerMap: starting in 4.7s
+upload ServerMap: uploading ServerMapS2_01 (12M)
+upload ServerMap: ServerMapS2_01 is asset 130171896665820
+upload ServerMap: uploading ServerMapS2_02 (5.4M)
+upload ServerMap: ServerMapS2_02 is asset 129233297364084
+upload ServerMap: shard upload done: 2 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
