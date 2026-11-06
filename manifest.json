@@ -19,8 +19,8 @@
 			"parts": 4
 		},
 		{
-			"id": "a55fff5333a66ff2",
-			"key": "fc0c5e558eaf305d-107c5c30239027da Spoke3 70 180 0",
+			"id": "e765168b71403e6f",
+			"key": "115ac3a755887f11-107c5c30239027da Spoke3 70 180 0",
 			"piece": 1,
 			"label": "Spoke3",
 			"turn": 0.0,
@@ -28,8 +28,8 @@
 			"parts": 1
 		},
 		{
-			"id": "5f50c978082efa9c",
-			"key": "fc0c5e558eaf305d-7b25a7aa2539d602 Plot4 210 180 0",
+			"id": "b6eed31bb57837ac",
+			"key": "115ac3a755887f11-7b25a7aa2539d602 Plot4 210 180 0",
 			"piece": 1,
 			"label": "Plot4",
 			"turn": 0.0,
@@ -42,7 +42,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotHubcappaWobbla",
 			"turn": 0.0,
-			"bytes": 557008,
+			"bytes": 557012,
 			"parts": 6
 		},
 		{
@@ -51,7 +51,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotFanettoWobblino",
 			"turn": 0.0,
-			"bytes": 647612,
+			"bytes": 647604,
 			"parts": 7
 		},
 		{
@@ -62,6 +62,15 @@
 			"turn": 0.0,
 			"bytes": 820588,
 			"parts": 9
+		},
+		{
+			"id": "21c785b5646bf8be",
+			"key": "JunkrotVrrVrrPatatrim-c5f05967943ccfb5 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotVrrVrrPatatrim",
+			"turn": 0.0,
+			"bytes": 737040,
+			"parts": 7
 		}
 	],
 	"placements": [
@@ -142,7 +151,7 @@
 			]
 		},
 		{
-			"asset": "a55fff5333a66ff2",
+			"asset": "e765168b71403e6f",
 			"label": "Spoke3",
 			"turn": 0.0,
 			"anchors": [
@@ -157,7 +166,7 @@
 			]
 		},
 		{
-			"asset": "5f50c978082efa9c",
+			"asset": "b6eed31bb57837ac",
 			"label": "Plot4",
 			"turn": 0.0,
 			"anchors": [
@@ -187,7 +196,7 @@
 				{
 					"name": "Cap",
 					"position": [
-						-35.985620499999996,
+						-191.985625,
 						-148.78175,
 						0.1183449785
 					]
@@ -202,7 +211,7 @@
 				{
 					"name": "Motor",
 					"position": [
-						227.99898000000002,
+						71.99897999999999,
 						-147.611965,
 						-0.299714545
 					]
@@ -210,7 +219,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						228.021175,
+						72.021165,
 						-148.9535,
 						0.62021354
 					]
@@ -225,7 +234,7 @@
 				{
 					"name": "Bands",
 					"position": [
-						491.99721,
+						335.99721,
 						-148.504455,
 						-0.56426208
 					]
@@ -233,9 +242,32 @@
 				{
 					"name": "Pupils",
 					"position": [
-						492.021165,
+						336.021165,
 						-147.4535,
 						1.27021355
+					]
+				}
+			]
+		},
+		{
+			"asset": "21c785b5646bf8be",
+			"label": "Kit_JunkrotVrrVrrPatatrim",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Branches",
+					"position": [
+						623.923785,
+						-146.21373499999999,
+						-0.01534000000000002
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						624.022165,
+						-147.50650000000002,
+						1.05021355
 					]
 				}
 			]
