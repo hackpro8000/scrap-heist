@@ -1,4 +1,4 @@
-# Keeps up to 16 shard machines warm, building each task posted with
+# Keeps up to 20 shard machines warm (the account's limit), building each task posted with
 # scripts/send-build.sh as it arrives (scripts/standby.sh). One cold start,
 # then every task skips machine start, checkout and cache restore. Machines
 # stay up while tasks keep coming: each task restarts the idle countdown
@@ -7,7 +7,7 @@
 # defaults let machines idle for up to an hour between tasks, for at most
 # 5 hours in all.
 #
-#   gh workflow run build-standby.yml -f ref=wip/coordinator -f shards=16
+#   gh workflow run build-standby.yml -f ref=wip/coordinator -f shards=20
 name: Build standby
 # The run's title carries its settings, so scripts/standby-status.sh can read
 # them from the run list (workflow inputs aren't in the runs API).
@@ -23,7 +23,7 @@ on:
         description: Layout the tasks build
         default: ServerMap
       shards:
-        description: Number of machines (1-16)
+        description: Number of machines (1-20)
         default: "8"
       minutes:
         description: Idle minutes before standby ends; each task restarts the countdown (1-60)
@@ -46,7 +46,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: ${{ fromJSON('{"1":[1],"2":[1,2],"3":[1,2,3],"4":[1,2,3,4],"5":[1,2,3,4,5],"6":[1,2,3,4,5,6],"7":[1,2,3,4,5,6,7],"8":[1,2,3,4,5,6,7,8],"9":[1,2,3,4,5,6,7,8,9],"10":[1,2,3,4,5,6,7,8,9,10],"11":[1,2,3,4,5,6,7,8,9,10,11],"12":[1,2,3,4,5,6,7,8,9,10,11,12],"13":[1,2,3,4,5,6,7,8,9,10,11,12,13],"14":[1,2,3,4,5,6,7,8,9,10,11,12,13,14],"15":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],"16":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]}')[inputs.shards] }}
+        shard: ${{ fromJSON('{"1":[1],"2":[1,2],"3":[1,2,3],"4":[1,2,3,4],"5":[1,2,3,4,5],"6":[1,2,3,4,5,6],"7":[1,2,3,4,5,6,7],"8":[1,2,3,4,5,6,7,8],"9":[1,2,3,4,5,6,7,8,9],"10":[1,2,3,4,5,6,7,8,9,10],"11":[1,2,3,4,5,6,7,8,9,10,11],"12":[1,2,3,4,5,6,7,8,9,10,11,12],"13":[1,2,3,4,5,6,7,8,9,10,11,12,13],"14":[1,2,3,4,5,6,7,8,9,10,11,12,13,14],"15":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],"16":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],"17":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],"18":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18],"19":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19],"20":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]}')[inputs.shards] }}
     env:
       MODELKIT_PRUNE: "1"
       ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
