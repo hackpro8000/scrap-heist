@@ -1,0 +1,20 @@
+slab Avenue1	1.371
+slab Avenue1 #split	1
+MarketIsland 1 x	31.718
+MarketIsland 1 x #split	1
+YardFooting 0.5 x x1.5	0.038
+YardFooting 0.5 x x1.5 #split	1
+slab Bridge7	0.763
+slab Bridge7 #split	1
+CarStack 1 x x2.5	0.199
+CarStack 1 x x2.5 #split	1
+CrushedCar 1 x x2.5	0.122
+CrushedCar 1 x x2.5 #split	1
+TyreStack 1 x x1.8	0.069
+TyreStack 1 x x1.8 #split	1
+Dumpster 1 x x2.2	0.163
+Dumpster 1 x x2.2 #split	1
+slab Hatch2	0.081
+slab Hatch2 #split	1
+StreetlightBroken 1 x x2	0.075
+StreetlightBroken 1 x x2 #split	1
