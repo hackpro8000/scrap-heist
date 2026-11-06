@@ -172,8 +172,20 @@ A layout is uploaded one object at a time, and only the objects that changed:
    placements, lines each copy up by its anchors, anchors the parts, and
    files every part under `workspace.Map` by object: `Map > Line > Walk > 1_0_0`,
    `Map > Yard1 > Gate > Frame`. It turns collision off on the yard gates,
-   then hooks the map up to the game: `YardSpots`, `ServerStorage.YardTemplate`
-   and a SpawnLocation (see `docs/systems/tycoon-raiding.md`). Save the place.
+   then hooks the map up to the game: `YardSpots`, a SpawnLocation, and the
+   kit. Save the place.
+
+**The kit.** Models the game places itself (pads, the build bay, the crate,
+the mound, the press, each tier's capsule and each junkrot) are built in the
+layout too, one of each under the label `Kit_<Name>`, out of sight under the
+hub (`KIT` at the end of `ServerMap.luau`). They upload with the map, and
+`PlaceMap` takes them out of `workspace.Map` and files them where the game
+clones them from: `Capsule<Tier>` in `ServerStorage.Capsules` as `<Tier>`,
+`Junkrot<Id>` in `ServerStorage.Junkrots` as `<Id>`, and the rest in
+`ServerStorage.YardKit`. Where a model is missing the game shows a plain
+block, so a junkrot can ship before its art. To add one: write its item,
+add it to the layout's `-- uses:` line and to `KIT`, build, upload, merge,
+grant, and run `PlaceMap`.
 
 The older whole-map path (`modelkit --chunks`, `scripts/upload-chunks.sh`,
 `scripts/worker-job.sh`, the build-map-shards workflow) packs parts into

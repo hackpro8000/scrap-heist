@@ -1,4 +1,4 @@
--- uses: HubSectionA HubSectionB HubSectionEnd YardIsland YardFence YardFenceHalf YardFooting YardGate PlotMarker PadKitchen PadGarage PadGadget BuildBay ScrapCrate RebirthPress JunkMound CapsuleScrap CapsuleSalvaged CapsuleRefurbished CapsuleFactory CapsulePrecision CapsulePrototype CapsuleSecret JunkrotCanettoRustini JunkrotSpoonzoBentolo JunkrotKettlinaDentata JunkrotTyroFlattino JunkrotBoltoloLonelo JunkrotHubcappaWobbla JunkrotRemotinoMuto JunkrotCabloTanglino JunkrotBulboFulminato
+-- uses: HubSectionA HubSectionB HubSectionEnd YardIsland YardFence YardFenceHalf YardFooting YardGate PlotMarker PadKitchen PadGarage PadGadget BuildBay ScrapCrate RebirthPress JunkMound CapsuleScrap CapsuleSalvaged CapsuleRefurbished CapsuleFactory CapsulePrecision CapsulePrototype CapsuleSecret JunkrotCanettoRustini JunkrotSpoonzoBentolo JunkrotKettlinaDentata JunkrotTyroFlattino JunkrotBoltoloLonelo JunkrotHubcappaWobbla JunkrotRemotinoMuto JunkrotCabloTanglino JunkrotBulboFulminato JunkrotCrumboPoppalot JunkrotPannettoPatchato JunkrotBlendroCigolante JunkrotJackoloCrickato JunkrotOilcannaGluglu JunkrotMuffleroTossetto JunkrotRadioloFruscio JunkrotFanettoWobblino JunkrotClockoTictacco
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands laid out along a line (the Scrap Line). The hub is a long
 -- island running along x, five sections in a row, paved from end to end: a
@@ -900,6 +900,15 @@ local KIT = {
 	{ "JunkrotRemotinoMuto", buildJunkrotRemotinoMuto, 1 },
 	{ "JunkrotCabloTanglino", buildJunkrotCabloTanglino, 1 },
 	{ "JunkrotBulboFulminato", buildJunkrotBulboFulminato, 1 },
+	{ "JunkrotCrumboPoppalot", buildJunkrotCrumboPoppalot, 1 },
+	{ "JunkrotPannettoPatchato", buildJunkrotPannettoPatchato, 1 },
+	{ "JunkrotBlendroCigolante", buildJunkrotBlendroCigolante, 1 },
+	{ "JunkrotJackoloCrickato", buildJunkrotJackoloCrickato, 1 },
+	{ "JunkrotOilcannaGluglu", buildJunkrotOilcannaGluglu, 1 },
+	{ "JunkrotMuffleroTossetto", buildJunkrotMuffleroTossetto, 1 },
+	{ "JunkrotRadioloFruscio", buildJunkrotRadioloFruscio, 1 },
+	{ "JunkrotFanettoWobblino", buildJunkrotFanettoWobblino, 1 },
+	{ "JunkrotClockoTictacco", buildJunkrotClockoTictacco, 1 },
 }
 useTexelDensity(KIT_DENSITY)
 for index, entry in KIT do
