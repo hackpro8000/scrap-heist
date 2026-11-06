@@ -1,0 +1,28 @@
+slab ArenaWall	2.102
+slab ArenaWall #split	1
+MarketIsland 1 x	53.344
+MarketIsland 1 x #split	1
+YardFooting 1 x x1.5	0.059
+YardFooting 1 x x1.5 #split	1
+slab Spoke7	0.139
+slab Spoke7 #split	1
+GroundTile 1 x x1.5	0.179
+GroundTile 1 x x1.5 #split	1
+MachinePad 1 x x1.5	0.182
+MachinePad 1 x x1.5 #split	1
+YardFooting 0.5 x x1.5	0.066
+YardFooting 0.5 x x1.5 #split	1
+slab Spoke8	0.144
+slab Spoke8 #split	1
+TrafficCones 1 x x1.8	0.191
+TrafficCones 1 x x1.8 #split	1
+ShippingContainer 1 x x1.5	0.393
+ShippingContainer 1 x x1.5 #split	1
+Barrels 1 x x1.9	0.183
+Barrels 1 x x1.9 #split	1
+JunkWall 1 x x1.75	0.232
+JunkWall 1 x x1.75 #split	1
+slab Hatch1	0.128
+slab Hatch1 #split	1
+slab Hatch3	0.126
+slab Hatch3 #split	1
