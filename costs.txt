@@ -1,0 +1,10 @@
+YardIsland 1 x	16.841
+YardIsland 1 x #split	1
+slab Plot1	4.403
+slab Plot1 #split	1
+YardFooting 1.037037037037037 x x1.5	0.020
+YardFooting 1.037037037037037 x x1.5 #split	1
+YardFence 1 x x1.5	0.061
+YardFence 1 x x1.5 #split	1
+slab Bridge8	1.142
+slab Bridge8 #split	1
