@@ -1,7 +1,0 @@
-slab Spawn	0.041
-slab Spawn #split	1
-slab Plot5	3.857
-slab Plot5 #split	1
-JunkrotLaserlevelLineo 1 x	0.492
-JunkrotLaserlevelLineo 1 x #split	1
-JunkrotUnitZero 1 x	0.068
