@@ -1,0 +1,127 @@
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses ArenaDrone (key 3feaec12b72c179a)
+assemble ServerMap: uses PadIsland (key 806134dd9857a177)
+assemble ServerMap: uses MarketIsland (key 4960049d45055133)
+assemble ServerMap: uses YardIsland (key 11c6adb69c9d778d)
+assemble ServerMap: uses ShopConceptContainer (key 3bd24aa005fdec59)
+assemble ServerMap: uses ScrapTreeLamppost (key 3721cdc5289a1227)
+assemble ServerMap: uses VendingMachine (key 8c8c9e54c0152446)
+assemble ServerMap: uses ParkBench (key 644aec5ddc470126)
+assemble ServerMap: uses ScrapPalm (key 71b29a81d57ca962)
+assemble ServerMap: uses ShippingContainer (key b4618da1e6c8e874)
+assemble ServerMap: uses CarStack (key 18868d27bbadf854)
+assemble ServerMap: uses CrushedCar (key cb21a631053a549a)
+assemble ServerMap: uses Barrels (key 6fd22d825787f5b7)
+assemble ServerMap: uses TyreStack (key 19ab2944a510d9c5)
+assemble ServerMap: uses JunkWall (key acd51bf6f9b5d959)
+assemble ServerMap: uses Dumpster (key 5705b07a41a863a8)
+assemble ServerMap: uses Pallets (key af2bcdda5ec40e79)
+assemble ServerMap: uses StreetlightBroken (key 860caef50018b787)
+assemble ServerMap: uses TrafficCones (key 878424fc7df50b09)
+assemble ServerMap: uses GroundTile (key 43a80920e4c5168b)
+assemble ServerMap: uses MachinePad (key 1b6d00719513f1f7)
+assemble ServerMap: uses YardFence (key 122ba19da15d7e80)
+assemble ServerMap: uses YardFenceHalf (key 76101fa539bb054b)
+assemble ServerMap: uses YardFooting (key 5f7c0e3c30ab293e)
+assemble ServerMap: uses YardGate (key 692a8cf69b44f092)
+assemble ServerMap: uses PlotMarker (key f406cb0c06262f89)
+assemble ServerMap: uses StorageCrate (key 5d99f3bcd3db5fca)
+assemble ServerMap: uses YardPath (key f096c7510747dcc8)
+assemble ServerMap: uses YardPathStub (key 9d6e97b27d7f04b9)
+assemble ServerMap: slab at ServerMap.luau:746-763 (key 0c960e1f862726f4)
+assemble ServerMap: slab at ServerMap.luau:832-836 (key 13efa5a1845e203d)
+assemble ServerMap: slab at ServerMap.luau:843-892 (key 041aab4d823cacfb)
+assemble ServerMap: slab at ServerMap.luau:897-921 (key e1d53c436615f36a)
+assemble ServerMap: slab at ServerMap.luau:955-970 (key f4f9015cc7a52d81)
+assemble ServerMap: slab at ServerMap.luau:1050-1243 (key f80a5011da1b57d2)
+assemble ServerMap: slab at ServerMap.luau:1325-1332 (key 2b2b51e4886723fb)
+assemble ServerMap: slab at ServerMap.luau:1355-1359 (key 886388888fe59ef3)
+assemble ServerMap: slab at ServerMap.luau:1362-1370 (key 209bd5af05ec8c81)
+assemble ServerMap: slab at ServerMap.luau:1402-1424 (key c8fbb33a2805dfaf)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 33588 lines, in 0s
+[    0.0s] running ServerMap/model.luau
+[    0.6s] building ArenaDrone 1 x part 1/6
+[    3.5s] baking on CPU (no GPU)
+[    3.6s]   shaded Plating_0_0_0_100_011 632×632 in 0.38s
+[    3.9s]   shaded Plating_0_0_0_000_001 616×616 in 0.24s
+[    4.4s]   shaded Plating_-1_0_0_100_101 684×684 in 0.40s
+[    4.5s]   shaded Plating_-1_0_0_100_111 468×468 in 0.17s
+[    4.8s]   shaded Plating_-1_0_0_000_101 612×612 in 0.28s
+[    5.1s]   shaded Plating_-1_0_0_010_000 692×692 in 0.23s
+[    5.2s]   shaded Plating_-1_0_0_010_101 416×416 in 0.07s
+[    5.7s]   shaded Plating_-2_0_0 804×804 in 0.45s
+[    5.9s]   shaded Plating_-1_-1_0_100_011 632×632 in 0.20s
+[    6.0s]   shaded Plating_-1_-1_0_100_100 352×352 in 0.13s
+[    6.1s]   shaded Plating_0_-1_0_000_001 280×280 in 0.07s
+[    6.4s]   shaded Plating_0_-1_0_010_011 596×596 in 0.23s
+[    6.5s]   shaded Plating_0_-1_0_110_111 344×344 in 0.08s
+[    6.5s]   shaded Plating_0_-1_0_100_100 252×252 in 0.04s
+[    7.0s]   shaded Grating5 256×256 in 0.48s
+[    7.1s]   shaded GratingRim3 256×256 in 0.07s
+[    7.7s]   shaded Girder1 512×512 in 0.68s
+[    8.4s]   shaded Girder5 512×512 in 0.68s
+[    8.6s]   shaded MotorCollar1 256×256 in 0.13s
+[    8.8s]   shaded Prop1 512×512 in 0.22s
+[    9.9s]   shaded Arm3 512×512 in 1.06s
+[   10.0s]   shaded BatteryWarning 128×128 in 0.09s
+[   10.3s]   shaded BatteryStraps 256×256 in 0.34s
+[   10.6s]   shaded SkidLegs 512×512 in 0.32s
+[   10.6s] built ArenaDrone 1 x part 1/6: 25 parts in 10.1s
+[   10.7s] building ShopConceptContainer 1 x x2.5 part 2/9
+[   11.8s]   shaded Container_-1_0_0_100_001_011 528×528 in 0.22s
+[   11.9s]   shaded Container_-1_0_0_100_001_110 416×416 in 0.10s
+[   12.0s]   shaded Container_-1_0_0_101_101_110 396×396 in 0.10s
+[   12.2s]   shaded Container_-1_0_0_101_000_011 520×520 in 0.20s
+[   12.5s]   shaded Container_0_0_0_001_000_001 632×632 in 0.28s
+[   13.1s]   shaded Container_0_-1_0_010_110 876×876 in 0.54s
+[   13.7s]   shaded Container_0_-1_0_010_111 776×776 in 0.51s
+[   13.8s]   shaded Container_0_-1_0_011_010_101 360×360 in 0.09s
+[   14.3s]   shaded Container_0_-1_0_011_110_111 700×700 in 0.46s
+[   15.1s]   shaded Doors 1024×1024 in 0.74s
+[   15.3s]   shaded Frame_-1_-1_0_111_110 728×728 in 0.21s
+[   15.4s]   shaded Frame_-1_0_0_101_101 680×680 in 0.08s
+[   15.6s]   shaded Frame_-1_0_0_101_000 672×672 in 0.15s
+[   15.6s]   shaded Frame_0_0_0_000_101 264×264 in 0.02s
+[   15.7s]   shaded CastingHoles 312×312 in 0.11s
+[   16.3s]   shaded Interior_-1_0_0_100_101 808×808 in 0.47s
+[   16.5s]   shaded Interior_0_-1_0_010_110 660×660 in 0.19s
+[   16.6s]   shaded Flap_-1_-1_0_010 212×212 in 0.06s
+[   16.9s]   shaded Flap_-1_-1_0_001_111_100 952×952 in 0.29s
+[   16.9s]   shaded Flap_-1_-1_0_001_101 104×104 in 0.01s
+[   17.2s]   shaded Flap_-1_-1_0_101_011_100 980×980 in 0.29s
+[   17.2s]   shaded Flap_-1_-1_0_101_000 108×108 in 0.01s
+[   17.3s]   shaded Flap_0_-1_0_110 208×208 in 0.06s
+[   17.5s]   shaded FlapFrame_-1_-1_0_111_001_111_001 924×924 in 0.20s
+[   17.7s]   shaded FlapFrame_-1_-1_0_111_001_101 232×232 in 0.23s
+[   17.9s]   shaded FlapFrame_0_-1_0_011_101_011_110 192×192 in 0.19s
+[   18.0s]   shaded Counter_0_-1_0_001_111 448×448 in 0.10s
+[   18.3s]   shaded Counter_0_-1_0_011_001 572×572 in 0.23s
+[   18.7s]   shaded Counter_0_-1_0_011_101 844×844 in 0.43s
+[   19.0s]   shaded CounterIron 1024×1024 in 0.27s
+[   19.2s]   shaded SignBolts_-1_-1_1_010_111_100 1024×1024 in 0.16s
+[   19.9s]   shaded Drum 1024×1024 in 0.58s
+[   19.9s] built ShopConceptContainer 1 x x2.5 part 2/9: 32 parts in 9.1s
+[   20.0s] building Plot2 220 -84 180
+[   21.3s]   shaded Slab 1024×1024 in 1.09s
+[   21.3s] built Plot2 220 -84 180: 1 parts in 1.3s
+[   21.3s] building YardFooting 0.5 x x1.5
+[   21.4s]   shaded Footing 256×256 in 0.06s
+[   21.4s] built YardFooting 0.5 x x1.5: 1 parts in 0.1s
+[   21.4s] building Plot6 444 -84 180
+[   22.6s]   shaded Slab 1024×1024 in 1.07s
+[   22.6s] built Plot6 444 -84 180: 1 parts in 1.2s
+[   22.6s] writing ServerMap.glb and 60 textures
+[   23.2s] chunk ServerMap_S1_01.glb: 57 parts, 16.9 MB
+[   23.2s] chunk ServerMap_S1_02.glb: 3 parts, 2.1 MB
+[   23.4s] rendering preview of 60 parts
+ServerMap: 60 parts, script 22.65s, total 23.60s
+SHARD_COST	ArenaDrone 1 x	59.314
+SHARD_COST	ArenaDrone 1 x #split	1
+SHARD_COST	ShopConceptContainer 1 x x2.5	82.239
+SHARD_COST	ShopConceptContainer 1 x x2.5 #split	1
+SHARD_COST	slab Plot2	1.258
+SHARD_COST	slab Plot2 #split	1
+SHARD_COST	YardFooting 0.5 x x1.5	0.062
+SHARD_COST	YardFooting 0.5 x x1.5 #split	1
+SHARD_COST	slab Plot6	1.245
+SHARD_COST	slab Plot6 #split	1
