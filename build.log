@@ -35,22 +35,22 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 22621 lines, in 0s
 [    1.0s] cached YardIsland 1 x part 1/5
 [    1.0s] cached YardIsland 1 x part 1/5
 [    1.1s] cached YardIsland 1 x part 1/5
-[    1.2s] writing ServerMap.glb and 190 textures
+[    1.1s] writing ServerMap.glb and 190 textures
 [    2.9s] chunk ServerMap_S8_01.glb: 46 parts, 7.0 MB
 [    2.9s] chunk ServerMap_S8_02.glb: 36 parts, 7.3 MB
 [    2.9s] chunk ServerMap_S8_03.glb: 36 parts, 7.3 MB
 [    2.9s] chunk ServerMap_S8_04.glb: 36 parts, 7.3 MB
 [    2.9s] chunk ServerMap_S8_05.glb: 36 parts, 7.3 MB
-ServerMap: 190 parts, script 1.17s, total 3.56s
-upload ServerMap: starting in 1.1s
+ServerMap: 190 parts, script 1.13s, total 3.57s
+upload ServerMap: starting in 0.1s
 upload ServerMap: uploading ServerMapS8_01 (6.7M)
-upload ServerMap: ServerMapS8_01 is asset 131358798454270
+upload ServerMap: ServerMapS8_01 is asset 73447695777807
 upload ServerMap: uploading ServerMapS8_02 (7.1M)
-upload ServerMap: ServerMapS8_02 is asset 135898157002119
+upload ServerMap: ServerMapS8_02 is asset 128885972461648
 upload ServerMap: uploading ServerMapS8_03 (7.1M)
-upload ServerMap: ServerMapS8_03 is asset 116765975574704
+upload ServerMap: ServerMapS8_03 is asset 97395661388639
 upload ServerMap: uploading ServerMapS8_04 (7.1M)
-upload ServerMap: ServerMapS8_04 is asset 86993959791641
+upload ServerMap: ServerMapS8_04 is asset 94939422634421
 upload ServerMap: uploading ServerMapS8_05 (7.1M)
-upload ServerMap: ServerMapS8_05 is asset 127867710002351
+upload ServerMap: ServerMapS8_05 is asset 136987772387020
 upload ServerMap: shard upload done: 5 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
