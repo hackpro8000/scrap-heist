@@ -26,7 +26,7 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
 [    0.9s] cached YardIsland 1 x part 4/5
 [    1.0s] cached YardIsland 1 x part 4/5
 [    1.0s] writing ServerMap.glb and 193 textures
-ServerMap: 193 parts, script 990.77ms, total 2.00s
+ServerMap: 193 parts, script 992.52ms, total 2.17s
 PLACED	HubSection3	0	HubSectionB-afc962b93a377a4a 1 x part 1/4
 PLACED	Island1	0	YardIsland-f7a297dc299e1e15 1 x part 4/5
 PLACED	Island2	0	YardIsland-f7a297dc299e1e15 1 x part 4/5
@@ -37,7 +37,3 @@ PLACED	Island6	180	YardIsland-f7a297dc299e1e15 1 x part 4/5
 PLACED	Island7	180	YardIsland-f7a297dc299e1e15 1 x part 4/5
 PLACED	Island8	180	YardIsland-f7a297dc299e1e15 1 x part 4/5
 export ServerMap: 2 objects (13.7 MB) for 9 placements
-remote: 
-remote: Create a pull request for 'build-objects/s9' on GitHub by visiting:        
-remote:      https://github.com/hackpro8000/scrap-heist/pull/new/build-objects/s9        
-remote: 
