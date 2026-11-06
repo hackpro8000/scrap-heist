@@ -1,12 +1,27 @@
-YardIsland 1 x	73.589
+YardIsland 1 x	75.142
 YardIsland 1 x #split	1
-slab Spoke1	0.083
-slab Spoke1 #split	1
-slab Bridge1	1.679
-slab Bridge1 #split	1
-slab Spoke3	0.090
-slab Spoke3 #split	1
-slab Bridge3	1.659
-slab Bridge3 #split	1
-slab Spoke8	0.089
-slab Spoke8 #split	1
+PadKitchen 1 x x1.6666666666666667	0.189
+PadKitchen 1 x x1.6666666666666667 #split	1
+PadGadget 1 x x1.6666666666666667	0.076
+PadGadget 1 x x1.6666666666666667 #split	1
+slab Yard1_Press	0.150
+slab Yard1_Press #split	1
+YardPath 1 x x2	0.242
+YardPath 1 x x2 #split	1
+YardGate 1 x x1.5	0.249
+YardGate 1 x x1.5 #split	1
+YardFence 1 x x1.5	0.181
+YardFence 1 x x1.5 #split	1
+JunkMound 1 x x2.3	0.671
+YardPathStub 0.75 y x2	0.184
+YardPathStub 0.75 y x2 #split	1
+slab Spoke5	0.079
+slab Spoke5 #split	1
+PadGarage 1 x x1.6666666666666667	0.083
+PadGarage 1 x x1.6666666666666667 #split	1
+YardFooting 0.5 x x1.5	0.064
+YardFooting 0.5 x x1.5 #split	1
+slab Bridge6	1.683
+slab Bridge6 #split	1
+slab Yard8_Press	0.156
+slab Yard8_Press #split	1
