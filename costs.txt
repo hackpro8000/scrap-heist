@@ -1,4 +1,0 @@
-HubSectionB 1 x	66.107
-HubSectionB 1 x #split	1
-YardIsland 1 x	76.183
-YardIsland 1 x #split	1
