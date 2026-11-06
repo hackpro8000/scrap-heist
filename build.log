@@ -5,5 +5,5 @@ assemble ShopTest: wrote art/models/ShopTest/model.luau, 2716 lines, in 0s
 [    0.2s] cached ShopConceptContainer 1 x part 1/4
 [    0.2s] writing ShopTest.glb and 17 textures
 [    0.4s] chunk ShopTest_S1_01.glb: 17 parts, 5.9 MB
-[    0.5s] rendering preview of 17 parts
-ShopTest: 17 parts, script 166.24ms, total 705.35ms
+[    0.4s] rendering preview of 17 parts
+ShopTest: 17 parts, script 164.25ms, total 705.36ms
