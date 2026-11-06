@@ -441,7 +441,7 @@ local function onThingBuilt(yard: PlotService.Yard, object: PlotService.Object, 
 	}
 	local body = CapsuleService.newBody(capsule)
 	body.Anchored = true
-	body.CFrame = hook.CFrame * CFrame.new(0, hook.Size.Y / 2 + body.Size.Y / 2, 0)
+	body.CFrame = PlotService.seatOf(model) * CFrame.new(0, body.Size.Y / 2, 0)
 	body.Parent = model
 
 	local text = body:FindFirstChild("Text", true) :: TextLabel

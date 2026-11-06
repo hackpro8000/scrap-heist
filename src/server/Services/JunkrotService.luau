@@ -147,12 +147,12 @@ local function dressPad(yard: PlotService.Yard, object: PlotService.Object, mode
 		return
 	end
 
-	local seat = hook.CFrame * CFrame.new(0, hook.Size.Y / 2, 0)
+	local seat = PlotService.seatOf(model)
 	local junkrotModel = buildJunkrotModel(junkrot, seat)
 	junkrotModel.Parent = model
 
 	local _, size = junkrotModel:GetBoundingBox()
-	local text = label(hook, hook.Size.Y / 2 + size.Y + 2.2, 3)
+	local text = label(hook, seat.Position.Y - hook.Position.Y + size.Y + 2.2, 3)
 	local rate = JunkrotRules.rate(placed, object.family)
 	local name = if placed.limited then `LIMITED {junkrot.name}` else junkrot.name
 	text.Text = `{name}\n{starsText(placed.stars)}\n{Format.short(rate)}/s`

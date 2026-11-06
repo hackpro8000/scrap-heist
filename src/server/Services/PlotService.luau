@@ -32,6 +32,7 @@
 		PlotService.objectOf(player, objectId): Object?
 		PlotService.objectCFrame(yard, object): CFrame   -- its middle, on the floor
 		PlotService.thingOf(yard, objectId): Model?
+		PlotService.seatOf(thing): CFrame             -- where something set on it rests
 		PlotService.rebuildThing(yard, object)
 		PlotService.rebuildYard(yard)
 		PlotService.forEachThing(callback)           -- every thing, now and later
@@ -309,6 +310,23 @@ end
 
 function PlotService.thingOf(yard: Yard, objectId: number): Model?
 	return yard.things[objectId]
+end
+
+-- Where something set down on a thing rests: the thing's surface under its
+-- middle, turned as the thing is. A thing's Hook is its art's whole
+-- bounding box, which reaches up to whatever stands tallest on it (a pad's
+-- junction box, a bay's lamp posts), so the surface is found by dropping a
+-- ray onto the art itself.
+function PlotService.seatOf(model: Model): CFrame
+	local hook = model.PrimaryPart :: BasePart
+	local top = hook.CFrame * CFrame.new(0, hook.Size.Y / 2, 0)
+
+	local params = RaycastParams.new()
+	params.FilterType = Enum.RaycastFilterType.Include
+	params.FilterDescendantsInstances = { model }
+	local hit = workspace:Raycast(top.Position + Vector3.new(0, 1, 0), Vector3.new(0, -hook.Size.Y - 2, 0), params)
+
+	return if hit then top.Rotation + hit.Position else top
 end
 
 function PlotService.rebuildThing(yard: Yard, object: Object)
