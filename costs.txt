@@ -1,19 +1,6 @@
-slab Yard2_Bay2	0.170
-slab Yard2_Bay2 #split	1
-slab Yard3_Press	0.164
-slab Yard3_Press #split	1
-slab Spoke3	0.080
-slab Spoke3 #split	1
-PadKitchen 1 x x1.6666666666666667	0.204
-PadKitchen 1 x x1.6666666666666667 #split	1
-YardGate 1 x x1.5	0.268
-YardGate 1 x x1.5 #split	1
-slab Yard5_Press	0.161
-slab Yard5_Press #split	1
-slab Yard6_Bay1	0.164
-slab Yard6_Bay1 #split	1
-slab Approach6	0.422
-slab Approach6 #split	1
-StorageCrate 1 x x2	9.648
-slab Yard8_Bay3	0.165
-slab Yard8_Bay3 #split	1
+HubSectionEnd 1 x	80.390
+HubSectionEnd 1 x #split	1
+slab Spoke2	0.082
+slab Spoke2 #split	1
+slab Plot3	5.260
+slab Plot3 #split	1
