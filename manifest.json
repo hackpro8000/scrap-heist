@@ -6,7 +6,7 @@
 			"piece": 1,
 			"label": "HubSection2",
 			"turn": 0.0,
-			"bytes": 7410844,
+			"bytes": 7410896,
 			"parts": 33
 		},
 		{
@@ -15,7 +15,7 @@
 			"piece": 1,
 			"label": "Yard3_FootingFront2",
 			"turn": 0.0,
-			"bytes": 120228,
+			"bytes": 120280,
 			"parts": 1
 		},
 		{
@@ -24,16 +24,16 @@
 			"piece": 1,
 			"label": "Yard3_FootingFrontHalf1",
 			"turn": 0.0,
-			"bytes": 127352,
+			"bytes": 127404,
 			"parts": 1
 		},
 		{
-			"id": "cb28181827907de0",
-			"key": "115ac3a755887f11-18845c9c8b69ea54 Approach3 70 0 0",
+			"id": "a877f372d7485ed7",
+			"key": "1cc43e4ea4bd80d5-18845c9c8b69ea54 Approach3 70 0 0",
 			"piece": 1,
 			"label": "Approach3",
 			"turn": 0.0,
-			"bytes": 597984,
+			"bytes": 598040,
 			"parts": 3
 		},
 		{
@@ -42,34 +42,34 @@
 			"piece": 1,
 			"label": "Yard5_FenceRight2",
 			"turn": 270.0,
-			"bytes": 420708,
+			"bytes": 420764,
 			"parts": 3
 		},
 		{
-			"id": "7812ea6d6da1c935",
-			"key": "115ac3a755887f11-cf7e96091024d5cc Bridge5 -210 -180 180",
+			"id": "83620ab6680de833",
+			"key": "1cc43e4ea4bd80d5-cf7e96091024d5cc Bridge5 -210 -180 180",
 			"piece": 1,
 			"label": "Bridge5",
 			"turn": 0.0,
-			"bytes": 3183476,
+			"bytes": 3183528,
 			"parts": 11
 		},
 		{
-			"id": "615abe14061456b3",
-			"key": "115ac3a755887f11-107c5c30239027da Spoke8 210 -180 180",
+			"id": "cfb9c7495e94b52e",
+			"key": "1cc43e4ea4bd80d5-107c5c30239027da Spoke8 210 -180 180",
 			"piece": 1,
 			"label": "Spoke8",
 			"turn": 0.0,
-			"bytes": 121296,
+			"bytes": 121352,
 			"parts": 1
 		},
 		{
-			"id": "9a967b10f0b043a9",
-			"key": "115ac3a755887f11-363b6dc9a40b12d8 Belt 0 0 0",
+			"id": "c38ba5eebd0126d4",
+			"key": "1cc43e4ea4bd80d5-363b6dc9a40b12d8 Belt 0 0 0",
 			"piece": 1,
 			"label": "Belt",
 			"turn": 0.0,
-			"bytes": 7322368,
+			"bytes": 7322420,
 			"parts": 56
 		},
 		{
@@ -78,7 +78,7 @@
 			"piece": 1,
 			"label": "Kit_PadGadget",
 			"turn": 0.0,
-			"bytes": 360876,
+			"bytes": 360928,
 			"parts": 3
 		},
 		{
@@ -87,7 +87,7 @@
 			"piece": 1,
 			"label": "Kit_CapsuleScrap",
 			"turn": 0.0,
-			"bytes": 399940,
+			"bytes": 399988,
 			"parts": 4
 		},
 		{
@@ -96,7 +96,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotSpoonzoBentolo",
 			"turn": 0.0,
-			"bytes": 446216,
+			"bytes": 446268,
 			"parts": 5
 		},
 		{
@@ -105,7 +105,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotPannettoPatchato",
 			"turn": 0.0,
-			"bytes": 516984,
+			"bytes": 517040,
 			"parts": 6
 		},
 		{
@@ -114,7 +114,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotMopaMopetta",
 			"turn": 0.0,
-			"bytes": 755652,
+			"bytes": 755716,
 			"parts": 8
 		},
 		{
@@ -123,8 +123,26 @@
 			"piece": 1,
 			"label": "Kit_JunkrotLeafblowaWhooshini",
 			"turn": 0.0,
-			"bytes": 639680,
+			"bytes": 639732,
 			"parts": 8
+		},
+		{
+			"id": "98e69fad5d7b75c7",
+			"key": "JunkrotChefbotPrecisio-655242385b26b2f8 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotChefbotPrecisio",
+			"turn": 0.0,
+			"bytes": 679304,
+			"parts": 9
+		},
+		{
+			"id": "b3b5bb4eb8cb5435",
+			"key": "JunkrotHoverbikkoZoomzoom-1b5900b42f82f562 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotHoverbikkoZoomzoom",
+			"turn": 0.0,
+			"bytes": 648576,
+			"parts": 10
 		}
 	],
 	"placements": [
@@ -220,7 +238,7 @@
 			]
 		},
 		{
-			"asset": "cb28181827907de0",
+			"asset": "a877f372d7485ed7",
 			"label": "Approach3",
 			"turn": 0.0,
 			"anchors": [
@@ -333,7 +351,7 @@
 			]
 		},
 		{
-			"asset": "7812ea6d6da1c935",
+			"asset": "83620ab6680de833",
 			"label": "Bridge5",
 			"turn": 0.0,
 			"anchors": [
@@ -746,7 +764,7 @@
 			]
 		},
 		{
-			"asset": "615abe14061456b3",
+			"asset": "cfb9c7495e94b52e",
 			"label": "Spoke8",
 			"turn": 0.0,
 			"anchors": [
@@ -761,7 +779,7 @@
 			]
 		},
 		{
-			"asset": "9a967b10f0b043a9",
+			"asset": "c38ba5eebd0126d4",
 			"label": "Belt",
 			"turn": 0.0,
 			"anchors": [
@@ -791,7 +809,7 @@
 				{
 					"name": "Hardware",
 					"position": [
-						-600.0089250000001,
+						-852.0089250000001,
 						-149.07463,
 						-1.15015185
 					]
@@ -799,7 +817,7 @@
 				{
 					"name": "Plate",
 					"position": [
-						-600.011675,
+						-852.011675,
 						-149.691015,
 						0.006314500000000223
 					]
@@ -814,7 +832,7 @@
 				{
 					"name": "Can",
 					"position": [
-						-480.007295,
+						-732.0072849999999,
 						-148.7712,
 						0.010462399999999983
 					]
@@ -829,7 +847,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						-287.96983,
+						-539.96983,
 						-147.5505,
 						0.41021353
 					]
@@ -837,7 +855,7 @@
 				{
 					"name": "Stain",
 					"position": [
-						-287.79580999999996,
+						-539.7958100000001,
 						-147.23425500000002,
 						-0.11728888100000001
 					]
@@ -852,7 +870,7 @@
 				{
 					"name": "Handle",
 					"position": [
-						-70.49578,
+						-322.495765,
 						-146.99375,
 						0.026629172500000006
 					]
@@ -860,7 +878,7 @@
 				{
 					"name": "Legs",
 					"position": [
-						-72.007655,
+						-324.007665,
 						-149.66916500000002,
 						0.17192995499999997
 					]
@@ -875,7 +893,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						192.67217499999998,
+						-59.327831,
 						-147.75650000000002,
 						0.630213495
 					]
@@ -883,7 +901,7 @@
 				{
 					"name": "Seat",
 					"position": [
-						191.137755,
+						-60.8622395,
 						-147.641415,
 						-0.006764660000000006
 					]
@@ -898,7 +916,7 @@
 				{
 					"name": "Leaves",
 					"position": [
-						483.21000000000004,
+						231.20999999999998,
 						-148.84,
 						0.0
 					]
@@ -906,9 +924,55 @@
 				{
 					"name": "Pupils",
 					"position": [
-						479.59767,
+						227.597665,
 						-148.15800000000002,
 						0.85521353
+					]
+				}
+			]
+		},
+		{
+			"asset": "98e69fad5d7b75c7",
+			"label": "Kit_JunkrotChefbotPrecisio",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dial",
+					"position": [
+						516.64435,
+						-148.826515,
+						0.99862495
+					]
+				},
+				{
+					"name": "Lid",
+					"position": [
+						516.0,
+						-146.57,
+						-0.09999999499999995
+					]
+				}
+			]
+		},
+		{
+			"asset": "b3b5bb4eb8cb5435",
+			"label": "Kit_JunkrotHoverbikkoZoomzoom",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pupils",
+					"position": [
+						829.211,
+						-148.058,
+						0.62000002
+					]
+				},
+				{
+					"name": "Seat",
+					"position": [
+						827.3951500000001,
+						-147.83470499999999,
+						0.009977765
 					]
 				}
 			]

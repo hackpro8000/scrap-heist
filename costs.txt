@@ -1,10 +1,12 @@
-slab Approach3	0.289
+slab Approach3	0.288
 slab Approach3 #split	1
-slab Bridge5	1.288
+slab Bridge5	1.342
 slab Bridge5 #split	1
 slab Spoke8	0.075
 slab Spoke8 #split	1
-slab Belt	3.954
+slab Belt	4.044
 slab Belt #split	1
-JunkrotLeafblowaWhooshini 1 x	0.631
-JunkrotLeafblowaWhooshini 1 x #split	1
+JunkrotChefbotPrecisio 1 x	0.766
+JunkrotChefbotPrecisio 1 x #split	1
+JunkrotHoverbikkoZoomzoom 1 x	0.721
+JunkrotHoverbikkoZoomzoom 1 x #split	1
