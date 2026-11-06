@@ -1,7 +1,4 @@
-slab Plot2	4.748
+slab Plot2	4.816
 slab Plot2 #split	1
-JunkMound 1 x x1.6666666666666667	0.585
-JunkrotCanettoRustini 1 x	0.527
-JunkrotCanettoRustini 1 x #split	1
-JunkrotCrumboPoppalot 1 x	0.673
-JunkrotCrumboPoppalot 1 x #split	1
+JunkrotMixerellaVroom 1 x	0.649
+JunkrotMixerellaVroom 1 x #split	1

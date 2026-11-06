@@ -28,8 +28,8 @@
 			"parts": 4
 		},
 		{
-			"id": "91c740c094c5d5cc",
-			"key": "d85c17ddde731d72-7b25a7aa2539d602 Plot2 -70 180 0",
+			"id": "0914de0adaba713c",
+			"key": "fc0c5e558eaf305d-7b25a7aa2539d602 Plot2 -70 180 0",
 			"piece": 1,
 			"label": "Plot2",
 			"turn": 0.0,
@@ -51,7 +51,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotCanettoRustini",
 			"turn": 0.0,
-			"bytes": 581464,
+			"bytes": 581468,
 			"parts": 6
 		},
 		{
@@ -61,6 +61,15 @@
 			"label": "Kit_JunkrotCrumboPoppalot",
 			"turn": 0.0,
 			"bytes": 726548,
+			"parts": 8
+		},
+		{
+			"id": "445a1ebb4f4c14ef",
+			"key": "JunkrotMixerellaVroom-344b44f12cb08348 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotMixerellaVroom",
+			"turn": 0.0,
+			"bytes": 712836,
 			"parts": 8
 		}
 	],
@@ -134,7 +143,7 @@
 			]
 		},
 		{
-			"asset": "91c740c094c5d5cc",
+			"asset": "0914de0adaba713c",
 			"label": "Plot2",
 			"turn": 0.0,
 			"anchors": [
@@ -164,7 +173,7 @@
 				{
 					"name": "Bits",
 					"position": [
-						-216.30947,
+						-348.30946500000005,
 						-148.10022500000002,
 						0.6443587500000001
 					]
@@ -172,7 +181,7 @@
 				{
 					"name": "Plates",
 					"position": [
-						-216.29239,
+						-348.29238499999997,
 						-149.040635,
 						-0.47066074999999996
 					]
@@ -187,7 +196,7 @@
 				{
 					"name": "Lid",
 					"position": [
-						-23.963414,
+						-155.96341,
 						-147.214905,
 						-0.40655548
 					]
@@ -195,7 +204,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						-23.963441,
+						-155.96344,
 						-148.258,
 						0.8636180499999999
 					]
@@ -210,7 +219,7 @@
 				{
 					"name": "Lever",
 					"position": [
-						193.35725000000002,
+						61.357258,
 						-148.29405,
 						0.012467160000000005
 					]
@@ -218,9 +227,32 @@
 				{
 					"name": "Patch",
 					"position": [
-						191.252785,
+						59.252787,
 						-148.72824,
 						-0.72210983
+					]
+				}
+			]
+		},
+		{
+			"asset": "445a1ebb4f4c14ef",
+			"label": "Kit_JunkrotMixerellaVroom",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Knob",
+					"position": [
+						324.713265,
+						-147.09494,
+						-0.194373715
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						324.02217,
+						-147.00650000000002,
+						1.1302135500000001
 					]
 				}
 			]
