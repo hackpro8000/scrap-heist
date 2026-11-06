@@ -1,48 +1,48 @@
-slab Ramps	4.805
+slab Ramps	7.060
 slab Ramps #split	1
-slab MarketIsland	3.026
+slab MarketIsland	4.648
 slab MarketIsland #split	1
-ShopConceptContainer 1 x x2.5	46.599
+ShopConceptContainer 1 x x2.5	86.032
 ShopConceptContainer 1 x x2.5 #split	1
-slab Plot1	0.899
+slab Plot1	1.347
 slab Plot1 #split	1
-GroundTile 1 x x1.5	0.040
+GroundTile 1 x x1.5	0.181
 GroundTile 1 x x1.5 #split	1
-MachinePad 1 x x1.5	0.119
+MachinePad 1 x x1.5	0.178
 MachinePad 1 x x1.5 #split	1
-YardPath 1 x x1.5	0.162
+YardPath 1 x x1.5	0.218
 YardPath 1 x x1.5 #split	1
-YardPathStub 1 x x1.5	0.115
+YardPathStub 1 x x1.5	0.178
 YardPathStub 1 x x1.5 #split	1
-YardFence 1 x x1.5	0.116
+YardFence 1 x x1.5	0.175
 YardFence 1 x x1.5 #split	1
-YardFooting 1 x x1.5	0.011
+YardFooting 1 x x1.5	0.059
 YardFooting 1 x x1.5 #split	1
-YardFenceHalf 1 x x1.5	0.102
+YardFenceHalf 1 x x1.5	0.151
 YardFenceHalf 1 x x1.5 #split	1
-YardFooting 0.5 x x1.5	0.010
+YardFooting 0.5 x x1.5	0.063
 YardFooting 0.5 x x1.5 #split	1
-YardGate 1 x x1.5	0.162
+YardGate 1 x x1.5	0.251
 YardGate 1 x x1.5 #split	1
-PlotMarker 1 x x1.5	0.246
+PlotMarker 1 x x1.5	0.385
 PlotMarker 1 x x1.5 #split	1
-slab Spoke1	0.096
+slab Spoke1	0.140
 slab Spoke1 #split	1
-slab Bridge1	0.771
+slab Bridge1	1.185
 slab Bridge1 #split	1
-slab Plot2	0.772
+slab Plot2	1.144
 slab Plot2 #split	1
-slab Bridge3	0.761
+slab Bridge3	1.162
 slab Bridge3 #split	1
-slab Bridge6	0.743
+slab Bridge6	1.143
 slab Bridge6 #split	1
-TrafficCones 1 x x1.8	0.137
+TrafficCones 1 x x1.8	0.193
 TrafficCones 1 x x1.8 #split	1
-CarStack 1 x x2.5	0.095
+CarStack 1 x x2.5	0.322
 CarStack 1 x x2.5 #split	1
-Dumpster 1 x x2.2	0.184
+Dumpster 1 x x2.2	0.260
 Dumpster 1 x x2.2 #split	1
-slab Hatch2	0.087
+slab Hatch2	0.131
 slab Hatch2 #split	1
-StreetlightBroken 1 x x2	0.030
+StreetlightBroken 1 x x2	0.123
 StreetlightBroken 1 x x2 #split	1
