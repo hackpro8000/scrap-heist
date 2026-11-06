@@ -16,139 +16,55 @@ assemble ServerMap: slab at ServerMap.luau:664-673 (key 107c5c30239027da)
 assemble ServerMap: slab at ServerMap.luau:681-711 (key 18845c9c8b69ea54)
 assemble ServerMap: wrote art/models/ServerMap/model.luau, 16471 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.2s] building HubSectionEnd 1 x part 4/4
-[    2.0s]   shaded Columns_-1_0_0_111 916×916 in 0.12s
-[    2.1s]   shaded Columns_0_0_0_101 708×708 in 0.07s
-[    2.1s]   shaded Columns_0_0_0_110 180×180 in 0.00s
-[    2.2s]   shaded Columns_0_0_0_100 288×288 in 0.01s
-[    2.2s]   shaded Columns_-1_-1_-1_011 236×236 in 0.01s
-[    2.2s]   shaded Columns_-1_-1_0_010 108×108 in 0.00s
-[    2.2s]   shaded Columns_-1_-1_0_110 212×212 in 0.01s
-[    2.3s]   shaded Columns_0_-1_-1_011 880×880 in 0.09s
-[    2.4s]   shaded Columns_0_-1_-1_010 512×512 in 0.03s
-[    2.4s]   shaded Dirt_0_0_0_111 552×552 in 0.03s
-[    2.5s]   shaded Dirt_0_0_0_101 596×596 in 0.04s
-[    2.5s]   shaded Dirt_0_0_0_000 472×472 in 0.02s
-[    2.6s]   shaded Dirt_0_0_0_001 552×552 in 0.03s
-[    2.7s]   shaded Dirt_0_-1_0_000 776×776 in 0.07s
-[    2.9s]   shaded Dirt_-1_0_0_010 1004×1004 in 0.13s
-[    2.9s]   shaded Dirt_-1_0_0_001 264×264 in 0.01s
-[    3.1s]   shaded Dirt_-1_-1_0_100 972×972 in 0.11s
-[    3.1s]   shaded Dirt_-1_-1_0_011 340×340 in 0.01s
-[    3.2s]   shaded Dirt_-1_-2_0 488×488 in 0.03s
-[    3.2s]   shaded Dirt_-1_0_-1 164×164 in 0.00s
-[    3.2s]   shaded Pebbles_-1_-1_0 356×356 in 0.01s
-[    3.2s]   shaded Pebbles_-1_-1_-1 56×56 in 0.00s
-[    3.2s]   shaded Pebbles_-1_-2_0 56×56 in 0.00s
-[    3.2s]   shaded Pebbles_0_1_0 44×44 in 0.00s
-[    3.2s]   shaded Grass_0_-1_0_000 408×408 in 0.02s
-[    3.3s]   shaded Grass_1_-1_0 696×696 in 0.04s
-[    3.4s]   shaded Grass_0_-2_0 908×908 in 0.09s
-[    3.4s]   shaded Grass_-1_-1_0_010 624×624 in 0.03s
-[    3.6s]   shaded Grass_0_0_0_100 876×876 in 0.10s
-[    3.6s]   shaded Grass_0_0_0_010 408×408 in 0.02s
-[    3.6s] built HubSectionEnd 1 x part 4/4: 30 parts in 3.4s
-[    3.8s] cached HubSectionEnd 1 x part 4/4
-[    3.8s] building Bridge2 -70 180 0
-[    4.1s] baking on CPU (no GPU)
-[    4.3s]   shaded Deck 932×932 in 0.39s
-[    4.3s]   shaded HazardYellow 132×132 in 0.01s
-[    4.3s]   shaded HazardBlack 132×132 in 0.01s
-[    4.6s]   shaded Girders 1024×1024 in 0.27s
-[    4.6s]   shaded Posts 192×192 in 0.01s
-[    4.7s]   shaded Rail 996×996 in 0.11s
-[    4.8s]   shaded KerbEnds 108×108 in 0.01s
-[    4.8s]   shaded EndPosts 60×60 in 0.00s
-[    4.8s]   shaded Abutments 368×368 in 0.04s
-[    4.8s]   shaded JointPlate 152×152 in 0.00s
-[    4.8s]   shaded Apron 184×184 in 0.01s
-[    4.8s] built Bridge2 -70 180 0: 11 parts in 1.0s
-[    4.9s] building YardFooting 1 x x1.5
-[    4.9s]   shaded Footing 256×256 in 0.01s
-[    4.9s] built YardFooting 1 x x1.5: 1 parts in 0.0s
-[    4.9s] cached YardFooting 1 x x1.5
-[    4.9s] cached YardFooting 1 x x1.5
-[    4.9s] building YardFooting 0.5 x x1.5
-[    4.9s]   shaded Footing 256×256 in 0.01s
-[    4.9s] built YardFooting 0.5 x x1.5: 1 parts in 0.0s
-[    4.9s] cached YardFooting 1 x x1.5
-[    4.9s] cached YardFooting 1 x x1.5
-[    4.9s] cached YardFooting 0.5 x x1.5
-[    4.9s] building Spoke6 -70 -180 180
-[    5.0s]   shaded Road 300×300 in 0.05s
-[    5.0s] built Spoke6 -70 -180 180: 1 parts in 0.1s
-[    5.0s] building Approach6 -70 0 180
-[    5.1s]   shaded Ramp 468×468 in 0.12s
-[    5.1s]   shaded Walls 488×488 in 0.04s
-[    5.2s]   shaded WallCaps 468×468 in 0.02s
-[    5.2s] built Approach6 -70 0 180: 3 parts in 0.2s
-[    5.2s] cached YardFooting 1 x x1.5
-[    5.2s] cached YardFooting 1 x x1.5
-[    5.2s] cached YardFooting 1 x x1.5
-[    5.2s] building YardFenceHalf 1 x x1.5
-[    5.2s]   shaded Posts 256×256 in 0.01s
-[    5.2s]   shaded Sheets 256×256 in 0.01s
-[    5.2s]   shaded Fittings 256×256 in 0.01s
-[    5.2s] built YardFenceHalf 1 x x1.5: 3 parts in 0.0s
-[    5.2s] cached YardFenceHalf 1 x x1.5
-[    5.2s] building PlotMarker 1 x x1.5
-[    5.2s]   shaded Post 256×256 in 0.01s
-[    5.2s]   shaded Sign 256×256 in 0.01s
-[    5.2s]   shaded Lamp 256×256 in 0.01s
-[    5.3s]   shaded Fittings 256×256 in 0.01s
-[    5.3s] built PlotMarker 1 x x1.5: 4 parts in 0.0s
-[    5.3s] cached YardFooting 1 x x1.5
-[    5.3s] cached YardFooting 1 x x1.5
-[    5.3s] cached YardFooting 1 x x1.5
-[    5.3s] cached YardFenceHalf 1 x x1.5
-[    5.3s] cached YardFooting 0.5 x x1.5
-[    5.3s] cached YardFooting 1 x x1.5
-[    5.3s] cached YardFooting 1 x x1.5
-[    5.3s] cached YardFooting 1 x x1.5
-[    5.3s] cached YardFenceHalf 1 x x1.5
-[    5.3s] cached YardFooting 0.5 x x1.5
-[    5.3s] building YardGate 1 x x1.5
-[    5.3s]   shaded Frame 256×256 in 0.01s
-[    5.3s]   shaded Doors 256×256 in 0.01s
-[    5.3s]   shaded Padlock 256×256 in 0.01s
-[    5.3s]   shaded Hardware 256×256 in 0.01s
-[    5.3s] built YardGate 1 x x1.5: 4 parts in 0.1s
-[    5.3s] writing ServerMap.glb and 113 textures
-ServerMap: 113 parts, script 5.34s, total 5.74s
+[    0.3s] cached HubSectionEnd 1 x part 4/4
+[    0.4s] cached HubSectionEnd 1 x part 4/4
+[    0.5s] cached Bridge2 -70 180 0
+[    0.5s] cached YardFooting 1 x x1.5
+[    0.5s] cached YardFooting 1 x x1.5
+[    0.5s] cached YardFooting 1 x x1.5
+[    0.5s] cached YardFooting 0.5 x x1.5
+[    0.5s] cached YardFooting 1 x x1.5
+[    0.5s] cached YardFooting 1 x x1.5
+[    0.5s] cached YardFooting 0.5 x x1.5
+[    0.5s] cached Spoke6 -70 -180 180
+[    0.5s] cached Approach6 -70 0 180
+[    0.5s] cached YardFooting 1 x x1.5
+[    0.5s] cached YardFooting 1 x x1.5
+[    0.5s] cached YardFooting 1 x x1.5
+[    0.5s] cached YardFenceHalf 1 x x1.5
+[    0.5s] cached YardFenceHalf 1 x x1.5
+[    0.5s] cached PlotMarker 1 x x1.5
+[    0.5s] cached YardFooting 1 x x1.5
+[    0.5s] cached YardFooting 1 x x1.5
+[    0.5s] cached YardFooting 1 x x1.5
+[    0.5s] cached YardFenceHalf 1 x x1.5
+[    0.5s] cached YardFooting 0.5 x x1.5
+[    0.5s] cached YardFooting 1 x x1.5
+[    0.5s] cached YardFooting 1 x x1.5
+[    0.5s] cached YardFooting 1 x x1.5
+[    0.5s] cached YardFenceHalf 1 x x1.5
+[    0.5s] cached YardFooting 0.5 x x1.5
+[    0.5s] cached YardGate 1 x x1.5
+[    0.6s] writing ServerMap.glb and 113 textures
+ServerMap: 113 parts, script 585.78ms, total 1.14s
 PLACED	HubSection1	180	HubSectionEnd-48c8eb7545b33eb2 1 x part 4/4
-SHARD_COST	HubSectionEnd 1 x	13.642
-SHARD_COST	HubSectionEnd 1 x #split	1
 PLACED	HubSection5	0	HubSectionEnd-48c8eb7545b33eb2 1 x part 4/4
 PLACED	Bridge2	0	abb4bc7b898fe3b1-cf7e96091024d5cc Bridge2 -70 180 0
-SHARD_COST	slab Bridge2	1.018
-SHARD_COST	slab Bridge2 #split	1
 PLACED	Yard6_FootingFront1	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
-SHARD_COST	YardFooting 1 x x1.5	0.015
-SHARD_COST	YardFooting 1 x x1.5 #split	1
 PLACED	Yard6_FootingFront2	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
 PLACED	Yard6_FootingFront3	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
 PLACED	Yard6_FootingFrontHalf1	180	YardFooting-5c7b334d7913a1ed 0.5 x x1.5
-SHARD_COST	YardFooting 0.5 x x1.5	0.014
-SHARD_COST	YardFooting 0.5 x x1.5 #split	1
 PLACED	Yard6_FootingFront4	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
 PLACED	Yard6_FootingFront6	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
 PLACED	Yard6_FootingFrontHalf2	180	YardFooting-5c7b334d7913a1ed 0.5 x x1.5
 PLACED	Spoke6	0	abb4bc7b898fe3b1-107c5c30239027da Spoke6 -70 -180 180
-SHARD_COST	slab Spoke6	0.060
-SHARD_COST	slab Spoke6 #split	1
 PLACED	Approach6	0	abb4bc7b898fe3b1-18845c9c8b69ea54 Approach6 -70 0 180
-SHARD_COST	slab Approach6	0.207
-SHARD_COST	slab Approach6 #split	1
 PLACED	Yard7_FootingFront1	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
 PLACED	Yard7_FootingFront2	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
 PLACED	Yard7_FootingFront3	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
 PLACED	Yard7_FenceFrontHalf1	180	YardFenceHalf-18c1a8760a959e18 1 x x1.5
-SHARD_COST	YardFenceHalf 1 x x1.5	0.043
-SHARD_COST	YardFenceHalf 1 x x1.5 #split	1
 PLACED	Yard7_FenceFrontHalf2	180	YardFenceHalf-18c1a8760a959e18 1 x x1.5
 PLACED	Yard7_PlotMarker	180	PlotMarker-1dcfac604b3fab76 1 x x1.5
-SHARD_COST	PlotMarker 1 x x1.5	0.046
-SHARD_COST	PlotMarker 1 x x1.5 #split	1
 PLACED	Yard8_FootingFront1	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
 PLACED	Yard8_FootingFront2	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
 PLACED	Yard8_FootingFront3	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
@@ -160,26 +76,6 @@ PLACED	Yard8_FootingFront6	180	YardFooting-5c7b334d7913a1ed 1 x x1.5
 PLACED	Yard8_FenceFrontHalf2	180	YardFenceHalf-18c1a8760a959e18 1 x x1.5
 PLACED	Yard8_FootingFrontHalf2	180	YardFooting-5c7b334d7913a1ed 0.5 x x1.5
 PLACED	Yard8_Gate	180	YardGate-6a909dbc533c5385 1 x x1.5
-SHARD_COST	YardGate 1 x x1.5	0.057
-SHARD_COST	YardGate 1 x x1.5 #split	1
 export ServerMap: 9 objects (13.5 MB) for 29 placements
-upload ServerMap: starting in 4.2s
-upload ServerMap: uploading 6a05d885f1227d7f (HubSection1, 7.7M)
-upload ServerMap: uploading 1a42e77580d826cc (Bridge2, 3.1M)
-upload ServerMap: uploading d919a85cf314d23f (Yard6_FootingFront1, 120K)
-upload ServerMap: uploading 9d83c1886dbf3768 (Yard6_FootingFrontHalf1, 128K)
-upload ServerMap: d919a85cf314d23f is asset 110836093461888
-upload ServerMap: uploading ce732e795aa1ba7d (Spoke6, 120K)
-upload ServerMap: 6a05d885f1227d7f is asset 101906453426570
-upload ServerMap: 1a42e77580d826cc is asset 128966944935577
-upload ServerMap: uploading c9061a4d42e6a9cb (Approach6, 588K)
-upload ServerMap: uploading cb9c52a2b176239d (Yard7_FenceFrontHalf1, 356K)
-upload ServerMap: 9d83c1886dbf3768 is asset 73698524003860
-upload ServerMap: uploading a6d7e55422710315 (Yard7_PlotMarker, 388K)
-upload ServerMap: c9061a4d42e6a9cb is asset 110219579882269
-upload ServerMap: uploading 0d9fdbe00f9a47e3 (Yard8_Gate, 528K)
-upload ServerMap: a6d7e55422710315 is asset 101486245961598
-upload ServerMap: ce732e795aa1ba7d is asset 77299778546079
-upload ServerMap: cb9c52a2b176239d is asset 118268543005820
-upload ServerMap: 0d9fdbe00f9a47e3 is asset 127253093809224
-upload ServerMap: done: 9 uploaded, 0 already had an asset
+upload ServerMap: starting in 4.1s
+upload ServerMap: done: 0 uploaded, 9 already had an asset
