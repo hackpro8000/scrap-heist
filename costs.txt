@@ -1,0 +1,20 @@
+slab Avenue1	1.347
+slab Avenue1 #split	1
+MarketIsland 1 x	33.370
+MarketIsland 1 x #split	1
+ParkBench 1 x x1.85	0.053
+ParkBench 1 x x1.85 #split	1
+slab Palm1Planter	0.040
+slab Palm1Planter #split	1
+ScrapPalm 1 x x1.5	0.111
+ScrapPalm 1 x x1.5 #split	1
+slab Palm2Planter	0.038
+slab Palm2Planter #split	1
+YardIsland 1 x	27.484
+YardIsland 1 x #split	1
+YardFooting 1 x x1.5	0.037
+YardFooting 1 x x1.5 #split	1
+slab Spoke4	0.086
+slab Spoke4 #split	1
+slab Bridge5	0.797
+slab Bridge5 #split	1
