@@ -21,6 +21,10 @@ on:
       minutes:
         description: Minutes to stay on standby (1-15)
         default: "15"
+      cold:
+        description: Start without the saved build caches, so the first task builds from scratch
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -52,6 +56,7 @@ jobs:
             /art/models/*/model.luau
             /tools/modelkit/
       - name: Restore this shard's build cache
+        if: ${{ !inputs.cold }}
         uses: actions/cache/restore@v4
         with:
           path: art/models/${{ inputs.layout }}/.cache
