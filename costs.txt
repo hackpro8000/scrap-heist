@@ -1,0 +1,10 @@
+HubIsland 1 x	153.018
+HubIsland 1 x #split	1
+ParkBench 1 x x1.85	0.051
+ParkBench 1 x x1.85 #split	1
+slab Palm1Planter	0.041
+slab Palm1Planter #split	1
+slab Palm2Planter	0.042
+slab Palm2Planter #split	1
+YardIsland 1 x	23.463
+YardIsland 1 x #split	1
