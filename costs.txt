@@ -1,16 +1,8 @@
-slab Bridge2	1.004
+slab Bridge2	0.792
 slab Bridge2 #split	1
-slab Spoke6	0.048
+slab Spoke6	0.046
 slab Spoke6 #split	1
-slab Approach6	0.244
+slab Approach6	0.155
 slab Approach6 #split	1
-PadKitchen 1 x x1.6666666666666667	0.121
-PadKitchen 1 x x1.6666666666666667 #split	1
-ScrapCrate 1 x	0.243
-ScrapCrate 1 x #split	1
-CapsuleFactory 1 x	0.185
-CapsuleFactory 1 x #split	1
-JunkrotBoltoloLonelo 1 x	0.464
-JunkrotBoltoloLonelo 1 x #split	1
-JunkrotOilcannaGluglu 1 x	0.405
-JunkrotOilcannaGluglu 1 x #split	1
+JunkrotTelefonoRingaling 1 x	0.581
+JunkrotTelefonoRingaling 1 x #split	1

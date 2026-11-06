@@ -10,8 +10,8 @@
 			"parts": 30
 		},
 		{
-			"id": "541c502ff98307ec",
-			"key": "d85c17ddde731d72-cf7e96091024d5cc Bridge2 -70 180 0",
+			"id": "322773302dc6aca4",
+			"key": "fc0c5e558eaf305d-cf7e96091024d5cc Bridge2 -70 180 0",
 			"piece": 1,
 			"label": "Bridge2",
 			"turn": 0.0,
@@ -37,8 +37,8 @@
 			"parts": 1
 		},
 		{
-			"id": "25693814675c01b3",
-			"key": "d85c17ddde731d72-107c5c30239027da Spoke6 -70 -180 180",
+			"id": "d380301f003ae64a",
+			"key": "fc0c5e558eaf305d-107c5c30239027da Spoke6 -70 -180 180",
 			"piece": 1,
 			"label": "Spoke6",
 			"turn": 0.0,
@@ -46,8 +46,8 @@
 			"parts": 1
 		},
 		{
-			"id": "92905dbbf6d97276",
-			"key": "d85c17ddde731d72-18845c9c8b69ea54 Approach6 -70 0 180",
+			"id": "90223630b8f4393a",
+			"key": "fc0c5e558eaf305d-18845c9c8b69ea54 Approach6 -70 0 180",
 			"piece": 1,
 			"label": "Approach6",
 			"turn": 0.0,
@@ -105,7 +105,7 @@
 			"piece": 1,
 			"label": "Kit_CapsuleFactory",
 			"turn": 0.0,
-			"bytes": 419080,
+			"bytes": 419076,
 			"parts": 4
 		},
 		{
@@ -114,7 +114,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotBoltoloLonelo",
 			"turn": 0.0,
-			"bytes": 604600,
+			"bytes": 604612,
 			"parts": 6
 		},
 		{
@@ -125,6 +125,15 @@
 			"turn": 0.0,
 			"bytes": 596344,
 			"parts": 7
+		},
+		{
+			"id": "a4e8645129cb23cd",
+			"key": "JunkrotTelefonoRingaling-c46bacb116919010 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotTelefonoRingaling",
+			"turn": 0.0,
+			"bytes": 829552,
+			"parts": 9
 		}
 	],
 	"placements": [
@@ -175,7 +184,7 @@
 			]
 		},
 		{
-			"asset": "541c502ff98307ec",
+			"asset": "322773302dc6aca4",
 			"label": "Bridge2",
 			"turn": 0.0,
 			"anchors": [
@@ -303,7 +312,7 @@
 			]
 		},
 		{
-			"asset": "25693814675c01b3",
+			"asset": "d380301f003ae64a",
 			"label": "Spoke6",
 			"turn": 0.0,
 			"anchors": [
@@ -318,7 +327,7 @@
 			]
 		},
 		{
-			"asset": "92905dbbf6d97276",
+			"asset": "90223630b8f4393a",
 			"label": "Approach6",
 			"turn": 0.0,
 			"anchors": [
@@ -603,7 +612,7 @@
 				{
 					"name": "Hardware",
 					"position": [
-						-360.00894,
+						-492.00894,
 						-149.07463,
 						-1.15015185
 					]
@@ -611,7 +620,7 @@
 				{
 					"name": "Plate",
 					"position": [
-						-360.01166,
+						-492.01166,
 						-149.691015,
 						0.006314500000000223
 					]
@@ -626,7 +635,7 @@
 				{
 					"name": "Bands",
 					"position": [
-						-264.00622999999996,
+						-396.00622999999996,
 						-147.8929,
 						-0.0017450000000001076
 					]
@@ -641,7 +650,7 @@
 				{
 					"name": "Label",
 					"position": [
-						-120.6,
+						-252.6,
 						-149.25,
 						1.31
 					]
@@ -649,7 +658,7 @@
 				{
 					"name": "Tape",
 					"position": [
-						-120.0,
+						-252.0,
 						-148.015,
 						0.0
 					]
@@ -664,7 +673,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						72.01678100000001,
+						-59.983219000000005,
 						-148.502,
 						0.56680905
 					]
@@ -672,7 +681,7 @@
 				{
 					"name": "Thread",
 					"position": [
-						71.9947245,
+						-60.005276,
 						-149.054925,
 						-0.013263684999999997
 					]
@@ -687,7 +696,7 @@
 				{
 					"name": "Drip",
 					"position": [
-						289.25755,
+						157.257555,
 						-148.045,
 						0.40574845499999995
 					]
@@ -695,9 +704,32 @@
 				{
 					"name": "Pump",
 					"position": [
-						287.55626,
+						155.556275,
 						-147.464765,
 						-0.008621589999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "a4e8645129cb23cd",
+			"label": "Kit_JunkrotTelefonoRingaling",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Cord",
+					"position": [
+						418.311155,
+						-148.755525,
+						-0.41160947
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						420.02117499999997,
+						-148.2535,
+						1.14021355
 					]
 				}
 			]
