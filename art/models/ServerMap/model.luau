@@ -1238,7 +1238,7 @@ local function finishParts()
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
-local function buildHubSectionA()
+function buildHubSectionA()
 local CACHE_KEY = "HubSectionA-9e178aacbb8e0c13"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -3814,7 +3814,7 @@ for _, entry in parts do
 end
 end
 buildKeys[buildHubSectionA] = "HubSectionA-a8313e4a55d56339"
-local function buildHubSectionB()
+function buildHubSectionB()
 local CACHE_KEY = "HubSectionB-dd31c3a9342d2ebb"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -6390,7 +6390,7 @@ for _, entry in parts do
 end
 end
 buildKeys[buildHubSectionB] = "HubSectionB-afc962b93a377a4a"
-local function buildHubSectionEnd()
+function buildHubSectionEnd()
 local CACHE_KEY = "HubSectionEnd-136fa7952b3f42be"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -8969,7 +8969,7 @@ for _, entry in parts do
 end
 end
 buildKeys[buildHubSectionEnd] = "HubSectionEnd-48c8eb7545b33eb2"
-local function buildYardIsland()
+function buildYardIsland()
 local CACHE_KEY = "YardIsland-a20f5454b9eeafc4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -11556,7 +11556,7 @@ for _, entry in parts do
 end
 end
 buildKeys[buildYardIsland] = "YardIsland-f7a297dc299e1e15"
-local function buildYardFence()
+function buildYardFence()
 local CACHE_KEY = "YardFence-79638c833401e47a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -12380,7 +12380,7 @@ end, nil, 0.6)
 finishParts()
 end
 buildKeys[buildYardFence] = "YardFence-fe3d5de848852dd7"
-local function buildYardFenceHalf()
+function buildYardFenceHalf()
 local CACHE_KEY = "YardFenceHalf-f2ca6d6436d118d5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -13204,7 +13204,7 @@ end, nil, 0.6)
 finishParts()
 end
 buildKeys[buildYardFenceHalf] = "YardFenceHalf-18c1a8760a959e18"
-local function buildYardFooting()
+function buildYardFooting()
 local CACHE_KEY = "YardFooting-7df7c30e617afb8a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -14032,7 +14032,7 @@ end, nil, 0.35)
 finishParts()
 end
 buildKeys[buildYardFooting] = "YardFooting-5c7b334d7913a1ed"
-local function buildYardGate()
+function buildYardGate()
 local CACHE_KEY = "YardGate-a6bba3472eb4e337"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -14895,7 +14895,7 @@ end, nil, 0.55)
 finishParts()
 end
 buildKeys[buildYardGate] = "YardGate-6a909dbc533c5385"
-local function buildPlotMarker()
+function buildPlotMarker()
 local CACHE_KEY = "PlotMarker-774d90149afa2f90"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -15751,7 +15751,7 @@ end, nil, 0.5)
 finishParts()
 end
 buildKeys[buildPlotMarker] = "PlotMarker-1dcfac604b3fab76"
-local function buildPadKitchen()
+function buildPadKitchen()
 local CACHE_KEY = "PadKitchen-c76f1c6cf26e3512"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -16602,7 +16602,7 @@ end, nil, 0.45)
 finishParts()
 end
 buildKeys[buildPadKitchen] = "PadKitchen-b26111bb8c8fc355"
-local function buildPadGarage()
+function buildPadGarage()
 local CACHE_KEY = "PadGarage-d5708ad48748d33b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -17453,7 +17453,7 @@ end, nil, 0.45)
 finishParts()
 end
 buildKeys[buildPadGarage] = "PadGarage-734bbac536619471"
-local function buildPadGadget()
+function buildPadGadget()
 local CACHE_KEY = "PadGadget-48988de9245004f8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -18304,7 +18304,7 @@ end, nil, 0.45)
 finishParts()
 end
 buildKeys[buildPadGadget] = "PadGadget-21e4e209e2c3928c"
-local function buildBuildBay()
+function buildBuildBay()
 local CACHE_KEY = "BuildBay-3bb72a1e392bdf4e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -19166,7 +19166,7 @@ end, nil, 0.7)
 finishParts()
 end
 buildKeys[buildBuildBay] = "BuildBay-a81c2edb1019fad5"
-local function buildScrapCrate()
+function buildScrapCrate()
 local CACHE_KEY = "ScrapCrate-29302168875da9ff"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -20023,7 +20023,7 @@ end, nil, 0.6)
 finishParts()
 end
 buildKeys[buildScrapCrate] = "ScrapCrate-313add4f147967e6"
-local function buildRebirthPress()
+function buildRebirthPress()
 local CACHE_KEY = "RebirthPress-73efca6cf26fc007"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -20881,7 +20881,7 @@ end, true, 0, nil, 1.2)
 finishParts()
 end
 buildKeys[buildRebirthPress] = "RebirthPress-a3e10ff078e85756"
-local function buildJunkMound()
+function buildJunkMound()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -21487,7 +21487,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkMound] = "JunkMound-7fa771084b98236c"
-local function buildCapsuleScrap()
+function buildCapsuleScrap()
 local CACHE_KEY = "CapsuleScrap-4fd4e85152e70de0"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -22322,7 +22322,7 @@ end, nil, 0.6)
 finishParts()
 end
 buildKeys[buildCapsuleScrap] = "CapsuleScrap-97d6ab3947528bd1"
-local function buildCapsuleSalvaged()
+function buildCapsuleSalvaged()
 local CACHE_KEY = "CapsuleSalvaged-a22b31bf9e05c3ba"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -23160,7 +23160,7 @@ end, nil, 0.5)
 finishParts()
 end
 buildKeys[buildCapsuleSalvaged] = "CapsuleSalvaged-920c7b0575b6f340"
-local function buildCapsuleRefurbished()
+function buildCapsuleRefurbished()
 local CACHE_KEY = "CapsuleRefurbished-87de8628bbe15cb0"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -23996,7 +23996,7 @@ end, nil, 0.1)
 finishParts()
 end
 buildKeys[buildCapsuleRefurbished] = "CapsuleRefurbished-964e4fc946ec306e"
-local function buildCapsuleFactory()
+function buildCapsuleFactory()
 local CACHE_KEY = "CapsuleFactory-77a50855066ef57d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -24836,7 +24836,7 @@ end, nil, 0)
 finishParts()
 end
 buildKeys[buildCapsuleFactory] = "CapsuleFactory-23e7ef6e39d8fcb9"
-local function buildCapsulePrecision()
+function buildCapsulePrecision()
 local CACHE_KEY = "CapsulePrecision-f0fd7da3c3e1c134"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -25687,7 +25687,7 @@ end, nil, 0.05)
 finishParts()
 end
 buildKeys[buildCapsulePrecision] = "CapsulePrecision-80c544621f832e35"
-local function buildCapsulePrototype()
+function buildCapsulePrototype()
 local CACHE_KEY = "CapsulePrototype-83a52d1637ac492b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -26524,7 +26524,7 @@ end, nil, 0)
 finishParts()
 end
 buildKeys[buildCapsulePrototype] = "CapsulePrototype-107d166201005067"
-local function buildCapsuleSecret()
+function buildCapsuleSecret()
 local CACHE_KEY = "CapsuleSecret-a36bc0a8b8574b40"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -27345,7 +27345,7 @@ end, nil, 0, nil, 2.2, true)
 finishParts()
 end
 buildKeys[buildCapsuleSecret] = "CapsuleSecret-09ca92fc3f995992"
-local function buildJunkrotCanettoRustini()
+function buildJunkrotCanettoRustini()
 local CACHE_KEY = "JunkrotCanettoRustini-e56330851c06106f"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -28199,7 +28199,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotCanettoRustini] = "JunkrotCanettoRustini-cb0c7bded31f7246"
-local function buildJunkrotSpoonzoBentolo()
+function buildJunkrotSpoonzoBentolo()
 local CACHE_KEY = "JunkrotSpoonzoBentolo-f34deb7e5159074d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -29049,7 +29049,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotSpoonzoBentolo] = "JunkrotSpoonzoBentolo-333931ef9d44c809"
-local function buildJunkrotKettlinaDentata()
+function buildJunkrotKettlinaDentata()
 local CACHE_KEY = "JunkrotKettlinaDentata-43a64bc232fd77c1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -29904,7 +29904,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotKettlinaDentata] = "JunkrotKettlinaDentata-b6a5a9b13a50ddfc"
-local function buildJunkrotTyroFlattino()
+function buildJunkrotTyroFlattino()
 local CACHE_KEY = "JunkrotTyroFlattino-b1b1f62fd3f1dda9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -30761,7 +30761,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotTyroFlattino] = "JunkrotTyroFlattino-0a6fed4afb36bc08"
-local function buildJunkrotBoltoloLonelo()
+function buildJunkrotBoltoloLonelo()
 local CACHE_KEY = "JunkrotBoltoloLonelo-f86f4855a7df8af5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -31614,7 +31614,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotBoltoloLonelo] = "JunkrotBoltoloLonelo-dc5359b2301236fb"
-local function buildJunkrotHubcappaWobbla()
+function buildJunkrotHubcappaWobbla()
 local CACHE_KEY = "JunkrotHubcappaWobbla-d9483f7e820a5d18"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -32469,7 +32469,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotHubcappaWobbla] = "JunkrotHubcappaWobbla-4ece2c0c2d632439"
-local function buildJunkrotRemotinoMuto()
+function buildJunkrotRemotinoMuto()
 local CACHE_KEY = "JunkrotRemotinoMuto-98a73940c80f60ea"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -33327,7 +33327,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotRemotinoMuto] = "JunkrotRemotinoMuto-adcd1b33b39b0e57"
-local function buildJunkrotCabloTanglino()
+function buildJunkrotCabloTanglino()
 local CACHE_KEY = "JunkrotCabloTanglino-08501bb705f8c68b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -34193,7 +34193,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotCabloTanglino] = "JunkrotCabloTanglino-71a7bdce8a73c75d"
-local function buildJunkrotBulboFulminato()
+function buildJunkrotBulboFulminato()
 local CACHE_KEY = "JunkrotBulboFulminato-09771c368952b63b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -35047,7 +35047,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotBulboFulminato] = "JunkrotBulboFulminato-d3d88c8d1be348d5"
-local function buildJunkrotCrumboPoppalot()
+function buildJunkrotCrumboPoppalot()
 local CACHE_KEY = "JunkrotCrumboPoppalot-3bcafce97f4a1b93"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -35911,7 +35911,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotCrumboPoppalot] = "JunkrotCrumboPoppalot-407b76145c5b25df"
-local function buildJunkrotPannettoPatchato()
+function buildJunkrotPannettoPatchato()
 local CACHE_KEY = "JunkrotPannettoPatchato-31aa297b2cca1c70"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -36767,7 +36767,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotPannettoPatchato] = "JunkrotPannettoPatchato-95ceb8add302c2b5"
-local function buildJunkrotBlendroCigolante()
+function buildJunkrotBlendroCigolante()
 local CACHE_KEY = "JunkrotBlendroCigolante-38c4aa836fdd4190"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -37623,7 +37623,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotBlendroCigolante] = "JunkrotBlendroCigolante-576a5245f81a08f2"
-local function buildJunkrotJackoloCrickato()
+function buildJunkrotJackoloCrickato()
 local CACHE_KEY = "JunkrotJackoloCrickato-f00210fc4c3457a6"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -38485,7 +38485,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotJackoloCrickato] = "JunkrotJackoloCrickato-775ba98d72736772"
-local function buildJunkrotOilcannaGluglu()
+function buildJunkrotOilcannaGluglu()
 local CACHE_KEY = "JunkrotOilcannaGluglu-09e01d97e5bf363c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -39344,7 +39344,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotOilcannaGluglu] = "JunkrotOilcannaGluglu-da992b0b4928a820"
-local function buildJunkrotMuffleroTossetto()
+function buildJunkrotMuffleroTossetto()
 local CACHE_KEY = "JunkrotMuffleroTossetto-36d28108c9a7c3f2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -40198,7 +40198,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotMuffleroTossetto] = "JunkrotMuffleroTossetto-51cde1cc6e30d9fd"
-local function buildJunkrotRadioloFruscio()
+function buildJunkrotRadioloFruscio()
 local CACHE_KEY = "JunkrotRadioloFruscio-7e2756cd3dba27c2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -41059,7 +41059,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotRadioloFruscio] = "JunkrotRadioloFruscio-9ad8ba65324bc486"
-local function buildJunkrotFanettoWobblino()
+function buildJunkrotFanettoWobblino()
 local CACHE_KEY = "JunkrotFanettoWobblino-092235365ccdead7"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -41922,7 +41922,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotFanettoWobblino] = "JunkrotFanettoWobblino-8243f260a8b0b6e8"
-local function buildJunkrotClockoTictacco()
+function buildJunkrotClockoTictacco()
 local CACHE_KEY = "JunkrotClockoTictacco-469142cd8736345c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -42784,7 +42784,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotClockoTictacco] = "JunkrotClockoTictacco-124e3e812d14c4c3"
-local function buildJunkrotFrostboxGelatone()
+function buildJunkrotFrostboxGelatone()
 local CACHE_KEY = "JunkrotFrostboxGelatone-7d35defdb52ead64"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -43641,7 +43641,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotFrostboxGelatone] = "JunkrotFrostboxGelatone-742ce98836c68599"
-local function buildJunkrotMicrondoBippetto()
+function buildJunkrotMicrondoBippetto()
 local CACHE_KEY = "JunkrotMicrondoBippetto-7cf37a13f4df470e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -44503,7 +44503,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotMicrondoBippetto] = "JunkrotMicrondoBippetto-798f3f9c3acd3eb1"
-local function buildJunkrotMixerellaVroom()
+function buildJunkrotMixerellaVroom()
 local CACHE_KEY = "JunkrotMixerellaVroom-df1985779d00ae30"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -45367,7 +45367,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotMixerellaVroom] = "JunkrotMixerellaVroom-344b44f12cb08348"
-local function buildJunkrotMopaMopetta()
+function buildJunkrotMopaMopetta()
 local CACHE_KEY = "JunkrotMopaMopetta-0b06b440f4269154"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -46235,7 +46235,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotMopaMopetta] = "JunkrotMopaMopetta-447fd9d8fa5b6092"
-local function buildJunkrotDrilloTrapanino()
+function buildJunkrotDrilloTrapanino()
 local CACHE_KEY = "JunkrotDrilloTrapanino-93fe481d2455ad40"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -47094,7 +47094,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotDrilloTrapanino] = "JunkrotDrilloTrapanino-e89c88ad79e9c60b"
-local function buildJunkrotGrindellaScintilla()
+function buildJunkrotGrindellaScintilla()
 local CACHE_KEY = "JunkrotGrindellaScintilla-9431b2d91de68ae2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -47960,7 +47960,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotGrindellaScintilla] = "JunkrotGrindellaScintilla-34447cb98f0a6877"
-local function buildJunkrotTelefonoRingaling()
+function buildJunkrotTelefonoRingaling()
 local CACHE_KEY = "JunkrotTelefonoRingaling-396bf739c102902d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -48833,7 +48833,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotTelefonoRingaling] = "JunkrotTelefonoRingaling-c46bacb116919010"
-local function buildJunkrotTypewrittoClackini()
+function buildJunkrotTypewrittoClackini()
 local CACHE_KEY = "JunkrotTypewrittoClackini-f0ab1911c0657d6f"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -49699,7 +49699,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotTypewrittoClackini] = "JunkrotTypewrittoClackini-fe49253052fa6f56"
-local function buildJunkrotCamerinoFlashetto()
+function buildJunkrotCamerinoFlashetto()
 local CACHE_KEY = "JunkrotCamerinoFlashetto-3c1c53bd8478f0cb"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -50559,7 +50559,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotCamerinoFlashetto] = "JunkrotCamerinoFlashetto-2d8422ee9636d2d3"
-local function buildJunkrotDrippiDroppi()
+function buildJunkrotDrippiDroppi()
 local CACHE_KEY = "JunkrotDrippiDroppi-3789dbb8cac3c0d8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -51440,7 +51440,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotDrippiDroppi] = "JunkrotDrippiDroppi-b006345a7aeeab08"
-local function buildJunkrotDingDingDingDongo()
+function buildJunkrotDingDingDingDongo()
 local CACHE_KEY = "JunkrotDingDingDingDongo-a8251bd8a60666bf"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -52301,7 +52301,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotDingDingDingDongo] = "JunkrotDingDingDingDongo-1d1e1e950c96e4e4"
-local function buildJunkrotGrindoBeanbasher()
+function buildJunkrotGrindoBeanbasher()
 local CACHE_KEY = "JunkrotGrindoBeanbasher-fafba055fa5a92e9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -53163,7 +53163,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotGrindoBeanbasher] = "JunkrotGrindoBeanbasher-5a476970c2b89efc"
-local function buildJunkrotAirfryoCroccante()
+function buildJunkrotAirfryoCroccante()
 local CACHE_KEY = "JunkrotAirfryoCroccante-1e53f617a773e8d8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -54020,7 +54020,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotAirfryoCroccante] = "JunkrotAirfryoCroccante-fe378a5846949e34"
-local function buildJunkrotDishwashinoSplashetto()
+function buildJunkrotDishwashinoSplashetto()
 local CACHE_KEY = "JunkrotDishwashinoSplashetto-6d81a3f2eb3f0725"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -54888,7 +54888,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotDishwashinoSplashetto] = "JunkrotDishwashinoSplashetto-683d7dad7d3db771"
-local function buildJunkrotLawnmowoRuggito()
+function buildJunkrotLawnmowoRuggito()
 local CACHE_KEY = "JunkrotLawnmowoRuggito-bd53ae97b649bffe"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -55757,7 +55757,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotLawnmowoRuggito] = "JunkrotLawnmowoRuggito-108da303884eadb8"
-local function buildJunkrotLeafblowaWhooshini()
+function buildJunkrotLeafblowaWhooshini()
 local CACHE_KEY = "JunkrotLeafblowaWhooshini-525ccc72b44f56ed"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -56618,7 +56618,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotLeafblowaWhooshini] = "JunkrotLeafblowaWhooshini-f2ce0e8b9e3edeaa"
-local function buildJunkrotPressurwashoSprizzo()
+function buildJunkrotPressurwashoSprizzo()
 local CACHE_KEY = "JunkrotPressurwashoSprizzo-e8e723ace09042d2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -57482,7 +57482,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotPressurwashoSprizzo] = "JunkrotPressurwashoSprizzo-87ac2472b45f7495"
-local function buildJunkrotConsoloJoypaddino()
+function buildJunkrotConsoloJoypaddino()
 local CACHE_KEY = "JunkrotConsoloJoypaddino-382c3eba02dcda89"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -58349,7 +58349,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotConsoloJoypaddino] = "JunkrotConsoloJoypaddino-191abffb1bf801ba"
-local function buildJunkrotSpeakeroneBoomba()
+function buildJunkrotSpeakeroneBoomba()
 local CACHE_KEY = "JunkrotSpeakeroneBoomba-ad45ca3c3f8935cf"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -59209,7 +59209,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotSpeakeroneBoomba] = "JunkrotSpeakeroneBoomba-3bbfbd68ef1f5c85"
-local function buildJunkrotRobovaccoGirotondo()
+function buildJunkrotRobovaccoGirotondo()
 local CACHE_KEY = "JunkrotRobovaccoGirotondo-e4e7edb762fbb398"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -60069,7 +60069,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotRobovaccoGirotondo] = "JunkrotRobovaccoGirotondo-45bdee1d4d860040"
-local function buildJunkrotClankClankClankScrapur()
+function buildJunkrotClankClankClankScrapur()
 local CACHE_KEY = "JunkrotClankClankClankScrapur-0bc0bf19dfadcc09"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -60936,7 +60936,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotClankClankClankScrapur] = "JunkrotClankClankClankScrapur-a30fc840bf59b273"
-local function buildJunkrotVrrVrrPatatrim()
+function buildJunkrotVrrVrrPatatrim()
 local CACHE_KEY = "JunkrotVrrVrrPatatrim-7605c8003ddfd374"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -61805,7 +61805,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotVrrVrrPatatrim] = "JunkrotVrrVrrPatatrim-c5f05967943ccfb5"
-local function buildJunkrotChimneyziniSpannerini()
+function buildJunkrotChimneyziniSpannerini()
 local CACHE_KEY = "JunkrotChimneyziniSpannerini-fbba48036387f184"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -62678,7 +62678,7 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotChimneyziniSpannerini] = "JunkrotChimneyziniSpannerini-16b899b9c5febdc7"
-local function buildJunkrotRusteliRustela()
+function buildJunkrotRusteliRustela()
 local CACHE_KEY = "JunkrotRusteliRustela-38081ac8d0fdaf86"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -63559,15 +63559,18130 @@ end, nil, RUBBER)
 finishParts()
 end
 buildKeys[buildJunkrotRusteliRustela] = "JunkrotRusteliRustela-41867bade3ceb8a9"
-slabKeys[63847] = "115ac3a755887f11-cf7e96091024d5cc"
-slabKeys[64117] = "115ac3a755887f11-7ded6fc62f8b67a3"
-slabKeys[64149] = "115ac3a755887f11-2f5b4070ee3aa512"
-slabKeys[64229] = "115ac3a755887f11-7b25a7aa2539d602"
-slabKeys[64237] = "115ac3a755887f11-107c5c30239027da"
-slabKeys[64254] = "115ac3a755887f11-18845c9c8b69ea54"
-slabKeys[64359] = "115ac3a755887f11-363b6dc9a40b12d8"
-slabKeys[64383] = "115ac3a755887f11-f4e0427155be5973"
--- uses: HubSectionA HubSectionB HubSectionEnd YardIsland YardFence YardFenceHalf YardFooting YardGate PlotMarker PadKitchen PadGarage PadGadget BuildBay ScrapCrate RebirthPress JunkMound CapsuleScrap CapsuleSalvaged CapsuleRefurbished CapsuleFactory CapsulePrecision CapsulePrototype CapsuleSecret JunkrotCanettoRustini JunkrotSpoonzoBentolo JunkrotKettlinaDentata JunkrotTyroFlattino JunkrotBoltoloLonelo JunkrotHubcappaWobbla JunkrotRemotinoMuto JunkrotCabloTanglino JunkrotBulboFulminato JunkrotCrumboPoppalot JunkrotPannettoPatchato JunkrotBlendroCigolante JunkrotJackoloCrickato JunkrotOilcannaGluglu JunkrotMuffleroTossetto JunkrotRadioloFruscio JunkrotFanettoWobblino JunkrotClockoTictacco JunkrotFrostboxGelatone JunkrotMicrondoBippetto JunkrotMixerellaVroom JunkrotMopaMopetta JunkrotDrilloTrapanino JunkrotGrindellaScintilla JunkrotTelefonoRingaling JunkrotTypewrittoClackini JunkrotCamerinoFlashetto JunkrotDrippiDroppi JunkrotDingDingDingDongo JunkrotGrindoBeanbasher JunkrotAirfryoCroccante JunkrotDishwashinoSplashetto JunkrotLawnmowoRuggito JunkrotLeafblowaWhooshini JunkrotPressurwashoSprizzo JunkrotConsoloJoypaddino JunkrotSpeakeroneBoomba JunkrotRobovaccoGirotondo JunkrotClankClankClankScrapur JunkrotVrrVrrPatatrim JunkrotChimneyziniSpannerini JunkrotRusteliRustela
+function buildJunkrotBallerinaTincuppina()
+local CACHE_KEY = "JunkrotBallerinaTincuppina-3b116afcb5fd9ebf"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Ballerina Tincuppina: a ballerina bent from fence wire with a dented
+-- tin mug for a head and a tutu of crumpled foil, up on one toe. 3.9
+-- studs tall. Rebuilt from scrap, in our own look.
+local FACE = { { -0.26, -0.62, 3.3, 0.2 }, { 0.26, -0.62, 3.35, 0.23 } }
+local FEET = { 0.5, 0.9 }
+part("Mug", nil, { 0.85, 0.87, 0.9 }, function(mesh)
+	cylinder(mesh, 0, 0, 3.25, 0.6, 0.95, "z", 14)
+	ring(mesh, 0.72, 0, 3.25, 0.16, 0.28, 0.12, "y", 10)
+	ring(mesh, 0, 0, 3.72, 0.52, 0.64, 0.08, "z", 14)
+end, nil, 0.25)
+part("Wire", nil, DARK_STEEL, function(mesh)
+	tube(mesh, { { 0, 0, 2.8 }, { 0, 0, 1.6 } }, 0.09, 6)
+	-- Arms up in a ring over the head.
+	tube(mesh, { { 0, 0, 2.55 }, { -0.9, 0, 2.9 }, { -0.8, 0, 3.9 }, { -0.2, 0, 4.3 } }, 0.05, 6)
+	tube(mesh, { { 0, 0, 2.55 }, { 0.9, 0, 2.9 }, { 0.8, 0, 3.9 }, { 0.2, 0, 4.3 } }, 0.05, 6)
+end, true, 0.3)
+part("Tutu", nil, { 0.92, 0.93, 0.95 }, function(mesh)
+	for k = 0, 9 do
+		local angle = k * TAU / 10
+		sphere(mesh, math.cos(angle) * 0.75, math.sin(angle) * 0.75, 1.75 + (k % 2) * 0.1, 0.45, 0.45, 0.1, 4, 8)
+	end
+end, true, 0.05)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotBallerinaTincuppina] = "JunkrotBallerinaTincuppina-30f20c40dd829229"
+function buildJunkrotTrashaleroTrashala()
+local CACHE_KEY = "JunkrotTrashaleroTrashala-1cc04ad94f164449"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Trashalero Trashala: a shark riveted from tin sheet, standing on three
+-- pipe legs in sneakers cut from tyre rubber. 3.4 studs tall, 4 long.
+-- Rebuilt from scrap, in our own look.
+local FACE = { { 0.9, -0.62, 2.35, 0.2 }, { 1.45, -0.55, 2.3, 0.2 } }
+local FEET = { 1.0, 0.9 }
+local TIN_BLUE = { 0.5, 0.62, 0.72 }
+part("Body", nil, TIN_BLUE, function(mesh)
+	sphere(mesh, 0, 0, 2.1, 1.9, 0.7, 0.8, 8, 16)
+end, true, 0.3)
+part("Belly", nil, { 0.86, 0.87, 0.85 }, function(mesh)
+	sphere(mesh, 0.2, 0, 1.85, 1.5, 0.62, 0.5, 6, 14)
+end, true, 0.25)
+part("Fins", nil, TIN_BLUE, function(mesh)
+	-- Dorsal fin, tail, and one fin a side.
+	plate(mesh, { { -0.5, 2.7 }, { -0.4, 3.5 }, { 0.3, 2.75 } }, 0, 0.08, 0.01)
+	plate(mesh, { { -1.7, 2.1 }, { -2.5, 1.3 }, { -2.2, 2.1 }, { -2.5, 3.0 } }, 0, 0.08, 0.01)
+	for _, side in { -1, 1 } do
+		sphere(mesh, 0.3, side * 0.75, 1.8, 0.4, 0.3, 0.07, 4, 8)
+	end
+end, nil, 0.3)
+part("Teeth", nil, { 0.95, 0.95, 0.9 }, function(mesh)
+	for k = 0, 4 do
+		cylinder(mesh, 1.2 + k * 0.13, -0.3 + k * 0.05, 1.82, 0.06, 0.16, "z", 3)
+	end
+end, nil, 0)
+part("ThirdLeg", nil, DARK_STEEL, function(mesh)
+	cylinder(mesh, -1.0, 0, 0.75, 0.11, 1.3, "z", 8)
+end, nil, 0.4)
+part("Sneakers", nil, { 0.9, 0.2, 0.2 }, function(mesh)
+	box(mesh, -1.0, -0.16, 0, 0.42, 0.72, 0.3)
+	for _, side in { -1, 1 } do
+		box(mesh, side * 0.5, -0.16, 0.22, 0.44, 0.74, 0.1)
+	end
+end, nil, RUBBER)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotTrashaleroTrashala] = "JunkrotTrashaleroTrashala-18a099d48482ff37"
+function buildJunkrotSockettoSeiSette()
+local CACHE_KEY = "JunkrotSockettoSeiSette-979118cb888239ca"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Socketto Sei-Sette: a raccoon whose belly is an open socket set, tail
+-- striped like a cable, juggling a 6 and a 7 cut from number plates. 3.7
+-- studs tall. Our own character.
+local FACE = { { -0.28, -0.74, 2.75, 0.2 }, { 0.28, -0.74, 2.8, 0.23 } }
+local FEET = { 0.9, 0.55 }
+local FUR = { 0.5, 0.5, 0.52 }
+part("Body", nil, FUR, function(mesh)
+	sphere(mesh, 0, 0, 1.55, 0.95, 0.8, 1.0, 8, 14)
+	sphere(mesh, 0, -0.1, 2.75, 0.75, 0.68, 0.6, 8, 14)
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * 0.5, 0, 3.3, 0.22, 0.14, "y", 3)
+	end
+end, true, 0.2)
+part("Mask", nil, { 0.12, 0.12, 0.13 }, function(mesh)
+	sphere(mesh, 0, -0.62, 2.78, 0.66, 0.16, 0.24, 5, 12)
+	sphere(mesh, 0, -0.8, 2.5, 0.12, 0.1, 0.1, 4, 8)
+end, true, 0)
+part("SocketTray", nil, { 0.82, 0.14, 0.12 }, function(mesh)
+	box(mesh, 0, -0.78, 1.05, 1.2, 0.12, 1.0)
+end, nil, 0.03)
+part("Sockets", nil, BARE_METAL, function(mesh)
+	for row = 0, 1 do
+		for column = -2, 2 do
+			cylinder(mesh, column * 0.22, -0.88, 1.3 + row * 0.45, 0.07 + (column + 2) * 0.012, 0.12, "y", 8)
+		end
+	end
+end, nil, 0.03)
+part("Tail", nil, FUR, function(mesh)
+	tube(mesh, { { 0, 0.7, 1.0 }, { 0.3, 1.4, 1.2 }, { 0.2, 1.7, 2.0 } }, 0.24, 8)
+end, true, 0.2)
+part("TailRings", nil, { 0.12, 0.12, 0.13 }, function(mesh)
+	sphere(mesh, 0.25, 1.2, 1.12, 0.27, 0.12, 0.27, 4, 8)
+	sphere(mesh, 0.26, 1.62, 1.75, 0.27, 0.27, 0.12, 4, 8)
+end, true, 0)
+part("Numbers", nil, { 0.98, 0.86, 0.2 }, function(mesh)
+	-- A 6 over the left paw: a loop with a tail. A 7 over the right.
+	ring(mesh, -1.3, -0.3, 3.5, 0.14, 0.26, 0.1, "y", 10)
+	tube(mesh, { { -1.5, -0.3, 3.6 }, { -1.45, -0.3, 4.0 }, { -1.15, -0.3, 4.15 } }, 0.06, 5)
+	strut(mesh, 1.05, -0.3, 4.3, 1.6, -0.3, 4.3, 0.12)
+	strut(mesh, 1.55, -0.3, 4.28, 1.2, -0.3, 3.5, 0.12)
+end, nil, 0.05)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotSockettoSeiSette] = "JunkrotSockettoSeiSette-676d9911a0746861"
+function buildJunkrotChefbotPrecisio()
+local CACHE_KEY = "JunkrotChefbotPrecisio-5b6ed9b75ea1bc7a"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Chefbot Precisio: an all-in-one kitchen robot, brushed steel jug locked
+-- into a white base with a touchscreen and one dial ringed in light. 3.8
+-- studs tall.
+local FACE = { { -0.36, -0.86, 2.6, 0.23 }, { 0.36, -0.86, 2.65, 0.26 } }
+local FEET = { 1.0, 0.5 }
+part("Base", nil, { 0.95, 0.96, 0.97 }, function(mesh)
+	box(mesh, 0, 0, 0.6, 2.2, 1.9, 1.2)
+end, nil, 0)
+part("Jug", nil, BARE_METAL, function(mesh)
+	cylinder(mesh, 0, 0.1, 2.5, 0.85, 1.5, "z", 18)
+	ring(mesh, 0, 0.1, 3.2, 0.8, 0.9, 0.08, "z", 18)
+	box(mesh, 1.0, 0.1, 2.2, 0.3, 0.3, 0.9)
+end, nil, 0.03)
+part("Lid", nil, { 0.14, 0.14, 0.16 }, function(mesh)
+	cylinder(mesh, 0, 0.1, 3.35, 0.78, 0.18, "z", 18)
+	cylinder(mesh, 0, 0.1, 3.5, 0.3, 0.2, "z", 12)
+end, nil, 0)
+part("Screen", nil, { 0.3, 0.75, 1.0 }, function(mesh)
+	box(mesh, -0.35, -0.96, 0.9, 1.0, 0.03, 0.6)
+end, nil, 0, nil, 1.0)
+part("DialGlow", nil, { 0.4, 1.0, 0.6 }, function(mesh)
+	ring(mesh, 0.65, -0.97, 1.2, 0.2, 0.27, 0.04, "y", 14)
+end, nil, 0, nil, 1.2)
+part("Dial", nil, BARE_METAL, function(mesh)
+	cylinder(mesh, 0.65, -0.99, 1.2, 0.2, 0.1, "y", 14)
+end, nil, 0.03)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotChefbotPrecisio] = "JunkrotChefbotPrecisio-655242385b26b2f8"
+function buildJunkrotSousvideSilvano()
+local CACHE_KEY = "JunkrotSousvideSilvano-d52c23b8818f0f76"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Sousvide Silvano: a sous-vide wand, a slim steel column with a black
+-- head, a temperature readout and its clamp out to one side like an arm.
+-- 4 studs tall.
+local FACE = { { -0.2, -0.52, 2.5, 0.2 }, { 0.2, -0.52, 2.55, 0.22 } }
+local FEET = { 0.5, 0.5 }
+part("Column", nil, BARE_METAL, function(mesh)
+	cylinder(mesh, 0, 0, 1.7, 0.45, 2.3, "z", 16)
+	for k = 0, 3 do
+		ring(mesh, 0, 0, 0.8 + k * 0.14, 0.44, 0.47, 0.05, "z", 16)
+	end
+end, nil, 0.03)
+part("Head", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	cylinder(mesh, 0, 0, 3.4, 0.55, 1.1, "z", 16)
+	sphere(mesh, 0, 0, 3.95, 0.55, 0.55, 0.2, 5, 16)
+end, true, 0)
+part("Readout", nil, { 1.0, 0.45, 0.2 }, function(mesh)
+	box(mesh, 0, -0.54, 3.3, 0.6, 0.03, 0.34)
+end, nil, 0, nil, 1.2)
+part("Clamp", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	box(mesh, 0.75, 0, 2.2, 0.7, 0.4, 0.3)
+	box(mesh, 1.05, 0, 1.5, 0.14, 0.4, 0.8)
+	cylinder(mesh, 0.8, 0, 1.6, 0.1, 0.5, "x", 8)
+end, nil, 0)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotSousvideSilvano] = "JunkrotSousvideSilvano-1305b15b458cf825"
+function buildJunkrotKnifeblockSlicetta()
+local CACHE_KEY = "JunkrotKnifeblockSlicetta-2d569929c63141ef"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Knifeblock Slicetta: a walnut knife block raked back at an angle, five
+-- steel-capped handles sticking out of its top like a quiff. 3.5 studs
+-- tall.
+local FACE = { { -0.35, -0.75, 1.9, 0.24 }, { 0.35, -0.75, 1.95, 0.27 } }
+local FEET = { 0.9, 0.5 }
+part("Block", nil, { 0.36, 0.22, 0.13 }, function(mesh)
+	for k = 0, 5 do
+		box(mesh, 0, -0.15 + k * 0.08, 0.6 + k * 0.38, 1.6, 1.2, 0.4)
+	end
+end, nil, 0.03)
+part("Handles", nil, { 0.1, 0.1, 0.11 }, function(mesh)
+	for k = -2, 2 do
+		strut(mesh, k * 0.3, 0.35, 2.85, k * 0.3, 0.6 + math.abs(k) * 0.05, 3.7 - math.abs(k) * 0.15, 0.2)
+	end
+end, nil, 0)
+part("Caps", nil, BARE_METAL, function(mesh)
+	for k = -2, 2 do
+		sphere(mesh, k * 0.3, 0.62 + math.abs(k) * 0.05, 3.76 - math.abs(k) * 0.15, 0.13, 0.13, 0.1, 4, 8)
+	end
+	box(mesh, 0, -0.78, 1.2, 0.5, 0.03, 0.2)
+end, nil, 0.03)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotKnifeblockSlicetta] = "JunkrotKnifeblockSlicetta-b0fc15670bb0eca0"
+function buildJunkrotTorquoWrenchelli()
+local CACHE_KEY = "JunkrotTorquoWrenchelli-2a139aa26b4149e9"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Torquo Wrenchelli: a chrome torque wrench standing on its handle, the
+-- ratchet head up top and a dial gauge on its chest. 4.2 studs tall.
+local FACE = { { -0.2, -0.3, 3.5, 0.2 }, { 0.2, -0.3, 3.55, 0.22 } }
+local FEET = { 0.5, 0.5 }
+part("Shaft", nil, BARE_METAL, function(mesh)
+	cylinder(mesh, 0, 0, 2.1, 0.16, 2.2, "z", 12)
+	sphere(mesh, 0, 0, 3.6, 0.55, 0.28, 0.5, 6, 14)
+	cylinder(mesh, 0, -0.34, 3.6, 0.2, 0.3, "y", 6)
+end, true, 0.03)
+part("Grip", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	cylinder(mesh, 0, 0, 1.05, 0.26, 1.1, "z", 12)
+	for k = 0, 4 do
+		ring(mesh, 0, 0, 0.65 + k * 0.2, 0.26, 0.3, 0.06, "z", 12)
+	end
+end, nil, RUBBER)
+part("Gauge", nil, { 0.96, 0.96, 0.94 }, function(mesh)
+	cylinder(mesh, 0, -0.26, 2.4, 0.42, 0.14, "y", 16)
+end, nil, 0)
+part("Needle", nil, { 0.95, 0.15, 0.12 }, function(mesh)
+	strut(mesh, 0, -0.35, 2.4, 0.22, -0.35, 2.65, 0.04)
+	ring(mesh, 0, -0.3, 2.4, 0.42, 0.48, 0.16, "y", 16)
+end, nil, 0)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotTorquoWrenchelli] = "JunkrotTorquoWrenchelli-3ac268b5345ff0f9"
+function buildJunkrotLaserlevelLineo()
+local CACHE_KEY = "JunkrotLaserlevelLineo-26d45c280857d079"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Laserlevel Lineo: a laser level on a little tripod, yellow and black,
+-- two bubble vials on top and a red beam shining out of one end. 3.4
+-- studs tall, 4.4 long with the beam.
+local FACE = { { -0.4, -0.52, 2.3, 0.22 }, { 0.2, -0.52, 2.35, 0.24 } }
+local FEET = { 0.9, 0.3 }
+part("Body", nil, { 1.0, 0.82, 0.1 }, function(mesh)
+	box(mesh, 0, 0, 1.9, 2.2, 0.9, 0.9)
+end, nil, 0.03)
+part("Ends", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	for _, x in { -1.2, 1.2 } do
+		box(mesh, x, 0, 1.85, 0.3, 1.0, 1.0)
+	end
+end, nil, RUBBER)
+part("Vials", nil, { 0.6, 1.0, 0.4 }, function(mesh)
+	cylinder(mesh, -0.4, 0, 2.85, 0.12, 0.6, "x", 10)
+	cylinder(mesh, 0.5, 0, 2.95, 0.12, 0.3, "z", 10)
+end, nil, 0, nil, 0.8)
+part("Beam", nil, { 1.0, 0.15, 0.1 }, function(mesh)
+	cylinder(mesh, 2.3, 0, 2.35, 0.04, 1.9, "x", 6)
+	sphere(mesh, 1.36, 0, 2.35, 0.1, 0.1, 0.1, 4, 8)
+end, nil, 0, nil, 2.0)
+part("Tripod", nil, BARE_METAL, function(mesh)
+	cylinder(mesh, 0, 0, 1.6, 0.14, 0.6, "z", 8)
+	for k = 0, 2 do
+		local angle = k * TAU / 3 + 0.5
+		strut(mesh, 0, 0, 1.4, math.cos(angle) * 0.9, math.sin(angle) * 0.9, 0.35, 0.07)
+	end
+end, nil, 0.03)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotLaserlevelLineo] = "JunkrotLaserlevelLineo-72fe0c3e9bfc4ac2"
+function buildJunkrotWeldettaSparkalot()
+local CACHE_KEY = "JunkrotWeldettaSparkalot-460c0b4990f4a729"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Weldetta Sparkalot: an inverter welder, a blue box with dials and
+-- cooling slots, wearing its welding mask pushed up, torch in hand and a
+-- blue-white arc at the tip. 3.6 studs tall.
+local FACE = { { -0.4, -0.82, 2.2, 0.24 }, { 0.4, -0.82, 2.25, 0.27 } }
+local FEET = { 1.0, 0.5 }
+part("Case", nil, { 0.12, 0.3, 0.62 }, function(mesh)
+	box(mesh, 0, 0, 0.6, 2.0, 1.6, 2.2)
+end, nil, 0.03)
+part("Slots", nil, { 0.08, 0.08, 0.1 }, function(mesh)
+	for k = 0, 4 do
+		box(mesh, 0, -0.81, 0.8 + k * 0.16, 1.4, 0.03, 0.08)
+	end
+end, nil, 0)
+part("Dials", nil, BARE_METAL, function(mesh)
+	for _, x in { -0.6, 0.6 } do
+		cylinder(mesh, x, -0.84, 1.75, 0.16, 0.1, "y", 12)
+	end
+end, nil, 0.03)
+part("Mask", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	sphere(mesh, 0, -0.2, 3.1, 0.85, 0.7, 0.5, 6, 14)
+	box(mesh, 0, -0.85, 2.95, 0.9, 0.06, 0.3)
+end, true, 0)
+part("Torch", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	tube(mesh, { { 1.0, 0, 1.2 }, { 1.6, -0.3, 1.5 }, { 1.7, -0.6, 2.3 } }, 0.07, 6)
+	cylinder(mesh, 1.72, -0.66, 2.55, 0.1, 0.5, "z", 8)
+end, true, RUBBER)
+part("Arc", nil, { 0.7, 0.9, 1.0 }, function(mesh)
+	sphere(mesh, 1.72, -0.66, 2.95, 0.16, 0.16, 0.16, 4, 8)
+	for k = 0, 4 do
+		local angle = k * TAU / 5
+		strut(mesh, 1.72, -0.66, 2.95, 1.72 + math.cos(angle) * 0.4, -0.66 + math.sin(angle) * 0.2, 3.05 + math.sin(angle * 2) * 0.3, 0.03)
+	end
+end, nil, 0, nil, 2.2)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotWeldettaSparkalot] = "JunkrotWeldettaSparkalot-c11aed715eb587cc"
+function buildJunkrotDronettoBuzzatti()
+local CACHE_KEY = "JunkrotDronettoBuzzatti-44f89926539385da"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Dronetto Buzzatti: a quadcopter standing on its skids, matte grey with
+-- four rotors up on arms, a camera ball under its chin and nav lights.
+-- 3 studs tall, 3.6 across.
+local FACE = { { -0.3, -0.62, 1.85, 0.22 }, { 0.3, -0.62, 1.9, 0.24 } }
+local FEET = { 0.8, 0.6 }
+part("Body", nil, { 0.42, 0.44, 0.48 }, function(mesh)
+	sphere(mesh, 0, 0, 1.7, 0.85, 0.7, 0.5, 8, 14)
+	for _, x in { -1, 1 } do
+		for _, y in { -1, 1 } do
+			strut(mesh, x * 0.5, y * 0.4, 1.8, x * 1.5, y * 1.2, 2.2, 0.14)
+			cylinder(mesh, x * 1.5, y * 1.2, 2.35, 0.14, 0.3, "z", 8)
+		end
+	end
+end, true, 0.03)
+part("Rotors", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	for _, x in { -1, 1 } do
+		for _, y in { -1, 1 } do
+			sphere(mesh, x * 1.5, y * 1.2, 2.55, 0.6, 0.09, 0.02, 4, 10)
+			sphere(mesh, x * 1.5, y * 1.2, 2.56, 0.09, 0.6, 0.02, 4, 10)
+		end
+	end
+end, true, 0)
+part("Camera", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	sphere(mesh, 0, -0.45, 1.2, 0.26, 0.26, 0.26, 6, 10)
+end, true, 0)
+part("NavRed", nil, { 1.0, 0.15, 0.1 }, function(mesh)
+	sphere(mesh, -0.8, -0.3, 1.75, 0.08, 0.08, 0.08, 4, 8)
+end, nil, 0, nil, 2.0)
+part("NavGreen", nil, { 0.2, 1.0, 0.4 }, function(mesh)
+	sphere(mesh, 0.8, -0.3, 1.75, 0.08, 0.08, 0.08, 4, 8)
+end, nil, 0, nil, 2.0)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotDronettoBuzzatti] = "JunkrotDronettoBuzzatti-7acc8fb57bb9953e"
+function buildJunkrotTickworthPocketti()
+local CACHE_KEY = "JunkrotTickworthPocketti-4b3c1dccf55cc4fa"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Tickworth Pocketti: a gold pocket watch standing on edge, its crown and
+-- bow on top, lid swung open to one side and a chain looping off behind.
+-- 3.5 studs tall.
+local FACE = { { -0.35, -0.3, 2.3, 0.2 }, { 0.35, -0.3, 2.35, 0.22 } }
+local FEET = { 0.9, 0.55 }
+local GOLD = { 0.92, 0.72, 0.25 }
+part("Case", nil, GOLD, function(mesh)
+	cylinder(mesh, 0, 0, 1.9, 1.2, 0.36, "y", 24)
+	cylinder(mesh, 0, 0, 3.2, 0.14, 0.3, "z", 8)
+	ring(mesh, 0, 0, 3.55, 0.16, 0.28, 0.08, "y", 12)
+end, nil, 0.03)
+part("Lid", nil, GOLD, function(mesh)
+	cylinder(mesh, 1.55, 0.5, 1.9, 1.15, 0.08, "x", 24)
+end, nil, 0.03)
+part("Dial", nil, { 0.97, 0.96, 0.92 }, function(mesh)
+	cylinder(mesh, 0, -0.2, 1.9, 1.05, 0.04, "y", 24)
+end, nil, 0)
+part("Hands", nil, { 0.08, 0.08, 0.1 }, function(mesh)
+	strut(mesh, 0, -0.24, 1.9, 0.3, -0.24, 1.3, 0.06)
+	strut(mesh, 0, -0.24, 1.9, -0.7, -0.24, 1.6, 0.04)
+	for k = 0, 11 do
+		local angle = k * TAU / 12
+		cylinder(mesh, math.cos(angle) * 0.92, -0.23, 1.9 + math.sin(angle) * 0.92, 0.04, 0.03, "y", 6)
+	end
+end, nil, 0)
+part("Chain", nil, GOLD, function(mesh)
+	for k = 0, 6 do
+		ring(mesh, -0.3 - k * 0.2, 0.3 + k * 0.12, 3.5 - k * 0.42, 0.06, 0.12, 0.05, if k % 2 == 0 then "y" else "x", 8)
+	end
+end, nil, 0.03)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotTickworthPocketti] = "JunkrotTickworthPocketti-22a6c4d039ad0ff0"
+function buildJunkrotHeadphonoBassimo()
+local CACHE_KEY = "JunkrotHeadphonoBassimo-281a5d6d93216616"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Headphono Bassimo: a pair of studio headphones standing on their ear
+-- cups, brushed band arched overhead, a ring of light round each cup.
+-- 3.6 studs tall.
+local FACE = { { -0.86, -0.42, 1.55, 0.2 }, { 0.86, -0.42, 1.6, 0.22 } }
+local FEET = { 1.7, 0.5 }
+part("Cups", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	for _, x in { -0.9, 0.9 } do
+		cylinder(mesh, x, 0, 1.5, 0.8, 0.7, "x", 18)
+	end
+end, nil, 0)
+part("Pads", nil, { 0.22, 0.2, 0.2 }, function(mesh)
+	for _, x in { -0.5, 0.5 } do
+		ring(mesh, x, 0, 1.5, 0.4, 0.78, 0.2, "x", 18)
+	end
+end, nil, RUBBER)
+part("Band", nil, BARE_METAL, function(mesh)
+	local points = {}
+	for step = 0, 10 do
+		local angle = math.rad(step * 18)
+		table.insert(points, { math.cos(angle) * 1.2, 0, 2.0 + math.sin(angle) * 1.6 })
+	end
+	tube(mesh, points, 0.1, 8)
+end, true, 0.03)
+part("BandPad", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	sphere(mesh, 0, 0, 3.6, 0.7, 0.24, 0.14, 5, 10)
+end, true, RUBBER)
+part("Glow", nil, { 0.5, 0.4, 1.0 }, function(mesh)
+	for _, x in { -1.27, 1.27 } do
+		ring(mesh, x, 0, 1.5, 0.5, 0.62, 0.04, "x", 18)
+	end
+end, nil, 0, nil, 1.5)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotHeadphonoBassimo] = "JunkrotHeadphonoBassimo-d47c976aa6738c6d"
+function buildJunkrotGascaniniHonkini()
+local CACHE_KEY = "JunkrotGascaniniHonkini-4b0654c6d2274299"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Gascanini Honkini: a goose beaten out of chrome tin, a jerry-can jet
+-- engine slung under each wing and its beak wide open mid-honk. 3.7
+-- studs tall. Rebuilt from scrap, in our own look.
+local FACE = { { -0.22, -1.0, 3.2, 0.18 }, { 0.22, -1.0, 3.25, 0.2 } }
+local FEET = { 0.7, 0.7 }
+part("Body", nil, BARE_METAL, function(mesh)
+	sphere(mesh, 0, 0.2, 1.6, 0.8, 1.3, 0.75, 8, 16)
+	tube(mesh, { { 0, -0.6, 1.9 }, { 0, -0.9, 2.6 }, { 0, -0.75, 3.1 } }, 0.24, 10)
+	sphere(mesh, 0, -0.8, 3.2, 0.34, 0.4, 0.32, 6, 12)
+end, true, 0.05)
+part("Wings", nil, BARE_METAL, function(mesh)
+	for _, side in { -1, 1 } do
+		sphere(mesh, side * 1.5, 0.2, 1.9, 0.9, 0.55, 0.07, 5, 12)
+	end
+end, true, 0.05)
+part("Beak", nil, { 1.0, 0.6, 0.1 }, function(mesh)
+	strut(mesh, 0, -1.1, 3.25, 0, -1.6, 3.4, 0.16)
+	strut(mesh, 0, -1.1, 3.1, 0, -1.55, 2.95, 0.14)
+end, nil, 0.03)
+part("JerryCans", nil, { 0.8, 0.14, 0.12 }, function(mesh)
+	for _, side in { -1, 1 } do
+		box(mesh, side * 1.5, 0.2, 1.2, 0.5, 1.1, 0.6)
+		cylinder(mesh, side * 1.5, -0.45, 1.5, 0.22, 0.3, "y", 10)
+	end
+end, nil, 0.05)
+part("Jets", nil, { 0.5, 0.8, 1.0 }, function(mesh)
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * 1.5, 1.0, 1.5, 0.2, 0.5, "y", 10)
+	end
+end, nil, 0, nil, 1.8)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotGascaniniHonkini] = "JunkrotGascaniniHonkini-f8b07ed06063b0f4"
+function buildJunkrotPercolattoNinjatto()
+local CACHE_KEY = "JunkrotPercolattoNinjatto-55ac45f4476e0eae"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Percolatto Ninjatto: a brushed-steel coffee cup with a ninja's body, a
+-- tea-towel mask tied round its rim and a spanner blade in each hand. 3.8
+-- studs tall. Rebuilt from scrap, in our own look.
+local FACE = { { -0.26, -0.7, 3.0, 0.2 }, { 0.26, -0.7, 3.05, 0.22 } }
+local FEET = { 0.7, 0.7 }
+part("Cup", nil, BARE_METAL, function(mesh)
+	cylinder(mesh, 0, 0, 3.0, 0.72, 1.1, "z", 16)
+	ring(mesh, 0, 0, 3.55, 0.64, 0.76, 0.08, "z", 16)
+	ring(mesh, 0.86, 0, 3.0, 0.16, 0.3, 0.12, "y", 10)
+end, nil, 0.03)
+part("Coffee", nil, { 0.25, 0.14, 0.07 }, function(mesh)
+	cylinder(mesh, 0, 0, 3.5, 0.64, 0.06, "z", 16)
+end, nil, 0)
+part("Mask", nil, { 0.12, 0.12, 0.2 }, function(mesh)
+	ring(mesh, 0, 0, 3.02, 0.72, 0.78, 0.5, "z", 16)
+	-- The knot's tails.
+	strut(mesh, 0.2, 0.75, 3.0, 0.6, 1.3, 2.7, 0.1)
+	strut(mesh, -0.1, 0.75, 3.0, 0.1, 1.4, 3.1, 0.1)
+end, nil, RUBBER)
+part("Suit", nil, { 0.1, 0.1, 0.13 }, function(mesh)
+	sphere(mesh, 0, 0, 1.75, 0.55, 0.45, 0.8, 6, 12)
+	tube(mesh, { { -0.45, 0, 2.2 }, { -1.0, -0.3, 2.0 }, { -1.25, -0.6, 2.4 } }, 0.12, 6)
+	tube(mesh, { { 0.45, 0, 2.2 }, { 1.0, -0.3, 2.0 }, { 1.25, -0.6, 2.4 } }, 0.12, 6)
+end, true, RUBBER)
+part("Blades", nil, BARE_METAL, function(mesh)
+	for _, side in { -1, 1 } do
+		strut(mesh, side * 1.25, -0.6, 2.3, side * 1.6, -0.9, 4.0, 0.12)
+		ring(mesh, side * 1.63, -0.93, 4.15, 0.1, 0.24, 0.1, "y", 8)
+	end
+end, nil, 0.03)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotPercolattoNinjatto] = "JunkrotPercolattoNinjatto-3392c5d7d380fb69"
+function buildJunkrotBoilerdiroCrockpotilo()
+local CACHE_KEY = "JunkrotBoilerdiroCrockpotilo-830e6233098a7a6b"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Boilerdiro Crockpotilo: a crocodile of riveted plate with a boiler tank
+-- for a belly, stub wings with a propeller on each and a row of teeth cut
+-- from a saw blade. 3.2 studs tall, 5 long. Rebuilt from scrap, in our
+-- own look.
+local FACE = { { 0.9, -0.5, 2.5, 0.2 }, { 1.4, -0.5, 2.45, 0.2 } }
+local FEET = { 1.0, 0.55 }
+local PLATE_GREEN = { 0.3, 0.44, 0.3 }
+part("Boiler", nil, { 0.5, 0.42, 0.3 }, function(mesh)
+	cylinder(mesh, -0.2, 0, 1.6, 0.9, 2.4, "x", 16)
+	for _, x in { -1.1, -0.2, 0.7 } do
+		ring(mesh, x, 0, 1.6, 0.9, 0.97, 0.1, "x", 16)
+	end
+end, nil, 0.1)
+part("Croc", nil, PLATE_GREEN, function(mesh)
+	-- Head and snout forward (+x), tail back.
+	box(mesh, 1.2, 0, 1.9, 1.0, 1.0, 0.7)
+	box(mesh, 2.2, 0, 2.0, 1.2, 0.8, 0.35)
+	box(mesh, 2.1, 0, 1.7, 1.1, 0.7, 0.2)
+	tube(mesh, { { -1.4, 0, 1.6 }, { -2.2, 0, 1.5 }, { -2.9, 0, 1.9 } }, 0.3, 8)
+end, nil, 0.1)
+part("Teeth", nil, BARE_METAL, function(mesh)
+	for k = 0, 5 do
+		for _, y in { -0.33, 0.33 } do
+			cylinder(mesh, 1.75 + k * 0.17, y, 1.92, 0.05, 0.14, "z", 3)
+		end
+	end
+end, nil, 0.03)
+part("Wings", nil, PLATE_GREEN, function(mesh)
+	for _, side in { -1, 1 } do
+		box(mesh, -0.2, side * 1.5, 2.0, 1.1, 1.4, 0.12)
+		cylinder(mesh, 0.5, side * 1.6, 2.0, 0.2, 0.5, "x", 10)
+	end
+end, nil, 0.1)
+part("Props", nil, DARK_STEEL, function(mesh)
+	for _, side in { -1, 1 } do
+		sphere(mesh, 0.8, side * 1.6, 2.0, 0.03, 0.08, 0.6, 4, 8)
+		sphere(mesh, 0.8, side * 1.6, 2.0, 0.03, 0.6, 0.08, 4, 8)
+	end
+end, true, 0.05)
+part("Rivets", nil, BARE_METAL, function(mesh)
+	for k = 0, 5 do
+		bolt(mesh, -1.0 + k * 0.36, 0, 2.52, "z", 0.07)
+	end
+end, nil, 0.03)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotBoilerdiroCrockpotilo] = "JunkrotBoilerdiroCrockpotilo-748a5e56f0959c15"
+function buildJunkrotSnackomaticPrototipo()
+local CACHE_KEY = "JunkrotSnackomaticPrototipo-259ad0a17d9bcb0f"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Snackomatic Prototipo: a food replicator, a seamless white cabinet with
+-- a glowing chamber in its chest, one perfect doughnut floating inside
+-- and a test-unit tag. 4 studs tall.
+local FACE = { { -0.4, -0.82, 3.2, 0.24 }, { 0.4, -0.82, 3.25, 0.26 } }
+local FEET = { 1.0, 0.5 }
+part("Cabinet", nil, { 0.96, 0.97, 0.98 }, function(mesh)
+	box(mesh, 0, 0, 0.6, 2.2, 1.6, 2.6)
+	sphere(mesh, 0, 0, 3.2, 1.1, 0.8, 0.5, 6, 16)
+end, true, 0)
+part("Chamber", nil, { 0.45, 0.95, 1.0 }, function(mesh)
+	box(mesh, 0, -0.78, 1.2, 1.5, 0.08, 1.5)
+end, nil, 0, nil, 1.6)
+part("Doughnut", nil, { 1.0, 0.55, 0.75 }, function(mesh)
+	ring(mesh, 0, -0.9, 1.95, 0.18, 0.46, 0.2, "y", 14)
+end, nil, 0, nil, 0.6)
+part("Trim", nil, { 0.3, 0.32, 0.36 }, function(mesh)
+	box(mesh, 0, 0, 0.55, 2.26, 1.66, 0.12)
+end, nil, 0)
+part("Tag", nil, { 0.98, 0.55, 0.12 }, function(mesh)
+	box(mesh, 0.75, -0.82, 2.85, 0.5, 0.03, 0.22)
+end, nil, 0)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotSnackomaticPrototipo] = "JunkrotSnackomaticPrototipo-580bc970b9d2684c"
+function buildJunkrotHoverbikkoZoomzoom()
+local CACHE_KEY = "JunkrotHoverbikkoZoomzoom-d7e06a7fe383ff67"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Hoverbikko Zoomzoom: a hoverbike with no wheels, a sleek white body
+-- over two glowing lift pads, a low screen and a seat with one stripe.
+-- 3 studs tall, 4.6 long.
+local FACE = { { 0.9, -0.52, 2.0, 0.22 }, { 1.5, -0.5, 1.95, 0.22 } }
+local FEET = { 1.2, 0.5 }
+part("Body", nil, { 0.95, 0.96, 0.98 }, function(mesh)
+	sphere(mesh, 0.2, 0, 1.7, 2.1, 0.55, 0.5, 8, 18)
+	sphere(mesh, -1.4, 0, 1.9, 0.9, 0.42, 0.34, 6, 12)
+end, true, 0)
+part("Pads", nil, { 0.4, 0.9, 1.0 }, function(mesh)
+	for _, x in { -1.1, 1.3 } do
+		cylinder(mesh, x, 0, 1.12, 0.6, 0.14, "z", 18)
+	end
+end, nil, 0, nil, 2.0)
+part("PadRims", nil, { 0.25, 0.27, 0.3 }, function(mesh)
+	for _, x in { -1.1, 1.3 } do
+		ring(mesh, x, 0, 1.22, 0.6, 0.72, 0.2, "z", 18)
+	end
+end, nil, 0)
+part("Seat", nil, { 0.12, 0.12, 0.14 }, function(mesh)
+	sphere(mesh, -0.6, 0, 2.15, 0.8, 0.4, 0.16, 5, 12)
+end, true, RUBBER)
+part("Stripe", nil, { 1.0, 0.45, 0.1 }, function(mesh)
+	box(mesh, 0.2, -0.56, 1.66, 2.6, 0.03, 0.12)
+end, nil, 0)
+part("Screen", nil, { 0.5, 0.85, 1.0 }, function(mesh)
+	strut(mesh, 1.3, 0, 2.05, 1.0, 0, 2.6, 0.5)
+end, nil, 0, nil, 0.8)
+part("Bars", nil, BARE_METAL, function(mesh)
+	cylinder(mesh, 0.9, 0, 2.5, 0.05, 1.3, "y", 8)
+end, nil, 0.03)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotHoverbikkoZoomzoom] = "JunkrotHoverbikkoZoomzoom-1b5900b42f82f562"
+function buildJunkrotHolofonoShimmerra()
+local CACHE_KEY = "JunkrotHolofonoShimmerra-450a50b88c2b5187"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Holofono Shimmerra: a hologram phone, a glass-black slab standing on
+-- end with a cone of light fanning up out of its top and a little glowing
+-- figure turning in it. 4.2 studs tall.
+local FACE = { { -0.26, -0.16, 2.2, 0.2 }, { 0.26, -0.16, 2.25, 0.22 } }
+local FEET = { 0.6, 0.5 }
+part("Slab", nil, { 0.05, 0.05, 0.07 }, function(mesh)
+	box(mesh, 0, 0, 0.6, 1.3, 0.22, 2.3)
+end, nil, 0, nil, nil, true)
+part("Edge", nil, BARE_METAL, function(mesh)
+	box(mesh, 0, 0, 0.56, 1.36, 0.28, 0.06)
+	box(mesh, 0, 0, 2.88, 1.36, 0.28, 0.06)
+	for _, x in { -0.67, 0.67 } do
+		box(mesh, x, 0, 0.6, 0.05, 0.28, 2.3)
+	end
+end, nil, 0.03)
+part("Cone", nil, { 0.5, 0.8, 1.0 }, function(mesh)
+	for k = 0, 7 do
+		local angle = k * TAU / 8
+		strut(mesh, 0, 0, 2.95, math.cos(angle) * 0.9, math.sin(angle) * 0.9, 4.1, 0.03)
+	end
+	ring(mesh, 0, 0, 4.1, 0.86, 0.92, 0.03, "z", 16)
+end, nil, 0, nil, 1.4)
+part("Figure", nil, { 0.9, 0.6, 1.0 }, function(mesh)
+	sphere(mesh, 0, 0, 3.9, 0.16, 0.16, 0.16, 5, 8)
+	sphere(mesh, 0, 0, 3.5, 0.2, 0.14, 0.3, 5, 8)
+end, true, 0, nil, 2.0)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotHolofonoShimmerra] = "JunkrotHolofonoShimmerra-9a65f88f2484fd69"
+function buildJunkrotLaVacuumaSaturnita()
+local CACHE_KEY = "JunkrotLaVacuumaSaturnita-18eac99f2eb1a098"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- La Vacuuma Saturnita: a round vacuum canister for a planet, its hose
+-- looped right round it as the ring, a tin cow's head on top with stub
+-- horns, on two legs. 4 studs tall. Rebuilt from scrap, in our own look.
+local FACE = { { -0.26, -0.78, 3.3, 0.2 }, { 0.26, -0.78, 3.35, 0.22 } }
+local FEET = { 0.9, 0.6 }
+part("Planet", nil, { 0.9, 0.62, 0.3 }, function(mesh)
+	sphere(mesh, 0, 0, 1.75, 1.15, 1.15, 1.1, 10, 18)
+end, true, 0)
+part("Bands", nil, { 0.98, 0.9, 0.7 }, function(mesh)
+	ring(mesh, 0, 0, 2.1, 1.02, 1.1, 0.16, "z", 18)
+	ring(mesh, 0, 0, 1.3, 1.05, 1.13, 0.2, "z", 18)
+end, nil, 0)
+part("HoseRing", nil, { 0.14, 0.14, 0.16 }, function(mesh)
+	local points = {}
+	for step = 0, 20 do
+		local angle = step / 20 * TAU
+		table.insert(points, { math.cos(angle) * 1.75, math.sin(angle) * 1.75, 1.75 + math.cos(angle) * 0.4 })
+	end
+	tube(mesh, points, 0.13, 6)
+end, true, RUBBER)
+part("CowHead", nil, { 0.9, 0.9, 0.88 }, function(mesh)
+	sphere(mesh, 0, -0.2, 3.2, 0.6, 0.62, 0.5, 8, 14)
+	sphere(mesh, 0, -0.75, 3.0, 0.36, 0.24, 0.26, 5, 12)
+	for _, side in { -1, 1 } do
+		sphere(mesh, side * 0.7, -0.1, 3.3, 0.24, 0.05, 0.14, 4, 8)
+	end
+end, true, 0.05)
+part("Spots", nil, { 0.1, 0.1, 0.11 }, function(mesh)
+	sphere(mesh, 0.34, -0.36, 3.5, 0.2, 0.2, 0.14, 4, 8)
+	sphere(mesh, -0.4, 0.1, 3.5, 0.22, 0.22, 0.14, 4, 8)
+end, true, 0)
+part("Horns", nil, BARE_METAL, function(mesh)
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * 0.4, -0.1, 3.72, 0.1, 0.3, "z", 3)
+	end
+	sphere(mesh, 0, -0.95, 2.98, 0.05, 0.04, 0.05, 4, 6)
+end, nil, 0.03)
+part("Glow", nil, { 0.5, 0.9, 1.0 }, function(mesh)
+	cylinder(mesh, 0, -1.12, 1.75, 0.2, 0.06, "y", 12)
+end, nil, 0, nil, 1.8)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Eyes are googly: a white ball with a black pupil looking a little off to
+-- one side, so no two junkrots stare the same way.
+part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
+	for _, eye in FACE do
+		sphere(mesh, eye[1], eye[2], eye[3], eye[4], eye[4] * 0.6, eye[4], 6, 12)
+	end
+end, true, 0)
+part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	for index, eye in FACE do
+		local size = eye[4]
+		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
+		sphere(mesh, eye[1] + drift, eye[2] - size * 0.5, eye[3] - size * 0.15, size * 0.45, size * 0.2, size * 0.45, 5, 10)
+	end
+end, true, 0)
+part("Legs", nil, RUBBER_BLACK, function(mesh)
+	local spread, height = FEET[1], FEET[2]
+	for _, side in { -1, 1 } do
+		cylinder(mesh, side * spread / 2, 0, height / 2 + 0.1, 0.11, height, "z", 8)
+		-- A stubby boot, toe forward.
+		box(mesh, side * spread / 2, -0.16, 0, 0.42, 0.72, 0.24)
+	end
+end, nil, RUBBER)
+finishParts()
+end
+buildKeys[buildJunkrotLaVacuumaSaturnita] = "JunkrotLaVacuumaSaturnita-bd517ef7554f341c"
+function buildJunkrotTheMonolito()
+local CACHE_KEY = "JunkrotTheMonolito-ff627a1efe0530dd"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- The Monolito: a black slab with no seams, no feet and no face but one
+-- slit of violet light, hanging a little off the ground over a faint
+-- ring. 4.6 studs tall. Nobody knows who made it.
+part("Slab", nil, { 0.03, 0.03, 0.045 }, function(mesh)
+	box(mesh, 0, 0, 0.6, 1.8, 0.7, 4.0)
+end, nil, 0, nil, nil, true)
+part("Eye", nil, { 0.65, 0.4, 1.0 }, function(mesh)
+	box(mesh, 0, -0.355, 3.4, 1.0, 0.03, 0.14)
+end, nil, 0, nil, 2.5, true)
+part("Hum", nil, { 0.5, 0.3, 0.9 }, function(mesh)
+	ring(mesh, 0, 0, 0.08, 1.1, 1.22, 0.05, "z", 28)
+end, nil, 0, nil, 1.5, true)
+finishParts()
+end
+buildKeys[buildJunkrotTheMonolito] = "JunkrotTheMonolito-e9bc9ca19c2b8402"
+function buildJunkrotUnitZero()
+local CACHE_KEY = "JunkrotUnitZero-8004f58c57247e7d"
+-- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
+-- legendary.
+local COMMON = { 0.62, 0.62, 0.6 }
+local UNCOMMON = { 0.3, 0.72, 0.3 }
+local RARE = { 0.25, 0.5, 0.95 }
+local LEGENDARY = { 1.0, 0.72, 0.18 }
+local STEEL = { 0.62, 0.64, 0.66 }
+local DARK_STEEL = { 0.3, 0.3, 0.32 }
+local COPPER = { 0.85, 0.5, 0.25 }
+local TAU = 2 * math.pi
+
+-- Edge highlight and feathering, matching the salvage machine.
+local EDGE_HIGHLIGHT = 0.6
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
+local GRADIENT = 0.5
+local EDGE_BLEND = 0.7
+local SMOOTH_ANGLE = 30
+local TEXTURE = 256
+
+-- Faces are split into a grid about every 0.4 studs so the warp in
+-- `part` can bend and dent flat panels.
+local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
+
+local function gridFace(mesh, origin, u, v, nu, nv)
+	local rows = {}
+	for j = 0, nv do
+		rows[j] = {}
+		for i = 0, nu do
+			local a, b = i / nu, j / nv
+			rows[j][i] = mesh:vertex(
+				origin[1] + u[1] * a + v[1] * b,
+				origin[2] + u[2] * a + v[2] * b,
+				origin[3] + u[3] * a + v[3] * b
+			)
+		end
+	end
+	for j = 0, nv - 1 do
+		for i = 0, nu - 1 do
+			mesh:face({ rows[j][i], rows[j][i + 1], rows[j + 1][i + 1], rows[j + 1][i] })
+		end
+	end
+end
+
+local function box(mesh, cx, cy, cz, sx, sy, sz)
+	local x0, y0, z0 = cx - sx / 2, cy - sy / 2, cz
+	local nx = math.clamp(math.ceil(sx / GRID), 1, 8)
+	local ny = math.clamp(math.ceil(sy / GRID), 1, 8)
+	local nz = math.clamp(math.ceil(sz / GRID), 1, 8)
+	gridFace(mesh, { x0, y0, z0 }, { 0, sy, 0 }, { sx, 0, 0 }, ny, nx)
+	gridFace(mesh, { x0, y0, z0 + sz }, { sx, 0, 0 }, { 0, sy, 0 }, nx, ny)
+	gridFace(mesh, { x0, y0, z0 }, { sx, 0, 0 }, { 0, 0, sz }, nx, nz)
+	gridFace(mesh, { x0, y0 + sy, z0 }, { 0, 0, sz }, { sx, 0, 0 }, nz, nx)
+	gridFace(mesh, { x0, y0, z0 }, { 0, 0, sz }, { 0, sy, 0 }, nz, ny)
+	gridFace(mesh, { x0 + sx, y0, z0 }, { 0, sy, 0 }, { 0, 0, sz }, ny, nz)
+end
+
+-- Cylinder centered at (cx, cy, cz) along axis "x", "y" or "z".
+local function cylinder(mesh, cx, cy, cz, radius, length, axis, sides)
+	sides = sides or 16
+	local a, b = {}, {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		local u, w = math.cos(t) * radius, math.sin(t) * radius
+		local h = length / 2
+		if axis == "x" then
+			a[i + 1] = mesh:vertex(cx - h, cy + u, cz + w)
+			b[i + 1] = mesh:vertex(cx + h, cy + u, cz + w)
+		elseif axis == "y" then
+			a[i + 1] = mesh:vertex(cx + w, cy - h, cz + u)
+			b[i + 1] = mesh:vertex(cx + w, cy + h, cz + u)
+		else
+			a[i + 1] = mesh:vertex(cx + u, cy + w, cz - h)
+			b[i + 1] = mesh:vertex(cx + u, cy + w, cz + h)
+		end
+	end
+	for i = 1, sides do
+		local j = i % sides + 1
+		mesh:face({ a[i], a[j], b[j], b[i] })
+	end
+	local capA = {}
+	for i = sides, 1, -1 do
+		table.insert(capA, a[i])
+	end
+	mesh:face(capA)
+	mesh:face(b)
+end
+
+-- UV sphere, squashed per axis by (rx, ry, rz).
+local function sphere(mesh, cx, cy, cz, rx, ry, rz, rings, sides)
+	rings, sides = rings or 8, sides or 16
+	local grid = {}
+	for r = 0, rings do
+		local phi = r / rings * math.pi
+		grid[r] = {}
+		for s = 0, sides - 1 do
+			local t = s / sides * TAU
+			local x = math.sin(phi) * math.cos(t)
+			local y = math.sin(phi) * math.sin(t)
+			grid[r][s] = mesh:vertex(cx + x * rx, cy + y * ry, cz - math.cos(phi) * rz)
+		end
+	end
+	for r = 0, rings - 1 do
+		for s = 0, sides - 1 do
+			local n = (s + 1) % sides
+			mesh:face({ grid[r][s], grid[r][n], grid[r + 1][n], grid[r + 1][s] })
+		end
+	end
+end
+
+-- Flat ring (washer) facing along axis "x", "y" or "z": a rim round an eye,
+-- a hub, a hose clamp.
+local function ring(mesh, cx, cy, cz, inner, outer, depth, axis, sides)
+	sides = sides or 16
+	local function at(r, t, d)
+		local u, w = math.cos(t) * r, math.sin(t) * r
+		if axis == "x" then
+			return mesh:vertex(cx + d, cy + u, cz + w)
+		elseif axis == "y" then
+			return mesh:vertex(cx + w, cy + d, cz + u)
+		end
+		return mesh:vertex(cx + u, cy + w, cz + d)
+	end
+	local rows = {}
+	for i = 0, sides - 1 do
+		local t = i / sides * TAU
+		rows[i + 1] = { at(outer, t, -depth / 2), at(outer, t, depth / 2), at(inner, t, depth / 2), at(inner, t, -depth / 2) }
+	end
+	for i = 1, sides do
+		local a, b = rows[i], rows[i % sides + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+end
+
+-- Bolt head: a squat hexagonal stud on a face pointing along axis.
+local function bolt(mesh, cx, cy, cz, axis, size)
+	size = size or 0.05
+	cylinder(mesh, cx, cy, cz, size, size * 0.7, axis, 6)
+end
+
+-- Square beam from one point to another, for limbs and antennae.
+local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
+	local len = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / len, dy / len, dz / len
+	local ax, ay, az = -dy, dx, 0
+	if math.abs(dz) > 0.99 then
+		ax, ay, az = 1, 0, 0
+	end
+	local al = math.sqrt(ax * ax + ay * ay + az * az)
+	ax, ay, az = ax / al * thick / 2, ay / al * thick / 2, az / al * thick / 2
+	local bx, by, bz = dy * az - dz * ay, dz * ax - dx * az, dx * ay - dy * ax
+	local v = {}
+	for i = 0, 7 do
+		local sa = if i % 2 == 0 then -1 else 1
+		local sb = if i // 2 % 2 == 0 then -1 else 1
+		local x, y, z = if i // 4 == 0 then x0 else x1, if i // 4 == 0 then y0 else y1, if i // 4 == 0 then z0 else z1
+		v[i + 1] = mesh:vertex(x + ax * sa + bx * sb, y + ay * sa + by * sb, z + az * sa + bz * sb)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ v[f[1]], v[f[2]], v[f[3]], v[f[4]] })
+	end
+end
+
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
+-- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
+-- the first level with the ground unless the tangent runs nearly vertical.
+local function crossFrame(tx, ty, tz)
+	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
+	tx, ty, tz = tx / tl, ty / tl, tz / tl
+	local ux, uy, uz = -ty, tx, 0
+	if math.abs(tz) > 0.9 then
+		ux, uy, uz = 0, tz, -ty
+	end
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	return tx, ty, tz, ux, uy, uz, ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+end
+
+-- Round tube through `points` ({x, y, z} each), capped at both ends: rope
+-- strands, and bolts on curved faces.
+local function tube(mesh, points, radius, sides)
+	sides = sides or 8
+	local rings = {}
+	for i, p in points do
+		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local ring = {}
+		for k = 0, sides - 1 do
+			local t = k / sides * TAU
+			local c, n = math.cos(t) * radius, math.sin(t) * radius
+			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+		end
+		rings[i] = ring
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, sides do
+			local n = k % sides + 1
+			mesh:face({ a[k], a[n], b[n], b[k] })
+		end
+	end
+	local cap = {}
+	for k = sides, 1, -1 do
+		table.insert(cap, rings[1][k])
+	end
+	mesh:face(cap)
+	mesh:face(rings[#rings])
+end
+
+-- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
+-- offset d along the axis.
+local function onAxis(cx, cy, cz, axis, r, t, d)
+	local u, w = math.cos(t) * r, math.sin(t) * r
+	if axis == "x" then
+		return cx + d, cy + u, cz + w
+	elseif axis == "y" then
+		return cx + w, cy + d, cz + u
+	end
+	return cx + u, cy + w, cz + d
+end
+
+-- Spur gear turning about `axis`, with square teeth and a hole for its shaft.
+local function gear(mesh, cx, cy, cz, radius, thick, teeth, axis)
+	local steps = teeth * 4
+	local rows = {}
+	for i = 0, steps - 1 do
+		local t = i / steps * TAU
+		-- Two samples up on the tooth, two down in the gap.
+		local r = if i % 4 < 2 then radius else radius * 0.82
+		local hole = radius * 0.25
+		rows[i + 1] = {
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, -thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, r, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, thick / 2)),
+			mesh:vertex(onAxis(cx, cy, cz, axis, hole, t, -thick / 2)),
+		}
+	end
+	for i = 1, steps do
+		local a, b = rows[i], rows[i % steps + 1]
+		for k = 1, 4 do
+			local l = k % 4 + 1
+			mesh:face({ a[k], b[k], b[l], a[l] })
+		end
+	end
+	-- Shaft through the middle.
+	cylinder(mesh, cx, cy, cz, radius * 0.25, thick * 1.8, axis, 8)
+end
+
+-- Drive belt wrapped round two pulleys turning about `axis`, the first at
+-- (ax, ay, az) with radius ra, the second at (bx, by, bz) with radius rb.
+local function belt(mesh, axis, ax, ay, az, ra, bx, by, bz, rb, thick)
+	thick = thick or 0.025
+	-- Work in the plane across the axis as (u, w), matching onAxis.
+	local function flat(x, y, z)
+		if axis == "x" then
+			return y, z
+		elseif axis == "y" then
+			return z, x
+		end
+		return x, y
+	end
+	local au, aw = flat(ax, ay, az)
+	local bu, bw = flat(bx, by, bz)
+	local heading = math.atan2(bw - aw, bu - au)
+	local points = {}
+	-- Round the far side of b, then back round the far side of a.
+	for i = 0, 8 do
+		local t = heading - math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(bx, by, bz, axis, rb + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	for i = 0, 8 do
+		local t = heading + math.pi / 2 + i / 8 * math.pi
+		local x, y, z = onAxis(ax, ay, az, axis, ra + thick, t, 0)
+		table.insert(points, { x, y, z })
+	end
+	table.insert(points, points[1])
+	tube(mesh, points, thick, 4)
+end
+
+-- Exhaust pipe along `points`, ending in a flared, soot-black lip.
+local function exhaust(mesh, points, radius)
+	tube(mesh, points, radius, 10)
+	local a, b = points[#points - 1], points[#points]
+	local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+	dx, dy, dz = dx / length, dy / length, dz / length
+	tube(mesh, {
+		{ b[1] - dx * 0.06, b[2] - dy * 0.06, b[3] - dz * 0.06 },
+		{ b[1], b[2], b[3] },
+	}, radius * 1.3, 10)
+end
+
+-- Little engine block: a box crankcase with a finned cylinder on top.
+local function engine(mesh, cx, cy, cz, size)
+	box(mesh, cx, cy, cz, size * 1.4, size, size * 0.7)
+	local top = cz + size * 0.7
+	cylinder(mesh, cx, cy, top + size * 0.35, size * 0.3, size * 0.7, "z", 12)
+	for i = 0, 3 do
+		ring(mesh, cx, cy, top + size * (0.1 + i * 0.17), size * 0.28, size * 0.45, size * 0.05, "z", 12)
+	end
+	box(mesh, cx, cy, top + size * 0.7, size * 0.5, size * 0.5, size * 0.1)
+end
+
+-- Bolt head on a curved face, standing out along the normal (nx, ny, nz).
+local function stud(mesh, x, y, z, nx, ny, nz, size)
+	size = size or 0.04
+	local a, b = -size * 0.2, size * 0.5
+	tube(mesh, { { x + nx * a, y + ny * a, z + nz * a }, { x + nx * b, y + ny * b, z + nz * b } }, size, 6)
+end
+
+-- Rope along `points`: two strands twisted round each other.
+local function rope(mesh, points, radius)
+	-- Resample the path finely enough for the twist to turn smoothly.
+	local path = {}
+	for i = 1, #points - 1 do
+		local a, b = points[i], points[i + 1]
+		local dx, dy, dz = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local steps = math.max(1, math.ceil(math.sqrt(dx * dx + dy * dy + dz * dz) / (radius * 0.8)))
+		for k = 0, steps - 1 do
+			table.insert(path, { a[1] + dx * k / steps, a[2] + dy * k / steps, a[3] + dz * k / steps })
+		end
+	end
+	table.insert(path, points[#points])
+	for strand = 0, 1 do
+		local twisted = {}
+		for i, p in path do
+			local a, b = path[math.max(i - 1, 1)], path[math.min(i + 1, #path)]
+			local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+			local t = i * 0.7 + strand * math.pi
+			local c, n = math.cos(t) * radius * 0.45, math.sin(t) * radius * 0.45
+			twisted[i] = { p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n }
+		end
+		tube(mesh, twisted, radius * 0.6, 6)
+	end
+end
+
+-- Rope lashed round a box at height z, its corners at x = +-halfX and
+-- y from y0 to y1, rounded so it sits snug round each corner.
+local function lashing(mesh, halfX, y0, y1, z, radius)
+	local bend = radius * 3
+	-- Corner centres counter-clockwise from (+X, y0), each with its start angle.
+	local corners = {
+		{ halfX - bend, y0 + bend, -math.pi / 2 },
+		{ halfX - bend, y1 - bend, 0 },
+		{ -halfX + bend, y1 - bend, math.pi / 2 },
+		{ -halfX + bend, y0 + bend, math.pi },
+	}
+	local points = {}
+	for _, c in corners do
+		for k = 0, 3 do
+			local t = c[3] + k / 3 * math.pi / 2
+			table.insert(points, { c[1] + math.cos(t) * bend, c[2] + math.sin(t) * bend, z })
+		end
+	end
+	table.insert(points, points[1])
+	rope(mesh, points, radius)
+end
+
+-- Flat sheet lying on the face of a box at `axis` = `at`, its outer side toward
+-- `sign`, covering a0..a1 along the other level axis and z0..z1 up, bolted at
+-- each corner.
+local function sheet(mesh, axis, at, sign, a0, a1, z0, z1, thick, boltSize)
+	thick, boltSize = thick or 0.03, boltSize or 0.035
+	local c = at + sign * thick / 2
+	if axis == "x" then
+		box(mesh, c, (a0 + a1) / 2, z0, thick, a1 - a0, z1 - z0)
+	else
+		box(mesh, (a0 + a1) / 2, c, z0, a1 - a0, thick, z1 - z0)
+	end
+	local inset = boltSize * 2
+	for _, a in { a0 + inset, a1 - inset } do
+		for _, z in { z0 + inset, z1 - inset } do
+			if axis == "x" then
+				bolt(mesh, at + sign * thick, a, z, "x", boltSize)
+			else
+				bolt(mesh, a, at + sign * thick, z, "y", boltSize)
+			end
+		end
+	end
+end
+
+-- Angle bracket bent round the vertical box corner at (x, y), outer faces
+-- toward sx and sy, legs `size` long, bolted through each leg.
+local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
+	local t = 0.025
+	box(mesh, x + sx * t / 2, y - sy * (size - t) / 2, z, t, size + t, height)
+	box(mesh, x - sx * (size - t) / 2, y + sy * t / 2, z, size + t, t, height)
+	for _, dz in { 0.25, 0.75 } do
+		bolt(mesh, x + sx * t, y - sy * size * 0.6, z + height * dz, "x", 0.03)
+		bolt(mesh, x - sx * size * 0.6, y + sy * t, z + height * dz, "y", 0.03)
+	end
+end
+
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
+local RUST_DARK = { 0.3, 0.2, 0.12 }
+local RUST_ORANGE = { 0.62, 0.36, 0.15 }
+local RUST_FLAKE = { 0.78, 0.52, 0.3 }
+local BARE_METAL = { 0.74, 0.73, 0.7 }
+
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
+
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
+end
+
+local RUBBER = -1
+local DUST = { 0.55, 0.5, 0.42 }
+-- Bindings, painted as RUBBER: duct tape and hemp rope.
+local TAPE = { 0.58, 0.58, 0.56 }
+local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
+local ROPE = { 0.62, 0.5, 0.32 }
+
+-- Part following one bone. `smooth` overrides the auto-smooth angle (true
+-- for fully round parts like the zapper's body). `rust` sets how worn it
+-- is, default 0.4; 0 for glowing eyes and visors; RUBBER for tyres and treads.
+local WARP = 0.0385
+
+-- Low-frequency warp so no panel is perfectly flat or square: a smooth sum
+-- of sines seeded by the part name, plus a couple of dents.
+local function imperfect(mesh, name)
+	local seed = 0
+	for i = 1, #name do
+		seed = (seed * 31 + string.byte(name, i)) % 9973
+	end
+	local function n(k)
+		return math.sin(seed * 12.9898 + k * 78.233) * 0.5 + 0.5
+	end
+	local function noise(x, y, z, k)
+		return math.sin(x * (1.7 + n(k)) + y * 0.9 + n(k + 1) * TAU) * 0.5
+			+ math.sin(y * (2.3 + n(k + 2)) - z * 1.3 + n(k + 3) * TAU) * 0.3
+			+ math.sin(z * (2.9 + n(k + 4)) + x * 1.1 + n(k + 5) * TAU) * 0.2
+	end
+	local dents = {}
+	for d = 1, 2 do
+		local k = d * 10
+		dents[d] = { (n(k) - 0.5) * 3, (n(k + 1) - 0.5) * 3, n(k + 2) * 4, 0.3 + n(k + 3) * 0.4 }
+	end
+	return setmetatable({
+		vertex = function(_, x, y, z)
+			local dx, dy, dz = noise(x, y, z, 1), noise(y, z, x, 7), noise(z, x, y, 13)
+			for _, dent in dents do
+				local ox, oy, oz = x - dent[1], y - dent[2], z - dent[3]
+				local fall = math.exp(-(ox * ox + oy * oy + oz * oz) / (dent[4] * dent[4]))
+				dx -= ox * fall * 0.6
+				dy -= oy * fall * 0.6
+				dz -= oz * fall * 0.6
+			end
+			return mesh:vertex(x + dx * WARP, y + dy * WARP, z + dz * WARP)
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				return mesh[key](mesh, ...)
+			end
+		end,
+	})
+end
+
+local parts = {}
+
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
+	rust = rust or 0.4
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
+	end
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(needed, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
+end
+
+-- Shades every part with all the others as occluders, so parts darken where
+-- they touch or tuck under each other, then adds them to the model.
+local function finishParts()
+	for _, entry in parts do
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
+		for _, other in parts do
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
+				table.insert(occluders, other.mesh)
+			end
+		end
+		entry.mesh:paintShading(entry.image, {
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
+			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			rubber = entry.rubber,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			paintedHighlights = entry.painted,
+			heightRange = entry.heightRange,
+		})
+		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
+	end
+end
+-- Unit Zero: a perfect chrome sphere hanging in the air inside two thin
+-- rings of light, one white eye-dot on its face. 3.6 studs tall. Too
+-- perfect; nobody knows who made it.
+part("Sphere", nil, { 0.9, 0.91, 0.93 }, function(mesh)
+	sphere(mesh, 0, 0, 2.2, 1.2, 1.2, 1.2, 14, 24)
+end, true, 0)
+part("Eye", nil, { 1.0, 1.0, 1.0 }, function(mesh)
+	sphere(mesh, 0, -1.16, 2.35, 0.16, 0.06, 0.16, 5, 10)
+end, true, 0, nil, 2.5)
+part("Rings", nil, { 0.6, 0.95, 1.0 }, function(mesh)
+	ring(mesh, 0, 0, 2.2, 1.55, 1.62, 0.04, "z", 32)
+	ring(mesh, 0, 0, 2.2, 1.72, 1.78, 0.04, "x", 32)
+end, nil, 0, nil, 2.0, true)
+part("Shadow", nil, { 0.5, 0.8, 1.0 }, function(mesh)
+	ring(mesh, 0, 0, 0.06, 0.5, 0.6, 0.04, "z", 20)
+end, nil, 0, nil, 1.2, true)
+finishParts()
+end
+buildKeys[buildJunkrotUnitZero] = "JunkrotUnitZero-cf5027927a7e9ceb"
+slabKeys[81962] = "1cc43e4ea4bd80d5-cf7e96091024d5cc"
+slabKeys[82232] = "1cc43e4ea4bd80d5-7ded6fc62f8b67a3"
+slabKeys[82264] = "1cc43e4ea4bd80d5-2f5b4070ee3aa512"
+slabKeys[82344] = "1cc43e4ea4bd80d5-7b25a7aa2539d602"
+slabKeys[82352] = "1cc43e4ea4bd80d5-107c5c30239027da"
+slabKeys[82369] = "1cc43e4ea4bd80d5-18845c9c8b69ea54"
+slabKeys[82474] = "1cc43e4ea4bd80d5-363b6dc9a40b12d8"
+slabKeys[82498] = "1cc43e4ea4bd80d5-f4e0427155be5973"
+-- uses: HubSectionA HubSectionB HubSectionEnd YardIsland YardFence YardFenceHalf YardFooting YardGate PlotMarker PadKitchen PadGarage PadGadget BuildBay ScrapCrate RebirthPress JunkMound CapsuleScrap CapsuleSalvaged CapsuleRefurbished CapsuleFactory CapsulePrecision CapsulePrototype CapsuleSecret JunkrotCanettoRustini JunkrotSpoonzoBentolo JunkrotKettlinaDentata JunkrotTyroFlattino JunkrotBoltoloLonelo JunkrotHubcappaWobbla JunkrotRemotinoMuto JunkrotCabloTanglino JunkrotBulboFulminato JunkrotCrumboPoppalot JunkrotPannettoPatchato JunkrotBlendroCigolante JunkrotJackoloCrickato JunkrotOilcannaGluglu JunkrotMuffleroTossetto JunkrotRadioloFruscio JunkrotFanettoWobblino JunkrotClockoTictacco JunkrotFrostboxGelatone JunkrotMicrondoBippetto JunkrotMixerellaVroom JunkrotMopaMopetta JunkrotDrilloTrapanino JunkrotGrindellaScintilla JunkrotTelefonoRingaling JunkrotTypewrittoClackini JunkrotCamerinoFlashetto JunkrotDrippiDroppi JunkrotDingDingDingDongo JunkrotGrindoBeanbasher JunkrotAirfryoCroccante JunkrotDishwashinoSplashetto JunkrotLawnmowoRuggito JunkrotLeafblowaWhooshini JunkrotPressurwashoSprizzo JunkrotConsoloJoypaddino JunkrotSpeakeroneBoomba JunkrotRobovaccoGirotondo JunkrotClankClankClankScrapur JunkrotVrrVrrPatatrim JunkrotChimneyziniSpannerini JunkrotRusteliRustela JunkrotBallerinaTincuppina JunkrotTrashaleroTrashala JunkrotSockettoSeiSette JunkrotChefbotPrecisio JunkrotSousvideSilvano JunkrotKnifeblockSlicetta JunkrotTorquoWrenchelli JunkrotLaserlevelLineo JunkrotWeldettaSparkalot JunkrotDronettoBuzzatti JunkrotTickworthPocketti JunkrotHeadphonoBassimo JunkrotGascaniniHonkini JunkrotPercolattoNinjatto JunkrotBoilerdiroCrockpotilo JunkrotSnackomaticPrototipo JunkrotHoverbikkoZoomzoom JunkrotHolofonoShimmerra JunkrotLaVacuumaSaturnita JunkrotTheMonolito JunkrotUnitZero
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands laid out along a line (the Scrap Line). The hub is a long
 -- island running along x, five sections in a row, paved from end to end: a
@@ -64502,6 +82617,27 @@ local KIT = {
 	{ "JunkrotVrrVrrPatatrim", buildJunkrotVrrVrrPatatrim, 1 },
 	{ "JunkrotChimneyziniSpannerini", buildJunkrotChimneyziniSpannerini, 1 },
 	{ "JunkrotRusteliRustela", buildJunkrotRusteliRustela, 1 },
+	{ "JunkrotBallerinaTincuppina", buildJunkrotBallerinaTincuppina, 1 },
+	{ "JunkrotTrashaleroTrashala", buildJunkrotTrashaleroTrashala, 1 },
+	{ "JunkrotSockettoSeiSette", buildJunkrotSockettoSeiSette, 1 },
+	{ "JunkrotChefbotPrecisio", buildJunkrotChefbotPrecisio, 1 },
+	{ "JunkrotSousvideSilvano", buildJunkrotSousvideSilvano, 1 },
+	{ "JunkrotKnifeblockSlicetta", buildJunkrotKnifeblockSlicetta, 1 },
+	{ "JunkrotTorquoWrenchelli", buildJunkrotTorquoWrenchelli, 1 },
+	{ "JunkrotLaserlevelLineo", buildJunkrotLaserlevelLineo, 1 },
+	{ "JunkrotWeldettaSparkalot", buildJunkrotWeldettaSparkalot, 1 },
+	{ "JunkrotDronettoBuzzatti", buildJunkrotDronettoBuzzatti, 1 },
+	{ "JunkrotTickworthPocketti", buildJunkrotTickworthPocketti, 1 },
+	{ "JunkrotHeadphonoBassimo", buildJunkrotHeadphonoBassimo, 1 },
+	{ "JunkrotGascaniniHonkini", buildJunkrotGascaniniHonkini, 1 },
+	{ "JunkrotPercolattoNinjatto", buildJunkrotPercolattoNinjatto, 1 },
+	{ "JunkrotBoilerdiroCrockpotilo", buildJunkrotBoilerdiroCrockpotilo, 1 },
+	{ "JunkrotSnackomaticPrototipo", buildJunkrotSnackomaticPrototipo, 1 },
+	{ "JunkrotHoverbikkoZoomzoom", buildJunkrotHoverbikkoZoomzoom, 1 },
+	{ "JunkrotHolofonoShimmerra", buildJunkrotHolofonoShimmerra, 1 },
+	{ "JunkrotLaVacuumaSaturnita", buildJunkrotLaVacuumaSaturnita, 1 },
+	{ "JunkrotTheMonolito", buildJunkrotTheMonolito, 1 },
+	{ "JunkrotUnitZero", buildJunkrotUnitZero, 1 },
 }
 useTexelDensity(KIT_DENSITY)
 for index, entry in KIT do

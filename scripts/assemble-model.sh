@@ -40,8 +40,11 @@ elif [ -f "${src}/layouts/${name}.luau" ]; then
 	say "layout: prelude, rarity, shared helpers, used models, layout"
 	{
 		cat "${src}/layouts/prelude.luau" "${src}/rarity.luau" "${src}/common.luau"
+		# Builders are globals, not locals: a layout that uses many models
+		# (the map's kit has one per junkrot) would run past Luau's limit
+		# of 200 locals in one function.
 		for used in $(head -n 1 "${src}/layouts/${name}.luau" | sed 's/^-- uses://'); do
-			echo "local function build${used}()"
+			echo "function build${used}()"
 			cat "${root}/art/models/${used}/model.luau"
 			echo "end"
 			key="$({ cat "${src}/layouts/prelude.luau" "${root}/art/models/${used}/model.luau"; echo "${skip}"; } | sha1sum | cut -c1-16)"
