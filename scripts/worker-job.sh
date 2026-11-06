@@ -136,7 +136,7 @@ case "${kind}" in
 		timed assemble scripts/assemble-model.sh "${name}" || fail "assemble"
 		timed build scripts/build-model.sh "${name}" -- --chunks --shard "${share}" || fail "build"
 		listParts "art/models/${name}/${name}.glb" > "${out}/parts.txt" || fail "listing parts"
-		cp "${chunks}/${name}Chunks.luau" "art/models/${name}/preview.png" "${out}/" 2>> "${log}"
+		cp "${chunks}/${name}Chunks.luau" "${out}/" 2>> "${log}"
 		summary="${summary}parts: $(wc -l < "${out}/parts.txt")
 chunks: $(ls "${chunks}/${name}_S${index}_"*.glb 2>/dev/null | wc -l)
 "

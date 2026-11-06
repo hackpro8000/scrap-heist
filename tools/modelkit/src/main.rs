@@ -607,9 +607,13 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 		}
 	}
 	let shown: Vec<&Part> = parts.iter().filter(|p| p.preview).collect();
-	progress::say(&format!("rendering preview of {} parts", shown.len()));
-	let preview = render::render(&shown, &render::View { size, spin: 0.0, focus: None, eye: None });
-	write_png(&dir.join("preview.png"), size, &preview).map_err(|e| e.to_string())?;
+	// A shard holds a scattered share of a layout, so nobody looks at its
+	// preview; skip the render. Asked-for views (turntable, closeups, eyes) still run.
+	if shard.is_none() {
+		progress::say(&format!("rendering preview of {} parts", shown.len()));
+		let preview = render::render(&shown, &render::View { size, spin: 0.0, focus: None, eye: None });
+		write_png(&dir.join("preview.png"), size, &preview).map_err(|e| e.to_string())?;
+	}
 
 	if turntable > 0 {
 		let frames = dir.join("turntable");

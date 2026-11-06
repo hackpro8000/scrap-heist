@@ -6,7 +6,7 @@
 #
 # Uploads need the repository secrets ROBLOX_API_KEY (asset:write) and
 # ROBLOX_CREATOR_ID; without them the shards are built and checked only.
-# Only small results (part lists, manifests, IDs, previews) are kept as
+# Only small results (part lists, manifests, IDs) are kept as
 # artifacts, for a day: the .glb chunks go straight to Roblox.
 #
 # Each machine keeps its build cache between runs, so a run rebuilds only
@@ -98,7 +98,6 @@ jobs:
           print("\n".join(sorted(names)))
           EOF
           cp "art/models/$LAYOUT/chunks/${LAYOUT}Chunks.luau" "$out/"
-          cp "art/models/$LAYOUT/preview.png" "$out/" || true
           # Each placement's build time (only what was rebuilt), for dealing shards.
           awk -F'\t' '$1 == "SHARD_COST" { print $2 "\t" $3 }' build.log > "$out/costs.txt"
       - name: Upload chunks to Roblox
