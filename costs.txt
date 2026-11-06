@@ -1,6 +1,0 @@
-slab Bridge3	1.250
-slab Bridge3 #split	1
-slab Plot7	4.741
-slab Plot7 #split	1
-JunkrotWeldettaSparkalot 1 x	0.790
-JunkrotWeldettaSparkalot 1 x #split	1
