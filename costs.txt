@@ -1,0 +1,16 @@
+HubSectionEnd 1 x	74.559
+HubSectionEnd 1 x #split	1
+slab Spawn	0.093
+slab Spawn #split	1
+slab Bridge2	1.720
+slab Bridge2 #split	1
+slab Spoke5	0.085
+slab Spoke5 #split	1
+slab Plot6	5.076
+slab Plot6 #split	1
+slab Side2	0.880
+slab Side2 #split	1
+slab Side6	0.877
+slab Side6 #split	1
+Pallets 1 x x1.4	0.185
+Pallets 1 x x1.4 #split	1
