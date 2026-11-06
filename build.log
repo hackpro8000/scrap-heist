@@ -64,6 +64,27 @@ assemble ServerMap: uses JunkrotClankClankClankScrapur (key a30fc840bf59b273)
 assemble ServerMap: uses JunkrotVrrVrrPatatrim (key c5f05967943ccfb5)
 assemble ServerMap: uses JunkrotChimneyziniSpannerini (key 16b899b9c5febdc7)
 assemble ServerMap: uses JunkrotRusteliRustela (key 41867bade3ceb8a9)
+assemble ServerMap: uses JunkrotBallerinaTincuppina (key 30f20c40dd829229)
+assemble ServerMap: uses JunkrotTrashaleroTrashala (key 18a099d48482ff37)
+assemble ServerMap: uses JunkrotSockettoSeiSette (key 676d9911a0746861)
+assemble ServerMap: uses JunkrotChefbotPrecisio (key 655242385b26b2f8)
+assemble ServerMap: uses JunkrotSousvideSilvano (key 1305b15b458cf825)
+assemble ServerMap: uses JunkrotKnifeblockSlicetta (key b0fc15670bb0eca0)
+assemble ServerMap: uses JunkrotTorquoWrenchelli (key 3ac268b5345ff0f9)
+assemble ServerMap: uses JunkrotLaserlevelLineo (key 72fe0c3e9bfc4ac2)
+assemble ServerMap: uses JunkrotWeldettaSparkalot (key c11aed715eb587cc)
+assemble ServerMap: uses JunkrotDronettoBuzzatti (key 7acc8fb57bb9953e)
+assemble ServerMap: uses JunkrotTickworthPocketti (key 22a6c4d039ad0ff0)
+assemble ServerMap: uses JunkrotHeadphonoBassimo (key d47c976aa6738c6d)
+assemble ServerMap: uses JunkrotGascaniniHonkini (key f8b07ed06063b0f4)
+assemble ServerMap: uses JunkrotPercolattoNinjatto (key 3392c5d7d380fb69)
+assemble ServerMap: uses JunkrotBoilerdiroCrockpotilo (key 748a5e56f0959c15)
+assemble ServerMap: uses JunkrotSnackomaticPrototipo (key 580bc970b9d2684c)
+assemble ServerMap: uses JunkrotHoverbikkoZoomzoom (key 1b5900b42f82f562)
+assemble ServerMap: uses JunkrotHolofonoShimmerra (key 9a65f88f2484fd69)
+assemble ServerMap: uses JunkrotLaVacuumaSaturnita (key bd517ef7554f341c)
+assemble ServerMap: uses JunkrotTheMonolito (key e9bc9ca19c2b8402)
+assemble ServerMap: uses JunkrotUnitZero (key cf5027927a7e9ceb)
 assemble ServerMap: slab at ServerMap.luau:278-468 (key cf7e96091024d5cc)
 assemble ServerMap: slab at ServerMap.luau:548-577 (key 7ded6fc62f8b67a3)
 assemble ServerMap: slab at ServerMap.luau:580-584 (key 2f5b4070ee3aa512)
@@ -72,22 +93,22 @@ assemble ServerMap: slab at ServerMap.luau:668-677 (key 107c5c30239027da)
 assemble ServerMap: slab at ServerMap.luau:685-715 (key 18845c9c8b69ea54)
 assemble ServerMap: slab at ServerMap.luau:790-801 (key 363b6dc9a40b12d8)
 assemble ServerMap: slab at ServerMap.luau:814-867 (key f4e0427155be5973)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 64511 lines, in 0s
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 82647 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.6s] cached YardIsland 1 x part 1/5
-[    0.6s] building Plot1 -210 180 0
+[    0.7s] cached YardIsland 1 x part 1/5
+[    0.7s] building Plot1 -210 180 0
 [    0.8s] baking on CPU (no GPU)
-[    1.3s]   shaded Ground_-1_-1_0 816×816 in 0.59s
+[    1.4s]   shaded Ground_-1_-1_0 816×816 in 0.60s
 [    1.5s]   shaded Ground_-1_0_0_000 540×540 in 0.12s
-[    1.6s]   shaded Ground_-1_0_0_010 544×544 in 0.12s
-[    1.9s]   shaded Ground_-1_0_0_100 540×540 in 0.25s
-[    2.2s]   shaded Ground_-1_0_0_110 544×544 in 0.24s
-[    2.9s]   shaded Ground_0_-1_0 816×816 in 0.59s
-[    3.2s]   shaded Ground_0_0_0_000 540×540 in 0.24s
+[    1.7s]   shaded Ground_-1_0_0_010 544×544 in 0.12s
+[    1.9s]   shaded Ground_-1_0_0_100 540×540 in 0.24s
+[    2.2s]   shaded Ground_-1_0_0_110 544×544 in 0.23s
+[    2.9s]   shaded Ground_0_-1_0 816×816 in 0.60s
+[    3.2s]   shaded Ground_0_0_0_000 540×540 in 0.22s
 [    3.5s]   shaded Ground_0_0_0_010 544×544 in 0.23s
 [    3.6s]   shaded Ground_0_0_0_100 540×540 in 0.12s
 [    3.7s]   shaded Ground_0_0_0_110 544×544 in 0.12s
-[    3.7s] built Plot1 -210 180 0: 10 parts in 3.2s
+[    3.7s] built Plot1 -210 180 0: 10 parts in 3.1s
 [    3.8s] cached YardIsland 1 x part 1/5
 [    3.9s] cached YardIsland 1 x part 1/5
 [    4.0s] cached YardIsland 1 x part 1/5
@@ -129,35 +150,36 @@ assemble ServerMap: wrote art/models/ServerMap/model.luau, 64511 lines, in 0s
 [    4.3s] building Bridge8 210 -180 180
 [    4.7s]   shaded Deck 932×932 in 0.31s
 [    4.7s]   shaded HazardYellow 132×132 in 0.01s
-[    4.7s]   shaded HazardBlack 132×132 in 0.00s
-[    4.9s]   shaded Girders 1024×1024 in 0.20s
+[    4.7s]   shaded HazardBlack 132×132 in 0.01s
+[    4.9s]   shaded Girders 1024×1024 in 0.21s
 [    4.9s]   shaded Posts 192×192 in 0.01s
-[    5.0s]   shaded Rail 996×996 in 0.07s
-[    5.0s]   shaded KerbEnds 108×108 in 0.00s
+[    5.0s]   shaded Rail 996×996 in 0.08s
+[    5.0s]   shaded KerbEnds 108×108 in 0.01s
 [    5.0s]   shaded EndPosts 60×60 in 0.00s
-[    5.0s]   shaded Abutments 368×368 in 0.03s
-[    5.0s]   shaded JointPlate 152×152 in 0.00s
+[    5.1s]   shaded Abutments 368×368 in 0.03s
+[    5.1s]   shaded JointPlate 152×152 in 0.00s
 [    5.1s]   shaded Apron 184×184 in 0.01s
 [    5.1s] built Bridge8 210 -180 180: 11 parts in 0.8s
 [    5.1s] cached CapsulePrecision 1 x
 [    5.1s] cached JunkrotRemotinoMuto 1 x
 [    5.1s] cached JunkrotClockoTictacco 1 x
 [    5.1s] cached JunkrotDingDingDingDongo 1 x
-[    5.1s] building JunkrotChimneyziniSpannerini 1 x
-[    5.1s]   shaded Pipe 256×256 in 0.03s
-[    5.1s]   shaded Peel 256×256 in 0.02s
-[    5.2s]   shaded PeelTips 256×256 in 0.05s
-[    5.3s]   shaded Chimp 256×256 in 0.06s
-[    5.3s]   shaded Spanner 256×256 in 0.02s
-[    5.4s]   shaded Eyes 256×256 in 0.11s
-[    5.5s]   shaded Pupils 256×256 in 0.11s
+[    5.2s] cached JunkrotChimneyziniSpannerini 1 x
+[    5.2s] building JunkrotTickworthPocketti 1 x
+[    5.2s]   shaded Case 256×256 in 0.04s
+[    5.2s]   shaded Lid 256×256 in 0.02s
+[    5.3s]   shaded Dial 256×256 in 0.04s
+[    5.3s]   shaded Hands 256×256 in 0.02s
+[    5.4s]   shaded Chain 256×256 in 0.09s
+[    5.5s]   shaded Eyes 256×256 in 0.11s
+[    5.6s]   shaded Pupils 256×256 in 0.12s
 [    5.6s]   shaded Legs 256×256 in 0.04s
-[    5.6s] built JunkrotChimneyziniSpannerini 1 x: 8 parts in 0.5s
-[    5.6s] writing ServerMap.glb and 283 textures
-ServerMap: 283 parts, script 5.56s, total 6.64s
+[    5.6s] built JunkrotTickworthPocketti 1 x: 8 parts in 0.5s
+[    5.6s] writing ServerMap.glb and 291 textures
+ServerMap: 291 parts, script 5.65s, total 6.73s
 PLACED	Island1	0	YardIsland-f7a297dc299e1e15 1 x part 1/5
-PLACED	Plot1	0	115ac3a755887f11-7b25a7aa2539d602 Plot1 -210 180 0
-SHARD_COST	slab Plot1	3.150
+PLACED	Plot1	0	1cc43e4ea4bd80d5-7b25a7aa2539d602 Plot1 -210 180 0
+SHARD_COST	slab Plot1	3.088
 SHARD_COST	slab Plot1 #split	1
 PLACED	Island2	0	YardIsland-f7a297dc299e1e15 1 x part 1/5
 PLACED	Island3	0	YardIsland-f7a297dc299e1e15 1 x part 1/5
@@ -197,14 +219,15 @@ PLACED	Yard8_FootingLeft9	270	YardFooting-5c7b334d7913a1ed 1.037037037037037 x x
 PLACED	Yard8_FenceFront1	180	YardFence-fe3d5de848852dd7 1 x x1.5
 PLACED	Yard8_FenceFront3	180	YardFence-fe3d5de848852dd7 1 x x1.5
 PLACED	Yard8_FenceFront5	180	YardFence-fe3d5de848852dd7 1 x x1.5
-PLACED	Bridge8	0	115ac3a755887f11-cf7e96091024d5cc Bridge8 210 -180 180
-SHARD_COST	slab Bridge8	0.786
+PLACED	Bridge8	0	1cc43e4ea4bd80d5-cf7e96091024d5cc Bridge8 210 -180 180
+SHARD_COST	slab Bridge8	0.824
 SHARD_COST	slab Bridge8 #split	1
 PLACED	Kit_CapsulePrecision	0	CapsulePrecision-80c544621f832e35 1 x
 PLACED	Kit_JunkrotRemotinoMuto	0	JunkrotRemotinoMuto-adcd1b33b39b0e57 1 x
 PLACED	Kit_JunkrotClockoTictacco	0	JunkrotClockoTictacco-124e3e812d14c4c3 1 x
 PLACED	Kit_JunkrotDingDingDingDongo	0	JunkrotDingDingDingDongo-1d1e1e950c96e4e4 1 x
 PLACED	Kit_JunkrotChimneyziniSpannerini	0	JunkrotChimneyziniSpannerini-16b899b9c5febdc7 1 x
-SHARD_COST	JunkrotChimneyziniSpannerini 1 x	0.461
-SHARD_COST	JunkrotChimneyziniSpannerini 1 x #split	1
-export ServerMap: 10 objects (19.6 MB) for 46 placements
+PLACED	Kit_JunkrotTickworthPocketti	0	JunkrotTickworthPocketti-22a6c4d039ad0ff0 1 x
+SHARD_COST	JunkrotTickworthPocketti 1 x	0.488
+SHARD_COST	JunkrotTickworthPocketti 1 x #split	1
+export ServerMap: 11 objects (20.3 MB) for 47 placements

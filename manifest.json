@@ -10,8 +10,8 @@
 			"parts": 22
 		},
 		{
-			"id": "8069fe0e30fcb47f",
-			"key": "115ac3a755887f11-7b25a7aa2539d602 Plot1 -210 180 0",
+			"id": "9ffc031227507517",
+			"key": "1cc43e4ea4bd80d5-7b25a7aa2539d602 Plot1 -210 180 0",
 			"piece": 1,
 			"label": "Plot1",
 			"turn": 0.0,
@@ -37,8 +37,8 @@
 			"parts": 3
 		},
 		{
-			"id": "e2ea5aa62361c928",
-			"key": "115ac3a755887f11-cf7e96091024d5cc Bridge8 210 -180 180",
+			"id": "f9e752798a3e8722",
+			"key": "1cc43e4ea4bd80d5-cf7e96091024d5cc Bridge8 210 -180 180",
 			"piece": 1,
 			"label": "Bridge8",
 			"turn": 0.0,
@@ -51,7 +51,7 @@
 			"piece": 1,
 			"label": "Kit_CapsulePrecision",
 			"turn": 0.0,
-			"bytes": 544612,
+			"bytes": 544608,
 			"parts": 4
 		},
 		{
@@ -69,7 +69,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotClockoTictacco",
 			"turn": 0.0,
-			"bytes": 598920,
+			"bytes": 598944,
 			"parts": 7
 		},
 		{
@@ -78,7 +78,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotDingDingDingDongo",
 			"turn": 0.0,
-			"bytes": 578932,
+			"bytes": 578940,
 			"parts": 7
 		},
 		{
@@ -87,7 +87,16 @@
 			"piece": 1,
 			"label": "Kit_JunkrotChimneyziniSpannerini",
 			"turn": 0.0,
-			"bytes": 761800,
+			"bytes": 761804,
+			"parts": 8
+		},
+		{
+			"id": "430086ae5519fd00",
+			"key": "JunkrotTickworthPocketti-22a6c4d039ad0ff0 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotTickworthPocketti",
+			"turn": 0.0,
+			"bytes": 709620,
 			"parts": 8
 		}
 	],
@@ -116,7 +125,7 @@
 			]
 		},
 		{
-			"asset": "8069fe0e30fcb47f",
+			"asset": "9ffc031227507517",
 			"label": "Plot1",
 			"turn": 0.0,
 			"anchors": [
@@ -765,7 +774,7 @@
 			]
 		},
 		{
-			"asset": "e2ea5aa62361c928",
+			"asset": "f9e752798a3e8722",
 			"label": "Bridge8",
 			"turn": 0.0,
 			"anchors": [
@@ -795,7 +804,7 @@
 				{
 					"name": "Clasps",
 					"position": [
-						-384.00514,
+						-636.00515,
 						-148.54465499999998,
 						1.03341805
 					]
@@ -803,7 +812,7 @@
 				{
 					"name": "Corners",
 					"position": [
-						-384.00389,
+						-636.0038999999999,
 						-148.899575,
 						-0.007264300000000001
 					]
@@ -818,7 +827,7 @@
 				{
 					"name": "Battery",
 					"position": [
-						-167.88896499999998,
+						-419.88897499999996,
 						-148.999675,
 						-0.26237187
 					]
@@ -826,7 +835,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						-167.984215,
+						-419.98422500000004,
 						-147.54899999999998,
 						0.336809025
 					]
@@ -841,7 +850,7 @@
 				{
 					"name": "Bells",
 					"position": [
-						95.992978,
+						-156.00703,
 						-147.12666000000002,
 						0.003604040000000003
 					]
@@ -849,7 +858,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						96.0211725,
+						-155.978825,
 						-148.05349999999999,
 						0.6402135
 					]
@@ -864,7 +873,7 @@
 				{
 					"name": "Eyes",
 					"position": [
-						360.985,
+						108.985,
 						-147.19,
 						0.2
 					]
@@ -872,7 +881,7 @@
 				{
 					"name": "Lever",
 					"position": [
-						358.591415,
+						106.59141,
 						-148.78833500000002,
 						0.8267715
 					]
@@ -887,7 +896,7 @@
 				{
 					"name": "PeelTips",
 					"position": [
-						648.000305,
+						396.00031,
 						-147.70609000000002,
 						-0.01741360000000003
 					]
@@ -895,9 +904,32 @@
 				{
 					"name": "Spanner",
 					"position": [
-						648.862025,
+						396.86199999999997,
 						-146.79371,
 						0.727153065
+					]
+				}
+			]
+		},
+		{
+			"asset": "430086ae5519fd00",
+			"label": "Kit_JunkrotTickworthPocketti",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Chain",
+					"position": [
+						683.1130499999999,
+						-147.774795,
+						-0.6473473
+					]
+				},
+				{
+					"name": "Lid",
+					"position": [
+						685.56002,
+						-148.115265,
+						-0.488530285
 					]
 				}
 			]
