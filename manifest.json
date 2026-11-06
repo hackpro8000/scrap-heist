@@ -6,7 +6,7 @@
 			"piece": 1,
 			"label": "HubSection1",
 			"turn": 180.0,
-			"bytes": 8302816,
+			"bytes": 8302868,
 			"parts": 29
 		},
 		{
@@ -15,25 +15,25 @@
 			"piece": 1,
 			"label": "Yard2_Gate",
 			"turn": 0.0,
-			"bytes": 540472,
+			"bytes": 540524,
 			"parts": 4
 		},
 		{
-			"id": "e765168b71403e6f",
-			"key": "115ac3a755887f11-107c5c30239027da Spoke3 70 180 0",
+			"id": "1709af1250a220c6",
+			"key": "1cc43e4ea4bd80d5-107c5c30239027da Spoke3 70 180 0",
 			"piece": 1,
 			"label": "Spoke3",
 			"turn": 0.0,
-			"bytes": 121892,
+			"bytes": 121944,
 			"parts": 1
 		},
 		{
-			"id": "b6eed31bb57837ac",
-			"key": "115ac3a755887f11-7b25a7aa2539d602 Plot4 210 180 0",
+			"id": "e9b5dde364bc32ea",
+			"key": "1cc43e4ea4bd80d5-7b25a7aa2539d602 Plot4 210 180 0",
 			"piece": 1,
 			"label": "Plot4",
 			"turn": 0.0,
-			"bytes": 5862360,
+			"bytes": 5862412,
 			"parts": 10
 		},
 		{
@@ -42,7 +42,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotHubcappaWobbla",
 			"turn": 0.0,
-			"bytes": 557012,
+			"bytes": 557064,
 			"parts": 6
 		},
 		{
@@ -51,7 +51,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotFanettoWobblino",
 			"turn": 0.0,
-			"bytes": 647604,
+			"bytes": 647676,
 			"parts": 7
 		},
 		{
@@ -60,7 +60,7 @@
 			"piece": 1,
 			"label": "Kit_JunkrotDrippiDroppi",
 			"turn": 0.0,
-			"bytes": 820588,
+			"bytes": 820628,
 			"parts": 9
 		},
 		{
@@ -69,8 +69,17 @@
 			"piece": 1,
 			"label": "Kit_JunkrotVrrVrrPatatrim",
 			"turn": 0.0,
-			"bytes": 737040,
+			"bytes": 737096,
 			"parts": 7
+		},
+		{
+			"id": "8a4bc563fe1077cb",
+			"key": "JunkrotDronettoBuzzatti-7acc8fb57bb9953e 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotDronettoBuzzatti",
+			"turn": 0.0,
+			"bytes": 579160,
+			"parts": 8
 		}
 	],
 	"placements": [
@@ -151,7 +160,7 @@
 			]
 		},
 		{
-			"asset": "e765168b71403e6f",
+			"asset": "1709af1250a220c6",
 			"label": "Spoke3",
 			"turn": 0.0,
 			"anchors": [
@@ -166,7 +175,7 @@
 			]
 		},
 		{
-			"asset": "b6eed31bb57837ac",
+			"asset": "e9b5dde364bc32ea",
 			"label": "Plot4",
 			"turn": 0.0,
 			"anchors": [
@@ -196,7 +205,7 @@
 				{
 					"name": "Cap",
 					"position": [
-						-191.985625,
+						-443.985625,
 						-148.78175,
 						0.1183449785
 					]
@@ -211,7 +220,7 @@
 				{
 					"name": "Motor",
 					"position": [
-						71.99897999999999,
+						-180.00101999999998,
 						-147.611965,
 						-0.299714545
 					]
@@ -219,7 +228,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						72.021165,
+						-179.978825,
 						-148.9535,
 						0.62021354
 					]
@@ -234,7 +243,7 @@
 				{
 					"name": "Bands",
 					"position": [
-						335.99721,
+						83.997195,
 						-148.504455,
 						-0.56426208
 					]
@@ -242,7 +251,7 @@
 				{
 					"name": "Pupils",
 					"position": [
-						336.021165,
+						84.02116749999999,
 						-147.4535,
 						1.27021355
 					]
@@ -257,7 +266,7 @@
 				{
 					"name": "Branches",
 					"position": [
-						623.923785,
+						371.9238,
 						-146.21373499999999,
 						-0.01534000000000002
 					]
@@ -265,9 +274,32 @@
 				{
 					"name": "Pupils",
 					"position": [
-						624.022165,
+						372.02217,
 						-147.50650000000002,
 						1.05021355
+					]
+				}
+			]
+		},
+		{
+			"asset": "8a4bc563fe1077cb",
+			"label": "Kit_JunkrotDronettoBuzzatti",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "NavGreen",
+					"position": [
+						660.8,
+						-148.25,
+						0.3
+					]
+				},
+				{
+					"name": "NavRed",
+					"position": [
+						659.2,
+						-148.25,
+						0.3
 					]
 				}
 			]

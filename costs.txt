@@ -1,6 +1,6 @@
 slab Spoke3	0.078
 slab Spoke3 #split	1
-slab Plot4	4.706
+slab Plot4	4.732
 slab Plot4 #split	1
-JunkrotVrrVrrPatatrim 1 x	0.695
-JunkrotVrrVrrPatatrim 1 x #split	1
+JunkrotDronettoBuzzatti 1 x	0.674
+JunkrotDronettoBuzzatti 1 x #split	1
