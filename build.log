@@ -25,99 +25,23 @@ assemble ServerMap: slab at ServerMap.luau:1351-1359 (key 84939f33a0cb0864)
 assemble ServerMap: slab at ServerMap.luau:1404-1426 (key dfbe27eb7d68389c)
 assemble ServerMap: wrote art/models/ServerMap/model.luau, 22621 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    0.4s] building HubSectionA 1 x part 5/5
-[    2.1s] baking on CPU (no GPU)
-[    2.1s]   shaded Columns_-1_0_0_011 152×152 in 0.06s
-[    2.6s]   shaded Columns_-1_-1_-1_110 516×516 in 0.50s
-[    2.7s]   shaded Columns_-1_-1_0_010 224×224 in 0.05s
-[    2.7s]   shaded Columns_-1_-1_0_110 40×40 in 0.00s
-[    3.2s]   shaded Columns_-1_0_-1_100 480×480 in 0.45s
-[    3.5s]   shaded Columns_-1_0_-1_111 428×428 in 0.30s
-[    4.4s]   shaded Columns_0_-1_0_001 656×656 in 0.85s
-[    5.3s]   shaded Columns_0_0_0_001 744×744 in 0.86s
-[    5.4s]   shaded Columns_0_0_0_010 300×300 in 0.13s
-[    7.0s]   shaded Columns_0_0_-1_001 932×932 in 1.52s
-[    7.3s]   shaded Dirt_-1_0_0_100 340×340 in 0.29s
-[    9.0s]   shaded Dirt_-1_-1_0_011 944×944 in 1.55s
-[    9.5s]   shaded Dirt_-1_-1_0_111 536×536 in 0.52s
-[    9.9s]   shaded Dirt_-1_-1_0_101 568×568 in 0.37s
-[   10.2s]   shaded Dirt_0_-1_0_100_011 408×408 in 0.26s
-[   10.3s]   shaded Dirt_0_-1_0_100_001 176×176 in 0.07s
-[   10.5s]   shaded Dirt_0_-1_0_110_101 372×372 in 0.19s
-[   11.1s]   shaded Dirt_0_-1_0_110_011 608×608 in 0.58s
-[   11.3s]   shaded Dirt_0_-1_0_010 296×296 in 0.19s
-[   11.3s]   shaded Dirt_0_0_-1 76×76 in 0.04s
-[   11.5s]   shaded Pebbles_-1_0_0 368×368 in 0.21s
-[   11.6s]   shaded Grass_1_-1_0 224×224 in 0.05s
-[   12.5s]   shaded Grass_-1_-1_0_000 840×840 in 0.92s
-[   12.9s]   shaded Grass_-1_-1_0_010 624×624 in 0.40s
-[   13.9s]   shaded Grass_-1_1_0 900×900 in 0.95s
-[   14.3s]   shaded Grass_0_0_0_010 408×408 in 0.34s
-[   14.3s] built HubSectionA 1 x part 5/5: 26 parts in 13.9s
-[   14.5s] cached HubSectionA 1 x part 5/5
-[   14.5s] building Plot2 -70 180 0
-[   19.6s]   shaded Slab 1024×1024 in 4.82s
-[   19.6s] built Plot2 -70 180 0: 1 parts in 5.1s
-[   19.6s] building Spoke4 210 180 0
-[   19.7s]   shaded Road 304×304 in 0.08s
-[   19.7s] built Spoke4 210 180 0: 1 parts in 0.1s
-[   19.7s] building Plot5 -210 -180 180
-[   24.8s]   shaded Slab 1024×1024 in 4.87s
-[   24.8s] built Plot5 -210 -180 180: 1 parts in 5.1s
-[   24.8s] building Spoke8 210 -180 180
-[   24.9s]   shaded Road 304×304 in 0.08s
-[   24.9s] built Spoke8 210 -180 180: 1 parts in 0.1s
-[   24.9s] building Side1 -140 150 -90
-[   25.3s]   shaded Deck 508×508 in 0.26s
-[   25.3s]   shaded HazardYellow 100×100 in 0.01s
-[   25.3s]   shaded HazardBlack 92×92 in 0.01s
-[   25.5s]   shaded Girders 640×640 in 0.24s
-[   25.6s]   shaded Posts 124×124 in 0.03s
-[   25.6s]   shaded Rail 416×416 in 0.05s
-[   25.7s]   shaded KerbEnds 148×148 in 0.03s
-[   25.7s]   shaded EndPosts 80×80 in 0.01s
-[   25.8s]   shaded Abutments 368×368 in 0.13s
-[   25.8s] built Side1 -140 150 -90: 9 parts in 0.9s
-[   25.8s] building Side5 0 -150 -90
-[   26.2s]   shaded Deck 508×508 in 0.26s
-[   26.2s]   shaded HazardYellow 100×100 in 0.01s
-[   26.2s]   shaded HazardBlack 92×92 in 0.01s
-[   26.4s]   shaded Girders 640×640 in 0.24s
-[   26.5s]   shaded Posts 124×124 in 0.03s
-[   26.5s]   shaded Rail 416×416 in 0.05s
-[   26.6s]   shaded KerbEnds 148×148 in 0.03s
-[   26.6s]   shaded EndPosts 80×80 in 0.01s
-[   26.7s]   shaded Abutments 368×368 in 0.13s
-[   26.7s] built Side5 0 -150 -90: 9 parts in 0.9s
-[   26.7s] building TyreStack 1 x x1.8
-[   26.8s]   shaded Tyres 256×256 in 0.06s
-[   26.8s]   shaded Rim 256×256 in 0.04s
-[   26.8s] built TyreStack 1 x x1.8: 2 parts in 0.1s
-[   26.8s] building JunkWall 1 x x1.75
-[   26.9s]   shaded Fridges 256×256 in 0.06s
-[   27.0s]   shaded Doors 256×256 in 0.06s
-[   27.0s]   shaded Drums 256×256 in 0.05s
-[   27.1s]   shaded Handles 256×256 in 0.04s
-[   27.1s] built JunkWall 1 x x1.75: 4 parts in 0.2s
-[   27.1s] writing ServerMap.glb and 80 textures
-[   27.7s] chunk ServerMap_S16_01.glb: 65 parts, 11.0 MB
-[   27.7s] chunk ServerMap_S16_02.glb: 15 parts, 2.8 MB
-ServerMap: 80 parts, script 27.12s, total 27.85s
-SHARD_COST	HubSectionA 1 x	69.525
-SHARD_COST	HubSectionA 1 x #split	1
-SHARD_COST	slab Plot2	5.108
-SHARD_COST	slab Plot2 #split	1
-SHARD_COST	slab Spoke4	0.086
-SHARD_COST	slab Spoke4 #split	1
-SHARD_COST	slab Plot5	5.103
-SHARD_COST	slab Plot5 #split	1
-SHARD_COST	slab Spoke8	0.087
-SHARD_COST	slab Spoke8 #split	1
-SHARD_COST	slab Side1	0.894
-SHARD_COST	slab Side1 #split	1
-SHARD_COST	slab Side5	0.888
-SHARD_COST	slab Side5 #split	1
-SHARD_COST	TyreStack 1 x x1.8	0.113
-SHARD_COST	TyreStack 1 x x1.8 #split	1
-SHARD_COST	JunkWall 1 x x1.75	0.236
-SHARD_COST	JunkWall 1 x x1.75 #split	1
+[    0.5s] cached HubSectionA 1 x part 5/5
+[    0.6s] cached HubSectionA 1 x part 5/5
+[    0.6s] cached Plot2 -70 180 0
+[    0.6s] cached Spoke4 210 180 0
+[    0.7s] cached Plot5 -210 -180 180
+[    0.7s] cached Spoke8 210 -180 180
+[    0.7s] cached Side1 -140 150 -90
+[    0.7s] cached Side5 0 -150 -90
+[    0.7s] cached TyreStack 1 x x1.8
+[    0.7s] cached JunkWall 1 x x1.75
+[    0.7s] writing ServerMap.glb and 80 textures
+[    1.3s] chunk ServerMap_S16_01.glb: 65 parts, 11.0 MB
+[    1.3s] chunk ServerMap_S16_02.glb: 15 parts, 2.8 MB
+ServerMap: 80 parts, script 724.07ms, total 1.50s
+upload ServerMap: starting in 1.8s
+upload ServerMap: uploading ServerMapS16_01 (11M)
+upload ServerMap: ServerMapS16_01 is asset 100113414823285
+upload ServerMap: uploading ServerMapS16_02 (2.7M)
+upload ServerMap: ServerMapS16_02 is asset 89890085137967
+upload ServerMap: shard upload done: 2 chunks; IDs in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapAssetIds.txt, anchors in /home/runner/work/scrap-heist/scrap-heist/art/models/ServerMap/chunks/ServerMapChunks.luau (src/shared not touched)
