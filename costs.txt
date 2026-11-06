@@ -1,6 +1,19 @@
-HubSectionA 1 x	54.952
-HubSectionA 1 x #split	1
-slab Bridge6	1.342
-slab Bridge6 #split	1
-slab Bridge8	1.327
-slab Bridge8 #split	1
+YardFooting 1.037037037037037 x x1.5	0.053
+YardFooting 1.037037037037037 x x1.5 #split	1
+slab Yard2_Bay2	0.130
+slab Yard2_Bay2 #split	1
+BillboardFrame 1 x x1.5	0.514
+slab Yard4_Bay3	0.127
+slab Yard4_Bay3 #split	1
+slab Yard5_Bay1	0.124
+slab Yard5_Bay1 #split	1
+slab Yard6_Bay2	0.129
+slab Yard6_Bay2 #split	1
+YardFooting 1 x x1.5	0.047
+YardFooting 1 x x1.5 #split	1
+PlotMarker 1 x x1.5	0.308
+PlotMarker 1 x x1.5 #split	1
+slab Yard7_Press	0.127
+slab Yard7_Press #split	1
+slab Yard8_Bay1	0.129
+slab Yard8_Bay1 #split	1
