@@ -8,7 +8,8 @@
 --   EditMesh.box({sx, sy, sz}, {nx, ny, nz})        cuts per side, default 1
 --   EditMesh.lattice(xs, ys, zs)                    a box with cuts at the
 --                                                   given coordinates
---   EditMesh.roundedBox({sx, sy, sz}, radius, segments)
+--   EditMesh.roundedBox({sx, sy, sz}, radius, segments, {nx, ny, nz})
+--                                                   cuts across the flat faces
 --   EditMesh.grid(sx, sy, nx, ny)                   flat, facing +z, open
 --   EditMesh.disk(radius, sides)                    flat, facing +z, open
 --   EditMesh.circle(radius, sides)                  one face, facing +z
@@ -85,10 +86,13 @@ function EditMesh.box(size, cuts)
 end
 
 -- A box with its edges and corners rounded to `radius`, in `segments`
--- quads round each edge.
-function EditMesh.roundedBox(size, radius, segments)
+-- quads round each edge, its flat faces cut `cuts` times along each axis.
+function EditMesh.roundedBox(size, radius, segments, cuts)
 	segments = segments or 3
+	cuts = cuts or { 1, 1, 1 }
+	local axisIndex = 0
 	local function axis(length)
+		axisIndex += 1
 		local h = length / 2
 		local r = math.min(radius, h)
 		local list = {}
@@ -96,7 +100,10 @@ function EditMesh.roundedBox(size, radius, segments)
 			table.insert(list, -h + r * k / segments)
 		end
 		if h - r > -h + r + 1e-9 then
-			table.insert(list, h - r)
+			local middle = cuts[axisIndex]
+			for k = 1, middle do
+				table.insert(list, -h + r + (2 * (h - r)) * k / middle)
+			end
 		end
 		for k = 1, segments do
 			table.insert(list, h - r + r * k / segments)

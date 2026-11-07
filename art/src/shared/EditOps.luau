@@ -12,7 +12,8 @@
 --   subdivide(levels)                              each face into quads
 --   smoothSubdivide(levels)                        Catmull-Clark, with creases
 --   bridge(edgesA, edgesB)                         quads joining two holes
---   bridgeFaces(faceA, faceB)                      a tunnel through the mesh
+--   bridgeFaces(a, b)                              a tunnel or handle between
+--                                                  two faces or regions
 --   bevel(edges, width, segments)                  chamfered or rounded edges
 --   poke(faces)                                    a point in each face
 --   spin / sweep (shared/EditShapes.luau)          lathe and profile sweeps
@@ -538,6 +539,7 @@ local function rimCycle(m, edges)
 		vert = nextOf[vert]
 		assert(vert, "EditMesh: those edges aren't one closed loop")
 	until vert == start
+	assert(#cycle == m:count(edges.ids), `EditMesh: those edges make more than one loop ({#cycle} of {m:count(edges.ids)} in the first)`)
 	return cycle
 end
 
@@ -567,14 +569,20 @@ function EditMesh:bridge(edgesA, edgesB, tag)
 	return setmetatable({ mesh = self, kind = "face", ids = made }, EditMesh.Selection)
 end
 
--- Removes two faces and joins their rims: a tunnel or a handle.
+-- Removes two faces (or two regions of faces, given as selections) and
+-- joins their rims: a tunnel through the mesh, or a handle between two
+-- ends turned to face each other.
 function EditMesh:bridgeFaces(faceA, faceB, tag)
-	local rimA = self:select("face", "ids", { faceA }):boundary()
-	local rimB = self:select("face", "ids", { faceB }):boundary()
-	local keepA, keepB = rimA.ids, rimB.ids
+	local regionA = if type(faceA) == "table" then faceA:faces() else self:select("face", "ids", { faceA })
+	local regionB = if type(faceB) == "table" then faceB:faces() else self:select("face", "ids", { faceB })
+	local keepA, keepB = regionA:boundary().ids, regionB:boundary().ids
 	return self:rebuilding(function()
-		self:removeFace(faceA)
-		self:removeFace(faceB)
+		for face in regionA.ids do
+			self:removeFace(face)
+		end
+		for face in regionB.ids do
+			self:removeFace(face)
+		end
 		local function restore(ids)
 			return setmetatable({ mesh = self, kind = "edge", ids = ids }, EditMesh.Selection)
 		end

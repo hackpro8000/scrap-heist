@@ -66,6 +66,8 @@ local KIT_NAME = "Kit"
 local KIT_FOLDERS = {
 	{ prefix = "Capsule", folder = "Capsules", strip = true },
 	{ prefix = "Junkrot", folder = "Junkrots", strip = true },
+	-- Test pieces of the modelling tools, kept apart from the game's models.
+	{ prefix = "Proof", folder = "Proofs", strip = true },
 	{ prefix = "", folder = "YardKit", strip = false },
 }
 
