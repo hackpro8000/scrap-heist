@@ -2,8 +2,12 @@
 at once as Roblox will take, from one place so one throttle sees every
 answer.
 
-Objects are added as they arrive (Uploader.add) and uploaded at once; the
-caller waits for the ones it cares about (Uploader.wait). An object is
+Objects are added as they arrive (Uploader.add) and go up in bundles: the
+objects that arrive within GATHER seconds of each other, up to BUNDLE_MOST
+bytes (under Open Cloud's 20 MB limit), are joined into one file (bundle.py) and uploaded as one Model, which
+holds each object as a child named by its id. Every object in a bundle gets
+the bundle's asset id. The caller waits for the ones it cares about
+(Uploader.wait). An object is
 skipped when it already has an asset: its id is in the layout's ledger,
 art/src/layouts/<Name>Uploads.tsv, or in this machine's record of what it
 has uploaded, art/models/<Name>/uploaded.tsv, which outlives a failed run.
@@ -33,6 +37,8 @@ import urllib.error
 import urllib.request
 import uuid
 
+import bundle
+
 API = os.environ.get("ROBLOX_ASSETS_API", "https://apis.roblox.com/assets/v1")
 START = float(os.environ.get("UPLOAD_START", "4"))
 MOST = int(os.environ.get("UPLOAD_MOST", "128"))
@@ -41,6 +47,8 @@ PROCESS_TIMEOUT = int(os.environ.get("UPLOAD_PROCESS_TIMEOUT", "360"))
 FIRST_PAUSE, MOST_PAUSE = 1.0, 60.0
 KEY_FILE = os.path.expanduser("~/.config/scrap-heist/roblox-api-key")
 CREATOR_ID = os.environ.get("ROBLOX_CREATOR_ID", "670715109")
+GATHER = float(os.environ.get("UPLOAD_GATHER", "1.0"))
+BUNDLE_MOST = int(os.environ.get("UPLOAD_BUNDLE_MOST", str(18 * 2**20)))
 
 
 def api_key():
@@ -127,6 +135,10 @@ class Uploader:
 				if len(fields) == 3:
 					self.record[fields[0]] = (fields[1], fields[2])
 		self.pending = set()
+		# Objects waiting to be bundled: (identity, path, label, shard).
+		self.queue = []
+		self.queued = threading.Condition(self.lock)
+		threading.Thread(target=self._bundle_up, daemon=True).start()
 		self.failed = {}
 		self.sent = 0
 		# Seconds an upload usually takes until Roblox has the asset ready.
@@ -146,7 +158,8 @@ class Uploader:
 				return False
 			self.pending.add(identity)
 			self.failed.pop(identity, None)
-		threading.Thread(target=self._send, args=(identity, path, label, shard), daemon=True).start()
+			self.queue.append((identity, path, label, shard))
+			self.queued.notify_all()
 		return True
 
 	def wait(self, identities, timeout=None):
@@ -168,30 +181,59 @@ class Uploader:
 		if not self.dry:
 			self.throttle.remember()
 
-	def _send(self, identity, path, label, shard):
+	def _bundle_up(self):
+		"""Takes what has gathered in the queue, one bundle at a time."""
+		while True:
+			with self.queued:
+				while not self.queue:
+					self.queued.wait()
+			# Give the objects arriving with this one a moment to join it.
+			time.sleep(GATHER)
+			with self.lock:
+				objects, size = [], 0
+				while self.queue:
+					# A missing file fails in _send, with the rest of its bundle.
+					size += os.path.getsize(self.queue[0][1]) if os.path.isfile(self.queue[0][1]) else 0
+					if objects and size > BUNDLE_MOST:
+						break
+					objects.append(self.queue.pop(0))
+			threading.Thread(target=self._send, args=(objects,), daemon=True).start()
+
+	def _send(self, objects):
 		self.throttle.enter()
 		succeeded = False
+		label = objects[0][2] if len(objects) == 1 else f"{len(objects)} objects"
 		try:
-			asset = self._upload(path, label) if not self.dry else self._pretend()
+			if self.dry:
+				asset = self._pretend()
+			else:
+				data = bundle.join([(identity, open(path, "rb").read()) for identity, path, _, _ in objects])
+				asset = self._upload(data, label)
 			with self.lock:
-				self.record[identity] = (str(asset), str(shard))
-				self.sent += 1
+				for identity, _, _, shard in objects:
+					self.record[identity] = (str(asset), str(shard))
+				self.sent += len(objects)
 				if not self.dry:
 					with open(self.record_path, "a") as file:
-						file.write(f"{identity}\t{asset}\t{shard}\n")
+						for identity, _, _, shard in objects:
+							file.write(f"{identity}\t{asset}\t{shard}\n")
 			succeeded = True
+			self.say(f"bundle of {len(objects)} is asset {asset}")
 		except Exception as error:
 			with self.lock:
-				self.failed[identity] = str(error)
-			self.say(f"{label} ({identity}) {error}")
+				for identity, *_ in objects:
+					self.failed[identity] = str(error)
+			self.say(f"bundle of {label} ({' '.join(o[0] for o in objects[:4])}) {error}")
 		finally:
 			self.throttle.leave(succeeded)
 			with self.done:
-				self.pending.discard(identity)
+				for identity, *_ in objects:
+					self.pending.discard(identity)
 				self.done.notify_all()
 			if self.on_done:
-				asset = self.record.get(identity, (None, None))[0] if succeeded else None
-				self.on_done(identity, asset, None if succeeded else self.failed.get(identity))
+				for identity, *_ in objects:
+					asset = self.record.get(identity, (None, None))[0] if succeeded else None
+					self.on_done(identity, asset, None if succeeded else self.failed.get(identity))
 
 	def _pretend(self):
 		self.throttle.hold()
@@ -224,18 +266,18 @@ class Uploader:
 			time.sleep(backoff * (0.5 + random.random()))
 			backoff = min(MOST_PAUSE, backoff * 2)
 
-	def _upload(self, path, label):
+	def _upload(self, data, label):
 		boundary = uuid.uuid4().hex
 		metadata = json.dumps({
 			"assetType": "Model",
 			"displayName": f"Scrap Heist {self.name} {label}"[:50],
-			"description": "Scrap Heist map object",
+			"description": "Scrap Heist map objects, one child per object",
 			"creationContext": {"creator": {"userId": CREATOR_ID}},
 		})
 		body = b"".join([
 			f'--{boundary}\r\nContent-Disposition: form-data; name="request"\r\nContent-Type: application/json\r\n\r\n{metadata}\r\n'.encode(),
-			f'--{boundary}\r\nContent-Disposition: form-data; name="fileContent"; filename="{os.path.basename(path)}"\r\nContent-Type: model/gltf-binary\r\n\r\n'.encode(),
-			open(path, "rb").read(),
+			f'--{boundary}\r\nContent-Disposition: form-data; name="fileContent"; filename="bundle.glb"\r\nContent-Type: model/gltf-binary\r\n\r\n'.encode(),
+			data,
 			f"\r\n--{boundary}--\r\n".encode(),
 		])
 		started = time.time()

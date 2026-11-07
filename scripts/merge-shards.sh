@@ -125,6 +125,6 @@ with open(placements_path, "w") as file:
 		file.write(f'\t{{ asset = "{placement["asset"]}", label = "{placement["label"]}", turn = {number(turn)}, anchors = {{ {anchors} }} }},\n')
 	file.write("}\n")
 
-say(f"{len(used)} objects in {len(placements)} placements; {len(fresh)} newly uploaded, {len(ledger)} in the ledger")
-print("\n".join(fresh))
+say(f"{len(used)} objects in {len(placements)} placements; {len(fresh)} newly uploaded in {len(set(fresh))} assets, {len(ledger)} in the ledger")
+print("\n".join(dict.fromkeys(fresh)))
 EOF

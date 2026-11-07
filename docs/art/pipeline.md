@@ -163,6 +163,11 @@ A layout is uploaded one object at a time, and only the objects that changed:
    them all at once, each machine's results and objects come straight back
    into `.standby-results/<task>/S<i>/`, and the session's one uploader
    (`tools/coordinator/uploader.py`) sends each object the moment it lands.
+   Objects landing within a second of each other go up as one bundle, a
+   Model of up to 18 MB with each object as a child named by its id
+   (`tools/coordinator/bundle.py`); they all get the bundle's asset id, and
+   `tools/studio/PlaceMap.luau` loads each bundle once and takes every
+   object out by its id.
    Its width grows by 0.5 per round of successes up to 64, halves when Roblox
    turns a request away (waiting out `Retry-After`), and is kept in
    `art/models/ServerMap/upload-width.txt` for the next run. Nothing polls.

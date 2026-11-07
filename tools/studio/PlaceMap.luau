@@ -305,36 +305,50 @@ local folder = Instance.new("Folder")
 folder.Name = "Map"
 folder.Parent = workspace
 
--- Every object loads at once, each on its own thread, since a load is
--- mostly waiting on the network. (AssetService loads objects uploaded with
--- an API key, which InsertService:LoadAsset refuses.)
+-- Every asset loads at once, each on its own thread, since a load is
+-- mostly waiting on the network. Objects are uploaded in bundles, so many
+-- share one asset: it loads once, and each object is the bundle's child
+-- named by its id (an asset from before bundling is the object itself).
+-- (AssetService loads objects uploaded with an API key, which
+-- InsertService:LoadAsset refuses.)
 local placed, failed = 0, 0
 local loaded: { [string]: Instance } = {}
-local wanted: { [string]: boolean } = {}
+local bundles: { [number]: Instance | false } = {}
 local loading = 0
 for _, placement in MapChunks do
-	if wanted[placement.asset] then
-		continue
-	end
-	wanted[placement.asset] = true
 	local id = (Assets.MapChunks :: any)[placement.asset]
 	if not Assets.isSet(id) then
 		warn(`PlaceMap: object {placement.asset} ({placement.label}) has no asset ID in Assets.MapChunks; skipped`)
 		continue
 	end
+	local number = tonumber(string.match(id, "%d+")) :: number
+	if bundles[number] ~= nil then
+		continue
+	end
+	bundles[number] = false
 	loading += 1
 	task.spawn(function()
-		local ok, container = pcall(AssetService.LoadAssetAsync, AssetService, tonumber(string.match(id, "%d+")))
+		local ok, container = pcall(AssetService.LoadAssetAsync, AssetService, number)
 		if ok then
-			loaded[placement.asset] = container
+			bundles[number] = container
 		else
-			warn(`PlaceMap: object {placement.asset} ({placement.label}) failed to load: {container}`)
+			warn(`PlaceMap: asset {number} (holding {placement.label}) failed to load: {container}`)
 		end
 		loading -= 1
 	end)
 end
 while loading > 0 do
 	task.wait()
+end
+for _, placement in MapChunks do
+	if loaded[placement.asset] then
+		continue
+	end
+	local id = (Assets.MapChunks :: any)[placement.asset]
+	local container = Assets.isSet(id) and bundles[tonumber(string.match(id, "%d+")) :: number]
+	if container then
+		loaded[placement.asset] = container:FindFirstChild(placement.asset, true) or container
+	end
 end
 
 for index, placement in MapChunks do
