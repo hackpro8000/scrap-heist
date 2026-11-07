@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotTrashaleroTrashala-b14c81f7e8ea3375"
+local CACHE_KEY = "JunkrotTrashaleroTrashala-b7c2d7eec1a3cab7"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -810,7 +810,8 @@ end
 -- One lofted body shaped like a shark: a conical snout over a crescent
 -- mouth on the underside, its corners back behind the eyes near the gills;
 -- the lower jaw is the head's own bottom slice hinged there, hanging open
--- on two rows of triangular teeth; the fins are pulled out of the body,
+-- on two rows of triangular teeth; the dorsal, tail and pelvic fins are pulled out
+-- of the body and the pectorals shaped from their outline,
 -- the eyes sit in sockets sunk into it, the gill slits and nostrils are
 -- recessed into it. No googly face. 3 studs tall, 4.5 long.
 -- Junkrot Kit: shaping helpers the junkrots share, on top of the edit-mesh
@@ -3553,7 +3554,7 @@ local GULLET = { 0.3, 0.07, 0.09 }
 local SNEAKER_BLUE = { 0.16, 0.32, 0.86 }
 local MIDDLE = 1.45 -- the body's middle line: it stands low, on fins of normal size
 -- The sneakers stand here, on the pectoral fins' tips and the pelvic fin's.
-local STANDS = { { 0.4, -0.78 }, { 0.4, 0.78 }, { -1.0, 0 } }
+local STANDS = { { 0.4, -0.92 }, { 0.4, 0.92 }, { -1.0, 0 } }
 
 -- The body's half height and half width along x, tail end to nose tip,
 -- read off these stations between; eased, except along the snout, which
@@ -3677,14 +3678,6 @@ local function shark()
 		pullFin(m, patch({ 0, 0, -1 }, 35, function(p)
 			return p[1] < -1.25 and math.abs(p[2]) < 0.1
 		end), { { -0.15, 0, -0.25 }, { -0.15, 0, -0.22 }, { -0.1, 0, -0.15 } }, { 0.75, 0.55, 0.8 })
-		-- The pectorals: flat blades off the flanks behind the gills, broad at
-		-- the root and tapering to a point, angled out and down and swept
-		-- back into the sneakers; thin side to side.
-		for _, side in { -1, 1 } do
-			pullFin(m, patch({ 0, side * 0.7, -0.7 }, 22, function(p)
-				return p[1] > 0.45 and p[1] < 1.0
-			end), { { -0.1, side * 0.12, -0.2 }, { -0.1, side * 0.1, -0.2 }, { -0.08, side * 0.06, -0.18 } }, { 0.68, 0.45, 1 })
-		end
 		pullFin(m, patch({ 0, 0, -1 }, 30, function(p)
 			return p[1] > -1.15 and p[1] < -0.8 and math.abs(p[2]) < 0.15
 		end), { { 0, 0, -0.28 }, { 0, 0, -0.25 }, { 0, 0, -0.22 } }, { 0.8, 0.7, 1 })
@@ -3814,6 +3807,26 @@ part("Mouth", nil, GULLET, function(mesh)
 	end, 0.006)
 	onJaw(floor):emit(mesh)
 end, true, 0)
+part("Pectorals", nil, TIN_BLUE, function(mesh)
+	-- Each pectoral fin shaped from its outline: a straight leading edge
+	-- sweeping back from the root to a pointed tip, a concave trailing edge
+	-- back to the root's rear; thick at the root, thinning to the edges.
+	-- Rooted in the flank low behind the gills, it points out, down and
+	-- back into its sneaker.
+	for _, side in { -1, 1 } do
+		local fin = Kit.plate({ { 0.3, -0.1 }, { 0.12, 0.45 }, { -0.1, 0.86 }, { -0.22, 0.88 }, { -0.4, 0.4 }, { -0.32, -0.1 } }, 0.1)
+		fin:translate(0, -0.05, 0)
+		fin:transform(function(p)
+			local out = math.clamp(p[3] / 0.88, 0, 1)
+			local thin = (1 - 0.8 * out) * (1 - 0.5 * math.abs(p[1] + 0.05) / 0.35)
+			return { p[1], p[2] * math.max(thin, 0.1), p[3] }
+		end)
+		Kit.turn(fin, "x", -side * 150)
+		Kit.turn(fin, "y", 25)
+		fin:translate(0.72, side * 0.46, MIDDLE - 0.48)
+		fin:emit(mesh)
+	end
+end, 40, 0.35)
 part("Eyes", nil, { 0.04, 0.04, 0.05 }, function(mesh)
 	for _, side in { -1, 1 } do
 		local eye = EditMesh.sphere(0.1, 8)
