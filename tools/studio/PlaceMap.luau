@@ -3,9 +3,10 @@
 	PlaceMap: run in Studio's command bar (edit mode, Rojo synced) to bring
 	the uploaded map into workspace.Map, every piece where it belongs.
 
-	The map travels as one upload per object (scripts/export-objects.py):
-	a model placed eight times is uploaded once. Assets.MapChunks holds each
-	object's asset ID and Config.MapChunks every placement: which object,
+	The map travels as objects (scripts/export-objects.py), uploaded in
+	bundles of many objects (tools/coordinator/bundle.py): a model placed
+	eight times is uploaded once. Assets.MapChunks holds each object's
+	bundle's asset ID and Config.MapChunks every placement: which object,
 	the label its parts take, how far to turn it from the way it was
 	uploaded, and one or two anchor parts with where their middles must
 	stand. Roblox may move or scale a model when it converts the upload, so
@@ -357,11 +358,15 @@ for index, placement in MapChunks do
 		failed += 1
 		continue
 	end
-	-- The load wraps the asset in a model; copy what's inside into one.
+	-- The load wraps the asset in a model; copy what's inside into one,
+	-- dropping the suffix a bundle gives every name ("Pupils__3").
 	local model = Instance.new("Model")
 	model.Name = placement.label
 	for _, child in container:GetChildren() do
 		child:Clone().Parent = model
+	end
+	for _, descendant in model:GetDescendants() do
+		descendant.Name = (string.gsub(descendant.Name, "__%d+", ""))
 	end
 
 	local done, message = place(model, placement.anchors, placement.turn)
@@ -388,8 +393,10 @@ for index, placement in MapChunks do
 		task.wait()
 	end
 end
-for _, container in loaded do
-	container:Destroy()
+for _, bundle in bundles do
+	if typeof(bundle) == "Instance" then
+		bundle:Destroy()
+	end
 end
 print(`PlaceMap: {placed} placements made, {failed} need attention`)
 

@@ -3,6 +3,11 @@ Model. Each object's nodes go under a new top node named by the object's id,
 which comes into Studio as a child of the bundle named the same; PlaceMap
 takes each object out by that name.
 
+Roblox's importer makes names unique across the whole file, so two objects'
+parts both called "Pupils" would come in as "Pupils" and "Pupils6". Each
+object's node and mesh names therefore get the object's place in the bundle
+as a suffix ("Pupils__3"), which PlaceMap strips off again.
+
 Everything indexed (nodes, meshes, materials, textures, images, samplers,
 accessors, buffer views, skins) is appended with its indices moved past what
 came before, and the binary chunks are laid end to end in one buffer.
@@ -47,8 +52,9 @@ def join(objects):
 	out = {name: [] for name in LISTS}
 	tops, used = [], set()
 	binary = bytearray()
-	for identity, data in objects:
+	for number, (identity, data) in enumerate(objects):
 		doc, chunk = read(data)
+		suffix = f"__{number}"
 		at = {name: len(out[name]) for name in LISTS}
 		base = len(binary)
 		binary += padded(chunk, b"\0")
@@ -87,6 +93,8 @@ def join(objects):
 					primitive["targets"] = [{k: v + at["accessors"] for k, v in t.items()} for t in primitive["targets"]]
 				primitives.append(primitive)
 			mesh["primitives"] = primitives
+			if "name" in mesh:
+				mesh["name"] += suffix
 			out["meshes"].append(mesh)
 		for skin in doc.get("skins", []):
 			skin = dict(skin)
@@ -102,6 +110,8 @@ def join(objects):
 					node[field] += at[list_name]
 			if "children" in node:
 				node["children"] = [c + at["nodes"] for c in node["children"]]
+			if "name" in node:
+				node["name"] += suffix
 			out["nodes"].append(node)
 		roots = doc["scenes"][doc.get("scene", 0)]["nodes"]
 		out["nodes"].append({"name": identity, "children": [r + at["nodes"] for r in roots]})
