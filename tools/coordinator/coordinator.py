@@ -90,6 +90,9 @@ class RemoteUploader:
 
 	def __init__(self, layout):
 		self.ledger_path = os.path.join(ROOT, "art", "src", "layouts", f"{layout}Uploads.tsv")
+		# Machines come and go; the width machine 1 learns is kept here and
+		# handed to each new machine 1 (uploader.py keeps it the same way).
+		self.width_path = os.path.join(ROOT, "art", "models", layout, "upload-width.txt")
 		self.record, self.failed, self.pending = {}, {}, set()
 		self.waiting = []  # (identity, path, label, shard) not yet sent
 		self.agent = None
@@ -131,8 +134,11 @@ class RemoteUploader:
 		else:
 			self.failed[identity] = event.get("error", "failed")
 		self.pending.discard(identity)
-		if "width" in event:
+		if event.get("width"):
 			self.throttle.limit = event["width"]
+			os.makedirs(os.path.dirname(self.width_path), exist_ok=True)
+			with open(self.width_path, "w") as file:
+				file.write(f"{event['width']:.2f}\n")
 		self.changed.set()
 
 	def wait(self, identities, timeout=None):
@@ -215,7 +221,13 @@ class Coordinator:
 		self.agents[shard] = socket
 		await self.emit({"type": "machine", "shard": shard, "up": len(self.agents), "count": count})
 		if self.uploads_on_machine and shard == 1:
-			await socket.send(json.dumps({"type": "uploader", "layout": self.layout}))
+			width = None
+			if os.path.isfile(self.uploader.width_path):
+				try:
+					width = float(open(self.uploader.width_path).read())
+				except ValueError:
+					pass
+			await socket.send(json.dumps({"type": "uploader", "layout": self.layout, "width": width}))
 			await self.uploader.connected(socket)
 		for task in self.tasks.values():
 			if shard not in task.done:

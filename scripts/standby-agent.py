@@ -140,6 +140,8 @@ class Agent:
 			# AGENT_DRY_UPLOAD fakes uploads, for local tests only.
 			self.uploader = uploading.Uploader(ROOT, header.get("layout", self.layout), say,
 				dry=os.environ.get("AGENT_DRY_UPLOAD") == "1", on_done=self.answer)
+			if getattr(self, "start_width", None):
+				self.uploader.throttle.limit = max(1.0, min(uploading.MOST, float(self.start_width)))
 		os.makedirs(self.inbox, exist_ok=True)
 		path = os.path.join(self.inbox, f"{header['id']}.glb")
 		with open(path, "wb") as file:
@@ -177,7 +179,8 @@ class Agent:
 					continue
 				event = json.loads(message)
 				if event["type"] == "uploader":
-					say("this machine uploads for the coordinator")
+					self.start_width = event.get("width")
+					say(f"this machine uploads for the coordinator, starting {self.start_width or 'fresh'} at once")
 				elif event["type"] == "task":
 					asyncio.create_task(self.handle(socket, event["id"], event["task"]))
 				elif event["type"] == "stop":
