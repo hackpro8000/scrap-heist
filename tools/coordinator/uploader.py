@@ -189,15 +189,21 @@ class Uploader:
 					self.queued.wait()
 			# Give the objects arriving with this one a moment to join it.
 			time.sleep(GATHER)
+			# Everything gathered goes at once, cut into bundles of up to
+			# BUNDLE_MOST bytes that upload side by side.
 			with self.lock:
-				objects, size = [], 0
-				while self.queue:
-					# A missing file fails in _send, with the rest of its bundle.
-					size += os.path.getsize(self.queue[0][1]) if os.path.isfile(self.queue[0][1]) else 0
-					if objects and size > BUNDLE_MOST:
-						break
-					objects.append(self.queue.pop(0))
-			threading.Thread(target=self._send, args=(objects,), daemon=True).start()
+				gathered, self.queue = self.queue, []
+			bundles, size = [[]], 0
+			for entry in gathered:
+				# A missing file fails in _send, with the rest of its bundle.
+				grows = os.path.getsize(entry[1]) if os.path.isfile(entry[1]) else 0
+				if bundles[-1] and size + grows > BUNDLE_MOST:
+					bundles.append([])
+					size = 0
+				bundles[-1].append(entry)
+				size += grows
+			for objects in bundles:
+				threading.Thread(target=self._send, args=(objects,), daemon=True).start()
 
 	def _send(self, objects):
 		self.throttle.enter()
