@@ -30,7 +30,10 @@ ref="$(sed -n 's/.* from \([^ ]*\) (.*/\1/p' <<< "${title}")"
 git fetch -q origin '+refs/heads/build-results/*:refs/remotes/origin/build-results/*' 2> /dev/null || true
 ready=0
 for i in $(seq 1 "${shards}"); do
-	if git log -n 20 --format=%s "origin/build-results/s${i}" 2> /dev/null | grep -q "^task ready-${id} "; then
+	# Read the log first: grep -q stopping early would break git's pipe, and
+	# with pipefail a found signal would count as missing.
+	subjects="$(git log -n 20 --format=%s "origin/build-results/s${i}" 2> /dev/null || true)"
+	if grep -q "^task ready-${id} " <<< "${subjects}"; then
 		ready=$((ready + 1))
 	fi
 done
