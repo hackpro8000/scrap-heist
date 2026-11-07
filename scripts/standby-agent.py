@@ -28,6 +28,7 @@ import json
 import os
 import subprocess
 import sys
+import threading
 import time
 import urllib.request
 
@@ -71,6 +72,7 @@ class Agent:
 		self.idle_until = time.monotonic() + self.idle_seconds
 		self.built = {}  # task id -> results folder
 		self.by_branch = {}  # task id -> whether its objects went to a branch
+		self.git_lock = threading.Lock()
 		self.building = set()
 		self.stopped = False
 		self.uploader = None
@@ -141,15 +143,27 @@ class Agent:
 			loop.call_soon_threadsafe(lambda: asyncio.ensure_future(socket.send(message)))
 
 	def fetch_objects(self, commit, into):
-		"""Machine 1: takes a builder's objects from its GitHub branch commit."""
+		"""Machine 1: takes a builder's objects from its GitHub branch commit,
+		into a bare repository of its own (never the checkout it builds in),
+		one fetch at a time (git refuses two into one repository at once),
+		trying a failed fetch again before it counts."""
 		os.makedirs(into, exist_ok=True)
-		# The checkout this machine works in (the folder it was started from).
-		fetched = subprocess.run(["git", "fetch", "-q", "--depth=1", "origin", commit], capture_output=True, text=True)
-		if fetched.returncode != 0:
-			raise RuntimeError(f"fetch of {commit[:8]} failed: {fetched.stderr.strip()[-200:]}")
-		archive = subprocess.Popen(["git", "archive", commit], stdout=subprocess.PIPE)
-		subprocess.run(["tar", "-x", "-C", into], stdin=archive.stdout, check=True)
-		archive.wait()
+		store = os.path.join(os.getcwd(), ".objects-store")
+		with self.git_lock:
+			if not os.path.isdir(store):
+				origin = subprocess.run(["git", "remote", "get-url", "origin"], capture_output=True, text=True).stdout.strip()
+				subprocess.run(["git", "init", "-q", "--bare", store], check=True)
+				subprocess.run(["git", "-C", store, "remote", "add", "origin", origin], check=True)
+			for attempt in range(3):
+				fetched = subprocess.run(["git", "-C", store, "fetch", "-q", "--depth=1", "origin", commit], capture_output=True, text=True)
+				if fetched.returncode == 0:
+					break
+				time.sleep(0.5 * (attempt + 1))
+			else:
+				raise RuntimeError(f"fetch of {commit[:8]} failed: {fetched.stderr.strip()[-200:]}")
+			archive = subprocess.Popen(["git", "-C", store, "archive", commit], stdout=subprocess.PIPE)
+			subprocess.run(["tar", "-x", "-C", into], stdin=archive.stdout, check=True)
+			archive.wait()
 
 	async def receive_fetch(self, socket, event):
 		"""Machine 1: a builder pushed objects; fetch them and upload the ones asked for."""

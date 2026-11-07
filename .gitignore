@@ -27,3 +27,4 @@ art/models/*/*
 !art/models/*/sketch.png
 .standby-results/
 /upload-inbox/
+/.objects-store/
