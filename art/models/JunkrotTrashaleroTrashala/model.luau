@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotTrashaleroTrashala-4a646c9922ad618d"
+local CACHE_KEY = "JunkrotTrashaleroTrashala-656a018d9ecb7e52"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3776,7 +3776,7 @@ end, true, 0.3)
 -- The scrap the shark is made of: darker metals over the back and on the
 -- fins, pale ones under the belly.
 local BACK_METALS = {
-	{ "BLUE_GREY", { 0.4, 0.47, 0.52 } },
+	{ "BLUEGREY", { 0.4, 0.47, 0.52 } },
 	{ "OLIVE", { 0.42, 0.45, 0.36 } },
 	{ "RUST", { 0.55, 0.35, 0.16 } },
 	{ "GUNMETAL", { 0.3, 0.33, 0.37 } },
