@@ -1,0 +1,15 @@
+slab Spoke2	0.046
+slab Spoke2 #split	1
+slab Spoke3	0.042
+slab Spoke3 #split	1
+slab Spoke4	0.043
+slab Spoke4 #split	1
+slab Spoke5	0.044
+slab Spoke5 #split	1
+slab Plot7	2.802
+slab Plot7 #split	1
+JunkrotLawnmowoRuggito 1 x	0.380
+JunkrotLawnmowoRuggito 1 x #split	1
+JunkrotSousvideSilvano 1 x	0.426
+JunkrotSousvideSilvano 1 x #split	1
+JunkrotUnitZero 1 x	0.044
