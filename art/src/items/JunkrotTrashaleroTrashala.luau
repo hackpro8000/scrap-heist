@@ -372,7 +372,7 @@ part("ShodFins", nil, { 0.18, 0.19, 0.21 }, function(mesh)
 		local out = (90 - f.down) * (if f.side == 0 then 1 else f.side)
 		-- Narrowing fast in the lower half, so only a slim tip goes into the
 		-- sneaker's collar.
-		metalFin({ { c, -0.12 }, { c * 0.42, f.span * 0.5 }, { c * 0.18, f.span }, { -c * 0.18, f.span }, { -c * 0.5, f.span * 0.45 }, { -c, -0.12 } }, 0.12, f.span, { f.span * 0.42 }, function(m)
+		metalFin({ { c, -0.12 }, { c * 0.34, f.span * 0.5 }, { c * 0.15, f.span }, { -c * 0.15, f.span }, { -c * 0.4, f.span * 0.45 }, { -c, -0.12 } }, 0.12, f.span, { f.span * 0.42 }, function(m)
 			Kit.turn(m, "x", 180)
 			Kit.turn(m, "x", out)
 			Kit.turn(m, "y", f.back)
@@ -390,9 +390,15 @@ end, 40, 0.4)
 -- touch wider.
 local SHOE = { long = 1.05, wide = 0.56, high = 0.38 }
 local SOLE = 0.14 -- outsole plus midsole
+-- The fin leans out and back on its way up, so the shoe is placed by where
+-- the fin's axis crosses the collar's height, not by its tip: the hole
+-- sits round the fin there, and the tip lies deeper inside the shoe.
 local function shoeAt(f)
-	local tip = shodTip(f)
-	return { tip[1] + SHOE.long * 0.3, tip[2] }
+	local a, b = finTurn(f, { 0, 0, f.span }), finTurn(f, { 0, 0, f.span - 0.5 })
+	local collarZ = SOLE - 0.03 + SHOE.high
+	local t = (collarZ - a[3]) / (b[3] - a[3])
+	local x, y = a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t
+	return { x + SHOE.long * 0.28, y }
 end
 -- Stations along the shoe, t from the heel (0) to the toe (1): half width
 -- and the upper's height, as shares of the shoe's.
@@ -445,7 +451,7 @@ part("Sneakers", nil, SNEAKER_BLUE, function(mesh)
 		-- The collar: a socket sunk into the top over the heel.
 		local collar = upper:select("face", "facing", { 0, 0, 1 }, 35):filter(function(p)
 			local t = (p[1] + SHOE.long / 2) / SHOE.long
-			return t > 0.1 and t < 0.34 and math.abs(p[2]) < SHOE.wide * 0.26
+			return t > 0.07 and t < 0.37 and math.abs(p[2]) < SHOE.wide * 0.3
 		end)
 		if collar:count() > 0 then
 			upper:extrude(upper:inset(collar, 0.02, 0), -0.14)
