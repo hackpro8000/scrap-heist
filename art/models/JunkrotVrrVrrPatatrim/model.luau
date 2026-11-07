@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotVrrVrrPatatrim-b482547edbe10f5e"
+local CACHE_KEY = "JunkrotVrrVrrPatatrim-7aee01b9ae8e19f1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -804,12 +804,69 @@ local function finishParts()
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
--- Vrr Vrr Patatrim: Brr Brr Patapim from scrap. A trunk of rusted pipe for
--- a body, flaring at its foot like roots, on two stumpy pipe legs in a pair
--- of huge boots; wire branches for arms with twigs off them and more for
--- hair; on top a tin monkey's head with its own big drooping nose, round
--- eyes under a heavy brow, a pale muzzle and round ears. No googly face.
--- 4 studs tall.
+-- Vrr Vrr Patatrim: Brr Brr Patapim from scrap. A proboscis monkey's head,
+-- far too big for its body, with a long pipe of a nose hanging from between
+-- the eyes down past the chin to a bulb, small close-set googly eyes under a
+-- heavy brow, an orange copper face in a pale tin mane; a mop of green
+-- sheet-metal leaves for hair, spreading down a hunched mossy back; two
+-- thick moss-and-bark trunk legs; thin knobbly root pipes for arms hanging
+-- to the ground; and two enormous bare feet of pale tin, five toes each
+-- with nail plates. Every surface is mismatched scrap plates. About 4 studs
+-- tall, nose +x.
+-- Junkrot Scrap: the scrap-built body kit the remix junkrots share, on top
+-- of JunkrotKit (which it brings in). A creature's body is a loft along x
+-- (nose +x, z up, y to the sides) skinned in plates of mismatched metal;
+-- its fins, wings and such are sheet metal in pieces; it may wear
+-- sneakers and googly eyes. Include it first: `-- include: JunkrotScrap`.
+--
+-- Scrap.loft(spec) -> loft              a tube body lofted along x:
+--   spec.stations  { {x, top, bottom, halfWidth}, ... } tail to nose, eased
+--                  between, except from spec.straightFrom on (a snout)
+--   spec.at        { x, y, z } where the body's axis origin goes (default 0)
+--   spec.sides, spec.steps   ring vertices (24) and stations along (80)
+--   spec.splits    { { nominal = 90, angle = fn(x) -> deg from top | nil,
+--                      tag = "belly" }, ... }: the ring is warped so its
+--                  vertex at the nominal angle sits exactly on angle(x),
+--                  so a split along it is a true edge loop; faces below the
+--                  nominal angle get the tag, where angle(x) is defined
+--   loft.mesh      the EditMesh, tags on, in the model's frame
+--   loft.skin(x, a)          point of the skin at x and nominal angle a
+--                  (0 top, 180 bottom, minus for the -y side)
+--   loft.normal(x, a) -> p, n  the point and the outward direction there
+--   loft.on(x, a, lift)      the point lifted off the skin
+--   loft.station(x) -> top, bottom, halfWidth (from the axis)
+-- Scrap.skinPart(loft, { keep = tag } | { drop = { tags } }, thickness)
+--                  a copy of the skin with only those faces, solidified
+-- Scrap.fin(outline, thick, span)      a fin plate, x along, z out from the
+--                  root, thick at the root thinning to tip and edges
+-- Scrap.metalFin(outline, thick, span, cuts, place, first)
+--                  the same fin as sheet metal in pieces cut at the span
+--                  heights in cuts, each piece its own metal, rivets along
+--                  the seams; place(m) positions a piece; returns the dark
+--                  core to emit; pieces and rivets come out with the panel
+--                  parts (Scrap.panelParts)
+-- Scrap.panels(loft, spec) -> panels    plates tiling the skin:
+--   spec.bands     { {a0, a1, {x cuts...}}, ... } nominal angle bands with
+--                  their own cuts along x
+--   spec.open(band, x0, x1, side) -> bool   leave this cell bare
+--   spec.metal(band, seg, cell, side, x0, x1) -> {name, colour} or nil for
+--                  the palette's pick; spec.paleFrom: bands from this angle
+--                  take Scrap.BELLY_METALS, others Scrap.BACK_METALS
+--   spec.splits    { [n] = share }: cells whose running count hits n are
+--                  split round the section at that share
+--   spec.gap (0.012), spec.nudge (1.5 deg), spec.lift (0.035)
+-- Scrap.panelParts(loft, panels, spec)  declares the parts: Panels<Metal>
+--                  (with any metal fin pieces), and the joins, by turns
+--                  rivets, bolts, welds, tape, stitches and clips;
+--                  spec.rivetsUpTo: no rivets or bolts beyond this x
+-- Scrap.sneakers(collars, spec)        declares sneaker parts standing on
+--                  the ground, toe +x, each collar's centre at {x, y}
+--   Scrap.SHOE, Scrap.SOLE   the shoe's size and its sole's height
+--   Scrap.collarCrossing(a, b, shoe)   where the line a->b crosses collar
+--                  height: the collar centre for a fin running down a->b
+-- Scrap.googlyEyes(eyes)   declares Eyes and Pupils: each { p, n }, a
+--                  point and outward direction (from loft.normal)
+-- Scrap.BACK_METALS, Scrap.BELLY_METALS   { {name, colour}, ... }
 -- Junkrot Kit: shaping helpers the junkrots share, on top of the edit-mesh
 -- tools (which it brings in). Each helper makes a fresh edit mesh, z up,
 -- front toward -y, centred on the origin unless it says otherwise; every
@@ -3544,102 +3601,1086 @@ end
 function Kit.recess(m, faces, rim, depth)
 	return m:inset(faces, rim, -depth)
 end
-local TIN = { 0.74, 0.7, 0.6 }
-local TRUNK = { 0.42, 0.28, 0.18 }
-local PALE = { 0.86, 0.78, 0.62 }
-local HEAD = { 0, 0, 3.25 }
--- The head and all on it a quarter bigger, about its middle.
-local function big(m)
-	return m:transform(function(p)
-		return { HEAD[1] + (p[1] - HEAD[1]) * 1.25, HEAD[2] + (p[2] - HEAD[2]) * 1.25, HEAD[3] + (p[3] - HEAD[3]) * 1.25 }
-	end)
+Scrap = {}
+
+Scrap.BACK_METALS = {
+	{ "BLUEGREY", { 0.4, 0.47, 0.52 } },
+	{ "OLIVE", { 0.42, 0.45, 0.36 } },
+	{ "RUST", { 0.55, 0.35, 0.16 } },
+	{ "GUNMETAL", { 0.3, 0.33, 0.37 } },
+	{ "PAINTED", { 0.36, 0.5, 0.62 } },
+	{ "BRASS", { 0.7, 0.58, 0.3 } },
+}
+Scrap.BELLY_METALS = {
+	{ "TIN", { 0.72, 0.7, 0.66 } },
+	{ "GALVANISED", { 0.6, 0.63, 0.62 } },
+	{ "ENAMEL", { 0.86, 0.86, 0.82 } },
+	{ "ALUMINIUM", { 0.78, 0.8, 0.8 } },
+	{ "TIN", { 0.72, 0.7, 0.66 } },
+	{ "ENAMEL", { 0.86, 0.86, 0.82 } },
+}
+local DARK = { 0.18, 0.19, 0.21 }
+
+local function smooth(t)
+	return t * t * (3 - 2 * t)
 end
-part("Trunk", nil, TRUNK, function(mesh)
-	local m = Kit.lathe({ { 0, 0 }, { 0.62, 0 }, { 0.55, 0.15 }, { 0.5, 0.4 }, { 0.5, 1.8 }, { 0.56, 1.9 }, { 0.56, 2.0 }, { 0, 2.0 } }, 20)
-	m:translate(0, 0, 0.8)
-	m:emit(mesh)
-	for _, side in { -1, 1 } do
-		Kit.tube({ { side * 0.25, 0, 0.95 }, { side * 0.33, -0.08, 0.4 } }, 0.2, 10):emit(mesh)
-	end
-end, 40, 0.4)
-part("Boots", nil, { 0.36, 0.2, 0.12 }, function(mesh)
-	for _, side in { -1, 1 } do
-		local boot = Kit.shoe(1.1, 0.55, 0.45)
-		Kit.turn(boot, "z", -90)
-		boot:translate(side * 0.38, -0.15, 0)
-		boot:emit(mesh)
-	end
-end, true, RUBBER)
-part("MonkeyFace", nil, TIN, function(mesh)
-	local head = EditMesh.sphere(0.5, 12)
-	head:translate(HEAD[1], HEAD[2], HEAD[3])
-	big(head):emit(mesh)
-	local brow = EditMesh.capsule(0.08, 0.42, 8)
-	Kit.turn(brow, "y", 90)
-	brow:translate(0, -0.4, HEAD[3] + 0.2)
-	big(brow):emit(mesh)
-	for _, side in { -1, 1 } do
-		local ear = Kit.lathe({ { 0, 0 }, { 0.2, 0 }, { 0.18, 0.06 }, { 0, 0.08 } }, 12)
-		Kit.turn(ear, "y", side * 90)
-		ear:translate(side * 0.48, 0, HEAD[3] + 0.02)
-		big(ear):emit(mesh)
-	end
-end, true, 0.25)
-part("Muzzle", nil, PALE, function(mesh)
-	local m = EditMesh.sphere(0.3, 12)
-	Kit.size(m, { 1.1, 0.6, 0.85 })
-	m:translate(0, -0.38, HEAD[3] - 0.08)
-	big(m):emit(mesh)
-	-- The big drooping nose.
-	local nose = Kit.curve({ { 0, -0.5, HEAD[3] + 0.02 }, { 0, -0.66, HEAD[3] - 0.15 }, { 0, -0.64, HEAD[3] - 0.42 } }, 4)
-	big(Kit.tube(nose, function(t)
-		return 0.11 + 0.07 * t
-	end, 10)):emit(mesh)
-end, true, 0.25)
-part("Eyes", nil, { 0.95, 0.94, 0.9 }, function(mesh)
-	for _, side in { -1, 1 } do
-		local eye = EditMesh.sphere(0.1, 8)
-		eye:translate(side * 0.18, -0.4, HEAD[3] + 0.08)
-		big(eye):emit(mesh)
-	end
-end, true, 0)
-part("Pupils", nil, { 0.04, 0.04, 0.05 }, function(mesh)
-	for _, side in { -1, 1 } do
-		local pupil = EditMesh.sphere(0.055, 8)
-		pupil:translate(side * 0.18, -0.48, HEAD[3] + 0.07)
-		big(pupil):emit(mesh)
-	end
-end, true, 0)
-part("Branches", nil, DARK_STEEL, function(mesh)
-	for _, side in { -1, 1 } do
-		Kit.tube(Kit.curve({ { side * 0.5, 0, 2.3 }, { side * 0.9, -0.1, 2.6 }, { side * 1.15, -0.1, 3.05 } }, 3), 0.08, 8):emit(mesh)
-		Kit.tube({ { side * 0.98, -0.08, 2.72 }, { side * 1.3, 0, 2.7 } }, 0.05, 6):emit(mesh)
-	end
-	for k = 0, 4 do
-		local a = math.rad(k * 72 + 20)
-		local c, s = math.cos(a), math.sin(a)
-		big(Kit.tube(Kit.curve({ { c * 0.15, s * 0.15, HEAD[3] + 0.42 }, { c * 0.3, s * 0.3, HEAD[3] + 0.8 }, { c * 0.5, s * 0.5, HEAD[3] + 0.95 } }, 3), 0.025, 4)):emit(mesh)
-	end
-end, true, 0.3)
-part("Bands", nil, RUST_ORANGE, function(mesh)
-	for _, z in { 1.55, 2.2 } do
-		local band = EditMesh.torus(0.51, 0.05, 20, 6)
-		band:translate(0, 0, z)
-		band:emit(mesh)
-	end
-end, true, 0.6)
-part("Twigs", nil, DARK_STEEL, function(mesh)
-	-- Twig fingers at the end of each branch arm.
-	for _, side in { -1, 1 } do
-		for k = -1, 1 do
-			Kit.tube({ { side * 1.15, -0.1, 3.05 }, { side * (1.25 + 0.05 * k), -0.1 + k * 0.1, 3.3 } }, 0.03, 4):emit(mesh)
+
+-- Reads a list of { x, values... } at x, eased between entries.
+local function tableAt(list, x, straightFrom)
+	for k = 1, #list - 1 do
+		local a, b = list[k], list[k + 1]
+		if x <= b[1] then
+			local t = math.clamp((x - a[1]) / (b[1] - a[1]), 0, 1)
+			if not straightFrom or a[1] < straightFrom then
+				t = smooth(t)
+			end
+			local out = {}
+			for i = 2, #a do
+				out[i - 1] = a[i] + (b[i] - a[i]) * t
+			end
+			return table.unpack(out)
 		end
 	end
-end, true, 0.3)
-part("Mouth", nil, { 0.25, 0.16, 0.1 }, function(mesh)
-	local m = EditMesh.capsule(0.03, 0.16, 6)
-	Kit.turn(m, "y", 90)
-	m:translate(0, -0.6, HEAD[3] - 0.28)
-	big(m):emit(mesh)
+	local last = list[#list]
+	return table.unpack(last, 2)
+end
+Scrap.tableAt = tableAt
+
+function Scrap.loft(spec)
+	local at = spec.at or { 0, 0, 0 }
+	local sides, steps = spec.sides or 24, spec.steps or 80
+	local splits = spec.splits or {}
+	local x0, x1 = spec.stations[1][1], spec.stations[#spec.stations][1]
+	local loft = {}
+
+	function loft.station(x)
+		return tableAt(spec.stations, x, spec.straightFrom)
+	end
+	-- The warp: nominal angle to actual, by the knots the splits set at x;
+	-- a split with no angle at this x stays where the ring's even spacing
+	-- would put it.
+	local function actualAngle(x, n)
+		local knots = { { 0, 0 } }
+		for _, split in splits do
+			table.insert(knots, { split.nominal, split.angle(x) })
+		end
+		table.insert(knots, { 180, 180 })
+		table.sort(knots, function(a, b)
+			return a[1] < b[1]
+		end)
+		for k = 2, #knots - 1 do
+			if knots[k][2] == nil then
+				local before, after = k - 1, k + 1
+				while knots[after][2] == nil do
+					after += 1
+				end
+				local t = (knots[k][1] - knots[before][1]) / (knots[after][1] - knots[before][1])
+				knots[k][2] = knots[before][2] + (knots[after][2] - knots[before][2]) * t
+			end
+		end
+		for k = 1, #knots - 1 do
+			local a, b = knots[k], knots[k + 1]
+			if n <= b[1] then
+				local t = if b[1] > a[1] then (n - a[1]) / (b[1] - a[1]) else 0
+				return a[2] + (b[2] - a[2]) * t
+			end
+		end
+		return 180
+	end
+	function loft.skin(x, a)
+		local top, bottom, w = loft.station(x)
+		local side = if a < 0 then -1 else 1
+		local r = math.rad(actualAngle(x, math.abs(a)))
+		local c = math.cos(r)
+		local mid = (top + bottom) / 2
+		return { at[1] + x, at[2] + side * math.sin(r) * w, at[3] + mid + c * (if c > 0 then top - mid else mid - bottom) }
+	end
+	function loft.normal(x, a)
+		local p = loft.skin(x, a)
+		local px, pa = loft.skin(x + 0.01, a), loft.skin(x, a + 0.5)
+		local u = { px[1] - p[1], px[2] - p[2], px[3] - p[3] }
+		local v = { pa[1] - p[1], pa[2] - p[2], pa[3] - p[3] }
+		local n = { u[2] * v[3] - u[3] * v[2], u[3] * v[1] - u[1] * v[3], u[1] * v[2] - u[2] * v[1] }
+		local len = math.sqrt(n[1] ^ 2 + n[2] ^ 2 + n[3] ^ 2)
+		if len < 1e-9 then
+			return p, { 0, 0, 1 }
+		end
+		n = { n[1] / len, n[2] / len, n[3] / len }
+		local top, bottom = loft.station(x)
+		local away = { 0, p[2] - at[2], p[3] - at[3] - (top + bottom) / 2 }
+		if n[2] * away[2] + n[3] * away[3] < 0 then
+			n = { -n[1], -n[2], -n[3] }
+		end
+		return p, n
+	end
+	function loft.on(x, a, lift)
+		local p, n = loft.normal(x, a)
+		return { p[1] + n[1] * lift, p[2] + n[2] * lift, p[3] + n[3] * lift }
+	end
+
+	local ring, path = {}, {}
+	for k = 0, sides - 1 do
+		local r = math.rad(k * 360 / sides)
+		table.insert(ring, { -math.sin(r), math.cos(r) })
+	end
+	for k = 0, steps do
+		table.insert(path, { x0 + (x1 - x0) * k / steps, 0, 0 })
+	end
+	local m = EditMesh.sweep(ring, path)
+	local half = (x1 - x0) / steps / 2
+	for _, split in splits do
+		if split.tag then
+			m:tagging(split.tag, function()
+				m:select("face", "where", function(p)
+					local n = math.deg(math.atan2(math.abs(p[2]), p[3]))
+					return n > split.nominal and p[1] > x0 + half / 2 and p[1] < x1 - half / 2 and split.angle(p[1]) ~= nil and split.angle(p[1] - half) ~= nil and split.angle(p[1] + half) ~= nil
+				end):tag(split.tag)
+			end)
+		end
+	end
+	m:transform(function(p)
+		return loft.skin(p[1], math.deg(math.atan2(p[2], p[3])))
+	end)
+	loft.mesh = m
+	loft.x0, loft.x1, loft.at = x0, x1, at
+	return loft
+end
+
+function Scrap.skinPart(loft, which, thickness)
+	local m = loft.mesh:copy()
+	local keep
+	if which.keep then
+		keep = m:select("face", "tag", which.keep)
+	else
+		keep = m:select("face", "all")
+	end
+	for _, tag in which.drop or {} do
+		keep = keep:minus(m:select("face", "tag", tag))
+	end
+	for _, id in m:select("face", "all"):minus(keep):list() do
+		m:removeFace(id)
+	end
+	m:solidify(thickness or 0.03)
+	return m
+end
+
+function Scrap.fin(outline, thick, span)
+	local m = Kit.plate(outline, thick)
+	m:translate(0, -thick / 2, 0)
+	m:transform(function(p)
+		local out = math.clamp(p[3] / span, 0, 1)
+		return { p[1], p[2] * math.max(0.12, 1 - 0.85 * out), p[3] }
+	end)
+	return m
+end
+
+-- Clips an x-z outline to lo <= z <= hi (Sutherland-Hodgman).
+local function clipBand(outline, lo, hi)
+	local function clip(poly, keep, cross)
+		local out = {}
+		for i, a in poly do
+			local b = poly[i % #poly + 1]
+			local ka, kb = keep(a), keep(b)
+			if ka then
+				table.insert(out, a)
+			end
+			if ka ~= kb then
+				table.insert(out, cross(a, b))
+			end
+		end
+		return out
+	end
+	local function at(a, b, z)
+		local t = (z - a[2]) / (b[2] - a[2])
+		return { a[1] + (b[1] - a[1]) * t, z }
+	end
+	local poly = clip(outline, function(q)
+		return q[2] >= lo
+	end, function(a, b)
+		return at(a, b, lo)
+	end)
+	return clip(poly, function(q)
+		return q[2] <= hi
+	end, function(a, b)
+		return at(a, b, hi)
+	end)
+end
+Scrap.clipBand = clipBand
+
+local finPieces, finRivets = {}, {}
+function Scrap.metalFin(outline, thick, span, cuts, place, first)
+	local edges = { -10 }
+	for _, c in cuts do
+		table.insert(edges, c)
+	end
+	table.insert(edges, 10)
+	for k = 1, #edges - 1 do
+		local lo = edges[k] + (if k > 1 then 0.012 else 0)
+		local hi = edges[k + 1] - (if k < #edges - 1 then 0.012 else 0)
+		local piece = clipBand(outline, lo, hi)
+		if #piece >= 3 then
+			local metal = Scrap.BACK_METALS[(first + k - 1) % #Scrap.BACK_METALS + 1]
+			table.insert(finPieces, { metal = metal[1], mesh = place(Scrap.fin(piece, thick, span)) })
+		end
+	end
+	for _, c in cuts do
+		local band = clipBand(outline, c - 0.001, c + 0.001)
+		local xs = {}
+		for _, q in band do
+			table.insert(xs, q[1])
+		end
+		table.sort(xs)
+		if #xs >= 2 then
+			local xa, xb = xs[1], xs[#xs]
+			local out = math.clamp(c / span, 0, 1)
+			local half = thick / 2 * math.max(0.12, 1 - 0.85 * out)
+			for _, t in { 0.2, 0.5, 0.8 } do
+				for _, side in { -1, 1 } do
+					for _, dz in { -0.045, 0.045 } do
+						local r = EditMesh.sphere(0.02, 6)
+						r:translate(xa + (xb - xa) * t, side * (half + 0.004), c + dz)
+						table.insert(finRivets, place(r))
+					end
+				end
+			end
+		end
+	end
+	return place(Scrap.fin(outline, thick * 0.8, span))
+end
+
+function Scrap.panels(loft, spec)
+	local gap, nudgeStep = spec.gap or 0.012, spec.nudge or 1.5
+	local panels = {}
+	for b, band in spec.bands do
+		for seg = 1, #band[3] - 1 do
+			local x0, x1 = band[3][seg], band[3][seg + 1]
+			for _, side in { -1, 1 } do
+				if spec.open and spec.open(b, x0, x1, side) then
+					continue
+				end
+				local pale = spec.paleFrom ~= nil and band[1] >= spec.paleFrom
+				local palette = if pale then Scrap.BELLY_METALS else Scrap.BACK_METALS
+				local count = #panels
+				local nudge = ((count * 7) % 5 - 2) * nudgeStep
+				local a0, a1 = band[1] + nudge, band[2] + nudge
+				local cells = { { a0, a1 } }
+				local split = spec.splits and spec.splits[count % 41 + 1]
+				if split and not (spec.noSplitFrom and x0 >= spec.noSplitFrom) then
+					local at = a0 + (a1 - a0) * split
+					cells = { { a0, at }, { at, a1 } }
+				end
+				for c, cell in cells do
+					local pick = spec.metal and spec.metal(b, seg, c, side, x0, x1, pale)
+					pick = pick or palette[(b * 3 + seg * 5 + c * 2 + (if side < 0 then 2 else 0)) % #palette + 1]
+					table.insert(panels, { x0 + gap, x1 - gap, side * (math.max(cell[1], 0.5) + 1.2), side * (math.min(cell[2], 179.5) - 1.2), pick[1], pick[2] })
+				end
+			end
+		end
+	end
+	return panels
+end
+
+local function panelMesh(loft, q, lift)
+	local m = EditMesh.new()
+	local ALONG, ROUND = 8, 6
+	local top, bottom = {}, {}
+	for i = 0, ALONG do
+		top[i], bottom[i] = {}, {}
+		for j = 0, ROUND do
+			local x, a = q[1] + (q[2] - q[1]) * i / ALONG, q[3] + (q[4] - q[3]) * j / ROUND
+			local o, u = loft.on(x, a, lift), loft.on(x, a, -0.01)
+			top[i][j] = m:addVertex(o[1], o[2], o[3])
+			bottom[i][j] = m:addVertex(u[1], u[2], u[3])
+		end
+	end
+	for i = 0, ALONG - 1 do
+		for j = 0, ROUND - 1 do
+			m:addFace({ top[i][j], top[i + 1][j], top[i + 1][j + 1], top[i][j + 1] })
+			m:addFace({ bottom[i][j], bottom[i][j + 1], bottom[i + 1][j + 1], bottom[i + 1][j] })
+		end
+	end
+	for k = 0, ALONG - 1 do
+		m:addFace({ top[k][0], bottom[k][0], bottom[k + 1][0], top[k + 1][0] })
+		m:addFace({ top[k + 1][ROUND], bottom[k + 1][ROUND], bottom[k][ROUND], top[k][ROUND] })
+	end
+	for k = 0, ROUND - 1 do
+		m:addFace({ top[0][k + 1], bottom[0][k + 1], bottom[0][k], top[0][k] })
+		m:addFace({ top[ALONG][k], bottom[ALONG][k], bottom[ALONG][k + 1], top[ALONG][k + 1] })
+	end
+	local mx, ma = (q[1] + q[2]) / 2, (q[3] + q[4]) / 2
+	local o, c = loft.on(mx, ma, lift + 0.07), loft.on(mx, ma, lift)
+	local n = m:faceNormal(m:select("face", "all"):list()[1])
+	if n[1] * (o[1] - c[1]) + n[2] * (o[2] - c[2]) + n[3] * (o[3] - c[3]) < 0 then
+		m:flip()
+	end
+	return m
+end
+
+local JOINS = { "rivets", "bolts", "weld", "tape", "stitches", "clips", "rivets", "weld", "bolts", "stitches", "tape", "clips" }
+
+-- A small piece stood along a normal: turned from z up to n and set at p.
+local function stood(piece, p, n, sink)
+	local tilt = math.deg(math.acos(math.clamp(n[3], -1, 1)))
+	local spin = math.deg(math.atan2(n[2], n[1]))
+	Kit.turn(piece, "y", tilt)
+	Kit.turn(piece, "z", spin)
+	piece:translate(p[1] - n[1] * (sink or 0), p[2] - n[2] * (sink or 0), p[3] - n[3] * (sink or 0))
+	return piece
+end
+
+function Scrap.panelParts(loft, panels, spec)
+	spec = spec or {}
+	local lift = spec.lift or 0.035
+	local upTo = spec.rivetsUpTo or math.huge
+	local metals = {}
+	for _, q in panels do
+		metals[q[5]] = q[6]
+	end
+	for _, list in { Scrap.BACK_METALS, Scrap.BELLY_METALS } do
+		for _, m in list do
+			metals[m[1]] = metals[m[1]] or m[2]
+		end
+	end
+	local names = {}
+	for metal in metals do
+		table.insert(names, metal)
+	end
+	table.sort(names)
+	for _, metal in names do
+		local colour = metals[metal]
+		part("Panels" .. metal, nil, colour, function(mesh)
+			for _, q in panels do
+				if q[5] == metal then
+					panelMesh(loft, q, lift):emit(mesh)
+				end
+			end
+			for _, piece in finPieces do
+				if piece.metal == metal then
+					piece.mesh:emit(mesh)
+				end
+			end
+		end, 40, if metal == "RUST" then 0.7 elseif metal == "BRASS" or metal == "ENAMEL" then 0.3 else 0.5)
+	end
+
+	local function joinOf(index)
+		return JOINS[(index * 5) % #JOINS + 1]
+	end
+	local function edgePoint(q, edge, t, off)
+		if edge == "x0" or edge == "x1" then
+			return loft.on(if edge == "x0" then q[1] else q[2], q[3] + (q[4] - q[3]) * t, off)
+		end
+		return loft.on(q[1] + (q[2] - q[1]) * t, if edge == "a0" then q[3] else q[4], off)
+	end
+	local function edgeNormal(q, edge, t)
+		local _, n = loft.normal(if edge == "x0" then q[1] elseif edge == "x1" then q[2] else q[1] + (q[2] - q[1]) * t, if edge == "a0" then q[3] elseif edge == "a1" then q[4] else q[3] + (q[4] - q[3]) * t)
+		return n
+	end
+	part("Rivets", nil, DARK_STEEL, function(mesh)
+		for _, r in finRivets do
+			r:emit(mesh)
+		end
+		for index, q in panels do
+			local join = joinOf(index)
+			if join == "rivets" or join == "bolts" then
+				local dx, da = (q[2] - q[1]) * 0.1, (q[4] - q[3]) * 0.15
+				for _, x in { q[1] + dx, q[2] - dx } do
+					for _, a in { q[3] + da, q[4] - da } do
+						if x <= upTo then
+							local p, n = loft.normal(x, a)
+							local o = { p[1] + n[1] * lift, p[2] + n[2] * lift, p[3] + n[3] * lift }
+							if join == "rivets" then
+								local rivet = EditMesh.sphere(0.026, 6)
+								rivet:translate(o[1], o[2], o[3])
+								rivet:emit(mesh)
+							else
+								local head = EditMesh.cylinder(0.022, 0.03, 6, 1)
+								head:translate(0, 0, 0.012)
+								stood(head, o, n, 0.012):emit(mesh)
+								stood(EditMesh.cylinder(0.036, 0.01, 10, 1), o, n, 0.012):emit(mesh)
+							end
+						end
+					end
+				end
+			end
+		end
+	end, true, 0.4)
+	part("Welds", nil, { 0.32, 0.3, 0.28 }, function(mesh)
+		local ring = {}
+		for k = 0, 7 do
+			local r = math.rad(k * 45)
+			table.insert(ring, { math.cos(r) * 0.03, math.sin(r) * 0.022 })
+		end
+		for index, q in panels do
+			if joinOf(index) == "weld" and q[1] < upTo then
+				local path = {}
+				for k = 0, 10 do
+					table.insert(path, edgePoint(q, "x0", k / 10, lift - 0.005))
+				end
+				EditMesh.sweep(ring, path, { scale = function(t)
+					return 0.8 + 0.35 * math.abs(math.sin(t * 31))
+				end }):emit(mesh)
+			end
+		end
+	end, true, 0.6)
+	part("Tape", nil, { 0.58, 0.58, 0.56 }, function(mesh)
+		for index, q in panels do
+			if joinOf(index) == "tape" and q[2] < upTo then
+				local path = {}
+				for k = 0, 6 do
+					table.insert(path, edgePoint(q, "x1", 0.3 + 0.4 * k / 6, lift + 0.003))
+				end
+				EditMesh.sweep({ { -0.045, -0.006 }, { 0.045, -0.006 }, { 0.045, 0.006 }, { -0.045, 0.006 } }, path):emit(mesh)
+			end
+		end
+	end, 40, 0.3)
+	part("Stitches", nil, { 0.55, 0.55, 0.52 }, function(mesh)
+		for index, q in panels do
+			if joinOf(index) == "stitches" and q[2] < upTo then
+				for _, t in { 0.25, 0.5, 0.75 } do
+					local o = edgePoint(q, "a0", t, lift + 0.001)
+					local n = edgeNormal(q, "a0", t)
+					local across, ref = edgePoint(q, "x0", 0.02, lift), edgePoint(q, "x0", 0.0, lift)
+					local d = { across[1] - ref[1], across[2] - ref[2], across[3] - ref[3] }
+					local len = math.sqrt(d[1] ^ 2 + d[2] ^ 2 + d[3] ^ 2)
+					if len > 1e-6 then
+						d = { d[1] / len, d[2] / len, d[3] / len }
+						Kit.tube(Kit.curve({
+							{ o[1] - d[1] * 0.05 - n[1] * 0.02, o[2] - d[2] * 0.05 - n[2] * 0.02, o[3] - d[3] * 0.05 - n[3] * 0.02 },
+							{ o[1], o[2], o[3] },
+							{ o[1] + d[1] * 0.05 - n[1] * 0.02, o[2] + d[2] * 0.05 - n[2] * 0.02, o[3] + d[3] * 0.05 - n[3] * 0.02 },
+						}, 3), 0.009, 5):emit(mesh)
+					end
+				end
+			end
+		end
+	end, true, 0.3)
+	part("Clips", nil, { 0.5, 0.52, 0.5 }, function(mesh)
+		for index, q in panels do
+			if joinOf(index) == "clips" and q[2] < upTo then
+				for _, t in { 0.3, 0.7 } do
+					local o = edgePoint(q, "a1", t, lift + 0.005)
+					stood(Kit.block(0.07, 0.09, 0.02, 0.005), o, edgeNormal(q, "a1", t)):emit(mesh)
+				end
+			end
+		end
+	end, 40, 0.4)
+end
+
+-- Sneakers.
+Scrap.SHOE = { long = 1.05, wide = 0.56, high = 0.38 }
+Scrap.SOLE = 0.14
+local FOOTPRINT = { { 0, 0.1 }, { 0.06, 0.78 }, { 0.3, 0.8 }, { 0.62, 0.95 }, { 0.84, 0.86 }, { 0.96, 0.45 }, { 1, 0.08 } }
+local UPPER = { { 0, 0.45 }, { 0.08, 1.0 }, { 0.28, 1.0 }, { 0.45, 0.82 }, { 0.7, 0.6 }, { 0.9, 0.4 }, { 0.97, 0.22 }, { 1, 0.08 } }
+local function spring(t)
+	return 0.05 * math.clamp((t - 0.6) / 0.4, 0, 1) ^ 2
+end
+function Scrap.collarCrossing(a, b, shoe)
+	shoe = shoe or Scrap.SHOE
+	local collarZ = Scrap.SOLE - 0.03 + shoe.high
+	local t = (collarZ - a[3]) / (b[3] - a[3])
+	return { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t }
+end
+function Scrap.sneakers(collars, spec)
+	spec = spec or {}
+	local SHOE, SOLE = spec.shoe or Scrap.SHOE, Scrap.SOLE
+	local blue = spec.colour or { 0.14, 0.46, 0.92 }
+	local dark = spec.dark or { 0.1, 0.36, 0.78 }
+	-- The shoe's middle from its collar centre.
+	local function middle(c)
+		return { c[1] + SHOE.long * 0.28, c[2] }
+	end
+	local function shoeLoft(stations, height, widen, z0, t0, t1)
+		t0, t1 = t0 or 0, t1 or 1
+		local ring, path = {}, {}
+		for k = 0, 19 do
+			local r = math.rad(k * 18)
+			local c, sn = math.cos(r), math.sin(r)
+			local push = 1 + 0.18 * (math.abs(c * sn) * 2)
+			table.insert(ring, { -sn * push, c * push })
+		end
+		for k = 0, stations do
+			table.insert(path, { -SHOE.long / 2 + SHOE.long * (t0 + (t1 - t0) * k / stations), 0, 0 })
+		end
+		local m = EditMesh.sweep(ring, path)
+		m:transform(function(p)
+			local t = (p[1] + SHOE.long / 2) / SHOE.long
+			local w = tableAt(FOOTPRINT, t) * SHOE.wide / 2 + widen
+			return { p[1], p[2] * w, z0 + spring(t) + (p[3] + 1) / 2 * height(t) }
+		end)
+		return m
+	end
+	local function instep(x)
+		local t = (x + SHOE.long / 2) / SHOE.long
+		return SOLE - 0.03 + spring(t) + tableAt(UPPER, t) * SHOE.high
+	end
+	part("Sneakers", nil, blue, function(mesh)
+		for _, c in collars do
+			local at = middle(c)
+			local upper = shoeLoft(20, function(t)
+				return tableAt(UPPER, t) * SHOE.high
+			end, 0, SOLE - 0.03)
+			local collar = upper:select("face", "facing", { 0, 0, 1 }, 35):filter(function(p)
+				local t = (p[1] + SHOE.long / 2) / SHOE.long
+				return t > 0.07 and t < 0.37 and math.abs(p[2]) < SHOE.wide * 0.3
+			end)
+			if collar:count() > 0 then
+				upper:extrude(upper:inset(collar, 0.02, 0), -0.14)
+			end
+			upper:translate(at[1], at[2], 0)
+			upper:emit(mesh)
+			local tongue = Kit.block(0.16, 0.2, 0.22, 0.05)
+			Kit.turn(tongue, "y", 30)
+			tongue:translate(at[1] - 0.12, at[2], SOLE + SHOE.high * 0.92)
+			tongue:emit(mesh)
+		end
+	end, true, RUBBER)
+	part("HeelCounters", nil, dark, function(mesh)
+		for _, c in collars do
+			local at = middle(c)
+			for _, band in { { 0, 0.24, 0.62 }, { 0.78, 1, 0.9 } } do
+				local m = shoeLoft(8, function(t)
+					return tableAt(UPPER, t) * SHOE.high * band[3]
+				end, 0.012, SOLE - 0.02, band[1], band[2])
+				m:translate(at[1], at[2], 0)
+				m:emit(mesh)
+			end
+		end
+	end, true, RUBBER)
+	part("Soles", nil, { 0.95, 0.95, 0.93 }, function(mesh)
+		for _, c in collars do
+			local at = middle(c)
+			local m = shoeLoft(20, function()
+				return 0.1
+			end, 0.03, 0.04)
+			m:translate(at[1], at[2], 0)
+			m:emit(mesh)
+		end
+	end, true, RUBBER)
+	part("Outsoles", nil, { 0.2, 0.2, 0.22 }, function(mesh)
+		for _, c in collars do
+			local at = middle(c)
+			local m = shoeLoft(20, function()
+				return 0.045
+			end, 0.02, 0)
+			m:translate(at[1], at[2], 0)
+			m:emit(mesh)
+		end
+	end, true, RUBBER)
+	part("ShoeTrim", nil, { 0.96, 0.96, 0.94 }, function(mesh)
+		for _, c in collars do
+			local at = middle(c)
+			local rows = { -0.12, 0.0, 0.12, 0.24 }
+			for k = 1, #rows - 1 do
+				for _, side in { -1, 1 } do
+					Kit.tube({ { at[1] + rows[k], at[2] + side * 0.1, instep(rows[k]) + 0.01 }, { at[1] + rows[k + 1], at[2] - side * 0.1, instep(rows[k + 1]) + 0.01 } }, 0.016, 6):emit(mesh)
+				end
+			end
+			for _, side in { -1, 1 } do
+				Kit.tube(Kit.curve({ { at[1] - 0.4, at[2] + side * 0.23, 0.3 }, { at[1] - 0.1, at[2] + side * 0.26, 0.2 }, { at[1] + 0.22, at[2] + side * 0.26, 0.17 }, { at[1] + 0.4, at[2] + side * 0.2, 0.22 } }, 4), 0.02, 6):emit(mesh)
+			end
+			local rim = EditMesh.torus(0.12, 0.03, 16, 6)
+			Kit.size(rim, { 1.5, 1, 1 })
+			rim:translate(at[1] - SHOE.long * 0.28, at[2], SOLE - 0.03 + SHOE.high)
+			rim:emit(mesh)
+			Kit.tube(Kit.curve({ { at[1] - 0.49, at[2], SOLE + 0.18 }, { at[1] - 0.55, at[2], SOLE + 0.28 }, { at[1] - 0.47, at[2], SOLE + 0.36 } }, 3), 0.02, 6):emit(mesh)
+		end
+	end, 50, 0)
+	part("Eyelets", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+		for _, c in collars do
+			local at = middle(c)
+			for _, x in { -0.12, 0.0, 0.12, 0.24 } do
+				for _, side in { -1, 1 } do
+					local eye = EditMesh.cylinder(0.024, 0.012, 8, 1)
+					eye:translate(at[1] + x, at[2] + side * 0.1, instep(x) + 0.005)
+					eye:emit(mesh)
+				end
+			end
+		end
+	end, 50, 0)
+end
+
+function Scrap.googlyEyes(eyes, size)
+	size = size or 0.13
+	part("Eyes", nil, { 0.96, 0.96, 0.94 }, function(mesh)
+		for _, e in eyes do
+			local p, n = e[1], e[2]
+			local dome = EditMesh.sphere(size, 12)
+			stood(dome, { p[1] + n[1] * 0.02, p[2] + n[2] * 0.02, p[3] + n[3] * 0.02 }, n)
+			-- Flattened along its normal.
+			local c = { p[1] + n[1] * 0.02, p[2] + n[2] * 0.02, p[3] + n[3] * 0.02 }
+			dome:transform(function(q)
+				local d = (q[1] - c[1]) * n[1] + (q[2] - c[2]) * n[2] + (q[3] - c[3]) * n[3]
+				return { q[1] - n[1] * d * 0.5, q[2] - n[2] * d * 0.5, q[3] - n[3] * d * 0.5 }
+			end)
+			dome:emit(mesh)
+		end
+	end, true, 0)
+	part("Pupils", nil, { 0.04, 0.04, 0.05 }, function(mesh)
+		for _, e in eyes do
+			local p, n = e[1], e[2]
+			local out = size * 0.5 + 0.02 + 0.01
+			-- Slid down and forward in the dome.
+			local c = { p[1] + n[1] * out + 0.02 * size / 0.13, p[2] + n[2] * out, p[3] + n[3] * out - 0.035 * size / 0.13 }
+			local pupil = EditMesh.sphere(size * 0.42, 8)
+			pupil:transform(function(q)
+				local d = q[1] * n[1] + q[2] * n[2] + q[3] * n[3]
+				return { q[1] - n[1] * d * 0.6 + c[1], q[2] - n[2] * d * 0.6 + c[2], q[3] - n[3] * d * 0.6 + c[3] }
+			end)
+			pupil:emit(mesh)
+		end
+	end, true, 0)
+end
+
+-- A rigid frame: turns (as Kit.turn, in order) then a move; place() for
+-- points, rot() for directions.
+local function frame(turns, move)
+	local function rot(p)
+		local q = { p[1], p[2], p[3] }
+		for _, t in turns do
+			local a = math.rad(t[2])
+			local c, s = math.cos(a), math.sin(a)
+			local x, y, z = q[1], q[2], q[3]
+			if t[1] == "x" then
+				q = { x, y * c - z * s, y * s + z * c }
+			elseif t[1] == "y" then
+				q = { x * c + z * s, y, -x * s + z * c }
+			else
+				q = { x * c - y * s, x * s + y * c, z }
+			end
+		end
+		return q
+	end
+	local function place(p)
+		local q = rot(p)
+		return { q[1] + move[1], q[2] + move[2], q[3] + move[3] }
+	end
+	return { rot = rot, place = place }
+end
+-- Stands a piece built up +z along n at p.
+local function stand(m, p, n)
+	Kit.turn(m, "y", math.deg(math.acos(math.clamp(n[3], -1, 1))))
+	Kit.turn(m, "z", math.deg(math.atan2(n[2], n[1])))
+	return m:translate(p[1], p[2], p[3])
+end
+-- A fixed scatter in [-1, 1).
+local function jitter(i, j)
+	return math.fmod(math.sin(i * 12.9898 + j * 78.233) * 43758.5453, 1)
+end
+
+-- Several lofts, each in its own frame, plated by one Scrap.panelParts
+-- call: a sub-loft's x is offset by its base (multiples of 10), and the
+-- composite dispatches on it.
+local SUBS = {}
+local function sub(base, loft, f)
+	SUBS[base] = { loft = loft, f = f }
+	return base
+end
+local function pick(x)
+	local base = math.floor(x / 10 + 0.5) * 10
+	return SUBS[base], x - base
+end
+local BODY = {}
+function BODY.on(x, a, lift)
+	local s, lx = pick(x)
+	return s.f.place(s.loft.on(lx, a, lift))
+end
+function BODY.skin(x, a)
+	local s, lx = pick(x)
+	return s.f.place(s.loft.skin(lx, a))
+end
+function BODY.normal(x, a)
+	local s, lx = pick(x)
+	local p, n = s.loft.normal(lx, a)
+	return s.f.place(p), s.f.rot(n)
+end
+function BODY.station(x)
+	local s, lx = pick(x)
+	return s.loft.station(lx)
+end
+-- A sub-loft's skin, closed already, in the model's frame.
+local function skinOf(base)
+	local s = SUBS[base]
+	return s.loft.mesh:copy():transform(s.f.place)
+end
+-- Plates for one sub-loft, its band cuts in its own x; the callbacks get
+-- its own x too.
+local PANELS = {}
+local function plating(base, bands, spec)
+	local shifted = {}
+	for _, b in bands do
+		local cuts = {}
+		for _, x in b[3] do
+			table.insert(cuts, base + x)
+		end
+		table.insert(shifted, { b[1], b[2], cuts })
+	end
+	local metal, open = spec.metal, spec.open
+	spec.bands = shifted
+	spec.metal = metal and function(b, seg, c, side, x0, x1, pale)
+		return metal(b, seg, c, side, x0 - base, x1 - base, pale)
+	end
+	spec.open = open and function(b, x0, x1, side)
+		return open(b, x0 - base, x1 - base, side)
+	end
+	for _, q in Scrap.panels(nil, spec) do
+		table.insert(PANELS, q)
+	end
+end
+
+-- The metals: moss greens and bark on the trunk and the hump, among the
+-- usual scrap; copper tones for the face and nose; the pale metals for the
+-- mane and the feet.
+local MOSS = { "MOSS", { 0.3, 0.5, 0.2 } }
+local LICHEN = { "LICHEN", { 0.46, 0.58, 0.26 } }
+local VERDIGRIS = { "VERDIGRIS", { 0.33, 0.52, 0.4 } }
+local BARK = { "BARK", { 0.4, 0.28, 0.17 } }
+local B = Scrap.BACK_METALS -- BLUEGREY, OLIVE, RUST, GUNMETAL, PAINTED, BRASS
+local TRUNK = { MOSS, LICHEN, BARK, MOSS, B[3], VERDIGRIS, B[2], MOSS, BARK, LICHEN, B[6], MOSS, B[4], LICHEN, B[1], MOSS, BARK, B[5], VERDIGRIS, MOSS }
+local ORANGES = { { "COPPER", { 0.74, 0.42, 0.2 } }, { "BRONZE", { 0.62, 0.36, 0.17 } }, { "PEACH", { 0.86, 0.56, 0.32 } } }
+local LEAF = { 0.32, 0.55, 0.2 }
+local LEAF_DARK = { 0.22, 0.42, 0.16 }
+local function hashed(list, b, seg, c, side, x0)
+	local h = b * 7 + seg * 3 + c * 5 + (if side < 0 then 1 else 0) + math.floor(x0 * 3 + 9)
+	return list[h % #list + 1]
+end
+
+-- Sizes: the whole is 4 studs tall; the feet take a tenth of the height
+-- and are as long as the legs are tall; the head is a third of it.
+local FOOT_Y = 0.52 -- each foot's centre line from the middle
+local LEG_LEAN = 10 -- degrees the legs lean forward
+local HEAD_AT = { 0.3, 0, 3.0 }
+local HEAD_PITCH = 8
+local FACE_X = 0.66 -- the head's flat front, in its own frame
+
+-- Legs: each a trunk lofted up from inside its foot to the shoulder, where
+-- the hump covers it. Up is +x in the loft; angle 0 is the back.
+local function legLoft()
+	return Scrap.loft({
+		stations = {
+			{ 0.0, 0.25, -0.25, 0.26 },
+			{ 0.5, 0.29, -0.29, 0.3 },
+			{ 1.1, 0.33, -0.33, 0.33 },
+			{ 1.6, 0.36, -0.35, 0.36 },
+			{ 1.9, 0.3, -0.3, 0.3 },
+			{ 2.0, 0.1, -0.1, 0.1 },
+		},
+		sides = 20,
+		steps = 30,
+	})
+end
+local LEG_L = sub(0, legLoft(), frame({ { "y", -90 }, { "y", LEG_LEAN } }, { -0.1, -FOOT_Y, 0.2 }))
+local LEG_R = sub(10, legLoft(), frame({ { "y", -90 }, { "y", LEG_LEAN } }, { -0.1, FOOT_Y, 0.2 }))
+
+-- The hump: the hunched back over the legs' tops, the head sitting on its
+-- front.
+local HUMP = sub(20, Scrap.loft({
+	stations = {
+		{ -1.05, 0.1, -0.1, 0.2 },
+		{ -0.8, 0.35, -0.42, 0.6 },
+		{ -0.4, 0.48, -0.5, 0.8 },
+		{ 0.05, 0.46, -0.5, 0.8 },
+		{ 0.35, 0.28, -0.4, 0.6 },
+		{ 0.5, 0.05, -0.1, 0.15 },
+	},
+	sides = 24,
+	steps = 36,
+}), frame({}, { 0, 0, 2.2 }))
+
+-- The head: a round head lofted back to front, ending in a broad flat cap
+-- where the face plate goes; pitched down a touch.
+local HEAD = sub(30, Scrap.loft({
+	stations = {
+		{ -0.9, 0.14, -0.14, 0.17 },
+		{ -0.66, 0.5, -0.5, 0.53 },
+		{ -0.3, 0.72, -0.67, 0.7 },
+		{ 0.18, 0.76, -0.72, 0.68 },
+		{ 0.48, 0.7, -0.67, 0.62 },
+		{ FACE_X, 0.62, -0.62, 0.56 },
+	},
+	sides = 24,
+	steps = 40,
+}), frame({ { "y", HEAD_PITCH } }, HEAD_AT))
+local headF = SUBS[HEAD].f
+
+-- The nose: a pipe lofted root to tip with a bulb at its end, hung from
+-- the face between the eyes, its tip curling in toward the chest. Angle 0
+-- is its front.
+local NOSE_ROOT = headF.place({ FACE_X - 0.04, 0, 0.1 })
+local NOSE = sub(40, Scrap.loft({
+	stations = {
+		{ 0.0, 0.17, -0.17, 0.17 },
+		{ 0.3, 0.15, -0.15, 0.15 },
+		{ 0.65, 0.16, -0.14, 0.15 },
+		{ 0.92, 0.23, -0.19, 0.21 },
+		{ 1.1, 0.17, -0.15, 0.17 },
+		{ 1.18, 0.04, -0.04, 0.04 },
+	},
+	sides = 20,
+	steps = 30,
+}), frame({ { "y", 90 }, { "y", 7 } }, NOSE_ROOT))
+
+-- The feet: each lofted heel to ball along x, flat-soled, high at the
+-- ankle; the toes sit on its front.
+local function footLoft()
+	return Scrap.loft({
+		stations = {
+			{ -0.6, 0.12, 0.0, 0.2 },
+			{ -0.45, 0.38, 0.0, 0.3 },
+			{ -0.2, 0.5, 0.0, 0.34 },
+			{ 0.2, 0.42, 0.0, 0.38 },
+			{ 0.6, 0.3, 0.0, 0.44 },
+			{ 0.9, 0.22, 0.0, 0.43 },
+			{ 1.0, 0.1, 0.0, 0.38 },
+		},
+		sides = 24,
+		steps = 40,
+	})
+end
+local FOOT_L = sub(50, footLoft(), frame({ { "z", 6 } }, { 0, -FOOT_Y, 0 }))
+local FOOT_R = sub(60, footLoft(), frame({ { "z", -6 } }, { 0, FOOT_Y, 0 }))
+
+-- Toes: five to a foot, big toe inside, each a short loft with a nail
+-- plate; given in a foot's own frame (inner side toward -y).
+local TOES = { -- y across, length, half width, height
+	{ -0.28, 0.42, 0.1, 0.2 },
+	{ -0.08, 0.38, 0.085, 0.18 },
+	{ 0.08, 0.34, 0.075, 0.17 },
+	{ 0.23, 0.3, 0.07, 0.16 },
+	{ 0.36, 0.25, 0.065, 0.14 },
+}
+local function toeMesh(t, inner)
+	local l, w, h = t[2], t[3], t[4]
+	return Scrap.loft({
+		stations = {
+			{ 0.78, h, 0.0, w * 0.9 },
+			{ 0.78 + l * 0.5, h * 0.95, 0.0, w },
+			{ 0.78 + l * 0.85, h * 0.8, 0.0, w * 0.95 },
+			{ 0.78 + l, h * 0.35, 0.0, w * 0.6 },
+		},
+		at = { 0, t[1] * inner, 0 },
+		sides = 12,
+		steps = 8,
+	}).mesh
+end
+local function nailMesh(t, inner)
+	local l, w, h = t[2], t[3], t[4]
+	local nail = Kit.block(l * 0.3, w * 1.3, 0.02, 0.006)
+	return nail:translate(0.78 + l * 0.8, t[1] * inner, h * 0.62)
+end
+
+-- The body's skins under the plates: dark steel showing in the seams.
+part("Body", nil, { 0.18, 0.19, 0.21 }, function(mesh)
+	for _, base in { LEG_L, LEG_R, HUMP, HEAD, NOSE, FOOT_L, FOOT_R } do
+		skinOf(base):emit(mesh)
+	end
+end, true, 0.4)
+
+part("Toes", nil, { 0.78, 0.76, 0.7 }, function(mesh)
+	for _, side in { -1, 1 } do
+		local f = SUBS[if side < 0 then FOOT_L else FOOT_R].f
+		for _, t in TOES do
+			toeMesh(t, side):transform(f.place):emit(mesh)
+		end
+	end
+end, true, 0.35)
+part("Nails", nil, { 0.9, 0.88, 0.8 }, function(mesh)
+	for _, side in { -1, 1 } do
+		local f = SUBS[if side < 0 then FOOT_L else FOOT_R].f
+		for _, t in TOES do
+			nailMesh(t, side):transform(f.place):emit(mesh)
+		end
+	end
+end, 40, 0.2)
+
+-- Arms: knobbly root pipes from the shoulders down the sides to the feet,
+-- three root fingers at the end of each resting on the foot.
+part("Arms", nil, { 0.4, 0.27, 0.16 }, function(mesh)
+	for _, side in { -1, 1 } do
+		local path = Kit.curve({
+			{ -0.05, side * 0.7, 2.25 },
+			{ 0.05, side * 1.0, 1.85 },
+			{ 0.0, side * 1.05, 1.3 },
+			{ 0.25, side * 0.9, 0.8 },
+			{ 0.45, side * 0.74, 0.55 },
+		}, 5)
+		Kit.tube(path, function(t)
+			return (0.11 - 0.05 * t) * (1 + 0.18 * math.sin(t * 29))
+		end, 8):emit(mesh)
+		local hand = path[#path]
+		local wrist = path[#path - 3]
+		for k = -1, 1 do
+			Kit.tube(Kit.curve({ wrist, hand, { hand[1] + 0.2, hand[2] + side * k * 0.1, 0.4 }, { hand[1] + 0.42 + 0.05 * k, hand[2] + side * k * 0.12, 0.26 } }, 3), function(t)
+				return 0.04 - 0.015 * t
+			end, 6):emit(mesh)
+		end
+	end
+end, true, 0.6)
+
+-- The face: a sheet over the head's flat front, worked into a monkey's
+-- face: a heavy brow ridge across the top, hollows under it for the eyes
+-- either side of the nose's root, the muzzle swelling below; copper.
+local FACE_W, FACE_H = 0.54, 0.6
+local function faceBump(u, v) -- u across (+ to the left), v up, both -1..1
+	local brow = math.exp(-((v - 0.62) / 0.16) ^ 2) * (0.09 + 0.03 * (1 - u * u))
+	local eye = (math.exp(-((math.abs(u) - 0.48) / 0.22) ^ 2 - ((v - 0.38) / 0.16) ^ 2)) * 0.05
+	local muzzle = math.exp(-((v + 0.3) / 0.5) ^ 2 - (u / 0.7) ^ 2) * 0.07
+	local cheek = math.exp(-((math.abs(u) - 0.75) / 0.25) ^ 2 - ((v - 0.1) / 0.3) ^ 2) * 0.03
+	return brow - eye + muzzle + cheek
+end
+local function faceSheet()
+	local m = EditMesh.new()
+	local N = 12
+	local ids = {}
+	for i = 0, N do
+		ids[i] = {}
+		for j = 0, N do
+			local u, v = -1 + 2 * i / N, -1 + 2 * j / N
+			local du, dv = u * math.sqrt(1 - v * v / 2), v * math.sqrt(1 - u * u / 2)
+			ids[i][j] = m:addVertex(FACE_X + faceBump(du, dv), du * FACE_W, dv * FACE_H)
+		end
+	end
+	for i = 0, N - 1 do
+		for j = 0, N - 1 do
+			m:addFace({ ids[i][j], ids[i][j + 1], ids[i + 1][j + 1], ids[i + 1][j] })
+		end
+	end
+	m:solidify(0.07)
+	return m
+end
+local function onFace(u, v, out) -- a point in front of the face sheet
+	local du, dv = u * math.sqrt(1 - v * v / 2), v * math.sqrt(1 - u * u / 2)
+	return headF.place({ FACE_X + faceBump(du, dv) + (out or 0), du * FACE_W, dv * FACE_H })
+end
+part("Face", nil, ORANGES[1][2], function(mesh)
+	faceSheet():transform(headF.place):emit(mesh)
+end, true, 0.35)
+-- A faint smile under the nose: a thin dark groove each side of it.
+part("Mouth", nil, { 0.2, 0.12, 0.08 }, function(mesh)
+	for _, side in { -1, 1 } do
+		local path = {}
+		for k = 0, 6 do
+			local t = k / 6
+			table.insert(path, onFace(side * (0.2 + 0.4 * t), -0.42 + 0.14 * t * t, 0.004))
+		end
+		Kit.tube(path, 0.012, 6):emit(mesh)
+	end
 end, true, 0)
+-- Small googly eyes, close set either side of the nose's root, under the
+-- brow.
+local eyes = {}
+for _, side in { -1, 1 } do
+	table.insert(eyes, { onFace(side * 0.42, 0.36), headF.rot({ 1, 0, 0.1 }) })
+end
+Scrap.googlyEyes(eyes, 0.095)
+
+-- The hair: a mop of ragged sheet-metal leaves shingled over the top and
+-- back of the head, wider than the head, framing the face down to the
+-- cheeks; a few more as moss tufts on the hump.
+local function leaf(i, j, size)
+	local w, h = size * (0.9 + 0.2 * jitter(i, j)), size * 1.15 * (0.9 + 0.2 * jitter(j, i))
+	local m = Kit.plate({ { -w / 2, 0 }, { -w * 0.55, h * 0.45 }, { -w * 0.3, h * 0.85 }, { 0, h }, { w * 0.3, h * 0.88 }, { w * 0.5, h * 0.5 }, { w / 2, 0 } }, 0.02)
+	m:translate(0, -0.01, 0)
+	-- Leant over like a shingle, turned a little either way.
+	Kit.turn(m, "x", 38 + 14 * jitter(i + 3, j))
+	Kit.turn(m, "z", 25 * jitter(i, j + 5))
+	return m
+end
+local function leaves(dark, mesh)
+	local n = 0
+	local function put(base, x, a, size)
+		n += 1
+		if (n % 2 == 0) ~= dark then
+			return
+		end
+		local p, nrm = BODY.normal(base + x, a)
+		local m = leaf(n, math.floor(a), size)
+		-- Spun so it leans down and back, away from the face.
+		Kit.turn(m, "z", 180 + 0.6 * a)
+		stand(m, p, nrm):emit(mesh)
+	end
+	for _, x in { -0.82, -0.6, -0.38, -0.16, 0.06, 0.28, 0.5 } do
+		for _, a in { 0, -24, 24, -48, 48, -72, 72, -96, 96 } do
+			local front = x > 0.3
+			if (front and math.abs(a) > 50) or (math.abs(a) > 80 and x > 0.1) then
+				continue
+			end
+			put(HEAD, x, a, if front then 0.26 else 0.36)
+		end
+	end
+	for _, x in { -0.95, -0.7, -0.45, -0.2 } do
+		for _, a in { 0, -40, 40, -80, 80 } do
+			put(HUMP, x, a, 0.3)
+		end
+	end
+end
+part("Leaves", nil, LEAF, function(mesh)
+	leaves(false, mesh)
+end, 40, 0.3)
+part("LeavesDark", nil, LEAF_DARK, function(mesh)
+	leaves(true, mesh)
+end, 40, 0.3)
+
+-- The plating. Legs and hump: moss and bark among the usual scrap. Head:
+-- copper over the brow, greens over the top and back under the leaves,
+-- pale mane round the face and under the chin. Nose: copper rings. Feet:
+-- pale metals, the sole left bare.
+for _, leg in { LEG_L, LEG_R } do
+	plating(leg, {
+		{ 0, 60, { 0, 0.5, 1.2, 1.75, 2.0 } },
+		{ 60, 120, { 0, 0.3, 0.9, 1.5, 2.0 } },
+		{ 120, 180, { 0, 0.7, 1.1, 1.8, 2.0 } },
+	}, {
+		splits = { [2] = 0.5, [5] = 0.4, [9] = 0.6, [14] = 0.45 },
+		metal = function(b, seg, c, side, x0)
+			return hashed(TRUNK, b, seg, c, side, x0 + leg)
+		end,
+	})
+end
+plating(HUMP, {
+	{ 0, 55, { -1.05, -0.6, -0.1, 0.5 } },
+	{ 55, 115, { -1.05, -0.75, -0.3, 0.15, 0.5 } },
+	{ 115, 180, { -1.05, -0.5, 0.0, 0.5 } },
+}, {
+	splits = { [3] = 0.55, [7] = 0.4 },
+	metal = function(b, seg, c, side, x0)
+		return hashed(TRUNK, b + 2, seg, c, side, x0)
+	end,
+})
+plating(HEAD, {
+	{ 0, 45, { -0.9, -0.5, -0.1, 0.3, FACE_X } },
+	{ 45, 95, { -0.9, -0.55, -0.15, 0.25, FACE_X } },
+	{ 95, 140, { -0.9, -0.45, 0.0, 0.35, FACE_X } },
+	{ 140, 180, { -0.9, -0.4, 0.1, FACE_X } },
+}, {
+	paleFrom = 45,
+	splits = { [4] = 0.5, [9] = 0.4 },
+	metal = function(b, seg, c, side, x0)
+		if b == 1 then
+			return if x0 >= 0.3 then ORANGES[(seg + c) % 3 + 1] else hashed({ MOSS, LICHEN, VERDIGRIS, MOSS }, b, seg, c, side, x0)
+		end
+		if x0 < (if b == 4 then -0.4 else -0.15) then
+			return hashed({ MOSS, LICHEN, BARK, VERDIGRIS }, b, seg, c, side, x0)
+		end
+		return nil
+	end,
+})
+plating(NOSE, {
+	{ 0, 90, { 0, 0.33, 0.68, 0.95, 1.18 } },
+	{ 90, 180, { 0, 0.2, 0.55, 0.85, 1.18 } },
+}, {
+	metal = function(b, seg, c, side, x0)
+		return hashed(ORANGES, b, seg, c, side, x0)
+	end,
+})
+for _, foot in { FOOT_L, FOOT_R } do
+	plating(foot, {
+		{ 0, 50, { -0.6, -0.3, 0.2, 0.65, 1.0 } },
+		{ 50, 110, { -0.6, -0.15, 0.4, 1.0 } },
+		{ 110, 150, { -0.6, 0.0, 0.5, 1.0 } },
+	}, {
+		paleFrom = 0,
+		splits = { [3] = 0.5, [8] = 0.4 },
+	})
+end
+Scrap.panelParts(BODY, PANELS, {})
 finishParts()
