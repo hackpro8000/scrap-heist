@@ -162,6 +162,8 @@ class RemoteUploader:
 		identity = event["id"]
 		if event.get("asset"):
 			self.record[identity] = (str(event["asset"]), str(event.get("shard", 1)))
+			# A retry that worked clears an earlier failure.
+			self.failed.pop(identity, None)
 		else:
 			self.failed[identity] = event.get("error", "failed")
 		self.pending.discard(identity)
