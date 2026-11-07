@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotLaVacuumaSaturnita-d5013b0e8a957003"
+local CACHE_KEY = "JunkrotLaVacuumaSaturnita-93a409dbd1f63d42"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -4335,7 +4335,8 @@ placeLoft(H, headPoint, headDir)
 -- The feet: each a loft heel to ball along x, flat-soled, the ankle rising
 -- at the back and the shin extruded up out of it into its cuff; the toes
 -- five small lofts from the ball. Splayed a little outward.
-local FOOT_X = 0.05 -- the ankle's x under the cuff
+local FOOT_X = 0.05 -- the cuffs' x, which the ankles stand under
+local ANKLE = -0.36 -- where the ankle is along a foot, heel to toe
 local feet = {}
 for _, s in { -1, 1 } do
 	local F = Scrap.loft({
@@ -4354,14 +4355,11 @@ for _, s in { -1, 1 } do
 		sides = 24,
 		steps = 40,
 	})
-	local ankle = F.mesh:select("face", "facing", { 0, 0, 1 }, 40):filter(function(p)
-		return p[1] > -0.56 and p[1] < -0.16 and math.abs(p[2]) < 0.19
-	end)
-	if ankle:count() > 0 then
-		local top = F.mesh:extrude(ankle, 0.36, { tag = "shin" })
-		top:scale({ 0.8, 0.8, 1 })
-	end
-	placeLoft(F, zPlacement(-s * 8, { FOOT_X, s * LEG_Y, 0 }))
+	-- Placed so the ankle (at x = ANKLE on the foot) stands right under
+	-- its cuff, whatever the splay.
+	local turn = math.rad(-s * 8)
+	local ax, ay = ANKLE * math.cos(turn), ANKLE * math.sin(turn)
+	placeLoft(F, zPlacement(-s * 8, { FOOT_X - ax, s * LEG_Y - ay, 0 }))
 	table.insert(feet, { loft = F, side = s })
 end
 
@@ -4373,7 +4371,15 @@ part("Head", nil, DARK, function(mesh)
 	Scrap.skinPart(H, { drop = { "muzzle" } }):emit(mesh)
 end, true, 0.3)
 part("Muzzle", nil, { 0.9, 0.62, 0.6 }, function(mesh)
-	Scrap.skinPart(H, { keep = "muzzle" }):emit(mesh)
+	-- Pushed out flush with the head's plates, so it meets them.
+	local m = H.mesh:copy()
+	local keep = m:select("face", "tag", "muzzle")
+	for _, id in m:select("face", "all"):minus(keep):list() do
+		m:removeFace(id)
+	end
+	m:push(m:select("vertex", "all"), 0.035)
+	m:solidify(0.06)
+	m:emit(mesh)
 end, true, 0.2)
 part("Horns", nil, { 0.9, 0.86, 0.74 }, function(mesh)
 	-- Cow horns: out sideways from the top of the head, curving up and a
@@ -4417,6 +4423,14 @@ part("Toes", nil, SKIN, function(mesh)
 	end
 end, true, 0.3)
 
+-- The shins: short, thick, straight up from each ankle into its cuff.
+part("Shins", nil, SKIN, function(mesh)
+	for _, s in { -1, 1 } do
+		local shin = Kit.lathe({ { 0, 0 }, { 0.2, 0 }, { 0.2, 0.1 }, { 0.19, 0.5 }, { 0.2, 0.62 }, { 0, 0.62 } }, 16)
+		shin:translate(FOOT_X, s * LEG_Y, 0.5)
+		shin:emit(mesh)
+	end
+end, true, 0.3)
 -- The pipe cuffs the legs hang from, lipped at the bottom.
 part("Cuffs", nil, { 0.3, 0.33, 0.37 }, function(mesh)
 	for _, s in { -1, 1 } do
@@ -4538,15 +4552,11 @@ local planetPanels = Scrap.panels(P, {
 -- muzzle and horns left to their own parts.
 local headPanels = Scrap.panels(H, {
 	bands = {
-		{ 0, 45, { 0.55, 0.9, 1.25, 1.72 } },
-		{ 45, 90, { 0.55, 1.05, 1.4, 1.72 } },
-		{ 90, 135, { 0.55, 0.85, 1.3, 1.72 } },
-		{ 135, 180, { 0.55, 1.1, 1.72 } },
+		{ 0, 45, { 0.55, 0.9, 1.25, 1.77 } },
+		{ 45, 90, { 0.55, 1.05, 1.4, 1.77 } },
+		{ 90, 135, { 0.55, 0.85, 1.3, 1.77 } },
+		{ 135, 180, { 0.55, 1.1, 1.77 } },
 	},
-	-- The eyes' cells left bare, so the eyes sit on the head.
-	open = function(band, x0)
-		return band == 2 and x0 > 1.3
-	end,
 	metal = function(band, seg, cell, side)
 		local black = (band == 1 and seg == 2 and side > 0) or (band == 2 and seg == 1 and side < 0) or (band == 3 and seg == 3 and side > 0) or (band == 1 and seg == 1 and side < 0)
 		return if black then { "PATCH", { 0.1, 0.1, 0.11 } } else { "COWWHITE", { 0.95, 0.94, 0.9 } }
@@ -4605,7 +4615,8 @@ end, 40, 0)
 local cowEyes = {}
 for _, side in { -1, 1 } do
 	local p, n = H.normal(1.45, side * 58)
-	table.insert(cowEyes, { p, n })
+	-- Out on top of the plates.
+	table.insert(cowEyes, { { p[1] + n[1] * 0.035, p[2] + n[2] * 0.035, p[3] + n[3] * 0.035 }, n })
 end
 Scrap.googlyEyes(cowEyes, 0.12)
 part("Nostrils", nil, { 0.35, 0.15, 0.17 }, function(mesh)
