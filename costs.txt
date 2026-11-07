@@ -1,0 +1,22 @@
+slab Approach4	0.222
+slab Approach4 #split	1
+slab Spoke6	0.058
+slab Spoke6 #split	1
+slab Approach6	0.214
+slab Approach6 #split	1
+slab Sorter	0.259
+slab Sorter #split	1
+BuildBay 1 x	0.341
+BuildBay 1 x #split	1
+CapsulePrototype 1 x	0.182
+CapsulePrototype 1 x #split	1
+JunkrotBulboFulminato 1 x	0.467
+JunkrotBulboFulminato 1 x #split	1
+JunkrotFrostboxGelatone 1 x	0.520
+JunkrotFrostboxGelatone 1 x #split	1
+JunkrotDingDingDingDongo 1 x	0.515
+JunkrotDingDingDingDongo 1 x #split	1
+JunkrotBallerinaTincuppina 1 x	0.475
+JunkrotBallerinaTincuppina 1 x #split	1
+JunkrotHoverbikkoZoomzoom 1 x	0.572
+JunkrotHoverbikkoZoomzoom 1 x #split	1
