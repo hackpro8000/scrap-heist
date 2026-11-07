@@ -7,11 +7,20 @@
 # defaults let machines idle for up to an hour between tasks, for at most
 # 5 hours in all.
 #
+# Given a coordinator address (scripts/standby-start.sh passes the one
+# scripts/coordinator.sh started), each machine keeps a live connection to
+# it instead (scripts/standby-agent.py): tasks arrive the moment they're
+# posted and results and objects go straight back, so nothing polls. A
+# machine proves who it is with this job's GitHub identity token; a ws://
+# address is a tailnet one, reached by joining the tailnet with TS_AUTHKEY.
+# Without one, machines wait on the build-queue branch (scripts/standby.sh).
+#
+#   scripts/standby-start.sh 20
 #   gh workflow run build-standby.yml -f ref=wip/coordinator -f shards=20
 name: Build standby
 # The run's title carries its settings, so scripts/standby-status.sh can read
 # them from the run list (workflow inputs aren't in the runs API).
-run-name: "Standby ${{ inputs.layout }} x${{ inputs.shards }} from ${{ inputs.ref }} (idle ${{ inputs.minutes }}m, max ${{ inputs.max_minutes }}m)"
+run-name: "Standby ${{ inputs.layout }} x${{ inputs.shards }} from ${{ inputs.ref }} (idle ${{ inputs.minutes }}m, max ${{ inputs.max_minutes }}m)${{ inputs.coordinator != '' && ' live' || '' }}"
 
 on:
   workflow_dispatch:
@@ -35,9 +44,14 @@ on:
         description: Start without the saved build caches, so the first task builds from scratch
         type: boolean
         default: false
+      coordinator:
+        description: Coordinator address (ws:// on the tailnet, wss:// through a tunnel); empty for the build-queue branch
+        default: ""
 
 permissions:
   contents: write
+  # The identity token a machine shows the coordinator.
+  id-token: write
 
 jobs:
   standby:
@@ -72,13 +86,27 @@ jobs:
           path: art/models/${{ inputs.layout }}/.cache
           key: shard-cache-${{ inputs.layout }}-${{ inputs.shards }}-${{ matrix.shard }}-${{ github.run_id }}
           restore-keys: shard-cache-${{ inputs.layout }}-${{ inputs.shards }}-${{ matrix.shard }}-
+      - name: Join the tailnet
+        if: ${{ startsWith(inputs.coordinator, 'ws://') }}
+        uses: tailscale/github-action@v3
+        with:
+          authkey: ${{ secrets.TS_AUTHKEY }}
+      - name: Install the agent's websocket library
+        if: ${{ inputs.coordinator != '' }}
+        run: python3 -m pip install --user --break-system-packages --quiet websockets==10.4
       - name: Wait for tasks
+        env:
+          COORDINATOR: ${{ inputs.coordinator }}
         run: |
           minutes=$(( ${{ inputs.minutes }} > 60 ? 60 : ${{ inputs.minutes }} ))
           max_minutes=$(( ${{ inputs.max_minutes }} > 300 ? 300 : ${{ inputs.max_minutes }} ))
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          scripts/standby.sh "${{ inputs.layout }}" "${{ matrix.shard }}" "${{ inputs.shards }}" "$minutes" "$max_minutes"
+          if [ -n "$COORDINATOR" ]; then
+            scripts/standby-agent.py "$COORDINATOR" "${{ inputs.layout }}" "${{ matrix.shard }}" "${{ inputs.shards }}" "$minutes" "$max_minutes"
+          else
+            scripts/standby.sh "${{ inputs.layout }}" "${{ matrix.shard }}" "${{ inputs.shards }}" "$minutes" "$max_minutes"
+          fi
       - name: Save this shard's build cache
         if: always()
         uses: actions/cache/save@v4

@@ -1,0 +1,239 @@
+"""Uploads a layout's objects to Roblox as Models through Open Cloud, as many
+at once as Roblox will take, from one place so one throttle sees every
+answer.
+
+Objects are added as they arrive (Uploader.add) and uploaded at once; the
+caller waits for the ones it cares about (Uploader.wait). An object is
+skipped when it already has an asset: its id is in the layout's ledger,
+art/src/layouts/<Name>Uploads.tsv, or in this machine's record of what it
+has uploaded, art/models/<Name>/uploaded.tsv, which outlives a failed run.
+
+The throttle finds the width Roblox allows by trying: one success adds
+0.5 / width (about +0.5 per full round), a refusal (429) halves it and holds
+every new request for Roblox's Retry-After, or else a pause that doubles
+from 1 s to 60 s, with jitter. The width it ends on is kept in
+art/models/<Name>/upload-width.txt for the next run to start from.
+
+With dry=True nothing is sent: each upload waits a moment and returns a
+made-up asset id, and nothing is written to the record, for testing.
+
+Needs ROBLOX_API_KEY (or the file ~/.config/scrap-heist/roblox-api-key)
+and ROBLOX_CREATOR_ID unless dry.
+"""
+import json
+import os
+import random
+import threading
+import time
+import urllib.error
+import urllib.request
+import uuid
+
+API = os.environ.get("ROBLOX_ASSETS_API", "https://apis.roblox.com/assets/v1")
+START = float(os.environ.get("UPLOAD_START", "4"))
+MOST = int(os.environ.get("UPLOAD_MOST", "64"))
+TRIES = int(os.environ.get("UPLOAD_TRIES", "8"))
+PROCESS_TIMEOUT = int(os.environ.get("UPLOAD_PROCESS_TIMEOUT", "360"))
+GROWTH = 0.5
+FIRST_PAUSE, MOST_PAUSE = 1.0, 60.0
+KEY_FILE = os.path.expanduser("~/.config/scrap-heist/roblox-api-key")
+CREATOR_ID = os.environ.get("ROBLOX_CREATOR_ID", "670715109")
+
+
+def api_key():
+	key = os.environ.get("ROBLOX_API_KEY", "").strip()
+	if not key and os.path.isfile(KEY_FILE):
+		key = open(KEY_FILE).read().strip()
+	return key
+
+
+class Throttle:
+	def __init__(self, width_path, say):
+		self.width_path, self.say = width_path, say
+		self.limit = START
+		if os.path.isfile(width_path):
+			try:
+				self.limit = min(MOST, max(1.0, float(open(width_path).read())))
+			except ValueError:
+				pass
+		self.flying, self.held_until, self.pause = 0, 0.0, FIRST_PAUSE
+		self.changed = threading.Condition()
+
+	def enter(self):
+		with self.changed:
+			while self.flying >= int(self.limit):
+				self.changed.wait()
+			self.flying += 1
+
+	def leave(self, succeeded):
+		with self.changed:
+			self.flying -= 1
+			if succeeded:
+				self.limit = min(MOST, self.limit + GROWTH / int(self.limit))
+				self.pause = FIRST_PAUSE
+			self.changed.notify_all()
+
+	def refused(self, retry_after):
+		with self.changed:
+			self.limit = max(1.0, self.limit / 2)
+			wait = retry_after if retry_after is not None else self.pause * (1 + random.random() * 0.5)
+			if retry_after is None:
+				self.pause = min(MOST_PAUSE, self.pause * 2)
+			self.held_until = max(self.held_until, time.time() + wait)
+			self.say(f"turned away; now {int(self.limit)} at once, holding {wait:.0f}s")
+
+	def hold(self):
+		while True:
+			wait = self.held_until - time.time()
+			if wait <= 0:
+				return
+			time.sleep(wait)
+
+	def remember(self):
+		with open(self.width_path, "w") as file:
+			file.write(f"{self.limit:.2f}\n")
+
+
+def ids_in(path):
+	return {line.split("\t")[0] for line in open(path)} if os.path.isfile(path) else set()
+
+
+class Uploader:
+	def __init__(self, root, name, say=print, dry=False):
+		self.name, self.say, self.dry = name, say, dry
+		models = os.path.join(root, "art", "models", name)
+		os.makedirs(models, exist_ok=True)
+		self.ledger_path = os.path.join(root, "art", "src", "layouts", f"{name}Uploads.tsv")
+		self.record_path = os.path.join(models, "uploaded.tsv")
+		self.throttle = Throttle(os.path.join(models, "upload-width.txt"), say)
+		self.lock = threading.Lock()
+		self.done = threading.Condition(self.lock)
+		# id -> (asset, shard) for everything with an asset this machine knows of.
+		self.record = {}
+		if os.path.isfile(self.record_path) and not dry:
+			for line in open(self.record_path):
+				fields = line.split()
+				if len(fields) == 3:
+					self.record[fields[0]] = (fields[1], fields[2])
+		self.pending = set()
+		self.failed = {}
+		self.sent = 0
+		if not dry and not api_key():
+			raise RuntimeError(f"no Roblox API key: set ROBLOX_API_KEY or put it in {KEY_FILE}")
+
+	def known(self, identity):
+		return identity in self.record or identity in ids_in(self.ledger_path)
+
+	def add(self, identity, path, label, shard):
+		"""Queues one object unless it has an asset or is already on its way."""
+		with self.lock:
+			if identity in self.pending or identity in self.record:
+				return False
+			if identity in ids_in(self.ledger_path):
+				return False
+			self.pending.add(identity)
+			self.failed.pop(identity, None)
+		threading.Thread(target=self._send, args=(identity, path, label, shard), daemon=True).start()
+		return True
+
+	def wait(self, identities, timeout=None):
+		"""Waits until none of `identities` is still uploading."""
+		deadline = None if timeout is None else time.time() + timeout
+		with self.done:
+			while self.pending & set(identities):
+				left = None if deadline is None else deadline - time.time()
+				if left is not None and left <= 0:
+					return False
+				self.done.wait(left)
+		return True
+
+	def asset_of(self, identity):
+		return self.record.get(identity, (None, None))[0]
+
+	def finish(self):
+		# A dry run's width says nothing about Roblox's limit.
+		if not self.dry:
+			self.throttle.remember()
+
+	def _send(self, identity, path, label, shard):
+		self.throttle.enter()
+		succeeded = False
+		try:
+			asset = self._upload(path, label) if not self.dry else self._pretend()
+			with self.lock:
+				self.record[identity] = (str(asset), str(shard))
+				self.sent += 1
+				if not self.dry:
+					with open(self.record_path, "a") as file:
+						file.write(f"{identity}\t{asset}\t{shard}\n")
+			succeeded = True
+		except Exception as error:
+			with self.lock:
+				self.failed[identity] = str(error)
+			self.say(f"{label} ({identity}) {error}")
+		finally:
+			self.throttle.leave(succeeded)
+			with self.done:
+				self.pending.discard(identity)
+				self.done.notify_all()
+
+	def _pretend(self):
+		self.throttle.hold()
+		time.sleep(0.2 + random.random() * 0.3)
+		return random.randrange(10**13, 10**14)
+
+	def _request(self, url, body=None, content_type=None):
+		backoff, failures = 1.0, 0
+		while True:
+			self.throttle.hold()
+			headers = {"x-api-key": api_key()}
+			if content_type:
+				headers["Content-Type"] = content_type
+			try:
+				with urllib.request.urlopen(urllib.request.Request(url, data=body, headers=headers), timeout=120) as response:
+					return json.load(response)
+			except urllib.error.HTTPError as error:
+				status, answer = error.code, error.read().decode(errors="replace")
+				if status == 429:
+					after = error.headers.get("Retry-After", "")
+					self.throttle.refused(float(after) if after.replace(".", "", 1).isdigit() else None)
+					continue
+				if status < 500:
+					raise RuntimeError(f"HTTP {status}: {answer[:300]}")
+			except (urllib.error.URLError, TimeoutError):
+				status = 0
+			failures += 1
+			if failures >= TRIES:
+				raise RuntimeError(f"gave up after {TRIES} tries (last HTTP {status})")
+			time.sleep(backoff * (0.5 + random.random()))
+			backoff = min(MOST_PAUSE, backoff * 2)
+
+	def _upload(self, path, label):
+		boundary = uuid.uuid4().hex
+		metadata = json.dumps({
+			"assetType": "Model",
+			"displayName": f"Scrap Heist {self.name} {label}"[:50],
+			"description": "Scrap Heist map object",
+			"creationContext": {"creator": {"userId": CREATOR_ID}},
+		})
+		body = b"".join([
+			f'--{boundary}\r\nContent-Disposition: form-data; name="request"\r\nContent-Type: application/json\r\n\r\n{metadata}\r\n'.encode(),
+			f'--{boundary}\r\nContent-Disposition: form-data; name="fileContent"; filename="{os.path.basename(path)}"\r\nContent-Type: model/gltf-binary\r\n\r\n'.encode(),
+			open(path, "rb").read(),
+			f"\r\n--{boundary}--\r\n".encode(),
+		])
+		operation = self._request(f"{API}/assets", body, f"multipart/form-data; boundary={boundary}").get("path")
+		if not operation:
+			raise RuntimeError("rejected: no operation returned")
+		gap, waited = 2.0, 0.0
+		while waited < PROCESS_TIMEOUT:
+			time.sleep(gap)
+			waited += gap
+			answer = self._request(f"{API}/{operation}")
+			if answer.get("done"):
+				asset = answer.get("response", {}).get("assetId")
+				if not asset:
+					raise RuntimeError(f"failed: {json.dumps(answer)[:300]}")
+				return asset
+			gap = min(15.0, gap * 1.5)
+		raise RuntimeError(f"still processing after {waited:.0f}s: {operation}")

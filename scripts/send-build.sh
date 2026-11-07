@@ -26,6 +26,16 @@ upload="${4:-yes}"
 root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "${root}"
 
+# A coordinator in this session hands the task to its machines live
+# (tools/coordinator/): no queue branch, no polling for results.
+if python3 tools/coordinator/client.py status > /dev/null 2>&1; then
+	git fetch -q origin "${ref}" 2> /dev/null || true
+	commit="$(git rev-parse --verify -q "origin/${ref}^{commit}" || git rev-parse --verify "${ref}^{commit}")"
+	flags=(--wait "${wait_seconds}")
+	[ "${upload}" = "no" ] && flags+=(--no-upload)
+	exec python3 tools/coordinator/client.py build "${commit}" "${flags[@]}"
+fi
+
 if [ "${count}" = "auto" ]; then
 	if ! status="$(scripts/standby-status.sh --line)"; then
 		scripts/standby-status.sh >&2 || true

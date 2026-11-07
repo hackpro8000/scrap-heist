@@ -9,6 +9,8 @@
 #   ref=<commit>                      build this shard of the layout
 #   upload=no                         ... without handing its objects over
 #   upload-of=<build task id>         upload what that build handed over
+#   hand-over=coordinator             leave the objects in <results>/handed/
+#                                     for scripts/standby-agent.py to send
 #
 # A build writes build.log, parts.txt, the objects' manifest.json, costs.txt
 # and summary.txt, and hands over the objects that have no asset yet: it
@@ -52,7 +54,12 @@ push_alone() {
 # with the build's task id and each object's label. Prints how many.
 hand_over() {
 	local id="$1" handed
-	handed="$(mktemp -d)"
+	if [ "$(field hand-over)" = "coordinator" ]; then
+		handed="${out}/handed"
+		mkdir -p "${handed}"
+	else
+		handed="$(mktemp -d)"
+	fi
 	echo "${id}" > "${handed}/task.txt"
 	python3 - "${model}/objects" "${ledger}" "${handed}" << 'EOF' || return 1
 import json, os, shutil, sys
@@ -64,6 +71,11 @@ with open(os.path.join(handed, "names.tsv"), "w") as names:
 			shutil.copy(os.path.join(objects, asset["id"] + ".glb"), handed)
 			names.write(f"{asset['id']}\t{asset['label']}\n")
 EOF
+	if [ "$(field hand-over)" = "coordinator" ]; then
+		rm -f "${handed}/task.txt"
+		wc -l < "${handed}/names.tsv"
+		return 0
+	fi
 	push_alone "${handed}" "build-objects/s${index}" "objects of task ${id} S${index}/${count}" || return 1
 	wc -l < "${handed}/names.tsv"
 	rm -rf "${handed}"
