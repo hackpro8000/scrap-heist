@@ -173,7 +173,7 @@ return {
 	{ asset = "012607a51d030186", label = "Kit_Press", turn = 0, anchors = { { name = "Bolts", position = Vector3.new(-746.048, -145.832, -0.397043) }, { name = "Button", position = Vector3.new(-737.6, -146.38, 2.6) } } },
 	{ asset = "dc17e7d9c71d1dae", label = "Kit_ProofKettle", turn = 0, anchors = { { name = "Body", position = Vector3.new(-911.641, -149.044, 0.00683522) } } },
 	{ asset = "ddc79084efbd7135", label = "Kit_ProofShark", turn = 0, anchors = { { name = "Body", position = Vector3.new(-888.18, -148.18, 0.0133178) } } },
-	{ asset = "9d3a05cdb557a2bb", label = "Kit_ProofToaster", turn = 0, anchors = { { name = "Shell", position = Vector3.new(-935.856, -148.935, -6.25e-05) } } },
+	{ asset = "290b710043accd0e", label = "Kit_ProofToaster", turn = 0, anchors = { { name = "Shell", position = Vector3.new(-935.856, -148.935, -6.25e-05) } } },
 	{ asset = "55390bdbcb957af8", label = "Line", turn = 0, anchors = { { name = "Walk_-5_-1_0", position = Vector3.new(-260.118, 1.7, 28) }, { name = "Walk_2_0_0_110", position = Vector3.new(173.412, 1.7, -41) } } },
 	{ asset = "6749088f574421e6", label = "Line", turn = 0, anchors = { { name = "Walk_3_-1_0_000", position = Vector3.new(204.941, 1.7, 41) }, { name = "Walk_4_0_0", position = Vector3.new(260.118, 1.7, -28) } } },
 	{ asset = "8f423e92d1fb7af8", label = "Line", turn = 0, anchors = { { name = "Kerb_-5_0_0", position = Vector3.new(-261.724, 1.85089, -28.2604) }, { name = "Kerb_4_-1_0", position = Vector3.new(261.739, 1.84907, 28.2403) } } },
