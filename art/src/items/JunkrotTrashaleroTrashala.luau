@@ -9,13 +9,13 @@
 -- the eyes sit in sockets sunk into it, the gill slits and nostrils are
 -- recessed into it. No googly face. 3 studs tall, 4.5 long.
 -- include: JunkrotKit
-local TIN_BLUE = { 0.36, 0.55, 0.78 }
+local TIN_BLUE = { 0.4, 0.5, 0.6 } -- grey-blue, as the shark is
 local BELLY = { 0.88, 0.89, 0.86 }
 local GULLET = { 0.3, 0.07, 0.09 }
-local SNEAKER_BLUE = { 0.16, 0.32, 0.86 }
-local MIDDLE = 1.45 -- the body's middle line: it stands low, on fins of normal size
+local SNEAKER_BLUE = { 0.14, 0.46, 0.92 }
+local MIDDLE = 1.75 -- the body's middle line: it stands about a body's depth off the ground
 -- The sneakers stand here, on the pectoral fins' tips and the pelvic fin's.
-local STANDS = { { 0.3, -0.85 }, { 0.3, 0.85 }, { -1.0, 0 } }
+local STANDS = { { 0.6, -0.5 }, { 0.6, 0.5 }, { -1.0, 0 } }
 
 -- The body's half height and half width along x, tail end to nose tip,
 -- read off these stations between; eased, except along the snout, which
@@ -79,7 +79,7 @@ end
 -- roof of the mouth at that plane.
 local ROOF = mouthPoint(-90)[3] + 0.03
 local HINGE = { CORNER.x, ROOF }
-local GAPE = 28 -- degrees the jaw hangs open
+local GAPE = 14 -- degrees the jaw hangs open: a grin, the teeth showing
 local function inMouth(x, y)
 	local along = (x - CORNER.x) / MOUTH_REACH
 	if along <= 0 or along >= 1 then
@@ -139,9 +139,16 @@ local function shark()
 		pullFin(m, patch({ 0, 0, -1 }, 35, function(p)
 			return p[1] < -1.25 and math.abs(p[2]) < 0.1
 		end), { { -0.2, 0, -0.32 }, { -0.22, 0, -0.3 }, { -0.2, 0, -0.25 }, { -0.12, 0, -0.15 } }, { 0.82, 0.58, 0.85 })
+		-- The legs: each pectoral fin runs on down as a thick limb of shark
+		-- skin into its sneaker, the pelvic fin the same under the tail.
+		for _, side in { -1, 1 } do
+			pullFin(m, patch({ 0, side * 0.6, -0.8 }, 32, function(p)
+				return p[1] > 0.3 and p[1] < 0.95
+			end), { { 0.02, side * 0.05, -0.3 }, { 0.02, side * 0.03, -0.3 }, { 0, 0, -0.26 }, { 0, 0, -0.12 } }, { 0.9, 0.9, 1 })
+		end
 		pullFin(m, patch({ 0, 0, -1 }, 30, function(p)
 			return p[1] > -1.15 and p[1] < -0.8 and math.abs(p[2]) < 0.15
-		end), { { 0, 0, -0.28 }, { 0, 0, -0.25 }, { 0, 0, -0.22 }, { 0, 0, -0.14 } }, { 0.82, 0.7, 1 })
+		end), { { 0, 0, -0.3 }, { 0, 0, -0.3 }, { 0, 0, -0.28 }, { 0, 0, -0.25 }, { 0, 0, -0.12 } }, { 0.9, 0.86, 1 })
 	end)
 	-- Eye sockets, sunk into the sides of the head above the mouth's front.
 	for _, side in { -1, 1 } do
@@ -272,19 +279,19 @@ part("Pectorals", nil, TIN_BLUE, function(mesh)
 	-- Each pectoral fin shaped from its outline: a straight leading edge
 	-- sweeping back from the root to a pointed tip, a concave trailing edge
 	-- back to the root's rear; thick at the root, thinning to the edges.
-	-- Rooted in the flank low behind the gills, it points out, down and
-	-- back into its sneaker.
+	-- Rooted in the flank low behind the gills, it sweeps back and down
+	-- along the back of the leg.
 	for _, side in { -1, 1 } do
-		local fin = Kit.plate({ { 0.3, -0.1 }, { 0.05, 0.5 }, { -0.3, 0.96 }, { -0.42, 0.96 }, { -0.5, 0.45 }, { -0.32, -0.1 } }, 0.1)
+		local fin = Kit.plate({ { 0.3, -0.1 }, { 0.05, 0.42 }, { -0.25, 0.8 }, { -0.36, 0.8 }, { -0.44, 0.38 }, { -0.32, -0.1 } }, 0.1)
 		fin:translate(0, -0.05, 0)
 		fin:transform(function(p)
-			local out = math.clamp(p[3] / 0.96, 0, 1)
+			local out = math.clamp(p[3] / 0.8, 0, 1)
 			local thin = (1 - 0.8 * out) * (1 - 0.5 * math.abs(p[1] + 0.05) / 0.35)
 			return { p[1], p[2] * math.max(thin, 0.1), p[3] }
 		end)
-		Kit.turn(fin, "x", -side * 150)
-		Kit.turn(fin, "y", 18)
-		fin:translate(0.72, side * 0.36, MIDDLE - 0.4)
+		Kit.turn(fin, "x", -side * 125)
+		Kit.turn(fin, "y", 40)
+		fin:translate(0.62, side * 0.4, MIDDLE - 0.38)
 		fin:emit(mesh)
 	end
 end, 40, 0.35)
@@ -336,23 +343,23 @@ part("Teeth", nil, { 0.97, 0.97, 0.93 }, function(mesh)
 end, 40, 0)
 part("Sneakers", nil, SNEAKER_BLUE, function(mesh)
 	for _, at in STANDS do
-		local shoe = Kit.shoe(0.95, 0.5, 0.36)
-		shoe:translate(at[1] + 0.12, at[2], 0.06)
+		local shoe = Kit.shoe(1.15, 0.6, 0.42)
+		shoe:translate(at[1] + 0.15, at[2], 0.06)
 		shoe:emit(mesh)
 	end
 end, true, RUBBER)
 part("Soles", nil, { 0.95, 0.95, 0.93 }, function(mesh)
 	for _, at in STANDS do
-		local sole = Kit.block(0.98, 0.52, 0.1, 0.04)
-		sole:translate(at[1] + 0.12, at[2], 0.05)
+		local sole = Kit.block(1.18, 0.62, 0.1, 0.04)
+		sole:translate(at[1] + 0.15, at[2], 0.05)
 		sole:emit(mesh)
 	end
 end, 50, RUBBER)
 part("Laces", nil, { 0.97, 0.97, 0.95 }, function(mesh)
 	for _, at in STANDS do
 		for k = 0, 2 do
-			local lace = Kit.block(0.05, 0.3, 0.03, 0.01)
-			lace:translate(at[1] + 0.2 + k * 0.1, at[2], 0.36 - k * 0.03)
+			local lace = Kit.block(0.05, 0.34, 0.03, 0.01)
+			lace:translate(at[1] + 0.25 + k * 0.12, at[2], 0.42 - k * 0.03)
 			lace:emit(mesh)
 		end
 	end
