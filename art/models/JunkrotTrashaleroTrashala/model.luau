@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotTrashaleroTrashala-c30e125e89fbea64"
+local CACHE_KEY = "JunkrotTrashaleroTrashala-6c0cbe746dd2bd58"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -856,7 +856,8 @@ end
 -- Scrap.panelParts(loft, panels, spec)  declares the parts: Panels<Metal>
 --                  (with any metal fin pieces), and the joins, by turns
 --                  rivets, bolts, welds, tape, stitches and clips;
---                  spec.rivetsUpTo: no rivets or bolts beyond this x
+--                  spec.rivetsUpTo: no rivets or bolts beyond this x;
+--                  spec.rust: { [metal] = 0..1 } overrides a metal's rust
 -- Scrap.sneakers(collars, spec)        declares sneaker parts standing on
 --                  the ground, toe +x, each collar's centre at {x, y}
 --   Scrap.SHOE, Scrap.SOLE   the shoe's size and its sole's height
@@ -3957,7 +3958,7 @@ function Scrap.panelParts(loft, panels, spec)
 					piece.mesh:emit(mesh)
 				end
 			end
-		end, 40, if metal == "RUST" then 0.7 elseif metal == "BRASS" or metal == "ENAMEL" then 0.3 else 0.5)
+		end, 40, (spec.rust and spec.rust[metal]) or (if metal == "RUST" then 0.7 elseif metal == "BRASS" or metal == "ENAMEL" then 0.3 else 0.5))
 	end
 
 	local function joinOf(index)
