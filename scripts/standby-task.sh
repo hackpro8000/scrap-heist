@@ -101,6 +101,8 @@ EOF
 # Renders this shard's share of the task's previews (every count-th name,
 # from this shard's index), each model in its own folder with its own cache,
 # so it runs beside the layout build. A model that fails leaves its log.
+# Renders are 384 pixels: they travel through the coordinator's tunnel, which
+# is slow, and four make a 768-pixel sheet.
 render_previews() {
 	local names name n=0 dir
 	IFS=, read -ra names <<< "$(field preview)"
@@ -110,7 +112,7 @@ render_previews() {
 		dir="${out}/previews/${name}"
 		mkdir -p "${dir}"
 		if scripts/assemble-model.sh "${name}" > "${dir}/build.log" 2>&1 &&
-			scripts/build-model.sh "${name}" -- --turntable 4 >> "${dir}/build.log" 2>&1; then
+			scripts/build-model.sh "${name}" -- --turntable 4 --size "${PREVIEW_SIZE:-384}" >> "${dir}/build.log" 2>&1; then
 			cp "art/models/${name}/preview.png" "${dir}/preview.png"
 			for turn in 0 1 2 3; do
 				cp "art/models/${name}/turntable/000${turn}.png" "${dir}/view${turn}.png"

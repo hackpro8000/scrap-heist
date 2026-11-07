@@ -511,7 +511,10 @@ async def serve(arguments):
 	coordinator = Coordinator(arguments.layout, arguments.dry_upload, arguments.test_without_identity, arguments.git_link,
 		arguments.uploads_on_machine)
 	coordinator.loop = asyncio.get_running_loop()
-	agents = await websockets.serve(coordinator.agent, arguments.agent_host, arguments.agent_port, max_size=MAX_MESSAGE)
+	# A ping waits behind whatever a machine is sending, and the tunnel is
+	# slow, so a big result could outlast websockets' 20 s and drop the machine.
+	agents = await websockets.serve(coordinator.agent, arguments.agent_host, arguments.agent_port, max_size=MAX_MESSAGE,
+		ping_interval=20, ping_timeout=120)
 	control = await websockets.serve(coordinator.control, "127.0.0.1", arguments.control_port, max_size=MAX_MESSAGE)
 	os.makedirs(os.path.dirname(STATE), exist_ok=True)
 	state = {"pid": os.getpid(), "control": f"ws://127.0.0.1:{arguments.control_port}",
