@@ -549,26 +549,26 @@ local function eyeAt(side)
 	local p, n = skinNormal(1.77, side * 72)
 	return p, n
 end
-part("Eyes", nil, { 0.03, 0.03, 0.04 }, function(mesh)
+part("Eyes", nil, { 0.96, 0.96, 0.94 }, function(mesh)
+	-- Googly eyes: a white dome on each socket.
 	for _, side in { -1, 1 } do
 		local p, n = eyeAt(side)
-		local eye = EditMesh.sphere(0.08, 10)
-		eye:translate(p[1] + n[1] * 0.01, p[2] + n[2] * 0.01, p[3] + n[3] * 0.01 + MIDDLE)
+		local eye = EditMesh.sphere(0.13, 12)
+		Kit.size(eye, { 1, 0.5, 1 })
+		eye:translate(p[1] + n[1] * 0.02, p[2] + n[2] * 0.02, p[3] + n[3] * 0.02 + MIDDLE)
 		eye:emit(mesh)
 	end
 end, true, 0)
-part("EyeRings", nil, { 0.86, 0.86, 0.82 }, function(mesh)
-	-- A white enamel washer round each eye, standing off the socket so the
-	-- black eye reads against it and it against the dark plating.
+part("Pupils", nil, { 0.04, 0.04, 0.05 }, function(mesh)
+	-- The loose black pupils, slid down and forward in their domes.
 	for _, side in { -1, 1 } do
 		local p, n = eyeAt(side)
-		local ring = EditMesh.torus(0.095, 0.022, 16, 6)
-		Kit.turn(ring, "x", 90)
-		Kit.turn(ring, "z", side * -math.deg(math.atan2(n[1], math.abs(n[2]))))
-		ring:translate(p[1] + n[1] * 0.035, p[2] + n[2] * 0.035, p[3] + n[3] * 0.035 + MIDDLE)
-		ring:emit(mesh)
+		local pupil = EditMesh.sphere(0.055, 8)
+		Kit.size(pupil, { 1, 0.4, 1 })
+		pupil:translate(p[1] + n[1] * 0.075 + 0.025, p[2] + n[2] * 0.075, p[3] + n[3] * 0.075 - 0.035 + MIDDLE)
+		pupil:emit(mesh)
 	end
-end, true, 0.1)
+end, true, 0)
 part("Lips", nil, { 0.1, 0.1, 0.12 }, function(mesh)
 	-- Dark rubber beading round the mouth's rim above, and along the jaw's
 	-- edge below: the grin stands out dark against the enamel head, the
