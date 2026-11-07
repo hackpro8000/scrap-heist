@@ -15,24 +15,24 @@ local GULLET = { 0.3, 0.07, 0.09 }
 local SNEAKER_BLUE = { 0.16, 0.32, 0.86 }
 local MIDDLE = 1.45 -- the body's middle line: it stands low, on fins of normal size
 -- The sneakers stand here, on the pectoral fins' tips and the pelvic fin's.
-local STANDS = { { 0.4, -0.92 }, { 0.4, 0.92 }, { -1.0, 0 } }
+local STANDS = { { 0.3, -0.85 }, { 0.3, 0.85 }, { -1.0, 0 } }
 
 -- The body's half height and half width along x, tail end to nose tip,
 -- read off these stations between; eased, except along the snout, which
 -- runs straight to its point.
 local STATIONS = {
-	{ -1.6, 0.14, 0.1 },
-	{ -1.3, 0.26, 0.2 },
-	{ -0.8, 0.5, 0.4 },
-	{ -0.2, 0.7, 0.56 },
-	{ 0.5, 0.78, 0.64 },
-	{ 1.0, 0.74, 0.62 },
-	{ 1.4, 0.6, 0.56 },
-	{ 1.7, 0.44, 0.46 },
-	{ 1.95, 0.26, 0.3 },
-	{ 2.1, 0.12, 0.16 },
-	{ 2.2, 0.05, 0.08 },
-	{ 2.24, 0.015, 0.025 },
+	{ -1.6, 0.105, 0.078 },
+	{ -1.3, 0.195, 0.156 },
+	{ -0.8, 0.375, 0.312 },
+	{ -0.2, 0.525, 0.437 },
+	{ 0.5, 0.585, 0.499 },
+	{ 1.0, 0.555, 0.484 },
+	{ 1.4, 0.45, 0.437 },
+	{ 1.7, 0.33, 0.359 },
+	{ 1.95, 0.195, 0.234 },
+	{ 2.1, 0.09, 0.125 },
+	{ 2.2, 0.038, 0.062 },
+	{ 2.24, 0.011, 0.02 },
 }
 local SNOUT = 1.4
 local function station(x)
@@ -138,10 +138,10 @@ local function shark()
 		end), { { -0.22, 0, 0.4 }, { -0.26, 0, 0.4 }, { -0.26, 0, 0.35 }, { -0.22, 0, 0.3 }, { -0.15, 0, 0.2 } }, { 0.84, 0.6, 0.88 })
 		pullFin(m, patch({ 0, 0, -1 }, 35, function(p)
 			return p[1] < -1.25 and math.abs(p[2]) < 0.1
-		end), { { -0.15, 0, -0.25 }, { -0.15, 0, -0.22 }, { -0.1, 0, -0.15 } }, { 0.75, 0.55, 0.8 })
+		end), { { -0.2, 0, -0.32 }, { -0.22, 0, -0.3 }, { -0.2, 0, -0.25 }, { -0.12, 0, -0.15 } }, { 0.82, 0.58, 0.85 })
 		pullFin(m, patch({ 0, 0, -1 }, 30, function(p)
 			return p[1] > -1.15 and p[1] < -0.8 and math.abs(p[2]) < 0.15
-		end), { { 0, 0, -0.28 }, { 0, 0, -0.25 }, { 0, 0, -0.22 } }, { 0.8, 0.7, 1 })
+		end), { { 0, 0, -0.28 }, { 0, 0, -0.25 }, { 0, 0, -0.22 }, { 0, 0, -0.14 } }, { 0.82, 0.7, 1 })
 	end)
 	-- Eye sockets, sunk into the sides of the head above the mouth's front.
 	for _, side in { -1, 1 } do
@@ -157,9 +157,9 @@ local function shark()
 	for _, side in { -1, 1 } do
 		for k = 0, 4 do
 			-- On every other column of faces, so no two slits touch.
-			local x = 1.13 - k * 0.12
-			local slit = patch({ 0, side, 0 }, 40, function(p)
-				return p[1] > x - 0.02 and p[1] < x + 0.02 and p[3] > -0.05 and p[3] < 0.3
+			local x = 1.25 - k * 0.12
+			local slit = patch({ 0, side, 0 }, 50, function(p)
+				return p[1] > x - 0.02 and p[1] < x + 0.02 and p[3] > -0.3 and p[3] < 0.45
 			end):minus(m:select("face", "tag", "fins"))
 			if slit:count() > 0 then
 				Kit.recess(m, slit, 0.008, 0.03)
@@ -275,16 +275,16 @@ part("Pectorals", nil, TIN_BLUE, function(mesh)
 	-- Rooted in the flank low behind the gills, it points out, down and
 	-- back into its sneaker.
 	for _, side in { -1, 1 } do
-		local fin = Kit.plate({ { 0.3, -0.1 }, { 0.12, 0.45 }, { -0.1, 0.86 }, { -0.22, 0.88 }, { -0.4, 0.4 }, { -0.32, -0.1 } }, 0.1)
+		local fin = Kit.plate({ { 0.3, -0.1 }, { 0.05, 0.5 }, { -0.3, 0.96 }, { -0.42, 0.96 }, { -0.5, 0.45 }, { -0.32, -0.1 } }, 0.1)
 		fin:translate(0, -0.05, 0)
 		fin:transform(function(p)
-			local out = math.clamp(p[3] / 0.88, 0, 1)
+			local out = math.clamp(p[3] / 0.96, 0, 1)
 			local thin = (1 - 0.8 * out) * (1 - 0.5 * math.abs(p[1] + 0.05) / 0.35)
 			return { p[1], p[2] * math.max(thin, 0.1), p[3] }
 		end)
 		Kit.turn(fin, "x", -side * 150)
-		Kit.turn(fin, "y", 25)
-		fin:translate(0.72, side * 0.46, MIDDLE - 0.48)
+		Kit.turn(fin, "y", 18)
+		fin:translate(0.72, side * 0.36, MIDDLE - 0.4)
 		fin:emit(mesh)
 	end
 end, 40, 0.35)
