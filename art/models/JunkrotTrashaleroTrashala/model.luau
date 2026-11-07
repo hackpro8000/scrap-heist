@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotTrashaleroTrashala-56c767c75e11b63b"
+local CACHE_KEY = "JunkrotTrashaleroTrashala-b1eb9ec3df0bf991"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3799,29 +3799,87 @@ part("ShodFins", nil, TIN_BLUE, function(mesh)
 		m:emit(mesh)
 	end
 end, 40, 0.35)
+-- Each sneaker stands on the ground with its collar over its fin's tip:
+-- the shoe's own origin is the middle of its sole, the collar sits back
+-- from it. Kit.shoe's proportions: toe +x, collar over the heel third.
+local SHOE = { long = 1.15, wide = 0.6, high = 0.42 }
+local function shoeAt(f)
+	local tip = shodTip(f)
+	return { tip[1] + SHOE.long * 0.32, tip[2] }
+end
+local SOLE = 0.14 -- the sole's height: outsole and midsole
+-- The upper's top at x from the shoe's middle: level over the instep,
+-- sloping down over the toe.
+local function instep(x)
+	local hx = SHOE.long / 2
+	local toe = math.clamp((x - hx * 0.25) / (hx * 0.75), 0, 1)
+	return SOLE - 0.04 + SHOE.high * (1 - 0.45 * toe)
+end
 part("Sneakers", nil, SNEAKER_BLUE, function(mesh)
 	for _, f in SHOD do
-		local shoe = Kit.shoe(1.15, 0.6, 0.42)
-		local foot = shodTip(f)
-		shoe:translate(foot[1] + 0.1, foot[2], 0.06)
+		local at = shoeAt(f)
+		local shoe = Kit.shoe(SHOE.long, SHOE.wide, SHOE.high)
+		shoe:translate(at[1], at[2], SOLE - 0.04)
 		shoe:emit(mesh)
+		-- The tongue, padded, rising out of the collar's front.
+		local tongue = Kit.block(0.2, 0.24, 0.3, 0.05)
+		Kit.turn(tongue, "y", 28)
+		tongue:translate(at[1] - 0.1, at[2], instep(-0.1) + 0.02)
+		tongue:emit(mesh)
 	end
 end, true, RUBBER)
 part("Soles", nil, { 0.95, 0.95, 0.93 }, function(mesh)
+	-- The midsole, white, standing a little proud of the upper.
 	for _, f in SHOD do
-		local sole = Kit.block(1.18, 0.62, 0.1, 0.04)
-		local foot = shodTip(f)
-		sole:translate(foot[1] + 0.1, foot[2], 0.05)
-		sole:emit(mesh)
+		local at = shoeAt(f)
+		local midsole = Kit.block(SHOE.long + 0.06, SHOE.wide + 0.06, 0.1, 0.04)
+		midsole:translate(at[1], at[2], 0.09)
+		midsole:emit(mesh)
 	end
 end, 50, RUBBER)
-part("Laces", nil, { 0.97, 0.97, 0.95 }, function(mesh)
+part("Outsoles", nil, { 0.2, 0.2, 0.22 }, function(mesh)
+	-- The dark rubber under it, and a toe bumper curling up at the front.
 	for _, f in SHOD do
-		local foot = shodTip(f)
-		for k = 0, 2 do
-			local lace = Kit.block(0.05, 0.34, 0.03, 0.01)
-			lace:translate(foot[1] + 0.2 + k * 0.12, foot[2], 0.42 - k * 0.03)
-			lace:emit(mesh)
+		local at = shoeAt(f)
+		local outsole = Kit.block(SHOE.long + 0.04, SHOE.wide + 0.04, 0.05, 0.02)
+		outsole:translate(at[1], at[2], 0.025)
+		outsole:emit(mesh)
+		local bumper = Kit.block(0.1, SHOE.wide * 0.6, 0.08, 0.02)
+		bumper:translate(at[1] + SHOE.long / 2 - 0.03, at[2], 0.14)
+		bumper:emit(mesh)
+	end
+end, 50, RUBBER)
+part("ShoeTrim", nil, { 0.96, 0.96, 0.94 }, function(mesh)
+	for _, f in SHOD do
+		local at = shoeAt(f)
+		-- Crossed laces between the eyelet rows down the instep.
+		local rows = { -0.16, -0.02, 0.12, 0.26 }
+		for k = 1, #rows - 1 do
+			for _, side in { -1, 1 } do
+				Kit.tube({ { at[1] + rows[k], at[2] + side * 0.1, instep(rows[k]) + 0.01 }, { at[1] + rows[k + 1], at[2] - side * 0.1, instep(rows[k + 1]) + 0.01 } }, 0.016, 6):emit(mesh)
+			end
+		end
+		-- A stripe along each side, dipping under the laces.
+		for _, side in { -1, 1 } do
+			Kit.tube(Kit.curve({ { at[1] - 0.46, at[2] + side * 0.27, 0.3 }, { at[1] - 0.1, at[2] + side * 0.31, 0.2 }, { at[1] + 0.25, at[2] + side * 0.29, 0.17 }, { at[1] + 0.45, at[2] + side * 0.2, 0.22 } }, 4), 0.022, 6):emit(mesh)
+		end
+		-- The padded collar rim and a heel tab.
+		local rim = EditMesh.torus(0.12, 0.03, 16, 6)
+		Kit.size(rim, { 1.5, 1, 1 })
+		rim:translate(at[1] - SHOE.long * 0.32, at[2], SOLE - 0.04 + SHOE.high)
+		rim:emit(mesh)
+		Kit.tube(Kit.curve({ { at[1] - 0.55, at[2], SOLE + 0.3 }, { at[1] - 0.6, at[2], SOLE + 0.42 }, { at[1] - 0.55, at[2], SOLE + 0.5 } }, 3), 0.02, 6):emit(mesh)
+	end
+end, 50, 0)
+part("Eyelets", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	for _, f in SHOD do
+		local at = shoeAt(f)
+		for _, x in { -0.16, -0.02, 0.12, 0.26 } do
+			for _, side in { -1, 1 } do
+				local eye = EditMesh.cylinder(0.024, 0.012, 8, 1)
+				eye:translate(at[1] + x, at[2] + side * 0.1, instep(x) + 0.005)
+				eye:emit(mesh)
+			end
 		end
 	end
 end, 50, 0)
