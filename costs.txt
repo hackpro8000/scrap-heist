@@ -1,0 +1,6 @@
+slab Plot4	3.873
+slab Plot4 #split	1
+JunkrotSpeakeroneBoomba 1 x	0.569
+JunkrotSpeakeroneBoomba 1 x #split	1
+JunkrotDronettoBuzzatti 1 x	0.558
+JunkrotDronettoBuzzatti 1 x #split	1

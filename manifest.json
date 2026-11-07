@@ -1,0 +1,415 @@
+{
+	"assets": [
+		{
+			"id": "e6e7985a2daa2e33",
+			"key": "HubSectionEnd-48c8eb7545b33eb2 1 x part 5/5",
+			"piece": 1,
+			"label": "HubSection1",
+			"turn": 180.0,
+			"bytes": 6483408,
+			"parts": 23
+		},
+		{
+			"id": "d919a85cf314d23f",
+			"key": "YardFooting-5c7b334d7913a1ed 1 x x1.5",
+			"piece": 1,
+			"label": "Yard2_FootingBack5",
+			"turn": 0.0,
+			"bytes": 120280,
+			"parts": 1
+		},
+		{
+			"id": "9d83c1886dbf3768",
+			"key": "YardFooting-5c7b334d7913a1ed 0.5 x x1.5",
+			"piece": 1,
+			"label": "Yard2_FootingFrontHalf1",
+			"turn": 0.0,
+			"bytes": 127408,
+			"parts": 1
+		},
+		{
+			"id": "947e764cb23c2270",
+			"key": "cd8e579a256b83b8-7b25a7aa2539d602 Plot4 210 180 0",
+			"piece": 1,
+			"label": "Plot4",
+			"turn": 0.0,
+			"bytes": 5862412,
+			"parts": 10
+		},
+		{
+			"id": "23fb8a0f6e8fee61",
+			"key": "JunkrotSpeakeroneBoomba-3bbfbd68ef1f5c85 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotSpeakeroneBoomba",
+			"turn": 0.0,
+			"bytes": 645224,
+			"parts": 8
+		},
+		{
+			"id": "8a4bc563fe1077cb",
+			"key": "JunkrotDronettoBuzzatti-7acc8fb57bb9953e 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotDronettoBuzzatti",
+			"turn": 0.0,
+			"bytes": 579160,
+			"parts": 8
+		}
+	],
+	"placements": [
+		{
+			"asset": "e6e7985a2daa2e33",
+			"label": "HubSection1",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Grass_-1_-1_0_000",
+					"position": [
+						-171.87365499999999,
+						-1.6778608499999998,
+						-47.959548500000004
+					]
+				},
+				{
+					"name": "Grass_0_1_0",
+					"position": [
+						-248.08397,
+						-2.09715615,
+						65.7629665
+					]
+				}
+			]
+		},
+		{
+			"asset": "e6e7985a2daa2e33",
+			"label": "HubSection5",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-1_-1_0_000",
+					"position": [
+						171.87365499999999,
+						-1.6778608499999998,
+						47.959548500000004
+					]
+				},
+				{
+					"name": "Grass_0_1_0",
+					"position": [
+						248.08397,
+						-2.09715615,
+						-65.7629665
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard2_FootingBack5",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-64.00217,
+						6.266335,
+						-236.03322
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard2_FootingFront1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-82.00217,
+						6.266335,
+						-124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard2_FootingFront3",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-106.00217,
+						6.266335,
+						-124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "9d83c1886dbf3768",
+			"label": "Yard2_FootingFrontHalf1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-115.0010825,
+						6.266335,
+						-124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard2_FootingFront4",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-58.00217,
+						6.266335,
+						-124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard2_FootingFront5",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-46.00217,
+						6.266335,
+						-124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard2_FootingFront6",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-34.00217,
+						6.266335,
+						-124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "9d83c1886dbf3768",
+			"label": "Yard2_FootingFrontHalf2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-25.001085500000002,
+						6.266335,
+						-124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard3_FootingBack3",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						51.99783,
+						6.266335,
+						-236.03322
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard3_FootingBack5",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						75.99783,
+						6.266335,
+						-236.03322
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard3_FootingBack7",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						99.99783,
+						6.266335,
+						-236.03322
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard3_FootingFront1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						57.99783,
+						6.266335,
+						-124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard3_FootingFront3",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						33.99783,
+						6.266335,
+						-124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "9d83c1886dbf3768",
+			"label": "Yard3_FootingFrontHalf1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						24.998914499999998,
+						6.266335,
+						-124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "d919a85cf314d23f",
+			"label": "Yard3_FootingFront6",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						105.99783,
+						6.266335,
+						-124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "9d83c1886dbf3768",
+			"label": "Yard3_FootingFrontHalf2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						114.9989175,
+						6.266335,
+						-124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "947e764cb23c2270",
+			"label": "Plot4",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_-1_0",
+					"position": [
+						186.0,
+						5.865,
+						-148.0
+					]
+				},
+				{
+					"name": "Ground_0_0_0_110",
+					"position": [
+						250.0,
+						5.865,
+						-220.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "23fb8a0f6e8fee61",
+			"label": "Kit_JunkrotSpeakeroneBoomba",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Handle",
+					"position": [
+						336.01367,
+						-146.105925,
+						-0.001983104999999999
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						336.02117499999997,
+						-146.80349999999999,
+						0.8402135
+					]
+				}
+			]
+		},
+		{
+			"asset": "8a4bc563fe1077cb",
+			"label": "Kit_JunkrotDronettoBuzzatti",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "NavGreen",
+					"position": [
+						696.8,
+						-148.25,
+						0.3
+					]
+				},
+				{
+					"name": "NavRed",
+					"position": [
+						695.2,
+						-148.25,
+						0.3
+					]
+				}
+			]
+		}
+	]
+}
