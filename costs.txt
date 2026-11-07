@@ -1,0 +1,18 @@
+slab Spawn	0.049
+slab Spawn #split	1
+slab Bridge6	1.226
+slab Bridge6 #split	1
+PadKitchen 1 x x1.6666666666666667	0.190
+PadKitchen 1 x x1.6666666666666667 #split	1
+CapsuleScrap 1 x	0.195
+CapsuleScrap 1 x #split	1
+JunkrotTyroFlattino 1 x	0.582
+JunkrotTyroFlattino 1 x #split	1
+JunkrotOilcannaGluglu 1 x	0.613
+JunkrotOilcannaGluglu 1 x #split	1
+JunkrotGrindellaScintilla 1 x	0.625
+JunkrotGrindellaScintilla 1 x #split	1
+JunkrotRobovaccoGirotondo 1 x	0.608
+JunkrotRobovaccoGirotondo 1 x #split	1
+JunkrotTickworthPocketti 1 x	0.770
+JunkrotTickworthPocketti 1 x #split	1
