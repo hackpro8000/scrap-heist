@@ -32,9 +32,6 @@ part("Mask", nil, MASK, function(mesh)
 		local tail = EditMesh.sweep({ { -0.02, -0.06 }, { 0.02, -0.06 }, { 0.02, 0.06 }, { -0.02, 0.06 } }, Kit.curve({ { side * 0.1, 0.55, NECK + 0.73 }, { side * 0.3, 0.9, NECK + 0.6 }, { side * 0.45, 1.25, NECK + 0.7 } }, 3))
 		tail:emit(mesh)
 	end
-	local sash = EditMesh.torus(0.31, 0.06, 16, 6)
-	sash:translate(0, 0, 1.75)
-	sash:emit(mesh)
 end, true, RUBBER)
 part("Eyes", nil, { 0.95, 0.94, 0.9 }, function(mesh)
 	for _, side in { -1, 1 } do
@@ -85,4 +82,18 @@ part("Blades", nil, BARE_METAL, function(mesh)
 		end
 	end
 end, 40, 0.03)
+part("Sash", nil, { 0.62, 0.12, 0.1 }, function(mesh)
+	-- A red sash round the waist, knotted at the front right, its two tails
+	-- flying out to the side.
+	local sash = EditMesh.torus(0.31, 0.06, 16, 6)
+	sash:translate(0, 0, 1.75)
+	sash:emit(mesh)
+	local knot = EditMesh.sphere(0.08, 8)
+	knot:translate(0.28, -0.15, 1.74)
+	knot:emit(mesh)
+	for _, k in { -1, 1 } do
+		local strip = EditMesh.sweep({ { -0.07, -0.015 }, { 0.07, -0.015 }, { 0.07, 0.015 }, { -0.07, 0.015 } }, Kit.curve({ { 0.3, -0.16, 1.72 }, { 0.42 + k * 0.06, -0.22, 1.5 }, { 0.5 + k * 0.14, -0.2, 1.26 }, { 0.58 + k * 0.2, -0.12, 1.06 } }, 3))
+		strip:emit(mesh)
+	end
+end, 40, 0.2)
 finishParts()

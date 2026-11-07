@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotChimneyziniSpannerini-e1591e2e54f4589d"
+local CACHE_KEY = "JunkrotChimneyziniSpannerini-56b026e69d753cac"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3649,4 +3649,10 @@ part("Spanner", nil, BARE_METAL, function(mesh)
 	jaw:translate(0.6, -0.34, RIM + 0.7)
 	put(jaw):emit(mesh)
 end, 40, 0.1)
+part("Mouth", nil, { 0.25, 0.16, 0.1 }, function(mesh)
+	local m = EditMesh.capsule(0.03, 0.14, 6)
+	Kit.turn(m, "y", 90)
+	m:translate(0, -0.48, RIM + 0.56)
+	put(m):emit(mesh)
+end, true, 0)
 finishParts()

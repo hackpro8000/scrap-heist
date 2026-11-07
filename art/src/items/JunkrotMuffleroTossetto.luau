@@ -39,4 +39,12 @@ part("Soot", nil, { 0.2, 0.19, 0.19 }, function(mesh)
 		m:emit(mesh)
 	end
 end, true, 0)
+part("Hangers", nil, RUBBER_BLACK, function(mesh)
+	for _, z in { BASE + 0.5, BASE + 1.5 } do
+		local m = EditMesh.torus(0.1, 0.03, 10, 4)
+		Kit.turn(m, "y", 90)
+		m:translate(0, 0.6, z)
+		m:emit(mesh)
+	end
+end, true, RUBBER)
 -- include: JunkrotFace

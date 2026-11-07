@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotOilcannaGluglu-bbfb15961725e2e6"
+local CACHE_KEY = "JunkrotOilcannaGluglu-703a93dfb5452f36"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3575,6 +3575,11 @@ part("Drip", nil, { 0.1, 0.08, 0.05 }, function(mesh)
 	m:translate(SPOUT[1], SPOUT[2], SPOUT[3] - 0.27)
 	m:emit(mesh)
 end, true, 0)
+part("Label", nil, { 0.9, 0.85, 0.7 }, function(mesh)
+	local m = EditMesh.tube(0.875, 0.85, 0.34, 24)
+	m:translate(0, 0, BASE + 0.42)
+	m:emit(mesh)
+end, true, 0.5)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

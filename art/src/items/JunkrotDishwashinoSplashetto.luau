@@ -10,14 +10,21 @@ local BASE = 0.55
 local TALL = 2.75
 local HINGE = BASE + 0.25 -- the door's bottom hinge
 local DOOR = TALL - 0.6 -- the door's height
-local AJAR = 6 -- degrees the door leans open
+local AJAR = 14 -- degrees the door leans open
 -- The door's front, which comes further out the higher up it is.
 local function doorY(z)
 	return -0.74 - (z - HINGE) * math.tan(math.rad(AJAR))
 end
 local FACE = { { -0.34, doorY(2.3) - 0.07, 2.3, 0.22 }, { 0.34, doorY(2.32) - 0.07, 2.32, 0.22 } }
 part("Cabinet", nil, WHITE, function(mesh)
-	local m = Kit.block(1.5, 1.3, TALL, 0.1)
+	local m = Kit.block(1.5, 1.3, TALL, 0.1, { 1, 1, 5 })
+	-- The tub inside, showing where the door has dropped away.
+	local front = m:select("face", "facing", { 0, -1, 0 }, 10):filter(function(p)
+		return p[3] > -TALL / 2 + 0.3 and p[3] < TALL / 2 - 0.45
+	end)
+	if front:count() > 0 then
+		Kit.recess(m, front, 0.06, 0.6)
+	end
 	m:translate(0, 0, BASE + TALL / 2)
 	m:emit(mesh)
 end, 50, 0)
@@ -51,7 +58,7 @@ part("Plates", nil, { 0.8, 0.9, 0.95 }, function(mesh)
 		local plate = Kit.lathe({ { 0, 0 }, { 0.32, 0 }, { 0.34, 0.03 }, { 0, 0.03 } }, 16)
 		Kit.turn(plate, "y", 90)
 		Kit.turn(plate, "z", 8)
-		plate:translate(-0.45 + k * 0.3, -0.5, BASE + DOOR + 0.12)
+		plate:translate(-0.45 + k * 0.3, -0.3, BASE + 1.85)
 		plate:emit(mesh)
 	end
 end, true, 0)

@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotLaVacuumaSaturnita-6e2d24a523a0e48e"
+local CACHE_KEY = "JunkrotLaVacuumaSaturnita-da5919a8ff6a68c7"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3637,4 +3637,12 @@ part("Legs", nil, { 0.14, 0.14, 0.16 }, function(mesh)
 		shoe:emit(mesh)
 	end
 end, true, 0.1)
+part("Cowbell", nil, { 0.82, 0.66, 0.3 }, function(mesh)
+	local bell = Kit.lathe({ { 0, 0 }, { 0.14, 0 }, { 0.12, 0.18 }, { 0.06, 0.25 }, { 0, 0.26 } }, 12)
+	bell:translate(0, -0.82, MID + 0.5)
+	bell:emit(mesh)
+end, true, 0.3)
+part("Strap", nil, { 0.35, 0.2, 0.1 }, function(mesh)
+	Kit.tube({ { 0, -0.82, MID + 0.74 }, { 0, -0.66, MID + 0.98 } }, 0.04, 6):emit(mesh)
+end, true, RUBBER)
 finishParts()

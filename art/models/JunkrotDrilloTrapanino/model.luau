@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotDrilloTrapanino-2455bbd89df9caaa"
+local CACHE_KEY = "JunkrotDrilloTrapanino-4c3d7682e71cad6d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3579,6 +3579,18 @@ part("Trigger", nil, { 0.85, 0.15, 0.12 }, function(mesh)
 	m:translate(0, -0.08, 2.0)
 	m:emit(mesh)
 end, 50, 0.1)
+part("Switch", nil, { 0.12, 0.12, 0.13 }, function(mesh)
+	local m = Kit.block(0.32, 0.1, 0.08, 0.03)
+	m:translate(0, -0.1, 2.27)
+	m:emit(mesh)
+	for _, side in { -1, 1 } do
+		for k = 0, 2 do
+			local vent = Kit.block(0.04, 0.06, 0.32, 0.01)
+			vent:translate(side * 0.44, 0.35 + k * 0.12, AXIS)
+			vent:emit(mesh)
+		end
+	end
+end, 50, 0)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

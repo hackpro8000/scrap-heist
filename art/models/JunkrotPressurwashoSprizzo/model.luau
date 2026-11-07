@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotPressurwashoSprizzo-6fdb5165de336ff8"
+local CACHE_KEY = "JunkrotPressurwashoSprizzo-60fef4c3777aab33"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3588,6 +3588,22 @@ part("Badge", nil, { 0.1, 0.1, 0.11 }, function(mesh)
 	m:translate(0, -0.52, BASE + 1.2)
 	m:emit(mesh)
 end, 50, 0)
+part("Gauge", nil, { 0.95, 0.95, 0.93 }, function(mesh)
+	local dial = Kit.lathe({ { 0, 0 }, { 0.15, 0 }, { 0.15, 0.04 }, { 0, 0.04 } }, 16)
+	Kit.turn(dial, "x", 90)
+	dial:translate(0, -0.52, BASE + 1.68)
+	dial:emit(mesh)
+end, 40, 0)
+part("GaugeRim", nil, { 0.1, 0.1, 0.11 }, function(mesh)
+	local rim = EditMesh.torus(0.15, 0.025, 16, 4)
+	Kit.turn(rim, "x", 90)
+	rim:translate(0, -0.55, BASE + 1.68)
+	rim:emit(mesh)
+	local needle = Kit.block(0.02, 0.02, 0.12, 0.005)
+	Kit.turn(needle, "y", 40)
+	needle:translate(0.03, -0.57, BASE + 1.71)
+	needle:emit(mesh)
+end, true, 0)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

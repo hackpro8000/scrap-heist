@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotHolofonoShimmerra-5ba3c618f167e389"
+local CACHE_KEY = "JunkrotHolofonoShimmerra-5e11d99f081a2b88"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3582,6 +3582,18 @@ part("Figure", nil, { 0.9, 0.6, 1.0 }, function(mesh)
 		Kit.tube({ { side * 0.04, 0, TOP + 0.55 }, { side * 0.09, 0, TOP + 0.38 } }, 0.03, 4):emit(mesh)
 	end
 end, true, 0, nil, 2.0)
+part("Lenses", nil, { 0.08, 0.08, 0.1 }, function(mesh)
+	for _, at in { { -0.33, -0.08 }, { -0.17, -0.08 }, { -0.33, 0.08 } } do
+		local lens = EditMesh.cylinder(0.06, 0.05, 8, 1)
+		Kit.turn(lens, "x", 90)
+		lens:translate(at[1], 0.16, TOP - 0.35 + at[2])
+		lens:emit(mesh)
+	end
+	local speaker = EditMesh.capsule(0.025, 0.2, 6)
+	Kit.turn(speaker, "y", 90)
+	speaker:translate(0, -0.1, TOP - 0.14)
+	speaker:emit(mesh)
+end, true, 0)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

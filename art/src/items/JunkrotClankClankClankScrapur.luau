@@ -47,8 +47,8 @@ part("Mouth", nil, { 0.1, 0.07, 0.05 }, function(mesh)
 	m:emit(mesh)
 end, 40, 0.3)
 part("Arms", nil, RUST_DARK, function(mesh)
-	Kit.tube(Kit.curve({ { -0.55, 0, BOTTOM + 1.5 }, { -0.85, -0.05, BOTTOM + 1.1 }, { -0.9, -0.15, BOTTOM + 0.6 } }, 3), 0.07, 8):emit(mesh)
-	Kit.tube(Kit.curve({ { 0.55, 0, BOTTOM + 1.5 }, { 0.92, -0.1, BOTTOM + 1.35 }, { 0.85, -0.3, BOTTOM + 1.85 } }, 3), 0.07, 8):emit(mesh)
+	Kit.tube(Kit.curve({ { -0.55, 0, BOTTOM + 1.5 }, { -0.85, -0.05, BOTTOM + 1.1 }, { -0.9, -0.15, BOTTOM + 0.6 } }, 3), 0.09, 8):emit(mesh)
+	Kit.tube(Kit.curve({ { 0.55, 0, BOTTOM + 1.5 }, { 0.92, -0.1, BOTTOM + 1.35 }, { 0.85, -0.3, BOTTOM + 1.85 } }, 3), 0.09, 8):emit(mesh)
 	for _, at in { { -0.9, -0.15, BOTTOM + 0.58 }, { 0.85, -0.3, BOTTOM + 1.85 } } do
 		local fist = EditMesh.sphere(0.11, 8)
 		fist:translate(at[1], at[2], at[3])
@@ -56,7 +56,7 @@ part("Arms", nil, RUST_DARK, function(mesh)
 	end
 	-- Legs and flat feet.
 	for _, side in { -1, 1 } do
-		Kit.tube({ { side * 0.25, 0, BOTTOM + 0.05 }, { side * 0.3, -0.05, 0.1 } }, 0.07, 8):emit(mesh)
+		Kit.tube({ { side * 0.25, 0, BOTTOM + 0.05 }, { side * 0.3, -0.05, 0.1 } }, 0.09, 8):emit(mesh)
 		local foot = Kit.block(0.24, 0.42, 0.1, 0.04)
 		foot:translate(side * 0.3, -0.12, 0.05)
 		foot:emit(mesh)
@@ -69,4 +69,12 @@ part("Bat", nil, DARK_STEEL, function(mesh)
 	end, 10)
 	m:emit(mesh)
 end, true, 0.7)
+part("Brows", nil, { 0.1, 0.07, 0.05 }, function(mesh)
+	for _, side in { -1, 1 } do
+		local brow = EditMesh.capsule(0.05, 0.3, 8)
+		Kit.turn(brow, "y", 90 + side * 14)
+		brow:translate(side * 0.25, -0.53, BOTTOM + 2.08)
+		brow:emit(mesh)
+	end
+end, true, 0.3)
 finishParts()

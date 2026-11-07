@@ -38,4 +38,7 @@ part("Tripod", nil, BARE_METAL, function(mesh)
 		Kit.tube({ { 0, 0, MID - 0.62 }, { math.cos(a) * 0.85, math.sin(a) * 0.85, 0.05 } }, 0.045, 6):emit(mesh)
 	end
 end, true, 0.03)
+part("Handle", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	Kit.tube(Kit.curve({ { -0.5, 0, MID + 0.34 }, { -0.42, 0, MID + 0.62 }, { 0.42, 0, MID + 0.62 }, { 0.5, 0, MID + 0.34 } }, 3), 0.05, 6):emit(mesh)
+end, true, RUBBER)
 -- include: JunkrotFace

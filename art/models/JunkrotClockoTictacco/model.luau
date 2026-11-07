@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotClockoTictacco-214ba326db4795e5"
+local CACHE_KEY = "JunkrotClockoTictacco-3cef37e91f5e22d5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3597,6 +3597,15 @@ part("Bells", nil, BARE_METAL, function(mesh)
 		wing:emit(mesh)
 	end
 end, true, 0.3)
+part("Marks", nil, { 0.08, 0.08, 0.09 }, function(mesh)
+	for k = 0, 3 do
+		local mark = Kit.block(0.06, 0.02, 0.15, 0.01)
+		mark:translate(0, 0, 0.62)
+		Kit.turn(mark, "y", k * 90)
+		mark:translate(0, -0.33, MID)
+		mark:emit(mesh)
+	end
+end, 40, 0.2)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotFrostboxGelatone-96984f7b3d3f6926"
+local CACHE_KEY = "JunkrotFrostboxGelatone-89f12efffdffc5e4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3588,6 +3588,16 @@ part("Coil", nil, DARK_STEEL, function(mesh)
 		Kit.tube({ { x, 0.7, BASE + 0.5 }, { x, 0.7, BASE + 2.15 } }, 0.04, 6):emit(mesh)
 	end
 end, true, 0.4)
+part("Grille", nil, { 0.16, 0.17, 0.18 }, function(mesh)
+	local grille = Kit.block(1.3, 0.04, 0.12, 0.02)
+	grille:translate(0, -0.66, BASE + 0.05)
+	grille:emit(mesh)
+end, 50, 0.2)
+part("Badge", nil, BARE_METAL, function(mesh)
+	local m = Kit.block(0.36, 0.03, 0.1, 0.02)
+	m:translate(0, -0.75, BASE + 2.32)
+	m:emit(mesh)
+end, 50, 0.05)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

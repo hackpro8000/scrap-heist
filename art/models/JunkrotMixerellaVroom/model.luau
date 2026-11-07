@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotMixerellaVroom-0be91f0cffbb170c"
+local CACHE_KEY = "JunkrotMixerellaVroom-4012ed5cb152af20"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3583,6 +3583,13 @@ part("Knob", nil, { 0.95, 0.93, 0.86 }, function(mesh)
 	local m = Kit.lathe({ { 0, 0 }, { 0.12, 0 }, { 0.1, 0.1 }, { 0, 0.11 } }, 12)
 	Kit.turn(m, "y", 90)
 	m:translate(0.45, 0.2, HEAD)
+	m:emit(mesh)
+end, true, 0.05)
+part("Band", nil, BARE_METAL, function(mesh)
+	local m = EditMesh.torus(0.46, 0.03, 24, 4)
+	Kit.size(m, { 1, 1, 0.95 })
+	Kit.turn(m, "x", 90 + 8)
+	m:translate(0, -0.42, HEAD + 0.04)
 	m:emit(mesh)
 end, true, 0.05)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of

@@ -52,4 +52,16 @@ part("NavGreen", nil, { 0.2, 1.0, 0.4 }, function(mesh)
 	light:translate(POD, -POD - 0.16, POD_TOP - 0.15)
 	light:emit(mesh)
 end, true, 0, nil, 2.0)
+part("Guards", nil, { 0.42, 0.44, 0.48 }, function(mesh)
+	for _, c in CORNERS do
+		local ring = EditMesh.torus(0.5, 0.025, 24, 4)
+		ring:translate(c[1] * POD, c[2] * POD, POD_TOP + 0.09)
+		ring:emit(mesh)
+		Kit.tube({ { c[1] * POD, c[2] * POD, POD_TOP - 0.05 }, { c[1] * (POD + 0.35), c[2] * (POD + 0.35), POD_TOP + 0.09 } }, 0.02, 4):emit(mesh)
+	end
+	Kit.tube({ { 0, 0.3, MID + 0.36 }, { 0, 0.35, MID + 0.75 } }, 0.02, 4):emit(mesh)
+	local tip = EditMesh.sphere(0.04, 6)
+	tip:translate(0, 0.35, MID + 0.78)
+	tip:emit(mesh)
+end, true, 0.03)
 -- include: JunkrotFace

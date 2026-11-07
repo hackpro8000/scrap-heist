@@ -40,4 +40,16 @@ part("Trigger", nil, { 0.85, 0.15, 0.12 }, function(mesh)
 	m:translate(0, -0.08, 2.0)
 	m:emit(mesh)
 end, 50, 0.1)
+part("Switch", nil, { 0.12, 0.12, 0.13 }, function(mesh)
+	local m = Kit.block(0.32, 0.1, 0.08, 0.03)
+	m:translate(0, -0.1, 2.27)
+	m:emit(mesh)
+	for _, side in { -1, 1 } do
+		for k = 0, 2 do
+			local vent = Kit.block(0.04, 0.06, 0.32, 0.01)
+			vent:translate(side * 0.44, 0.35 + k * 0.12, AXIS)
+			vent:emit(mesh)
+		end
+	end
+end, 50, 0)
 -- include: JunkrotFace

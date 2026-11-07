@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotBlendroCigolante-b9a39cdc981e9f97"
+local CACHE_KEY = "JunkrotBlendroCigolante-95038ccc37324389"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3580,6 +3580,12 @@ part("Dial", nil, { 0.85, 0.2, 0.15 }, function(mesh)
 	m:translate(0, -0.6, BASE + 0.36)
 	m:emit(mesh)
 end, true, 0.3)
+part("Gasket", nil, { 0.12, 0.12, 0.13 }, function(mesh)
+	local ring = EditMesh.torus(0.53, 0.05, 20, 6)
+	ring:translate(0, 0, JUG + 0.03)
+	ring:emit(mesh)
+	Kit.tube(Kit.curve({ { 0, 0.55, BASE + 0.22 }, { 0.2, 0.95, BASE + 0.1 }, { 0.5, 1.15, 0.04 } }, 4), 0.05, 6):emit(mesh)
+end, true, RUBBER)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

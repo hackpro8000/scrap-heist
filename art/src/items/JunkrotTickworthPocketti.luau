@@ -60,4 +60,13 @@ part("Chain", nil, GOLD, function(mesh)
 	bar:translate(0.55, 0.45, 0.25)
 	bar:emit(mesh)
 end, true, 0.03)
+part("Marks", nil, { 0.08, 0.08, 0.1 }, function(mesh)
+	for k = 0, 11 do
+		local mark = Kit.block(0.04, 0.02, if k % 3 == 0 then 0.14 else 0.08, 0.01)
+		mark:translate(0, 0, 0.66)
+		Kit.turn(mark, "y", k * 30)
+		mark:translate(0, -0.2, MID)
+		mark:emit(mesh)
+	end
+end, 40, 0)
 -- include: JunkrotFace

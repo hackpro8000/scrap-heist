@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotLawnmowoRuggito-49f2e94196f6db21"
+local CACHE_KEY = "JunkrotLawnmowoRuggito-85b1914e73ec5d7c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3597,6 +3597,12 @@ part("Bag", nil, { 0.2, 0.36, 0.22 }, function(mesh)
 	m:translate(0, 1.25, DECK + 0.62)
 	m:emit(mesh)
 end, true, RUBBER)
+part("Chute", nil, { 0.14, 0.14, 0.16 }, function(mesh)
+	local m = Kit.block(0.5, 0.6, 0.3, 0.08)
+	Kit.turn(m, "y", -12)
+	m:translate(1.3, 0.25, DECK + 0.3)
+	m:emit(mesh)
+end, 50, 0.03)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

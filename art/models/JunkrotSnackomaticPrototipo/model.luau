@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotSnackomaticPrototipo-35a942a214e63967"
+local CACHE_KEY = "JunkrotSnackomaticPrototipo-c85bf7afa38e52c1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3565,9 +3565,9 @@ part("Chamber", nil, { 0.45, 0.95, 1.0 }, function(mesh)
 	m:emit(mesh)
 end, 50, 0, nil, 1.6)
 part("Doughnut", nil, { 1.0, 0.55, 0.75 }, function(mesh)
-	local m = EditMesh.torus(0.17, 0.08, 16, 8)
+	local m = EditMesh.torus(0.22, 0.1, 16, 8)
 	Kit.turn(m, "x", 75)
-	m:translate(0, -0.48, CHAMBER)
+	m:translate(0, -0.52, CHAMBER)
 	m:emit(mesh)
 end, true, 0, nil, 0.6)
 part("Trim", nil, { 0.3, 0.32, 0.36 }, function(mesh)
@@ -3591,6 +3591,12 @@ part("Tag", nil, { 0.98, 0.55, 0.12 }, function(mesh)
 	m:translate(0.84, -0.26, BASE + 1.72)
 	m:emit(mesh)
 end, 50, 0)
+part("Nozzle", nil, { 0.3, 0.32, 0.36 }, function(mesh)
+	local m = EditMesh.cone(0.08, 0.03, 0.2, 8, 1)
+	Kit.turn(m, "x", 180)
+	m:translate(0, -0.42, CHAMBER + 0.6)
+	m:emit(mesh)
+end, true, 0)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

@@ -49,4 +49,11 @@ part("Aerial", nil, BARE_METAL, function(mesh)
 	tip:translate(1.1, 0.05, TOP + 1.17)
 	tip:emit(mesh)
 end, true, 0.3)
+part("Keys", nil, { 0.85, 0.82, 0.72 }, function(mesh)
+	for k = 0, 2 do
+		local key = Kit.block(0.13, 0.2, 0.06, 0.02)
+		key:translate(-0.55 + k * 0.17, -0.22, TOP + 0.01)
+		key:emit(mesh)
+	end
+end, 50, 0.4)
 -- include: JunkrotFace

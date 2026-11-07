@@ -54,4 +54,14 @@ part("Sparks", nil, { 1.0, 0.7, 0.2 }, function(mesh)
 		end, 4):emit(mesh)
 	end
 end, true, 0, nil, 2.0)
+part("Cord", nil, { 0.1, 0.1, 0.11 }, function(mesh)
+	Kit.tube(Kit.curve({ { -1.33, 0, AXIS }, { -1.7, 0.05, AXIS - 0.3 }, { -1.95, 0.25, 0.05 } }, 4), 0.06, 6):emit(mesh)
+	for _, side in { -1, 1 } do
+		for k = 0, 2 do
+			local vent = Kit.block(0.06, 0.04, 0.3, 0.01)
+			vent:translate(-0.75 + k * 0.14, side * 0.4, AXIS)
+			vent:emit(mesh)
+		end
+	end
+end, true, RUBBER)
 -- include: JunkrotFace

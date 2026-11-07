@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotTypewrittoClackini-3c5f766afd973cec"
+local CACHE_KEY = "JunkrotTypewrittoClackini-3ec2a62af96c898e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3594,6 +3594,13 @@ part("Lever", nil, BARE_METAL, function(mesh)
 	end
 	Kit.tube({ { -1.05, 0.45, BASE + 1.15 }, { -1.3, 0.2, BASE + 1.3 }, { -1.42, -0.1, BASE + 1.25 } }, 0.035, 6):emit(mesh)
 end, true, 0.05)
+part("Spools", nil, { 0.12, 0.12, 0.13 }, function(mesh)
+	for _, x in { -0.65, 0.65 } do
+		local spool = EditMesh.cylinder(0.18, 0.06, 12, 1)
+		spool:translate(x, 0.15, BASE + 0.93)
+		spool:emit(mesh)
+	end
+end, true, RUBBER)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

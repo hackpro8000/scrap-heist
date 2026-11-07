@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotChefbotPrecisio-4db55e0c3e27ca00"
+local CACHE_KEY = "JunkrotChefbotPrecisio-ff3ce59adcaaeada"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3587,6 +3587,14 @@ part("Lid", nil, { 0.14, 0.14, 0.16 }, function(mesh)
 	m:translate(0, 0, JUG + 1.24)
 	m:emit(mesh)
 end, 40, 0)
+part("Spatula", nil, { 0.92, 0.92, 0.9 }, function(mesh)
+	-- Left standing in the lid's cap.
+	Kit.tube({ { 0.05, 0, JUG + 1.45 }, { 0.12, 0.03, JUG + 1.8 }, { 0.2, 0.06, JUG + 2.1 } }, 0.045, 6):emit(mesh)
+	local loop = EditMesh.torus(0.07, 0.025, 10, 4)
+	Kit.turn(loop, "x", 90)
+	loop:translate(0.22, 0.06, JUG + 2.2)
+	loop:emit(mesh)
+end, true, 0.03)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

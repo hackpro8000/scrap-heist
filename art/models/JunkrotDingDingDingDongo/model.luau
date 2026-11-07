@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotDingDingDingDongo-46710efca0c24880"
+local CACHE_KEY = "JunkrotDingDingDingDongo-09ffd68b96af8969"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3605,4 +3605,14 @@ part("Lever", nil, DARK_STEEL, function(mesh)
 	knob:translate(SHELL[1] + 0.43, SHELL[2], SHELL[3] + 0.9)
 	knob:emit(mesh)
 end, 40, 0.4)
+part("Rings", nil, BARE_METAL, function(mesh)
+	-- The bell's pressed rings round its dome.
+	for _, ring in { { 0.73, 0.12 }, { 0.6, 0.36 } } do
+		local m = EditMesh.torus(ring[1], 0.025, 24, 4)
+		m:translate(0, 0, ring[2])
+		Kit.turn(m, "x", 90)
+		m:translate(SHELL[1], SHELL[2], SHELL[3])
+		m:emit(mesh)
+	end
+end, true, 0.3)
 finishParts()

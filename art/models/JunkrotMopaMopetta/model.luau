@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotMopaMopetta-acbe5390fd6b0887"
+local CACHE_KEY = "JunkrotMopaMopetta-720bf564f79c63d4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3600,6 +3600,17 @@ part("Bars", nil, BARE_METAL, function(mesh)
 	Kit.tube({ { 0.92, -0.5, 2.38 }, { 0.95, 0, 2.3 }, { 0.92, 0.5, 2.38 } }, 0.04, 6):emit(mesh)
 	EditMesh.coil(0.12, 0.025, 3, 0.08, 6, 12):translate(-0.85, 0, 1.6):emit(mesh)
 end, true, 0.05)
+part("Exhaust", nil, BARE_METAL, function(mesh)
+	Kit.tube({ { -0.4, 0.38, 0.68 }, { -1.55, 0.38, 0.78 } }, 0.06, 8):emit(mesh)
+	Kit.tube({ { -1.52, 0.38, 0.78 }, { -1.7, 0.38, 0.8 } }, 0.08, 8):emit(mesh)
+	-- The rack behind the seat.
+	Kit.tube({ { -1.3, -0.25, 1.65 }, { -1.65, -0.25, 1.65 }, { -1.65, 0.25, 1.65 }, { -1.3, 0.25, 1.65 } }, 0.03, 4):emit(mesh)
+end, true, 0.05)
+part("TailLight", nil, { 1.0, 0.2, 0.15 }, function(mesh)
+	local m = Kit.block(0.06, 0.2, 0.12, 0.02)
+	m:translate(-1.56, 0, 1.42)
+	m:emit(mesh)
+end, 50, 0, nil, 1.5)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

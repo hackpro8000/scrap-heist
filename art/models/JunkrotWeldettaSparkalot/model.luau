@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotWeldettaSparkalot-4599e5ef5f08098a"
+local CACHE_KEY = "JunkrotWeldettaSparkalot-f3a64b6d965fabb1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3611,6 +3611,19 @@ part("Arc", nil, { 0.7, 0.9, 1.0 }, function(mesh)
 		spark:emit(mesh)
 	end
 end, 40, 0, nil, 2.2)
+part("Display", nil, { 0.4, 1.0, 0.8 }, function(mesh)
+	local m = Kit.block(0.28, 0.03, 0.14, 0.02)
+	m:translate(0.36, -0.6, BASE + 0.75)
+	m:emit(mesh)
+end, 50, 0, nil, 1.2)
+part("Ground", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	Kit.tube(Kit.curve({ { -0.4, -0.6, BASE + 0.3 }, { -0.7, -0.8, 0.1 }, { -1.05, -0.9, 0.06 } }, 4), 0.045, 6):emit(mesh)
+end, true, RUBBER)
+part("Clamp", nil, COPPER, function(mesh)
+	local m = Kit.block(0.22, 0.12, 0.1, 0.03)
+	m:translate(-1.12, -0.92, 0.06)
+	m:emit(mesh)
+end, 50, 0.3)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

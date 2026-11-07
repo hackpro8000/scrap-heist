@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotPannettoPatchato-a4164760ee55c25f"
+local CACHE_KEY = "JunkrotPannettoPatchato-28485e328fd1b2b8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3566,6 +3566,9 @@ part("Patch", nil, COPPER, function(mesh)
 	m:translate(0.32, -0.01, MID - 0.5)
 	m:emit(mesh)
 end, 50, 0.6)
+part("Grip", nil, { 0.45, 0.28, 0.15 }, function(mesh)
+	Kit.tube(Kit.curve({ { 0, 0.72, MID + 1.48 }, { 0, 0.9, MID + 1.62 }, { 0, 1.05, MID + 1.72 } }, 3), 0.11, 8):emit(mesh)
+end, true, 0.3)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

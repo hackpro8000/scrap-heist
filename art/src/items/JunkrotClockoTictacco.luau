@@ -58,4 +58,13 @@ part("Bells", nil, BARE_METAL, function(mesh)
 		wing:emit(mesh)
 	end
 end, true, 0.3)
+part("Marks", nil, { 0.08, 0.08, 0.09 }, function(mesh)
+	for k = 0, 3 do
+		local mark = Kit.block(0.06, 0.02, 0.15, 0.01)
+		mark:translate(0, 0, 0.62)
+		Kit.turn(mark, "y", k * 90)
+		mark:translate(0, -0.33, MID)
+		mark:emit(mesh)
+	end
+end, 40, 0.2)
 -- include: JunkrotFace

@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotDrippiDroppi-96ef73cb816bf3bc"
+local CACHE_KEY = "JunkrotDrippiDroppi-30f7a328817b7cc2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3646,6 +3646,12 @@ end, true, 0)
 part("Drip", nil, { 0.1, 0.08, 0.05 }, function(mesh)
 	local m = Kit.lathe({ { 0, 0 }, { 0.07, 0.04 }, { 0.08, 0.1 }, { 0.04, 0.2 }, { 0, 0.26 } }, 12)
 	m:translate(HEAD[1], -0.3, HEAD[3] - 0.68)
+	m:emit(mesh)
+end, true, 0)
+part("Mouth", nil, { 0.2, 0.12, 0.1 }, function(mesh)
+	local m = EditMesh.capsule(0.025, 0.12, 6)
+	Kit.turn(m, "y", 90)
+	m:translate(HEAD[1], -0.48, HEAD[3] - 0.22)
 	m:emit(mesh)
 end, true, 0)
 finishParts()

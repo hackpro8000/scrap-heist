@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotSousvideSilvano-00a0c4ad77ebdf22"
+local CACHE_KEY = "JunkrotSousvideSilvano-d7f52cb16f32455a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3583,6 +3583,9 @@ part("Clamp", nil, { 0.1, 0.1, 0.12 }, function(mesh)
 	screw:translate(0.85, 0, HEAD - 1.15)
 	screw:emit(mesh)
 end, 50, 0)
+part("Cable", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	Kit.tube(Kit.curve({ { 0, 0.4, HEAD + 0.3 }, { 0.1, 0.72, HEAD - 0.3 }, { 0.3, 0.9, 0.05 } }, 4), 0.05, 6):emit(mesh)
+end, true, RUBBER)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

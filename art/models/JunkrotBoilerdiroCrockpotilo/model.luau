@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotBoilerdiroCrockpotilo-0151cdbb1cb8d27a"
+local CACHE_KEY = "JunkrotBoilerdiroCrockpotilo-fed93bd642fae27f"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3685,4 +3685,10 @@ part("Wheels", nil, RUBBER_BLACK, function(mesh)
 		m:emit(mesh)
 	end
 end, true, RUBBER)
+part("Canopy", nil, { 0.55, 0.75, 0.85 }, function(mesh)
+	local m = EditMesh.sphere(0.32, 12)
+	Kit.size(m, { 1.35, 0.8, 0.7 })
+	m:translate(0.3, 0, MID + 0.46)
+	m:emit(mesh)
+end, true, 0)
 finishParts()

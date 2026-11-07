@@ -59,4 +59,11 @@ part("Cord", nil, { 0.12, 0.12, 0.13 }, function(mesh)
 	coil:translate(0.95, 0.3, BASE + 1.25)
 	coil:emit(mesh)
 end, true, RUBBER)
+part("Plungers", nil, BARE_METAL, function(mesh)
+	for _, x in { -0.2, 0.2 } do
+		local m = EditMesh.cylinder(0.06, 0.12, 8, 1)
+		m:translate(x, 0.15, BASE + 0.96)
+		m:emit(mesh)
+	end
+end, true, 0.05)
 -- include: JunkrotFace

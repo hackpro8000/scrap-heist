@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotTorquoWrenchelli-428d44016bdc93bf"
+local CACHE_KEY = "JunkrotTorquoWrenchelli-04385b601683f3d5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3587,6 +3587,15 @@ part("Needle", nil, { 0.95, 0.15, 0.12 }, function(mesh)
 	m:translate(0, -0.18, GAUGE)
 	m:emit(mesh)
 end, 40, 0)
+part("Socket", nil, BARE_METAL, function(mesh)
+	local socket = Kit.lathe({ { 0, 0 }, { 0.13, 0 }, { 0.13, 0.25 }, { 0, 0.25 } }, 12)
+	Kit.turn(socket, "x", -90)
+	socket:translate(0, 0.44, HEAD)
+	socket:emit(mesh)
+	local ring = EditMesh.torus(0.26, 0.04, 16, 4)
+	ring:translate(0, 0, BASE + 0.95)
+	ring:emit(mesh)
+end, true, 0.03)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

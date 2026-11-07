@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotHoverbikkoZoomzoom-917af3e83a36f781"
+local CACHE_KEY = "JunkrotHoverbikkoZoomzoom-87108aebe6d3ebad"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3591,6 +3591,23 @@ part("Bars", nil, BARE_METAL, function(mesh)
 	Kit.tube({ { 0.35, -0.45, MID + 0.6 }, { 0.38, 0, MID + 0.52 }, { 0.35, 0.45, MID + 0.6 } }, 0.04, 6):emit(mesh)
 	Kit.tube({ { 0.38, 0, MID + 0.52 }, { 0.42, 0, MID + 0.2 } }, 0.05, 6):emit(mesh)
 end, true, 0.03)
+part("Fin", nil, { 0.95, 0.96, 0.98 }, function(mesh)
+	local fin = Kit.plate({ { -1.55, MID + 0.3 }, { -1.1, MID + 0.3 }, { -1.45, MID + 0.78 }, { -1.65, MID + 0.75 } }, 0.06)
+	fin:translate(0, -0.03, 0)
+	fin:emit(mesh)
+end, 40, 0)
+part("Thruster", nil, { 0.25, 0.27, 0.3 }, function(mesh)
+	local m = Kit.lathe({ { 0, 0 }, { 0.2, 0 }, { 0.24, 0.18 }, { 0.17, 0.2 }, { 0, 0.12 } }, 12)
+	Kit.turn(m, "y", -90)
+	m:translate(-1.62, 0, MID + 0.12)
+	m:emit(mesh)
+end, true, 0)
+part("Exhaust", nil, { 0.4, 0.9, 1.0 }, function(mesh)
+	local glow = EditMesh.cylinder(0.14, 0.04, 12, 1)
+	Kit.turn(glow, "y", 90)
+	glow:translate(-1.76, 0, MID + 0.12)
+	glow:emit(mesh)
+end, true, 0, nil, 2.0)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

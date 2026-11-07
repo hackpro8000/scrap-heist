@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotVrrVrrPatatrim-4e3e791710ed12d4"
+local CACHE_KEY = "JunkrotVrrVrrPatatrim-b482547edbe10f5e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3621,4 +3621,25 @@ part("Branches", nil, DARK_STEEL, function(mesh)
 		big(Kit.tube(Kit.curve({ { c * 0.15, s * 0.15, HEAD[3] + 0.42 }, { c * 0.3, s * 0.3, HEAD[3] + 0.8 }, { c * 0.5, s * 0.5, HEAD[3] + 0.95 } }, 3), 0.025, 4)):emit(mesh)
 	end
 end, true, 0.3)
+part("Bands", nil, RUST_ORANGE, function(mesh)
+	for _, z in { 1.55, 2.2 } do
+		local band = EditMesh.torus(0.51, 0.05, 20, 6)
+		band:translate(0, 0, z)
+		band:emit(mesh)
+	end
+end, true, 0.6)
+part("Twigs", nil, DARK_STEEL, function(mesh)
+	-- Twig fingers at the end of each branch arm.
+	for _, side in { -1, 1 } do
+		for k = -1, 1 do
+			Kit.tube({ { side * 1.15, -0.1, 3.05 }, { side * (1.25 + 0.05 * k), -0.1 + k * 0.1, 3.3 } }, 0.03, 4):emit(mesh)
+		end
+	end
+end, true, 0.3)
+part("Mouth", nil, { 0.25, 0.16, 0.1 }, function(mesh)
+	local m = EditMesh.capsule(0.03, 0.16, 6)
+	Kit.turn(m, "y", 90)
+	m:translate(0, -0.6, HEAD[3] - 0.28)
+	big(m):emit(mesh)
+end, true, 0)
 finishParts()

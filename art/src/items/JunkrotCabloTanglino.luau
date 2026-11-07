@@ -33,4 +33,19 @@ part("Prongs", nil, BARE_METAL, function(mesh)
 		prong:emit(mesh)
 	end
 end, 50, 0.1)
+part("Ties", nil, { 0.92, 0.92, 0.88 }, function(mesh)
+	-- Two zip ties cinched tight round the flat middle loop, heads on top.
+	for _, a in { -150, 30 } do
+		local c, s = math.cos(math.rad(a)), math.sin(math.rad(a))
+		local band = EditMesh.torus(0.13, 0.03, 12, 6)
+		Kit.turn(band, "x", 90)
+		Kit.turn(band, "z", a)
+		band:translate(c * 0.7, s * 0.7, MID)
+		band:emit(mesh)
+		local head = Kit.block(0.1, 0.12, 0.08, 0.02)
+		Kit.turn(head, "z", a)
+		head:translate(c * 0.7, s * 0.7, MID + 0.17)
+		head:emit(mesh)
+	end
+end, true, 0.05)
 -- include: JunkrotFace

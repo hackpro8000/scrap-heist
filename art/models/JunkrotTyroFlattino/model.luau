@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotTyroFlattino-36ae8e2c85494471"
+local CACHE_KEY = "JunkrotTyroFlattino-da48c6d69ddf15cd"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3591,6 +3591,12 @@ part("Nail", nil, BARE_METAL, function(mesh)
 	head:translate(0.22, 0, MID + 1.53)
 	head:emit(mesh)
 end, 40, 0.4)
+part("Patch", nil, { 0.3, 0.3, 0.32 }, function(mesh)
+	local m = Kit.block(0.3, 0.04, 0.22, 0.05)
+	Kit.turn(m, "y", -45)
+	m:translate(-0.62, -0.37, MID + 0.62)
+	m:emit(mesh)
+end, 50, RUBBER)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

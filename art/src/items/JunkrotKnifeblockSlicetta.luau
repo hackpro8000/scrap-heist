@@ -48,4 +48,13 @@ part("Caps", nil, BARE_METAL, function(mesh)
 		end
 	end
 end, 50, 0.03)
+part("Honing", nil, BARE_METAL, function(mesh)
+	-- A honing steel standing at the back, its ring for hanging on top.
+	local rod = Kit.tube({ { -0.45, 0.3, BASE + TALL - 0.1 }, { -0.45, 0.3, BASE + TALL + 1.0 } }, 0.035, 6)
+	rake(rod):emit(mesh)
+	local ring = EditMesh.torus(0.08, 0.02, 10, 4)
+	Kit.turn(ring, "x", 90)
+	ring:translate(-0.45, 0.3, BASE + TALL + 1.1)
+	rake(ring):emit(mesh)
+end, true, 0.03)
 -- include: JunkrotFace

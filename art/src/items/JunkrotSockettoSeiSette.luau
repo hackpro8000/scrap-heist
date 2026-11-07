@@ -104,4 +104,11 @@ part("Numbers", nil, { 0.98, 0.86, 0.2 }, function(mesh)
 	loop:emit(mesh)
 	Kit.tube(Kit.curve({ { six[1] - 0.14, six[2], six[3] }, { six[1] - 0.12, six[2], six[3] + 0.3 }, { six[1] + 0.04, six[2], six[3] + 0.48 }, { six[1] + 0.16, six[2], six[3] + 0.44 } }, 3), 0.05, 6):emit(mesh)
 end, 40, 0.05)
+part("Whiskers", nil, BLACK, function(mesh)
+	for _, side in { -1, 1 } do
+		for k = -1, 1 do
+			Kit.tube({ { side * 0.14, -0.7, HEAD[3] - 0.12 }, { side * 0.6, -0.78, HEAD[3] - 0.1 + k * 0.08 } }, 0.012, 4):emit(mesh)
+		end
+	end
+end, true, 0)
 finishParts()

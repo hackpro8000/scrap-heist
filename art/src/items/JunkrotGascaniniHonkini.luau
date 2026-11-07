@@ -70,10 +70,10 @@ end, true, 0, nil, 1.8)
 part("Beak", nil, ORANGE, function(mesh)
 	-- Open mid-honk: the upper half tipped up, the lower down.
 	for _, tip in { { 75, 0.06 }, { 105, -0.04 } } do
-		local half = EditMesh.cone(0.12, 0.02, 0.36, 8, 1)
+		local half = EditMesh.cone(0.15, 0.025, 0.46, 8, 1)
 		Kit.size(half, { 1, 0.8, 0.6 })
 		Kit.turn(half, "y", tip[1])
-		half:translate(HEAD[1] + 0.45, 0, HEAD[3] + tip[2])
+		half:translate(HEAD[1] + 0.5, 0, HEAD[3] + tip[2])
 		half:emit(mesh)
 	end
 end, true, 0.03)
@@ -93,4 +93,16 @@ part("Feet", nil, ORANGE, function(mesh)
 		web:emit(mesh)
 	end
 end, 40, 0.03)
+part("Feathers", nil, BARE_METAL, function(mesh)
+	-- A second, shorter layer under each wing's trailing edge.
+	local outline = { { -0.75, 0.1 }, { -0.2, 0.1 }, { -0.55, 1.05 }, { -0.95, 0.95 } }
+	local near = Kit.plate(outline, 0.05)
+	Kit.turn(near, "x", 90)
+	near:translate(-0.1, -0.42, MID + 0.03)
+	near:emit(mesh)
+	local far = Kit.plate(outline, 0.05)
+	Kit.turn(far, "x", -90)
+	far:translate(-0.1, 0.42, MID + 0.2)
+	far:emit(mesh)
+end, 40, 0.05)
 finishParts()

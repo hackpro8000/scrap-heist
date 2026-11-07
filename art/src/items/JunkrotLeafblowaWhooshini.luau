@@ -43,4 +43,9 @@ part("Leaves", nil, { 0.55, 0.7, 0.2 }, function(mesh)
 		m:emit(mesh)
 	end
 end, 40, 0)
+part("Trigger", nil, { 0.85, 0.15, 0.12 }, function(mesh)
+	local m = Kit.block(0.15, 0.08, 0.18, 0.03)
+	m:translate(MX - 0.05, 0, MZ + 1.05)
+	m:emit(mesh)
+end, 50, 0.03)
 -- include: JunkrotFace

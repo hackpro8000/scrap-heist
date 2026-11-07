@@ -44,4 +44,17 @@ part("Brush", nil, { 0.95, 0.75, 0.1 }, function(mesh)
 		bristle:emit(mesh)
 	end
 end, 40, 0)
+part("Wheels", nil, RUBBER_BLACK, function(mesh)
+	-- Its underside faces the back: two drive wheels and the brush roll.
+	for _, x in { -0.6, 0.6 } do
+		local wheel = Kit.lathe({ { 0, -0.06 }, { 0.15, -0.06 }, { 0.2, 0 }, { 0.15, 0.06 }, { 0, 0.06 } }, 12)
+		Kit.turn(wheel, "y", 90)
+		wheel:translate(x, 0.3, MID)
+		wheel:emit(mesh)
+	end
+	local roll = EditMesh.capsule(0.08, 0.6, 8)
+	Kit.turn(roll, "y", 90)
+	roll:translate(0, 0.27, MID - 0.45)
+	roll:emit(mesh)
+end, true, RUBBER)
 -- include: JunkrotFace

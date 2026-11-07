@@ -54,4 +54,13 @@ part("Sticker", nil, { 0.95, 0.3, 0.25 }, function(mesh)
 	m:translate(1.17, 0.15, BASE + 1.25)
 	m:emit(mesh)
 end, 50, 0)
+part("Window", nil, { 1.0, 0.6, 0.28 }, function(mesh)
+	-- The basket's window, lit warm from the element inside.
+	local m = Kit.block(0.9, 0.04, 0.24, 0.04)
+	m:translate(0, -1.14, BASE + 1.07)
+	m:emit(mesh)
+end, 50, 0, nil, 0.7)
+part("Cord", nil, { 0.1, 0.1, 0.11 }, function(mesh)
+	Kit.tube(Kit.curve({ { 0, 0.95, BASE + 0.3 }, { 0.2, 1.35, BASE + 0.12 }, { 0.55, 1.6, 0.04 } }, 4), 0.05, 6):emit(mesh)
+end, true, RUBBER)
 -- include: JunkrotFace

@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotGrindoBeanbasher-68d185e606aa3432"
+local CACHE_KEY = "JunkrotGrindoBeanbasher-afd5ad08e212d882"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3594,6 +3594,12 @@ part("Sticker", nil, { 0.98, 0.85, 0.2 }, function(mesh)
 	m:translate(0.71, 0.1, BASE + 1.2)
 	m:emit(mesh)
 end, 50, 0)
+part("Wand", nil, BARE_METAL, function(mesh)
+	Kit.tube(Kit.curve({ { 0.68, -0.3, BASE + 1.9 }, { 0.85, -0.42, BASE + 1.62 }, { 0.86, -0.45, BASE + 1.1 } }, 4), 0.04, 6):emit(mesh)
+	local tip = EditMesh.cone(0.05, 0.025, 0.1, 8, 1)
+	tip:translate(0.86, -0.45, BASE + 1.03)
+	tip:emit(mesh)
+end, true, 0.03)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

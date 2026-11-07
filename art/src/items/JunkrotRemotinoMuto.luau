@@ -46,4 +46,11 @@ part("Battery", nil, COPPER, function(mesh)
 		m:emit(mesh)
 	end
 end, true, 0.7)
+part("Rockers", nil, { 0.55, 0.55, 0.58 }, function(mesh)
+	for _, x in { -0.2, 0.2 } do
+		local m = Kit.block(0.12, 0.06, 0.3, 0.04)
+		m:translate(x, -0.155, BASE + 1.38)
+		m:emit(mesh)
+	end
+end, 50, 0.4)
 -- include: JunkrotFace

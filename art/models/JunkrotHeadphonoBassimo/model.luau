@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotHeadphonoBassimo-757a1062c7f88da9"
+local CACHE_KEY = "JunkrotHeadphonoBassimo-4a3186e3553e8b5c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3577,6 +3577,20 @@ end, 40, 0.03)
 part("BandPad", nil, { 0.1, 0.1, 0.12 }, function(mesh)
 	local path = Kit.curve({ { -0.55, 0, MID + 1.66 }, { 0, 0, MID + 1.86 }, { 0.55, 0, MID + 1.66 } }, 6)
 	Kit.tube(path, 0.1, 8):emit(mesh)
+end, true, RUBBER)
+part("Sliders", nil, BARE_METAL, function(mesh)
+	for _, side in { -1, 1 } do
+		local m = Kit.block(0.1, 0.3, 0.32, 0.03)
+		m:translate(side * 0.93, 0, MID + 0.72)
+		m:emit(mesh)
+	end
+end, 50, 0.03)
+part("Cable", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	Kit.tube(Kit.curve({ { -0.95, 0, MID - 0.6 }, { -1.15, -0.2, 0.7 }, { -0.95, -0.5, 0.06 } }, 4), 0.04, 6):emit(mesh)
+	local jack = Kit.block(0.1, 0.1, 0.22, 0.03)
+	Kit.turn(jack, "y", 70)
+	jack:translate(-0.86, -0.52, 0.06)
+	jack:emit(mesh)
 end, true, RUBBER)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how

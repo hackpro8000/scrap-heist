@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotCamerinoFlashetto-168ec3136637ffa3"
+local CACHE_KEY = "JunkrotCamerinoFlashetto-b0f5626bf68eadb4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3593,6 +3593,15 @@ part("Flash", nil, { 0.9, 0.92, 0.95 }, function(mesh)
 	m:translate(0.45, 0.05, BASE + 1.92)
 	m:emit(mesh)
 end, 50, 0.05)
+part("Knobs", nil, BARE_METAL, function(mesh)
+	local rewind = EditMesh.cylinder(0.1, 0.1, 12, 1)
+	rewind:translate(-0.45, 0.05, BASE + 1.56)
+	rewind:emit(mesh)
+	local timer = Kit.block(0.08, 0.06, 0.22, 0.02)
+	Kit.turn(timer, "y", 25)
+	timer:translate(-0.78, -0.5, BASE + 1.08)
+	timer:emit(mesh)
+end, 40, 0.05)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

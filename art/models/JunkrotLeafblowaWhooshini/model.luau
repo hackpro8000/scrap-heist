@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotLeafblowaWhooshini-78e5b5010e33571d"
+local CACHE_KEY = "JunkrotLeafblowaWhooshini-1bde1d1c54b1296b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3582,6 +3582,11 @@ part("Leaves", nil, { 0.55, 0.7, 0.2 }, function(mesh)
 		m:emit(mesh)
 	end
 end, 40, 0)
+part("Trigger", nil, { 0.85, 0.15, 0.12 }, function(mesh)
+	local m = Kit.block(0.15, 0.08, 0.18, 0.03)
+	m:translate(MX - 0.05, 0, MZ + 1.05)
+	m:emit(mesh)
+end, 50, 0.03)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

@@ -48,4 +48,12 @@ part("Lid", nil, { 0.14, 0.14, 0.16 }, function(mesh)
 	m:translate(0, 0, JUG + 1.24)
 	m:emit(mesh)
 end, 40, 0)
+part("Spatula", nil, { 0.92, 0.92, 0.9 }, function(mesh)
+	-- Left standing in the lid's cap.
+	Kit.tube({ { 0.05, 0, JUG + 1.45 }, { 0.12, 0.03, JUG + 1.8 }, { 0.2, 0.06, JUG + 2.1 } }, 0.045, 6):emit(mesh)
+	local loop = EditMesh.torus(0.07, 0.025, 10, 4)
+	Kit.turn(loop, "x", 90)
+	loop:translate(0.22, 0.06, JUG + 2.2)
+	loop:emit(mesh)
+end, true, 0.03)
 -- include: JunkrotFace

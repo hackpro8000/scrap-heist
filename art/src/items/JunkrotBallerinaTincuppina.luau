@@ -6,6 +6,7 @@
 -- Built stocky so she reads at a distance. 4.1 studs tall.
 -- include: JunkrotKit
 local PINK = { 0.95, 0.62, 0.72 }
+local TIGHTS = { 0.98, 0.8, 0.84 }
 local HEAD = 3.05 -- the mug's base
 local WAIST = 2.12
 -- Every piece widened about the middle, so she reads at a distance.
@@ -51,8 +52,16 @@ part("Tutu", nil, { 0.97, 0.78, 0.86 }, function(mesh)
 	stout(m):emit(mesh)
 end, true, 0.05)
 part("Wire", nil, DARK_STEEL, function(mesh)
-	-- Neck, arms rounded up over the head to meet, and legs.
+	-- The neck, and the saucer her mug sits in.
 	stout(Kit.tube({ { 0, 0, HEAD - 0.12 }, { 0, 0, HEAD + 0.05 } }, 0.07, 8)):emit(mesh)
+end, true, 0.3)
+part("Saucer", nil, { 0.85, 0.87, 0.9 }, function(mesh)
+	local saucer = Kit.lathe({ { 0, 0 }, { 0.3, 0 }, { 0.5, 0.06 }, { 0.48, 0.08 }, { 0.3, 0.04 }, { 0, 0.04 } }, 20)
+	saucer:translate(0, 0, HEAD - 0.06)
+	stout(saucer):emit(mesh)
+end, true, 0.25)
+part("Limbs", nil, TIGHTS, function(mesh)
+	-- Arms rounded up over the head to meet, and legs in pink tights.
 	for _, side in { -1, 1 } do
 		local arm = Kit.curve({
 			{ side * 0.26, 0, HEAD - 0.2 },
@@ -61,11 +70,14 @@ part("Wire", nil, DARK_STEEL, function(mesh)
 			{ side * 0.3, -0.1, HEAD + 1.0 },
 			{ side * 0.02, -0.1, HEAD + 1.04 },
 		}, 4)
-		stout(Kit.tube(arm, 0.055, 8)):emit(mesh)
+		stout(Kit.tube(arm, 0.07, 8)):emit(mesh)
 	end
-	stout(Kit.tube({ { -0.1, 0, WAIST }, { -0.1, 0, 1.1 }, { -0.08, -0.02, 0.28 } }, 0.06, 8)):emit(mesh)
-	stout(Kit.tube(Kit.curve({ { 0.1, 0, WAIST }, { 0.45, -0.1, 1.55 }, { 0.02, -0.05, 1.2 } }, 4), 0.06, 8)):emit(mesh)
-end, true, 0.3)
+	stout(Kit.tube({ { -0.1, 0, WAIST }, { -0.1, 0, 1.1 }, { -0.08, -0.02, 0.28 } }, 0.075, 8)):emit(mesh)
+	stout(Kit.tube(Kit.curve({ { 0.1, 0, WAIST }, { 0.45, -0.1, 1.55 }, { 0.02, -0.05, 1.2 } }, 4), 0.075, 8)):emit(mesh)
+	local hands = EditMesh.sphere(0.08, 8)
+	hands:translate(0, -0.1, HEAD + 1.04)
+	stout(hands):emit(mesh)
+end, true, 0.15)
 part("Slippers", nil, PINK, function(mesh)
 	-- Up on pointe: the standing shoe toe-down, the raised one at her knee.
 	local standing = EditMesh.capsule(0.085, 0.22, 8)

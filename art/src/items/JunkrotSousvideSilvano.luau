@@ -44,4 +44,7 @@ part("Clamp", nil, { 0.1, 0.1, 0.12 }, function(mesh)
 	screw:translate(0.85, 0, HEAD - 1.15)
 	screw:emit(mesh)
 end, 50, 0)
+part("Cable", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	Kit.tube(Kit.curve({ { 0, 0.4, HEAD + 0.3 }, { 0.1, 0.72, HEAD - 0.3 }, { 0.3, 0.9, 0.05 } }, 4), 0.05, 6):emit(mesh)
+end, true, RUBBER)
 -- include: JunkrotFace

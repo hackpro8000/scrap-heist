@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotKettlinaDentata-fad51cda8ec1efec"
+local CACHE_KEY = "JunkrotKettlinaDentata-181b8ccb5e0016ab"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3581,6 +3581,17 @@ part("Grip", nil, RUBBER_BLACK, function(mesh)
 	local path = Kit.curve({ { -0.3, 0, TOP + 0.71 }, { 0, 0, TOP + 0.78 }, { 0.3, 0, TOP + 0.71 } }, 3)
 	Kit.tube(path, 0.09, 8):emit(mesh)
 end, true, RUBBER)
+part("Whistle", nil, COPPER, function(mesh)
+	-- A brass whistle capping the spout's tip, its flap lever raised.
+	local cap = EditMesh.cylinder(0.14, 0.2, 12, 1)
+	Kit.turn(cap, "y", 90)
+	cap:translate(1.5, 0, BASE + 1.07)
+	cap:emit(mesh)
+	local flap = Kit.block(0.24, 0.12, 0.04, 0.01)
+	Kit.turn(flap, "y", -25)
+	flap:translate(1.46, 0, BASE + 1.24)
+	flap:emit(mesh)
+end, 40, 0.3)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

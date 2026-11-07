@@ -32,4 +32,22 @@ part("Contact", nil, { 0.1, 0.1, 0.11 }, function(mesh)
 	m:translate(0, 0, BASE)
 	m:emit(mesh)
 end, 40, 0.3)
+part("Shards", nil, { 0.56, 0.54, 0.46 }, function(mesh)
+	-- Broken glass standing up round the hole.
+	for k = 0, 5 do
+		local a = math.rad(k * 60 + 15)
+		local shard = EditMesh.cone(0.06, 0.008, 0.18 + (k % 2) * 0.08, 4, 1)
+		Kit.turn(shard, "y", 20)
+		Kit.turn(shard, "z", k * 60 + 15)
+		shard:translate(math.cos(a) * 0.28, math.sin(a) * 0.28, GLASS + 1.74)
+		shard:emit(mesh)
+	end
+end, 40, 0.25)
+part("Filament", nil, { 0.16, 0.14, 0.12 }, function(mesh)
+	-- The broken filament, seen through the hole, on its two supports.
+	Kit.tube({ { -0.16, 0, GLASS + 1.4 }, { -0.06, 0, GLASS + 1.56 }, { 0.04, 0, GLASS + 1.4 }, { 0.12, 0, GLASS + 1.52 } }, 0.02, 4):emit(mesh)
+	for _, x in { -0.16, 0.12 } do
+		Kit.tube({ { x, 0, GLASS + 0.3 }, { x, 0, GLASS + 1.45 } }, 0.015, 4):emit(mesh)
+	end
+end, true, 0.3)
 -- include: JunkrotFace

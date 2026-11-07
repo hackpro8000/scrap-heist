@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotBoltoloLonelo-7f359174ac7ac846"
+local CACHE_KEY = "JunkrotBoltoloLonelo-1f23ec979bf31130"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3565,6 +3565,11 @@ part("Head", nil, STEEL, function(mesh)
 	m:translate(0, 0, HEAD + 0.05)
 	m:emit(mesh)
 end, 20, 0.7)
+part("Washer", nil, DARK_STEEL, function(mesh)
+	local m = Kit.lathe({ { 0, 0 }, { 0.62, 0 }, { 0.62, 0.05 }, { 0, 0.05 } }, 20)
+	m:translate(0, 0, SHANK + 0.4)
+	m:emit(mesh)
+end, 40, 0.6)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at

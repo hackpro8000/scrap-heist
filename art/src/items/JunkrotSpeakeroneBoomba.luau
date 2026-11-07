@@ -47,4 +47,14 @@ part("Handle", nil, BARE_METAL, function(mesh)
 	local path = Kit.curve({ { -0.45, 0, BASE + TALL - 0.05 }, { -0.4, 0, BASE + TALL + 0.25 }, { 0.4, 0, BASE + TALL + 0.25 }, { 0.45, 0, BASE + TALL - 0.05 } }, 3)
 	Kit.tube(path, 0.06, 8):emit(mesh)
 end, true, 0.03)
+part("Panel", nil, { 0.25, 0.25, 0.27 }, function(mesh)
+	local strip = Kit.block(0.9, 0.35, 0.05, 0.02)
+	strip:translate(0, 0.25, BASE + TALL + 0.01)
+	strip:emit(mesh)
+	for k = -1, 1 do
+		local button = EditMesh.cylinder(0.05, 0.05, 8, 1)
+		button:translate(k * 0.25, 0.25, BASE + TALL + 0.05)
+		button:emit(mesh)
+	end
+end, 50, 0)
 -- include: JunkrotFace

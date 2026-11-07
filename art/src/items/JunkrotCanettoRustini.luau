@@ -28,6 +28,10 @@ part("Can", nil, BARE_METAL, function(mesh)
 		{ 0.6, 1.5 },
 		{ 0, 1.42 },
 	}, 24)
+	-- Dented in at the back where it was kicked.
+	m:select("vertex", "where", function(p)
+		return p[1] < -0.3 and p[2] > 0.3 and p[3] > 0.5 and p[3] < 1.0
+	end):move({ 0.06, -0.06, 0 }, 0.2)
 	m:translate(0, 0, BASE)
 	m:emit(mesh)
 end, 40, 0.9)

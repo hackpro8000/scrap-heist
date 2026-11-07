@@ -46,4 +46,7 @@ part("Patch", nil, RUST_ORANGE, function(mesh)
 	m:translate(-0.95, 0.1, BASE + 0.8)
 	m:emit(mesh)
 end, 50, 0.8)
+part("Cord", nil, { 0.1, 0.1, 0.11 }, function(mesh)
+	Kit.tube(Kit.curve({ { 0.3, 0.5, BASE + 0.2 }, { 0.5, 0.9, BASE + 0.08 }, { 0.9, 1.05, 0.04 } }, 4), 0.05, 6):emit(mesh)
+end, true, RUBBER)
 -- include: JunkrotFace

@@ -55,4 +55,11 @@ part("Lever", nil, BARE_METAL, function(mesh)
 	end
 	Kit.tube({ { -1.05, 0.45, BASE + 1.15 }, { -1.3, 0.2, BASE + 1.3 }, { -1.42, -0.1, BASE + 1.25 } }, 0.035, 6):emit(mesh)
 end, true, 0.05)
+part("Spools", nil, { 0.12, 0.12, 0.13 }, function(mesh)
+	for _, x in { -0.65, 0.65 } do
+		local spool = EditMesh.cylinder(0.18, 0.06, 12, 1)
+		spool:translate(x, 0.15, BASE + 0.93)
+		spool:emit(mesh)
+	end
+end, true, RUBBER)
 -- include: JunkrotFace

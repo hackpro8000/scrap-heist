@@ -44,4 +44,13 @@ part("Cap", nil, { 0.75, 0.18, 0.14 }, function(mesh)
 	m:translate(0, -0.32, MID)
 	m:emit(mesh)
 end, true, 0.4)
+part("Clips", nil, DARK_STEEL, function(mesh)
+	-- The spring clips on its back that held it to the wheel.
+	for k = 0, 3 do
+		local a = math.rad(45 + k * 90)
+		local clip = Kit.block(0.16, 0.12, 0.1, 0.02)
+		clip:translate(math.cos(a) * 0.85, 0.06, MID + math.sin(a) * 0.85)
+		clip:emit(mesh)
+	end
+end, 40, 0.5)
 -- include: JunkrotFace

@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotConsoloJoypaddino-17427414760de2f9"
+local CACHE_KEY = "JunkrotConsoloJoypaddino-aca465be178d6742"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3612,6 +3612,15 @@ part("Cable", nil, { 0.1, 0.1, 0.11 }, function(mesh)
 	}, 4)
 	Kit.tube(path, 0.04, 6):emit(mesh)
 end, true, RUBBER)
+part("Vents", nil, { 0.08, 0.08, 0.1 }, function(mesh)
+	for _, side in { -1, 1 } do
+		for k = -1, 1 do
+			local slot = Kit.block(0.1, 0.22, 0.03, 0.01)
+			slot:translate(side * 0.6, k * 0.3, BASE + TALL + 0.11)
+			slot:emit(mesh)
+		end
+	end
+end, 50, 0)
 -- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
 -- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
 -- far apart its two legs stand and how tall they are (the body starts at
