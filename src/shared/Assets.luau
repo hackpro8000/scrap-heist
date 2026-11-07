@@ -704,6 +704,7 @@ Assets.MapChunks = {
 	["3bf00bc9c3b49ba2"] = "rbxassetid://135896299254385",
 	["3e53765954f502d8"] = "rbxassetid://112889192782909",
 	["40a636d616a83ed6"] = "rbxassetid://117161419146103",
+	["4465adda79670a5c"] = "rbxassetid://129063732249939",
 	["451fe0cb6b82e281"] = "rbxassetid://104701908478343",
 	["47f01e7c74812c8f"] = "rbxassetid://95003152263569",
 	["4851a97869a09e61"] = "rbxassetid://138346806937538",
@@ -809,7 +810,6 @@ Assets.MapChunks = {
 	["fb282890e93ad005"] = "rbxassetid://138346806937538",
 	["fb52792530b46adc"] = "rbxassetid://127609087302178",
 	["fca3dff4c54b4164"] = "rbxassetid://86537313870245",
-	["fce071020d15870d"] = "rbxassetid://74275733021195",
 	["ff3731a3aa17f3cb"] = "rbxassetid://117161419146103",
 }
 
