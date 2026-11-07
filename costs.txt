@@ -1,0 +1,18 @@
+slab Bridge2	1.004
+slab Bridge2 #split	1
+slab Approach8	0.204
+slab Approach8 #split	1
+PadGarage 1 x x1.6666666666666667	0.150
+PadGarage 1 x x1.6666666666666667 #split	1
+CapsuleSalvaged 1 x	0.209
+CapsuleSalvaged 1 x #split	1
+JunkrotBoltoloLonelo 1 x	0.667
+JunkrotBoltoloLonelo 1 x #split	1
+JunkrotMuffleroTossetto 1 x	0.483
+JunkrotMuffleroTossetto 1 x #split	1
+JunkrotTelefonoRingaling 1 x	0.742
+JunkrotTelefonoRingaling 1 x #split	1
+JunkrotClankClankClankScrapur 1 x	0.563
+JunkrotClankClankClankScrapur 1 x #split	1
+JunkrotGascaniniHonkini 1 x	0.645
+JunkrotGascaniniHonkini 1 x #split	1

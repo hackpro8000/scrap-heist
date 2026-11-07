@@ -1,0 +1,388 @@
+{
+	"assets": [
+		{
+			"id": "392c261d8c2c8129",
+			"key": "HubSectionA-a8313e4a55d56339 1 x part 2/5",
+			"piece": 1,
+			"label": "HubSection2",
+			"turn": 0.0,
+			"bytes": 5781536,
+			"parts": 27
+		},
+		{
+			"id": "b638341552f36e34",
+			"key": "cd8e579a256b83b8-cf7e96091024d5cc Bridge2 -70 180 0",
+			"piece": 1,
+			"label": "Bridge2",
+			"turn": 0.0,
+			"bytes": 3181472,
+			"parts": 11
+		},
+		{
+			"id": "cb9c52a2b176239d",
+			"key": "YardFenceHalf-18c1a8760a959e18 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FenceFrontHalf1",
+			"turn": 180.0,
+			"bytes": 362404,
+			"parts": 3
+		},
+		{
+			"id": "f07318087ec851b5",
+			"key": "cd8e579a256b83b8-18845c9c8b69ea54 Approach8 210 0 180",
+			"piece": 1,
+			"label": "Approach8",
+			"turn": 0.0,
+			"bytes": 597864,
+			"parts": 3
+		},
+		{
+			"id": "55d73acdb177cecb",
+			"key": "PadGarage-734bbac536619471 1 x x1.6666666666666667",
+			"piece": 1,
+			"label": "Kit_PadGarage",
+			"turn": 0.0,
+			"bytes": 360632,
+			"parts": 3
+		},
+		{
+			"id": "f9090db15e8c3966",
+			"key": "CapsuleSalvaged-920c7b0575b6f340 1 x",
+			"piece": 1,
+			"label": "Kit_CapsuleSalvaged",
+			"turn": 0.0,
+			"bytes": 415856,
+			"parts": 5
+		},
+		{
+			"id": "f23cfdbea9125de3",
+			"key": "JunkrotBoltoloLonelo-dc5359b2301236fb 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotBoltoloLonelo",
+			"turn": 0.0,
+			"bytes": 604668,
+			"parts": 6
+		},
+		{
+			"id": "38aff20450a36fb4",
+			"key": "JunkrotMuffleroTossetto-51cde1cc6e30d9fd 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotMuffleroTossetto",
+			"turn": 0.0,
+			"bytes": 558168,
+			"parts": 6
+		},
+		{
+			"id": "a4e8645129cb23cd",
+			"key": "JunkrotTelefonoRingaling-c46bacb116919010 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotTelefonoRingaling",
+			"turn": 0.0,
+			"bytes": 829596,
+			"parts": 9
+		},
+		{
+			"id": "b7606a22bec51ab9",
+			"key": "JunkrotClankClankClankScrapur-a30fc840bf59b273 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotClankClankClankScrapur",
+			"turn": 0.0,
+			"bytes": 733596,
+			"parts": 8
+		},
+		{
+			"id": "d173b2b5d4f81251",
+			"key": "JunkrotGascaniniHonkini-f8b07ed06063b0f4 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotGascaniniHonkini",
+			"turn": 0.0,
+			"bytes": 654728,
+			"parts": 8
+		}
+	],
+	"placements": [
+		{
+			"asset": "392c261d8c2c8129",
+			"label": "HubSection2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_-1_0_100_100",
+					"position": [
+						-52.8018665,
+						-4.538961,
+						54.1952015
+					]
+				},
+				{
+					"name": "Grass_-2_0_0",
+					"position": [
+						-174.379665,
+						-2.03675295,
+						-17.865800425
+					]
+				}
+			]
+		},
+		{
+			"asset": "392c261d8c2c8129",
+			"label": "HubSection4",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_-1_0_100_100",
+					"position": [
+						52.8018665,
+						-4.538961,
+						-54.1952015
+					]
+				},
+				{
+					"name": "Grass_-2_0_0",
+					"position": [
+						174.379665,
+						-2.03675295,
+						17.865800425
+					]
+				}
+			]
+		},
+		{
+			"asset": "b638341552f36e34",
+			"label": "Bridge2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Apron",
+					"position": [
+						-70.0084,
+						6.059419,
+						-118.016205
+					]
+				},
+				{
+					"name": "EndPosts",
+					"position": [
+						-70.01269500000001,
+						6.89372,
+						-63.023643
+					]
+				}
+			]
+		},
+		{
+			"asset": "cb9c52a2b176239d",
+			"label": "Yard8_FenceFrontHalf1",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						254.993965,
+						9.33787235,
+						123.999375
+					]
+				}
+			]
+		},
+		{
+			"asset": "cb9c52a2b176239d",
+			"label": "Yard8_FenceFrontHalf2",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						164.993975,
+						9.33787235,
+						123.999375
+					]
+				}
+			]
+		},
+		{
+			"asset": "f07318087ec851b5",
+			"label": "Approach8",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ramp",
+					"position": [
+						210.0,
+						3.7,
+						54.7
+					]
+				},
+				{
+					"name": "Walls",
+					"position": [
+						209.9939,
+						4.34630485,
+						54.189201
+					]
+				}
+			]
+		},
+		{
+			"asset": "55d73acdb177cecb",
+			"label": "Kit_PadGarage",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Hardware",
+					"position": [
+						-840.0089250000001,
+						-149.07463,
+						-1.15015185
+					]
+				},
+				{
+					"name": "Plate",
+					"position": [
+						-840.011675,
+						-149.691015,
+						0.006314500000000223
+					]
+				}
+			]
+		},
+		{
+			"asset": "f9090db15e8c3966",
+			"label": "Kit_CapsuleSalvaged",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Box",
+					"position": [
+						-672.0066999999999,
+						-149.37695,
+						-0.005186370000000051
+					]
+				},
+				{
+					"name": "Patch",
+					"position": [
+						-671.23795,
+						-149.47592,
+						0.8867474500000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "f23cfdbea9125de3",
+			"label": "Kit_JunkrotBoltoloLonelo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pupils",
+					"position": [
+						-431.98323,
+						-148.502,
+						0.56680905
+					]
+				},
+				{
+					"name": "Thread",
+					"position": [
+						-432.005275,
+						-149.054925,
+						-0.013263684999999997
+					]
+				}
+			]
+		},
+		{
+			"asset": "38aff20450a36fb4",
+			"label": "Kit_JunkrotMuffleroTossetto",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pupils",
+					"position": [
+						-191.977325,
+						-148.308,
+						0.85521353
+					]
+				},
+				{
+					"name": "Soot",
+					"position": [
+						-191.338045,
+						-146.155,
+						-0.01195774999999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "a4e8645129cb23cd",
+			"label": "Kit_JunkrotTelefonoRingaling",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Cord",
+					"position": [
+						46.3111575,
+						-148.755525,
+						-0.41160947
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						48.02117,
+						-148.2535,
+						1.14021355
+					]
+				}
+			]
+		},
+		{
+			"asset": "b7606a22bec51ab9",
+			"label": "Kit_JunkrotClankClankClankScrapur",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Bat",
+					"position": [
+						385.268155,
+						-146.33733999999998,
+						-0.11063585999999997
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						384.036565,
+						-147.258,
+						0.88361803
+					]
+				}
+			]
+		},
+		{
+			"asset": "d173b2b5d4f81251",
+			"label": "Kit_JunkrotGascaniniHonkini",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Beak",
+					"position": [
+						767.98853,
+						-146.852445,
+						1.3537403000000001
+					]
+				},
+				{
+					"name": "Jets",
+					"position": [
+						768.0,
+						-148.5,
+						-1.0
+					]
+				}
+			]
+		}
+	]
+}
