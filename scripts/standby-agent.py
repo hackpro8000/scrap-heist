@@ -49,6 +49,10 @@ forward = None
 
 
 def say(message):
+	# Wall-clock time to the millisecond, so a build's steps can be lined up
+	# across machines (GitHub's runners keep their clocks synced).
+	now = time.time()
+	message = f"{time.strftime('%H:%M:%S', time.gmtime(now))}.{int(now % 1 * 1000):03d} {message}"
 	print(f"agent: {message}", file=sys.stderr, flush=True)
 	if forward:
 		forward(message)
@@ -73,6 +77,10 @@ class Agent:
 		self.built = {}  # task id -> results folder
 		self.by_branch = {}  # task id -> whether its objects went to a branch
 		self.git_lock = threading.Lock()
+		# Machine 1: builders' commits waiting for the next fetch, which takes
+		# them all at once: [(commit, into, future)].
+		self.fetch_waiting = []
+		self.fetching = False
 		self.building = set()
 		self.stopped = False
 		self.uploader = None
@@ -142,28 +150,50 @@ class Agent:
 		if socket and loop:
 			loop.call_soon_threadsafe(lambda: asyncio.ensure_future(socket.send(message)))
 
-	def fetch_objects(self, commit, into):
-		"""Machine 1: takes a builder's objects from its GitHub branch commit,
-		into a bare repository of its own (never the checkout it builds in),
-		one fetch at a time (git refuses two into one repository at once),
-		trying a failed fetch again before it counts."""
-		os.makedirs(into, exist_ok=True)
+	def fetch_objects(self, wanted):
+		"""Machine 1: takes builders' objects from their GitHub branch commits,
+		all of them in one fetch, into a bare repository of its own (never the
+		checkout it builds in), trying a failed fetch again before it counts.
+		wanted: [(commit, into)]."""
 		store = os.path.join(os.getcwd(), ".objects-store")
 		with self.git_lock:
 			if not os.path.isdir(store):
 				origin = subprocess.run(["git", "remote", "get-url", "origin"], capture_output=True, text=True).stdout.strip()
 				subprocess.run(["git", "init", "-q", "--bare", store], check=True)
 				subprocess.run(["git", "-C", store, "remote", "add", "origin", origin], check=True)
+			commits = sorted({commit for commit, _ in wanted})
 			for attempt in range(3):
-				fetched = subprocess.run(["git", "-C", store, "fetch", "-q", "--depth=1", "origin", commit], capture_output=True, text=True)
+				fetched = subprocess.run(["git", "-C", store, "fetch", "-q", "--depth=1", "origin", *commits], capture_output=True, text=True)
 				if fetched.returncode == 0:
 					break
 				time.sleep(0.5 * (attempt + 1))
 			else:
-				raise RuntimeError(f"fetch of {commit[:8]} failed: {fetched.stderr.strip()[-200:]}")
-			archive = subprocess.Popen(["git", "-C", store, "archive", commit], stdout=subprocess.PIPE)
-			subprocess.run(["tar", "-x", "-C", into], stdin=archive.stdout, check=True)
-			archive.wait()
+				raise RuntimeError(f"fetch of {len(commits)} commits failed: {fetched.stderr.strip()[-200:]}")
+			for commit, into in wanted:
+				os.makedirs(into, exist_ok=True)
+				archive = subprocess.Popen(["git", "-C", store, "archive", commit], stdout=subprocess.PIPE)
+				subprocess.run(["tar", "-x", "-C", into], stdin=archive.stdout, check=True)
+				archive.wait()
+
+	async def fetch_waiting_objects(self):
+		"""Fetches whatever has queued up, round after round, until none waits:
+		commits arriving during one fetch all go in the next."""
+		self.fetching = True
+		try:
+			while self.fetch_waiting:
+				batch, self.fetch_waiting = self.fetch_waiting, []
+				started = time.monotonic()
+				try:
+					await asyncio.to_thread(self.fetch_objects, [(commit, into) for commit, into, _ in batch])
+				except Exception as error:
+					for *_, future in batch:
+						future.set_exception(error)
+					continue
+				say(f"fetched {len(batch)} machines' objects in one go, {time.monotonic() - started:.1f}s")
+				for *_, future in batch:
+					future.set_result(None)
+		finally:
+			self.fetching = False
 
 	async def receive_fetch(self, socket, event):
 		"""Machine 1: a builder pushed objects; fetch them and upload the ones asked for."""
@@ -175,15 +205,17 @@ class Agent:
 			if getattr(self, "start_known", None):
 				self.uploader.throttle.known = max(1.0, min(uploading.MOST, float(self.start_known)))
 		into = os.path.join(self.inbox, f"{event['task']}-S{event['shard']}")
-		started = time.monotonic()
+		fetched = asyncio.get_running_loop().create_future()
+		self.fetch_waiting.append((event["commit"], into, fetched))
+		if not self.fetching:
+			asyncio.ensure_future(self.fetch_waiting_objects())
 		try:
-			await asyncio.to_thread(self.fetch_objects, event["commit"], into)
+			await fetched
 		except Exception as error:
 			say(f"S{event['shard']}'s objects: {error}")
 			for identity in event["ids"]:
 				await socket.send(json.dumps({"type": "uploaded", "id": identity, "error": str(error)}))
 			return
-		say(f"fetched S{event['shard']}'s {len(event['ids'])} objects in {time.monotonic() - started:.1f}s")
 		for identity, label in event["ids"].items():
 			path = os.path.join(into, f"{identity}.glb")
 			if not self.uploader.add(identity, path, label, event["shard"]):

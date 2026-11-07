@@ -3,7 +3,7 @@ at once as Roblox will take, from one place so one throttle sees every
 answer.
 
 Objects are added as they arrive (Uploader.add) and go up in bundles: the
-objects that arrive within GATHER seconds of each other, up to BUNDLE_MOST
+objects that arrive within GATHER seconds (a quarter of one) of each other, up to BUNDLE_MOST
 bytes (under Open Cloud's 20 MB limit), are joined into one file (bundle.py) and uploaded as one Model, which
 holds each object as a child named by its id. Every object in a bundle gets
 the bundle's asset id. The caller waits for the ones it cares about
@@ -47,7 +47,7 @@ PROCESS_TIMEOUT = int(os.environ.get("UPLOAD_PROCESS_TIMEOUT", "360"))
 FIRST_PAUSE, MOST_PAUSE = 1.0, 60.0
 KEY_FILE = os.path.expanduser("~/.config/scrap-heist/roblox-api-key")
 CREATOR_ID = os.environ.get("ROBLOX_CREATOR_ID", "670715109")
-GATHER = float(os.environ.get("UPLOAD_GATHER", "1.0"))
+GATHER = float(os.environ.get("UPLOAD_GATHER", "0.25"))
 BUNDLE_MOST = int(os.environ.get("UPLOAD_BUNDLE_MOST", str(18 * 2**20)))
 
 
@@ -211,10 +211,11 @@ class Uploader:
 		label = objects[0][2] if len(objects) == 1 else f"{len(objects)} objects"
 		try:
 			if self.dry:
-				asset = self._pretend()
+				asset, timing = self._pretend(), "dry"
 			else:
 				data = bundle.join([(identity, open(path, "rb").read()) for identity, path, _, _ in objects])
-				asset = self._upload(data, label)
+				self.say(f"bundle of {len(objects)}, {len(data) / 2**20:.1f} MB, sending")
+				asset, timing = self._upload(data, label)
 			with self.lock:
 				for identity, _, _, shard in objects:
 					self.record[identity] = (str(asset), str(shard))
@@ -224,7 +225,7 @@ class Uploader:
 						for identity, _, _, shard in objects:
 							file.write(f"{identity}\t{asset}\t{shard}\n")
 			succeeded = True
-			self.say(f"bundle of {len(objects)} is asset {asset}")
+			self.say(f"bundle of {len(objects)} is asset {asset} ({timing})")
 		except Exception as error:
 			with self.lock:
 				for identity, *_ in objects:
@@ -288,12 +289,14 @@ class Uploader:
 		])
 		started = time.time()
 		created = self._request(f"{API}/assets", body, f"multipart/form-data; boundary={boundary}")
+		sent = time.time()
 		operation = created.get("path")
 		if not operation:
 			raise RuntimeError("rejected: no operation returned")
 		# Roblox doesn't push a finished upload, so it has to be asked; but a
-		# finished answer is taken at once, and the first question waits about
-		# as long as Roblox has lately taken, not a fixed time.
+		# finished answer is taken at once, the first question waits about as
+		# long as Roblox has lately taken, and after that it asks every half
+		# second (a refusal holds every request back, as for uploads).
 		answer = created
 		gap = max(0.5, self.typical_processing * 0.8)
 		checks = 0
@@ -302,14 +305,13 @@ class Uploader:
 				raise RuntimeError(f"still processing after {PROCESS_TIMEOUT}s: {operation}")
 			time.sleep(gap)
 			answer = self._request(f"{API}/{operation}")
-			# After the first, informed wait: soon again, then less often.
-			gap = 1.0 if checks == 0 else min(5.0, gap * 1.5)
+			gap = 0.5
 			checks += 1
 		asset = answer.get("response", {}).get("assetId")
 		if not asset:
 			raise RuntimeError(f"failed: {json.dumps(answer)[:300]}")
 		self._learn(time.time() - started)
-		return asset
+		return asset, f"sent in {sent - started:.1f}s, processed in {time.time() - sent:.1f}s, {checks} checks"
 
 	def _learn(self, seconds):
 		"""Keeps a running estimate of how long an upload takes, end to end."""
