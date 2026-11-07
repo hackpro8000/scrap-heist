@@ -8,11 +8,15 @@ skipped when it already has an asset: its id is in the layout's ledger,
 art/src/layouts/<Name>Uploads.tsv, or in this machine's record of what it
 has uploaded, art/models/<Name>/uploaded.tsv, which outlives a failed run.
 
-The throttle finds the width Roblox allows by trying: one success adds
-0.5 / width (about +0.5 per full round), a refusal (429) halves it and holds
-every new request for Roblox's Retry-After, or else a pause that doubles
-from 1 s to 60 s, with jitter. The width it ends on is kept in
-art/models/<Name>/upload-width.txt for the next run to start from.
+The throttle finds the width Roblox allows the way TCP finds a network's:
+it starts fast, each success adding one more upload in flight (so the
+width doubles every round), until Roblox first turns a request away (429).
+Then the width halves and that half becomes the known limit; above it,
+growth slows to about one more per round, and each refusal halves again.
+Every request waits out Roblox's Retry-After, or else a pause that doubles
+from 1 s to 60 s, with jitter. The width and the known limit are kept in
+art/models/<Name>/upload-width.txt, so the next run starts near the best
+width instead of finding it again.
 
 With dry=True nothing is sent: each upload waits a moment and returns a
 made-up asset id, and nothing is written to the record, for testing.
@@ -31,10 +35,9 @@ import uuid
 
 API = os.environ.get("ROBLOX_ASSETS_API", "https://apis.roblox.com/assets/v1")
 START = float(os.environ.get("UPLOAD_START", "4"))
-MOST = int(os.environ.get("UPLOAD_MOST", "64"))
+MOST = int(os.environ.get("UPLOAD_MOST", "128"))
 TRIES = int(os.environ.get("UPLOAD_TRIES", "8"))
 PROCESS_TIMEOUT = int(os.environ.get("UPLOAD_PROCESS_TIMEOUT", "360"))
-GROWTH = 0.5
 FIRST_PAUSE, MOST_PAUSE = 1.0, 60.0
 KEY_FILE = os.path.expanduser("~/.config/scrap-heist/roblox-api-key")
 CREATOR_ID = os.environ.get("ROBLOX_CREATOR_ID", "670715109")
@@ -50,11 +53,14 @@ def api_key():
 class Throttle:
 	def __init__(self, width_path, say):
 		self.width_path, self.say = width_path, say
-		self.limit = START
+		self.limit, self.known = START, float(MOST)
 		if os.path.isfile(width_path):
 			try:
-				self.limit = min(MOST, max(1.0, float(open(width_path).read())))
-			except ValueError:
+				fields = open(width_path).read().split()
+				self.limit = min(MOST, max(1.0, float(fields[0])))
+				if len(fields) > 1:
+					self.known = min(MOST, max(1.0, float(fields[1])))
+			except (ValueError, IndexError):
 				pass
 		self.flying, self.held_until, self.pause = 0, 0.0, FIRST_PAUSE
 		self.changed = threading.Condition()
@@ -69,13 +75,16 @@ class Throttle:
 		with self.changed:
 			self.flying -= 1
 			if succeeded:
-				self.limit = min(MOST, self.limit + GROWTH / int(self.limit))
+				# Fast below the known limit, careful above it.
+				step = 1.0 if self.limit < self.known else 1.0 / self.limit
+				self.limit = min(MOST, self.limit + step)
 				self.pause = FIRST_PAUSE
 			self.changed.notify_all()
 
 	def refused(self, retry_after):
 		with self.changed:
-			self.limit = max(1.0, self.limit / 2)
+			self.known = max(1.0, self.limit / 2)
+			self.limit = self.known
 			wait = retry_after if retry_after is not None else self.pause * (1 + random.random() * 0.5)
 			if retry_after is None:
 				self.pause = min(MOST_PAUSE, self.pause * 2)
@@ -91,7 +100,7 @@ class Throttle:
 
 	def remember(self):
 		with open(self.width_path, "w") as file:
-			file.write(f"{self.limit:.2f}\n")
+			file.write(f"{self.limit:.2f} {self.known:.2f}\n")
 
 
 def ids_in(path):
@@ -230,7 +239,7 @@ class Uploader:
 		operation = self._request(f"{API}/assets", body, f"multipart/form-data; boundary={boundary}").get("path")
 		if not operation:
 			raise RuntimeError("rejected: no operation returned")
-		gap, waited = 2.0, 0.0
+		gap, waited = 1.0, 0.0
 		while waited < PROCESS_TIMEOUT:
 			time.sleep(gap)
 			waited += gap
@@ -240,5 +249,5 @@ class Uploader:
 				if not asset:
 					raise RuntimeError(f"failed: {json.dumps(answer)[:300]}")
 				return asset
-			gap = min(15.0, gap * 1.5)
+			gap = min(5.0, gap * 1.5)
 		raise RuntimeError(f"still processing after {waited:.0f}s: {operation}")

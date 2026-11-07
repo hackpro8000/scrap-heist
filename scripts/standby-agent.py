@@ -129,7 +129,7 @@ class Agent:
 		"""From the uploader's threads: send the result on the live socket."""
 		say(f"upload {identity}: " + (f"asset {asset}" if asset else f"FAILED {error}"))
 		message = json.dumps({"type": "uploaded", "id": identity, "asset": asset, "error": error,
-			"width": round(self.uploader.throttle.limit, 1)})
+			"width": round(self.uploader.throttle.limit, 1), "known": round(self.uploader.throttle.known, 1)})
 		socket, loop = self.socket, self.loop
 		if socket and loop:
 			loop.call_soon_threadsafe(lambda: asyncio.ensure_future(socket.send(message)))
@@ -142,6 +142,8 @@ class Agent:
 				dry=os.environ.get("AGENT_DRY_UPLOAD") == "1", on_done=self.answer)
 			if getattr(self, "start_width", None):
 				self.uploader.throttle.limit = max(1.0, min(uploading.MOST, float(self.start_width)))
+			if getattr(self, "start_known", None):
+				self.uploader.throttle.known = max(1.0, min(uploading.MOST, float(self.start_known)))
 		os.makedirs(self.inbox, exist_ok=True)
 		path = os.path.join(self.inbox, f"{header['id']}.glb")
 		with open(path, "wb") as file:
@@ -179,7 +181,7 @@ class Agent:
 					continue
 				event = json.loads(message)
 				if event["type"] == "uploader":
-					self.start_width = event.get("width")
+					self.start_width, self.start_known = event.get("width"), event.get("known")
 					say(f"this machine uploads for the coordinator, starting {self.start_width or 'fresh'} at once")
 				elif event["type"] == "task":
 					asyncio.create_task(self.handle(socket, event["id"], event["task"]))

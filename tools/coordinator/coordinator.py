@@ -138,7 +138,7 @@ class RemoteUploader:
 			self.throttle.limit = event["width"]
 			os.makedirs(os.path.dirname(self.width_path), exist_ok=True)
 			with open(self.width_path, "w") as file:
-				file.write(f"{event['width']:.2f}\n")
+				file.write(f"{event['width']:.2f} {event.get('known', event['width']):.2f}\n")
 		self.changed.set()
 
 	def wait(self, identities, timeout=None):
@@ -221,13 +221,14 @@ class Coordinator:
 		self.agents[shard] = socket
 		await self.emit({"type": "machine", "shard": shard, "up": len(self.agents), "count": count})
 		if self.uploads_on_machine and shard == 1:
-			width = None
+			width = known = None
 			if os.path.isfile(self.uploader.width_path):
 				try:
-					width = float(open(self.uploader.width_path).read())
-				except ValueError:
+					fields = [float(field) for field in open(self.uploader.width_path).read().split()]
+					width, known = fields[0], fields[1] if len(fields) > 1 else None
+				except (ValueError, IndexError):
 					pass
-			await socket.send(json.dumps({"type": "uploader", "layout": self.layout, "width": width}))
+			await socket.send(json.dumps({"type": "uploader", "layout": self.layout, "width": width, "known": known}))
 			await self.uploader.connected(socket)
 		for task in self.tasks.values():
 			if shard not in task.done:
