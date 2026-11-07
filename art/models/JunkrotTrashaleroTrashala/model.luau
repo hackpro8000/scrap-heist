@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotTrashaleroTrashala-8f5e7b877982dfde"
+local CACHE_KEY = "JunkrotTrashaleroTrashala-896dc197f6ea9f73"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3746,12 +3746,12 @@ local function skinPart(m, belly)
 	return m
 end
 
-part("Body", nil, TIN_BLUE, function(mesh)
+part("Body", nil, { 0.18, 0.19, 0.21 }, function(mesh)
 	skinPart(body:copy(), false):emit(mesh)
-end, true, 0.35)
-part("Belly", nil, BELLY, function(mesh)
+end, true, 0.4)
+part("Belly", nil, { 0.3, 0.3, 0.3 }, function(mesh)
 	skinPart(body:copy(), true):emit(mesh)
-end, true, 0.25)
+end, true, 0.3)
 -- A fin from its outline in x (along the body) and z (out from the root
 -- at 0), thick at the root and thinning toward its edges and tip.
 local function fin(outline, thick, span)
@@ -3764,7 +3764,7 @@ local function fin(outline, thick, span)
 	end)
 	return m
 end
-part("Fins", nil, TIN_BLUE, function(mesh)
+part("Fins", nil, { 0.4, 0.47, 0.52 }, function(mesh)
 	-- The first dorsal, over the back's high point: a straight leading edge
 	-- raked back to the tip, a concave trailing edge down to a free tip.
 	local dorsal = fin({ { 0.95, -0.15 }, { 0.6, 0.4 }, { 0.2, 0.9 }, { 0.05, 0.98 }, { 0.12, 0.6 }, { 0.2, 0.25 }, { 0.1, -0.15 } }, 0.14, 0.98)
@@ -3785,7 +3785,7 @@ part("Fins", nil, TIN_BLUE, function(mesh)
 	tail:translate(-1.62, 0, MIDDLE + 0.01)
 	tail:emit(mesh)
 end, 40, 0.35)
-part("ShodFins", nil, TIN_BLUE, function(mesh)
+part("ShodFins", nil, { 0.6, 0.63, 0.62 }, function(mesh)
 	-- The pectorals and the fin under the tail, from fin outlines like the
 	-- rest, turned down to the ground.
 	for _, f in SHOD do
@@ -4013,35 +4013,63 @@ part("Teeth", nil, { 0.97, 0.97, 0.93 }, function(mesh)
 		onJaw(tip):emit(mesh)
 	end
 end, 40, 0)
--- Scrap panels, as on the Zapper: plates of mismatched metal beaten to the
--- body's curve, each a grid over a patch of the skin between two x's and
--- two nominal angles round the section (minus for the left side, 0 the
--- top, 180 the bottom), lifted a hair off it with its own thickness, and
--- riveted at the corners. They keep clear of the eyes and the mouth.
-local PANEL_METALS = {
-	GALVANISED = { 0.6, 0.63, 0.62 },
-	OLIVE = { 0.42, 0.45, 0.36 },
-	BLUE_GREY = { 0.4, 0.47, 0.52 },
-	RUST = { 0.55, 0.35, 0.16 },
-	BRASS = { 0.7, 0.58, 0.3 },
-	TIN = { 0.72, 0.7, 0.66 },
+-- The whole skin is scrap, as on the Zapper: plates of mismatched metal
+-- beaten to the body's curve, in bands round the section with staggered
+-- cuts along the length, darker metals over the back and pale ones under
+-- the belly, each lifted a hair off the skin with its own thickness and
+-- riveted at the corners, a seam of dark steel showing between them. The
+-- eyes and the mouth are left open.
+local BACK_METALS = {
+	{ "BLUE_GREY", { 0.4, 0.47, 0.52 } },
+	{ "OLIVE", { 0.42, 0.45, 0.36 } },
+	{ "RUST", { 0.55, 0.35, 0.16 } },
+	{ "GUNMETAL", { 0.3, 0.33, 0.37 } },
+	{ "PAINTED", { 0.36, 0.5, 0.62 } },
+	{ "BRASS", { 0.7, 0.58, 0.3 } },
 }
-local PANELS = {
-	{ -0.2, 0.6, 12, 58, "GALVANISED" },
-	{ 0.7, 1.3, -12, -56, "OLIVE" },
-	{ -1.2, -0.45, 22, 78, "BLUE_GREY" },
-	{ 0.05, 0.85, -68, -112, "RUST" },
-	{ 1.25, 1.85, 28, 62, "BRASS" },
-	{ -0.95, -0.15, -42, -92, "TIN" },
-	{ 0.3, 1.05, 98, 142, "GALVANISED" },
-	{ -0.55, 0.25, -96, -148, "OLIVE" },
-	{ -1.55, -0.95, -8, -52, "RUST" },
-	{ 1.4, 2.0, -18, -52, "BLUE_GREY" },
-	{ 0.85, 1.35, 62, 98, "OLIVE" },
-	{ -0.45, 0.35, -22, 24, "TIN" },
-	{ 1.95, 2.25, 10, 48, "RUST" },
-	{ -1.3, -0.7, 95, 135, "BRASS" },
+local BELLY_METALS = {
+	{ "TIN", { 0.72, 0.7, 0.66 } },
+	{ "GALVANISED", { 0.6, 0.63, 0.62 } },
+	{ "ENAMEL", { 0.86, 0.86, 0.82 } },
+	{ "ALUMINIUM", { 0.78, 0.8, 0.8 } },
+	{ "TIN", { 0.72, 0.7, 0.66 } },
+	{ "ENAMEL", { 0.86, 0.86, 0.82 } },
 }
+-- Bands round the section by nominal angle, and each band's cuts along x.
+local BANDS = {
+	{ 0, 32, { -1.7, -1.05, -0.35, 0.4, 1.0, 1.55, 2.05, 2.3 } },
+	{ 32, 65, { -1.7, -1.25, -0.6, 0.1, 0.75, 1.3, 1.8, 2.3 } },
+	{ 65, 80, { -1.7, -0.9, -0.15, 0.55, 1.15, 1.65, 1.9, 2.3 } },
+	{ 80, 118, { -1.7, -1.15, -0.45, 0.25, 0.9, 1.45, 1.95, 2.3 } },
+	{ 118, 150, { -1.7, -0.95, -0.25, 0.5, 1.1, 1.6, 2.1, 2.3 } },
+	{ 150, 180, { -1.7, -1.1, -0.4, 0.3, 0.95, 1.5, 2.1, 2.3 } },
+}
+local PANELS = {}
+for b, band in BANDS do
+	for seg = 1, #band[3] - 1 do
+		local x0, x1 = band[3][seg], band[3][seg + 1]
+		for _, side in { -1, 1 } do
+			local open = false
+			-- The eye's opening, and the mouth's.
+			if b == 3 and x0 < 1.9 and x1 > 1.6 then
+				open = true
+			end
+			if b == 6 and x1 > 1.5 and x0 < 2.1 then
+				open = true
+			end
+			if not open then
+				local pale = band[1] >= 80
+				local palette = if pale then BELLY_METALS else BACK_METALS
+				local pick = palette[(b * 3 + seg * 5 + (if side < 0 then 2 else 0)) % #palette + 1]
+				table.insert(PANELS, { x0 + 0.012, x1 - 0.012, side * (band[1] + 1.2), side * (band[2] - 1.2), pick[1], pick[2] })
+			end
+		end
+	end
+end
+local PANEL_METALS = {}
+for _, q in PANELS do
+	PANEL_METALS[q[5]] = q[6]
+end
 -- The skin's outward direction at x, a, from neighbouring points.
 local function skinNormal(x, a)
 	local p = skin(x, a)
@@ -4106,16 +4134,16 @@ for metal, colour in PANEL_METALS do
 				panel(q[1], q[2], q[3], q[4]):emit(mesh)
 			end
 		end
-	end, 40, if metal == "RUST" then 0.7 elseif metal == "BRASS" then 0.3 else 0.5)
+	end, 40, if metal == "RUST" then 0.7 elseif metal == "BRASS" or metal == "ENAMEL" then 0.3 else 0.5)
 end
 part("Rivets", nil, DARK_STEEL, function(mesh)
 	-- A dome rivet in each panel's corners, half sunk into it.
 	for _, q in PANELS do
-		local dx, da = (q[2] - q[1]) * 0.08, (q[4] - q[3]) * 0.1
+		local dx, da = (q[2] - q[1]) * 0.1, (q[4] - q[3]) * 0.15
 		for _, x in { q[1] + dx, q[2] - dx } do
 			for _, a in { q[3] + da, q[4] - da } do
 				local o = onSkin(x, a, 0.035)
-				local rivet = EditMesh.sphere(0.03, 6)
+				local rivet = EditMesh.sphere(if x > 1.9 then 0.018 else 0.026, 6)
 				rivet:translate(o[1], o[2], o[3])
 				rivet:emit(mesh)
 			end
