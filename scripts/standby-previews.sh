@@ -28,11 +28,16 @@ for name in "${list[@]}"; do
 	[ $(((n - 1) % count + 1)) -eq "${index}" ] || continue
 	dir="${out}/previews/${name}"
 	mkdir -p "${dir}"
-	if scripts/build-model.sh "${name}" -- --preview --turntable 4 --size "${PREVIEW_SIZE:-384}" > "${dir}/build.log" 2>&1; then
+	# art/src/items/<Name>.preview-flags adds modelkit flags, say --eye views
+	# from chosen spots; their renders come back too.
+	extra=()
+	[ -f "art/src/items/${name}.preview-flags" ] && read -ra extra < "art/src/items/${name}.preview-flags"
+	if scripts/build-model.sh "${name}" -- --preview --turntable 4 --size "${PREVIEW_SIZE:-384}" "${extra[@]}" > "${dir}/build.log" 2>&1; then
 		cp "art/models/${name}/preview.png" "${dir}/preview.png"
 		for turn in 0 1 2 3; do
 			cp "art/models/${name}/turntable/000${turn}.png" "${dir}/view${turn}.png"
 		done
+		cp art/models/"${name}"/eye_*.png art/models/"${name}"/closeup_*.png "${dir}/" 2> /dev/null || true
 	else
 		echo "FAILED" >> "${dir}/build.log"
 	fi

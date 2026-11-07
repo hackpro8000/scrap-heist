@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotTrashaleroTrashala-ecb5eb077da392df"
+local CACHE_KEY = "JunkrotTrashaleroTrashala-f2d8ee088cd321b5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -805,12 +805,14 @@ local function finishParts()
 	end
 end
 -- Trashalero Trashala: Tralalero Tralala riveted from tin sheet. A blue
--- shark with a white belly, nose forward (+x), standing on three steel pipe
--- legs in blue sneakers with white soles: two under its chest, one under
--- its tail end. Its own small black shark eyes, a raked dorsal fin, two
--- flat side fins, a tall forked tail and a wide grin round its snout full
--- of teeth.
--- No googly face. 3.4 studs tall, 4 long.
+-- shark with a white belly, nose forward (+x), its two pectoral fins and
+-- its pelvic fin hanging down as legs into blue sneakers with white soles.
+-- One lofted body shaped like a shark: a conical snout over a crescent
+-- mouth on the underside, its corners back behind the eyes near the gills;
+-- the lower jaw is the head's own bottom slice hinged there, hanging open
+-- on two rows of triangular teeth; the fins are pulled out of the body,
+-- the eyes sit in sockets sunk into it, the gill slits and nostrils are
+-- recessed into it. No googly face. 3 studs tall, 4.5 long.
 -- Junkrot Kit: shaping helpers the junkrots share, on top of the edit-mesh
 -- tools (which it brings in). Each helper makes a fresh edit mesh, z up,
 -- front toward -y, centred on the origin unless it says otherwise; every
@@ -3546,146 +3548,316 @@ function Kit.recess(m, faces, rim, depth)
 	return m:inset(faces, rim, -depth)
 end
 local TIN_BLUE = { 0.36, 0.55, 0.78 }
+local BELLY = { 0.88, 0.89, 0.86 }
+local GULLET = { 0.3, 0.07, 0.09 }
 local SNEAKER_BLUE = { 0.16, 0.32, 0.86 }
-local MIDDLE = 2.1 -- the body's middle
--- Legs stand here: two under the chest, one under the tail end.
-local STANDS = { { 0.65, -0.38 }, { 0.65, 0.38 }, { -0.95, 0 } }
+local MIDDLE = 1.45 -- the body's middle line: it stands low, on fins of normal size
+-- The sneakers stand here, on the pectoral fins' tips and the pelvic fin's.
+local STANDS = { { 0.55, -0.6 }, { 0.55, 0.6 }, { -1.0, 0 } }
 
--- The shark, as one mesh: a sphere drawn out along x and tapering to the
--- tail, its dorsal fin pulled out of it (tagged "fins", so the belly
--- leaves it blue). The belly is its own underside; the tail and side fins
--- are plates of tin riveted on (part Fins).
-local function shark()
-	local m = EditMesh.sphere(1, 16)
-	m:transform(function(p)
-		local x = p[1] * 1.95
-		local tail = math.clamp(-x / 1.95, 0, 1)
-		local nose = math.clamp(x / 1.95, 0, 1)
-		local thick = 1 - 0.6 * tail ^ 1.4 - 0.25 * nose ^ 2
-		return { x, p[2] * 0.72 * thick, p[3] * 0.85 * thick - 0.12 * nose ^ 2 + 0.15 * tail ^ 2 }
-	end)
-	-- Faces picked before any extrusion moves things about.
-	local back = m:select("face", "facing", { 0, 0, 1 }, 30):filter(function(p)
-		return p[1] > -0.75 and p[1] < 0.15 and math.abs(p[2]) < 0.25
-	end)
-	m:tagging("fins", function()
-		-- Dorsal fin, raked back and thin side to side.
-		local fin = back
-		for step, rise in { 0.38, 0.32, 0.24 } do
-			fin = m:extrude(fin, { -0.12 - 0.08 * step, 0, rise })
-			fin:scale({ 0.65, 0.45, 0.65 })
+-- The body's half height and half width along x, tail end to nose tip,
+-- read off these stations between; eased, except along the snout, which
+-- runs straight to its point.
+local STATIONS = {
+	{ -1.6, 0.14, 0.1 },
+	{ -1.3, 0.26, 0.2 },
+	{ -0.8, 0.5, 0.4 },
+	{ -0.2, 0.7, 0.56 },
+	{ 0.5, 0.78, 0.64 },
+	{ 1.0, 0.74, 0.62 },
+	{ 1.4, 0.6, 0.56 },
+	{ 1.7, 0.44, 0.46 },
+	{ 1.95, 0.26, 0.3 },
+	{ 2.1, 0.12, 0.16 },
+	{ 2.2, 0.05, 0.08 },
+	{ 2.24, 0.015, 0.025 },
+}
+local SNOUT = 1.4
+local function station(x)
+	for k = 1, #STATIONS - 1 do
+		local a, b = STATIONS[k], STATIONS[k + 1]
+		if x <= b[1] then
+			local t = math.clamp((x - a[1]) / (b[1] - a[1]), 0, 1)
+			if a[1] < SNOUT then
+				t = t * t * (3 - 2 * t)
+			end
+			return a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t
 		end
+	end
+	local last = STATIONS[#STATIONS]
+	return last[2], last[3]
+end
+-- The snout's underside runs flat and a touch upward to the tip, the top
+-- sloping down to meet it: it lifts by this.
+local function lift(x)
+	return 0.07 * math.clamp((x - 1.5) / 0.72, 0, 1)
+end
+local UNDER = 0.85 -- the lower half is this much of the upper: a flatter belly
+-- The skin's underside at x, y, from the middle line.
+local function skinBottom(x, y)
+	local h, w = station(x)
+	return lift(x) - h * UNDER * math.sqrt(math.max(0, 1 - (y / w) ^ 2))
+end
+
+-- The mouth: a crescent on the underside, its corners back behind the eyes
+-- near the gills, round the front just ahead of them, short of the snout.
+-- mouthPoint(a) walks its rim from one corner (a = -90) round the front
+-- (0) to the other (90).
+local CORNER = { x = 1.3, spread = 0.85 } -- the corners: x, and y as a share of the width there
+local MOUTH_REACH = 0.42 -- how far ahead of the corners the rim goes
+local function mouthPoint(a)
+	local r = math.rad(a)
+	local x = CORNER.x + MOUTH_REACH * math.cos(r) ^ 0.8
+	local _, w = station(x)
+	local y = w * CORNER.spread * math.sin(r)
+	return { x, y, skinBottom(x, y) }
+end
+-- The jaw is the head's own bottom slice inside that rim, split off along
+-- a flat plane at the corners' height and hinged there; the body keeps the
+-- roof of the mouth at that plane.
+local ROOF = mouthPoint(-90)[3] + 0.03
+local HINGE = { CORNER.x, ROOF }
+local GAPE = 28 -- degrees the jaw hangs open
+local function inMouth(x, y)
+	local along = (x - CORNER.x) / MOUTH_REACH
+	if along <= 0 or along >= 1 then
+		return false
+	end
+	local a = math.acos(along ^ 1.25)
+	local _, w = station(x)
+	return math.abs(y) < w * CORNER.spread * math.sin(a)
+end
+local EYE = { 1.62, select(2, station(1.62)) * 0.9, 0.1 } -- from the middle line
+
+-- Pulls a fin out of the faces picked, in steps, each thinning it.
+local function pullFin(m, faces, steps, thin)
+	local fin = faces
+	for _, step in steps do
+		fin = m:extrude(fin, step)
+		fin:scale(thin)
+	end
+	return fin
+end
+
+local function shark()
+	local ring, path = {}, {}
+	for k = 0, 15 do
+		local r = math.rad(k * 22.5)
+		table.insert(ring, { math.cos(r), math.sin(r) })
+	end
+	for k = 0, 32 do
+		table.insert(path, { -1.6 + 3.84 * k / 32, 0, 0 })
+	end
+	local m = EditMesh.sweep(ring, path)
+	-- Each ring sized to its station, the belly flatter than the back.
+	m:transform(function(p)
+		local h, w = station(p[1])
+		local z = p[3]
+		return { p[1], p[2] * w, lift(p[1]) + (if z < 0 then z * h * UNDER else z * h) }
 	end)
+	-- Fins, pulled out of the body: the dorsal raked back, the tail's two
+	-- lobes, the pectorals down and out into the sneakers, the pelvic down
+	-- under the tail.
+	local function patch(dir, deg, test)
+		return m:select("face", "facing", dir, deg):filter(test)
+	end
+	m:tagging("fins", function()
+		-- The first dorsal: tall, triangular, raked back to a point.
+		pullFin(m, patch({ 0, 0, 1 }, 25, function(p)
+			return p[1] > 0.1 and p[1] < 0.85 and math.abs(p[2]) < 0.15
+		end), { { -0.12, 0, 0.3 }, { -0.15, 0, 0.3 }, { -0.18, 0, 0.25 }, { -0.15, 0, 0.15 } }, { 0.72, 0.5, 0.8 })
+		-- The second dorsal, small, over the tail root.
+		pullFin(m, patch({ 0, 0, 1 }, 30, function(p)
+			return p[1] > -1.0 and p[1] < -0.7 and math.abs(p[2]) < 0.1
+		end), { { -0.08, 0, 0.12 }, { -0.08, 0, 0.08 } }, { 0.6, 0.5, 0.7 })
+		-- The tail: a tall upper lobe sweeping up and back, a shorter lower one.
+		pullFin(m, patch({ 0, 0, 1 }, 35, function(p)
+			return p[1] < -1.25 and math.abs(p[2]) < 0.1
+		end), { { -0.22, 0, 0.4 }, { -0.26, 0, 0.4 }, { -0.26, 0, 0.35 }, { -0.22, 0, 0.3 }, { -0.15, 0, 0.2 } }, { 0.84, 0.6, 0.88 })
+		pullFin(m, patch({ 0, 0, -1 }, 35, function(p)
+			return p[1] < -1.25 and math.abs(p[2]) < 0.1
+		end), { { -0.15, 0, -0.25 }, { -0.15, 0, -0.22 }, { -0.1, 0, -0.15 } }, { 0.75, 0.55, 0.8 })
+		-- The pectorals: long, swept back and down into the sneakers.
+		for _, side in { -1, 1 } do
+			pullFin(m, patch({ 0, side * 0.8, -0.6 }, 30, function(p)
+				return p[1] > 0.5 and p[1] < 0.95
+			end), { { -0.06, side * 0.07, -0.22 }, { -0.08, side * 0.05, -0.22 }, { -0.06, side * 0.03, -0.2 } }, { 0.9, 0.62, 1 })
+		end
+		pullFin(m, patch({ 0, 0, -1 }, 30, function(p)
+			return p[1] > -1.15 and p[1] < -0.8 and math.abs(p[2]) < 0.15
+		end), { { 0, 0, -0.28 }, { 0, 0, -0.25 }, { 0, 0, -0.22 } }, { 0.8, 0.7, 1 })
+	end)
+	-- Eye sockets, sunk into the sides of the head above the mouth's front.
+	for _, side in { -1, 1 } do
+		local socket = patch({ 0, side, 0.3 }, 28, function(p)
+			return p[1] > 1.48 and p[1] < 1.78 and p[3] > -0.05 and p[3] < 0.3
+		end)
+		if socket:count() > 0 then
+			m:extrude(m:inset(socket, 0.03, 0), -0.06)
+		end
+	end
 	m:smoothSubdivide(1)
+	-- Gill slits, five a side, and the nostrils under the snout: recessed.
+	for _, side in { -1, 1 } do
+		for k = 0, 4 do
+			-- On every other column of faces, so no two slits touch.
+			local x = 1.13 - k * 0.12
+			local slit = patch({ 0, side, 0 }, 40, function(p)
+				return p[1] > x - 0.02 and p[1] < x + 0.02 and p[3] > -0.1 and p[3] < 0.3
+			end)
+			if slit:count() > 0 then
+				Kit.recess(m, slit, 0.008, 0.03)
+			end
+		end
+		local nare = patch({ 0, 0, -1 }, 50, function(p)
+			return p[1] > 1.94 and p[1] < 2.06 and p[2] * side > 0.04 and p[2] * side < 0.14
+		end)
+		if nare:count() > 0 then
+			Kit.recess(m, nare, 0.008, 0.025)
+		end
+	end
+	-- The mouth: everything inside its rim below the roof is the jaw's, so
+	-- the body's skin there lifts to the roof plane.
+	m:transform(function(p)
+		if inMouth(p[1], p[2]) and p[3] < ROOF then
+			return { p[1], p[2], ROOF }
+		end
+		return p
+	end)
 	m:translate(0, 0, MIDDLE)
 	return m
 end
 local body = shark()
 
+-- The head's bottom slice inside the mouth's rim: rings of the skin's
+-- underside between the rim's sides, flat across the top at the roof.
+local function jaw()
+	local m = EditMesh.new()
+	local rings = {}
+	local across = 12
+	for i = 0, 16 do
+		local p = mouthPoint(90 - i * 5.3)
+		local x, reach = p[1], math.max(p[2], 0.02)
+		local ring = {}
+		for k = 0, across do
+			local y = -reach + 2 * reach * k / across
+			table.insert(ring, m:addVertex(x, y, math.min(skinBottom(x, y), ROOF - 0.015)))
+		end
+		for k = across - 1, 1, -1 do
+			local y = -reach + 2 * reach * k / across
+			table.insert(ring, m:addVertex(x, y, ROOF - 0.015))
+		end
+		table.insert(rings, ring)
+	end
+	for i = 1, #rings - 1 do
+		local a, b = rings[i], rings[i + 1]
+		for k = 1, #a do
+			local k2 = k % #a + 1
+			m:addFace({ a[k], b[k], b[k2], a[k2] })
+		end
+	end
+	local front = {}
+	for k = #rings[#rings], 1, -1 do
+		table.insert(front, rings[#rings][k])
+	end
+	m:addFace(rings[1])
+	m:addFace(front)
+	m:flip()
+	return m
+end
+-- Places a piece built round the mouth (from the middle line) onto the
+-- hanging jaw: turned open about the hinge line through the corners.
+local function onJaw(m)
+	m:translate(-HINGE[1], 0, -HINGE[2])
+	Kit.turn(m, "y", GAPE)
+	return m:translate(HINGE[1], 0, MIDDLE + HINGE[2])
+end
+-- Keeps only the faces of m that pass the test, as a thin skin.
+local function skinOf(m, test, out)
+	local keep = m:select("face", "where", test)
+	for _, id in m:select("face", "all"):minus(keep):list() do
+		m:removeFace(id)
+	end
+	m:push(m:select("vertex", "all"), out)
+	m:solidify(0.025)
+	return m
+end
+
 part("Body", nil, TIN_BLUE, function(mesh)
 	body:emit(mesh)
 end, true, 0.35)
-part("Belly", nil, { 0.88, 0.89, 0.86 }, function(mesh)
-	-- The body's underside, fins left out, lifted off a hair and given its
-	-- own thickness.
+part("Belly", nil, BELLY, function(mesh)
+	-- The underside, fins and mouth left out, lifted off a hair with its own
+	-- thickness.
 	local belly = body:copy()
-	local keep = belly:select("face", "where", function(p)
-		return p[3] < MIDDLE - 0.12 and p[1] > -1.5
-	end):minus(belly:select("face", "tag", "fins"))
-	for _, id in belly:select("face", "all"):minus(keep):list() do
-		belly:removeFace(id)
-	end
-	belly:push(belly:select("vertex", "all"), 0.012)
-	belly:solidify(0.03)
-	belly:emit(mesh)
+	local fins = belly:select("face", "tag", "fins")
+	local down = belly:select("face", "facing", { 0, 0, -1 }, 80):minus(fins)
+	skinOf(belly, function(p, id)
+		return down:count() > 0 and down.ids[id] ~= nil and p[1] > -1.4 and p[1] < 2.1 and not (inMouth(p[1], p[2]) and p[3] > MIDDLE + ROOF - 0.03)
+	end, 0.012):emit(mesh)
 end, true, 0.25)
-part("Fins", nil, TIN_BLUE, function(mesh)
-	-- The tail: a tall crescent, its upper lobe sweeping up and back, a
-	-- shorter one below, thin side to side.
-	for _, lobe in {
-		{ { -1.7, 0.05 }, { -1.5, 0.18 }, { -2.15, 0.95 }, { -2.3, 0.88 } },
-		{ { -1.6, 0.1 }, { -1.75, 0.2 }, { -2.15, -0.35 }, { -2.0, -0.42 } },
-	} do
-		local plate = Kit.plate(lobe, 0.08)
-		plate:translate(0, -0.04, MIDDLE)
-		plate:emit(mesh)
-	end
-	-- Side fins: out from the chest and down, swept back.
-	for _, side in { -1, 1 } do
-		local fin = Kit.plate({ { 0, 0 }, { 0.35, 0 }, { -0.15, 0.55 }, { -0.3, 0.5 } }, 0.05)
-		Kit.turn(fin, "x", -side * 120)
-		fin:translate(0.45, side * 0.32, MIDDLE - 0.25)
-		fin:emit(mesh)
-	end
-end, 40, 0.35)
+part("Jaw", nil, BELLY, function(mesh)
+	onJaw(jaw()):emit(mesh)
+end, true, 0.25)
+part("Mouth", nil, GULLET, function(mesh)
+	-- The inside: the roof, lining the body's mouth plane, and the jaw's
+	-- top, in the same dark red.
+	local roof = body:copy()
+	skinOf(roof, function(p)
+		return inMouth(p[1], p[2]) and p[3] > MIDDLE + ROOF - 0.03
+	end, 0.006):emit(mesh)
+	local floor = jaw()
+	skinOf(floor, function(p)
+		return p[3] > ROOF - 0.03
+	end, 0.006)
+	onJaw(floor):emit(mesh)
+end, true, 0)
 part("Eyes", nil, { 0.04, 0.04, 0.05 }, function(mesh)
 	for _, side in { -1, 1 } do
-		local eye = EditMesh.sphere(0.11, 8)
-		eye:translate(1.32, side * 0.4, MIDDLE + 0.22)
+		local eye = EditMesh.sphere(0.1, 8)
+		eye:translate(EYE[1], side * EYE[2], MIDDLE + EYE[3])
 		eye:emit(mesh)
 	end
 end, true, 0)
--- The mouth: a wide dark grin round the snout across the line where the
--- blue meets the white belly, standing proud of the belly plating, its
--- corners turned up; and the teeth along it, a top row pointing down and a
--- bottom row pointing up between them. It follows the snout's outline,
--- found by stepping out from inside the head until leaving the shape
--- shark() draws.
-local function insideShark(x, y, z) -- z from the middle
-	local p1 = x / 1.95
-	local tail = math.clamp(-p1, 0, 1)
-	local nose = math.clamp(p1, 0, 1)
-	local thick = 1 - 0.6 * tail ^ 1.4 - 0.25 * nose ^ 2
-	local p2 = y / (0.72 * thick)
-	local p3 = (z + 0.12 * nose ^ 2 - 0.15 * tail ^ 2) / (0.85 * thick)
-	return p1 * p1 + p2 * p2 + p3 * p3 < 1
+-- A tooth: a flat triangle standing up from the origin, facing +-y, its
+-- point up; turned to face along its rim.
+local function tooth(wide, tall, facing)
+	local m = Kit.plate({ { -wide / 2, 0 }, { wide / 2, 0 }, { 0, tall } }, 0.03)
+	m:translate(0, -0.015, 0)
+	Kit.turn(m, "z", facing)
+	return m
 end
--- t from -1 (one side) through 0 (the front) to 1; out is how far off the
--- skin.
-local function grinPoint(t, out)
-	local a = t * math.rad(78)
-	local z = -0.16 + 0.08 * t * t
-	local inner, outer = 0, 1.5
-	for _ = 1, 24 do
-		local r = (inner + outer) / 2
-		if insideShark(1.0 + r * math.cos(a), r * math.sin(a), z) then
-			inner = r
-		else
-			outer = r
-		end
-	end
-	local r = inner + out
-	return { 1.0 + r * math.cos(a), r * math.sin(a), MIDDLE + z }
+local function rimFacing(a)
+	local p, q = mouthPoint(a - 1), mouthPoint(a + 1)
+	return math.deg(math.atan2(q[2] - p[2], q[1] - p[1]))
 end
-part("Mouth", nil, { 0.18, 0.06, 0.08 }, function(mesh)
-	local path = {}
-	for k = 0, 24 do
-		table.insert(path, grinPoint(-1 + k / 12, 0.02))
-	end
-	EditMesh.sweep({ { -0.06, -0.1 }, { 0.06, -0.1 }, { 0.06, 0.1 }, { -0.06, 0.1 } }, path):emit(mesh)
-end, 40, 0)
 part("Teeth", nil, { 0.97, 0.97, 0.93 }, function(mesh)
-	for k = -6, 6 do
-		local p = grinPoint(k / 6.5, 0.08)
-		local top = EditMesh.cone(0.055, 0.012, 0.13, 4, 1)
-		Kit.turn(top, "x", 180)
-		top:translate(p[1], p[2], p[3] + 0.09)
-		top:emit(mesh)
-		if k < 6 then
-			local q = grinPoint((k + 0.5) / 6.5, 0.08)
-			local bottom = EditMesh.cone(0.05, 0.012, 0.11, 4, 1)
-			bottom:translate(q[1], q[2], q[3] - 0.09)
-			bottom:emit(mesh)
-		end
+	-- Round the upper rim, hanging from the lip, a second smaller row
+	-- behind; round the jaw's edge, standing up.
+	for k = 1, 15 do
+		local a = -90 + k * 11.25
+		local p = mouthPoint(a)
+		local t = tooth(0.08, 0.17, rimFacing(a))
+		Kit.turn(t, "y", 180)
+		t:translate(p[1] * 0.96 + CORNER.x * 0.04, p[2] * 0.93, p[3] + MIDDLE + 0.03)
+		t:emit(mesh)
+	end
+	for k = 1, 14 do
+		local a = -84.4 + k * 11.25
+		local p = mouthPoint(a)
+		local t = tooth(0.065, 0.13, rimFacing(a))
+		Kit.turn(t, "y", 180)
+		t:translate(p[1] * 0.9 + CORNER.x * 0.1, p[2] * 0.84, MIDDLE + ROOF - 0.005)
+		t:emit(mesh)
+	end
+	for k = 1, 15 do
+		local a = -90 + k * 11.25
+		local p = mouthPoint(a)
+		local t = tooth(0.075, 0.15, rimFacing(a))
+		t:translate(p[1] * 0.98 + CORNER.x * 0.02, p[2] * 0.92, ROOF - 0.02)
+		onJaw(t):emit(mesh)
 	end
 end, 40, 0)
-part("Legs", nil, DARK_STEEL, function(mesh)
-	for _, at in STANDS do
-		local m = EditMesh.cylinder(0.12, MIDDLE - 0.3, 8, 2)
-		m:translate(at[1], at[2], 0.28 + (MIDDLE - 0.3) / 2)
-		m:emit(mesh)
-	end
-end, true, 0.4)
 part("Sneakers", nil, SNEAKER_BLUE, function(mesh)
 	for _, at in STANDS do
 		local shoe = Kit.shoe(0.95, 0.5, 0.36)
@@ -3700,15 +3872,6 @@ part("Soles", nil, { 0.95, 0.95, 0.93 }, function(mesh)
 		sole:emit(mesh)
 	end
 end, 50, RUBBER)
-part("Gills", nil, { 0.15, 0.25, 0.4 }, function(mesh)
-	for _, side in { -1, 1 } do
-		for k = 0, 2 do
-			local slit = EditMesh.capsule(0.025, 0.24, 6)
-			slit:translate(0.88 - k * 0.12, side * (0.6 + k * 0.01), MIDDLE - 0.02)
-			slit:emit(mesh)
-		end
-	end
-end, true, 0)
 part("Laces", nil, { 0.97, 0.97, 0.95 }, function(mesh)
 	for _, at in STANDS do
 		for k = 0, 2 do
