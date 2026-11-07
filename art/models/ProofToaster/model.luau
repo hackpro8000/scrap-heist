@@ -1,4 +1,4 @@
-local CACHE_KEY = "ProofToaster-3b15d8a892532e28"
+local CACHE_KEY = "ProofToaster-4fbdfbb909b74a79"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -2393,6 +2393,7 @@ local function rimCycle(m, edges)
 		vert = nextOf[vert]
 		assert(vert, "EditMesh: those edges aren't one closed loop")
 	until vert == start
+	assert(#cycle == m:count(edges.ids), `EditMesh: those edges make more than one loop ({#cycle} of {m:count(edges.ids)} in the first)`)
 	return cycle
 end
 
@@ -3441,7 +3442,7 @@ part("Shell", nil, SHELL, function(mesh)
 	m:emit(mesh)
 end, nil, 0.2)
 part("Toast", nil, BREAD, function(mesh)
-	local m = EditMesh.roundedBox({ 1.1, 0.12, 0.8 }, 0.05, 2)
+	local m = EditMesh.roundedBox({ 1.1, 0.16, 0.8 }, 0.06, 2)
 	m:translate(0, -0.2, 2.0)
 	m:emit(mesh)
 end, nil, RUBBER)
