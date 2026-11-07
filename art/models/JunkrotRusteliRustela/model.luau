@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotRusteliRustela-b4e041f161608a98"
+local CACHE_KEY = "JunkrotRusteliRustela-98cd95bec6aae657"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -4267,13 +4267,16 @@ local function ribbed(p)
 	local f = 1 + RIB * math.cos(RIBS * math.atan2(p[2], p[3]))
 	return { p[1], p[2] * f, p[3] * f }
 end
--- The cactus: a column rounding in to a skirt between the legs below and
--- a dome above, round in section before the ribs.
+-- The cactus: a column, round in section before the ribs above, its lower
+-- body drawn out front and back down over both legs so they grow out of
+-- it as one piece; a dome on top.
 local CACTUS = Scrap.loft({
 	stations = { -- height, back, front, half width
-		{ 0.95, 0.3, -0.3, 0.3 },
-		{ 1.2, 0.5, -0.5, 0.5 },
-		{ 1.7, 0.62, -0.62, 0.62 },
+		{ 0.9, 0.78, -0.78, 0.3 },
+		{ 1.05, 0.84, -0.84, 0.38 },
+		{ 1.35, 0.84, -0.84, 0.48 },
+		{ 1.75, 0.76, -0.76, 0.58 },
+		{ 2.2, 0.68, -0.68, 0.64 },
 		{ 2.6, 0.66, -0.66, 0.66 },
 		{ 3.2, 0.64, -0.64, 0.64 },
 		{ 3.6, 0.56, -0.56, 0.56 },
@@ -4400,9 +4403,11 @@ part("Ears", nil, DARK, function(mesh)
 	for n, side in { -1, 1 } do
 		Scrap.metalFin(EAR, 0.1, 1.0, { 0.35, 0.7 }, function(m)
 			Kit.turn(m, "x", 180)
-			Kit.turn(m, "x", side * 28)
-			Kit.turn(m, "z", side * 18)
-			return m:translate(HX + 0.15, side * 0.42, HZ + 0.42)
+			Kit.turn(m, "x", side * 12)
+			-- Swung round so the ear's flat face looks forward, a fan either
+			-- side of the face.
+			Kit.turn(m, "z", side * 62)
+			return m:translate(HX + 0.3, side * 0.46, HZ + 0.42)
 		end, n, GREYS):emit(mesh)
 	end
 end, 40, 0.35)
@@ -4501,8 +4506,8 @@ local function bands(cuts)
 end
 local B = {}
 for _, b in bands({
-	{ 1.0, 1.6, 2.4, 2.9, 3.5, 3.85 },
-	{ 1.0, 1.35, 2.05, 2.7, 3.3, 3.85 },
+	{ 0.95, 1.6, 2.4, 2.9, 3.5, 3.85 },
+	{ 0.95, 1.35, 2.05, 2.7, 3.3, 3.85 },
 	{ 1.0, 1.8, 2.25, 3.0, 3.6, 3.85 },
 	{ 1.0, 1.45, 2.15, 2.6, 3.25, 3.85 },
 	{ 1.0, 1.7, 2.5, 3.1, 3.85 },

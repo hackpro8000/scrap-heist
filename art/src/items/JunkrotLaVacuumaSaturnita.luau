@@ -81,36 +81,18 @@ local H = Scrap.loft({
 		{ 0.85, 0.5, -0.46, 0.5 },
 		{ 1.2, 0.5, -0.46, 0.5 },
 		{ 1.45, 0.44, -0.43, 0.44 },
-		{ 1.65, 0.3, -0.4, 0.36 },
-		{ 1.85, 0.16, -0.38, 0.32 },
-		{ 2.0, 0.08, -0.34, 0.3 },
-		{ 2.08, 0.0, -0.3, 0.26 },
-		{ 2.13, -0.1, -0.22, 0.14 },
+		{ 1.65, 0.32, -0.36, 0.36 },
+		{ 1.8, 0.2, -0.3, 0.3 },
+		{ 1.92, 0.08, -0.24, 0.24 },
+		{ 1.98, -0.04, -0.18, 0.15 },
 	},
 	straightFrom = 1.65,
 	sides = 24,
 	steps = 40,
 })
--- Horns out of the skull's top corners, three extrusions each, curving
--- up and out; the muzzle tagged for its own pink skin.
-for _, s in { -1, 1 } do
-	local base = H.mesh:select("face", "facing", { 0, s * 0.7, 1 }, 28):filter(function(p)
-		return p[1] > 0.95 and p[1] < 1.3
-	end)
-	if base:count() > 0 then
-		local top = H.mesh:extrude(base, 0.14, { tag = "horn" })
-		top:scale(0.7)
-		top:move({ 0, s * 0.06, 0.08 })
-		top = H.mesh:extrude(top, 0.14, { tag = "horn" })
-		top:scale(0.7)
-		top:move({ 0.06, s * 0.02, 0.12 })
-		top = H.mesh:extrude(top, 0.1, { tag = "horn" })
-		top:scale(0.45)
-		top:move({ 0.06, -s * 0.02, 0.1 })
-	end
-end
+-- The muzzle tagged for its own pink skin.
 H.mesh:select("face", "where", function(p)
-	return p[1] > 1.74
+	return p[1] > 1.76
 end):tag("muzzle")
 local headPoint, headDir = placement(HEAD_DOWN, 0, { 0, 0, ZC + 0.3 })
 placeLoft(H, headPoint, headDir)
@@ -153,14 +135,27 @@ part("Planet", nil, DARK, function(mesh)
 	P.mesh:copy():emit(mesh)
 end, true, 0.4)
 part("Head", nil, DARK, function(mesh)
-	Scrap.skinPart(H, { drop = { "muzzle", "horn" } }):emit(mesh)
+	Scrap.skinPart(H, { drop = { "muzzle" } }):emit(mesh)
 end, true, 0.3)
 part("Muzzle", nil, { 0.9, 0.62, 0.6 }, function(mesh)
 	Scrap.skinPart(H, { keep = "muzzle" }):emit(mesh)
 end, true, 0.2)
-part("Horns", nil, BARE_METAL, function(mesh)
-	Scrap.skinPart(H, { keep = "horn" }):emit(mesh)
-end, true, 0.3)
+part("Horns", nil, { 0.9, 0.86, 0.74 }, function(mesh)
+	-- Cow horns: out sideways from the top of the head, curving up and a
+	-- little forward to a point, tapering all the way.
+	for _, side in { -1, 1 } do
+		local root = H.on(1.12, side * 42, -0.04)
+		local path = Kit.curve({
+			root,
+			{ root[1] + 0.02, root[2] + side * 0.2, root[3] + 0.04 },
+			{ root[1] + 0.06, root[2] + side * 0.34, root[3] + 0.18 },
+			{ root[1] + 0.1, root[2] + side * 0.36, root[3] + 0.36 },
+		}, 5)
+		Kit.tube(path, function(t)
+			return 0.075 * (1 - 0.85 * t)
+		end, 8):emit(mesh)
+	end
+end, true, 0.2)
 part("Feet", nil, SKIN, function(mesh)
 	for _, f in feet do
 		f.loft.mesh:copy():emit(mesh)
@@ -313,21 +308,44 @@ local headPanels = Scrap.panels(H, {
 		{ 90, 135, { 0.55, 0.85, 1.3, 1.72 } },
 		{ 135, 180, { 0.55, 1.1, 1.72 } },
 	},
+	-- The eyes' cells left bare, so the eyes sit on the head.
+	open = function(band, x0)
+		return band == 2 and x0 > 1.3
+	end,
 	metal = function(band, seg, cell, side)
 		local black = (band == 1 and seg == 2 and side > 0) or (band == 2 and seg == 1 and side < 0) or (band == 3 and seg == 3 and side > 0) or (band == 1 and seg == 1 and side < 0)
 		return if black then { "PATCH", { 0.1, 0.1, 0.11 } } else { "COWWHITE", { 0.95, 0.94, 0.9 } }
 	end,
 })
-local allPanels = {}
+-- Both lofts' plates go through one composite: the planet where it is, the
+-- head's x moved up by 10, so one set of plate and join parts serves both.
+local BOTH = {}
+local function pick(x)
+	if x > 5 then
+		return H, x - 10
+	end
+	return P, x
+end
+function BOTH.skin(x, a)
+	local loft, lx = pick(x)
+	return loft.skin(lx, a)
+end
+function BOTH.normal(x, a)
+	local loft, lx = pick(x)
+	return loft.normal(lx, a)
+end
+function BOTH.on(x, a, lift)
+	local loft, lx = pick(x)
+	return loft.on(lx, a, lift)
+end
+local all = {}
 for _, q in planetPanels do
-	table.insert(allPanels, { loft = P, q = q })
+	table.insert(all, q)
 end
 for _, q in headPanels do
-	table.insert(allPanels, { loft = H, q = q })
+	table.insert(all, { q[1] + 10, q[2] + 10, q[3], q[4], q[5], q[6] })
 end
--- Two lofts' plates: panelParts once per loft, the second with its parts
--- named apart.
-Scrap.panelParts(P, planetPanels, { rust = { CREAM = 0.15, SAND = 0.2, PALETEAL = 0.15, SKYBAND = 0.15 } })
+Scrap.panelParts(BOTH, all, { rust = { CREAM = 0.15, SAND = 0.2, PALETEAL = 0.15, SKYBAND = 0.15, COWWHITE = 0.1, PATCH = 0.2 } })
 -- The ears: black sheet out to the sides, pink inside, behind the horns.
 part("Ears", nil, { 0.1, 0.1, 0.11 }, function(mesh)
 	for _, side in { -1, 1 } do
@@ -357,7 +375,7 @@ end
 Scrap.googlyEyes(cowEyes, 0.12)
 part("Nostrils", nil, { 0.35, 0.15, 0.17 }, function(mesh)
 	for _, side in { -1, 1 } do
-		local o = H.on(2.05, side * 150, 0.0)
+		local o = H.on(1.93, side * 150, 0.0)
 		local pit = EditMesh.sphere(0.05, 8)
 		Kit.size(pit, { 0.6, 1, 0.8 })
 		pit:translate(o[1], o[2], o[3])

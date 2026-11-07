@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotChimneyziniSpannerini-b5b31caac6cee49b"
+local CACHE_KEY = "JunkrotChimneyziniSpannerini-eced0f7edb8db64d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -846,7 +846,9 @@ end
 --                  heights in cuts, each piece its own metal, rivets along
 --                  the seams; place(m) positions a piece; returns the dark
 --                  core to emit; pieces and rivets come out with the panel
---                  parts (Scrap.panelParts)
+--                  parts (Scrap.panelParts); palette: {name, colour}s for
+--                  the pieces (Scrap.BACK_METALS by default; the panel
+--                  parts emit pieces whose metal names they share)
 -- Scrap.panels(loft, spec) -> panels    plates tiling the skin:
 --   spec.bands     { {a0, a1, {x cuts...}}, ... } nominal angle bands with
 --                  their own cuts along x
@@ -3815,7 +3817,8 @@ end
 Scrap.clipBand = clipBand
 
 local finPieces, finRivets = {}, {}
-function Scrap.metalFin(outline, thick, span, cuts, place, first)
+function Scrap.metalFin(outline, thick, span, cuts, place, first, palette)
+	palette = palette or Scrap.BACK_METALS
 	local edges = { -10 }
 	for _, c in cuts do
 		table.insert(edges, c)
@@ -3826,8 +3829,8 @@ function Scrap.metalFin(outline, thick, span, cuts, place, first)
 		local hi = edges[k + 1] - (if k < #edges - 1 then 0.012 else 0)
 		local piece = clipBand(outline, lo, hi)
 		if #piece >= 3 then
-			local metal = Scrap.BACK_METALS[(first + k - 1) % #Scrap.BACK_METALS + 1]
-			table.insert(finPieces, { metal = metal[1], mesh = place(Scrap.fin(piece, thick, span)) })
+			local metal = palette[(first + k - 1) % #palette + 1]
+			table.insert(finPieces, { metal = metal[1], colour = metal[2], mesh = place(Scrap.fin(piece, thick, span)) })
 		end
 	end
 	for _, c in cuts do
@@ -3949,6 +3952,9 @@ function Scrap.panelParts(loft, panels, spec)
 		for _, m in list do
 			metals[m[1]] = metals[m[1]] or m[2]
 		end
+	end
+	for _, piece in finPieces do
+		metals[piece.metal] = metals[piece.metal] or piece.colour
 	end
 	local names = {}
 	for metal in metals do
@@ -4247,15 +4253,17 @@ local function st(x, r, lean)
 end
 local L = Scrap.loft({
 	stations = {
-		st(-4.0, 0.06, 0.3),
-		st(-3.9, 0.3, 0.29),
-		st(-3.72, 0.45, 0.26),
-		st(-3.45, 0.53, 0.19),
-		st(-3.1, 0.53, 0.11),
-		st(-2.75, 0.5, 0.05),
-		st(-2.45, 0.45, 0.01),
-		st(-2.38, 0.41, 0),
-		st(-2.06, 0.41, 0),
+		st(-4.0, 0.05, 0.3),
+		st(-3.96, 0.24, 0.3),
+		st(-3.88, 0.37, 0.29),
+		st(-3.76, 0.47, 0.27),
+		st(-3.58, 0.54, 0.22),
+		st(-3.3, 0.57, 0.15),
+		st(-3.0, 0.56, 0.09),
+		st(-2.72, 0.53, 0.04),
+		st(-2.47, 0.52, 0.01),
+		st(-2.38, 0.53, 0),
+		st(-2.06, 0.55, 0),
 		st(-2.0, 0.58, 0),
 		st(-1.2, 0.6, 0),
 		st(0.0, 0.55, 0),
