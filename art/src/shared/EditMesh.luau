@@ -126,8 +126,16 @@ function EditMesh:addFace(verts, tags)
 		face.tags[self.stamp] = true
 	end
 	self.faces[id] = face
-	for index, vert in verts do
+	-- Inside m:rebuilding, vertices a removeFace dropped come back first.
+	for _, vert in verts do
+		if not self.verts[vert] and self.ghosts and self.ghosts[vert] then
+			self.verts[vert] = self.ghosts[vert]
+			self.vertFaces[vert] = {}
+			self.vertEdges[vert] = {}
+		end
 		assert(self.verts[vert], `EditMesh: face uses missing vertex {vert}`)
+	end
+	for index, vert in verts do
 		self.vertFaces[vert][id] = true
 		local nextVert = verts[index % #verts + 1]
 		self.edgeFaces[addEdge(self, vert, nextVert)][id] = true
