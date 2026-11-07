@@ -1,6 +1,7 @@
 -- Leafblowa Whooshini: a leaf blower in hi-vis orange, a round fan
 -- housing with a long nozzle out one side and a couple of leaves caught in
 -- its draught. 3 studs tall, 4 long.
+-- floats: Leaves
 local FACE = { { -0.75, -0.72, 1.85, 0.25 }, { -0.1, -0.72, 1.9, 0.28 } }
 local FEET = { 1.0, 0.6 }
 local HIVIS = { 1.0, 0.5, 0.08 }

@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotLeafblowaWhooshini-525ccc72b44f56ed"
+local CACHE_KEY = "JunkrotLeafblowaWhooshini-76790d1e3f7ceb18"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -807,6 +807,7 @@ end
 -- Leafblowa Whooshini: a leaf blower in hi-vis orange, a round fan
 -- housing with a long nozzle out one side and a couple of leaves caught in
 -- its draught. 3 studs tall, 4 long.
+-- floats: Leaves
 local FACE = { { -0.75, -0.72, 1.85, 0.25 }, { -0.1, -0.72, 1.9, 0.28 } }
 local FEET = { 1.0, 0.6 }
 local HIVIS = { 1.0, 0.5, 0.08 }

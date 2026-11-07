@@ -26,6 +26,14 @@ upload="${4:-yes}"
 root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "${root}"
 
+# Models that changed since they were last checked must have no floating
+# pieces or broken surfaces (scripts/check-models.sh; CHECK=skip to build
+# anyway).
+if [ "${CHECK:-}" != "skip" ] && ! scripts/check-models.sh >&2; then
+	echo "a changed model failed its check; fix it, or build anyway with CHECK=skip" >&2
+	exit 1
+fi
+
 # A coordinator in this session hands the task to its machines live
 # (tools/coordinator/): no queue branch, no polling for results.
 if python3 tools/coordinator/client.py status > /dev/null 2>&1; then

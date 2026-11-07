@@ -1,6 +1,7 @@
 -- Socketto Sei-Sette: a raccoon whose belly is an open socket set, tail
 -- striped like a cable, juggling a 6 and a 7 cut from number plates. 3.7
 -- studs tall. Our own character.
+-- floats: Numbers
 local FACE = { { -0.28, -0.74, 2.75, 0.2 }, { 0.28, -0.74, 2.8, 0.23 } }
 local FEET = { 0.9, 0.55 }
 local FUR = { 0.5, 0.5, 0.52 }
