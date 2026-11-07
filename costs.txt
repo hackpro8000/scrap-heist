@@ -1,0 +1,20 @@
+slab Approach2	0.227
+slab Approach2 #split	1
+slab Bridge5	1.047
+slab Bridge5 #split	1
+ProofToaster 1 x	0.182
+ProofToaster 1 x #split	1
+ScrapCrate 1 x	0.310
+ScrapCrate 1 x #split	1
+CapsuleSecret 1 x	0.086
+CapsuleSecret 1 x #split	1
+JunkrotCrumboPoppalot 1 x	0.544
+JunkrotCrumboPoppalot 1 x #split	1
+JunkrotMicrondoBippetto 1 x	0.686
+JunkrotMicrondoBippetto 1 x #split	1
+JunkrotGrindoBeanbasher 1 x	0.656
+JunkrotGrindoBeanbasher 1 x #split	1
+JunkrotTrashaleroTrashala 1 x	0.585
+JunkrotTrashaleroTrashala 1 x #split	1
+JunkrotHolofonoShimmerra 1 x	0.524
+JunkrotHolofonoShimmerra 1 x #split	1
