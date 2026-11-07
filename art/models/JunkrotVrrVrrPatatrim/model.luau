@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotVrrVrrPatatrim-293f3bc6b1707bc1"
+local CACHE_KEY = "JunkrotVrrVrrPatatrim-06473d3a2caeca87"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3946,11 +3946,8 @@ function Scrap.panelParts(loft, panels, spec)
 	for _, q in panels do
 		metals[q[5]] = q[6]
 	end
-	for _, list in { Scrap.BACK_METALS, Scrap.BELLY_METALS } do
-		for _, m in list do
-			metals[m[1]] = metals[m[1]] or m[2]
-		end
-	end
+	-- Only metals something is made of: an empty part is an empty mesh,
+	-- and Roblox refuses a whole upload over one.
 	for _, piece in finPieces do
 		metals[piece.metal] = metals[piece.metal] or piece.colour
 	end

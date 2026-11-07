@@ -91,6 +91,12 @@ local function check(name: string): (boolean, string)
 	local pieces = {}
 	for _, part in parts do
 		local mesh = part.mesh
+		-- An empty part uploads as an empty mesh, and Roblox then refuses to
+		-- parse the whole file.
+		if #mesh.faces == 0 then
+			table.insert(problems, `{part.name} is empty`)
+			continue
+		end
 		-- Helper shapes build each side from its own vertices; sides that meet
 		-- at the same positions count as joined, as the engine welds them.
 		local canonical, byPosition = {}, {}
