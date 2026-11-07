@@ -215,6 +215,13 @@ part("BellStrap", nil, { 0.3, 0.33, 0.37 }, function(mesh)
 		return L.on(BELL.x - 0.08 + 0.16 * s, -125 + 250 * t, lift)
 	end, 1, 24, 0.055, 0.03):emit(mesh)
 end, true, 0.5)
+part("BellPost", nil, BARE_METAL, function(mesh)
+	-- The post the dome screws onto, up the bell's axis from the clapper
+	-- housing to the crown.
+	local post = EditMesh.cylinder(0.07, 0.64, 10, 1)
+	post:translate(0, 0, 0.3)
+	onBell(post):emit(mesh)
+end, true, 0.3)
 part("Lever", nil, { 0.1, 0.1, 0.11 }, function(mesh)
 	-- The thumb lever: a flat paddle on its pivot at the housing's left
 	-- side, pointing forward and out, ridged for the thumb.

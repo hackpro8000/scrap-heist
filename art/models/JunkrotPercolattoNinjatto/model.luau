@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotPercolattoNinjatto-17fb4259a6943a12"
+local CACHE_KEY = "JunkrotPercolattoNinjatto-e1342d332631dd50"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -859,7 +859,8 @@ end
 -- Scrap.panelParts(loft, panels, spec)  declares the parts: Panels<Metal>
 --                  (with any metal fin pieces), and the joins, by turns
 --                  rivets, bolts, welds, tape, stitches and clips;
---                  spec.rivetsUpTo: no rivets or bolts beyond this x
+--                  spec.rivetsUpTo: no rivets or bolts beyond this x;
+--                  spec.rust: { [metal] = 0..1 } overrides a metal's rust
 -- Scrap.sneakers(collars, spec)        declares sneaker parts standing on
 --                  the ground, toe +x, each collar's centre at {x, y}
 --   Scrap.SHOE, Scrap.SOLE   the shoe's size and its sole's height
@@ -3688,7 +3689,10 @@ function Scrap.loft(spec)
 		end
 		return 180
 	end
-	function loft.skin(x, a)
+	-- The skin in the loft's own frame. normal() measures on this, not on
+	-- loft.skin, so an item that swaps loft.skin for a placed version can
+	-- place normal()'s answer itself without it being placed twice.
+	local function rawSkin(x, a)
 		local top, bottom, w = loft.station(x)
 		local side = if a < 0 then -1 else 1
 		local r = math.rad(actualAngle(x, math.abs(a)))
@@ -3696,9 +3700,10 @@ function Scrap.loft(spec)
 		local mid = (top + bottom) / 2
 		return { at[1] + x, at[2] + side * math.sin(r) * w, at[3] + mid + c * (if c > 0 then top - mid else mid - bottom) }
 	end
+	loft.skin = rawSkin
 	function loft.normal(x, a)
-		local p = loft.skin(x, a)
-		local px, pa = loft.skin(x + 0.01, a), loft.skin(x, a + 0.5)
+		local p = rawSkin(x, a)
+		local px, pa = rawSkin(x + 0.01, a), rawSkin(x, a + 0.5)
 		local u = { px[1] - p[1], px[2] - p[2], px[3] - p[3] }
 		local v = { pa[1] - p[1], pa[2] - p[2], pa[3] - p[3] }
 		local n = { u[2] * v[3] - u[3] * v[2], u[3] * v[1] - u[1] * v[3], u[1] * v[2] - u[2] * v[1] }
@@ -3740,7 +3745,7 @@ function Scrap.loft(spec)
 		end
 	end
 	m:transform(function(p)
-		return loft.skin(p[1], math.deg(math.atan2(p[2], p[3])))
+		return rawSkin(p[1], math.deg(math.atan2(p[2], p[3])))
 	end)
 	loft.mesh = m
 	loft.x0, loft.x1, loft.at = x0, x1, at
@@ -3825,21 +3830,23 @@ function Scrap.metalFin(outline, thick, span, cuts, place, first)
 		end
 	end
 	for _, c in cuts do
-		local band = clipBand(outline, c - 0.001, c + 0.001)
-		local xs = {}
-		for _, q in band do
-			table.insert(xs, q[1])
-		end
-		table.sort(xs)
-		if #xs >= 2 then
-			local xa, xb = xs[1], xs[#xs]
-			local out = math.clamp(c / span, 0, 1)
-			local half = thick / 2 * math.max(0.12, 1 - 0.85 * out)
-			for _, t in { 0.2, 0.5, 0.8 } do
-				for _, side in { -1, 1 } do
-					for _, dz in { -0.045, 0.045 } do
+		for _, dz in { -0.045, 0.045 } do
+			-- The fin's width at the rivet's own height, not the seam's: it
+			-- may narrow in between.
+			local z = c + dz
+			local band = clipBand(outline, z - 0.001, z + 0.001)
+			local xs = {}
+			for _, q in band do
+				table.insert(xs, q[1])
+			end
+			table.sort(xs)
+			if #xs >= 2 then
+				local xa, xb = xs[1], xs[#xs]
+				local half = thick / 2 * math.max(0.12, 1 - 0.85 * math.clamp(z / span, 0, 1))
+				for _, t in { 0.2, 0.5, 0.8 } do
+					for _, side in { -1, 1 } do
 						local r = EditMesh.sphere(0.02, 6)
-						r:translate(xa + (xb - xa) * t, side * (half + 0.004), c + dz)
+						r:translate(xa + (xb - xa) * t, side * (half + 0.004), z)
 						table.insert(finRivets, place(r))
 					end
 				end
@@ -3960,7 +3967,7 @@ function Scrap.panelParts(loft, panels, spec)
 					piece.mesh:emit(mesh)
 				end
 			end
-		end, 40, if metal == "RUST" then 0.7 elseif metal == "BRASS" or metal == "ENAMEL" then 0.3 else 0.5)
+		end, 40, (spec.rust and spec.rust[metal]) or (if metal == "RUST" then 0.7 elseif metal == "BRASS" or metal == "ENAMEL" then 0.3 else 0.5))
 	end
 
 	local function joinOf(index)
@@ -4477,10 +4484,17 @@ part("Arms", nil, SOOT, function(mesh)
 		hand:emit(mesh)
 	end
 end, true, 0.3)
+-- The cup's base: a dark disc closing its bottom, that the legs are fixed
+-- into.
+part("CupBase", nil, { 0.1, 0.1, 0.11 }, function(mesh)
+	local m = Kit.lathe({ { 0, 0 }, { 0.5, 0 }, { 0.53, 0.04 }, { 0.5, 0.08 }, { 0, 0.08 } }, 24)
+	m:translate(0, 0, BOTTOM - 0.02)
+	m:emit(mesh)
+end, true, 0.3)
 -- Legs: soot sticks down from the cup's base into split-toe boots.
 part("Legs", nil, SOOT, function(mesh)
 	for _, side in { -1, 1 } do
-		Kit.tube({ { side * 0.24, 0, BOTTOM + 0.12 }, { side * 0.27, -0.02, 0.2 } }, 0.05, 8):emit(mesh)
+		Kit.tube({ { side * 0.24, 0, BOTTOM + 0.02 }, { side * 0.25, -0.01, 0.5 }, { side * 0.27, -0.02, 0.2 } }, 0.05, 8):emit(mesh)
 	end
 end, true, 0.3)
 part("Boots", nil, { 0.13, 0.14, 0.2 }, function(mesh)

@@ -1,7 +1,11 @@
 -- lune run tools/modelcheck/pieces <Name>: every connected piece of every part
--- must touch (within GAP) a face of some other part, or stand on the ground.
+-- must reach the ground through a chain of pieces that touch (within GAP).
 -- Stricter than check.luau, which tests whole parts: a part like Rivets
 -- spans the model, so one loose rivet passes there and fails here.
+-- Touching means a vertex of either within GAP of a face of the other, or
+-- some of one's vertices inside the other (closed pieces). Two pieces that
+-- only cross face through face, no vertex near, are not seen: embed ends
+-- (a leg's top inside the body) rather than just passing through.
 local fs = require("@lune/fs")
 local luau = require("@lune/luau")
 local process = require("@lune/process")
@@ -89,39 +93,119 @@ local function pieces(mesh)
 	end
 	return groups
 end
--- Triangles of every part, with bboxes, for the proximity test.
-local tris = {}
+-- Every piece of every part, its triangles with bboxes; then pieces that
+-- touch (a vertex of one within GAP of a triangle of the other) are joined,
+-- and anything not joined, through some chain, to a piece on the ground is
+-- loose. A rivet on a plate on the body counts as attached; so does a ridge
+-- on a lever of its own part.
+local all = {}
 for pi, part in parts do
-	for _, f in part.mesh.faces do
-		for k = 2, #f - 1 do
-			local a, b, c = part.mesh.verts[f[1]], part.mesh.verts[f[k]], part.mesh.verts[f[k + 1]]
-			table.insert(tris, { part = pi, a = a, b = b, c = c,
-				lo = { math.min(a[1], b[1], c[1]), math.min(a[2], b[2], c[2]), math.min(a[3], b[3], c[3]) },
-				hi = { math.max(a[1], b[1], c[1]), math.max(a[2], b[2], c[2]), math.max(a[3], b[3], c[3]) } })
+	for _, g in pieces(part.mesh) do
+		g.part = part.name
+		g.tris = {}
+		for _, f in g.faces do
+			for k = 2, #f - 1 do
+				local a, b, c = part.mesh.verts[f[1]], part.mesh.verts[f[k]], part.mesh.verts[f[k + 1]]
+				table.insert(g.tris, { a = a, b = b, c = c,
+					lo = { math.min(a[1], b[1], c[1]), math.min(a[2], b[2], c[2]), math.min(a[3], b[3], c[3]) },
+					hi = { math.max(a[1], b[1], c[1]), math.max(a[2], b[2], c[2]), math.max(a[3], b[3], c[3]) } })
+			end
+		end
+		table.insert(all, g)
+	end
+end
+local parent = {}
+for i in all do
+	parent[i] = i
+end
+local function find(i)
+	while parent[i] ~= i do
+		parent[i] = parent[parent[i]]
+		i = parent[i]
+	end
+	return i
+end
+local function near(g, h)
+	return g.lo[1] < h.hi[1] + GAP and g.hi[1] > h.lo[1] - GAP and g.lo[2] < h.hi[2] + GAP and g.hi[2] > h.lo[2] - GAP and g.lo[3] < h.hi[3] + GAP and g.hi[3] > h.lo[3] - GAP
+end
+-- Whether a vertex of g lies within GAP of a triangle of h.
+local function reaches(g, h)
+	for _, t in h.tris do
+		if near(t, g) then
+			for _, p in g.verts do
+				if p[1] > t.lo[1] - GAP and p[1] < t.hi[1] + GAP and p[2] > t.lo[2] - GAP and p[2] < t.hi[2] + GAP and p[3] > t.lo[3] - GAP and p[3] < t.hi[3] + GAP then
+					if pointTri(p, t.a, t.b, t.c) < GAP * GAP then
+						return true
+					end
+				end
+			end
+		end
+	end
+	return false
+end
+-- Either way round: a corner of one may sit on a face of the other without
+-- the reverse holding.
+local function touches(g, h)
+	return reaches(g, h) or reaches(h, g)
+end
+-- Whether point p lies inside piece h (a ray up +z crossing its
+-- triangles an odd number of times; h should be closed).
+local function inside(p, h)
+	if p[1] < h.lo[1] or p[1] > h.hi[1] or p[2] < h.lo[2] or p[2] > h.hi[2] or p[3] < h.lo[3] or p[3] > h.hi[3] then
+		return false
+	end
+	local crossings = 0
+	for _, t in h.tris do
+		if p[1] >= t.lo[1] and p[1] <= t.hi[1] and p[2] >= t.lo[2] and p[2] <= t.hi[2] and t.hi[3] >= p[3] then
+			local a, b, c = t.a, t.b, t.c
+			local d = (b[2] - c[2]) * (a[1] - c[1]) + (c[1] - b[1]) * (a[2] - c[2])
+			if math.abs(d) > 1e-12 then
+				local l1 = ((b[2] - c[2]) * (p[1] - c[1]) + (c[1] - b[1]) * (p[2] - c[2])) / d
+				local l2 = ((c[2] - a[2]) * (p[1] - c[1]) + (a[1] - c[1]) * (p[2] - c[2])) / d
+				local l3 = 1 - l1 - l2
+				if l1 >= 0 and l2 >= 0 and l3 >= 0 and l1 * a[3] + l2 * b[3] + l3 * c[3] > p[3] then
+					crossings += 1
+				end
+			end
+		end
+	end
+	return crossings % 2 == 1
+end
+-- A piece reaches into another when a few of its vertices lie inside it.
+-- Sampled evenly over the piece (at most 48 vertices), so a leg's foot
+-- end is tried, not just its top.
+local function within(g, h)
+	local list = {}
+	for _, p in g.verts do
+		table.insert(list, p)
+	end
+	local step = math.max(1, #list // 48)
+	for k = 1, #list, step do
+		if inside(list[k], h) then
+			return true
+		end
+	end
+	return false
+end
+local GROUND = #all + 1
+parent[GROUND] = GROUND
+for i, g in all do
+	if g.lo[3] < GAP then
+		parent[find(i)] = find(GROUND)
+	end
+end
+for i = 1, #all do
+	for j = i + 1, #all do
+		if find(i) ~= find(j) and near(all[i], all[j]) and (touches(all[i], all[j]) or within(all[i], all[j]) or within(all[j], all[i])) then
+			parent[find(i)] = find(j)
 		end
 	end
 end
 local loose = 0
-for pi, part in parts do
-	local n = 0
-	for _, g in pieces(part.mesh) do
-		n += 1
-		local touching = false
-		if g.lo[3] < GAP then touching = true end -- on the ground
-		if not touching then
-			for _, t in tris do
-				if t.part ~= pi and t.lo[1] < g.hi[1] + GAP and t.hi[1] > g.lo[1] - GAP and t.lo[2] < g.hi[2] + GAP and t.hi[2] > g.lo[2] - GAP and t.lo[3] < g.hi[3] + GAP and t.hi[3] > g.lo[3] - GAP then
-					for _, p in g.verts do
-						if pointTri(p, t.a, t.b, t.c) < GAP * GAP then touching = true break end
-					end
-					if touching then break end
-				end
-			end
-		end
-		if not touching then
-			loose += 1
-			print(string.format("LOOSE %s piece at x %.2f..%.2f y %.2f..%.2f z %.2f..%.2f (%d faces)", part.name, g.lo[1], g.hi[1], g.lo[2], g.hi[2], g.lo[3], g.hi[3], #g.faces))
-		end
+for i, g in all do
+	if find(i) ~= find(GROUND) then
+		loose += 1
+		print(string.format("LOOSE %s piece at x %.2f..%.2f y %.2f..%.2f z %.2f..%.2f (%d faces)", g.part, g.lo[1], g.hi[1], g.lo[2], g.hi[2], g.lo[3], g.hi[3], #g.faces))
 	end
 end
 print(`{name}: {#parts} parts, {loose} loose pieces`)

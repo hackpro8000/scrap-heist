@@ -255,10 +255,17 @@ part("Arms", nil, SOOT, function(mesh)
 		hand:emit(mesh)
 	end
 end, true, 0.3)
+-- The cup's base: a dark disc closing its bottom, that the legs are fixed
+-- into.
+part("CupBase", nil, { 0.1, 0.1, 0.11 }, function(mesh)
+	local m = Kit.lathe({ { 0, 0 }, { 0.5, 0 }, { 0.53, 0.04 }, { 0.5, 0.08 }, { 0, 0.08 } }, 24)
+	m:translate(0, 0, BOTTOM - 0.02)
+	m:emit(mesh)
+end, true, 0.3)
 -- Legs: soot sticks down from the cup's base into split-toe boots.
 part("Legs", nil, SOOT, function(mesh)
 	for _, side in { -1, 1 } do
-		Kit.tube({ { side * 0.24, 0, BOTTOM + 0.12 }, { side * 0.27, -0.02, 0.2 } }, 0.05, 8):emit(mesh)
+		Kit.tube({ { side * 0.24, 0, BOTTOM + 0.02 }, { side * 0.25, -0.01, 0.5 }, { side * 0.27, -0.02, 0.2 } }, 0.05, 8):emit(mesh)
 	end
 end, true, 0.3)
 part("Boots", nil, { 0.13, 0.14, 0.2 }, function(mesh)

@@ -13,6 +13,7 @@ local TILT = 22 -- degrees the ring tips, front down
 local LEG_Y = 0.62 -- the legs' spread from the middle
 local DARK = { 0.18, 0.19, 0.21 }
 local TIN = { 0.72, 0.7, 0.66 }
+local SKIN = { 0.88, 0.7, 0.58 } -- the bare feet: pale, warm tin
 
 -- Point and direction maps for a mesh turned about y, then about x, then
 -- moved: the way a loft and all built on it are placed.
@@ -73,7 +74,7 @@ placeLoft(P, placement(-90, 0, { 0, 0, ZC }))
 
 -- The head: a cow's head lofted nose +x, grown from inside the planet,
 -- turned nose down and set high on the planet's front.
-local HEAD_DOWN = 28
+local HEAD_DOWN = 12
 local H = Scrap.loft({
 	stations = { -- x, top, bottom, half width
 		{ 0.5, 0.4, -0.38, 0.4 },
@@ -111,7 +112,7 @@ end
 H.mesh:select("face", "where", function(p)
 	return p[1] > 1.74
 end):tag("muzzle")
-local headPoint, headDir = placement(HEAD_DOWN, 0, { 0, 0, ZC + 0.5 })
+local headPoint, headDir = placement(HEAD_DOWN, 0, { 0, 0, ZC + 0.3 })
 placeLoft(H, headPoint, headDir)
 
 -- The feet: each a loft heel to ball along x, flat-soled, the ankle rising
@@ -151,7 +152,7 @@ end
 part("Planet", nil, DARK, function(mesh)
 	P.mesh:copy():emit(mesh)
 end, true, 0.4)
-part("Head", nil, { 0.86, 0.86, 0.82 }, function(mesh)
+part("Head", nil, DARK, function(mesh)
 	Scrap.skinPart(H, { drop = { "muzzle", "horn" } }):emit(mesh)
 end, true, 0.3)
 part("Muzzle", nil, { 0.9, 0.62, 0.6 }, function(mesh)
@@ -160,12 +161,12 @@ end, true, 0.2)
 part("Horns", nil, BARE_METAL, function(mesh)
 	Scrap.skinPart(H, { keep = "horn" }):emit(mesh)
 end, true, 0.3)
-part("Feet", nil, DARK, function(mesh)
+part("Feet", nil, SKIN, function(mesh)
 	for _, f in feet do
 		f.loft.mesh:copy():emit(mesh)
 	end
 end, true, 0.4)
-part("Toes", nil, TIN, function(mesh)
+part("Toes", nil, SKIN, function(mesh)
 	for _, f in feet do
 		-- Big toe inward, the rest shorter and thinner outward.
 		for k, toe in { { 0.29, 0.1, 0.44 }, { 0.12, 0.085, 0.42 }, { -0.04, 0.078, 0.38 }, { -0.19, 0.07, 0.33 }, { -0.32, 0.065, 0.27 } } do
@@ -232,7 +233,7 @@ local function onRing(m)
 end
 -- Each band: its radii (a row of vertices near the planet's skin, so the
 -- inner band is seen to meet it), its first seam's angle, its metals.
-local RING = { { { 1.17, 1.25, 1.48, 1.72 }, 0, Scrap.BELLY_METALS }, { { 1.78, 2.06, 2.35 }, 15, Scrap.BACK_METALS } }
+local RING = { { { 1.17, 1.25, 1.48, 1.74 }, 0, Scrap.BELLY_METALS }, { { 1.76, 2.06, 2.35 }, 15, Scrap.BACK_METALS } }
 local ringSectors = {}
 for b, band in RING do
 	for k = 0, 11 do
@@ -273,4 +274,94 @@ part("RingRivets", nil, DARK_STEEL, function(mesh)
 		end
 	end
 end, true, 0.4)
+-- The planet's plating: Saturn's stripes, each row of plates its own pale
+-- colour all the way round, the seams staggered row to row.
+local STRIPES = {
+	{ "PALETEAL", { 0.62, 0.78, 0.78 } },
+	{ "CREAM", { 0.93, 0.9, 0.8 } },
+	{ "SAND", { 0.86, 0.78, 0.62 } },
+	{ "CREAM", { 0.93, 0.9, 0.8 } },
+	{ "SKYBAND", { 0.7, 0.82, 0.86 } },
+	{ "CREAM", { 0.93, 0.9, 0.8 } },
+	{ "SAND", { 0.86, 0.78, 0.62 } },
+	{ "CREAM", { 0.93, 0.9, 0.8 } },
+}
+local ROWS = { -1.04, -0.82, -0.55, -0.27, 0.03, 0.33, 0.6, 0.85, 1.04 }
+local function rowOf(x0)
+	for k = 1, #ROWS - 1 do
+		if x0 < ROWS[k + 1] - 0.01 then
+			return k
+		end
+	end
+	return #ROWS - 1
+end
+local planetPanels = Scrap.panels(P, {
+	bands = {
+		{ 0, 30, ROWS }, { 30, 62, ROWS }, { 62, 95, ROWS }, { 95, 125, ROWS }, { 125, 152, ROWS }, { 152, 180, ROWS },
+	},
+	splits = { [5] = 0.5, [17] = 0.45, [29] = 0.55, [41] = 0.5 },
+	metal = function(_, _, _, _, x0)
+		return STRIPES[rowOf(x0)]
+	end,
+})
+-- The cow's head: white plates with a few black patch plates, the
+-- muzzle and horns left to their own parts.
+local headPanels = Scrap.panels(H, {
+	bands = {
+		{ 0, 45, { 0.55, 0.9, 1.25, 1.72 } },
+		{ 45, 90, { 0.55, 1.05, 1.4, 1.72 } },
+		{ 90, 135, { 0.55, 0.85, 1.3, 1.72 } },
+		{ 135, 180, { 0.55, 1.1, 1.72 } },
+	},
+	metal = function(band, seg, cell, side)
+		local black = (band == 1 and seg == 2 and side > 0) or (band == 2 and seg == 1 and side < 0) or (band == 3 and seg == 3 and side > 0) or (band == 1 and seg == 1 and side < 0)
+		return if black then { "PATCH", { 0.1, 0.1, 0.11 } } else { "COWWHITE", { 0.95, 0.94, 0.9 } }
+	end,
+})
+local allPanels = {}
+for _, q in planetPanels do
+	table.insert(allPanels, { loft = P, q = q })
+end
+for _, q in headPanels do
+	table.insert(allPanels, { loft = H, q = q })
+end
+-- Two lofts' plates: panelParts once per loft, the second with its parts
+-- named apart.
+Scrap.panelParts(P, planetPanels, { rust = { CREAM = 0.15, SAND = 0.2, PALETEAL = 0.15, SKYBAND = 0.15 } })
+-- The ears: black sheet out to the sides, pink inside, behind the horns.
+part("Ears", nil, { 0.1, 0.1, 0.11 }, function(mesh)
+	for _, side in { -1, 1 } do
+		local ear = Kit.plate({ { 0, 0 }, { 0.16, 0.05 }, { 0.22, 0.28 }, { 0.12, 0.42 }, { -0.04, 0.3 } }, 0.05)
+		Kit.turn(ear, "x", side * 100)
+		local root = H.on(1.05, side * 95, -0.02)
+		ear:translate(root[1], root[2], root[3])
+		ear:emit(mesh)
+	end
+end, 40, 0.3)
+part("EarInsides", nil, { 0.93, 0.6, 0.62 }, function(mesh)
+	for _, side in { -1, 1 } do
+		local ear = Kit.plate({ { 0.04, 0.06 }, { 0.13, 0.08 }, { 0.17, 0.26 }, { 0.1, 0.34 }, { 0.0, 0.26 } }, 0.02)
+		Kit.turn(ear, "x", side * 100)
+		local root = H.on(1.05, side * 95, -0.02)
+		-- On the ear's front face.
+		ear:translate(root[1] + 0.03, root[2] - side * 0.0, root[3])
+		ear:emit(mesh)
+	end
+end, 40, 0)
+-- Googly eyes on the head's sides, forward of the ears.
+local cowEyes = {}
+for _, side in { -1, 1 } do
+	local p, n = H.normal(1.45, side * 58)
+	table.insert(cowEyes, { p, n })
+end
+Scrap.googlyEyes(cowEyes, 0.12)
+part("Nostrils", nil, { 0.35, 0.15, 0.17 }, function(mesh)
+	for _, side in { -1, 1 } do
+		local o = H.on(2.05, side * 150, 0.0)
+		local pit = EditMesh.sphere(0.05, 8)
+		Kit.size(pit, { 0.6, 1, 0.8 })
+		pit:translate(o[1], o[2], o[3])
+		pit:emit(mesh)
+	end
+end, true, 0)
 finishParts()
