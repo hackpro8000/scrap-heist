@@ -1,17 +1,34 @@
 -- Unit Zero: a perfect chrome sphere hanging in the air inside two thin
--- rings of light, one white eye-dot on its face. 3.6 studs tall. Too
--- perfect; nobody knows who made it.
+-- rings of light, one white eye-dot on its face, over a faint glow on the
+-- ground. 3.6 studs tall. Too perfect; nobody knows who made it.
+-- include: JunkrotKit
+-- floats: Shadow
 part("Sphere", nil, { 0.9, 0.91, 0.93 }, function(mesh)
-	sphere(mesh, 0, 0, 2.2, 1.2, 1.2, 1.2, 14, 24)
+	local m = EditMesh.sphere(1.15, 16)
+	m:smoothSubdivide(1)
+	m:translate(0, 0, 2.2)
+	m:emit(mesh)
 end, true, 0)
 part("Eye", nil, { 1.0, 1.0, 1.0 }, function(mesh)
-	sphere(mesh, 0, -1.16, 2.35, 0.16, 0.06, 0.16, 5, 10)
+	local m = EditMesh.sphere(0.16, 8)
+	Kit.size(m, { 1, 0.4, 1 })
+	m:translate(0, -1.12, 2.35)
+	m:emit(mesh)
 end, true, 0, nil, 2.5)
 part("Rings", nil, { 0.6, 0.95, 1.0 }, function(mesh)
-	ring(mesh, 0, 0, 2.2, 1.55, 1.62, 0.04, "z", 32)
-	ring(mesh, 0, 0, 2.2, 1.72, 1.78, 0.04, "x", 32)
-end, nil, 0, nil, 2.0, true)
+	local a = EditMesh.torus(1.6, 0.035, 48, 6)
+	Kit.turn(a, "x", 12)
+	a:translate(0, 0, 2.2)
+	a:emit(mesh)
+	local b = EditMesh.torus(1.76, 0.035, 48, 6)
+	Kit.turn(b, "y", 78)
+	b:translate(0, 0, 2.2)
+	b:emit(mesh)
+end, true, 0, nil, 2.0, true)
 part("Shadow", nil, { 0.5, 0.8, 1.0 }, function(mesh)
-	ring(mesh, 0, 0, 0.06, 0.5, 0.6, 0.04, "z", 20)
-end, nil, 0, nil, 1.2, true)
+	local m = EditMesh.torus(0.55, 0.05, 24, 6)
+	Kit.size(m, { 1, 1, 0.4 })
+	m:translate(0, 0, 0.05)
+	m:emit(mesh)
+end, true, 0, nil, 1.2, true)
 finishParts()

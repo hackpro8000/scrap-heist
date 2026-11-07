@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotTrashaleroTrashala-0333fe049df41e78"
+local CACHE_KEY = "JunkrotTrashaleroTrashala-a48fe92c8daff3ab"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -804,51 +804,30 @@ local function finishParts()
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
--- Trashalero Trashala: a shark riveted from tin sheet, standing on three
--- pipe legs in sneakers cut from tyre rubber. 3.4 studs tall, 4 long.
--- Rebuilt from scrap, in our own look.
-local FACE = { { 0.9, -0.62, 2.35, 0.2 }, { 1.45, -0.55, 2.3, 0.2 } }
-local FEET = { 1.0, 0.9 }
-local TIN_BLUE = { 0.5, 0.62, 0.72 }
-part("Body", nil, TIN_BLUE, function(mesh)
-	sphere(mesh, 0, 0, 2.1, 1.9, 0.7, 0.8, 8, 16)
-end, true, 0.3)
-part("Belly", nil, { 0.86, 0.87, 0.85 }, function(mesh)
-	sphere(mesh, 0.2, 0, 1.85, 1.5, 0.62, 0.5, 6, 14)
-end, true, 0.25)
-part("Fins", nil, TIN_BLUE, function(mesh)
-	-- Dorsal fin, tail, and one fin a side.
-	plate(mesh, { { -0.5, 2.7 }, { -0.4, 3.5 }, { 0.3, 2.75 } }, 0, 0.08, 0.01)
-	plate(mesh, { { -1.7, 2.1 }, { -2.5, 1.3 }, { -2.2, 2.1 }, { -2.5, 3.0 } }, 0, 0.08, 0.01)
-	for _, side in { -1, 1 } do
-		sphere(mesh, 0.3, side * 0.75, 1.8, 0.4, 0.3, 0.07, 4, 8)
-	end
-end, nil, 0.3)
-part("Teeth", nil, { 0.95, 0.95, 0.9 }, function(mesh)
-	for k = 0, 4 do
-		cylinder(mesh, 1.2 + k * 0.13, -0.3 + k * 0.05, 1.82, 0.06, 0.16, "z", 3)
-	end
-end, nil, 0)
-part("ThirdLeg", nil, DARK_STEEL, function(mesh)
-	cylinder(mesh, -1.0, 0, 0.75, 0.11, 1.3, "z", 8)
-end, nil, 0.4)
-part("Sneakers", nil, { 0.9, 0.2, 0.2 }, function(mesh)
-	box(mesh, -1.0, -0.16, 0, 0.42, 0.72, 0.3)
-	for _, side in { -1, 1 } do
-		box(mesh, side * 0.5, -0.16, 0.22, 0.44, 0.74, 0.1)
-	end
-end, nil, RUBBER)
--- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
--- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
--- far apart its two legs stand and how tall they are (the body starts at
--- that height). It includes this after its own parts.
+-- Trashalero Trashala: Tralalero Tralala riveted from tin sheet. A blue
+-- shark with a white belly, nose forward (+x), standing on three steel pipe
+-- legs in blue sneakers with white soles: two under its chest, one under
+-- its tail end. Its own small black shark eyes, a raked dorsal fin, two
+-- flat side fins, a tall forked tail and a toothy mouth under its snout.
+-- No googly face. 3.4 studs tall, 4 long.
+-- Junkrot Kit: shaping helpers the junkrots share, on top of the edit-mesh
+-- tools (which it brings in). Each helper makes a fresh edit mesh, z up,
+-- front toward -y, centred on the origin unless it says otherwise; every
+-- vertex stays editable afterwards. Include it first: `-- include:
+-- JunkrotKit`.
 --
--- Each piece is one edit mesh shaped from a single starting shape:
--- - an eye is a squashed ball with a lens rim inset into its front;
--- - a pupil is a flat disc lying on the lens, looking a little off to one
---   side, so no two junkrots stare the same way;
--- - a leg is a boot block whose back-middle top face is pulled up into the
---   leg, then smoothed, the sole kept flat by a crease.
+--   Kit.turn(m, axis, degrees)     turn a whole mesh about x, y or z
+--   Kit.size(m, f | {fx, fy, fz})  scale a whole mesh about the origin
+--   Kit.block(sx, sy, sz, round, cuts)  a block with rounded edges
+--   Kit.lathe(profile, sides)      a lathe of {r, z} points, bottom to top
+--   Kit.curve(points, steps)       a smooth path through control points
+--   Kit.tube(path, radius, sides)  a capped round tube along a path;
+--                                  radius may be a function of t (0 to 1)
+--   Kit.plate(outline, thickness)  a slab cut to a convex {x, z} outline,
+--                                  front at y = 0, `thickness` deep in +y
+--   Kit.shoe(long, wide, high)     a shoe, toe toward +x, sole at z = 0
+--   Kit.recess(m, faces, rim, depth)  a panel sunk into faces (or raised,
+--                                  with a negative depth)
 -- Edit Mesh: a mesh that can be edited after it's made, down to every
 -- vertex, edge and face, then handed to the engine as one part
 -- (`m:emit(mesh)` inside a part's build function). Include it with
@@ -3455,63 +3434,234 @@ function EditMesh.coil(radius, wire, turns, pitch, sides, steps)
 	end
 	return EditMesh.sweep(outline, path)
 end
+local Kit = {}
 
--- A disc of radius r and thickness t facing -y, centred on the origin.
-local function faceDisc(r, t, sides)
-	local m = EditMesh.cylinder(r, t, sides, 1)
-	-- A quarter turn about x, z up to -y (a turn, not a swap, so faces
-	-- keep their winding).
+function Kit.turn(m, axis, degrees)
+	local a = math.rad(degrees)
+	local c, s = math.cos(a), math.sin(a)
 	return m:transform(function(p)
-		return { p[1], -p[3], p[2] }
+		local x, y, z = p[1], p[2], p[3]
+		if axis == "x" then
+			return { x, y * c - z * s, y * s + z * c }
+		elseif axis == "y" then
+			return { x * c + z * s, y, -x * s + z * c }
+		end
+		return { x * c - y * s, x * s + y * c, z }
 	end)
 end
 
-part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
-	for _, eye in FACE do
-		local size = eye[4]
-		local m = EditMesh.sphere(size, 12)
-		m:transform(function(p)
-			return { p[1], p[2] * 0.6, p[3] }
-		end)
-		-- The lens: the front faces inset into a ring, the middle sunk a touch.
-		local front = m:select("face", "facing", { 0, -1, 0 }, 40)
-		m:inset(front, size * 0.12, size * 0.04)
-		m:smoothSubdivide(1)
-		m:translate(eye[1], eye[2], eye[3])
-		m:emit(mesh)
+-- Factors must be positive: a mirror would turn the faces inside out.
+function Kit.size(m, f)
+	local fx, fy, fz = f, f, f
+	if type(f) == "table" then
+		fx, fy, fz = f[1], f[2], f[3]
 	end
-end, true, 0)
+	return m:transform(function(p)
+		return { p[1] * fx, p[2] * fy, p[3] * fz }
+	end)
+end
 
-part("Pupils", nil, { 0.05, 0.05, 0.06 }, function(mesh)
-	for index, eye in FACE do
-		local size = eye[4]
-		local drift = (if index % 2 == 0 then 0.25 else -0.15) * size
-		local m = faceDisc(size * 0.42, size * 0.14, 12)
-		m:smoothSubdivide(1)
-		-- Resting on the lens, which sits about 0.55 of the size in front.
-		m:translate(eye[1] + drift, eye[2] - size * 0.56, eye[3] - size * 0.12)
-		m:emit(mesh)
+-- The rounding never reaches half the block's thinnest side: past that the
+-- rounded edges would cross each other.
+function Kit.block(sx, sy, sz, round, cuts)
+	round = math.min(round or 0.08, math.min(sx, sy, sz) / 2 * 0.98)
+	return EditMesh.roundedBox({ sx, sy, sz }, round, 2, cuts)
+end
+
+function Kit.lathe(profile, sides)
+	return EditMesh.spin(profile, sides or 16)
+end
+
+-- Catmull-Rom through the points, `steps` points to each span.
+function Kit.curve(points, steps)
+	steps = steps or 4
+	local out = {}
+	local n = #points
+	for i = 1, n - 1 do
+		local p0, p1, p2, p3 = points[math.max(1, i - 1)], points[i], points[i + 1], points[math.min(n, i + 2)]
+		for s = 0, steps - 1 do
+			local t = s / steps
+			local t2, t3 = t * t, t * t * t
+			local q = {}
+			for a = 1, 3 do
+				q[a] = 0.5
+					* (2 * p1[a] + (p2[a] - p0[a]) * t + (2 * p0[a] - 5 * p1[a] + 4 * p2[a] - p3[a]) * t2 + (3 * p1[a] - p0[a] - 3 * p2[a] + p3[a]) * t3)
+			end
+			table.insert(out, q)
+		end
 	end
-end, true, 0)
+	table.insert(out, { points[n][1], points[n][2], points[n][3] })
+	return out
+end
 
-part("Legs", nil, RUBBER_BLACK, function(mesh)
-	local spread, height = FEET[1], FEET[2]
+function Kit.tube(path, radius, sides)
+	sides = sides or 8
+	local outline = {}
+	for k = 0, sides - 1 do
+		local t = k / sides * 2 * math.pi
+		table.insert(outline, { math.cos(t), math.sin(t) })
+	end
+	local scale = radius
+	if type(radius) ~= "function" then
+		scale = function()
+			return radius
+		end
+	end
+	return EditMesh.sweep(outline, path, { scale = scale })
+end
+
+function Kit.plate(outline, thickness)
+	local m = EditMesh.new()
+	local verts = {}
+	for _, p in outline do
+		table.insert(verts, m:addVertex(p[1], 0, p[2]))
+	end
+	m:addFace(verts)
+	return m:solidify(thickness)
+end
+
+function Kit.shoe(long, wide, high)
+	local hx, hy = long / 2, wide / 2
+	local m = EditMesh.lattice({ -hx, -hx * 0.3, hx * 0.25, hx * 0.7, hx }, { -hy, -hy * 0.4, hy * 0.4, hy }, { 0, high * 0.55, high })
+	-- The toe slopes down toward its tip.
+	m:transform(function(p)
+		local toe = math.clamp((p[1] - hx * 0.25) / (hx * 0.75), 0, 1)
+		return { p[1], p[2], p[3] * (1 - 0.45 * toe) }
+	end)
+	-- A collar up from the heel, for a leg to go into.
+	local heel = m:select("face", "facing", { 0, 0, 1 }, 20):filter(function(p)
+		return p[1] < -hx * 0.3 and math.abs(p[2]) < hy * 0.4
+	end)
+	local collar = m:extrude(heel, high * 0.45)
+	collar:scale(0.85)
+	m:select("edge", "where", function(p)
+		return p[3] < 0.001
+	end):crease(1)
+	m:smoothSubdivide(1)
+	return m
+end
+
+function Kit.recess(m, faces, rim, depth)
+	return m:inset(faces, rim, -depth)
+end
+local TIN_BLUE = { 0.36, 0.55, 0.78 }
+local SNEAKER_BLUE = { 0.16, 0.32, 0.86 }
+local MIDDLE = 2.1 -- the body's middle
+-- Legs stand here: two under the chest, one under the tail end.
+local STANDS = { { 0.65, -0.38 }, { 0.65, 0.38 }, { -0.95, 0 } }
+
+-- The shark, as one mesh: a sphere drawn out along x and tapering to the
+-- tail, its dorsal fin pulled out of it (tagged "fins", so the belly
+-- leaves it blue). The belly is its own underside; the tail and side fins
+-- are plates of tin riveted on (part Fins).
+local function shark()
+	local m = EditMesh.sphere(1, 16)
+	m:transform(function(p)
+		local x = p[1] * 1.95
+		local tail = math.clamp(-x / 1.95, 0, 1)
+		local nose = math.clamp(x / 1.95, 0, 1)
+		local thick = 1 - 0.6 * tail ^ 1.4 - 0.25 * nose ^ 2
+		return { x, p[2] * 0.72 * thick, p[3] * 0.85 * thick - 0.12 * nose ^ 2 + 0.15 * tail ^ 2 }
+	end)
+	-- Faces picked before any extrusion moves things about.
+	local back = m:select("face", "facing", { 0, 0, 1 }, 30):filter(function(p)
+		return p[1] > -0.75 and p[1] < 0.15 and math.abs(p[2]) < 0.25
+	end)
+	local chin = m:select("face", "facing", { 0.4, 0, -1 }, 35):filter(function(p)
+		return p[1] > 1.05 and math.abs(p[2]) < 0.3
+	end)
+	m:tagging("fins", function()
+		-- Dorsal fin, raked back and thin side to side.
+		local fin = back
+		for step, rise in { 0.38, 0.32, 0.24 } do
+			fin = m:extrude(fin, { -0.12 - 0.08 * step, 0, rise })
+			fin:scale({ 0.65, 0.45, 0.65 })
+		end
+	end)
+	-- The mouth: the chin sunk in under the snout.
+	if chin:count() > 0 then
+		local lip = m:inset(chin, 0.05, 0)
+		m:extrude(lip, -0.14)
+	end
+	m:smoothSubdivide(1)
+	m:translate(0, 0, MIDDLE)
+	return m
+end
+local body = shark()
+
+part("Body", nil, TIN_BLUE, function(mesh)
+	body:emit(mesh)
+end, true, 0.35)
+part("Belly", nil, { 0.88, 0.89, 0.86 }, function(mesh)
+	-- The body's underside, fins left out, lifted off a hair and given its
+	-- own thickness.
+	local belly = body:copy()
+	local keep = belly:select("face", "where", function(p)
+		return p[3] < MIDDLE - 0.12 and p[1] > -1.5
+	end):minus(belly:select("face", "tag", "fins"))
+	for _, id in belly:select("face", "all"):minus(keep):list() do
+		belly:removeFace(id)
+	end
+	belly:push(belly:select("vertex", "all"), 0.012)
+	belly:solidify(0.03)
+	belly:emit(mesh)
+end, true, 0.25)
+part("Fins", nil, TIN_BLUE, function(mesh)
+	-- The tail: a tall crescent, its upper lobe sweeping up and back, a
+	-- shorter one below, thin side to side.
+	for _, lobe in {
+		{ { -1.7, 0.05 }, { -1.5, 0.18 }, { -2.15, 0.95 }, { -2.3, 0.88 } },
+		{ { -1.6, 0.1 }, { -1.75, 0.2 }, { -2.15, -0.35 }, { -2.0, -0.42 } },
+	} do
+		local plate = Kit.plate(lobe, 0.08)
+		plate:translate(0, -0.04, MIDDLE)
+		plate:emit(mesh)
+	end
+	-- Side fins: out from the chest and down, swept back.
 	for _, side in { -1, 1 } do
-		-- The boot, toe forward (-y); the leg rises from its back middle.
-		local m = EditMesh.lattice({ -0.24, -0.1, 0.1, 0.24 }, { -0.4, -0.14, 0.06, 0.26, 0.4 }, { 0, 0.26 })
-		local top = m:select("face", "facing", { 0, 0, 1 }, 10):filter(function(p)
-			return math.abs(p[1]) < 0.1 and p[2] > 0.06 and p[2] < 0.26
-		end)
-		-- Ankle, then the leg up into the body.
-		local ankle = m:extrude(top, 0.12)
-		ankle:scale(0.85)
-		m:extrude(ankle, math.max(0.1, height + 0.2 - 0.38))
-		m:select("edge", "where", function(p)
-			return p[3] < 0.01
-		end):crease(1)
-		m:smoothSubdivide(1)
-		m:translate(side * spread / 2, -0.16, 0)
+		local fin = Kit.plate({ { 0, 0 }, { 0.35, 0 }, { -0.15, 0.55 }, { -0.3, 0.5 } }, 0.05)
+		Kit.turn(fin, "x", -side * 120)
+		fin:translate(0.45, side * 0.32, MIDDLE - 0.25)
+		fin:emit(mesh)
+	end
+end, 40, 0.35)
+part("Eyes", nil, { 0.04, 0.04, 0.05 }, function(mesh)
+	for _, side in { -1, 1 } do
+		local eye = EditMesh.sphere(0.11, 8)
+		eye:translate(1.32, side * 0.4, MIDDLE + 0.22)
+		eye:emit(mesh)
+	end
+end, true, 0)
+part("Teeth", nil, { 0.95, 0.95, 0.9 }, function(mesh)
+	-- A row of chunky teeth along each side of the mouth, points down.
+	for _, side in { -1, 1 } do
+		for k = 0, 3 do
+			local tooth = EditMesh.cone(0.075, 0.015, 0.22, 4, 1)
+			Kit.turn(tooth, "x", 180)
+			tooth:translate(1.2 + k * 0.12, side * (0.2 - k * 0.03), MIDDLE - 0.62 + k * 0.05)
+			tooth:emit(mesh)
+		end
+	end
+end, 40, 0)
+part("Legs", nil, DARK_STEEL, function(mesh)
+	for _, at in STANDS do
+		local m = EditMesh.cylinder(0.12, MIDDLE - 0.3, 8, 2)
+		m:translate(at[1], at[2], 0.28 + (MIDDLE - 0.3) / 2)
 		m:emit(mesh)
 	end
-end, nil, RUBBER)
+end, true, 0.4)
+part("Sneakers", nil, SNEAKER_BLUE, function(mesh)
+	for _, at in STANDS do
+		local shoe = Kit.shoe(0.95, 0.5, 0.36)
+		shoe:translate(at[1] + 0.12, at[2], 0.06)
+		shoe:emit(mesh)
+	end
+end, true, RUBBER)
+part("Soles", nil, { 0.95, 0.95, 0.93 }, function(mesh)
+	for _, at in STANDS do
+		local sole = Kit.block(0.98, 0.52, 0.1, 0.04)
+		sole:translate(at[1] + 0.12, at[2], 0.05)
+		sole:emit(mesh)
+	end
+end, 50, RUBBER)
 finishParts()

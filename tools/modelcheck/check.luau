@@ -11,6 +11,7 @@
 	- holes: edges with one face (parts listed on `-- open: A, B` may have them)
 	- fins: edges with more than two faces
 	- flipped faces: neighbours running a shared edge the same way
+	- pieces turned inside out: closed ones whose faces all point inward
 	- for information: faces with more than four corners, and the share of
 	  four-sided faces
 
@@ -175,6 +176,33 @@ local function check(name: string): (boolean, string)
 				end
 			end
 		end
+		-- A closed piece whose faces all point inward has a negative volume
+		-- and would show the camera its inside. (Open pieces have no inside,
+		-- so only a part without holes is judged.)
+		if holes == 0 then
+			local volumes = {}
+			for _, face in mesh.faces do
+				local root = find(face[1])
+				local a: { number } = mesh.verts[face[1]]
+				for k = 2, #face - 1 do
+					local b: { number }, c: { number } = mesh.verts[face[k]], mesh.verts[face[k + 1]]
+					local triple = a[1] * (b[2] * c[3] - b[3] * c[2])
+						- a[2] * (b[1] * c[3] - b[3] * c[1])
+						+ a[3] * (b[1] * c[2] - b[2] * c[1])
+					volumes[root] = (volumes[root] or 0) + triple / 6
+				end
+			end
+			local insideOut = 0
+			for _, volume in volumes do
+				if volume < -1e-6 then
+					insideOut += 1
+				end
+			end
+			if insideOut > 0 then
+				table.insert(problems, `{part.name} has {insideOut} pieces turned inside out`)
+			end
+		end
+
 		local boxes = {}
 		for _, face in mesh.faces do
 			local root = find(face[1])

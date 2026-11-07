@@ -1,20 +1,30 @@
--- Pannetto Patchato: a frying pan standing on its rim, its handle up like
--- a tail and a riveted patch over an old hole, 3.3 studs tall.
-local FACE = { { -0.38, -0.2, 1.75, 0.27 }, { 0.38, -0.2, 1.8, 0.3 } }
+-- Pannetto Patchato: a frying pan standing on its rim with its bottom to
+-- us, flared walls rolled at the lip, its long handle up behind like a
+-- tail with a hanging ring at the end, and a copper patch over an old hole
+-- low on its bottom. 3.3 studs tall.
+-- include: JunkrotKit
+local FACE = { { -0.32, -0.08, 1.95, 0.22 }, { 0.32, -0.08, 1.97, 0.23 } }
 local FEET = { 0.9, 0.55 }
+local MID = 1.65
 part("Pan", nil, { 0.17, 0.17, 0.18 }, function(mesh)
-	cylinder(mesh, 0, 0.1, 1.7, 1.15, 0.16, "y", 20)
-	ring(mesh, 0, -0.06, 1.7, 1.05, 1.22, 0.36, "y", 20)
-end, nil, 0.6)
+	-- Lathed with its bottom down, then turned to face us.
+	local m = Kit.lathe({ { 0, 0 }, { 0.82, 0 }, { 0.9, 0.04 }, { 1.08, 0.36 }, { 1.12, 0.4 }, { 1.06, 0.42 }, { 0.88, 0.1 }, { 0, 0.07 } }, 24)
+	Kit.turn(m, "x", -90)
+	m:translate(0, 0, MID)
+	m:emit(mesh)
+end, 40, 0.6)
 part("Handle", nil, { 0.17, 0.17, 0.18 }, function(mesh)
-	tube(mesh, { { 0.8, 0, 2.5 }, { 1.4, 0, 3.1 }, { 2.0, 0, 3.35 } }, 0.14, 8)
-	ring(mesh, 2.1, 0, 3.4, 0.08, 0.2, 0.1, "y", 10)
+	local path = Kit.curve({ { 0, 0.32, MID + 1.0 }, { 0, 0.62, MID + 1.42 }, { 0, 1.05, MID + 1.72 } }, 4)
+	Kit.tube(path, 0.08, 8):emit(mesh)
+	local ring = EditMesh.torus(0.12, 0.035, 12, 6)
+	Kit.turn(ring, "y", 90)
+	ring:translate(0, 1.18, MID + 1.8)
+	ring:emit(mesh)
 end, true, 0.5)
 part("Patch", nil, COPPER, function(mesh)
-	box(mesh, 0.35, -0.02, 0.95, 0.7, 0.06, 0.55)
-	for _, x in { 0.1, 0.6 } do
-		bolt(mesh, x, -0.06, 1.05, "y", 0.05)
-		bolt(mesh, x, -0.06, 1.4, "y", 0.05)
-	end
-end, nil, 0.6)
+	local m = Kit.block(0.45, 0.04, 0.35, 0.03)
+	Kit.turn(m, "y", 12)
+	m:translate(0.32, -0.01, MID - 0.5)
+	m:emit(mesh)
+end, 50, 0.6)
 -- include: JunkrotFace

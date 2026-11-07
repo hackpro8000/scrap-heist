@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotPressurwashoSprizzo-d95c04831ee3dd09"
+local CACHE_KEY = "JunkrotPressurwashoSprizzo-6fdb5165de336ff8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -804,44 +804,29 @@ local function finishParts()
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
--- Pressurwasho Sprizzo: an upright pressure washer in bright yellow on two
--- wheels, its black hose coiled on a hook and the lance held up like a
--- spear. 3.9 studs tall.
-local FACE = { { -0.38, -0.72, 2.3, 0.25 }, { 0.38, -0.72, 2.35, 0.28 } }
-local FEET = { 0.9, 0.45 }
-local WASH_YELLOW = { 1.0, 0.84, 0.1 }
-part("Body", nil, WASH_YELLOW, function(mesh)
-	box(mesh, 0, 0, 0.6, 1.7, 1.3, 2.4)
-	cylinder(mesh, 0, 0, 3.0, 0.65, 1.7, "x", 14)
-end, nil, 0.03)
-part("Wheels", nil, RUBBER_BLACK, function(mesh)
-	for _, x in { -1.0, 1.0 } do
-		cylinder(mesh, x, 0.5, 0.95, 0.55, 0.3, "x", 14)
-	end
-end, nil, RUBBER)
-part("Hose", nil, { 0.1, 0.1, 0.11 }, function(mesh)
-	for k = 0, 2 do
-		ring(mesh, 0.9 + k * 0.08, -0.1, 2.0, 0.42, 0.6, 0.1, "x", 14)
-	end
-end, nil, RUBBER)
-part("Lance", nil, BARE_METAL, function(mesh)
-	strut(mesh, -0.95, -0.2, 1.4, -1.25, -0.4, 3.9, 0.09)
-	box(mesh, -0.95, -0.2, 1.1, 0.24, 0.3, 0.6)
-end, nil, 0.03)
-part("Badge", nil, { 0.1, 0.1, 0.11 }, function(mesh)
-	box(mesh, 0, -0.66, 1.0, 1.0, 0.03, 0.5)
-end, nil, 0)
--- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
--- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
--- far apart its two legs stand and how tall they are (the body starts at
--- that height). It includes this after its own parts.
+-- Pressurwasho Sprizzo: an upright pressure washer in bright yellow, a
+-- rounded body tapering to its top with a carry handle over it, two black
+-- wheels at its heels, the hose coiled on a hook on its side, the spray
+-- gun and lance stood up beside it like a spear and a black badge on its
+-- front. 3.7 studs tall.
+-- Junkrot Kit: shaping helpers the junkrots share, on top of the edit-mesh
+-- tools (which it brings in). Each helper makes a fresh edit mesh, z up,
+-- front toward -y, centred on the origin unless it says otherwise; every
+-- vertex stays editable afterwards. Include it first: `-- include:
+-- JunkrotKit`.
 --
--- Each piece is one edit mesh shaped from a single starting shape:
--- - an eye is a squashed ball with a lens rim inset into its front;
--- - a pupil is a flat disc lying on the lens, looking a little off to one
---   side, so no two junkrots stare the same way;
--- - a leg is a boot block whose back-middle top face is pulled up into the
---   leg, then smoothed, the sole kept flat by a crease.
+--   Kit.turn(m, axis, degrees)     turn a whole mesh about x, y or z
+--   Kit.size(m, f | {fx, fy, fz})  scale a whole mesh about the origin
+--   Kit.block(sx, sy, sz, round, cuts)  a block with rounded edges
+--   Kit.lathe(profile, sides)      a lathe of {r, z} points, bottom to top
+--   Kit.curve(points, steps)       a smooth path through control points
+--   Kit.tube(path, radius, sides)  a capped round tube along a path;
+--                                  radius may be a function of t (0 to 1)
+--   Kit.plate(outline, thickness)  a slab cut to a convex {x, z} outline,
+--                                  front at y = 0, `thickness` deep in +y
+--   Kit.shoe(long, wide, high)     a shoe, toe toward +x, sole at z = 0
+--   Kit.recess(m, faces, rim, depth)  a panel sunk into faces (or raised,
+--                                  with a negative depth)
 -- Edit Mesh: a mesh that can be edited after it's made, down to every
 -- vertex, edge and face, then handed to the engine as one part
 -- (`m:emit(mesh)` inside a part's build function). Include it with
@@ -3448,6 +3433,172 @@ function EditMesh.coil(radius, wire, turns, pitch, sides, steps)
 	end
 	return EditMesh.sweep(outline, path)
 end
+local Kit = {}
+
+function Kit.turn(m, axis, degrees)
+	local a = math.rad(degrees)
+	local c, s = math.cos(a), math.sin(a)
+	return m:transform(function(p)
+		local x, y, z = p[1], p[2], p[3]
+		if axis == "x" then
+			return { x, y * c - z * s, y * s + z * c }
+		elseif axis == "y" then
+			return { x * c + z * s, y, -x * s + z * c }
+		end
+		return { x * c - y * s, x * s + y * c, z }
+	end)
+end
+
+-- Factors must be positive: a mirror would turn the faces inside out.
+function Kit.size(m, f)
+	local fx, fy, fz = f, f, f
+	if type(f) == "table" then
+		fx, fy, fz = f[1], f[2], f[3]
+	end
+	return m:transform(function(p)
+		return { p[1] * fx, p[2] * fy, p[3] * fz }
+	end)
+end
+
+-- The rounding never reaches half the block's thinnest side: past that the
+-- rounded edges would cross each other.
+function Kit.block(sx, sy, sz, round, cuts)
+	round = math.min(round or 0.08, math.min(sx, sy, sz) / 2 * 0.98)
+	return EditMesh.roundedBox({ sx, sy, sz }, round, 2, cuts)
+end
+
+function Kit.lathe(profile, sides)
+	return EditMesh.spin(profile, sides or 16)
+end
+
+-- Catmull-Rom through the points, `steps` points to each span.
+function Kit.curve(points, steps)
+	steps = steps or 4
+	local out = {}
+	local n = #points
+	for i = 1, n - 1 do
+		local p0, p1, p2, p3 = points[math.max(1, i - 1)], points[i], points[i + 1], points[math.min(n, i + 2)]
+		for s = 0, steps - 1 do
+			local t = s / steps
+			local t2, t3 = t * t, t * t * t
+			local q = {}
+			for a = 1, 3 do
+				q[a] = 0.5
+					* (2 * p1[a] + (p2[a] - p0[a]) * t + (2 * p0[a] - 5 * p1[a] + 4 * p2[a] - p3[a]) * t2 + (3 * p1[a] - p0[a] - 3 * p2[a] + p3[a]) * t3)
+			end
+			table.insert(out, q)
+		end
+	end
+	table.insert(out, { points[n][1], points[n][2], points[n][3] })
+	return out
+end
+
+function Kit.tube(path, radius, sides)
+	sides = sides or 8
+	local outline = {}
+	for k = 0, sides - 1 do
+		local t = k / sides * 2 * math.pi
+		table.insert(outline, { math.cos(t), math.sin(t) })
+	end
+	local scale = radius
+	if type(radius) ~= "function" then
+		scale = function()
+			return radius
+		end
+	end
+	return EditMesh.sweep(outline, path, { scale = scale })
+end
+
+function Kit.plate(outline, thickness)
+	local m = EditMesh.new()
+	local verts = {}
+	for _, p in outline do
+		table.insert(verts, m:addVertex(p[1], 0, p[2]))
+	end
+	m:addFace(verts)
+	return m:solidify(thickness)
+end
+
+function Kit.shoe(long, wide, high)
+	local hx, hy = long / 2, wide / 2
+	local m = EditMesh.lattice({ -hx, -hx * 0.3, hx * 0.25, hx * 0.7, hx }, { -hy, -hy * 0.4, hy * 0.4, hy }, { 0, high * 0.55, high })
+	-- The toe slopes down toward its tip.
+	m:transform(function(p)
+		local toe = math.clamp((p[1] - hx * 0.25) / (hx * 0.75), 0, 1)
+		return { p[1], p[2], p[3] * (1 - 0.45 * toe) }
+	end)
+	-- A collar up from the heel, for a leg to go into.
+	local heel = m:select("face", "facing", { 0, 0, 1 }, 20):filter(function(p)
+		return p[1] < -hx * 0.3 and math.abs(p[2]) < hy * 0.4
+	end)
+	local collar = m:extrude(heel, high * 0.45)
+	collar:scale(0.85)
+	m:select("edge", "where", function(p)
+		return p[3] < 0.001
+	end):crease(1)
+	m:smoothSubdivide(1)
+	return m
+end
+
+function Kit.recess(m, faces, rim, depth)
+	return m:inset(faces, rim, -depth)
+end
+local FACE = { { -0.3, -0.53, 2.55, 0.2 }, { 0.3, -0.53, 2.57, 0.2 } }
+local FEET = { 0.9, 0.45 }
+local WASH_YELLOW = { 1.0, 0.84, 0.1 }
+local BASE = 0.55
+local TALL = 2.4
+part("Body", nil, WASH_YELLOW, function(mesh)
+	local m = Kit.block(1.3, 1.05, TALL, 0.28)
+	m:taper("z", 1, 0.86)
+	m:translate(0, 0, BASE + TALL / 2)
+	m:emit(mesh)
+	local handle = Kit.curve({ { -0.4, 0.2, BASE + TALL - 0.05 }, { -0.35, 0.25, BASE + TALL + 0.35 }, { 0.35, 0.25, BASE + TALL + 0.35 }, { 0.4, 0.2, BASE + TALL - 0.05 } }, 3)
+	Kit.tube(handle, 0.07, 8):emit(mesh)
+	local hook = Kit.block(0.2, 0.12, 0.1, 0.03)
+	hook:translate(0.72, 0, BASE + 1.62)
+	hook:emit(mesh)
+end, 50, 0.03)
+part("Wheels", nil, RUBBER_BLACK, function(mesh)
+	for _, side in { -1, 1 } do
+		local m = Kit.lathe({ { 0, -0.1 }, { 0.3, -0.1 }, { 0.38, -0.06 }, { 0.4, 0 }, { 0.38, 0.06 }, { 0.3, 0.1 }, { 0, 0.1 } }, 16)
+		Kit.turn(m, "y", 90)
+		m:translate(side * 0.75, 0.32, 0.4)
+		m:emit(mesh)
+	end
+end, true, RUBBER)
+part("Hose", nil, { 0.1, 0.1, 0.11 }, function(mesh)
+	local coil = EditMesh.coil(0.35, 0.05, 3, 0.11, 8, 24)
+	Kit.turn(coil, "y", 90)
+	coil:translate(0.74, 0, BASE + 1.3)
+	coil:emit(mesh)
+	Kit.tube(Kit.curve({ { -0.55, -0.4, BASE + 0.5 }, { -0.85, -0.45, BASE + 0.6 }, { -0.85, -0.3, 1.45 } }, 3), 0.05, 6):emit(mesh)
+end, true, RUBBER)
+part("Lance", nil, BARE_METAL, function(mesh)
+	local grip = Kit.block(0.12, 0.2, 0.35, 0.04)
+	grip:translate(-0.85, -0.3, 1.55)
+	grip:emit(mesh)
+	Kit.tube({ { -0.85, -0.32, 1.7 }, { -0.9, -0.35, 3.55 } }, 0.04, 6):emit(mesh)
+	local nozzle = EditMesh.cone(0.06, 0.03, 0.15, 8, 1)
+	nozzle:translate(-0.9, -0.35, 3.62)
+	nozzle:emit(mesh)
+end, true, 0.03)
+part("Badge", nil, { 0.1, 0.1, 0.11 }, function(mesh)
+	local m = Kit.block(0.5, 0.04, 0.3, 0.05)
+	m:translate(0, -0.52, BASE + 1.2)
+	m:emit(mesh)
+end, 50, 0)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Each piece is one edit mesh shaped from a single starting shape:
+-- - an eye is a squashed ball with a lens rim inset into its front;
+-- - a pupil is a flat disc lying on the lens, looking a little off to one
+--   side, so no two junkrots stare the same way;
+-- - a leg is a boot block whose back-middle top face is pulled up into the
+--   leg, then smoothed, the sole kept flat by a crease.
 
 -- A disc of radius r and thickness t facing -y, centred on the origin.
 local function faceDisc(r, t, sides)
@@ -3466,7 +3617,8 @@ part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
 		m:transform(function(p)
 			return { p[1], p[2] * 0.6, p[3] }
 		end)
-		-- The lens: the front faces inset into a ring, the middle sunk a touch.
+		-- The lens: the front faces inset into a ring, the middle raised a
+		-- touch, a googly eye's clear dome.
 		local front = m:select("face", "facing", { 0, -1, 0 }, 40)
 		m:inset(front, size * 0.12, size * 0.04)
 		m:smoothSubdivide(1)

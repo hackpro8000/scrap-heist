@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotKnifeblockSlicetta-fb40248ec49dfdb3"
+local CACHE_KEY = "JunkrotKnifeblockSlicetta-dd97ebff048ecc0f"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -804,38 +804,28 @@ local function finishParts()
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
--- Knifeblock Slicetta: a walnut knife block raked back at an angle, five
--- steel-capped handles sticking out of its top like a quiff. 3.5 studs
+-- Knifeblock Slicetta: a walnut knife block raked back, five dark slots
+-- across its top with the knives' black handles standing out of them like
+-- a quiff, fanned a little, each with a steel bolster and cap. 3.5 studs
 -- tall.
-local FACE = { { -0.35, -0.75, 1.9, 0.24 }, { 0.35, -0.75, 1.95, 0.27 } }
-local FEET = { 0.9, 0.5 }
-part("Block", nil, { 0.36, 0.22, 0.13 }, function(mesh)
-	for k = 0, 5 do
-		box(mesh, 0, -0.15 + k * 0.08, 0.6 + k * 0.38, 1.6, 1.2, 0.4)
-	end
-end, nil, 0.03)
-part("Handles", nil, { 0.1, 0.1, 0.11 }, function(mesh)
-	for k = -2, 2 do
-		strut(mesh, k * 0.3, 0.35, 2.85, k * 0.3, 0.6 + math.abs(k) * 0.05, 3.7 - math.abs(k) * 0.15, 0.2)
-	end
-end, nil, 0)
-part("Caps", nil, BARE_METAL, function(mesh)
-	for k = -2, 2 do
-		sphere(mesh, k * 0.3, 0.62 + math.abs(k) * 0.05, 3.76 - math.abs(k) * 0.15, 0.13, 0.13, 0.1, 4, 8)
-	end
-	box(mesh, 0, -0.78, 1.2, 0.5, 0.03, 0.2)
-end, nil, 0.03)
--- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
--- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
--- far apart its two legs stand and how tall they are (the body starts at
--- that height). It includes this after its own parts.
+-- Junkrot Kit: shaping helpers the junkrots share, on top of the edit-mesh
+-- tools (which it brings in). Each helper makes a fresh edit mesh, z up,
+-- front toward -y, centred on the origin unless it says otherwise; every
+-- vertex stays editable afterwards. Include it first: `-- include:
+-- JunkrotKit`.
 --
--- Each piece is one edit mesh shaped from a single starting shape:
--- - an eye is a squashed ball with a lens rim inset into its front;
--- - a pupil is a flat disc lying on the lens, looking a little off to one
---   side, so no two junkrots stare the same way;
--- - a leg is a boot block whose back-middle top face is pulled up into the
---   leg, then smoothed, the sole kept flat by a crease.
+--   Kit.turn(m, axis, degrees)     turn a whole mesh about x, y or z
+--   Kit.size(m, f | {fx, fy, fz})  scale a whole mesh about the origin
+--   Kit.block(sx, sy, sz, round, cuts)  a block with rounded edges
+--   Kit.lathe(profile, sides)      a lathe of {r, z} points, bottom to top
+--   Kit.curve(points, steps)       a smooth path through control points
+--   Kit.tube(path, radius, sides)  a capped round tube along a path;
+--                                  radius may be a function of t (0 to 1)
+--   Kit.plate(outline, thickness)  a slab cut to a convex {x, z} outline,
+--                                  front at y = 0, `thickness` deep in +y
+--   Kit.shoe(long, wide, high)     a shoe, toe toward +x, sole at z = 0
+--   Kit.recess(m, faces, rim, depth)  a panel sunk into faces (or raised,
+--                                  with a negative depth)
 -- Edit Mesh: a mesh that can be edited after it's made, down to every
 -- vertex, edge and face, then handed to the engine as one part
 -- (`m:emit(mesh)` inside a part's build function). Include it with
@@ -3442,6 +3432,172 @@ function EditMesh.coil(radius, wire, turns, pitch, sides, steps)
 	end
 	return EditMesh.sweep(outline, path)
 end
+local Kit = {}
+
+function Kit.turn(m, axis, degrees)
+	local a = math.rad(degrees)
+	local c, s = math.cos(a), math.sin(a)
+	return m:transform(function(p)
+		local x, y, z = p[1], p[2], p[3]
+		if axis == "x" then
+			return { x, y * c - z * s, y * s + z * c }
+		elseif axis == "y" then
+			return { x * c + z * s, y, -x * s + z * c }
+		end
+		return { x * c - y * s, x * s + y * c, z }
+	end)
+end
+
+-- Factors must be positive: a mirror would turn the faces inside out.
+function Kit.size(m, f)
+	local fx, fy, fz = f, f, f
+	if type(f) == "table" then
+		fx, fy, fz = f[1], f[2], f[3]
+	end
+	return m:transform(function(p)
+		return { p[1] * fx, p[2] * fy, p[3] * fz }
+	end)
+end
+
+-- The rounding never reaches half the block's thinnest side: past that the
+-- rounded edges would cross each other.
+function Kit.block(sx, sy, sz, round, cuts)
+	round = math.min(round or 0.08, math.min(sx, sy, sz) / 2 * 0.98)
+	return EditMesh.roundedBox({ sx, sy, sz }, round, 2, cuts)
+end
+
+function Kit.lathe(profile, sides)
+	return EditMesh.spin(profile, sides or 16)
+end
+
+-- Catmull-Rom through the points, `steps` points to each span.
+function Kit.curve(points, steps)
+	steps = steps or 4
+	local out = {}
+	local n = #points
+	for i = 1, n - 1 do
+		local p0, p1, p2, p3 = points[math.max(1, i - 1)], points[i], points[i + 1], points[math.min(n, i + 2)]
+		for s = 0, steps - 1 do
+			local t = s / steps
+			local t2, t3 = t * t, t * t * t
+			local q = {}
+			for a = 1, 3 do
+				q[a] = 0.5
+					* (2 * p1[a] + (p2[a] - p0[a]) * t + (2 * p0[a] - 5 * p1[a] + 4 * p2[a] - p3[a]) * t2 + (3 * p1[a] - p0[a] - 3 * p2[a] + p3[a]) * t3)
+			end
+			table.insert(out, q)
+		end
+	end
+	table.insert(out, { points[n][1], points[n][2], points[n][3] })
+	return out
+end
+
+function Kit.tube(path, radius, sides)
+	sides = sides or 8
+	local outline = {}
+	for k = 0, sides - 1 do
+		local t = k / sides * 2 * math.pi
+		table.insert(outline, { math.cos(t), math.sin(t) })
+	end
+	local scale = radius
+	if type(radius) ~= "function" then
+		scale = function()
+			return radius
+		end
+	end
+	return EditMesh.sweep(outline, path, { scale = scale })
+end
+
+function Kit.plate(outline, thickness)
+	local m = EditMesh.new()
+	local verts = {}
+	for _, p in outline do
+		table.insert(verts, m:addVertex(p[1], 0, p[2]))
+	end
+	m:addFace(verts)
+	return m:solidify(thickness)
+end
+
+function Kit.shoe(long, wide, high)
+	local hx, hy = long / 2, wide / 2
+	local m = EditMesh.lattice({ -hx, -hx * 0.3, hx * 0.25, hx * 0.7, hx }, { -hy, -hy * 0.4, hy * 0.4, hy }, { 0, high * 0.55, high })
+	-- The toe slopes down toward its tip.
+	m:transform(function(p)
+		local toe = math.clamp((p[1] - hx * 0.25) / (hx * 0.75), 0, 1)
+		return { p[1], p[2], p[3] * (1 - 0.45 * toe) }
+	end)
+	-- A collar up from the heel, for a leg to go into.
+	local heel = m:select("face", "facing", { 0, 0, 1 }, 20):filter(function(p)
+		return p[1] < -hx * 0.3 and math.abs(p[2]) < hy * 0.4
+	end)
+	local collar = m:extrude(heel, high * 0.45)
+	collar:scale(0.85)
+	m:select("edge", "where", function(p)
+		return p[3] < 0.001
+	end):crease(1)
+	m:smoothSubdivide(1)
+	return m
+end
+
+function Kit.recess(m, faces, rim, depth)
+	return m:inset(faces, rim, -depth)
+end
+local FEET = { 0.9, 0.5 }
+local BASE = 0.55
+local TALL = 2.3
+local RAKE = 0.38 -- how far back the block leans per stud up
+local function frontY(z)
+	return -0.45 + (z - BASE) * RAKE
+end
+local FACE = { { -0.26, frontY(1.75) - 0.07, 1.75, 0.2 }, { 0.26, frontY(1.77) - 0.07, 1.77, 0.2 } }
+-- Leans a piece built upright back with the block.
+local function rake(m)
+	m:transform(function(p)
+		return { p[1], p[2] + (p[3] - BASE) * RAKE, p[3] }
+	end)
+	return m
+end
+local KNIVES = { -0.4, -0.2, 0, 0.2, 0.4 }
+part("Block", nil, { 0.36, 0.22, 0.13 }, function(mesh)
+	local m = Kit.block(1.2, 0.9, TALL, 0.1)
+	m:translate(0, 0, BASE + TALL / 2)
+	rake(m):emit(mesh)
+end, 50, 0.03)
+part("Handles", nil, { 0.1, 0.1, 0.11 }, function(mesh)
+	for index, x in KNIVES do
+		local slot = Kit.block(0.16, 0.36, 0.03, 0.01)
+		slot:translate(x, (index % 2) * 0.12 - 0.06, BASE + TALL)
+		rake(slot):emit(mesh)
+		local handle = Kit.block(0.13, 0.28, 0.7, 0.06)
+		Kit.turn(handle, "y", x * 25)
+		handle:translate(x, (index % 2) * 0.12 - 0.06, BASE + TALL + 0.4)
+		rake(handle):emit(mesh)
+	end
+end, 50, 0)
+part("Caps", nil, BARE_METAL, function(mesh)
+	-- A bolster at the foot of each handle and a cap on its end, turned
+	-- with the handle about its middle.
+	for index, x in KNIVES do
+		for _, along in { -0.34, 0.36 } do
+			local cap = Kit.block(0.14, 0.3, 0.1, 0.04)
+			cap:translate(0, 0, along)
+			Kit.turn(cap, "y", x * 25)
+			cap:translate(x, (index % 2) * 0.12 - 0.06, BASE + TALL + 0.4)
+			rake(cap):emit(mesh)
+		end
+	end
+end, 50, 0.03)
+-- Junkrot Face: the bits every junkrot shares. An item sets FACE, a list of
+-- eyes { x, y, z, size } on its front (-y), and FEET { spread, height }: how
+-- far apart its two legs stand and how tall they are (the body starts at
+-- that height). It includes this after its own parts.
+--
+-- Each piece is one edit mesh shaped from a single starting shape:
+-- - an eye is a squashed ball with a lens rim inset into its front;
+-- - a pupil is a flat disc lying on the lens, looking a little off to one
+--   side, so no two junkrots stare the same way;
+-- - a leg is a boot block whose back-middle top face is pulled up into the
+--   leg, then smoothed, the sole kept flat by a crease.
 
 -- A disc of radius r and thickness t facing -y, centred on the origin.
 local function faceDisc(r, t, sides)
@@ -3460,7 +3616,8 @@ part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
 		m:transform(function(p)
 			return { p[1], p[2] * 0.6, p[3] }
 		end)
-		-- The lens: the front faces inset into a ring, the middle sunk a touch.
+		-- The lens: the front faces inset into a ring, the middle raised a
+		-- touch, a googly eye's clear dome.
 		local front = m:select("face", "facing", { 0, -1, 0 }, 40)
 		m:inset(front, size * 0.12, size * 0.04)
 		m:smoothSubdivide(1)

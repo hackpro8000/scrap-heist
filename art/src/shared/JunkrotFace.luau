@@ -30,7 +30,8 @@ part("Eyes", nil, { 0.96, 0.96, 0.92 }, function(mesh)
 		m:transform(function(p)
 			return { p[1], p[2] * 0.6, p[3] }
 		end)
-		-- The lens: the front faces inset into a ring, the middle sunk a touch.
+		-- The lens: the front faces inset into a ring, the middle raised a
+		-- touch, a googly eye's clear dome.
 		local front = m:select("face", "facing", { 0, -1, 0 }, 40)
 		m:inset(front, size * 0.12, size * 0.04)
 		m:smoothSubdivide(1)
