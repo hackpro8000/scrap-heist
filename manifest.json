@@ -1,0 +1,401 @@
+{
+	"assets": [
+		{
+			"id": "b19e8ffcac301460",
+			"key": "HubSectionB-afc962b93a377a4a 1 x part 4/5",
+			"piece": 1,
+			"label": "HubSection3",
+			"turn": 0.0,
+			"bytes": 5921852,
+			"parts": 20
+		},
+		{
+			"id": "4ae01bd8cb995eef",
+			"key": "YardFooting-5c7b334d7913a1ed 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingLeft4",
+			"turn": 90.0,
+			"bytes": 115968,
+			"parts": 1
+		},
+		{
+			"id": "cb9c52a2b176239d",
+			"key": "YardFenceHalf-18c1a8760a959e18 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceFrontHalf1",
+			"turn": 0.0,
+			"bytes": 362416,
+			"parts": 3
+		},
+		{
+			"id": "d2a80d99c7200bd8",
+			"key": "cd8e579a256b83b8-18845c9c8b69ea54 Approach1 -210 0 0",
+			"piece": 1,
+			"label": "Approach1",
+			"turn": 0.0,
+			"bytes": 599792,
+			"parts": 3
+		},
+		{
+			"id": "c90c3c97d2587669",
+			"key": "YardFence-fe3d5de848852dd7 1 x x1.5",
+			"piece": 1,
+			"label": "Yard5_FenceBack3",
+			"turn": 360.0,
+			"bytes": 417740,
+			"parts": 3
+		},
+		{
+			"id": "5d4a1ce6694a9a36",
+			"key": "cd8e579a256b83b8-7b25a7aa2539d602 Plot6 -70 -180 180",
+			"piece": 1,
+			"label": "Plot6",
+			"turn": 0.0,
+			"bytes": 5869816,
+			"parts": 10
+		},
+		{
+			"id": "d3e84f2b04731415",
+			"key": "JunkrotHeadphonoBassimo-d47c976aa6738c6d 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotHeadphonoBassimo",
+			"turn": 0.0,
+			"bytes": 630152,
+			"parts": 8
+		}
+	],
+	"placements": [
+		{
+			"asset": "b19e8ffcac301460",
+			"label": "HubSection3",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-1_-1_0_000_001",
+					"position": [
+						-52.694666,
+						-8.7341545,
+						57.332008
+					]
+				},
+				{
+					"name": "Grass_0_0_0_110",
+					"position": [
+						47.515789999999996,
+						-2.0273614999999996,
+						-47.923162500000004
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard1_FootingLeft4",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-258.03322000000003,
+						6.266335,
+						-167.55330500000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard1_FootingLeft6",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-258.03322000000003,
+						6.266335,
+						-192.44219
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard1_FootingLeft8",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-258.03322000000003,
+						6.266335,
+						-217.331075
+					]
+				}
+			]
+		},
+		{
+			"asset": "cb9c52a2b176239d",
+			"label": "Yard1_FenceFrontHalf1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-254.993965,
+						9.33787235,
+						-123.999375
+					]
+				}
+			]
+		},
+		{
+			"asset": "d2a80d99c7200bd8",
+			"label": "Approach1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ramp",
+					"position": [
+						-210.0,
+						3.7,
+						-54.7
+					]
+				},
+				{
+					"name": "Walls",
+					"position": [
+						-209.9939,
+						4.34630485,
+						-54.189201
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard4_FootingLeft8",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						161.96678,
+						6.266335,
+						-217.331075
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard4_FootingRight9",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						257.96677999999997,
+						6.266335,
+						-229.77553
+					]
+				}
+			]
+		},
+		{
+			"asset": "cb9c52a2b176239d",
+			"label": "Yard4_FenceFrontHalf1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						165.006025,
+						9.33787235,
+						-123.999375
+					]
+				}
+			]
+		},
+		{
+			"asset": "cb9c52a2b176239d",
+			"label": "Yard4_FenceFrontHalf2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						255.006015,
+						9.33787235,
+						-123.999375
+					]
+				}
+			]
+		},
+		{
+			"asset": "c90c3c97d2587669",
+			"label": "Yard5_FenceBack3",
+			"turn": 360.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-192.004455,
+						9.34634735,
+						235.99415
+					]
+				}
+			]
+		},
+		{
+			"asset": "c90c3c97d2587669",
+			"label": "Yard5_FenceBack5",
+			"turn": 360.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-216.004455,
+						9.34634735,
+						235.99415
+					]
+				}
+			]
+		},
+		{
+			"asset": "c90c3c97d2587669",
+			"label": "Yard5_FenceBack7",
+			"turn": 360.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-240.004455,
+						9.34634735,
+						235.99415
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard5_FootingLeft9",
+			"turn": 270.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-161.96678,
+						6.266335,
+						229.77553
+					]
+				}
+			]
+		},
+		{
+			"asset": "c90c3c97d2587669",
+			"label": "Yard5_FenceFront2",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-185.995545,
+						9.34634735,
+						124.00585
+					]
+				}
+			]
+		},
+		{
+			"asset": "cb9c52a2b176239d",
+			"label": "Yard5_FenceFrontHalf1",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-165.006025,
+						9.33787235,
+						123.999375
+					]
+				}
+			]
+		},
+		{
+			"asset": "c90c3c97d2587669",
+			"label": "Yard5_FenceFront5",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-233.995545,
+						9.34634735,
+						124.00585
+					]
+				}
+			]
+		},
+		{
+			"asset": "cb9c52a2b176239d",
+			"label": "Yard5_FenceFrontHalf2",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-255.006015,
+						9.33787235,
+						123.999375
+					]
+				}
+			]
+		},
+		{
+			"asset": "5d4a1ce6694a9a36",
+			"label": "Plot6",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_-1_0",
+					"position": [
+						-46.0,
+						5.865,
+						148.0
+					]
+				},
+				{
+					"name": "Ground_0_0_0_110",
+					"position": [
+						-110.0,
+						5.865,
+						220.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "d3e84f2b04731415",
+			"label": "Kit_JunkrotHeadphonoBassimo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Band",
+					"position": [
+						744.0094,
+						-147.169905,
+						-0.011962049999999995
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						744.0167799999999,
+						-148.452,
+						0.526809005
+					]
+				}
+			]
+		}
+	]
+}
