@@ -1,0 +1,7 @@
+slab Plot2	4.736
+slab Plot2 #split	1
+JunkrotDishwashinoSplashetto 1 x	0.974
+JunkrotDishwashinoSplashetto 1 x #split	1
+JunkrotChefbotPrecisio 1 x	0.725
+JunkrotChefbotPrecisio 1 x #split	1
+JunkrotTheMonolito 1 x	0.079

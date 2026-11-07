@@ -1,0 +1,251 @@
+{
+	"assets": [
+		{
+			"id": "67aa0259ed1e76c6",
+			"key": "HubSectionB-afc962b93a377a4a 1 x part 3/5",
+			"piece": 1,
+			"label": "HubSection3",
+			"turn": 0.0,
+			"bytes": 6088108,
+			"parts": 20
+		},
+		{
+			"id": "4ae01bd8cb995eef",
+			"key": "YardFooting-5c7b334d7913a1ed 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingRight3",
+			"turn": 90.0,
+			"bytes": 115972,
+			"parts": 1
+		},
+		{
+			"id": "cb9c52a2b176239d",
+			"key": "YardFenceHalf-18c1a8760a959e18 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceFrontHalf2",
+			"turn": 0.0,
+			"bytes": 362416,
+			"parts": 3
+		},
+		{
+			"id": "760290c97313ad85",
+			"key": "cd8e579a256b83b8-7b25a7aa2539d602 Plot2 -70 180 0",
+			"piece": 1,
+			"label": "Plot2",
+			"turn": 0.0,
+			"bytes": 5838652,
+			"parts": 10
+		},
+		{
+			"id": "8855be22b80c74b0",
+			"key": "JunkrotDishwashinoSplashetto-683d7dad7d3db771 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotDishwashinoSplashetto",
+			"turn": 0.0,
+			"bytes": 809132,
+			"parts": 9
+		},
+		{
+			"id": "98e69fad5d7b75c7",
+			"key": "JunkrotChefbotPrecisio-655242385b26b2f8 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotChefbotPrecisio",
+			"turn": 0.0,
+			"bytes": 679304,
+			"parts": 9
+		},
+		{
+			"id": "5bb698567130db01",
+			"key": "JunkrotTheMonolito-e9bc9ca19c2b8402 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotTheMonolito",
+			"turn": 0.0,
+			"bytes": 113844,
+			"parts": 3
+		}
+	],
+	"placements": [
+		{
+			"asset": "67aa0259ed1e76c6",
+			"label": "HubSection3",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_0_0_110_111",
+					"position": [
+						52.187988,
+						-8.644332,
+						-54.80629
+					]
+				},
+				{
+					"name": "Grass_-1_-1_0_000",
+					"position": [
+						-47.687975,
+						-1.79136525,
+						48.155153
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard1_FootingRight3",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-162.03322,
+						6.266335,
+						-155.10886499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard1_FootingRight5",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-162.03322,
+						6.266335,
+						-179.99775
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard1_FootingRight7",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-162.03322,
+						6.266335,
+						-204.886635
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard1_FootingRight9",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-162.03322,
+						6.266335,
+						-229.77553
+					]
+				}
+			]
+		},
+		{
+			"asset": "cb9c52a2b176239d",
+			"label": "Yard1_FenceFrontHalf2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-164.993975,
+						9.33787235,
+						-123.999375
+					]
+				}
+			]
+		},
+		{
+			"asset": "760290c97313ad85",
+			"label": "Plot2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_-1_0",
+					"position": [
+						-94.0,
+						5.865,
+						-148.0
+					]
+				},
+				{
+					"name": "Ground_0_0_0_110",
+					"position": [
+						-30.0,
+						5.865,
+						-220.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "8855be22b80c74b0",
+			"label": "Kit_JunkrotDishwashinoSplashetto",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Cabinet",
+					"position": [
+						216.0,
+						-147.95,
+						-0.10000000000000003
+					]
+				},
+				{
+					"name": "Handle",
+					"position": [
+						215.990825,
+						-147.40997,
+						1.3807363000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "98e69fad5d7b75c7",
+			"label": "Kit_JunkrotChefbotPrecisio",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dial",
+					"position": [
+						552.64435,
+						-148.826515,
+						0.99862495
+					]
+				},
+				{
+					"name": "Lid",
+					"position": [
+						552.0,
+						-146.57,
+						-0.09999999499999995
+					]
+				}
+			]
+		},
+		{
+			"asset": "5bb698567130db01",
+			"label": "Kit_JunkrotTheMonolito",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Eye",
+					"position": [
+						936.0,
+						-146.53,
+						0.355
+					]
+				}
+			]
+		}
+	]
+}
