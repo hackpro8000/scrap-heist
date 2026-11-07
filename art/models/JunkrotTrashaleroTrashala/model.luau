@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotTrashaleroTrashala-35f8467b34d7433d"
+local CACHE_KEY = "JunkrotTrashaleroTrashala-56c767c75e11b63b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -805,10 +805,9 @@ local function finishParts()
 	end
 end
 -- Trashalero Trashala: Tralalero Tralala riveted from tin sheet. A
--- grey-blue shark with a white belly, nose forward (+x), walking on three
--- legs in blue sneakers: its two pectoral fins run on down into the front
--- pair, its pelvic fin into the back one. Built after the picture: a slim
--- torpedo body about a body's depth off the ground, a smooth conical
+-- grey-blue shark with a white belly, nose forward (+x), in blue sneakers
+-- on its three bottom fins, the two pectorals and the fin under its tail,
+-- so it sits low on them. Built after the picture: a slim torpedo body, a smooth conical
 -- snout, the back sloping down to it over a flat belly line. No googly
 -- face.
 -- Junkrot Kit: shaping helpers the junkrots share, on top of the edit-mesh
@@ -3547,43 +3546,38 @@ function Kit.recess(m, faces, rim, depth)
 end
 local TIN_BLUE = { 0.4, 0.5, 0.6 }
 local BELLY = { 0.88, 0.89, 0.86 }
-local MIDDLE = 1.48 -- the body's axis
+local MIDDLE = 1.2 -- the body's axis: it sits low, on its fins
 local SNEAKER_BLUE = { 0.14, 0.46, 0.92 }
--- The legs, as in the picture, are the fins themselves: each pectoral a
--- broad flat blade that bows out sideways from its root and down to a
--- sneaker on its tip, one a step ahead of the other; the pelvic fin the
--- same under the tail, out to one side. Each: its root on the body, the
--- side it bows to, how far it leans out at the root (degrees below
--- level), its length, and its step forward.
-local LEGS = {
-	{ root = { 1.0, -0.3, 1.2 }, side = -1, lean = 20, long = 1.16, step = 0.22, chord = 0.62 },
-	{ root = { 1.0, 0.3, 1.2 }, side = 1, lean = 20, long = 1.16, step = -0.1, chord = 0.62 },
-	{ root = { -0.7, 0.0, 1.42 }, side = 1, lean = 8, long = 1.3, step = -0.12, chord = 0.42 },
+-- The three bottom fins wear the sneakers: the two pectorals and the fin
+-- under the tail, ordinary fins angled down so their tips reach the
+-- ground. Each: where its root sits on the body, its outline's chord and
+-- span, which side it points to (0 for the middle), how far it points
+-- down (degrees below level) and how far it sweeps back.
+local SHOD = {
+	{ root = { 1.0, -0.3, -0.3 }, chord = 0.55, span = 0.95, side = -1, down = 62, back = 25 },
+	{ root = { 1.0, 0.3, -0.3 }, chord = 0.55, span = 0.95, side = 1, down = 62, back = 25 },
+	{ root = { -0.7, 0, -0.22 }, chord = 0.4, span = 0.62, side = 0, down = 80, back = 20 },
 }
--- The bow a fin follows out and down: at s along it, its point, and the
--- direction across its thickness. It starts leaning out at the root and
--- curves to straight down at the foot.
-local function bowAt(at, s)
-	local y0, z0 = at.root[2], at.root[3]
-	local a0, a1 = math.rad(at.lean), math.rad(90)
-	local t = math.clamp(s / at.long, 0, 1)
-	local a = a0 + (a1 - a0) * t
-	-- Integrated: y and z travelled for an angle running linearly with s.
-	local k = (a1 - a0) / at.long
-	local y = y0 + at.side * (math.sin(a) - math.sin(a0)) / k
-	local z = z0 - (math.cos(a0) - math.cos(a)) / k
-	if s < 0 then -- straight on inside the body
-		y, z = y0 + at.side * math.cos(a0) * s, z0 - math.sin(a0) * s
-	elseif s > at.long then
-		z = z - (s - at.long)
+-- Turns a point as a shod fin is turned (Kit.turn's rotations): the span
+-- runs up +z on the outline; it is tipped over to point down, tilted out
+-- to its side and swept back.
+local function finTurn(f, p)
+	local function turnX(q, deg)
+		local c, s = math.cos(math.rad(deg)), math.sin(math.rad(deg))
+		return { q[1], q[2] * c - q[3] * s, q[2] * s + q[3] * c }
 	end
-	-- Across: the in-plane normal, chosen so x, across and along the bow
-	-- stay a right-handed frame on either side.
-	return { y, z }, { -math.sin(a), -at.side * math.cos(a) }
+	local function turnY(q, deg)
+		local c, s = math.cos(math.rad(deg)), math.sin(math.rad(deg))
+		return { q[1] * c + q[3] * s, q[2], -q[1] * s + q[3] * c }
+	end
+	local out = (90 - f.down) * (if f.side == 0 then 1 else f.side)
+	local q = turnX(p, 180)
+	q = turnX(q, out)
+	q = turnY(q, f.back)
+	return { q[1] + f.root[1], q[2] + f.root[2], q[3] + MIDDLE + f.root[3] }
 end
-local function footOf(at)
-	local p = bowAt(at, at.long)
-	return { at.root[1] + at.step, p[1], p[2] }
+local function shodTip(f)
+	return finTurn(f, { 0, 0, f.span })
 end
 -- The body's lines along x, tail root to nose tip: the back's height, the
 -- belly's depth and the half width, read off these stations between;
@@ -3598,9 +3592,9 @@ local STATIONS = { -- x, top, bottom, half width
 	{ 0.2, 0.56, -0.4, 0.4 },
 	{ 0.7, 0.58, -0.42, 0.43 },
 	{ 1.1, 0.52, -0.42, 0.42 },
-	{ 1.4, 0.42, -0.4, 0.38 },
-	{ 1.7, 0.27, -0.34, 0.3 },
-	{ 2.0, 0.1, -0.25, 0.19 },
+	{ 1.4, 0.47, -0.42, 0.4 },
+	{ 1.7, 0.34, -0.37, 0.33 },
+	{ 2.0, 0.16, -0.28, 0.22 },
 	{ 2.2, -0.02, -0.16, 0.09 },
 	{ 2.3, -0.08, -0.12, 0.03 },
 }
@@ -3625,7 +3619,7 @@ end
 -- How far up the section the white belly reaches, in degrees from the
 -- bottom, along x: to the mid flank at the chest, lower toward the tail
 -- root, and nearly to the eye on the head.
-local REACH = { { -1.7, 25 }, { -1.0, 55 }, { -0.3, 80 }, { 0.5, 95 }, { 1.3, 92 }, { 2.0, 85 }, { 2.3, 80 } }
+local REACH = { { -1.7, 25 }, { -1.0, 55 }, { -0.3, 85 }, { 0.5, 100 }, { 1.3, 100 }, { 2.0, 102 }, { 2.3, 95 } }
 local function reach(x)
 	for k = 1, #REACH - 1 do
 		local a, b = REACH[k], REACH[k + 1]
@@ -3724,18 +3718,8 @@ local function shark()
 			m:extrude(m:inset(socket, 0.015, 0), -0.04)
 		end
 	end
-	-- Gill slits, five a side ahead of the front legs, and the nostrils
-	-- under the snout: recessed, each one face column wide.
+	-- The nostrils under the snout, recessed.
 	for _, side in { -1, 1 } do
-		for k = 0, 4 do
-			local x = 1.425 - k * 0.1
-			local slit = m:select("face", "facing", { 0, side, 0 }, 50):filter(function(p)
-				return p[1] > x - 0.02 and p[1] < x + 0.02 and p[3] > -0.2 and p[3] < 0.32
-			end)
-			if slit:count() > 0 then
-				Kit.recess(m, slit, 0.012, 0.04)
-			end
-		end
 		local nare = m:select("face", "facing", { 0, 0, -1 }, 50):filter(function(p)
 			return p[1] > 2.1 and p[1] < 2.17 and p[2] * side > 0.02 and p[2] * side < 0.08
 		end)
@@ -3801,45 +3785,42 @@ part("Fins", nil, TIN_BLUE, function(mesh)
 	tail:translate(-1.62, 0, MIDDLE + 0.01)
 	tail:emit(mesh)
 end, 40, 0.35)
-part("Legs", nil, TIN_BLUE, function(mesh)
-	-- Each fin from its outline, x along the body and s out along the span,
-	-- thick at the root and thinning toward the tip and edges, then bent
-	-- along its bow and sheared forward by its step.
-	for _, at in LEGS do
-		local c = at.chord / 2
-		local blade = Kit.plate({ { c, -0.15 }, { c * 0.7, at.long * 0.45 }, { c * 0.4, at.long }, { -c * 0.4, at.long }, { -c * 0.65, at.long * 0.55 }, { -c, -0.15 } }, 0.22)
-		blade:translate(0, -0.11, 0)
-		blade:transform(function(p)
-			local out = math.clamp(p[3] / at.long, 0, 1)
-			local thick = p[2] * (1 - 0.55 * out) * (1 - 0.35 * math.abs(p[1]) / c)
-			local point, across = bowAt(at, p[3])
-			return { at.root[1] + p[1] + at.step * out, point[1] + across[1] * thick, point[2] + across[2] * thick }
-		end)
-		blade:emit(mesh)
+part("ShodFins", nil, TIN_BLUE, function(mesh)
+	-- The pectorals and the fin under the tail, from fin outlines like the
+	-- rest, turned down to the ground.
+	for _, f in SHOD do
+		local c = f.chord / 2
+		local m = fin({ { c, -0.12 }, { c * 0.6, f.span * 0.5 }, { c * 0.25, f.span }, { -c * 0.3, f.span }, { -c * 0.75, f.span * 0.45 }, { -c, -0.12 } }, 0.12, f.span)
+		local out = (90 - f.down) * (if f.side == 0 then 1 else f.side)
+		Kit.turn(m, "x", 180)
+		Kit.turn(m, "x", out)
+		Kit.turn(m, "y", f.back)
+		m:translate(f.root[1], f.root[2], MIDDLE + f.root[3])
+		m:emit(mesh)
 	end
-end, true, 0.35)
+end, 40, 0.35)
 part("Sneakers", nil, SNEAKER_BLUE, function(mesh)
-	for _, at in LEGS do
+	for _, f in SHOD do
 		local shoe = Kit.shoe(1.15, 0.6, 0.42)
-		local foot = footOf(at)
-		shoe:translate(foot[1] + 0.15, foot[2], 0.06)
+		local foot = shodTip(f)
+		shoe:translate(foot[1] + 0.1, foot[2], 0.06)
 		shoe:emit(mesh)
 	end
 end, true, RUBBER)
 part("Soles", nil, { 0.95, 0.95, 0.93 }, function(mesh)
-	for _, at in LEGS do
+	for _, f in SHOD do
 		local sole = Kit.block(1.18, 0.62, 0.1, 0.04)
-		local foot = footOf(at)
-		sole:translate(foot[1] + 0.15, foot[2], 0.05)
+		local foot = shodTip(f)
+		sole:translate(foot[1] + 0.1, foot[2], 0.05)
 		sole:emit(mesh)
 	end
 end, 50, RUBBER)
 part("Laces", nil, { 0.97, 0.97, 0.95 }, function(mesh)
-	for _, at in LEGS do
-		local foot = footOf(at)
+	for _, f in SHOD do
+		local foot = shodTip(f)
 		for k = 0, 2 do
 			local lace = Kit.block(0.05, 0.34, 0.03, 0.01)
-			lace:translate(foot[1] + 0.25 + k * 0.12, foot[2], 0.42 - k * 0.03)
+			lace:translate(foot[1] + 0.2 + k * 0.12, foot[2], 0.42 - k * 0.03)
 			lace:emit(mesh)
 		end
 	end
