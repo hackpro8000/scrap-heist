@@ -169,7 +169,7 @@ local function shark()
 				return p[1] > x - 0.02 and p[1] < x + 0.02 and p[3] > -0.3 and p[3] < 0.45
 			end):minus(m:select("face", "tag", "fins"))
 			if slit:count() > 0 then
-				Kit.recess(m, slit, 0.008, 0.03)
+				Kit.recess(m, slit, 0.02, 0.05)
 			end
 		end
 		local nare = patch({ 0, 0, -1 }, 50, function(p)
@@ -242,7 +242,7 @@ local function skinOf(m, test, out)
 		m:removeFace(id)
 	end
 	m:push(m:select("vertex", "all"), out)
-	m:solidify(0.025)
+	m:solidify(0.012)
 	return m
 end
 
@@ -257,7 +257,7 @@ part("Belly", nil, BELLY, function(mesh)
 	local down = belly:select("face", "facing", { 0, 0, -1 }, 80):minus(fins)
 	skinOf(belly, function(p, id)
 		return down:count() > 0 and down.ids[id] ~= nil and p[1] > -1.4 and p[1] < 2.1 and not (inMouth(p[1], p[2]) and p[3] > MIDDLE + ROOF - 0.03)
-	end, 0.012):emit(mesh)
+	end, 0.004):emit(mesh)
 end, true, 0.25)
 part("Jaw", nil, BELLY, function(mesh)
 	onJaw(jaw()):emit(mesh)
@@ -279,8 +279,8 @@ part("Pectorals", nil, TIN_BLUE, function(mesh)
 	-- Each pectoral fin shaped from its outline: a straight leading edge
 	-- sweeping back from the root to a pointed tip, a concave trailing edge
 	-- back to the root's rear; thick at the root, thinning to the edges.
-	-- Rooted in the flank low behind the gills, it sweeps back and down
-	-- along the back of the leg.
+	-- Rooted at the back of the leg's top, in the body's own plane and
+	-- tilted out a touch, it sweeps down and back along the leg.
 	for _, side in { -1, 1 } do
 		local fin = Kit.plate({ { 0.3, -0.1 }, { 0.05, 0.42 }, { -0.25, 0.8 }, { -0.36, 0.8 }, { -0.44, 0.38 }, { -0.32, -0.1 } }, 0.1)
 		fin:translate(0, -0.05, 0)
@@ -289,9 +289,10 @@ part("Pectorals", nil, TIN_BLUE, function(mesh)
 			local thin = (1 - 0.8 * out) * (1 - 0.5 * math.abs(p[1] + 0.05) / 0.35)
 			return { p[1], p[2] * math.max(thin, 0.1), p[3] }
 		end)
-		Kit.turn(fin, "x", -side * 125)
-		Kit.turn(fin, "y", 40)
-		fin:translate(0.62, side * 0.4, MIDDLE - 0.38)
+		Kit.turn(fin, "x", 180)
+		Kit.turn(fin, "y", 22)
+		Kit.turn(fin, "x", -side * 10)
+		fin:translate(0.42, side * 0.4, MIDDLE - 0.5)
 		fin:emit(mesh)
 	end
 end, 40, 0.35)
