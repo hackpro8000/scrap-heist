@@ -14,7 +14,7 @@ local GULLET = { 0.3, 0.07, 0.09 }
 local SNEAKER_BLUE = { 0.16, 0.32, 0.86 }
 local MIDDLE = 1.45 -- the body's middle line: it stands low, on fins of normal size
 -- The sneakers stand here, on the pectoral fins' tips and the pelvic fin's.
-local STANDS = { { 0.55, -0.6 }, { 0.55, 0.6 }, { -1.0, 0 } }
+local STANDS = { { 0.4, -0.78 }, { 0.4, 0.78 }, { -1.0, 0 } }
 
 -- The body's half height and half width along x, tail end to nose tip,
 -- read off these stations between; eased, except along the snout, which
@@ -138,11 +138,13 @@ local function shark()
 		pullFin(m, patch({ 0, 0, -1 }, 35, function(p)
 			return p[1] < -1.25 and math.abs(p[2]) < 0.1
 		end), { { -0.15, 0, -0.25 }, { -0.15, 0, -0.22 }, { -0.1, 0, -0.15 } }, { 0.75, 0.55, 0.8 })
-		-- The pectorals: long, swept back and down into the sneakers.
+		-- The pectorals: flat blades off the flanks behind the gills, broad at
+		-- the root and tapering to a point, angled out and down and swept
+		-- back into the sneakers; thin side to side.
 		for _, side in { -1, 1 } do
-			pullFin(m, patch({ 0, side * 0.8, -0.6 }, 30, function(p)
-				return p[1] > 0.5 and p[1] < 0.95
-			end), { { -0.06, side * 0.07, -0.22 }, { -0.08, side * 0.05, -0.22 }, { -0.06, side * 0.03, -0.2 } }, { 0.9, 0.62, 1 })
+			pullFin(m, patch({ 0, side * 0.7, -0.7 }, 22, function(p)
+				return p[1] > 0.45 and p[1] < 1.0
+			end), { { -0.1, side * 0.12, -0.2 }, { -0.1, side * 0.1, -0.2 }, { -0.08, side * 0.06, -0.18 } }, { 0.68, 0.45, 1 })
 		end
 		pullFin(m, patch({ 0, 0, -1 }, 30, function(p)
 			return p[1] > -1.15 and p[1] < -0.8 and math.abs(p[2]) < 0.15
@@ -164,8 +166,8 @@ local function shark()
 			-- On every other column of faces, so no two slits touch.
 			local x = 1.13 - k * 0.12
 			local slit = patch({ 0, side, 0 }, 40, function(p)
-				return p[1] > x - 0.02 and p[1] < x + 0.02 and p[3] > -0.1 and p[3] < 0.3
-			end)
+				return p[1] > x - 0.02 and p[1] < x + 0.02 and p[3] > -0.05 and p[3] < 0.3
+			end):minus(m:select("face", "tag", "fins"))
 			if slit:count() > 0 then
 				Kit.recess(m, slit, 0.008, 0.03)
 			end
