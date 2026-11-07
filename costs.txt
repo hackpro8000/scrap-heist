@@ -1,0 +1,8 @@
+slab Plot3	4.792
+slab Plot3 #split	1
+JunkrotAirfryoCroccante 1 x	0.655
+JunkrotAirfryoCroccante 1 x #split	1
+JunkrotSockettoSeiSette 1 x	1.088
+JunkrotSockettoSeiSette 1 x #split	1
+JunkrotLaVacuumaSaturnita 1 x	0.909
+JunkrotLaVacuumaSaturnita 1 x #split	1

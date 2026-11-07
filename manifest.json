@@ -1,0 +1,189 @@
+{
+	"assets": [
+		{
+			"id": "808394adae3b4407",
+			"key": "HubSectionA-a8313e4a55d56339 1 x part 4/5",
+			"piece": 1,
+			"label": "HubSection2",
+			"turn": 0.0,
+			"bytes": 5431424,
+			"parts": 25
+		},
+		{
+			"id": "9465aa7dbc5c6442",
+			"key": "cd8e579a256b83b8-7b25a7aa2539d602 Plot3 70 180 0",
+			"piece": 1,
+			"label": "Plot3",
+			"turn": 0.0,
+			"bytes": 5843228,
+			"parts": 10
+		},
+		{
+			"id": "6dd58b5eb03aba9e",
+			"key": "JunkrotAirfryoCroccante-fe378a5846949e34 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotAirfryoCroccante",
+			"turn": 0.0,
+			"bytes": 609132,
+			"parts": 8
+		},
+		{
+			"id": "a3bb747c8931296c",
+			"key": "JunkrotSockettoSeiSette-06f957224084af84 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotSockettoSeiSette",
+			"turn": 0.0,
+			"bytes": 886284,
+			"parts": 10
+		},
+		{
+			"id": "1573ebf6bdbea3a8",
+			"key": "JunkrotLaVacuumaSaturnita-bd517ef7554f341c 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotLaVacuumaSaturnita",
+			"turn": 0.0,
+			"bytes": 823476,
+			"parts": 10
+		}
+	],
+	"placements": [
+		{
+			"asset": "808394adae3b4407",
+			"label": "HubSection2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-1_-2_0",
+					"position": [
+						-137.74034,
+						-3.11387665,
+						64.2556785
+					]
+				},
+				{
+					"name": "Dirt_0_0_0_110_110",
+					"position": [
+						-58.271511499999995,
+						-4.984545,
+						-55.806095
+					]
+				}
+			]
+		},
+		{
+			"asset": "808394adae3b4407",
+			"label": "HubSection4",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Dirt_-1_-2_0",
+					"position": [
+						137.74034,
+						-3.11387665,
+						-64.2556785
+					]
+				},
+				{
+					"name": "Dirt_0_0_0_110_110",
+					"position": [
+						58.271511499999995,
+						-4.984545,
+						55.806095
+					]
+				}
+			]
+		},
+		{
+			"asset": "9465aa7dbc5c6442",
+			"label": "Plot3",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_-1_0",
+					"position": [
+						46.0,
+						5.865,
+						-148.0
+					]
+				},
+				{
+					"name": "Ground_0_0_0_110",
+					"position": [
+						110.0,
+						5.865,
+						-220.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "6dd58b5eb03aba9e",
+			"label": "Kit_JunkrotAirfryoCroccante",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Body",
+					"position": [
+						192.0,
+						-147.89999999999998,
+						0.0
+					]
+				},
+				{
+					"name": "Handle",
+					"position": [
+						191.99361,
+						-148.427665,
+						1.2858595
+					]
+				}
+			]
+		},
+		{
+			"asset": "a3bb747c8931296c",
+			"label": "Kit_JunkrotSockettoSeiSette",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Sockets",
+					"position": [
+						528.03615,
+						-148.457385,
+						0.89186285
+					]
+				},
+				{
+					"name": "TailRings",
+					"position": [
+						528.255,
+						-148.64,
+						-1.4849999999999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "1573ebf6bdbea3a8",
+			"label": "Kit_JunkrotLaVacuumaSaturnita",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Glow",
+					"position": [
+						912.0,
+						-148.25,
+						1.12
+					]
+				},
+				{
+					"name": "HoseRing",
+					"position": [
+						911.984325,
+						-148.246985,
+						-0.012057849999999926
+					]
+				}
+			]
+		}
+	]
+}
