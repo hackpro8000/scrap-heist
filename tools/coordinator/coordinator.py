@@ -75,12 +75,15 @@ class Task:
 		self.handed = {}  # object id -> (shard, label)
 		self.labels = {}  # (shard, object id) -> label, from names.tsv
 		self.sent = set()  # objects this task uploaded (the rest had assets)
+		self.by_branch = False
 		self.answered = 0
 		self.out = os.path.join(ROOT, ".standby-results", identity)
 		os.makedirs(self.out, exist_ok=True)
 
 	def text(self):
-		return f"ref={self.ref}\nhand-over=coordinator\n" + ("" if self.upload else "upload=no\n")
+		# When machine 1 uploads, objects go to it through GitHub, not this link.
+		hand_over = "branch" if self.by_branch else "coordinator"
+		return f"ref={self.ref}\nhand-over={hand_over}\n" + ("" if self.upload else "upload=no\n")
 
 
 class RemoteUploader:
@@ -95,6 +98,8 @@ class RemoteUploader:
 		self.width_path = os.path.join(ROOT, "art", "models", layout, "upload-width.txt")
 		self.record, self.failed, self.pending = {}, {}, set()
 		self.waiting = []  # (identity, path, label, shard) not yet sent
+		self.fetches = []  # fetch-objects messages not yet sent
+		self.sent_fetches = []  # sent, in case machine 1 drops before answering
 		self.agent = None
 		self.loop = None
 		self.changed = asyncio.Event()
@@ -119,6 +124,26 @@ class RemoteUploader:
 				self.waiting.insert(0, (identity, path, label, shard))
 				return
 
+	def track(self, identity):
+		"""Counts an object as on its way, without sending it from here."""
+		if identity in self.pending or identity in self.record or identity in uploading.ids_in(self.ledger_path):
+			return False
+		self.pending.add(identity)
+		return True
+
+	async def request_fetch(self, message):
+		self.fetches.append(message)
+		await self.send_fetches()
+
+	async def send_fetches(self):
+		while self.agent and self.fetches:
+			message = self.fetches[0]
+			try:
+				await self.agent.send(json.dumps(message))
+			except Exception:
+				return
+			self.sent_fetches.append(self.fetches.pop(0))
+
 	async def connected(self, agent):
 		self.agent = agent
 		# Anything sent to a machine 1 that dropped goes again.
@@ -126,6 +151,12 @@ class RemoteUploader:
 			if not any(entry[0] == identity for entry in self.waiting) and identity in self.sent_paths:
 				self.waiting.append(self.sent_paths[identity])
 		await self.flush()
+		# Fetches a dropped machine 1 never answered go again.
+		for message in self.sent_fetches:
+			if any(identity in self.pending for identity in message["ids"]):
+				self.fetches.append(message)
+		self.sent_fetches = []
+		await self.send_fetches()
 
 	def answered(self, event):
 		identity = event["id"]
@@ -174,6 +205,24 @@ class Coordinator:
 		self.agents = {}  # shard -> websocket
 		self.tasks = {}
 		self.watchers = set()  # control websockets waiting on events
+
+	async def hand_to_machine_one(self, task, shard, commit):
+		"""A builder pushed its objects to its branch: queue them and tell
+		machine 1 to fetch that commit and upload them."""
+		wanted = {}
+		for (from_shard, identity), label in task.labels.items():
+			if from_shard != shard:
+				continue
+			if identity not in task.handed:
+				task.handed[identity] = (shard, label)
+			if self.uploader.track(identity):
+				task.sent.add(identity)
+				wanted[identity] = label
+		if not wanted:
+			return
+		say(f"task {task.id}: S{shard} pushed {len(wanted)} objects at {commit[:8]}; machine 1 fetches them")
+		await self.emit({"type": "uploading", "task": task.id, "shard": shard, "count": len(wanted), "queued": len(task.sent)})
+		await self.uploader.request_fetch({"type": "fetch-objects", "task": task.id, "shard": shard, "commit": commit, "ids": wanted})
 
 	def local_answer(self, identity, asset, error):
 		"""From the local uploader's threads."""
@@ -275,6 +324,8 @@ class Coordinator:
 				if "\t" in line:
 					identity, label = line.split("\t", 1)
 					task.labels[(shard, identity)] = label
+		elif name == "handed-commit.txt" and task.by_branch and task.upload:
+			await self.hand_to_machine_one(task, shard, data.decode().strip())
 		elif name.startswith("handed" + os.sep) and name.endswith(".glb") and task.upload:
 			identity = os.path.basename(name)[:-4]
 			label = task.labels.get((shard, identity), identity)
@@ -340,6 +391,7 @@ class Coordinator:
 
 	async def post(self, identity, ref, upload):
 		task = Task(identity, ref, upload, self.count)
+		task.by_branch = self.uploads_on_machine
 		self.tasks[identity] = task
 		for agent in list(self.agents.values()):
 			await agent.send(json.dumps({"type": "task", "id": identity, "task": task.text()}))

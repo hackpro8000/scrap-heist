@@ -11,6 +11,12 @@
 #   upload-of=<build task id>         upload what that build handed over
 #   hand-over=coordinator             leave the objects in <results>/handed/
 #                                     for scripts/standby-agent.py to send
+#   hand-over=branch                  push them to build-objects/s<index> as
+#                                     before, list them in <results>/handed/
+#                                     names.tsv and the commit in
+#                                     <results>/handed-commit.txt (machine 1
+#                                     fetches them from GitHub, so they never
+#                                     cross the coordinator's connection)
 #
 # A build writes build.log, parts.txt, the objects' manifest.json, costs.txt
 # and summary.txt, and hands over the objects that have no asset yet: it
@@ -32,6 +38,7 @@ out="${4:?results folder required}"
 task="${out}/task.txt"
 UPLOADER=1
 model="art/models/${layout}"
+pushed_commit_file="$(mktemp)"
 ledger="art/src/layouts/${layout}Uploads.tsv"
 
 field() {
@@ -47,7 +54,8 @@ push_alone() {
 	tree="$(GIT_INDEX_FILE="${index_file}" git write-tree)"
 	rm -f "${index_file}"
 	commit="$(git commit-tree "${tree}" -m "${message}")"
-	git push -q -f origin "${commit}:refs/heads/${branch}"
+	git push -q -f origin "${commit}:refs/heads/${branch}" || return 1
+	echo "${commit}" > "${pushed_commit_file}"
 }
 
 # Hands over the objects of this build that the ledger has no asset for,
@@ -77,6 +85,11 @@ EOF
 		return 0
 	fi
 	push_alone "${handed}" "build-objects/s${index}" "objects of task ${id} S${index}/${count}" || return 1
+	if [ "$(field hand-over)" = "branch" ]; then
+		mkdir -p "${out}/handed"
+		cp "${handed}/names.tsv" "${out}/handed/names.tsv"
+		cp "${pushed_commit_file}" "${out}/handed-commit.txt"
+	fi
 	wc -l < "${handed}/names.tsv"
 	rm -rf "${handed}"
 }

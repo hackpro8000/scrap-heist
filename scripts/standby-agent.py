@@ -68,12 +68,13 @@ class Agent:
 		self.stop_at = time.monotonic() + int(max_minutes) * 60
 		self.idle_until = time.monotonic() + self.idle_seconds
 		self.built = {}  # task id -> results folder
+		self.by_branch = {}  # task id -> whether its objects went to a branch
 		self.building = set()
 		self.stopped = False
 		self.uploader = None
 		self.socket = None
 		self.loop = None
-		self.inbox = os.path.join(ROOT, "upload-inbox")
+		self.inbox = os.path.join(os.getcwd(), "upload-inbox")
 
 	def run_task(self, identity, text):
 		out = os.path.join("results", identity)
@@ -101,8 +102,10 @@ class Agent:
 			for name in names:
 				path = os.path.join(directory, name)
 				relative = os.path.relpath(path, out)
-				if relative != "task.txt":
-					files.append(relative)
+				# In branch mode the objects went to GitHub; only results come back.
+				if relative == "task.txt" or (self.by_branch.get(identity) and relative.endswith(".glb")):
+					continue
+				files.append(relative)
 		# Names before objects, so the coordinator knows each object's label.
 		files.sort(key=lambda path: (not path.endswith("names.tsv"), path))
 		for relative in files:
@@ -114,6 +117,7 @@ class Agent:
 
 	async def handle(self, socket, identity, text):
 		self.idle_until = time.monotonic() + self.idle_seconds
+		self.by_branch[identity] = "hand-over=branch" in text
 		if identity in self.building:
 			return
 		if identity not in self.built:
@@ -133,6 +137,43 @@ class Agent:
 		socket, loop = self.socket, self.loop
 		if socket and loop:
 			loop.call_soon_threadsafe(lambda: asyncio.ensure_future(socket.send(message)))
+
+	def fetch_objects(self, commit, into):
+		"""Machine 1: takes a builder's objects from its GitHub branch commit."""
+		os.makedirs(into, exist_ok=True)
+		# The checkout this machine works in (the folder it was started from).
+		fetched = subprocess.run(["git", "fetch", "-q", "--depth=1", "origin", commit], capture_output=True, text=True)
+		if fetched.returncode != 0:
+			raise RuntimeError(f"fetch of {commit[:8]} failed: {fetched.stderr.strip()[-200:]}")
+		archive = subprocess.Popen(["git", "archive", commit], stdout=subprocess.PIPE)
+		subprocess.run(["tar", "-x", "-C", into], stdin=archive.stdout, check=True)
+		archive.wait()
+
+	async def receive_fetch(self, socket, event):
+		"""Machine 1: a builder pushed objects; fetch them and upload the ones asked for."""
+		if self.uploader is None:
+			self.uploader = uploading.Uploader(ROOT, self.layout, say,
+				dry=os.environ.get("AGENT_DRY_UPLOAD") == "1", on_done=self.answer)
+			if getattr(self, "start_width", None):
+				self.uploader.throttle.limit = max(1.0, min(uploading.MOST, float(self.start_width)))
+			if getattr(self, "start_known", None):
+				self.uploader.throttle.known = max(1.0, min(uploading.MOST, float(self.start_known)))
+		into = os.path.join(self.inbox, f"{event['task']}-S{event['shard']}")
+		started = time.monotonic()
+		try:
+			await asyncio.to_thread(self.fetch_objects, event["commit"], into)
+		except Exception as error:
+			say(f"S{event['shard']}'s objects: {error}")
+			for identity in event["ids"]:
+				await socket.send(json.dumps({"type": "uploaded", "id": identity, "error": str(error)}))
+			return
+		say(f"fetched S{event['shard']}'s {len(event['ids'])} objects in {time.monotonic() - started:.1f}s")
+		for identity, label in event["ids"].items():
+			path = os.path.join(into, f"{identity}.glb")
+			if not self.uploader.add(identity, path, label, event["shard"]):
+				asset = self.uploader.asset_of(identity)
+				if asset:
+					await socket.send(json.dumps({"type": "uploaded", "id": identity, "asset": asset}))
 
 	async def receive_upload(self, socket, header, data):
 		say(f"upload {header['label']} ({header['id']}, {len(data) // 1000} KB) received")
@@ -183,6 +224,8 @@ class Agent:
 				if event["type"] == "uploader":
 					self.start_width, self.start_known = event.get("width"), event.get("known")
 					say(f"this machine uploads for the coordinator, starting {self.start_width or 'fresh'} at once")
+				elif event["type"] == "fetch-objects":
+					asyncio.create_task(self.receive_fetch(socket, event))
 				elif event["type"] == "task":
 					asyncio.create_task(self.handle(socket, event["id"], event["task"]))
 				elif event["type"] == "stop":
