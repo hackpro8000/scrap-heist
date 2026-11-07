@@ -1,0 +1,14 @@
+slab Bridge7	1.008
+slab Bridge7 #split	1
+CapsuleRefurbished 1 x	0.244
+CapsuleRefurbished 1 x #split	1
+JunkrotHubcappaWobbla 1 x	0.443
+JunkrotHubcappaWobbla 1 x #split	1
+JunkrotRadioloFruscio 1 x	0.525
+JunkrotRadioloFruscio 1 x #split	1
+JunkrotTypewrittoClackini 1 x	0.588
+JunkrotTypewrittoClackini 1 x #split	1
+JunkrotVrrVrrPatatrim 1 x	0.569
+JunkrotVrrVrrPatatrim 1 x #split	1
+JunkrotPercolattoNinjatto 1 x	0.553
+JunkrotPercolattoNinjatto 1 x #split	1
