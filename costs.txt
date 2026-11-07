@@ -1,0 +1,6 @@
+slab Spoke1	0.054
+slab Spoke1 #split	1
+slab Plot5	2.998
+slab Plot5 #split	1
+JunkrotKnifeblockSlicetta 1 x	0.390
+JunkrotKnifeblockSlicetta 1 x #split	1

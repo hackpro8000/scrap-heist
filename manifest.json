@@ -1,0 +1,813 @@
+{
+	"assets": [
+		{
+			"id": "fc82a2f70bda161a",
+			"key": "HubSectionB-afc962b93a377a4a 1 x part 5/5",
+			"piece": 1,
+			"label": "HubSection3",
+			"turn": 0.0,
+			"bytes": 5588548,
+			"parts": 21
+		},
+		{
+			"id": "4ae01bd8cb995eef",
+			"key": "YardFooting-5c7b334d7913a1ed 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingRight4",
+			"turn": 90.0,
+			"bytes": 115916,
+			"parts": 1
+		},
+		{
+			"id": "9d83c1886dbf3768",
+			"key": "YardFooting-5c7b334d7913a1ed 0.5 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingFrontHalf1",
+			"turn": 0.0,
+			"bytes": 127352,
+			"parts": 1
+		},
+		{
+			"id": "29b12bb51dfc08ff",
+			"key": "cd8e579a256b83b8-107c5c30239027da Spoke1 -210 180 0",
+			"piece": 1,
+			"label": "Spoke1",
+			"turn": 0.0,
+			"bytes": 122260,
+			"parts": 1
+		},
+		{
+			"id": "c90c3c97d2587669",
+			"key": "YardFence-fe3d5de848852dd7 1 x x1.5",
+			"piece": 1,
+			"label": "Yard2_FenceBack1",
+			"turn": 180.0,
+			"bytes": 417696,
+			"parts": 3
+		},
+		{
+			"id": "5cf289445ef85d11",
+			"key": "cd8e579a256b83b8-7b25a7aa2539d602 Plot5 -210 -180 180",
+			"piece": 1,
+			"label": "Plot5",
+			"turn": 0.0,
+			"bytes": 5857924,
+			"parts": 10
+		},
+		{
+			"id": "6ce702dd69cb7fdc",
+			"key": "JunkrotKnifeblockSlicetta-b0fc15670bb0eca0 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotKnifeblockSlicetta",
+			"turn": 0.0,
+			"bytes": 656188,
+			"parts": 6
+		}
+	],
+	"placements": [
+		{
+			"asset": "fc82a2f70bda161a",
+			"label": "HubSection3",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-1_-1_0_000_101",
+					"position": [
+						-38.7497485,
+						-10.9347612,
+						58.800163
+					]
+				},
+				{
+					"name": "Dirt_0_0_0_110_110",
+					"position": [
+						52.239063,
+						-4.9440635,
+						-56.955704999999995
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard1_FootingRight4",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-162.03322,
+						6.266335,
+						-167.55330500000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard1_FootingRight6",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-162.03322,
+						6.266335,
+						-192.44219
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard1_FootingRight8",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-162.03322,
+						6.266335,
+						-217.331075
+					]
+				}
+			]
+		},
+		{
+			"asset": "9d83c1886dbf3768",
+			"label": "Yard1_FootingFrontHalf1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-255.00108500000002,
+						6.266335,
+						-124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "9d83c1886dbf3768",
+			"label": "Yard1_FootingFrontHalf2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-165.001085,
+						6.266335,
+						-124.033218
+					]
+				}
+			]
+		},
+		{
+			"asset": "29b12bb51dfc08ff",
+			"label": "Spoke1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Road",
+					"position": [
+						-210.001755,
+						6.050334449999999,
+						-119.757243
+					]
+				}
+			]
+		},
+		{
+			"asset": "c90c3c97d2587669",
+			"label": "Yard2_FenceBack1",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-111.99554499999999,
+						9.34634735,
+						-235.99415
+					]
+				}
+			]
+		},
+		{
+			"asset": "c90c3c97d2587669",
+			"label": "Yard2_FenceBack2",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-99.99554499999999,
+						9.34634735,
+						-235.99415
+					]
+				}
+			]
+		},
+		{
+			"asset": "c90c3c97d2587669",
+			"label": "Yard2_FenceBack3",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-87.99554499999999,
+						9.34634735,
+						-235.99415
+					]
+				}
+			]
+		},
+		{
+			"asset": "c90c3c97d2587669",
+			"label": "Yard2_FenceBack4",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-75.99554499999999,
+						9.34634735,
+						-235.99415
+					]
+				}
+			]
+		},
+		{
+			"asset": "c90c3c97d2587669",
+			"label": "Yard2_FenceBack5",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-63.995543,
+						9.34634735,
+						-235.99415
+					]
+				}
+			]
+		},
+		{
+			"asset": "c90c3c97d2587669",
+			"label": "Yard2_FenceBack6",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-51.9955445,
+						9.34634735,
+						-235.99415
+					]
+				}
+			]
+		},
+		{
+			"asset": "c90c3c97d2587669",
+			"label": "Yard2_FenceBack7",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-39.9955445,
+						9.34634735,
+						-235.99415
+					]
+				}
+			]
+		},
+		{
+			"asset": "c90c3c97d2587669",
+			"label": "Yard2_FenceBack8",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-27.9955445,
+						9.34634735,
+						-235.99415
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard2_FootingLeft1",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-118.033218,
+						6.266335,
+						-130.219975
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard2_FootingRight1",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-22.033217,
+						6.266335,
+						-130.219975
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard2_FootingLeft2",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-118.033218,
+						6.266335,
+						-142.66442
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard2_FootingRight2",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-22.033217,
+						6.266335,
+						-142.66442
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard2_FootingLeft3",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-118.033218,
+						6.266335,
+						-155.10886499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard2_FootingRight3",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-22.033217,
+						6.266335,
+						-155.10886499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard2_FootingRight4",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-22.033217,
+						6.266335,
+						-167.55330500000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard2_FootingRight5",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-22.033217,
+						6.266335,
+						-179.99775
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard2_FootingRight6",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-22.033217,
+						6.266335,
+						-192.44219
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard2_FootingRight7",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-22.033217,
+						6.266335,
+						-204.886635
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard2_FootingRight8",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-22.033217,
+						6.266335,
+						-217.331075
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard2_FootingRight9",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-22.033217,
+						6.266335,
+						-229.77553
+					]
+				}
+			]
+		},
+		{
+			"asset": "c90c3c97d2587669",
+			"label": "Yard3_FenceBack5",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						76.00445500000001,
+						9.34634735,
+						-235.99415
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard3_FootingLeft1",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						21.966783,
+						6.266335,
+						-130.219975
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard3_FootingLeft2",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						21.966783,
+						6.266335,
+						-142.66442
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard3_FootingLeft3",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						21.966783,
+						6.266335,
+						-155.10886499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard3_FootingLeft4",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						21.966783,
+						6.266335,
+						-167.55330500000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard3_FootingLeft5",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						21.966783,
+						6.266335,
+						-179.99775
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard3_FootingLeft6",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						21.966783,
+						6.266335,
+						-192.44219
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard3_FootingLeft7",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						21.966783,
+						6.266335,
+						-204.886635
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard3_FootingLeft8",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						21.966783,
+						6.266335,
+						-217.331075
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard3_FootingLeft9",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						21.966783,
+						6.266335,
+						-229.77553
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard4_FootingLeft1",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						161.96678,
+						6.266335,
+						-130.219975
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard4_FootingRight1",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						257.96677999999997,
+						6.266335,
+						-130.219975
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard4_FootingLeft2",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						161.96678,
+						6.266335,
+						-142.66442
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard4_FootingLeft3",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						161.96678,
+						6.266335,
+						-155.10886499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard4_FootingLeft4",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						161.96678,
+						6.266335,
+						-167.55330500000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard4_FootingLeft5",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						161.96678,
+						6.266335,
+						-179.99775
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard4_FootingLeft6",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						161.96678,
+						6.266335,
+						-192.44219
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard4_FootingLeft7",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						161.96678,
+						6.266335,
+						-204.886635
+					]
+				}
+			]
+		},
+		{
+			"asset": "4ae01bd8cb995eef",
+			"label": "Yard4_FootingRight8",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						257.96677999999997,
+						6.266335,
+						-217.331075
+					]
+				}
+			]
+		},
+		{
+			"asset": "5cf289445ef85d11",
+			"label": "Plot5",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_-1_0",
+					"position": [
+						-186.0,
+						5.865,
+						148.0
+					]
+				},
+				{
+					"name": "Ground_0_0_0_110",
+					"position": [
+						-250.0,
+						5.865,
+						220.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "6ce702dd69cb7fdc",
+			"label": "Kit_JunkrotKnifeblockSlicetta",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Handles",
+					"position": [
+						600.0,
+						-146.73774,
+						-0.519214795
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						600.0222,
+						-148.10649999999998,
+						0.880213495
+					]
+				}
+			]
+		}
+	]
+}
