@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotTrashaleroTrashala-b1eb9ec3df0bf991"
+local CACHE_KEY = "JunkrotTrashaleroTrashala-8f5e7b877982dfde"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3546,7 +3546,7 @@ function Kit.recess(m, faces, rim, depth)
 end
 local TIN_BLUE = { 0.4, 0.5, 0.6 }
 local BELLY = { 0.88, 0.89, 0.86 }
-local MIDDLE = 1.2 -- the body's axis: it sits low, on its fins
+local MIDDLE = 1.3 -- the body's axis: it sits low, on its fins
 local SNEAKER_BLUE = { 0.14, 0.46, 0.92 }
 -- The three bottom fins wear the sneakers: the two pectorals and the fin
 -- under the tail, ordinary fins angled down so their tips reach the
@@ -3554,9 +3554,9 @@ local SNEAKER_BLUE = { 0.14, 0.46, 0.92 }
 -- span, which side it points to (0 for the middle), how far it points
 -- down (degrees below level) and how far it sweeps back.
 local SHOD = {
-	{ root = { 1.0, -0.3, -0.3 }, chord = 0.55, span = 0.95, side = -1, down = 62, back = 25 },
-	{ root = { 1.0, 0.3, -0.3 }, chord = 0.55, span = 0.95, side = 1, down = 62, back = 25 },
-	{ root = { -0.7, 0, -0.22 }, chord = 0.4, span = 0.62, side = 0, down = 80, back = 20 },
+	{ root = { 1.0, -0.3, -0.3 }, chord = 0.55, span = 0.95, side = -1, down = 68, back = 15 },
+	{ root = { 1.0, 0.3, -0.3 }, chord = 0.55, span = 0.95, side = 1, down = 68, back = 15 },
+	{ root = { -0.7, 0, -0.22 }, chord = 0.4, span = 0.62, side = 0, down = 82, back = 12 },
 }
 -- Turns a point as a shod fin is turned (Kit.turn's rotations): the span
 -- runs up +z on the outline; it is tipped over to point down, tilted out
@@ -3790,7 +3790,9 @@ part("ShodFins", nil, TIN_BLUE, function(mesh)
 	-- rest, turned down to the ground.
 	for _, f in SHOD do
 		local c = f.chord / 2
-		local m = fin({ { c, -0.12 }, { c * 0.6, f.span * 0.5 }, { c * 0.25, f.span }, { -c * 0.3, f.span }, { -c * 0.75, f.span * 0.45 }, { -c, -0.12 } }, 0.12, f.span)
+		-- Narrowing fast in the lower half, so only a slim tip goes into the
+		-- sneaker's collar.
+		local m = fin({ { c, -0.12 }, { c * 0.42, f.span * 0.5 }, { c * 0.18, f.span }, { -c * 0.18, f.span }, { -c * 0.5, f.span * 0.45 }, { -c, -0.12 } }, 0.12, f.span)
 		local out = (90 - f.down) * (if f.side == 0 then 1 else f.side)
 		Kit.turn(m, "x", 180)
 		Kit.turn(m, "x", out)
@@ -3802,7 +3804,7 @@ end, 40, 0.35)
 -- Each sneaker stands on the ground with its collar over its fin's tip:
 -- the shoe's own origin is the middle of its sole, the collar sits back
 -- from it. Kit.shoe's proportions: toe +x, collar over the heel third.
-local SHOE = { long = 1.15, wide = 0.6, high = 0.42 }
+local SHOE = { long = 1.05, wide = 0.56, high = 0.38 }
 local function shoeAt(f)
 	local tip = shodTip(f)
 	return { tip[1] + SHOE.long * 0.32, tip[2] }
@@ -3822,7 +3824,7 @@ part("Sneakers", nil, SNEAKER_BLUE, function(mesh)
 		shoe:translate(at[1], at[2], SOLE - 0.04)
 		shoe:emit(mesh)
 		-- The tongue, padded, rising out of the collar's front.
-		local tongue = Kit.block(0.2, 0.24, 0.3, 0.05)
+		local tongue = Kit.block(0.18, 0.22, 0.24, 0.05)
 		Kit.turn(tongue, "y", 28)
 		tongue:translate(at[1] - 0.1, at[2], instep(-0.1) + 0.02)
 		tongue:emit(mesh)
@@ -3832,7 +3834,7 @@ part("Soles", nil, { 0.95, 0.95, 0.93 }, function(mesh)
 	-- The midsole, white, standing a little proud of the upper.
 	for _, f in SHOD do
 		local at = shoeAt(f)
-		local midsole = Kit.block(SHOE.long + 0.06, SHOE.wide + 0.06, 0.1, 0.04)
+		local midsole = Kit.block(SHOE.long + 0.05, SHOE.wide + 0.05, 0.1, 0.04)
 		midsole:translate(at[1], at[2], 0.09)
 		midsole:emit(mesh)
 	end
@@ -3853,7 +3855,7 @@ part("ShoeTrim", nil, { 0.96, 0.96, 0.94 }, function(mesh)
 	for _, f in SHOD do
 		local at = shoeAt(f)
 		-- Crossed laces between the eyelet rows down the instep.
-		local rows = { -0.16, -0.02, 0.12, 0.26 }
+		local rows = { -0.14, -0.02, 0.1, 0.22 }
 		for k = 1, #rows - 1 do
 			for _, side in { -1, 1 } do
 				Kit.tube({ { at[1] + rows[k], at[2] + side * 0.1, instep(rows[k]) + 0.01 }, { at[1] + rows[k + 1], at[2] - side * 0.1, instep(rows[k + 1]) + 0.01 } }, 0.016, 6):emit(mesh)
@@ -3861,20 +3863,20 @@ part("ShoeTrim", nil, { 0.96, 0.96, 0.94 }, function(mesh)
 		end
 		-- A stripe along each side, dipping under the laces.
 		for _, side in { -1, 1 } do
-			Kit.tube(Kit.curve({ { at[1] - 0.46, at[2] + side * 0.27, 0.3 }, { at[1] - 0.1, at[2] + side * 0.31, 0.2 }, { at[1] + 0.25, at[2] + side * 0.29, 0.17 }, { at[1] + 0.45, at[2] + side * 0.2, 0.22 } }, 4), 0.022, 6):emit(mesh)
+			Kit.tube(Kit.curve({ { at[1] - 0.42, at[2] + side * 0.25, 0.28 }, { at[1] - 0.1, at[2] + side * 0.29, 0.19 }, { at[1] + 0.22, at[2] + side * 0.27, 0.16 }, { at[1] + 0.4, at[2] + side * 0.18, 0.2 } }, 4), 0.02, 6):emit(mesh)
 		end
 		-- The padded collar rim and a heel tab.
 		local rim = EditMesh.torus(0.12, 0.03, 16, 6)
 		Kit.size(rim, { 1.5, 1, 1 })
 		rim:translate(at[1] - SHOE.long * 0.32, at[2], SOLE - 0.04 + SHOE.high)
 		rim:emit(mesh)
-		Kit.tube(Kit.curve({ { at[1] - 0.55, at[2], SOLE + 0.3 }, { at[1] - 0.6, at[2], SOLE + 0.42 }, { at[1] - 0.55, at[2], SOLE + 0.5 } }, 3), 0.02, 6):emit(mesh)
+		Kit.tube(Kit.curve({ { at[1] - 0.5, at[2], SOLE + 0.2 }, { at[1] - 0.55, at[2], SOLE + 0.3 }, { at[1] - 0.5, at[2], SOLE + 0.38 } }, 3), 0.02, 6):emit(mesh)
 	end
 end, 50, 0)
 part("Eyelets", nil, { 0.1, 0.1, 0.12 }, function(mesh)
 	for _, f in SHOD do
 		local at = shoeAt(f)
-		for _, x in { -0.16, -0.02, 0.12, 0.26 } do
+		for _, x in { -0.14, -0.02, 0.1, 0.22 } do
 			for _, side in { -1, 1 } do
 				local eye = EditMesh.cylinder(0.024, 0.012, 8, 1)
 				eye:translate(at[1] + x, at[2] + side * 0.1, instep(x) + 0.005)
@@ -4011,4 +4013,113 @@ part("Teeth", nil, { 0.97, 0.97, 0.93 }, function(mesh)
 		onJaw(tip):emit(mesh)
 	end
 end, 40, 0)
+-- Scrap panels, as on the Zapper: plates of mismatched metal beaten to the
+-- body's curve, each a grid over a patch of the skin between two x's and
+-- two nominal angles round the section (minus for the left side, 0 the
+-- top, 180 the bottom), lifted a hair off it with its own thickness, and
+-- riveted at the corners. They keep clear of the eyes and the mouth.
+local PANEL_METALS = {
+	GALVANISED = { 0.6, 0.63, 0.62 },
+	OLIVE = { 0.42, 0.45, 0.36 },
+	BLUE_GREY = { 0.4, 0.47, 0.52 },
+	RUST = { 0.55, 0.35, 0.16 },
+	BRASS = { 0.7, 0.58, 0.3 },
+	TIN = { 0.72, 0.7, 0.66 },
+}
+local PANELS = {
+	{ -0.2, 0.6, 12, 58, "GALVANISED" },
+	{ 0.7, 1.3, -12, -56, "OLIVE" },
+	{ -1.2, -0.45, 22, 78, "BLUE_GREY" },
+	{ 0.05, 0.85, -68, -112, "RUST" },
+	{ 1.25, 1.85, 28, 62, "BRASS" },
+	{ -0.95, -0.15, -42, -92, "TIN" },
+	{ 0.3, 1.05, 98, 142, "GALVANISED" },
+	{ -0.55, 0.25, -96, -148, "OLIVE" },
+	{ -1.55, -0.95, -8, -52, "RUST" },
+	{ 1.4, 2.0, -18, -52, "BLUE_GREY" },
+	{ 0.85, 1.35, 62, 98, "OLIVE" },
+	{ -0.45, 0.35, -22, 24, "TIN" },
+	{ 1.95, 2.25, 10, 48, "RUST" },
+	{ -1.3, -0.7, 95, 135, "BRASS" },
+}
+-- The skin's outward direction at x, a, from neighbouring points.
+local function skinNormal(x, a)
+	local p = skin(x, a)
+	local px, pa = skin(x + 0.01, a), skin(x, a + 0.5)
+	local u = { px[1] - p[1], px[2] - p[2], px[3] - p[3] }
+	local v = { pa[1] - p[1], pa[2] - p[2], pa[3] - p[3] }
+	local n = { u[2] * v[3] - u[3] * v[2], u[3] * v[1] - u[1] * v[3], u[1] * v[2] - u[2] * v[1] }
+	local len = math.sqrt(n[1] ^ 2 + n[2] ^ 2 + n[3] ^ 2)
+	n = { n[1] / len, n[2] / len, n[3] / len }
+	-- Outward: away from the axis.
+	local mid = select(1, station(x)) + select(2, station(x))
+	local away = { 0, p[2], p[3] - mid / 2 }
+	if n[1] * away[1] + n[2] * away[2] + n[3] * away[3] < 0 then
+		n = { -n[1], -n[2], -n[3] }
+	end
+	return p, n
+end
+local function onSkin(x, a, lift)
+	local p, n = skinNormal(x, a)
+	return { p[1] + n[1] * lift, p[2] + n[2] * lift, p[3] + n[3] * lift + MIDDLE }
+end
+local function panel(x0, x1, a0, a1)
+	local m = EditMesh.new()
+	local ALONG, ROUND = 8, 6
+	local top, bottom = {}, {}
+	for i = 0, ALONG do
+		top[i], bottom[i] = {}, {}
+		for j = 0, ROUND do
+			local x, a = x0 + (x1 - x0) * i / ALONG, a0 + (a1 - a0) * j / ROUND
+			local o, u = onSkin(x, a, 0.035), onSkin(x, a, -0.01)
+			top[i][j] = m:addVertex(o[1], o[2], o[3])
+			bottom[i][j] = m:addVertex(u[1], u[2], u[3])
+		end
+	end
+	for i = 0, ALONG - 1 do
+		for j = 0, ROUND - 1 do
+			m:addFace({ top[i][j], top[i + 1][j], top[i + 1][j + 1], top[i][j + 1] })
+			m:addFace({ bottom[i][j], bottom[i][j + 1], bottom[i + 1][j + 1], bottom[i + 1][j] })
+		end
+	end
+	for k = 0, ALONG - 1 do
+		m:addFace({ top[k][0], bottom[k][0], bottom[k + 1][0], top[k + 1][0] })
+		m:addFace({ top[k + 1][ROUND], bottom[k + 1][ROUND], bottom[k][ROUND], top[k][ROUND] })
+	end
+	for k = 0, ROUND - 1 do
+		m:addFace({ top[0][k + 1], bottom[0][k + 1], bottom[0][k], top[0][k] })
+		m:addFace({ top[ALONG][k], bottom[ALONG][k], bottom[ALONG][k + 1], top[ALONG][k + 1] })
+	end
+	-- Consistent winding whichever way round the angles run.
+	local o = onSkin((x0 + x1) / 2, (a0 + a1) / 2, 0.1)
+	local c = onSkin((x0 + x1) / 2, (a0 + a1) / 2, 0.035)
+	local n = m:faceNormal(m:select("face", "all"):list()[1])
+	if n[1] * (o[1] - c[1]) + n[2] * (o[2] - c[2]) + n[3] * (o[3] - c[3]) < 0 then
+		m:flip()
+	end
+	return m
+end
+for metal, colour in PANEL_METALS do
+	part("Panels" .. metal, nil, colour, function(mesh)
+		for _, q in PANELS do
+			if q[5] == metal then
+				panel(q[1], q[2], q[3], q[4]):emit(mesh)
+			end
+		end
+	end, 40, if metal == "RUST" then 0.7 elseif metal == "BRASS" then 0.3 else 0.5)
+end
+part("Rivets", nil, DARK_STEEL, function(mesh)
+	-- A dome rivet in each panel's corners, half sunk into it.
+	for _, q in PANELS do
+		local dx, da = (q[2] - q[1]) * 0.08, (q[4] - q[3]) * 0.1
+		for _, x in { q[1] + dx, q[2] - dx } do
+			for _, a in { q[3] + da, q[4] - da } do
+				local o = onSkin(x, a, 0.035)
+				local rivet = EditMesh.sphere(0.03, 6)
+				rivet:translate(o[1], o[2], o[3])
+				rivet:emit(mesh)
+			end
+		end
+	end
+end, true, 0.4)
 finishParts()
