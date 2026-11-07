@@ -33,6 +33,11 @@ for old in $(gh run list --workflow build-standby.yml --limit 20 --json database
 	gh run cancel "${old}" > /dev/null || true
 done
 branch="$(git rev-parse --abbrev-ref HEAD)"
+# Machines run the code they check out, so a scratch branch gets this
+# working tree first; otherwise they would run an older snapshot.
+case "${ref}" in
+	wip/*) scripts/push-wip.sh "${ref}" > /dev/null ;;
+esac
 gh workflow run build-standby.yml --ref "${branch}" -f ref="${ref}" -f shards="${shards}" -f coordinator="${url}"
 # Say straight away if GitHub holds the run back.
 sleep 8
