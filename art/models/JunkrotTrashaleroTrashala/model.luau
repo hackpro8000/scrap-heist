@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotTrashaleroTrashala-afed56ddee32c8bc"
+local CACHE_KEY = "JunkrotTrashaleroTrashala-71bd035793a04898"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3919,61 +3919,131 @@ part("ShodFins", nil, { 0.18, 0.19, 0.21 }, function(mesh)
 		end, 2 + n):emit(mesh)
 	end
 end, 40, 0.4)
--- Each sneaker stands on the ground with its collar over its fin's tip:
--- the shoe's own origin is the middle of its sole, the collar sits back
--- from it. Kit.shoe's proportions: toe +x, collar over the heel third.
+-- Each sneaker stands on the ground with its collar over its fin's tip.
+-- It is lofted along its length from heel to toe: a footprint that is
+-- narrow at the heel, widest at the ball and rounded at the toe, an upper
+-- that stands tallest at the collar and slopes down the vamp to a low
+-- rounded toe box, the whole thing springing up a little at the toe. The
+-- collar is a socket sunk into the top over the heel for the fin to go
+-- in. The midsole and outsole are the same footprint, thicker and a
+-- touch wider.
 local SHOE = { long = 1.05, wide = 0.56, high = 0.38 }
+local SOLE = 0.14 -- outsole plus midsole
 local function shoeAt(f)
 	local tip = shodTip(f)
-	return { tip[1] + SHOE.long * 0.32, tip[2] }
+	return { tip[1] + SHOE.long * 0.3, tip[2] }
 end
-local SOLE = 0.14 -- the sole's height: outsole and midsole
--- The upper's top at x from the shoe's middle: level over the instep,
--- sloping down over the toe.
-local function instep(x)
-	local hx = SHOE.long / 2
-	local toe = math.clamp((x - hx * 0.25) / (hx * 0.75), 0, 1)
-	return SOLE - 0.04 + SHOE.high * (1 - 0.45 * toe)
+-- Stations along the shoe, t from the heel (0) to the toe (1): half width
+-- and the upper's height, as shares of the shoe's.
+local FOOTPRINT = { { 0, 0.1 }, { 0.06, 0.78 }, { 0.3, 0.8 }, { 0.62, 0.95 }, { 0.84, 0.86 }, { 0.96, 0.45 }, { 1, 0.08 } }
+local UPPER = { { 0, 0.45 }, { 0.08, 1.0 }, { 0.28, 1.0 }, { 0.45, 0.82 }, { 0.7, 0.6 }, { 0.9, 0.4 }, { 0.97, 0.22 }, { 1, 0.08 } }
+local function along(list, t)
+	for k = 1, #list - 1 do
+		local a, b = list[k], list[k + 1]
+		if t <= b[1] then
+			local u = math.clamp((t - a[1]) / (b[1] - a[1]), 0, 1)
+			u = u * u * (3 - 2 * u)
+			return a[2] + (b[2] - a[2]) * u
+		end
+	end
+	return list[#list][2]
+end
+local function spring(t) -- the toe's lift off the ground
+	return 0.05 * math.clamp((t - 0.6) / 0.4, 0, 1) ^ 2
+end
+-- A loft of the footprint: a rounded-square section, bottom flat at z0,
+-- rising to height(t) * scale; w as a share of the shoe's half width.
+local function shoeLoft(stations, height, widen, z0, t0, t1)
+	t0, t1 = t0 or 0, t1 or 1
+	local ring, path = {}, {}
+	for k = 0, 19 do
+		local r = math.rad(k * 18)
+		-- A rounded square: the circle pushed out toward the corners.
+		local c, sn = math.cos(r), math.sin(r)
+		local push = 1 + 0.18 * (math.abs(c * sn) * 2)
+		table.insert(ring, { -sn * push, c * push })
+	end
+	for k = 0, stations do
+		table.insert(path, { -SHOE.long / 2 + SHOE.long * (t0 + (t1 - t0) * k / stations), 0, 0 })
+	end
+	local m = EditMesh.sweep(ring, path)
+	m:transform(function(p)
+		local t = (p[1] + SHOE.long / 2) / SHOE.long
+		local w = along(FOOTPRINT, t) * SHOE.wide / 2 + widen
+		local h = height(t)
+		return { p[1], p[2] * w, z0 + spring(t) + (p[3] + 1) / 2 * h }
+	end)
+	return m
 end
 part("Sneakers", nil, SNEAKER_BLUE, function(mesh)
 	for _, f in SHOD do
 		local at = shoeAt(f)
-		local shoe = Kit.shoe(SHOE.long, SHOE.wide, SHOE.high)
-		shoe:translate(at[1], at[2], SOLE - 0.04)
-		shoe:emit(mesh)
+		local upper = shoeLoft(20, function(t)
+			return along(UPPER, t) * SHOE.high
+		end, 0, SOLE - 0.03)
+		-- The collar: a socket sunk into the top over the heel.
+		local collar = upper:select("face", "facing", { 0, 0, 1 }, 35):filter(function(p)
+			local t = (p[1] + SHOE.long / 2) / SHOE.long
+			return t > 0.1 and t < 0.34 and math.abs(p[2]) < SHOE.wide * 0.26
+		end)
+		if collar:count() > 0 then
+			upper:extrude(upper:inset(collar, 0.02, 0), -0.14)
+		end
+		upper:translate(at[1], at[2], 0)
+		upper:emit(mesh)
 		-- The tongue, padded, rising out of the collar's front.
-		local tongue = Kit.block(0.18, 0.22, 0.24, 0.05)
-		Kit.turn(tongue, "y", 28)
-		tongue:translate(at[1] - 0.1, at[2], instep(-0.1) + 0.02)
+		local tongue = Kit.block(0.16, 0.2, 0.22, 0.05)
+		Kit.turn(tongue, "y", 30)
+		tongue:translate(at[1] - 0.12, at[2], SOLE + SHOE.high * 0.92)
 		tongue:emit(mesh)
 	end
 end, true, RUBBER)
+part("HeelCounters", nil, { 0.1, 0.36, 0.78 }, function(mesh)
+	-- A stiffer cup of darker blue round the heel, and a mudguard round
+	-- the toe, both lofted from the same footprint a hair wider.
+	for _, f in SHOD do
+		local at = shoeAt(f)
+		for _, band in { { 0, 0.24, 0.62 }, { 0.78, 1, 0.9 } } do
+			local m = shoeLoft(8, function(t)
+				return along(UPPER, t) * SHOE.high * band[3]
+			end, 0.012, SOLE - 0.02, band[1], band[2])
+			m:translate(at[1], at[2], 0)
+			m:emit(mesh)
+		end
+	end
+end, true, RUBBER)
 part("Soles", nil, { 0.95, 0.95, 0.93 }, function(mesh)
-	-- The midsole, white, standing a little proud of the upper.
+	-- The midsole, white, the footprint a little wider than the upper.
 	for _, f in SHOD do
 		local at = shoeAt(f)
-		local midsole = Kit.block(SHOE.long + 0.05, SHOE.wide + 0.05, 0.1, 0.04)
-		midsole:translate(at[1], at[2], 0.09)
-		midsole:emit(mesh)
+		local m = shoeLoft(20, function()
+			return 0.1
+		end, 0.03, 0.04)
+		m:translate(at[1], at[2], 0)
+		m:emit(mesh)
 	end
-end, 50, RUBBER)
+end, true, RUBBER)
 part("Outsoles", nil, { 0.2, 0.2, 0.22 }, function(mesh)
-	-- The dark rubber under it, and a toe bumper curling up at the front.
+	-- The dark rubber under it, with the toe spring.
 	for _, f in SHOD do
 		local at = shoeAt(f)
-		local outsole = Kit.block(SHOE.long + 0.04, SHOE.wide + 0.04, 0.05, 0.02)
-		outsole:translate(at[1], at[2], 0.025)
-		outsole:emit(mesh)
-		local bumper = Kit.block(0.1, SHOE.wide * 0.6, 0.08, 0.02)
-		bumper:translate(at[1] + SHOE.long / 2 - 0.03, at[2], 0.14)
-		bumper:emit(mesh)
+		local m = shoeLoft(20, function()
+			return 0.045
+		end, 0.02, 0)
+		m:translate(at[1], at[2], 0)
+		m:emit(mesh)
 	end
-end, 50, RUBBER)
+end, true, RUBBER)
+-- The upper's top at x from the shoe's middle, for the laces and eyelets.
+local function instep(x)
+	local t = (x + SHOE.long / 2) / SHOE.long
+	return SOLE - 0.03 + spring(t) + along(UPPER, t) * SHOE.high
+end
 part("ShoeTrim", nil, { 0.96, 0.96, 0.94 }, function(mesh)
 	for _, f in SHOD do
 		local at = shoeAt(f)
 		-- Crossed laces between the eyelet rows down the instep.
-		local rows = { -0.14, -0.02, 0.1, 0.22 }
+		local rows = { -0.12, 0.0, 0.12, 0.24 }
 		for k = 1, #rows - 1 do
 			for _, side in { -1, 1 } do
 				Kit.tube({ { at[1] + rows[k], at[2] + side * 0.1, instep(rows[k]) + 0.01 }, { at[1] + rows[k + 1], at[2] - side * 0.1, instep(rows[k + 1]) + 0.01 } }, 0.016, 6):emit(mesh)
@@ -3981,20 +4051,20 @@ part("ShoeTrim", nil, { 0.96, 0.96, 0.94 }, function(mesh)
 		end
 		-- A stripe along each side, dipping under the laces.
 		for _, side in { -1, 1 } do
-			Kit.tube(Kit.curve({ { at[1] - 0.42, at[2] + side * 0.25, 0.28 }, { at[1] - 0.1, at[2] + side * 0.29, 0.19 }, { at[1] + 0.22, at[2] + side * 0.27, 0.16 }, { at[1] + 0.4, at[2] + side * 0.18, 0.2 } }, 4), 0.02, 6):emit(mesh)
+			Kit.tube(Kit.curve({ { at[1] - 0.4, at[2] + side * 0.23, 0.3 }, { at[1] - 0.1, at[2] + side * 0.26, 0.2 }, { at[1] + 0.22, at[2] + side * 0.26, 0.17 }, { at[1] + 0.4, at[2] + side * 0.2, 0.22 } }, 4), 0.02, 6):emit(mesh)
 		end
 		-- The padded collar rim and a heel tab.
 		local rim = EditMesh.torus(0.12, 0.03, 16, 6)
 		Kit.size(rim, { 1.5, 1, 1 })
-		rim:translate(at[1] - SHOE.long * 0.32, at[2], SOLE - 0.04 + SHOE.high)
+		rim:translate(at[1] - SHOE.long * 0.28, at[2], SOLE - 0.03 + SHOE.high)
 		rim:emit(mesh)
-		Kit.tube(Kit.curve({ { at[1] - 0.5, at[2], SOLE + 0.2 }, { at[1] - 0.55, at[2], SOLE + 0.3 }, { at[1] - 0.5, at[2], SOLE + 0.38 } }, 3), 0.02, 6):emit(mesh)
+		Kit.tube(Kit.curve({ { at[1] - 0.49, at[2], SOLE + 0.18 }, { at[1] - 0.55, at[2], SOLE + 0.28 }, { at[1] - 0.47, at[2], SOLE + 0.36 } }, 3), 0.02, 6):emit(mesh)
 	end
 end, 50, 0)
 part("Eyelets", nil, { 0.1, 0.1, 0.12 }, function(mesh)
 	for _, f in SHOD do
 		local at = shoeAt(f)
-		for _, x in { -0.14, -0.02, 0.1, 0.22 } do
+		for _, x in { -0.12, 0.0, 0.12, 0.24 } do
 			for _, side in { -1, 1 } do
 				local eye = EditMesh.cylinder(0.024, 0.012, 8, 1)
 				eye:translate(at[1] + x, at[2] + side * 0.1, instep(x) + 0.005)
@@ -4287,25 +4357,143 @@ for metal, colour in PANEL_METALS do
 		end
 	end, 40, if metal == "RUST" then 0.7 elseif metal == "BRASS" or metal == "ENAMEL" then 0.3 else 0.5)
 end
+-- How each plate is held on: by turns rivets, hex bolts with washers, a
+-- weld bead run along one edge, a strip of tape across a seam, wire
+-- stitches over an edge, or bent tabs clipped over it. A plate's join is
+-- picked from its place in the list, so neighbours differ.
+local JOINS = { "rivets", "bolts", "weld", "tape", "stitches", "clips", "rivets", "weld", "bolts", "stitches", "tape", "clips" }
+local function joinOf(index)
+	return JOINS[(index * 5) % #JOINS + 1]
+end
+-- Points along a plate's edge in skin space: edge "x0"/"x1" runs round the
+-- section at that x, "a0"/"a1" along x at that angle; t from 0 to 1.
+local function edgePoint(q, edge, t, lift)
+	if edge == "x0" or edge == "x1" then
+		local x = if edge == "x0" then q[1] else q[2]
+		return onSkin(x, q[3] + (q[4] - q[3]) * t, lift)
+	end
+	local a = if edge == "a0" then q[3] else q[4]
+	return onSkin(q[1] + (q[2] - q[1]) * t, a, lift)
+end
+local function joinNormal(q, edge, t)
+	local p, n = skinNormal(if edge == "x0" then q[1] elseif edge == "x1" then q[2] else q[1] + (q[2] - q[1]) * t, if edge == "a0" then q[3] elseif edge == "a1" then q[4] else q[3] + (q[4] - q[3]) * t)
+	return n
+end
 part("Rivets", nil, DARK_STEEL, function(mesh)
 	for _, r in FIN_RIVETS do
 		r:emit(mesh)
 	end
-	-- A dome rivet in each panel's corners, half sunk into it.
-	for _, q in PANELS do
-		local dx, da = (q[2] - q[1]) * 0.1, (q[4] - q[3]) * 0.15
-		for _, x in { q[1] + dx, q[2] - dx } do
-			for _, a in { q[3] + da, q[4] - da } do
-				-- None on the snout's tip, where the plates run out to slivers.
-				if x > 1.95 then
-					continue
+	for index, q in PANELS do
+		local join = joinOf(index)
+		if join == "rivets" or join == "bolts" then
+			-- In the corners, half sunk; bolts are hex heads on washers.
+			local dx, da = (q[2] - q[1]) * 0.1, (q[4] - q[3]) * 0.15
+			for _, x in { q[1] + dx, q[2] - dx } do
+				for _, a in { q[3] + da, q[4] - da } do
+					if x <= 1.95 then
+						local o = onSkin(x, a, 0.035)
+						if join == "rivets" then
+							local rivet = EditMesh.sphere(0.026, 6)
+							rivet:translate(o[1], o[2], o[3])
+							rivet:emit(mesh)
+						else
+							local _, n = skinNormal(x, a)
+							local head = EditMesh.cylinder(0.022, 0.03, 6, 1)
+							local washer = EditMesh.cylinder(0.036, 0.01, 10, 1)
+							-- Standing along the skin's normal.
+							local tilt = math.deg(math.acos(math.clamp(n[3], -1, 1)))
+							local spin = math.deg(math.atan2(n[2], n[1]))
+							head:translate(0, 0, 0.012)
+							for _, piece in { head, washer } do
+								Kit.turn(piece, "y", tilt)
+								Kit.turn(piece, "z", spin)
+								piece:translate(o[1] - n[1] * 0.012, o[2] - n[2] * 0.012, o[3] - n[3] * 0.012)
+								piece:emit(mesh)
+							end
+						end
+					end
 				end
-				local o = onSkin(x, a, 0.035)
-				local rivet = EditMesh.sphere(0.026, 6)
-				rivet:translate(o[1], o[2], o[3])
-				rivet:emit(mesh)
 			end
 		end
 	end
 end, true, 0.4)
+part("Welds", nil, { 0.32, 0.3, 0.28 }, function(mesh)
+	-- A bead of weld run along the plate's rear edge, lumpy.
+	for index, q in PANELS do
+		if joinOf(index) == "weld" and q[1] < 1.9 then
+			local path = {}
+			for k = 0, 10 do
+				local t = k / 10
+				local o = edgePoint(q, "x0", t, 0.03)
+				table.insert(path, o)
+			end
+			EditMesh.sweep((function()
+				local ring = {}
+				for k = 0, 7 do
+					local r = math.rad(k * 45)
+					table.insert(ring, { math.cos(r) * 0.03, math.sin(r) * 0.022 })
+				end
+				return ring
+			end)(), path, { scale = function(t)
+				return 0.8 + 0.35 * math.abs(math.sin(t * 31))
+			end }):emit(mesh)
+		end
+	end
+end, true, 0.6)
+part("Tape", nil, { 0.58, 0.58, 0.56 }, function(mesh)
+	-- A strip of tape across the seam at the plate's front edge, mid way.
+	for index, q in PANELS do
+		if joinOf(index) == "tape" and q[2] < 1.95 then
+			local path = {}
+			for k = 0, 6 do
+				local t = 0.3 + 0.4 * k / 6
+				local o = edgePoint(q, "x1", t, 0.038)
+				table.insert(path, o)
+			end
+			-- Flat: wide across the seam, thin off the plate.
+			EditMesh.sweep({ { -0.045, -0.006 }, { 0.045, -0.006 }, { 0.045, 0.006 }, { -0.045, 0.006 } }, path):emit(mesh)
+		end
+	end
+end, 40, 0.3)
+part("Stitches", nil, { 0.55, 0.55, 0.52 }, function(mesh)
+	-- Wire staples over the plate's upper edge, three to a plate.
+	for index, q in PANELS do
+		if joinOf(index) == "stitches" and q[2] < 1.95 then
+			for _, t in { 0.25, 0.5, 0.75 } do
+				local o = edgePoint(q, "a0", t, 0.036)
+				local n = joinNormal(q, "a0", t)
+				-- Across the edge: along the section, roughly the direction
+				-- of the next point round.
+				local across = edgePoint(q, "x0", 0.02, 0.036)
+				local ref = edgePoint(q, "x0", 0.0, 0.036)
+				local d = { across[1] - ref[1], across[2] - ref[2], across[3] - ref[3] }
+				local len = math.sqrt(d[1] ^ 2 + d[2] ^ 2 + d[3] ^ 2)
+				d = { d[1] / len, d[2] / len, d[3] / len }
+				Kit.tube(Kit.curve({
+					{ o[1] - d[1] * 0.05 - n[1] * 0.02, o[2] - d[2] * 0.05 - n[2] * 0.02, o[3] - d[3] * 0.05 - n[3] * 0.02 },
+					{ o[1], o[2] + 0, o[3] },
+					{ o[1] + d[1] * 0.05 - n[1] * 0.02, o[2] + d[2] * 0.05 - n[2] * 0.02, o[3] + d[3] * 0.05 - n[3] * 0.02 },
+				}, 3), 0.009, 5):emit(mesh)
+			end
+		end
+	end
+end, true, 0.3)
+part("Clips", nil, { 0.5, 0.52, 0.5 }, function(mesh)
+	-- Bent tabs clipped over the plate's lower edge.
+	for index, q in PANELS do
+		if joinOf(index) == "clips" and q[2] < 1.95 then
+			for _, t in { 0.3, 0.7 } do
+				local o = edgePoint(q, "a1", t, 0.04)
+				local n = joinNormal(q, "a1", t)
+				local tab = Kit.block(0.07, 0.09, 0.02, 0.005)
+				local tilt = math.deg(math.acos(math.clamp(n[3], -1, 1)))
+				local spin = math.deg(math.atan2(n[2], n[1]))
+				Kit.turn(tab, "y", tilt)
+				Kit.turn(tab, "z", spin)
+				tab:translate(o[1], o[2], o[3])
+				tab:emit(mesh)
+			end
+		end
+	end
+end, 40, 0.4)
 finishParts()
