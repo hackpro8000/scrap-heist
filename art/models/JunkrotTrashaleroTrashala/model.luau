@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotTrashaleroTrashala-4168d23b6a085bdc"
+local CACHE_KEY = "JunkrotTrashaleroTrashala-20f5f6c2a7f3f902"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -4281,8 +4281,12 @@ part("Rivets", nil, DARK_STEEL, function(mesh)
 		local dx, da = (q[2] - q[1]) * 0.1, (q[4] - q[3]) * 0.15
 		for _, x in { q[1] + dx, q[2] - dx } do
 			for _, a in { q[3] + da, q[4] - da } do
+				-- None on the snout's tip, where the plates run out to slivers.
+				if x > 1.95 then
+					continue
+				end
 				local o = onSkin(x, a, 0.035)
-				local rivet = EditMesh.sphere(if x > 1.9 then 0.018 else 0.026, 6)
+				local rivet = EditMesh.sphere(0.026, 6)
 				rivet:translate(o[1], o[2], o[3])
 				rivet:emit(mesh)
 			end
