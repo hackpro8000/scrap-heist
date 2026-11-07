@@ -171,9 +171,11 @@ A layout is uploaded one object at a time, and only the objects that changed:
    The machines also render previews with modelkit's own renderer, no
    Studio and no upload needed: `send-build.sh` lists the layout's models
    whose script changed since their last preview (`PREVIEW=Name,Name` or
-   `PREVIEW=all` to choose), the shards share them out and render them
-   beside the layout build, and each machine's renders come back with its
-   result, seconds in, to `art/models/<Name>/preview.png` and `views.png`.
+   `PREVIEW=all` to choose), and each machine renders its share once its
+   build result has gone (`scripts/standby-previews.sh`), so renders never
+   hold a build or its uploads back. Each lands in
+   `art/models/<Name>/preview.png` and `views.png` as it arrives, and the
+   client waits for the last.
    Its width grows by 0.5 per round of successes up to 64, halves when Roblox
    turns a request away (waiting out `Retry-After`), and is kept in
    `art/models/ServerMap/upload-width.txt` for the next run. Nothing polls.

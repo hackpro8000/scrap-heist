@@ -40,8 +40,11 @@ results, objects left out, as one commit to build-results/coordinator.
 """
 import argparse
 import asyncio
+import glob
+import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -71,8 +74,10 @@ def say(message):
 class Task:
 	def __init__(self, identity, ref, upload, count, previews=()):
 		self.id, self.ref, self.upload, self.count = identity, ref, upload, count
-		# Models whose previews the shards render, shared out between them.
+		# Models whose previews the shards render, shared out between them,
+		# and the shards whose previews haven't all come yet.
 		self.previews = list(previews)
+		self.previews_waiting = set(range(1, count + 1)) if self.previews else set()
 		self.started = time.time()
 		self.done = {}  # shard -> summary text
 		self.handed = {}  # object id -> (shard, label)
@@ -287,7 +292,7 @@ class Coordinator:
 			await socket.send(json.dumps({"type": "uploader", "layout": self.layout, "width": width, "known": known}))
 			await self.uploader.connected(socket)
 		for task in self.tasks.values():
-			if shard not in task.done:
+			if shard not in task.done or shard in task.previews_waiting:
 				await socket.send(json.dumps({"type": "task", "id": task.id, "task": task.text()}))
 		try:
 			async for message in socket:
@@ -301,6 +306,8 @@ class Coordinator:
 				elif event["type"] == "uploaded" and self.uploads_on_machine:
 					self.uploader.answered(event)
 					await self.uploaded(event["id"], event.get("asset"), event.get("error"))
+				elif event["type"] == "previews-done":
+					await self.previews_done(shard, event)
 				elif event["type"] == "log":
 					say(f"S{shard}: {event.get('text', '')}")
 					await self.emit({"type": "log", "shard": shard, "text": event.get("text", "")})
@@ -347,6 +354,36 @@ class Coordinator:
 				say(f"task {task.id}: uploading {label} ({identity}) from S{shard}")
 				await self.emit({"type": "uploading", "task": task.id, "object": identity, "label": label, "queued": len(task.sent)})
 
+	async def previews_done(self, shard, event):
+		"""A machine's renders are all in: put them beside their models
+		(preview.png, the four turns as views.png, and the model script's hash
+		in previewed.txt, so send-build knows it has a preview) and say so."""
+		task = self.tasks.get(event["task"])
+		if not task or shard not in task.previews_waiting:
+			return
+		task.previews_waiting.discard(shard)
+		for source in sorted(glob.glob(os.path.join(task.out, f"S{shard}", "previews", "*"))):
+			name = os.path.basename(source)
+			model = os.path.join(ROOT, "art", "models", name)
+			if not os.path.isfile(os.path.join(source, "preview.png")):
+				await self.emit({"type": "preview", "task": task.id, "name": name, "path": f"FAILED, see {os.path.join(source, 'build.log')}"})
+				continue
+			os.makedirs(model, exist_ok=True)
+			shutil.copy(os.path.join(source, "preview.png"), os.path.join(model, "preview.png"))
+			views = [os.path.join(source, f"view{turn}.png") for turn in range(4)]
+			sheet = os.path.join(model, "views.png")
+			if shutil.which("montage") and all(os.path.isfile(view) for view in views):
+				await asyncio.to_thread(subprocess.run, ["montage", *views, "-tile", "2x2", "-geometry", "+4+4", sheet])
+			script = os.path.join(model, "model.luau")
+			if os.path.isfile(script):
+				with open(os.path.join(model, "previewed.txt"), "w") as file:
+					file.write(hashlib.sha1(open(script, "rb").read()).hexdigest()[:16] + "\n")
+			shown = sheet if os.path.isfile(sheet) else os.path.join(model, "preview.png")
+			await self.emit({"type": "preview", "task": task.id, "name": name, "path": os.path.relpath(shown, ROOT)})
+		await self.emit({"type": "previews-done", "task": task.id, "shard": shard, "left": len(task.previews_waiting)})
+		if not task.previews_waiting and getattr(task, "completed", False):
+			del self.tasks[task.id]
+
 	async def finished_shard(self, shard, event):
 		task = self.tasks.get(event["task"])
 		if not task or shard in task.done:
@@ -382,8 +419,11 @@ class Coordinator:
 			merged = await asyncio.to_thread(self.merge, task)
 		await self.emit({"type": "finished", "task": task.id, "out": task.out, "built": round(built),
 			"total": round(time.time() - task.started), "objects": len(task.handed), "uploaded": len(task.sent & set(self.uploader.record)), "failed": failed,
-			"width": round(self.uploader.throttle.limit, 1), "merged": merged})
-		del self.tasks[task.id]
+			"width": round(self.uploader.throttle.limit, 1), "merged": merged, "previews_waiting": len(task.previews_waiting)})
+		# Kept while previews are still to come; previews_done lets it go.
+		task.completed = True
+		if not task.previews_waiting:
+			del self.tasks[task.id]
 
 	def merge(self, task):
 		"""Merges a finished task into the game's tables (scripts/merge-shards.sh)

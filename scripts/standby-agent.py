@@ -79,6 +79,7 @@ class Agent:
 		self.by_branch = {}  # task id -> whether its objects went to a branch
 		self.git_lock = threading.Lock()
 		self.building = set()
+		self.previewed = set()  # tasks whose previews this machine rendered
 		self.stopped = False
 		self.uploader = None
 		self.socket = None
@@ -112,7 +113,8 @@ class Agent:
 				path = os.path.join(directory, name)
 				relative = os.path.relpath(path, out)
 				# In branch mode the objects went to GitHub; only results come back.
-				if relative == "task.txt" or (self.by_branch.get(identity) and relative.endswith(".glb")):
+				# Previews go on their own afterwards (send_previews).
+				if relative == "task.txt" or relative.startswith("previews-run") or (self.by_branch.get(identity) and relative.endswith(".glb")):
 					continue
 				files.append(relative)
 		# Names before objects, so the coordinator knows each object's label.
@@ -136,6 +138,28 @@ class Agent:
 			finally:
 				self.building.discard(identity)
 		await self.send_results(socket, identity, self.built[identity])
+		self.idle_until = time.monotonic() + self.idle_seconds
+		await self.send_previews(socket, identity, text)
+
+	async def send_previews(self, socket, identity, text):
+		"""Renders this shard's share of the task's previews once its build
+		result has gone (scripts/standby-previews.sh), sends them, then says
+		so, even with nothing to render, so the coordinator can count shards."""
+		names = next((line[8:] for line in text.splitlines() if line.startswith("preview=")), "")
+		if not names:
+			return
+		out = os.path.join(self.built[identity], "previews-run")
+		if identity not in self.previewed:
+			self.previewed.add(identity)
+			await asyncio.to_thread(subprocess.run, ["scripts/standby-previews.sh", names, str(self.index), str(self.count), out],
+				capture_output=True)
+		for directory, _, files in os.walk(out):
+			for name in sorted(files):
+				path = os.path.join(directory, name)
+				with open(path, "rb") as file:
+					data = file.read()
+				await socket.send(wire.pack({"type": "file", "task": identity, "path": os.path.relpath(path, out), "size": len(data)}, data))
+		await socket.send(json.dumps({"type": "previews-done", "task": identity}))
 		self.idle_until = time.monotonic() + self.idle_seconds
 
 	def answer(self, identity, asset, error):
@@ -219,7 +243,7 @@ class Agent:
 
 	async def session(self):
 		token = await asyncio.to_thread(identity_token)
-		async with websockets.connect(self.url, max_size=MAX_MESSAGE, ping_interval=20, ping_timeout=60) as socket:
+		async with websockets.connect(self.url, max_size=MAX_MESSAGE, ping_interval=20, ping_timeout=120) as socket:
 			await socket.send(json.dumps({"type": "hello", "token": token, "shard": self.index, "count": self.count,
 				"layout": self.layout}))
 			say(f"connected to {self.url}")

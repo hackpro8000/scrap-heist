@@ -13,18 +13,16 @@ arrives, then the upload's, and exits 0 when every machine built and every
 object uploaded. Results land in .standby-results/<task>/ for
 scripts/merge-shards.sh. With --preview, the machines also render those
 models with modelkit; each machine's renders come back with its result,
-long before the uploads end, and go to art/models/<Name>/ (preview.png,
-views.png) with the model script's hash in previewed.txt. Exits 2 when no
+often before the uploads end; the coordinator puts them in
+art/models/<Name>/ (preview.png, views.png) and each is printed as it
+lands. Exits 2 when no
 coordinator is running.
 """
 import argparse
 import asyncio
 import glob
-import hashlib
 import json
 import os
-import shutil
-import subprocess
 import sys
 
 import websockets
@@ -80,33 +78,12 @@ async def stop_machines(url):
 STALL_SECONDS = 30
 
 
-def take_previews(folder):
-	"""Moves a machine's renders (previews/<Name>/) beside their models and
-	prints where they are. Four turns go on one sheet, views.png."""
-	for source in sorted(glob.glob(os.path.join(folder, "*"))):
-		name = os.path.basename(source)
-		model = os.path.join("art", "models", name)
-		if not os.path.isfile(os.path.join(source, "preview.png")):
-			print(f"preview {name} FAILED: {os.path.join(source, 'build.log')}", flush=True)
-			continue
-		os.makedirs(model, exist_ok=True)
-		shutil.copy(os.path.join(source, "preview.png"), os.path.join(model, "preview.png"))
-		views = [os.path.join(source, f"view{turn}.png") for turn in range(4)]
-		sheet = os.path.join(model, "views.png")
-		if shutil.which("montage") and all(os.path.isfile(view) for view in views):
-			subprocess.run(["montage", *views, "-tile", "2x2", "-geometry", "+4+4", sheet], check=False)
-		script = os.path.join(model, "model.luau")
-		if os.path.isfile(script):
-			with open(os.path.join(model, "previewed.txt"), "w") as file:
-				file.write(hashlib.sha1(open(script, "rb").read()).hexdigest()[:16] + "\n")
-		print(f"preview {name}: {sheet if os.path.isfile(sheet) else os.path.join(model, 'preview.png')}", flush=True)
-
-
 async def build(url, ref, upload, wait, previews=()):
 	async with websockets.connect(url, max_size=MAX_MESSAGE) as socket:
 		await socket.send(json.dumps({"type": "build", "ref": ref, "upload": upload, "previews": list(previews)}))
 		failed = False
 		task = None
+		finished = None
 		quiet = 0
 		while True:
 			try:
@@ -129,8 +106,6 @@ async def build(url, ref, upload, wait, previews=()):
 			elif kind == "shard":
 				summary = event["summary"].replace("\n", " ")
 				print(f"S{event['shard']} after {event['seconds']}s: {summary}", flush=True)
-				if task:
-					take_previews(os.path.join(".standby-results", task, f"S{event['shard']}", "previews"))
 				failed = failed or "status=DONE" not in event["summary"]
 			elif kind == "machine" and event.get("gone"):
 				print(f"S{event['shard']} dropped its connection (it reconnects and resumes)", flush=True)
@@ -138,6 +113,10 @@ async def build(url, ref, upload, wait, previews=()):
 				state = f"asset {event['asset']}" if event.get("asset") else f"FAILED: {event.get('error')}"
 				print(f"upload {event['done']}/{event['of']}: {event['label']} {state}", flush=True)
 				failed = failed or not event.get("asset")
+			elif kind == "preview":
+				print(f"preview {event['name']}: {event['path']}", flush=True)
+			elif kind == "previews-done" and event["task"] == task and event["left"] == 0 and finished is not None:
+				return finished
 			elif kind == "warning":
 				print(f"warning: {event['text']}", flush=True)
 			elif kind == "log" and ("FAILED" in event["text"] or "could not" in event["text"] or "error" in event["text"].lower()):
@@ -164,7 +143,11 @@ async def build(url, ref, upload, wait, previews=()):
 					print(f"merged into the game's tables; {len(new)} new assets need the game's permission")
 					with open(os.path.join(out, "new-assets.txt"), "w") as file:
 						file.write("\n".join(new) + ("\n" if new else ""))
-				return 1 if failed else 0
+				finished = 1 if failed else 0
+				# Previews come after each machine's result; wait for the last.
+				if not event.get("previews_waiting"):
+					return finished
+				print(f"waiting for previews from {event['previews_waiting']} machines", flush=True)
 
 
 def main():

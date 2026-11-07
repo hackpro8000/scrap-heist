@@ -11,10 +11,10 @@
 #   upload-of=<build task id>         upload what that build handed over
 #   hand-over=coordinator             leave the objects in <results>/handed/
 #                                     for scripts/standby-agent.py to send
-#   preview=<Name>,<Name>...          also render these models' previews
-#                                     with modelkit, shared out between the
-#                                     shards, into <results>/previews/<Name>/
-#                                     (preview.png and four turns, view0-3.png)
+#   preview=<Name>,<Name>...          render these models' previews too;
+#                                     scripts/standby-agent.py runs
+#                                     scripts/standby-previews.sh for them
+#                                     once the build's result has gone
 #   hand-over=branch                  push them to build-objects/s<index> as
 #                                     before, list them in <results>/handed/
 #                                     names.tsv and the commit in
@@ -98,36 +98,9 @@ EOF
 	rm -rf "${handed}"
 }
 
-# Renders this shard's share of the task's previews (every count-th name,
-# from this shard's index), each model in its own folder with its own cache,
-# so it runs beside the layout build. A model that fails leaves its log.
-# Renders are 384 pixels: they travel through the coordinator's tunnel, which
-# is slow, and four make a 768-pixel sheet.
-render_previews() {
-	local names name n=0 dir
-	IFS=, read -ra names <<< "$(field preview)"
-	for name in "${names[@]}"; do
-		n=$((n + 1))
-		[ $(((n - 1) % count + 1)) -eq "${index}" ] || continue
-		dir="${out}/previews/${name}"
-		mkdir -p "${dir}"
-		if scripts/assemble-model.sh "${name}" > "${dir}/build.log" 2>&1 &&
-			scripts/build-model.sh "${name}" -- --turntable 4 --size "${PREVIEW_SIZE:-384}" >> "${dir}/build.log" 2>&1; then
-			cp "art/models/${name}/preview.png" "${dir}/preview.png"
-			for turn in 0 1 2 3; do
-				cp "art/models/${name}/turntable/000${turn}.png" "${dir}/view${turn}.png"
-			done
-		else
-			echo "FAILED" >> "${dir}/build.log"
-		fi
-	done
-}
-
 build() {
-	local id started=${SECONDS} status="DONE" build_seconds="-" upload="skipped" handed previews
+	local id started=${SECONDS} status="DONE" build_seconds="-" upload="skipped" handed
 	id="$(basename "${out}")"
-	render_previews &
-	previews=$!
 	{
 		scripts/assemble-model.sh "${layout}" &&
 			{
@@ -155,7 +128,6 @@ EOF
 			status="FAILED"
 		fi
 	fi
-	wait "${previews}"
 	{
 		echo "status=${status}"
 		echo "build=${build_seconds}"
