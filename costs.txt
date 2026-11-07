@@ -1,0 +1,17 @@
+slab Approach5	0.219
+slab Approach5 #split	1
+slab Approach7	0.231
+slab Approach7 #split	1
+ProofShark 1 x	0.102
+ProofShark 1 x #split	1
+JunkMound 1 x x1.6666666666666667	0.490
+JunkrotSpoonzoBentolo 1 x	0.484
+JunkrotSpoonzoBentolo 1 x #split	1
+JunkrotBlendroCigolante 1 x	0.530
+JunkrotBlendroCigolante 1 x #split	1
+JunkrotMopaMopetta 1 x	0.546
+JunkrotMopaMopetta 1 x #split	1
+JunkrotPressurwashoSprizzo 1 x	0.555
+JunkrotPressurwashoSprizzo 1 x #split	1
+JunkrotLaserlevelLineo 1 x	0.485
+JunkrotLaserlevelLineo 1 x #split	1
