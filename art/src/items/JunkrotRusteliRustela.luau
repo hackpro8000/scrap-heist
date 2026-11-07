@@ -1,13 +1,24 @@
 -- Rusteli Rustela: Lirili Larila from scrap. A tall ribbed green cactus
 -- column of mismatched painted plates bristling with rebar spines, nose
--- forward (+x), standing on just two massive grey elephant legs in
--- strap sandals; at its top front a grey tin elephant's head with huge
+-- forward (+x), standing on just two massive legs in strap sandals,
+-- one in front of the other; at its top front a grey tin elephant's head with huge
 -- sheet-tin ears, a corrugated hose trunk hanging down its front and
 -- curling up at the end, two tusks and googly eyes. 4 studs tall.
 -- include: JunkrotScrap
-local LEGY = 0.42 -- the legs' centres, either side
+local LEGX = 0.5 -- the legs' centres: one in front, one behind
 local HX, HZ = 0.35, 3.3 -- the head's axis: its x origin and height
 local RIBS, RIB = 10, 0.05 -- ribs round the cactus and how deep
+local GREENS = {
+	{ "CACTUS", { 0.33, 0.56, 0.33 } },
+	{ "DEEPGREEN", { 0.22, 0.42, 0.26 } },
+	{ "SAGE", { 0.46, 0.6, 0.42 } },
+	{ "MOSSY", { 0.38, 0.5, 0.28 } },
+}
+local GREYS = {
+	{ "HIDE", { 0.56, 0.57, 0.58 } },
+	{ "SLATE", { 0.47, 0.49, 0.52 } },
+	{ "ASH", { 0.64, 0.63, 0.61 } },
+}
 
 -- Lofts are built along x; the cactus and the legs are stood upright
 -- (loft x becomes height, loft z becomes -x) and the ribs are pressed
@@ -72,7 +83,7 @@ local function place(x, p)
 		return upright(ribbed(p))
 	elseif x < 25 then
 		local q = upright(p)
-		return { q[1], q[2] + (if x < 15 then -LEGY else LEGY), q[3] }
+		return { q[1] + (if x < 15 then -LEGX else LEGX), q[2], q[3] }
 	end
 	return p
 end
@@ -88,7 +99,7 @@ function W.normal(x, a)
 	local p = W.skin(x, a)
 	local px, pa = W.skin(x + 0.01, a), W.skin(x, a + 0.5)
 	local n = EditMesh.vec.unit(EditMesh.vec.cross(EditMesh.vec.sub(px, p), EditMesh.vec.sub(pa, p)))
-	local axis = if x < 5 then { 0, 0, p[3] } elseif x < 25 then { 0, if x < 15 then -LEGY else LEGY, p[3] } else { p[1], 0, HZ }
+	local axis = if x < 5 then { 0, 0, p[3] } elseif x < 25 then { if x < 15 then -LEGX else LEGX, 0, p[3] } else { p[1], 0, HZ }
 	if EditMesh.vec.dot(n, EditMesh.vec.sub(p, axis)) < 0 then
 		n = { -n[1], -n[2], -n[3] }
 	end
@@ -157,7 +168,7 @@ part("Ears", nil, DARK, function(mesh)
 			Kit.turn(m, "x", side * 28)
 			Kit.turn(m, "z", side * 18)
 			return m:translate(HX + 0.15, side * 0.42, HZ + 0.42)
-		end, n):emit(mesh)
+		end, n, GREYS):emit(mesh)
 	end
 end, 40, 0.35)
 local eyes = {}
@@ -179,7 +190,7 @@ part("Footbeds", nil, { 0.55, 0.42, 0.26 }, function(mesh)
 	for _, side in { -1, 1 } do
 		local bed = Kit.plate(FOOT, 0.08)
 		Kit.turn(bed, "x", -90)
-		bed:translate(0, side * LEGY, 0.1)
+		bed:translate(side * LEGX, 0, 0.1)
 		bed:emit(mesh)
 	end
 end, 40, 0.6)
@@ -188,7 +199,7 @@ part("Outsoles", nil, { 0.12, 0.12, 0.12 }, function(mesh)
 		local sole = Kit.plate(FOOT, 0.05)
 		Kit.turn(sole, "x", -90)
 		Kit.size(sole, { 1.03, 1.03, 1 })
-		sole:translate(0, side * LEGY, 0.05)
+		sole:translate(side * LEGX, 0, 0.05)
 		sole:emit(mesh)
 	end
 end, 40, RUBBER)
@@ -198,7 +209,7 @@ part("Straps", nil, { 0.42, 0.26, 0.14 }, function(mesh)
 		for _, x in STRAPS do
 			local strap = EditMesh.arch(0.37, 0.03, 0.15, 14)
 			Kit.turn(strap, "z", 90)
-			strap:translate(x, side * LEGY, 0.14)
+			strap:translate(side * LEGX + x, 0, 0.14)
 			strap:emit(mesh)
 		end
 	end
@@ -208,8 +219,8 @@ part("Buckles", nil, { 0.75, 0.72, 0.6 }, function(mesh)
 		for _, x in STRAPS do
 			local frame = EditMesh.tube(0.075, 0.05, 0.03, 4)
 			Kit.turn(frame, "z", 45)
-			Kit.turn(frame, "x", side * -55)
-			frame:translate(x, side * (LEGY + 0.32), 0.4)
+			Kit.turn(frame, "x", -55)
+			frame:translate(side * LEGX + x, 0.32, 0.4)
 			frame:emit(mesh)
 		end
 	end
@@ -227,4 +238,72 @@ part("Toenails", nil, { 0.88, 0.86, 0.78 }, function(mesh)
 		end
 	end
 end, true, 0.1)
+-- Rebar spines along the cactus's rib crests, pointing straight out, in
+-- staggered rows; none on the front where the head and trunk hang.
+part("Spines", nil, { 0.3, 0.24, 0.18 }, function(mesh)
+	for r = 0, RIBS - 1 do
+		local a = r * 360 / RIBS
+		local signed = if a > 180 then a - 360 else a
+		for k, x in { 1.4, 1.85, 2.3, 2.75, 3.2, 3.55 } do
+			local h = x + (r % 2) * 0.2
+			local front = math.abs(signed) > 125
+			if not (front and h > 1.3) and h < 3.75 then
+				local p, n = W.normal(h, signed)
+				Kit.tube({ { p[1] - n[1] * 0.04, p[2] - n[2] * 0.04, p[3] - n[3] * 0.04 }, { p[1] + n[1] * 0.2, p[2] + n[2] * 0.2, p[3] + n[3] * 0.2 + 0.03 } }, function(t)
+					return 0.022 * (1 - 0.8 * t)
+				end, 5):emit(mesh)
+			end
+		end
+	end
+end, true, 0.6)
+
+-- The plating: the cactus and its legs in mismatched greens, the
+-- elephant's head in greys.
+local function bands(cuts)
+	return {
+		{ 0, 36, cuts[1] }, { 36, 72, cuts[2] }, { 72, 108, cuts[3] }, { 108, 144, cuts[4] }, { 144, 180, cuts[5] },
+	}
+end
+local B = {}
+for _, b in bands({
+	{ 1.0, 1.6, 2.4, 2.9, 3.5, 3.85 },
+	{ 1.0, 1.35, 2.05, 2.7, 3.3, 3.85 },
+	{ 1.0, 1.8, 2.25, 3.0, 3.6, 3.85 },
+	{ 1.0, 1.45, 2.15, 2.6, 3.25, 3.85 },
+	{ 1.0, 1.7, 2.5, 3.1, 3.85 },
+}) do
+	table.insert(B, b)
+end
+for _, base in { 10, 20 } do
+	for _, b in bands({
+		{ base + 0.08, base + 0.6, base + 1.1, base + 1.45 },
+		{ base + 0.08, base + 0.45, base + 0.95, base + 1.45 },
+		{ base + 0.08, base + 0.7, base + 1.2, base + 1.45 },
+		{ base + 0.08, base + 0.5, base + 1.0, base + 1.45 },
+		{ base + 0.08, base + 0.65, base + 1.45 },
+	}) do
+		table.insert(B, b)
+	end
+end
+for _, b in bands({
+	{ 29.48, 29.85, 30.3, 30.7, 30.94 },
+	{ 29.48, 30.05, 30.5, 30.94 },
+	{ 29.48, 29.9, 30.4, 30.94 },
+	{ 29.48, 30.15, 30.6, 30.94 },
+	{ 29.48, 29.95, 30.45, 30.94 },
+}) do
+	table.insert(B, b)
+end
+local panels = Scrap.panels(W, {
+	bands = B,
+	splits = { [4] = 0.5, [13] = 0.45, [27] = 0.55, [38] = 0.5 },
+	metal = function(band, seg, cell, side, x0)
+		local n = band * 5 + seg * 3 + cell + (if side < 0 then 1 else 0)
+		if x0 > 25 then
+			return GREYS[n % #GREYS + 1]
+		end
+		return GREENS[n % #GREENS + 1]
+	end,
+})
+Scrap.panelParts(W, panels, { rust = { CACTUS = 0.2, DEEPGREEN = 0.2, SAGE = 0.2, MOSSY = 0.3, HIDE = 0.2, SLATE = 0.2, ASH = 0.2 } })
 finishParts()
