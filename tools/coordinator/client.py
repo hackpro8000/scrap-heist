@@ -2,7 +2,7 @@
 """Talks to the running coordinator (coordinator.py) from this session.
 
   tools/coordinator/client.py status          # the run, machines up, tasks
-  tools/coordinator/client.py build <commit> [--no-upload] [--wait S]
+  tools/coordinator/client.py build <commit> [--no-upload] [--wait S] [--preview A,B]
   tools/coordinator/client.py stop-machines   # standby machines end now
   tools/coordinator/client.py wait-machines [N] [--wait S]
                                               # returns once N machines are up
@@ -11,13 +11,20 @@
 `build` posts a task and prints each machine's result the moment it
 arrives, then the upload's, and exits 0 when every machine built and every
 object uploaded. Results land in .standby-results/<task>/ for
-scripts/merge-shards.sh. Exits 2 when no coordinator is running.
+scripts/merge-shards.sh. With --preview, the machines also render those
+models with modelkit; each machine's renders come back with its result,
+long before the uploads end, and go to art/models/<Name>/ (preview.png,
+views.png) with the model script's hash in previewed.txt. Exits 2 when no
+coordinator is running.
 """
 import argparse
 import asyncio
 import glob
+import hashlib
 import json
 import os
+import shutil
+import subprocess
 import sys
 
 import websockets
@@ -73,10 +80,33 @@ async def stop_machines(url):
 STALL_SECONDS = 30
 
 
-async def build(url, ref, upload, wait):
+def take_previews(folder):
+	"""Moves a machine's renders (previews/<Name>/) beside their models and
+	prints where they are. Four turns go on one sheet, views.png."""
+	for source in sorted(glob.glob(os.path.join(folder, "*"))):
+		name = os.path.basename(source)
+		model = os.path.join("art", "models", name)
+		if not os.path.isfile(os.path.join(source, "preview.png")):
+			print(f"preview {name} FAILED: {os.path.join(source, 'build.log')}", flush=True)
+			continue
+		os.makedirs(model, exist_ok=True)
+		shutil.copy(os.path.join(source, "preview.png"), os.path.join(model, "preview.png"))
+		views = [os.path.join(source, f"view{turn}.png") for turn in range(4)]
+		sheet = os.path.join(model, "views.png")
+		if shutil.which("montage") and all(os.path.isfile(view) for view in views):
+			subprocess.run(["montage", *views, "-tile", "2x2", "-geometry", "+4+4", sheet], check=False)
+		script = os.path.join(model, "model.luau")
+		if os.path.isfile(script):
+			with open(os.path.join(model, "previewed.txt"), "w") as file:
+				file.write(hashlib.sha1(open(script, "rb").read()).hexdigest()[:16] + "\n")
+		print(f"preview {name}: {sheet if os.path.isfile(sheet) else os.path.join(model, 'preview.png')}", flush=True)
+
+
+async def build(url, ref, upload, wait, previews=()):
 	async with websockets.connect(url, max_size=MAX_MESSAGE) as socket:
-		await socket.send(json.dumps({"type": "build", "ref": ref, "upload": upload}))
+		await socket.send(json.dumps({"type": "build", "ref": ref, "upload": upload, "previews": list(previews)}))
 		failed = False
+		task = None
 		quiet = 0
 		while True:
 			try:
@@ -94,10 +124,13 @@ async def build(url, ref, upload, wait):
 				print(event["text"])
 				return 1
 			if kind == "posted":
-				print(f"posted task {event['task']} ({ref[:7]}) to {event['up']} of {event['count']} machines", file=sys.stderr)
+				task = event["task"]
+				print(f"posted task {task} ({ref[:7]}) to {event['up']} of {event['count']} machines", file=sys.stderr)
 			elif kind == "shard":
 				summary = event["summary"].replace("\n", " ")
 				print(f"S{event['shard']} after {event['seconds']}s: {summary}", flush=True)
+				if task:
+					take_previews(os.path.join(".standby-results", task, f"S{event['shard']}", "previews"))
 				failed = failed or "status=DONE" not in event["summary"]
 			elif kind == "machine" and event.get("gone"):
 				print(f"S{event['shard']} dropped its connection (it reconnects and resumes)", flush=True)
@@ -140,6 +173,7 @@ def main():
 	parser.add_argument("ref", nargs="?")
 	parser.add_argument("--no-upload", action="store_true")
 	parser.add_argument("--wait", type=int, default=600)
+	parser.add_argument("--preview", default="", help="models to render, comma-separated")
 	arguments = parser.parse_args()
 	url = control_url()
 	if not url:
@@ -154,7 +188,8 @@ def main():
 	else:
 		if not arguments.ref:
 			parser.error("build needs a commit")
-		code = asyncio.run(build(url, arguments.ref, not arguments.no_upload, arguments.wait))
+		previews = [name for name in arguments.preview.split(",") if name]
+		code = asyncio.run(build(url, arguments.ref, not arguments.no_upload, arguments.wait, previews))
 	sys.exit(code)
 
 

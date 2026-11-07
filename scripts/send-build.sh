@@ -41,6 +41,22 @@ if python3 tools/coordinator/client.py status > /dev/null 2>&1; then
 	commit="$(git rev-parse --verify -q "origin/${ref}^{commit}" || git rev-parse --verify "${ref}^{commit}")"
 	flags=(--wait "${wait_seconds}")
 	[ "${upload}" = "no" ] && flags+=(--no-upload)
+	# The machines render the layout's models that changed since their last
+	# preview (or PREVIEW=Name,Name; PREVIEW=all for every one), and each
+	# render comes back with its machine's result, before the uploads end.
+	previews="${PREVIEW:-}"
+	if [ -z "${previews}" ] || [ "${previews}" = "all" ]; then
+		every="${previews}"
+		previews=""
+		for name in $(head -n 1 art/src/layouts/ServerMap.luau | sed 's/^-- uses://'); do
+			script="art/models/${name}/model.luau"
+			[ -f "${script}" ] || continue
+			if [ "${every}" = "all" ] || [ "$(cat "art/models/${name}/previewed.txt" 2> /dev/null)" != "$(sha1sum "${script}" | cut -c1-16)" ]; then
+				previews="${previews:+${previews},}${name}"
+			fi
+		done
+	fi
+	[ -n "${previews}" ] && flags+=(--preview "${previews}")
 	exec python3 tools/coordinator/client.py build "${commit}" "${flags[@]}"
 fi
 
