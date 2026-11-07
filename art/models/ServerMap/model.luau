@@ -81686,7 +81686,7 @@ finishParts()
 end
 buildKeys[buildJunkrotUnitZero] = "JunkrotUnitZero-39d93a002e3a485d"
 function buildProofToaster()
-local CACHE_KEY = "ProofToaster-4fbdfbb909b74a79"
+local CACHE_KEY = "ProofToaster-a9618b4a08e31118"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -82495,7 +82495,8 @@ end
 -- Proof Toaster: a test of the edit-mesh tools. The whole shell is one
 -- rounded box: two slots inset into its top and pushed down into it, a
 -- lever housing extruded from its side, and four feet extruded from its
--- base. 2.6 x 1.6, about 2.1 tall, standing on the origin.
+-- base. 2.6 x 1.6, about 2.1 tall, standing on the origin. The toast sits
+-- in the -y slot.
 -- Edit Mesh: a mesh that can be edited after it's made, down to every
 -- vertex, edge and face, then handed to the engine as one part
 -- (`m:emit(mesh)` inside a part's build function). Include it with
@@ -85136,7 +85137,7 @@ part("Toast", nil, BREAD, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildProofToaster] = "ProofToaster-b4d4cc998da322b4"
+buildKeys[buildProofToaster] = "ProofToaster-39187b35ced582a5"
 function buildProofKettle()
 local CACHE_KEY = "ProofKettle-515ddb4e8083616e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -92066,14 +92067,14 @@ end, nil, 0.2)
 finishParts()
 end
 buildKeys[buildProofShark] = "ProofShark-7e3b2d6b25523b9f"
-slabKeys[92354] = "ee64ae88eefa8b1f-cf7e96091024d5cc"
-slabKeys[92624] = "ee64ae88eefa8b1f-7ded6fc62f8b67a3"
-slabKeys[92656] = "ee64ae88eefa8b1f-2f5b4070ee3aa512"
-slabKeys[92736] = "ee64ae88eefa8b1f-7b25a7aa2539d602"
-slabKeys[92744] = "ee64ae88eefa8b1f-107c5c30239027da"
-slabKeys[92761] = "ee64ae88eefa8b1f-18845c9c8b69ea54"
-slabKeys[92866] = "ee64ae88eefa8b1f-363b6dc9a40b12d8"
-slabKeys[92890] = "ee64ae88eefa8b1f-f4e0427155be5973"
+slabKeys[92355] = "ee64ae88eefa8b1f-cf7e96091024d5cc"
+slabKeys[92625] = "ee64ae88eefa8b1f-7ded6fc62f8b67a3"
+slabKeys[92657] = "ee64ae88eefa8b1f-2f5b4070ee3aa512"
+slabKeys[92737] = "ee64ae88eefa8b1f-7b25a7aa2539d602"
+slabKeys[92745] = "ee64ae88eefa8b1f-107c5c30239027da"
+slabKeys[92762] = "ee64ae88eefa8b1f-18845c9c8b69ea54"
+slabKeys[92867] = "ee64ae88eefa8b1f-363b6dc9a40b12d8"
+slabKeys[92891] = "ee64ae88eefa8b1f-f4e0427155be5973"
 -- uses: HubSectionA HubSectionB HubSectionEnd YardIsland YardFence YardFenceHalf YardFooting YardGate PlotMarker PadKitchen PadGarage PadGadget BuildBay ScrapCrate RebirthPress JunkMound CapsuleScrap CapsuleSalvaged CapsuleRefurbished CapsuleFactory CapsulePrecision CapsulePrototype CapsuleSecret JunkrotCanettoRustini JunkrotSpoonzoBentolo JunkrotKettlinaDentata JunkrotTyroFlattino JunkrotBoltoloLonelo JunkrotHubcappaWobbla JunkrotRemotinoMuto JunkrotCabloTanglino JunkrotBulboFulminato JunkrotCrumboPoppalot JunkrotPannettoPatchato JunkrotBlendroCigolante JunkrotJackoloCrickato JunkrotOilcannaGluglu JunkrotMuffleroTossetto JunkrotRadioloFruscio JunkrotFanettoWobblino JunkrotClockoTictacco JunkrotFrostboxGelatone JunkrotMicrondoBippetto JunkrotMixerellaVroom JunkrotMopaMopetta JunkrotDrilloTrapanino JunkrotGrindellaScintilla JunkrotTelefonoRingaling JunkrotTypewrittoClackini JunkrotCamerinoFlashetto JunkrotDrippiDroppi JunkrotDingDingDingDongo JunkrotGrindoBeanbasher JunkrotAirfryoCroccante JunkrotDishwashinoSplashetto JunkrotLawnmowoRuggito JunkrotLeafblowaWhooshini JunkrotPressurwashoSprizzo JunkrotConsoloJoypaddino JunkrotSpeakeroneBoomba JunkrotRobovaccoGirotondo JunkrotClankClankClankScrapur JunkrotVrrVrrPatatrim JunkrotChimneyziniSpannerini JunkrotRusteliRustela JunkrotBallerinaTincuppina JunkrotTrashaleroTrashala JunkrotSockettoSeiSette JunkrotChefbotPrecisio JunkrotSousvideSilvano JunkrotKnifeblockSlicetta JunkrotTorquoWrenchelli JunkrotLaserlevelLineo JunkrotWeldettaSparkalot JunkrotDronettoBuzzatti JunkrotTickworthPocketti JunkrotHeadphonoBassimo JunkrotGascaniniHonkini JunkrotPercolattoNinjatto JunkrotBoilerdiroCrockpotilo JunkrotSnackomaticPrototipo JunkrotHoverbikkoZoomzoom JunkrotHolofonoShimmerra JunkrotLaVacuumaSaturnita JunkrotTheMonolito JunkrotUnitZero ProofToaster ProofKettle ProofShark
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands laid out along a line (the Scrap Line). The hub is a long

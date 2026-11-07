@@ -1,4 +1,4 @@
-local CACHE_KEY = "ProofToaster-4fbdfbb909b74a79"
+local CACHE_KEY = "ProofToaster-a9618b4a08e31118"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -807,7 +807,8 @@ end
 -- Proof Toaster: a test of the edit-mesh tools. The whole shell is one
 -- rounded box: two slots inset into its top and pushed down into it, a
 -- lever housing extruded from its side, and four feet extruded from its
--- base. 2.6 x 1.6, about 2.1 tall, standing on the origin.
+-- base. 2.6 x 1.6, about 2.1 tall, standing on the origin. The toast sits
+-- in the -y slot.
 -- Edit Mesh: a mesh that can be edited after it's made, down to every
 -- vertex, edge and face, then handed to the engine as one part
 -- (`m:emit(mesh)` inside a part's build function). Include it with

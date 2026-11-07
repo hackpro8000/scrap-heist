@@ -1,7 +1,8 @@
 -- Proof Toaster: a test of the edit-mesh tools. The whole shell is one
 -- rounded box: two slots inset into its top and pushed down into it, a
 -- lever housing extruded from its side, and four feet extruded from its
--- base. 2.6 x 1.6, about 2.1 tall, standing on the origin.
+-- base. 2.6 x 1.6, about 2.1 tall, standing on the origin. The toast sits
+-- in the -y slot.
 -- include: EditMesh
 -- include: EditOps
 -- include: EditShapes
