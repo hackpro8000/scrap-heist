@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotSockettoSeiSette-6c0e0522a907c4ae"
+local CACHE_KEY = "JunkrotSockettoSeiSette-6ccb6f1bdb96fd4b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -4414,7 +4414,7 @@ part("Hands", nil, SOOT, function(mesh)
 		for k = 0, 3 do
 			local finger = Kit.block(0.04, 0.03, 0.14, 0.01)
 			Kit.turn(finger, "y", 12)
-			finger:translate(w[1] + 0.07, w[2] - 0.06 + k * 0.04, w[3] - 0.22)
+			finger:translate(w[1] + 0.03, w[2] - 0.06 + k * 0.04, w[3] - 0.2)
 			finger:emit(mesh)
 		end
 	end

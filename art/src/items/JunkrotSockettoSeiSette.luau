@@ -192,7 +192,7 @@ part("Hands", nil, SOOT, function(mesh)
 		for k = 0, 3 do
 			local finger = Kit.block(0.04, 0.03, 0.14, 0.01)
 			Kit.turn(finger, "y", 12)
-			finger:translate(w[1] + 0.07, w[2] - 0.06 + k * 0.04, w[3] - 0.22)
+			finger:translate(w[1] + 0.03, w[2] - 0.06 + k * 0.04, w[3] - 0.2)
 			finger:emit(mesh)
 		end
 	end
