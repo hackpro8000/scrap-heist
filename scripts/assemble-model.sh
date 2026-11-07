@@ -54,14 +54,20 @@ elif [ -f "${src}/layouts/${name}.luau" ]; then
 	} > "${out}.head"
 	layout="${src}/layouts/${name}.luau"
 	# Each slab body runs from a line ending `slab(..., function()` to the
-	# `end` at its indent. Its key hashes the body plus everything around
-	# the bodies (prelude, helpers, used models, the layout outside slabs),
-	# so editing one slab rebuilds only that slab, and editing shared code
-	# rebuilds them all.
+	# `end` at its indent. Its key hashes the body plus the code it can
+	# reach: the prelude, the shared helpers and the layout outside slabs.
+	# Not the models the layout uses (a slab can't place one: prelude.luau
+	# refuses), nor the `-- uses:` line, nor lines between `-- slab keys
+	# skip` and `-- slab keys resume` (the kit), so adding or editing a model
+	# leaves every slab cached. Editing one slab rebuilds only that slab;
+	# editing shared code rebuilds them all.
 	spans="$(awk '!open && /slab\(.*function\(\)[ \t]*$/ { match($0, /^\t*/); indent = substr($0, 1, RLENGTH); start = NR; open = 1; next }
 		open && index($0, indent "end") == 1 { print start, NR; open = 0 }' "${layout}")"
 	outside="$(awk -v spans="${spans}" 'BEGIN { n = split(spans, s, /[ \n]/); for (i = 1; i < n; i += 2) for (l = s[i] + 1; l < s[i + 1]; l++) skip[l] = 1 }
-		!skip[NR]' "${layout}" | cat "${out}.head" - | sha1sum | cut -c1-16)"
+		NR == 1 && /^-- uses:/ { next }
+		/^-- slab keys skip/ { skipping = 1; next }
+		/^-- slab keys resume/ { skipping = 0; next }
+		!skip[NR] && !skipping' "${layout}" | cat "${src}/layouts/prelude.luau" "${src}/rarity.luau" "${src}/common.luau" - | sha1sum | cut -c1-16)"
 	# Measured build times for dealing placements to shards (see prelude.luau),
 	# written by the build-map-shards workflow. They go on one line ahead of
 	# everything and into no key, so new timings never invalidate the cache.

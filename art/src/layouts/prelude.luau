@@ -332,7 +332,14 @@ end
 
 -- `scale` builds the model that many times its own size, so its textures
 -- keep their density instead of being stretched with it.
+-- Set while a slab builds. A slab's cache key leaves out the models the
+-- layout uses (scripts/assemble-model.sh), so a slab must not place one.
+local slabBuilding: string? = nil
+
 local function place(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, stretch: number?, axis: string?, scale: number?)
+	if slabBuilding then
+		error(`slab {slabBuilding} places {label}: place models outside slabs, as a slab's cache key doesn't follow model changes`)
+	end
 	local key = buildKeys[build]
 	if not key then
 		if not inThisShard(`place {label}`) then
@@ -420,10 +427,12 @@ local function placeSlab(label: string, build: () -> (), x: number, y: number, t
 	for _, part in model.cached(`{key} {label} {x} {y} {turn or 0}`, function()
 		return timedBuild(costKey, function()
 			builtParts = {}
+			slabBuilding = label
 			build()
 			if finish then
 				finish()
 			end
+			slabBuilding = nil
 			local built = builtParts
 			builtParts = nil
 			return built

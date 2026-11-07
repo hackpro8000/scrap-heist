@@ -333,7 +333,14 @@ end
 
 -- `scale` builds the model that many times its own size, so its textures
 -- keep their density instead of being stretched with it.
+-- Set while a slab builds. A slab's cache key leaves out the models the
+-- layout uses (scripts/assemble-model.sh), so a slab must not place one.
+local slabBuilding: string? = nil
+
 local function place(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, stretch: number?, axis: string?, scale: number?)
+	if slabBuilding then
+		error(`slab {slabBuilding} places {label}: place models outside slabs, as a slab's cache key doesn't follow model changes`)
+	end
 	local key = buildKeys[build]
 	if not key then
 		if not inThisShard(`place {label}`) then
@@ -421,10 +428,12 @@ local function placeSlab(label: string, build: () -> (), x: number, y: number, t
 	for _, part in model.cached(`{key} {label} {x} {y} {turn or 0}`, function()
 		return timedBuild(costKey, function()
 			builtParts = {}
+			slabBuilding = label
 			build()
 			if finish then
 				finish()
 			end
+			slabBuilding = nil
 			local built = builtParts
 			builtParts = nil
 			return built
@@ -3813,7 +3822,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildHubSectionA] = "HubSectionA-a8313e4a55d56339"
+buildKeys[buildHubSectionA] = "HubSectionA-b14008da39185e3a"
 function buildHubSectionB()
 local CACHE_KEY = "HubSectionB-dd31c3a9342d2ebb"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -6389,7 +6398,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildHubSectionB] = "HubSectionB-afc962b93a377a4a"
+buildKeys[buildHubSectionB] = "HubSectionB-a37adca50998542c"
 function buildHubSectionEnd()
 local CACHE_KEY = "HubSectionEnd-136fa7952b3f42be"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -8968,7 +8977,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildHubSectionEnd] = "HubSectionEnd-48c8eb7545b33eb2"
+buildKeys[buildHubSectionEnd] = "HubSectionEnd-35998d3955bcd931"
 function buildYardIsland()
 local CACHE_KEY = "YardIsland-a20f5454b9eeafc4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -11555,7 +11564,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildYardIsland] = "YardIsland-f7a297dc299e1e15"
+buildKeys[buildYardIsland] = "YardIsland-c11a4756436b4dec"
 function buildYardFence()
 local CACHE_KEY = "YardFence-79638c833401e47a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -12379,7 +12388,7 @@ part("Fittings", nil, DARK_STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildYardFence] = "YardFence-fe3d5de848852dd7"
+buildKeys[buildYardFence] = "YardFence-de7af1c986971656"
 function buildYardFenceHalf()
 local CACHE_KEY = "YardFenceHalf-f2ca6d6436d118d5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -13203,7 +13212,7 @@ part("Fittings", nil, DARK_STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildYardFenceHalf] = "YardFenceHalf-18c1a8760a959e18"
+buildKeys[buildYardFenceHalf] = "YardFenceHalf-4147e63b91fae5e1"
 function buildYardFooting()
 local CACHE_KEY = "YardFooting-7df7c30e617afb8a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -14031,7 +14040,7 @@ end, nil, 0.35)
 
 finishParts()
 end
-buildKeys[buildYardFooting] = "YardFooting-5c7b334d7913a1ed"
+buildKeys[buildYardFooting] = "YardFooting-7a71c704c97a550d"
 function buildYardGate()
 local CACHE_KEY = "YardGate-a6bba3472eb4e337"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -14894,7 +14903,7 @@ part("Hardware", nil, DARK_STEEL, function(mesh)
 end, nil, 0.55)
 finishParts()
 end
-buildKeys[buildYardGate] = "YardGate-6a909dbc533c5385"
+buildKeys[buildYardGate] = "YardGate-64c682d5dad9ca80"
 function buildPlotMarker()
 local CACHE_KEY = "PlotMarker-774d90149afa2f90"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -15750,7 +15759,7 @@ part("Fittings", nil, STEEL, function(mesh)
 end, nil, 0.5)
 finishParts()
 end
-buildKeys[buildPlotMarker] = "PlotMarker-1dcfac604b3fab76"
+buildKeys[buildPlotMarker] = "PlotMarker-a28a65552aedd8c5"
 function buildPadKitchen()
 local CACHE_KEY = "PadKitchen-c76f1c6cf26e3512"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -16601,7 +16610,7 @@ part("Hardware", nil, STEEL, function(mesh)
 end, nil, 0.45)
 finishParts()
 end
-buildKeys[buildPadKitchen] = "PadKitchen-b26111bb8c8fc355"
+buildKeys[buildPadKitchen] = "PadKitchen-412262d2e40ad03b"
 function buildPadGarage()
 local CACHE_KEY = "PadGarage-d5708ad48748d33b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -17452,7 +17461,7 @@ part("Hardware", nil, STEEL, function(mesh)
 end, nil, 0.45)
 finishParts()
 end
-buildKeys[buildPadGarage] = "PadGarage-734bbac536619471"
+buildKeys[buildPadGarage] = "PadGarage-48d03c341d05ec90"
 function buildPadGadget()
 local CACHE_KEY = "PadGadget-48988de9245004f8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -18303,7 +18312,7 @@ part("Hardware", nil, STEEL, function(mesh)
 end, nil, 0.45)
 finishParts()
 end
-buildKeys[buildPadGadget] = "PadGadget-21e4e209e2c3928c"
+buildKeys[buildPadGadget] = "PadGadget-7932e6fcfd1feec3"
 function buildBuildBay()
 local CACHE_KEY = "BuildBay-3bb72a1e392bdf4e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -19165,7 +19174,7 @@ part("Rack", nil, RUST_ORANGE, function(mesh)
 end, nil, 0.7)
 finishParts()
 end
-buildKeys[buildBuildBay] = "BuildBay-a81c2edb1019fad5"
+buildKeys[buildBuildBay] = "BuildBay-b8ef7bbae1b1e646"
 function buildScrapCrate()
 local CACHE_KEY = "ScrapCrate-29302168875da9ff"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -20022,7 +20031,7 @@ part("Bits", nil, STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildScrapCrate] = "ScrapCrate-313add4f147967e6"
+buildKeys[buildScrapCrate] = "ScrapCrate-ee16f513aa3ccaf5"
 function buildRebirthPress()
 local CACHE_KEY = "RebirthPress-73efca6cf26fc007"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -20880,7 +20889,7 @@ part("Button", nil, BUTTON_RED, function(mesh)
 end, true, 0, nil, 1.2)
 finishParts()
 end
-buildKeys[buildRebirthPress] = "RebirthPress-a3e10ff078e85756"
+buildKeys[buildRebirthPress] = "RebirthPress-50bcaa9383c94720"
 function buildJunkMound()
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -21486,7 +21495,7 @@ end, nil, RUBBER)
 
 finishParts()
 end
-buildKeys[buildJunkMound] = "JunkMound-7fa771084b98236c"
+buildKeys[buildJunkMound] = "JunkMound-f3cfd0cc805b7c23"
 function buildCapsuleScrap()
 local CACHE_KEY = "CapsuleScrap-4fd4e85152e70de0"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -22321,7 +22330,7 @@ part("Handle", nil, DARK_STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildCapsuleScrap] = "CapsuleScrap-97d6ab3947528bd1"
+buildKeys[buildCapsuleScrap] = "CapsuleScrap-f5865626bbc861a8"
 function buildCapsuleSalvaged()
 local CACHE_KEY = "CapsuleSalvaged-a22b31bf9e05c3ba"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -23159,7 +23168,7 @@ part("Handle", nil, DARK_STEEL, function(mesh)
 end, nil, 0.5)
 finishParts()
 end
-buildKeys[buildCapsuleSalvaged] = "CapsuleSalvaged-920c7b0575b6f340"
+buildKeys[buildCapsuleSalvaged] = "CapsuleSalvaged-97a264f4df2d8ad6"
 function buildCapsuleRefurbished()
 local CACHE_KEY = "CapsuleRefurbished-87de8628bbe15cb0"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -23995,7 +24004,7 @@ part("Handle", nil, BARE_METAL, function(mesh)
 end, nil, 0.1)
 finishParts()
 end
-buildKeys[buildCapsuleRefurbished] = "CapsuleRefurbished-964e4fc946ec306e"
+buildKeys[buildCapsuleRefurbished] = "CapsuleRefurbished-700a44d02273b3b1"
 function buildCapsuleFactory()
 local CACHE_KEY = "CapsuleFactory-77a50855066ef57d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -24835,7 +24844,7 @@ part("Label", nil, LABEL_WHITE, function(mesh)
 end, nil, 0)
 finishParts()
 end
-buildKeys[buildCapsuleFactory] = "CapsuleFactory-23e7ef6e39d8fcb9"
+buildKeys[buildCapsuleFactory] = "CapsuleFactory-b6168f42c74b04de"
 function buildCapsulePrecision()
 local CACHE_KEY = "CapsulePrecision-f0fd7da3c3e1c134"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -25686,7 +25695,7 @@ part("Clasps", nil, BARE_METAL, function(mesh)
 end, nil, 0.05)
 finishParts()
 end
-buildKeys[buildCapsulePrecision] = "CapsulePrecision-80c544621f832e35"
+buildKeys[buildCapsulePrecision] = "CapsulePrecision-92c9158398b1b297"
 function buildCapsulePrototype()
 local CACHE_KEY = "CapsulePrototype-83a52d1637ac492b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -26523,7 +26532,7 @@ part("Tag", nil, TAG_ORANGE, function(mesh)
 end, nil, 0)
 finishParts()
 end
-buildKeys[buildCapsulePrototype] = "CapsulePrototype-107d166201005067"
+buildKeys[buildCapsulePrototype] = "CapsulePrototype-84371941735a84a9"
 function buildCapsuleSecret()
 local CACHE_KEY = "CapsuleSecret-a36bc0a8b8574b40"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -27344,7 +27353,7 @@ part("Seam", nil, SEAM_GLOW, function(mesh)
 end, nil, 0, nil, 2.2, true)
 finishParts()
 end
-buildKeys[buildCapsuleSecret] = "CapsuleSecret-09ca92fc3f995992"
+buildKeys[buildCapsuleSecret] = "CapsuleSecret-20676f6bd6f64f1d"
 function buildJunkrotCanettoRustini()
 local CACHE_KEY = "JunkrotCanettoRustini-e56330851c06106f"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -28198,7 +28207,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotCanettoRustini] = "JunkrotCanettoRustini-cb0c7bded31f7246"
+buildKeys[buildJunkrotCanettoRustini] = "JunkrotCanettoRustini-cb46910ed5b3bd58"
 function buildJunkrotSpoonzoBentolo()
 local CACHE_KEY = "JunkrotSpoonzoBentolo-f34deb7e5159074d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -29048,7 +29057,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotSpoonzoBentolo] = "JunkrotSpoonzoBentolo-333931ef9d44c809"
+buildKeys[buildJunkrotSpoonzoBentolo] = "JunkrotSpoonzoBentolo-1a1c2babba3bc6dd"
 function buildJunkrotKettlinaDentata()
 local CACHE_KEY = "JunkrotKettlinaDentata-43a64bc232fd77c1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -29903,7 +29912,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotKettlinaDentata] = "JunkrotKettlinaDentata-b6a5a9b13a50ddfc"
+buildKeys[buildJunkrotKettlinaDentata] = "JunkrotKettlinaDentata-113c7e1b935c4ffd"
 function buildJunkrotTyroFlattino()
 local CACHE_KEY = "JunkrotTyroFlattino-b1b1f62fd3f1dda9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -30760,7 +30769,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTyroFlattino] = "JunkrotTyroFlattino-0a6fed4afb36bc08"
+buildKeys[buildJunkrotTyroFlattino] = "JunkrotTyroFlattino-06260be1f0c4114a"
 function buildJunkrotBoltoloLonelo()
 local CACHE_KEY = "JunkrotBoltoloLonelo-f86f4855a7df8af5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -31613,7 +31622,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotBoltoloLonelo] = "JunkrotBoltoloLonelo-dc5359b2301236fb"
+buildKeys[buildJunkrotBoltoloLonelo] = "JunkrotBoltoloLonelo-672f8c10254e91c9"
 function buildJunkrotHubcappaWobbla()
 local CACHE_KEY = "JunkrotHubcappaWobbla-d9483f7e820a5d18"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -32468,7 +32477,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotHubcappaWobbla] = "JunkrotHubcappaWobbla-4ece2c0c2d632439"
+buildKeys[buildJunkrotHubcappaWobbla] = "JunkrotHubcappaWobbla-1a0bc251183f9bb7"
 function buildJunkrotRemotinoMuto()
 local CACHE_KEY = "JunkrotRemotinoMuto-98a73940c80f60ea"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -33326,7 +33335,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotRemotinoMuto] = "JunkrotRemotinoMuto-adcd1b33b39b0e57"
+buildKeys[buildJunkrotRemotinoMuto] = "JunkrotRemotinoMuto-fe7293a463f57505"
 function buildJunkrotCabloTanglino()
 local CACHE_KEY = "JunkrotCabloTanglino-08501bb705f8c68b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -34192,7 +34201,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotCabloTanglino] = "JunkrotCabloTanglino-71a7bdce8a73c75d"
+buildKeys[buildJunkrotCabloTanglino] = "JunkrotCabloTanglino-451febbe2f41aa46"
 function buildJunkrotBulboFulminato()
 local CACHE_KEY = "JunkrotBulboFulminato-09771c368952b63b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -35046,7 +35055,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotBulboFulminato] = "JunkrotBulboFulminato-d3d88c8d1be348d5"
+buildKeys[buildJunkrotBulboFulminato] = "JunkrotBulboFulminato-dd5e46dca9bebe10"
 function buildJunkrotCrumboPoppalot()
 local CACHE_KEY = "JunkrotCrumboPoppalot-3bcafce97f4a1b93"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -35910,7 +35919,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotCrumboPoppalot] = "JunkrotCrumboPoppalot-407b76145c5b25df"
+buildKeys[buildJunkrotCrumboPoppalot] = "JunkrotCrumboPoppalot-155a280610c1096c"
 function buildJunkrotPannettoPatchato()
 local CACHE_KEY = "JunkrotPannettoPatchato-31aa297b2cca1c70"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -36766,7 +36775,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotPannettoPatchato] = "JunkrotPannettoPatchato-95ceb8add302c2b5"
+buildKeys[buildJunkrotPannettoPatchato] = "JunkrotPannettoPatchato-f37d76fd499c61bc"
 function buildJunkrotBlendroCigolante()
 local CACHE_KEY = "JunkrotBlendroCigolante-38c4aa836fdd4190"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -37622,7 +37631,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotBlendroCigolante] = "JunkrotBlendroCigolante-576a5245f81a08f2"
+buildKeys[buildJunkrotBlendroCigolante] = "JunkrotBlendroCigolante-b8c4b7ad943c3aae"
 function buildJunkrotJackoloCrickato()
 local CACHE_KEY = "JunkrotJackoloCrickato-f00210fc4c3457a6"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -38484,7 +38493,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotJackoloCrickato] = "JunkrotJackoloCrickato-775ba98d72736772"
+buildKeys[buildJunkrotJackoloCrickato] = "JunkrotJackoloCrickato-142dc5755a520d9d"
 function buildJunkrotOilcannaGluglu()
 local CACHE_KEY = "JunkrotOilcannaGluglu-09e01d97e5bf363c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -39343,7 +39352,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotOilcannaGluglu] = "JunkrotOilcannaGluglu-da992b0b4928a820"
+buildKeys[buildJunkrotOilcannaGluglu] = "JunkrotOilcannaGluglu-bd4a4510e4498a46"
 function buildJunkrotMuffleroTossetto()
 local CACHE_KEY = "JunkrotMuffleroTossetto-36d28108c9a7c3f2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -40197,7 +40206,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotMuffleroTossetto] = "JunkrotMuffleroTossetto-51cde1cc6e30d9fd"
+buildKeys[buildJunkrotMuffleroTossetto] = "JunkrotMuffleroTossetto-ff9ecdc08d1a1113"
 function buildJunkrotRadioloFruscio()
 local CACHE_KEY = "JunkrotRadioloFruscio-7e2756cd3dba27c2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -41058,7 +41067,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotRadioloFruscio] = "JunkrotRadioloFruscio-9ad8ba65324bc486"
+buildKeys[buildJunkrotRadioloFruscio] = "JunkrotRadioloFruscio-0f8445eb7f739545"
 function buildJunkrotFanettoWobblino()
 local CACHE_KEY = "JunkrotFanettoWobblino-092235365ccdead7"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -41921,7 +41930,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotFanettoWobblino] = "JunkrotFanettoWobblino-8243f260a8b0b6e8"
+buildKeys[buildJunkrotFanettoWobblino] = "JunkrotFanettoWobblino-87242d169ea9aa6f"
 function buildJunkrotClockoTictacco()
 local CACHE_KEY = "JunkrotClockoTictacco-469142cd8736345c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -42783,7 +42792,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotClockoTictacco] = "JunkrotClockoTictacco-124e3e812d14c4c3"
+buildKeys[buildJunkrotClockoTictacco] = "JunkrotClockoTictacco-dbae27f7759f843d"
 function buildJunkrotFrostboxGelatone()
 local CACHE_KEY = "JunkrotFrostboxGelatone-7d35defdb52ead64"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -43640,7 +43649,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotFrostboxGelatone] = "JunkrotFrostboxGelatone-742ce98836c68599"
+buildKeys[buildJunkrotFrostboxGelatone] = "JunkrotFrostboxGelatone-1b432ca6b52a48cd"
 function buildJunkrotMicrondoBippetto()
 local CACHE_KEY = "JunkrotMicrondoBippetto-7cf37a13f4df470e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -44502,7 +44511,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotMicrondoBippetto] = "JunkrotMicrondoBippetto-798f3f9c3acd3eb1"
+buildKeys[buildJunkrotMicrondoBippetto] = "JunkrotMicrondoBippetto-92ae978391478b74"
 function buildJunkrotMixerellaVroom()
 local CACHE_KEY = "JunkrotMixerellaVroom-df1985779d00ae30"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -45366,7 +45375,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotMixerellaVroom] = "JunkrotMixerellaVroom-344b44f12cb08348"
+buildKeys[buildJunkrotMixerellaVroom] = "JunkrotMixerellaVroom-0798a4a50e14f442"
 function buildJunkrotMopaMopetta()
 local CACHE_KEY = "JunkrotMopaMopetta-0b06b440f4269154"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -46234,7 +46243,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotMopaMopetta] = "JunkrotMopaMopetta-447fd9d8fa5b6092"
+buildKeys[buildJunkrotMopaMopetta] = "JunkrotMopaMopetta-2a3b69b0b8ca288e"
 function buildJunkrotDrilloTrapanino()
 local CACHE_KEY = "JunkrotDrilloTrapanino-93fe481d2455ad40"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -47093,7 +47102,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotDrilloTrapanino] = "JunkrotDrilloTrapanino-e89c88ad79e9c60b"
+buildKeys[buildJunkrotDrilloTrapanino] = "JunkrotDrilloTrapanino-a54c40907f41ef89"
 function buildJunkrotGrindellaScintilla()
 local CACHE_KEY = "JunkrotGrindellaScintilla-9431b2d91de68ae2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -47959,7 +47968,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotGrindellaScintilla] = "JunkrotGrindellaScintilla-34447cb98f0a6877"
+buildKeys[buildJunkrotGrindellaScintilla] = "JunkrotGrindellaScintilla-8839ef3ec2c70da9"
 function buildJunkrotTelefonoRingaling()
 local CACHE_KEY = "JunkrotTelefonoRingaling-396bf739c102902d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -48832,7 +48841,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTelefonoRingaling] = "JunkrotTelefonoRingaling-c46bacb116919010"
+buildKeys[buildJunkrotTelefonoRingaling] = "JunkrotTelefonoRingaling-95ea12eaab848583"
 function buildJunkrotTypewrittoClackini()
 local CACHE_KEY = "JunkrotTypewrittoClackini-f0ab1911c0657d6f"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -49698,7 +49707,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTypewrittoClackini] = "JunkrotTypewrittoClackini-fe49253052fa6f56"
+buildKeys[buildJunkrotTypewrittoClackini] = "JunkrotTypewrittoClackini-1a9d8562c14fdabd"
 function buildJunkrotCamerinoFlashetto()
 local CACHE_KEY = "JunkrotCamerinoFlashetto-3c1c53bd8478f0cb"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -50558,7 +50567,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotCamerinoFlashetto] = "JunkrotCamerinoFlashetto-2d8422ee9636d2d3"
+buildKeys[buildJunkrotCamerinoFlashetto] = "JunkrotCamerinoFlashetto-efd67b047aaaa48b"
 function buildJunkrotDrippiDroppi()
 local CACHE_KEY = "JunkrotDrippiDroppi-3789dbb8cac3c0d8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -51439,7 +51448,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotDrippiDroppi] = "JunkrotDrippiDroppi-b006345a7aeeab08"
+buildKeys[buildJunkrotDrippiDroppi] = "JunkrotDrippiDroppi-191062f110daf99d"
 function buildJunkrotDingDingDingDongo()
 local CACHE_KEY = "JunkrotDingDingDingDongo-a8251bd8a60666bf"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -52300,7 +52309,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotDingDingDingDongo] = "JunkrotDingDingDingDongo-1d1e1e950c96e4e4"
+buildKeys[buildJunkrotDingDingDingDongo] = "JunkrotDingDingDingDongo-8785e25a24de5aff"
 function buildJunkrotGrindoBeanbasher()
 local CACHE_KEY = "JunkrotGrindoBeanbasher-fafba055fa5a92e9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -53162,7 +53171,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotGrindoBeanbasher] = "JunkrotGrindoBeanbasher-5a476970c2b89efc"
+buildKeys[buildJunkrotGrindoBeanbasher] = "JunkrotGrindoBeanbasher-89969a503c9cc570"
 function buildJunkrotAirfryoCroccante()
 local CACHE_KEY = "JunkrotAirfryoCroccante-1e53f617a773e8d8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -54019,7 +54028,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotAirfryoCroccante] = "JunkrotAirfryoCroccante-fe378a5846949e34"
+buildKeys[buildJunkrotAirfryoCroccante] = "JunkrotAirfryoCroccante-b9d1c16a1d16e668"
 function buildJunkrotDishwashinoSplashetto()
 local CACHE_KEY = "JunkrotDishwashinoSplashetto-6d81a3f2eb3f0725"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -54887,7 +54896,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotDishwashinoSplashetto] = "JunkrotDishwashinoSplashetto-683d7dad7d3db771"
+buildKeys[buildJunkrotDishwashinoSplashetto] = "JunkrotDishwashinoSplashetto-8f1ba4c4dfc240a9"
 function buildJunkrotLawnmowoRuggito()
 local CACHE_KEY = "JunkrotLawnmowoRuggito-bd53ae97b649bffe"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -55756,7 +55765,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotLawnmowoRuggito] = "JunkrotLawnmowoRuggito-108da303884eadb8"
+buildKeys[buildJunkrotLawnmowoRuggito] = "JunkrotLawnmowoRuggito-dffe239fc42d38bc"
 function buildJunkrotLeafblowaWhooshini()
 local CACHE_KEY = "JunkrotLeafblowaWhooshini-76790d1e3f7ceb18"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -56618,7 +56627,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotLeafblowaWhooshini] = "JunkrotLeafblowaWhooshini-bd73f44a1529d572"
+buildKeys[buildJunkrotLeafblowaWhooshini] = "JunkrotLeafblowaWhooshini-c2715141afb4be52"
 function buildJunkrotPressurwashoSprizzo()
 local CACHE_KEY = "JunkrotPressurwashoSprizzo-e8e723ace09042d2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -57482,7 +57491,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotPressurwashoSprizzo] = "JunkrotPressurwashoSprizzo-87ac2472b45f7495"
+buildKeys[buildJunkrotPressurwashoSprizzo] = "JunkrotPressurwashoSprizzo-65b67c3ab6fa35c5"
 function buildJunkrotConsoloJoypaddino()
 local CACHE_KEY = "JunkrotConsoloJoypaddino-382c3eba02dcda89"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -58349,7 +58358,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotConsoloJoypaddino] = "JunkrotConsoloJoypaddino-191abffb1bf801ba"
+buildKeys[buildJunkrotConsoloJoypaddino] = "JunkrotConsoloJoypaddino-9134f90ef770ce64"
 function buildJunkrotSpeakeroneBoomba()
 local CACHE_KEY = "JunkrotSpeakeroneBoomba-ad45ca3c3f8935cf"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -59209,7 +59218,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotSpeakeroneBoomba] = "JunkrotSpeakeroneBoomba-3bbfbd68ef1f5c85"
+buildKeys[buildJunkrotSpeakeroneBoomba] = "JunkrotSpeakeroneBoomba-933c1a5ed22f9edd"
 function buildJunkrotRobovaccoGirotondo()
 local CACHE_KEY = "JunkrotRobovaccoGirotondo-e4e7edb762fbb398"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -60069,7 +60078,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotRobovaccoGirotondo] = "JunkrotRobovaccoGirotondo-45bdee1d4d860040"
+buildKeys[buildJunkrotRobovaccoGirotondo] = "JunkrotRobovaccoGirotondo-c58c5026517b89e1"
 function buildJunkrotClankClankClankScrapur()
 local CACHE_KEY = "JunkrotClankClankClankScrapur-0bc0bf19dfadcc09"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -60936,7 +60945,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotClankClankClankScrapur] = "JunkrotClankClankClankScrapur-a30fc840bf59b273"
+buildKeys[buildJunkrotClankClankClankScrapur] = "JunkrotClankClankClankScrapur-46936ab26d69222d"
 function buildJunkrotVrrVrrPatatrim()
 local CACHE_KEY = "JunkrotVrrVrrPatatrim-7605c8003ddfd374"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -61805,7 +61814,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotVrrVrrPatatrim] = "JunkrotVrrVrrPatatrim-c5f05967943ccfb5"
+buildKeys[buildJunkrotVrrVrrPatatrim] = "JunkrotVrrVrrPatatrim-5ca3c4470f27a0b6"
 function buildJunkrotChimneyziniSpannerini()
 local CACHE_KEY = "JunkrotChimneyziniSpannerini-fbba48036387f184"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -62678,7 +62687,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotChimneyziniSpannerini] = "JunkrotChimneyziniSpannerini-16b899b9c5febdc7"
+buildKeys[buildJunkrotChimneyziniSpannerini] = "JunkrotChimneyziniSpannerini-9a81db6ca83ba395"
 function buildJunkrotRusteliRustela()
 local CACHE_KEY = "JunkrotRusteliRustela-38081ac8d0fdaf86"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -63559,7 +63568,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotRusteliRustela] = "JunkrotRusteliRustela-41867bade3ceb8a9"
+buildKeys[buildJunkrotRusteliRustela] = "JunkrotRusteliRustela-892846b3f5a9d570"
 function buildJunkrotBallerinaTincuppina()
 local CACHE_KEY = "JunkrotBallerinaTincuppina-3b116afcb5fd9ebf"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -64418,7 +64427,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotBallerinaTincuppina] = "JunkrotBallerinaTincuppina-30f20c40dd829229"
+buildKeys[buildJunkrotBallerinaTincuppina] = "JunkrotBallerinaTincuppina-e4003d00b08d072b"
 function buildJunkrotTrashaleroTrashala()
 local CACHE_KEY = "JunkrotTrashaleroTrashala-1cc04ad94f164449"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -65289,7 +65298,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTrashaleroTrashala] = "JunkrotTrashaleroTrashala-18a099d48482ff37"
+buildKeys[buildJunkrotTrashaleroTrashala] = "JunkrotTrashaleroTrashala-7a8853fa89c4bfc5"
 function buildJunkrotSockettoSeiSette()
 local CACHE_KEY = "JunkrotSockettoSeiSette-b17e14b9350f03c5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -66168,7 +66177,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotSockettoSeiSette] = "JunkrotSockettoSeiSette-06f957224084af84"
+buildKeys[buildJunkrotSockettoSeiSette] = "JunkrotSockettoSeiSette-698dd740a08e89cc"
 function buildJunkrotChefbotPrecisio()
 local CACHE_KEY = "JunkrotChefbotPrecisio-5b6ed9b75ea1bc7a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -67031,7 +67040,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotChefbotPrecisio] = "JunkrotChefbotPrecisio-655242385b26b2f8"
+buildKeys[buildJunkrotChefbotPrecisio] = "JunkrotChefbotPrecisio-c17b46e73e1ce3b9"
 function buildJunkrotSousvideSilvano()
 local CACHE_KEY = "JunkrotSousvideSilvano-d52c23b8818f0f76"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -67891,7 +67900,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotSousvideSilvano] = "JunkrotSousvideSilvano-1305b15b458cf825"
+buildKeys[buildJunkrotSousvideSilvano] = "JunkrotSousvideSilvano-39f900efc8f75dc7"
 function buildJunkrotKnifeblockSlicetta()
 local CACHE_KEY = "JunkrotKnifeblockSlicetta-2d569929c63141ef"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -68749,7 +68758,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotKnifeblockSlicetta] = "JunkrotKnifeblockSlicetta-b0fc15670bb0eca0"
+buildKeys[buildJunkrotKnifeblockSlicetta] = "JunkrotKnifeblockSlicetta-87cf86932310fc56"
 function buildJunkrotTorquoWrenchelli()
 local CACHE_KEY = "JunkrotTorquoWrenchelli-2a139aa26b4149e9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -69608,7 +69617,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTorquoWrenchelli] = "JunkrotTorquoWrenchelli-3ac268b5345ff0f9"
+buildKeys[buildJunkrotTorquoWrenchelli] = "JunkrotTorquoWrenchelli-eaad6c7480c46e4b"
 function buildJunkrotLaserlevelLineo()
 local CACHE_KEY = "JunkrotLaserlevelLineo-26d45c280857d079"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -70473,7 +70482,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotLaserlevelLineo] = "JunkrotLaserlevelLineo-72fe0c3e9bfc4ac2"
+buildKeys[buildJunkrotLaserlevelLineo] = "JunkrotLaserlevelLineo-abd062adce016a33"
 function buildJunkrotWeldettaSparkalot()
 local CACHE_KEY = "JunkrotWeldettaSparkalot-460c0b4990f4a729"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -71343,7 +71352,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotWeldettaSparkalot] = "JunkrotWeldettaSparkalot-c11aed715eb587cc"
+buildKeys[buildJunkrotWeldettaSparkalot] = "JunkrotWeldettaSparkalot-a841c5fbc9f1eef9"
 function buildJunkrotDronettoBuzzatti()
 local CACHE_KEY = "JunkrotDronettoBuzzatti-44f89926539385da"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -72211,7 +72220,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotDronettoBuzzatti] = "JunkrotDronettoBuzzatti-7acc8fb57bb9953e"
+buildKeys[buildJunkrotDronettoBuzzatti] = "JunkrotDronettoBuzzatti-31085da8cafdecaf"
 function buildJunkrotTickworthPocketti()
 local CACHE_KEY = "JunkrotTickworthPocketti-4b3c1dccf55cc4fa"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -73078,7 +73087,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTickworthPocketti] = "JunkrotTickworthPocketti-22a6c4d039ad0ff0"
+buildKeys[buildJunkrotTickworthPocketti] = "JunkrotTickworthPocketti-c725c76435c6f6ad"
 function buildJunkrotHeadphonoBassimo()
 local CACHE_KEY = "JunkrotHeadphonoBassimo-281a5d6d93216616"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -73946,7 +73955,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotHeadphonoBassimo] = "JunkrotHeadphonoBassimo-d47c976aa6738c6d"
+buildKeys[buildJunkrotHeadphonoBassimo] = "JunkrotHeadphonoBassimo-9de894c3e570d17c"
 function buildJunkrotGascaniniHonkini()
 local CACHE_KEY = "JunkrotGascaniniHonkini-4b0654c6d2274299"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -74813,7 +74822,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotGascaniniHonkini] = "JunkrotGascaniniHonkini-f8b07ed06063b0f4"
+buildKeys[buildJunkrotGascaniniHonkini] = "JunkrotGascaniniHonkini-52603fca8e43ff2d"
 function buildJunkrotPercolattoNinjatto()
 local CACHE_KEY = "JunkrotPercolattoNinjatto-55ac45f4476e0eae"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -75680,7 +75689,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotPercolattoNinjatto] = "JunkrotPercolattoNinjatto-3392c5d7d380fb69"
+buildKeys[buildJunkrotPercolattoNinjatto] = "JunkrotPercolattoNinjatto-748b16eaf7e318b8"
 function buildJunkrotBoilerdiroCrockpotilo()
 local CACHE_KEY = "JunkrotBoilerdiroCrockpotilo-830e6233098a7a6b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -76561,7 +76570,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotBoilerdiroCrockpotilo] = "JunkrotBoilerdiroCrockpotilo-748a5e56f0959c15"
+buildKeys[buildJunkrotBoilerdiroCrockpotilo] = "JunkrotBoilerdiroCrockpotilo-2d1b5450419cb59a"
 function buildJunkrotSnackomaticPrototipo()
 local CACHE_KEY = "JunkrotSnackomaticPrototipo-259ad0a17d9bcb0f"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -77419,7 +77428,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotSnackomaticPrototipo] = "JunkrotSnackomaticPrototipo-580bc970b9d2684c"
+buildKeys[buildJunkrotSnackomaticPrototipo] = "JunkrotSnackomaticPrototipo-d3a23b88a43fd57b"
 function buildJunkrotHoverbikkoZoomzoom()
 local CACHE_KEY = "JunkrotHoverbikkoZoomzoom-d7e06a7fe383ff67"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -78287,7 +78296,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotHoverbikkoZoomzoom] = "JunkrotHoverbikkoZoomzoom-1b5900b42f82f562"
+buildKeys[buildJunkrotHoverbikkoZoomzoom] = "JunkrotHoverbikkoZoomzoom-0471780b35eff817"
 function buildJunkrotHolofonoShimmerra()
 local CACHE_KEY = "JunkrotHolofonoShimmerra-450a50b88c2b5187"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -79150,7 +79159,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotHolofonoShimmerra] = "JunkrotHolofonoShimmerra-9a65f88f2484fd69"
+buildKeys[buildJunkrotHolofonoShimmerra] = "JunkrotHolofonoShimmerra-527e1013a7b64769"
 function buildJunkrotLaVacuumaSaturnita()
 local CACHE_KEY = "JunkrotLaVacuumaSaturnita-18eac99f2eb1a098"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -80027,7 +80036,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotLaVacuumaSaturnita] = "JunkrotLaVacuumaSaturnita-bd517ef7554f341c"
+buildKeys[buildJunkrotLaVacuumaSaturnita] = "JunkrotLaVacuumaSaturnita-ce4d20c322e28b75"
 function buildJunkrotTheMonolito()
 local CACHE_KEY = "JunkrotTheMonolito-ff627a1efe0530dd"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -80849,7 +80858,7 @@ part("Hum", nil, { 0.5, 0.3, 0.9 }, function(mesh)
 end, nil, 0, nil, 1.5, true)
 finishParts()
 end
-buildKeys[buildJunkrotTheMonolito] = "JunkrotTheMonolito-e9bc9ca19c2b8402"
+buildKeys[buildJunkrotTheMonolito] = "JunkrotTheMonolito-f05a67d58f3ef7ab"
 function buildJunkrotUnitZero()
 local CACHE_KEY = "JunkrotUnitZero-8004f58c57247e7d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -81675,7 +81684,7 @@ part("Shadow", nil, { 0.5, 0.8, 1.0 }, function(mesh)
 end, nil, 0, nil, 1.2, true)
 finishParts()
 end
-buildKeys[buildJunkrotUnitZero] = "JunkrotUnitZero-cf5027927a7e9ceb"
+buildKeys[buildJunkrotUnitZero] = "JunkrotUnitZero-39d93a002e3a485d"
 function buildProofToaster()
 local CACHE_KEY = "ProofToaster-4fbdfbb909b74a79"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -85127,7 +85136,7 @@ part("Toast", nil, BREAD, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildProofToaster] = "ProofToaster-2546ee1ce1cdb0a9"
+buildKeys[buildProofToaster] = "ProofToaster-b4d4cc998da322b4"
 function buildProofKettle()
 local CACHE_KEY = "ProofKettle-515ddb4e8083616e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -88594,7 +88603,7 @@ part("Body", nil, ENAMEL, function(mesh)
 end, nil, 0.25)
 finishParts()
 end
-buildKeys[buildProofKettle] = "ProofKettle-016eb460e80e1b1f"
+buildKeys[buildProofKettle] = "ProofKettle-1eb6d2c104c0d0cd"
 function buildProofShark()
 local CACHE_KEY = "ProofShark-ebde7dbef1c77450"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -92056,15 +92065,15 @@ part("Body", nil, SHARK, function(mesh)
 end, nil, 0.2)
 finishParts()
 end
-buildKeys[buildProofShark] = "ProofShark-4627761684d9be1d"
-slabKeys[92345] = "9dd65ae9a9a8b071-cf7e96091024d5cc"
-slabKeys[92615] = "9dd65ae9a9a8b071-7ded6fc62f8b67a3"
-slabKeys[92647] = "9dd65ae9a9a8b071-2f5b4070ee3aa512"
-slabKeys[92727] = "9dd65ae9a9a8b071-7b25a7aa2539d602"
-slabKeys[92735] = "9dd65ae9a9a8b071-107c5c30239027da"
-slabKeys[92752] = "9dd65ae9a9a8b071-18845c9c8b69ea54"
-slabKeys[92857] = "9dd65ae9a9a8b071-363b6dc9a40b12d8"
-slabKeys[92881] = "9dd65ae9a9a8b071-f4e0427155be5973"
+buildKeys[buildProofShark] = "ProofShark-7e3b2d6b25523b9f"
+slabKeys[92354] = "ee64ae88eefa8b1f-cf7e96091024d5cc"
+slabKeys[92624] = "ee64ae88eefa8b1f-7ded6fc62f8b67a3"
+slabKeys[92656] = "ee64ae88eefa8b1f-2f5b4070ee3aa512"
+slabKeys[92736] = "ee64ae88eefa8b1f-7b25a7aa2539d602"
+slabKeys[92744] = "ee64ae88eefa8b1f-107c5c30239027da"
+slabKeys[92761] = "ee64ae88eefa8b1f-18845c9c8b69ea54"
+slabKeys[92866] = "ee64ae88eefa8b1f-363b6dc9a40b12d8"
+slabKeys[92890] = "ee64ae88eefa8b1f-f4e0427155be5973"
 -- uses: HubSectionA HubSectionB HubSectionEnd YardIsland YardFence YardFenceHalf YardFooting YardGate PlotMarker PadKitchen PadGarage PadGadget BuildBay ScrapCrate RebirthPress JunkMound CapsuleScrap CapsuleSalvaged CapsuleRefurbished CapsuleFactory CapsulePrecision CapsulePrototype CapsuleSecret JunkrotCanettoRustini JunkrotSpoonzoBentolo JunkrotKettlinaDentata JunkrotTyroFlattino JunkrotBoltoloLonelo JunkrotHubcappaWobbla JunkrotRemotinoMuto JunkrotCabloTanglino JunkrotBulboFulminato JunkrotCrumboPoppalot JunkrotPannettoPatchato JunkrotBlendroCigolante JunkrotJackoloCrickato JunkrotOilcannaGluglu JunkrotMuffleroTossetto JunkrotRadioloFruscio JunkrotFanettoWobblino JunkrotClockoTictacco JunkrotFrostboxGelatone JunkrotMicrondoBippetto JunkrotMixerellaVroom JunkrotMopaMopetta JunkrotDrilloTrapanino JunkrotGrindellaScintilla JunkrotTelefonoRingaling JunkrotTypewrittoClackini JunkrotCamerinoFlashetto JunkrotDrippiDroppi JunkrotDingDingDingDongo JunkrotGrindoBeanbasher JunkrotAirfryoCroccante JunkrotDishwashinoSplashetto JunkrotLawnmowoRuggito JunkrotLeafblowaWhooshini JunkrotPressurwashoSprizzo JunkrotConsoloJoypaddino JunkrotSpeakeroneBoomba JunkrotRobovaccoGirotondo JunkrotClankClankClankScrapur JunkrotVrrVrrPatatrim JunkrotChimneyziniSpannerini JunkrotRusteliRustela JunkrotBallerinaTincuppina JunkrotTrashaleroTrashala JunkrotSockettoSeiSette JunkrotChefbotPrecisio JunkrotSousvideSilvano JunkrotKnifeblockSlicetta JunkrotTorquoWrenchelli JunkrotLaserlevelLineo JunkrotWeldettaSparkalot JunkrotDronettoBuzzatti JunkrotTickworthPocketti JunkrotHeadphonoBassimo JunkrotGascaniniHonkini JunkrotPercolattoNinjatto JunkrotBoilerdiroCrockpotilo JunkrotSnackomaticPrototipo JunkrotHoverbikkoZoomzoom JunkrotHolofonoShimmerra JunkrotLaVacuumaSaturnita JunkrotTheMonolito JunkrotUnitZero ProofToaster ProofKettle ProofShark
 -- Server Map: one server's whole map, centered on the origin, built as
 -- floating islands laid out along a line (the Scrap Line). The hub is a long
@@ -92933,6 +92942,7 @@ slab("Sorter", function()
 	end, true, 0, nil, 1.5)
 end, SORTER_X, SORTER_Y)
 
+-- slab keys skip (the kit below places models only; no slab uses it)
 -- The kit: one of each model the game places itself (yard things, capsules
 -- and junkrots), built here so they upload with the map. They stand in a
 -- row far under the hub; tools/studio/PlaceMap.luau takes them out of the
@@ -93031,3 +93041,4 @@ for index, entry in KIT do
 	useTexelDensity(KIT_DENSITY)
 end
 useTexelDensity(MAP_DENSITY)
+-- slab keys resume

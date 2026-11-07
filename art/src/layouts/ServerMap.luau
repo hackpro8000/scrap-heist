@@ -866,6 +866,7 @@ slab("Sorter", function()
 	end, true, 0, nil, 1.5)
 end, SORTER_X, SORTER_Y)
 
+-- slab keys skip (the kit below places models only; no slab uses it)
 -- The kit: one of each model the game places itself (yard things, capsules
 -- and junkrots), built here so they upload with the map. They stand in a
 -- row far under the hub; tools/studio/PlaceMap.luau takes them out of the
@@ -964,3 +965,4 @@ for index, entry in KIT do
 	useTexelDensity(KIT_DENSITY)
 end
 useTexelDensity(MAP_DENSITY)
+-- slab keys resume
