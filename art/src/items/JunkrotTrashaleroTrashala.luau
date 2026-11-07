@@ -10,17 +10,42 @@ local TIN_BLUE = { 0.4, 0.5, 0.6 }
 local BELLY = { 0.88, 0.89, 0.86 }
 local MIDDLE = 1.48 -- the body's axis
 local SNEAKER_BLUE = { 0.14, 0.46, 0.92 }
--- The legs, as in the picture: each bows out sideways from its root like a
--- fin sweeping out and down, to a foot planted wide; the front pair from
--- the pectoral roots, one a step ahead of the other, the back leg from
--- under the pelvic fin, out to one side. Each: its root on the body and
--- where its foot lands.
+-- The legs, as in the picture, are the fins themselves: each pectoral a
+-- broad flat blade that bows out sideways from its root and down to a
+-- sneaker on its tip, one a step ahead of the other; the pelvic fin the
+-- same under the tail, out to one side. Each: its root on the body, the
+-- side it bows to, how far it leans out at the root (degrees below
+-- level), its length, and its step forward.
 local LEGS = {
-	{ root = { 1.0, -0.3, 1.18 }, foot = { 1.25, -0.95, 0.3 } },
-	{ root = { 1.0, 0.3, 1.18 }, foot = { 0.85, 0.95, 0.3 } },
-	{ root = { -0.7, 0, 1.38 }, foot = { -0.95, 0.6, 0.3 } },
+	{ root = { 1.0, -0.3, 1.2 }, side = -1, lean = 20, long = 1.16, step = 0.22, chord = 0.62 },
+	{ root = { 1.0, 0.3, 1.2 }, side = 1, lean = 20, long = 1.16, step = -0.1, chord = 0.62 },
+	{ root = { -0.7, 0.0, 1.42 }, side = 1, lean = 8, long = 1.3, step = -0.12, chord = 0.42 },
 }
-
+-- The bow a fin follows out and down: at s along it, its point, and the
+-- direction across its thickness. It starts leaning out at the root and
+-- curves to straight down at the foot.
+local function bowAt(at, s)
+	local y0, z0 = at.root[2], at.root[3]
+	local a0, a1 = math.rad(at.lean), math.rad(90)
+	local t = math.clamp(s / at.long, 0, 1)
+	local a = a0 + (a1 - a0) * t
+	-- Integrated: y and z travelled for an angle running linearly with s.
+	local k = (a1 - a0) / at.long
+	local y = y0 + at.side * (math.sin(a) - math.sin(a0)) / k
+	local z = z0 - (math.cos(a0) - math.cos(a)) / k
+	if s < 0 then -- straight on inside the body
+		y, z = y0 + at.side * math.cos(a0) * s, z0 - math.sin(a0) * s
+	elseif s > at.long then
+		z = z - (s - at.long)
+	end
+	-- Across: the in-plane normal, chosen so x, across and along the bow
+	-- stay a right-handed frame on either side.
+	return { y, z }, { -math.sin(a), -at.side * math.cos(a) }
+end
+local function footOf(at)
+	local p = bowAt(at, at.long)
+	return { at.root[1] + at.step, p[1], p[2] }
+end
 -- The body's lines along x, tail root to nose tip: the back's height, the
 -- belly's depth and the half width, read off these stations between;
 -- eased, except along the snout, which runs straight to its rounded tip.
@@ -237,63 +262,45 @@ part("Fins", nil, TIN_BLUE, function(mesh)
 	tail:translate(-1.62, 0, MIDDLE + 0.01)
 	tail:emit(mesh)
 end, 40, 0.35)
--- A leg: a sweep from its root inside the body down a curve to the ankle
--- in the sneaker, an oval section longer fore and aft than wide, broad at
--- the root like the fin it grew from and narrowing to the ankle; it hangs
--- out of the hip sideways and bows down to where the foot lands.
-local function leg(root, foot, long, wide, taper)
-	local profile = {}
-	for k = 0, 15 do
-		local r = math.rad(k * 22.5)
-		table.insert(profile, { wide * math.cos(r), long * math.sin(r) })
-	end
-	-- Out of the flank sideways first, bowing, then down to the foot.
-	local path = Kit.curve({
-		{ root[1], root[2] - (foot[2] - root[2]) * 0.3, root[3] + 0.3 },
-		{ root[1], root[2], root[3] },
-		{ root[1] + (foot[1] - root[1]) * 0.3, root[2] + (foot[2] - root[2]) * 0.8, root[3] - (root[3] - foot[3]) * 0.4 },
-		{ root[1] + (foot[1] - root[1]) * 0.7, root[2] + (foot[2] - root[2]) * 1.05, root[3] - (root[3] - foot[3]) * 0.75 },
-		{ foot[1], foot[2], foot[3] + 0.08 },
-		{ foot[1], foot[2], foot[3] - 0.1 },
-	}, 4)
-	return EditMesh.sweep(profile, path, { scale = function(t)
-		return 1 - (1 - taper) * math.clamp(t * 1.15, 0, 1)
-	end })
-end
 part("Legs", nil, TIN_BLUE, function(mesh)
-	for index, at in LEGS do
-		local front = index < 3
-		leg(at.root, at.foot, if front then 0.3 else 0.22, if front then 0.19 else 0.17, 0.55):emit(mesh)
-		if front then
-			-- The pectoral fin's trailing edge, a flap down the back of the leg.
-			local side = if at.root[2] < 0 then -1 else 1
-			local flap = fin({ { 0.0, 0.1 }, { 0.0, -0.55 }, { -0.2, -0.5 }, { -0.42, -0.15 }, { -0.3, 0.1 } }, 0.08, 0.55)
-			Kit.turn(flap, "x", 180)
-			Kit.turn(flap, "x", -side * 8)
-			flap:translate(at.root[1] - 0.24, at.root[2], at.root[3] - 0.05)
-			flap:emit(mesh)
-		end
+	-- Each fin from its outline, x along the body and s out along the span,
+	-- thick at the root and thinning toward the tip and edges, then bent
+	-- along its bow and sheared forward by its step.
+	for _, at in LEGS do
+		local c = at.chord / 2
+		local blade = Kit.plate({ { c, -0.15 }, { c * 0.7, at.long * 0.45 }, { c * 0.4, at.long }, { -c * 0.4, at.long }, { -c * 0.65, at.long * 0.55 }, { -c, -0.15 } }, 0.22)
+		blade:translate(0, -0.11, 0)
+		blade:transform(function(p)
+			local out = math.clamp(p[3] / at.long, 0, 1)
+			local thick = p[2] * (1 - 0.55 * out) * (1 - 0.35 * math.abs(p[1]) / c)
+			local point, across = bowAt(at, p[3])
+			return { at.root[1] + p[1] + at.step * out, point[1] + across[1] * thick, point[2] + across[2] * thick }
+		end)
+		blade:emit(mesh)
 	end
 end, true, 0.35)
 part("Sneakers", nil, SNEAKER_BLUE, function(mesh)
 	for _, at in LEGS do
 		local shoe = Kit.shoe(1.15, 0.6, 0.42)
-		shoe:translate(at.foot[1] + 0.15, at.foot[2], 0.06)
+		local foot = footOf(at)
+		shoe:translate(foot[1] + 0.15, foot[2], 0.06)
 		shoe:emit(mesh)
 	end
 end, true, RUBBER)
 part("Soles", nil, { 0.95, 0.95, 0.93 }, function(mesh)
 	for _, at in LEGS do
 		local sole = Kit.block(1.18, 0.62, 0.1, 0.04)
-		sole:translate(at.foot[1] + 0.15, at.foot[2], 0.05)
+		local foot = footOf(at)
+		sole:translate(foot[1] + 0.15, foot[2], 0.05)
 		sole:emit(mesh)
 	end
 end, 50, RUBBER)
 part("Laces", nil, { 0.97, 0.97, 0.95 }, function(mesh)
 	for _, at in LEGS do
+		local foot = footOf(at)
 		for k = 0, 2 do
 			local lace = Kit.block(0.05, 0.34, 0.03, 0.01)
-			lace:translate(at.foot[1] + 0.25 + k * 0.12, at.foot[2], 0.42 - k * 0.03)
+			lace:translate(foot[1] + 0.25 + k * 0.12, foot[2], 0.42 - k * 0.03)
 			lace:emit(mesh)
 		end
 	end
