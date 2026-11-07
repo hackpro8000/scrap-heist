@@ -1,0 +1,14 @@
+slab Bridge1	1.220
+slab Bridge1 #split	1
+slab Bridge8	1.294
+slab Bridge8 #split	1
+JunkrotKettlinaDentata 1 x	0.550
+JunkrotKettlinaDentata 1 x #split	1
+JunkrotJackoloCrickato 1 x	0.549
+JunkrotJackoloCrickato 1 x #split	1
+JunkrotDrilloTrapanino 1 x	0.680
+JunkrotDrilloTrapanino 1 x #split	1
+JunkrotConsoloJoypaddino 1 x	0.788
+JunkrotConsoloJoypaddino 1 x #split	1
+JunkrotWeldettaSparkalot 1 x	0.791
+JunkrotWeldettaSparkalot 1 x #split	1
