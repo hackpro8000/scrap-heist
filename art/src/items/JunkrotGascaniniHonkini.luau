@@ -12,9 +12,9 @@
 local MID = 0.78 -- the body's axis: it sits low, belly on the bomb
 local DARK = { 0.18, 0.19, 0.21 }
 local HEAD = { 1.5, 0, 3.5 } -- the head's loft origin
-local DIHEDRAL = 38 -- degrees the wings rise
+local DIHEDRAL = 30 -- degrees the wings rise, raised as in flight
 local WING = { x = -0.15, y = 0.4, z = MID + 0.3 } -- the wing roots
-local SPAN = 1.45
+local SPAN = 2.25
 local ENAMEL = { 0.86, 0.86, 0.82 }
 local YELLOW = { 0.95, 0.75, 0.15 }
 
@@ -107,15 +107,15 @@ local NECK = Scrap.loft({
 -- to a point behind.
 local L = Scrap.loft({
 	stations = { -- x, top, bottom, half width
-		{ -1.45, 0.14, 0.0, 0.05 },
-		{ -1.2, 0.24, -0.1, 0.17 },
-		{ -0.8, 0.4, -0.28, 0.33 },
-		{ -0.3, 0.52, -0.44, 0.47 },
-		{ 0.2, 0.55, -0.5, 0.52 },
-		{ 0.6, 0.5, -0.46, 0.48 },
-		{ 0.9, 0.38, -0.34, 0.36 },
-		{ 1.05, 0.22, -0.16, 0.18 },
-		{ 1.1, 0.08, -0.04, 0.05 },
+		{ -1.45, 0.171, 0.0, 0.061 },
+		{ -1.2, 0.293, -0.122, 0.207 },
+		{ -0.8, 0.488, -0.342, 0.403 },
+		{ -0.3, 0.634, -0.537, 0.573 },
+		{ 0.2, 0.671, -0.61, 0.634 },
+		{ 0.6, 0.61, -0.561, 0.586 },
+		{ 0.9, 0.464, -0.415, 0.439 },
+		{ 1.05, 0.268, -0.195, 0.22 },
+		{ 1.1, 0.098, -0.049, 0.061 },
 	},
 	at = { 0, 0, MID },
 })
@@ -157,21 +157,22 @@ part("BillRidge", nil, YELLOW, function(mesh)
 	skinCell(H, BILL + 0.02, 0.62, 0, 20, 0.035, 0.02):emit(mesh)
 end, true, 0.2)
 
--- The neck's plates: rings of mismatched dark metal along it, a gap of
+-- The neck's plates: rings of mismatched dark metal along it, black as a
+-- Canada goose's neck,, a gap of
 -- dark core between, some rings split down the sides; the head's plates
 -- in the same metals, dark over the crown and down the back, enamel for
 -- the white cheek patch that runs under the chin.
 local NECK_METALS = {
-	{ "Gunmetal", { 0.3, 0.33, 0.37 } },
-	{ "Bluegrey", { 0.4, 0.47, 0.52 } },
-	{ "Slate", { 0.26, 0.28, 0.3 } },
-	{ "Painted", { 0.36, 0.5, 0.62 } },
+	{ "Gunmetal", { 0.3, 0.32, 0.34 } },
+	{ "Black", { 0.13, 0.13, 0.14 } },
+	{ "Slate", { 0.24, 0.26, 0.28 } },
+	{ "Charcoal", { 0.19, 0.19, 0.21 } },
 }
 local rings = {}
 do
 	local x, k = 0.2, 0
 	while x < NECK_LEN - 0.08 do
-		local len = if k % 3 == 1 then 0.22 else 0.32
+		local len = if k % 3 == 1 then 0.4 else 0.55
 		local x1 = math.min(x + len, NECK_LEN - 0.02)
 		if k % 4 == 2 then
 			table.insert(rings, { x, x1, -1, k })
@@ -205,7 +206,11 @@ end, true, 0.3)
 
 -- Wings: huge, swept back, spread and raised; sheet metal in three
 -- pieces out from the root, the trailing edge scalloped into feathers.
-local WING_OUTLINE = { { 0.5, 0 }, { 0.42, 0.4 }, { 0.26, 0.9 }, { 0.0, 1.38 }, { -0.3, 1.45 }, { -0.42, 1.26 }, { -0.58, 1.32 }, { -0.68, 1.06 }, { -0.83, 1.1 }, { -0.87, 0.82 }, { -0.77, 0.45 }, { -0.6, 0.08 }, { -0.5, 0 } }
+local WING_OUTLINE = {}
+for _, q in { { 0.5, 0 }, { 0.42, 0.4 }, { 0.26, 0.9 }, { 0.0, 1.38 }, { -0.3, 1.45 }, { -0.42, 1.26 }, { -0.58, 1.32 }, { -0.68, 1.06 }, { -0.83, 1.1 }, { -0.87, 0.82 }, { -0.77, 0.45 }, { -0.6, 0.08 }, { -0.5, 0 } } do
+	-- Huge: half again as long in span, a quarter more in chord.
+	table.insert(WING_OUTLINE, { q[1] * 1.25, q[2] * 1.55 })
+end
 local function placeWing(side)
 	return function(m)
 		Kit.turn(m, "x", -90 * side)
@@ -224,7 +229,7 @@ local function wingAt(side, s, chord)
 end
 part("Wings", nil, DARK, function(mesh)
 	for n, side in { -1, 1 } do
-		Scrap.metalFin(WING_OUTLINE, 0.13, SPAN, { 0.45, 0.98 }, placeWing(side), n * 2):emit(mesh)
+		Scrap.metalFin(WING_OUTLINE, 0.15, SPAN, { 0.7, 1.5 }, placeWing(side), n * 2):emit(mesh)
 	end
 	-- The vertical tail fin, swept back over the tail.
 	Scrap.metalFin({ { -0.55, -0.1 }, { -0.95, 0.7 }, { -1.3, 0.76 }, { -1.36, 0.5 }, { -1.3, -0.1 } }, 0.09, 0.76, { 0.35 }, function(m)
@@ -241,7 +246,7 @@ end, 40, 0.35)
 -- The engines: gas cans slung under each wing on pylons, one near the
 -- root and one further out, lying along x: the can's handles forward as
 -- the intake grille, its spout behind as the nozzle, glowing blue.
-local CANS = { { s = 0.42, colour = { 0.38, 0.42, 0.3 }, name = "Olive" }, { s = 1.0, colour = { 0.72, 0.14, 0.1 }, name = "Red" } }
+local CANS = { { s = 0.62, colour = { 0.38, 0.42, 0.3 }, name = "Olive" }, { s = 1.4, colour = { 0.72, 0.14, 0.1 }, name = "Red" } }
 local CAN = { long = 0.5, wide = 0.2, high = 0.34, x = -0.2, drop = 0.33 }
 local function canCentre(side, c)
 	local w = wingAt(side, c.s, CAN.x)
