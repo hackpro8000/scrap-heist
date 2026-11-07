@@ -18,9 +18,10 @@ width doubles every round), until Roblox first turns a request away (429).
 Then the width halves and that half becomes the known limit; above it,
 growth slows to about one more per round, and each refusal halves again.
 Every request waits out Roblox's Retry-After, or else a pause that doubles
-from 1 s to 60 s, with jitter. The width and the known limit are kept in
-art/models/<Name>/upload-width.txt, so the next run starts near the best
-width instead of finding it again.
+from 1 s to 60 s, with jitter. The width is kept in
+art/models/<Name>/upload-width.txt, and the next run starts there (at least
+START wide) with the known limit forgotten, finding it again only if Roblox
+turns it away.
 
 With dry=True nothing is sent: each upload waits a moment and returns a
 made-up asset id, and nothing is written to the record, for testing.
@@ -40,7 +41,7 @@ import uuid
 import bundle
 
 API = os.environ.get("ROBLOX_ASSETS_API", "https://apis.roblox.com/assets/v1")
-START = float(os.environ.get("UPLOAD_START", "4"))
+START = float(os.environ.get("UPLOAD_START", "32"))
 MOST = int(os.environ.get("UPLOAD_MOST", "128"))
 TRIES = int(os.environ.get("UPLOAD_TRIES", "8"))
 PROCESS_TIMEOUT = int(os.environ.get("UPLOAD_PROCESS_TIMEOUT", "360"))
@@ -64,10 +65,7 @@ class Throttle:
 		self.limit, self.known = START, float(MOST)
 		if os.path.isfile(width_path):
 			try:
-				fields = open(width_path).read().split()
-				self.limit = min(MOST, max(1.0, float(fields[0])))
-				if len(fields) > 1:
-					self.known = min(MOST, max(1.0, float(fields[1])))
+				self.limit = min(MOST, max(START, float(open(width_path).read().split()[0])))
 			except (ValueError, IndexError):
 				pass
 		self.flying, self.held_until, self.pause = 0, 0.0, FIRST_PAUSE
