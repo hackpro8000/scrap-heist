@@ -17,7 +17,8 @@ arrive over the connection and are uploaded with this job's
 ROBLOX_API_KEY by tools/coordinator/uploader.py, each asset id sent back
 as soon as it's known.
 
-A dropped connection is retried with backoff (1 s doubling to 30 s). A task
+A dropped connection is retried with backoff (1 s doubling to 30 s); with
+no coordinator for LOST_MINUTES the machine ends, freeing its slot. A task
 sent again after a reconnect is not rebuilt: what it left is sent again.
 The machine ends after <idle minutes> without a task, at <max minutes>, or
 when the coordinator says stop.
@@ -38,6 +39,7 @@ import uploader as uploading  # noqa: E402
 import wire  # noqa: E402
 
 MAX_MESSAGE = 64 * 1024 * 1024
+LOST_MINUTES = 3
 AUDIENCE = "scrap-heist-coordinator"
 
 
@@ -244,6 +246,7 @@ class Agent:
 		global forward
 		self.backoff = 1
 		clock = asyncio.create_task(self.watch_clock())
+		lost_since = None
 		while not self.stopped:
 			connection = asyncio.create_task(self.session())
 			done, _ = await asyncio.wait({connection, clock}, return_when=asyncio.FIRST_COMPLETED)
@@ -254,6 +257,11 @@ class Agent:
 			if self.stopped:
 				break
 			forward = None
+			if self.backoff == 1:
+				lost_since = time.monotonic()
+			elif lost_since and time.monotonic() - lost_since > LOST_MINUTES * 60:
+				say(f"no coordinator for {LOST_MINUTES} minutes; ending to free this machine's slot")
+				break
 			say(f"connection lost ({error}); retrying in {self.backoff}s")
 			await asyncio.sleep(self.backoff)
 			self.backoff = min(30, self.backoff * 2)

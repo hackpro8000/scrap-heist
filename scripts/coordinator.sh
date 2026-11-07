@@ -105,6 +105,11 @@ start() {
 }
 
 stop() {
+	# Machines first: left running they'd hold all the account's machine
+	# slots, and a new standby run would wait in GitHub's queue behind them.
+	if running; then
+		python3 "${root}/tools/coordinator/client.py" stop-machines > /dev/null 2>&1 && echo "told the machines to stop" >&2 || true
+	fi
 	if [ -f "${logs}/tunnel.pid" ]; then
 		kill "$(cat "${logs}/tunnel.pid")" 2> /dev/null || true
 		rm -f "${logs}/tunnel.pid"

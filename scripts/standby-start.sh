@@ -25,7 +25,20 @@ if [ "${on_machine}" = yes ]; then
 else
 	url="$(scripts/coordinator.sh url 2> /dev/null || true)"
 fi
-gh workflow run build-standby.yml -f ref="${ref}" -f shards="${shards}" -f coordinator="${url}"
+# One standby at a time: an older run still up would hold the account's
+# machine slots and this one would wait behind it in GitHub's queue.
+for old in $(gh run list --workflow build-standby.yml --limit 20 --json databaseId,status \
+	--jq '.[] | select(.status == "in_progress" or .status == "queued" or .status == "waiting") | .databaseId'); do
+	echo "stopping standby run ${old} first" >&2
+	gh run cancel "${old}" > /dev/null || true
+done
+branch="$(git rev-parse --abbrev-ref HEAD)"
+gh workflow run build-standby.yml --ref "${branch}" -f ref="${ref}" -f shards="${shards}" -f coordinator="${url}"
+# Say straight away if GitHub holds the run back.
+sleep 8
+state="$(gh run list --workflow build-standby.yml --limit 1 --json status,databaseId --jq '.[0] | "\(.databaseId) \(.status)"')"
+echo "standby run ${state}" >&2
+case "${state}" in *queued*) echo "warning: the run is queued; another run may still hold the machine slots (gh run list)" >&2 ;; esac
 if [ "${url}" = "machine-1" ]; then
 	echo "starting ${shards} machines; machine 1 coordinates and uploads, tasks go by the build-queue branch" >&2
 elif [ -n "${url}" ]; then
