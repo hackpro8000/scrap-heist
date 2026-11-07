@@ -70,16 +70,25 @@ async def stop_machines(url):
 	return 0
 
 
+STALL_SECONDS = 30
+
+
 async def build(url, ref, upload, wait):
 	async with websockets.connect(url, max_size=MAX_MESSAGE) as socket:
 		await socket.send(json.dumps({"type": "build", "ref": ref, "upload": upload}))
 		failed = False
+		quiet = 0
 		while True:
 			try:
-				event = json.loads(await asyncio.wait_for(socket.recv(), wait))
+				event = json.loads(await asyncio.wait_for(socket.recv(), STALL_SECONDS))
+				quiet = 0
 			except asyncio.TimeoutError:
-				print(f"nothing heard for {wait}s; giving up waiting (the task carries on)")
-				return 1
+				quiet += STALL_SECONDS
+				print(f"... nothing for {quiet}s (machines and uploads still going?)", flush=True)
+				if quiet >= wait:
+					print(f"nothing heard for {wait}s; giving up waiting (the task carries on)")
+					return 1
+				continue
 			kind = event["type"]
 			if kind == "error":
 				print(event["text"])
@@ -88,10 +97,18 @@ async def build(url, ref, upload, wait):
 				print(f"posted task {event['task']} ({ref[:7]}) to {event['up']} of {event['count']} machines", file=sys.stderr)
 			elif kind == "shard":
 				summary = event["summary"].replace("\n", " ")
-				print(f"S{event['shard']} after {event['seconds']}s: {summary}")
+				print(f"S{event['shard']} after {event['seconds']}s: {summary}", flush=True)
 				failed = failed or "status=DONE" not in event["summary"]
 			elif kind == "machine" and event.get("gone"):
-				print(f"S{event['shard']} dropped its connection (it reconnects and resumes)", file=sys.stderr)
+				print(f"S{event['shard']} dropped its connection (it reconnects and resumes)", flush=True)
+			elif kind == "uploaded":
+				state = f"asset {event['asset']}" if event.get("asset") else f"FAILED: {event.get('error')}"
+				print(f"upload {event['done']}/{event['of']}: {event['label']} {state}", flush=True)
+				failed = failed or not event.get("asset")
+			elif kind == "warning":
+				print(f"warning: {event['text']}", flush=True)
+			elif kind == "log" and ("FAILED" in event["text"] or "could not" in event["text"] or "error" in event["text"].lower()):
+				print(f"S{event['shard']}: {event['text']}", flush=True)
 			elif kind == "finished":
 				out = event["out"]
 				parts = [line for path in glob.glob(f"{out}/S*/parts.txt") for line in open(path).read().split()]

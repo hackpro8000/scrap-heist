@@ -11,7 +11,9 @@ Machines (scripts/standby-agent.py) connect to the agent port, proving with
 GitHub's identity token that they are this repo's standby machines (oidc.py),
 and keep the connection open. The session talks to the control port, which
 listens on this machine only (tools/coordinator/client.py). Both carry JSON
-messages; a file follows its {"type": "file"} message as one binary message.
+messages; a file is one binary message, its description and bytes together
+(wire.py). Everything the machines report, their log lines included, is
+written to the coordinator's log and passed on to the session as it happens.
 
 A build task goes to every machine of the newest standby run, and to any
 that connect later. Each machine sends back its results (summary.txt,
@@ -50,6 +52,7 @@ import websockets
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import oidc  # noqa: E402
 import uploader as uploading  # noqa: E402
+import wire  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 REPOSITORY = "hackpro8000/scrap-heist"
@@ -72,6 +75,7 @@ class Task:
 		self.handed = {}  # object id -> (shard, label)
 		self.labels = {}  # (shard, object id) -> label, from names.tsv
 		self.sent = set()  # objects this task uploaded (the rest had assets)
+		self.answered = 0
 		self.out = os.path.join(ROOT, ".standby-results", identity)
 		os.makedirs(self.out, exist_ok=True)
 
@@ -107,8 +111,7 @@ class RemoteUploader:
 			with open(path, "rb") as file:
 				data = file.read()
 			try:
-				await self.agent.send(json.dumps({"type": "upload", "id": identity, "label": label, "shard": shard}))
-				await self.agent.send(data)
+				await self.agent.send(wire.pack({"type": "upload", "id": identity, "label": label, "shard": shard}, data))
 			except Exception:
 				self.waiting.insert(0, (identity, path, label, shard))
 				return
@@ -157,12 +160,27 @@ class Coordinator:
 			self.uploader = RemoteUploader(layout)
 			self.uploader.sent_paths = {}
 		else:
-			self.uploader = uploading.Uploader(ROOT, layout, say, dry=dry)
+			self.uploader = uploading.Uploader(ROOT, layout, say, dry=dry, on_done=self.local_answer)
+		self.loop = None
 		self.run_id = None
 		self.count = 0
 		self.agents = {}  # shard -> websocket
 		self.tasks = {}
 		self.watchers = set()  # control websockets waiting on events
+
+	def local_answer(self, identity, asset, error):
+		"""From the local uploader's threads."""
+		if self.loop:
+			self.loop.call_soon_threadsafe(lambda: asyncio.ensure_future(self.uploaded(identity, asset, error)))
+
+	async def uploaded(self, identity, asset, error):
+		if error:
+			say(f"upload of {identity} failed: {error}")
+		for task in self.tasks.values():
+			if identity in task.handed:
+				task.answered += 1
+				await self.emit({"type": "uploaded", "task": task.id, "object": identity, "label": task.handed[identity][1],
+					"asset": asset, "error": error, "done": task.answered, "of": len(task.sent)})
 
 	async def emit(self, event):
 		message = json.dumps(event)
@@ -202,29 +220,29 @@ class Coordinator:
 		for task in self.tasks.values():
 			if shard not in task.done:
 				await socket.send(json.dumps({"type": "task", "id": task.id, "task": task.text()}))
-		pending = None
 		try:
 			async for message in socket:
 				if isinstance(message, bytes):
-					if pending:
-						await self.file(shard, pending, message)
-						pending = None
+					header, data = wire.unpack(message)
+					await self.file(shard, header, data)
 					continue
 				event = json.loads(message)
-				if event["type"] == "file":
-					pending = event
-				elif event["type"] == "done":
+				if event["type"] == "done":
 					await self.finished_shard(shard, event)
 				elif event["type"] == "uploaded" and self.uploads_on_machine:
 					self.uploader.answered(event)
-					await self.emit({"type": "uploaded", "object": event["id"], "asset": event.get("asset"), "error": event.get("error")})
+					await self.uploaded(event["id"], event.get("asset"), event.get("error"))
 				elif event["type"] == "log":
+					say(f"S{shard}: {event.get('text', '')}")
 					await self.emit({"type": "log", "shard": shard, "text": event.get("text", "")})
 		except websockets.ConnectionClosed:
 			pass
 		finally:
 			if self.uploads_on_machine and shard == 1 and self.uploader.agent is socket:
 				self.uploader.agent = None
+				if self.uploader.pending:
+					await self.emit({"type": "warning", "text": f"machine 1 dropped with {len(self.uploader.pending)} uploads unanswered; they go again when it reconnects"})
+			say(f"S{shard} disconnected")
 			if self.agents.get(shard) is socket:
 				del self.agents[shard]
 				await self.emit({"type": "machine", "shard": shard, "up": len(self.agents), "count": self.count, "gone": True})
@@ -252,13 +270,15 @@ class Coordinator:
 				self.uploader.sent_paths[identity] = (identity, path, label, shard)
 			if self.uploader.add(identity, path, label, shard):
 				task.sent.add(identity)
-				await self.emit({"type": "uploading", "task": task.id, "object": identity, "label": label})
+				say(f"task {task.id}: uploading {label} ({identity}) from S{shard}")
+				await self.emit({"type": "uploading", "task": task.id, "object": identity, "label": label, "queued": len(task.sent)})
 
 	async def finished_shard(self, shard, event):
 		task = self.tasks.get(event["task"])
 		if not task or shard in task.done:
 			return
 		task.done[shard] = event.get("summary", "")
+		say(f"task {task.id}: S{shard} done ({len(task.done)} of {task.count}): {task.done[shard].strip().replace(chr(10), ' ')}")
 		await self.emit({"type": "shard", "task": task.id, "shard": shard, "summary": task.done[shard],
 			"seconds": round(time.time() - task.started)})
 		if len(task.done) >= task.count:
@@ -398,6 +418,7 @@ async def serve(arguments):
 		sys.exit("--test-without-identity is only for a local dry run (agent host 127.0.0.1, --dry-upload)")
 	coordinator = Coordinator(arguments.layout, arguments.dry_upload, arguments.test_without_identity, arguments.git_link,
 		arguments.uploads_on_machine)
+	coordinator.loop = asyncio.get_running_loop()
 	agents = await websockets.serve(coordinator.agent, arguments.agent_host, arguments.agent_port, max_size=MAX_MESSAGE)
 	control = await websockets.serve(coordinator.control, "127.0.0.1", arguments.control_port, max_size=MAX_MESSAGE)
 	os.makedirs(os.path.dirname(STATE), exist_ok=True)

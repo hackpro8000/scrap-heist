@@ -35,13 +35,20 @@ import websockets
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, os.path.join(ROOT, "tools", "coordinator"))
 import uploader as uploading  # noqa: E402
+import wire  # noqa: E402
 
 MAX_MESSAGE = 64 * 1024 * 1024
 AUDIENCE = "scrap-heist-coordinator"
 
 
+# Lines also go to the coordinator, live, once connected (Agent.session).
+forward = None
+
+
 def say(message):
 	print(f"agent: {message}", file=sys.stderr, flush=True)
+	if forward:
+		forward(message)
 
 
 def identity_token():
@@ -101,8 +108,7 @@ class Agent:
 		for relative in files:
 			with open(os.path.join(out, relative), "rb") as file:
 				data = file.read()
-			await socket.send(json.dumps({"type": "file", "task": identity, "path": relative, "size": len(data)}))
-			await socket.send(data)
+			await socket.send(wire.pack({"type": "file", "task": identity, "path": relative, "size": len(data)}, data))
 		summary = open(os.path.join(out, "summary.txt")).read() if os.path.isfile(os.path.join(out, "summary.txt")) else "status=FAILED\n"
 		await socket.send(json.dumps({"type": "done", "task": identity, "summary": summary}))
 
@@ -121,6 +127,7 @@ class Agent:
 
 	def answer(self, identity, asset, error):
 		"""From the uploader's threads: send the result on the live socket."""
+		say(f"upload {identity}: " + (f"asset {asset}" if asset else f"FAILED {error}"))
 		message = json.dumps({"type": "uploaded", "id": identity, "asset": asset, "error": error,
 			"width": round(self.uploader.throttle.limit, 1)})
 		socket, loop = self.socket, self.loop
@@ -128,6 +135,7 @@ class Agent:
 			loop.call_soon_threadsafe(lambda: asyncio.ensure_future(socket.send(message)))
 
 	async def receive_upload(self, socket, header, data):
+		say(f"upload {header['label']} ({header['id']}, {len(data) // 1000} KB) received")
 		if self.uploader is None:
 			# AGENT_DRY_UPLOAD fakes uploads, for local tests only.
 			self.uploader = uploading.Uploader(ROOT, header.get("layout", self.layout), say,
@@ -150,19 +158,26 @@ class Agent:
 			say(f"connected to {self.url}")
 			self.backoff = 1
 			self.socket, self.loop = socket, asyncio.get_running_loop()
-			pending = None
+			global forward
+			loop = self.loop
+
+			def forward_line(text):
+				# say() may run on an uploader thread.
+				loop.call_soon_threadsafe(lambda: asyncio.ensure_future(socket.send(json.dumps({"type": "log", "text": text}))))
+
+			forward = forward_line
 			async for message in socket:
 				if isinstance(message, bytes):
-					if pending:
-						await self.receive_upload(socket, pending, message)
-						pending = None
+					header, data = wire.unpack(message)
+					try:
+						await self.receive_upload(socket, header, data)
+					except Exception as error:
+						say(f"upload {header.get('id')}: could not start: {error}")
+						await socket.send(json.dumps({"type": "uploaded", "id": header.get("id"), "error": str(error)}))
 					continue
 				event = json.loads(message)
 				if event["type"] == "uploader":
-					self.layout_for_uploads = event.get("layout", self.layout)
 					say("this machine uploads for the coordinator")
-				elif event["type"] == "upload":
-					pending = event
 				elif event["type"] == "task":
 					asyncio.create_task(self.handle(socket, event["id"], event["task"]))
 				elif event["type"] == "stop":
@@ -178,6 +193,7 @@ class Agent:
 			await asyncio.sleep(min(self.idle_until, self.stop_at) - now)
 
 	async def main(self):
+		global forward
 		self.backoff = 1
 		clock = asyncio.create_task(self.watch_clock())
 		while not self.stopped:
@@ -189,6 +205,7 @@ class Agent:
 			error = connection.exception()
 			if self.stopped:
 				break
+			forward = None
 			say(f"connection lost ({error}); retrying in {self.backoff}s")
 			await asyncio.sleep(self.backoff)
 			self.backoff = min(30, self.backoff * 2)
