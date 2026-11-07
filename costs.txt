@@ -1,0 +1,14 @@
+slab Plot1	2.948
+slab Plot1 #split	1
+CapsulePrecision 1 x	0.286
+CapsulePrecision 1 x #split	1
+JunkrotCabloTanglino 1 x	0.366
+JunkrotCabloTanglino 1 x #split	1
+JunkrotClockoTictacco 1 x	0.380
+JunkrotClockoTictacco 1 x #split	1
+JunkrotDrippiDroppi 1 x	0.575
+JunkrotDrippiDroppi 1 x #split	1
+JunkrotRusteliRustela 1 x	0.444
+JunkrotRusteliRustela 1 x #split	1
+JunkrotSnackomaticPrototipo 1 x	0.412
+JunkrotSnackomaticPrototipo 1 x #split	1

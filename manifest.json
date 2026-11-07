@@ -1,0 +1,423 @@
+{
+	"assets": [
+		{
+			"id": "3e36d24b65b20bd6",
+			"key": "YardIsland-f7a297dc299e1e15 1 x part 1/6",
+			"piece": 1,
+			"label": "Island1",
+			"turn": 0.0,
+			"bytes": 5656180,
+			"parts": 17
+		},
+		{
+			"id": "0ebd1247d8edf1c9",
+			"key": "cd8e579a256b83b8-7b25a7aa2539d602 Plot1 -210 180 0",
+			"piece": 1,
+			"label": "Plot1",
+			"turn": 0.0,
+			"bytes": 5853320,
+			"parts": 10
+		},
+		{
+			"id": "e479a0e1158ba0ab",
+			"key": "CapsulePrecision-80c544621f832e35 1 x",
+			"piece": 1,
+			"label": "Kit_CapsulePrecision",
+			"turn": 0.0,
+			"bytes": 544660,
+			"parts": 4
+		},
+		{
+			"id": "5ced53ed46645346",
+			"key": "JunkrotCabloTanglino-71a7bdce8a73c75d 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotCabloTanglino",
+			"turn": 0.0,
+			"bytes": 588208,
+			"parts": 6
+		},
+		{
+			"id": "bb90f112d2b40bbd",
+			"key": "JunkrotClockoTictacco-124e3e812d14c4c3 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotClockoTictacco",
+			"turn": 0.0,
+			"bytes": 599004,
+			"parts": 7
+		},
+		{
+			"id": "bd6b6ba77380bf74",
+			"key": "JunkrotDrippiDroppi-b006345a7aeeab08 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotDrippiDroppi",
+			"turn": 0.0,
+			"bytes": 820644,
+			"parts": 9
+		},
+		{
+			"id": "0720886069862270",
+			"key": "JunkrotRusteliRustela-41867bade3ceb8a9 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotRusteliRustela",
+			"turn": 0.0,
+			"bytes": 938988,
+			"parts": 10
+		},
+		{
+			"id": "902990582bc7a2c5",
+			"key": "JunkrotSnackomaticPrototipo-580bc970b9d2684c 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotSnackomaticPrototipo",
+			"turn": 0.0,
+			"bytes": 542056,
+			"parts": 8
+		}
+	],
+	"placements": [
+		{
+			"asset": "3e36d24b65b20bd6",
+			"label": "Island1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_0_0_110",
+					"position": [
+						-164.675865,
+						-2.0414825,
+						-228.31328000000002
+					]
+				},
+				{
+					"name": "Pebbles_-1_-2_0",
+					"position": [
+						-240.698305,
+						-5.1780507,
+						-112.85637700000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "0ebd1247d8edf1c9",
+			"label": "Plot1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_-1_0",
+					"position": [
+						-234.0,
+						5.865,
+						-148.0
+					]
+				},
+				{
+					"name": "Ground_0_0_0_110",
+					"position": [
+						-170.0,
+						5.865,
+						-220.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "3e36d24b65b20bd6",
+			"label": "Island2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_0_0_110",
+					"position": [
+						-24.675867,
+						-2.0414825,
+						-228.31328000000002
+					]
+				},
+				{
+					"name": "Pebbles_-1_-2_0",
+					"position": [
+						-100.698295,
+						-5.1780507,
+						-112.85637700000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "3e36d24b65b20bd6",
+			"label": "Island3",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_0_0_110",
+					"position": [
+						115.3241375,
+						-2.0414825,
+						-228.31328000000002
+					]
+				},
+				{
+					"name": "Pebbles_-1_-2_0",
+					"position": [
+						39.3017015,
+						-5.1780507,
+						-112.85637700000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "3e36d24b65b20bd6",
+			"label": "Island4",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_0_0_110",
+					"position": [
+						255.32414,
+						-2.0414825,
+						-228.31328000000002
+					]
+				},
+				{
+					"name": "Pebbles_-1_-2_0",
+					"position": [
+						179.301695,
+						-5.1780507,
+						-112.85637700000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "3e36d24b65b20bd6",
+			"label": "Island5",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_0_0_110",
+					"position": [
+						-255.32414,
+						-2.0414825,
+						228.31328000000002
+					]
+				},
+				{
+					"name": "Pebbles_-1_-2_0",
+					"position": [
+						-179.301695,
+						-5.1780507,
+						112.85637700000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "3e36d24b65b20bd6",
+			"label": "Island6",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_0_0_110",
+					"position": [
+						-115.3241375,
+						-2.0414825,
+						228.31328000000002
+					]
+				},
+				{
+					"name": "Pebbles_-1_-2_0",
+					"position": [
+						-39.3017015,
+						-5.1780507,
+						112.85637700000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "3e36d24b65b20bd6",
+			"label": "Island7",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_0_0_110",
+					"position": [
+						24.675867,
+						-2.0414825,
+						228.31328000000002
+					]
+				},
+				{
+					"name": "Pebbles_-1_-2_0",
+					"position": [
+						100.698295,
+						-5.1780507,
+						112.85637700000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "3e36d24b65b20bd6",
+			"label": "Island8",
+			"turn": 180.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_0_0_110",
+					"position": [
+						164.675865,
+						-2.0414825,
+						228.31328000000002
+					]
+				},
+				{
+					"name": "Pebbles_-1_-2_0",
+					"position": [
+						240.698305,
+						-5.1780507,
+						112.85637700000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "e479a0e1158ba0ab",
+			"label": "Kit_CapsulePrecision",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Clasps",
+					"position": [
+						-600.00515,
+						-148.54465499999998,
+						1.03341805
+					]
+				},
+				{
+					"name": "Corners",
+					"position": [
+						-600.0038999999999,
+						-148.899575,
+						-0.007264300000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "5ced53ed46645346",
+			"label": "Kit_JunkrotCabloTanglino",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Plug",
+					"position": [
+						-358.710355,
+						-148.19236,
+						-0.71517855
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						-359.96781999999996,
+						-148.4065,
+						0.935000005
+					]
+				}
+			]
+		},
+		{
+			"asset": "bb90f112d2b40bbd",
+			"label": "Kit_JunkrotClockoTictacco",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Bells",
+					"position": [
+						-120.007022,
+						-147.12666000000002,
+						0.003604040000000003
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						-119.9788275,
+						-148.05349999999999,
+						0.6402135
+					]
+				}
+			]
+		},
+		{
+			"asset": "bd6b6ba77380bf74",
+			"label": "Kit_JunkrotDrippiDroppi",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Bands",
+					"position": [
+						119.997195,
+						-148.504455,
+						-0.56426208
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						120.02116749999999,
+						-147.4535,
+						1.27021355
+					]
+				}
+			]
+		},
+		{
+			"asset": "0720886069862270",
+			"label": "Kit_JunkrotRusteliRustela",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "BackLegs",
+					"position": [
+						455.984015,
+						-149.503055,
+						-1.1165569199999998
+					]
+				},
+				{
+					"name": "Trunk",
+					"position": [
+						455.978765,
+						-148.642085,
+						1.7710532
+					]
+				}
+			]
+		},
+		{
+			"asset": "902990582bc7a2c5",
+			"label": "Kit_JunkrotSnackomaticPrototipo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Cabinet",
+					"position": [
+						840.0,
+						-147.85000000000002,
+						0.0
+					]
+				},
+				{
+					"name": "Tag",
+					"position": [
+						840.75,
+						-147.04000000000002,
+						0.8200000000000001
+					]
+				}
+			]
+		}
+	]
+}
