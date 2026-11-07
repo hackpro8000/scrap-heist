@@ -28,9 +28,23 @@ if [ -d "${src}/bots/${name}" ]; then
 elif [ -f "${src}/items/${name}.luau" ]; then
 	# CACHE_KEY hashes the shared code and the item down to "-- cached
 	# above", for a model.cached build of the part above that line.
-	# An "-- include: <Name>" line pulls in art/src/shared/<Name>.luau.
+	# An "-- include: <Name>" line pulls in art/src/shared/<Name>.luau, whose
+	# own includes are pulled in too; each file comes in once, the first time.
 	say "item: rarity, shared helpers, item"
-	item="$(awk -v shared="${src}/shared" '/^-- include: / { file = shared "/" $3 ".luau"; while ((getline line < file) > 0) print line; close(file); next } 1' "${src}/items/${name}.luau")"
+	item="$(awk -v shared="${src}/shared" '
+		function pull(file,    line, name) {
+			while ((getline line < file) > 0) {
+				if (line ~ /^-- include: /) {
+					split(line, words, " ")
+					name = words[3]
+					if (!(name in seen)) { seen[name] = 1; pull(shared "/" name ".luau") }
+				} else {
+					print line
+				}
+			}
+			close(file)
+		}
+		BEGIN { pull(ARGV[1]); exit }' "${src}/items/${name}.luau")"
 	key="$({ cat "${src}/rarity.luau" "${src}/common.luau"; printf '%s\n' "${item}" | sed '/^-- cached above$/q'; } | sha1sum | cut -c1-16)"
 	{ echo "local CACHE_KEY = \"${name}-${key}\""; cat "${src}/rarity.luau" "${src}/common.luau"; printf '%s\n' "${item}"; } > "${out}"
 	say "cache key ${name}-${key}"
