@@ -99,8 +99,10 @@ def ids_in(path):
 
 
 class Uploader:
-	def __init__(self, root, name, say=print, dry=False):
+	def __init__(self, root, name, say=print, dry=False, on_done=None):
 		self.name, self.say, self.dry = name, say, dry
+		# Called as on_done(id, asset or None, error or None) after each upload.
+		self.on_done = on_done
 		models = os.path.join(root, "art", "models", name)
 		os.makedirs(models, exist_ok=True)
 		self.ledger_path = os.path.join(root, "art", "src", "layouts", f"{name}Uploads.tsv")
@@ -176,6 +178,9 @@ class Uploader:
 			with self.done:
 				self.pending.discard(identity)
 				self.done.notify_all()
+			if self.on_done:
+				asset = self.record.get(identity, (None, None))[0] if succeeded else None
+				self.on_done(identity, asset, None if succeeded else self.failed.get(identity))
 
 	def _pretend(self):
 		self.throttle.hold()

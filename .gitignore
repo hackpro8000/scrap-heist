@@ -26,3 +26,4 @@ art/models/*/*
 !art/models/*/model.luau
 !art/models/*/sketch.png
 .standby-results/
+/upload-inbox/

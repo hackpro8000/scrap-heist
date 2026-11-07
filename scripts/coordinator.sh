@@ -15,8 +15,11 @@
 # cloudflare. Either way a machine is let in only with GitHub's identity
 # token for this repo's standby workflow (tools/coordinator/oidc.py).
 #
-# If this session can't connect out at all, start standby without a
-# coordinator: the machines then use the build-queue branches as before.
+# Uploads run here when this session has the Roblox key (ROBLOX_API_KEY, or
+# ~/.config/scrap-heist/roblox-api-key); without it, build machine 1 does
+# them with the repo's ROBLOX_API_KEY secret, still over the live
+# connections. If this session can't connect out at all, start standby with
+# scripts/standby-start.sh --on-machine.
 
 set -euo pipefail
 
@@ -61,6 +64,10 @@ start() {
 	local route dry="" host="127.0.0.1" url
 	route="$(route_for "${1:-auto}")"
 	[ "${2:-}" = "--dry-upload" ] && dry="--dry-upload"
+	if [ -z "${dry}" ] && [ -z "${ROBLOX_API_KEY:-}" ] && [ ! -f "${HOME}/.config/scrap-heist/roblox-api-key" ]; then
+		dry="--uploads-on-machine"
+		echo "no Roblox key in this session: build machine 1 will upload with the repo's secret" >&2
+	fi
 	if running; then
 		echo "coordinator already running: $(json agent_url)" >&2
 		return 0

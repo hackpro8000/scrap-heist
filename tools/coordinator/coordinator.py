@@ -25,6 +25,11 @@ written and the session told.
 If a machine reconnects mid-task, it is sent the task again; it resends
 what it already built instead of building twice.
 
+With --uploads-on-machine (what scripts/coordinator.sh chooses when this
+session has no Roblox key), objects are uploaded by build machine 1 with the
+repo's ROBLOX_API_KEY secret instead: each goes to it over its live
+connection and its asset id comes straight back (RemoteUploader).
+
 With --git-link, the coordinator runs on build machine 1, for a session
 that can't connect out (scripts/standby-start.sh --on-machine): it takes
 build tasks from the build-queue branch (scripts/send-build.sh posts them
@@ -74,12 +79,85 @@ class Task:
 		return f"ref={self.ref}\nhand-over=coordinator\n" + ("" if self.upload else "upload=no\n")
 
 
+class RemoteUploader:
+	"""The uploader's interface, with the uploading done by build machine 1:
+	objects are sent to it as they land and asset ids come back. Objects
+	wait here until machine 1 is connected."""
+
+	def __init__(self, layout):
+		self.ledger_path = os.path.join(ROOT, "art", "src", "layouts", f"{layout}Uploads.tsv")
+		self.record, self.failed, self.pending = {}, {}, set()
+		self.waiting = []  # (identity, path, label, shard) not yet sent
+		self.agent = None
+		self.loop = None
+		self.changed = asyncio.Event()
+		self.throttle = type("Width", (), {"limit": 0})()
+
+	def add(self, identity, path, label, shard):
+		if identity in self.pending or identity in self.record or identity in uploading.ids_in(self.ledger_path):
+			return False
+		self.pending.add(identity)
+		self.waiting.append((identity, path, label, shard))
+		asyncio.get_event_loop().create_task(self.flush())
+		return True
+
+	async def flush(self):
+		while self.agent and self.waiting:
+			identity, path, label, shard = self.waiting.pop(0)
+			with open(path, "rb") as file:
+				data = file.read()
+			try:
+				await self.agent.send(json.dumps({"type": "upload", "id": identity, "label": label, "shard": shard}))
+				await self.agent.send(data)
+			except Exception:
+				self.waiting.insert(0, (identity, path, label, shard))
+				return
+
+	async def connected(self, agent):
+		self.agent = agent
+		# Anything sent to a machine 1 that dropped goes again.
+		for identity in list(self.pending):
+			if not any(entry[0] == identity for entry in self.waiting) and identity in self.sent_paths:
+				self.waiting.append(self.sent_paths[identity])
+		await self.flush()
+
+	def answered(self, event):
+		identity = event["id"]
+		if event.get("asset"):
+			self.record[identity] = (str(event["asset"]), str(event.get("shard", 1)))
+		else:
+			self.failed[identity] = event.get("error", "failed")
+		self.pending.discard(identity)
+		if "width" in event:
+			self.throttle.limit = event["width"]
+		self.changed.set()
+
+	def wait(self, identities, timeout=None):
+		raise RuntimeError("use wait_async")
+
+	async def wait_async(self, identities):
+		while self.pending & set(identities):
+			self.changed.clear()
+			await self.changed.wait()
+
+	def asset_of(self, identity):
+		return self.record.get(identity, (None, None))[0]
+
+	def finish(self):
+		pass
+
+
 class Coordinator:
-	def __init__(self, layout, dry, test_without_identity=False, git_link=False):
+	def __init__(self, layout, dry, test_without_identity=False, git_link=False, uploads_on_machine=False):
 		self.layout = layout
 		self.git_link = git_link
 		self.test_without_identity = test_without_identity
-		self.uploader = uploading.Uploader(ROOT, layout, say, dry=dry)
+		self.uploads_on_machine = uploads_on_machine
+		if uploads_on_machine:
+			self.uploader = RemoteUploader(layout)
+			self.uploader.sent_paths = {}
+		else:
+			self.uploader = uploading.Uploader(ROOT, layout, say, dry=dry)
 		self.run_id = None
 		self.count = 0
 		self.agents = {}  # shard -> websocket
@@ -118,6 +196,9 @@ class Coordinator:
 			say(f"standby run {run} with {count} machines")
 		self.agents[shard] = socket
 		await self.emit({"type": "machine", "shard": shard, "up": len(self.agents), "count": count})
+		if self.uploads_on_machine and shard == 1:
+			await socket.send(json.dumps({"type": "uploader", "layout": self.layout}))
+			await self.uploader.connected(socket)
 		for task in self.tasks.values():
 			if shard not in task.done:
 				await socket.send(json.dumps({"type": "task", "id": task.id, "task": task.text()}))
@@ -134,11 +215,16 @@ class Coordinator:
 					pending = event
 				elif event["type"] == "done":
 					await self.finished_shard(shard, event)
+				elif event["type"] == "uploaded" and self.uploads_on_machine:
+					self.uploader.answered(event)
+					await self.emit({"type": "uploaded", "object": event["id"], "asset": event.get("asset"), "error": event.get("error")})
 				elif event["type"] == "log":
 					await self.emit({"type": "log", "shard": shard, "text": event.get("text", "")})
 		except websockets.ConnectionClosed:
 			pass
 		finally:
+			if self.uploads_on_machine and shard == 1 and self.uploader.agent is socket:
+				self.uploader.agent = None
 			if self.agents.get(shard) is socket:
 				del self.agents[shard]
 				await self.emit({"type": "machine", "shard": shard, "up": len(self.agents), "count": self.count, "gone": True})
@@ -162,6 +248,8 @@ class Coordinator:
 			label = task.labels.get((shard, identity), identity)
 			if identity not in task.handed:
 				task.handed[identity] = (shard, label)
+			if self.uploads_on_machine:
+				self.uploader.sent_paths[identity] = (identity, path, label, shard)
 			if self.uploader.add(identity, path, label, shard):
 				task.sent.add(identity)
 				await self.emit({"type": "uploading", "task": task.id, "object": identity, "label": label})
@@ -178,7 +266,10 @@ class Coordinator:
 
 	async def complete(self, task):
 		built = time.time() - task.started
-		await asyncio.to_thread(self.uploader.wait, list(task.handed))
+		if self.uploads_on_machine:
+			await self.uploader.wait_async(list(task.handed))
+		else:
+			await asyncio.to_thread(self.uploader.wait, list(task.handed))
 		self.uploader.finish()
 		failed = {i: e for i, e in self.uploader.failed.items() if i in task.handed}
 		with open(os.path.join(task.out, "uploaded.tsv"), "w") as file:
@@ -303,9 +394,10 @@ class Coordinator:
 
 
 async def serve(arguments):
-	if arguments.test_without_identity and (arguments.agent_host != "127.0.0.1" or not arguments.dry_upload):
+	if arguments.test_without_identity and (arguments.agent_host != "127.0.0.1" or not (arguments.dry_upload or arguments.uploads_on_machine)):
 		sys.exit("--test-without-identity is only for a local dry run (agent host 127.0.0.1, --dry-upload)")
-	coordinator = Coordinator(arguments.layout, arguments.dry_upload, arguments.test_without_identity, arguments.git_link)
+	coordinator = Coordinator(arguments.layout, arguments.dry_upload, arguments.test_without_identity, arguments.git_link,
+		arguments.uploads_on_machine)
 	agents = await websockets.serve(coordinator.agent, arguments.agent_host, arguments.agent_port, max_size=MAX_MESSAGE)
 	control = await websockets.serve(coordinator.control, "127.0.0.1", arguments.control_port, max_size=MAX_MESSAGE)
 	os.makedirs(os.path.dirname(STATE), exist_ok=True)
@@ -321,7 +413,8 @@ async def serve(arguments):
 	with open(STATE, "w") as file:
 		json.dump(state, file)
 	say(f"machines on {arguments.agent_host}:{arguments.agent_port}, control on 127.0.0.1:{arguments.control_port}"
-		+ (" (dry upload)" if arguments.dry_upload else ""))
+		+ (" (dry upload)" if arguments.dry_upload else "")
+		+ (" (machine 1 uploads)" if arguments.uploads_on_machine else ""))
 	waits = [agents.wait_closed(), control.wait_closed()]
 	if arguments.git_link:
 		waits.append(coordinator.link())
@@ -340,6 +433,7 @@ def main():
 	# a tunnel, which makes every outside connection look local.
 	parser.add_argument("--test-without-identity", action="store_true")
 	parser.add_argument("--git-link", action="store_true")
+	parser.add_argument("--uploads-on-machine", action="store_true")
 	asyncio.run(serve(parser.parse_args()))
 
 
