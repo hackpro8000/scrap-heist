@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotTrashaleroTrashala-20f5f6c2a7f3f902"
+local CACHE_KEY = "JunkrotTrashaleroTrashala-afed56ddee32c8bc"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -4180,14 +4180,18 @@ end, 40, 0)
 -- riveted at the corners, a seam of dark steel showing between them. The
 -- eyes and the mouth are left open.
 -- Bands round the section by nominal angle, and each band's cuts along x.
+-- Cuts of very different lengths, so no two plates match; some cells are
+-- split round the section as well, and each plate's edges are nudged so
+-- the rows don't line up.
 local BANDS = {
-	{ 0, 32, { -1.7, -1.05, -0.35, 0.4, 1.0, 1.55, 2.05, 2.3 } },
-	{ 32, 65, { -1.7, -1.25, -0.6, 0.1, 0.75, 1.3, 1.8, 2.3 } },
-	{ 65, 80, { -1.7, -0.9, -0.15, 0.55, 1.15, 1.65, 1.9, 2.3 } },
-	{ 80, 118, { -1.7, -1.15, -0.45, 0.25, 0.9, 1.45, 1.95, 2.3 } },
-	{ 118, 150, { -1.7, -0.95, -0.25, 0.5, 1.1, 1.6, 2.1, 2.3 } },
-	{ 150, 180, { -1.7, -1.1, -0.4, 0.3, 0.95, 1.5, 2.1, 2.3 } },
+	{ 0, 32, { -1.7, -1.3, -0.2, 0.1, 1.2, 1.45, 2.05, 2.3 } },
+	{ 32, 65, { -1.7, -0.75, -0.5, 0.65, 0.9, 1.75, 2.3 } },
+	{ 65, 80, { -1.7, -1.4, -0.3, 0.95, 1.25, 1.6, 1.9, 2.3 } },
+	{ 80, 118, { -1.7, -0.95, 0.15, 0.4, 1.3, 1.6, 2.3 } },
+	{ 118, 150, { -1.7, -1.45, -0.55, 0.0, 0.25, 1.15, 1.55, 2.3 } },
+	{ 150, 180, { -1.7, -0.6, -0.35, 0.85, 1.5, 2.1, 2.3 } },
 }
+local SPLITS = { [3] = 0.45, [7] = 0.6, [12] = 0.35, [18] = 0.55, [23] = 0.4, [29] = 0.65, [34] = 0.5, [40] = 0.3 }
 local PANELS = {}
 for b, band in BANDS do
 	for seg = 1, #band[3] - 1 do
@@ -4204,13 +4208,24 @@ for b, band in BANDS do
 			if not open then
 				local pale = band[1] >= 80
 				local palette = if pale then BELLY_METALS else BACK_METALS
-				local pick = palette[(b * 3 + seg * 5 + (if side < 0 then 2 else 0)) % #palette + 1]
-				-- The head plainer, so the face reads: gunmetal above, enamel
-				-- below.
-				if x0 >= 1.45 then
-					pick = if pale then BELLY_METALS[3] else BACK_METALS[4]
+				local count = #PANELS
+				local nudge = ((count * 7) % 5 - 2) * 1.5 -- degrees, -3..3
+				local a0, a1 = band[1] + nudge, band[2] + nudge
+				local cells = { { a0, a1 } }
+				local split = SPLITS[count % 41 + 1]
+				if split and x0 < 1.45 then
+					local at = a0 + (a1 - a0) * split
+					cells = { { a0, at }, { at, a1 } }
 				end
-				table.insert(PANELS, { x0 + 0.012, x1 - 0.012, side * (band[1] + 1.2), side * (band[2] - 1.2), pick[1], pick[2] })
+				for c, cell in cells do
+					local pick = palette[(b * 3 + seg * 5 + c * 2 + (if side < 0 then 2 else 0)) % #palette + 1]
+					-- The head plainer, so the face reads: gunmetal above,
+					-- enamel below.
+					if x0 >= 1.45 then
+						pick = if pale then BELLY_METALS[3] else BACK_METALS[4]
+					end
+					table.insert(PANELS, { x0 + 0.012, x1 - 0.012, side * (math.max(cell[1], 0.5) + 1.2), side * (math.min(cell[2], 179.5) - 1.2), pick[1], pick[2] })
+				end
 			end
 		end
 	end
