@@ -46,6 +46,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import traceback
 
 import websockets
 
@@ -303,8 +304,11 @@ class Coordinator:
 				elif event["type"] == "log":
 					say(f"S{shard}: {event.get('text', '')}")
 					await self.emit({"type": "log", "shard": shard, "text": event.get("text", "")})
-		except websockets.ConnectionClosed:
-			pass
+		except websockets.ConnectionClosed as closed:
+			say(f"S{shard} closed: {closed}")
+		except Exception:
+			# Anything else would close the connection without a word.
+			say(f"S{shard} handler failed:\n{traceback.format_exc()}")
 		finally:
 			if self.uploads_on_machine and shard == 1 and self.uploader.agent is socket:
 				self.uploader.agent = None
