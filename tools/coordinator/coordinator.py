@@ -306,6 +306,8 @@ class Coordinator:
 				elif event["type"] == "uploaded" and self.uploads_on_machine:
 					self.uploader.answered(event)
 					await self.uploaded(event["id"], event.get("asset"), event.get("error"))
+				elif event["type"] == "preview-ready":
+					await self.preview_ready(shard, event)
 				elif event["type"] == "previews-done":
 					await self.previews_done(shard, event)
 				elif event["type"] == "log":
@@ -354,32 +356,38 @@ class Coordinator:
 				say(f"task {task.id}: uploading {label} ({identity}) from S{shard}")
 				await self.emit({"type": "uploading", "task": task.id, "object": identity, "label": label, "queued": len(task.sent)})
 
+	async def preview_ready(self, shard, event):
+		"""One model's renders are in: put them beside the model (preview.png,
+		the four turns as views.png, and the model script's hash in
+		previewed.txt, so send-build knows it has a preview) and say so."""
+		task = self.tasks.get(event["task"])
+		if not task:
+			return
+		name = os.path.basename(event["name"])
+		source = os.path.join(task.out, f"S{shard}", "previews", name)
+		model = os.path.join(ROOT, "art", "models", name)
+		if not os.path.isfile(os.path.join(source, "preview.png")):
+			await self.emit({"type": "preview", "task": task.id, "name": name, "path": f"FAILED, see {os.path.join(source, 'build.log')}"})
+			return
+		os.makedirs(model, exist_ok=True)
+		shutil.copy(os.path.join(source, "preview.png"), os.path.join(model, "preview.png"))
+		views = [os.path.join(source, f"view{turn}.png") for turn in range(4)]
+		sheet = os.path.join(model, "views.png")
+		if shutil.which("montage") and all(os.path.isfile(view) for view in views):
+			await asyncio.to_thread(subprocess.run, ["montage", *views, "-tile", "2x2", "-geometry", "+4+4", sheet])
+		script = os.path.join(model, "model.luau")
+		if os.path.isfile(script):
+			with open(os.path.join(model, "previewed.txt"), "w") as file:
+				file.write(hashlib.sha1(open(script, "rb").read()).hexdigest()[:16] + "\n")
+		shown = sheet if os.path.isfile(sheet) else os.path.join(model, "preview.png")
+		await self.emit({"type": "preview", "task": task.id, "name": name, "path": os.path.relpath(shown, ROOT)})
+
 	async def previews_done(self, shard, event):
-		"""A machine's renders are all in: put them beside their models
-		(preview.png, the four turns as views.png, and the model script's hash
-		in previewed.txt, so send-build knows it has a preview) and say so."""
+		"""A machine has sent every preview it had to render."""
 		task = self.tasks.get(event["task"])
 		if not task or shard not in task.previews_waiting:
 			return
 		task.previews_waiting.discard(shard)
-		for source in sorted(glob.glob(os.path.join(task.out, f"S{shard}", "previews", "*"))):
-			name = os.path.basename(source)
-			model = os.path.join(ROOT, "art", "models", name)
-			if not os.path.isfile(os.path.join(source, "preview.png")):
-				await self.emit({"type": "preview", "task": task.id, "name": name, "path": f"FAILED, see {os.path.join(source, 'build.log')}"})
-				continue
-			os.makedirs(model, exist_ok=True)
-			shutil.copy(os.path.join(source, "preview.png"), os.path.join(model, "preview.png"))
-			views = [os.path.join(source, f"view{turn}.png") for turn in range(4)]
-			sheet = os.path.join(model, "views.png")
-			if shutil.which("montage") and all(os.path.isfile(view) for view in views):
-				await asyncio.to_thread(subprocess.run, ["montage", *views, "-tile", "2x2", "-geometry", "+4+4", sheet])
-			script = os.path.join(model, "model.luau")
-			if os.path.isfile(script):
-				with open(os.path.join(model, "previewed.txt"), "w") as file:
-					file.write(hashlib.sha1(open(script, "rb").read()).hexdigest()[:16] + "\n")
-			shown = sheet if os.path.isfile(sheet) else os.path.join(model, "preview.png")
-			await self.emit({"type": "preview", "task": task.id, "name": name, "path": os.path.relpath(shown, ROOT)})
 		await self.emit({"type": "previews-done", "task": task.id, "shard": shard, "left": len(task.previews_waiting)})
 		if not task.previews_waiting and getattr(task, "completed", False):
 			del self.tasks[task.id]

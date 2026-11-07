@@ -79,7 +79,6 @@ class Agent:
 		self.by_branch = {}  # task id -> whether its objects went to a branch
 		self.git_lock = threading.Lock()
 		self.building = set()
-		self.previewed = set()  # tasks whose previews this machine rendered
 		self.stopped = False
 		self.uploader = None
 		self.socket = None
@@ -149,16 +148,18 @@ class Agent:
 		if not names:
 			return
 		out = os.path.join(self.built[identity], "previews-run")
-		if identity not in self.previewed:
-			self.previewed.add(identity)
-			await asyncio.to_thread(subprocess.run, ["scripts/standby-previews.sh", names, str(self.index), str(self.count), out],
-				capture_output=True)
-		for directory, _, files in os.walk(out):
-			for name in sorted(files):
-				path = os.path.join(directory, name)
-				with open(path, "rb") as file:
+		# This shard's share: every count-th name from its index. Each model
+		# goes the moment it is rendered, so the first preview comes in seconds.
+		share = [name for n, name in enumerate(names.split(",")) if n % self.count == self.index - 1]
+		for model in share:
+			folder = os.path.join(out, "previews", model)
+			if not os.path.isdir(folder):
+				await asyncio.to_thread(subprocess.run, ["scripts/standby-previews.sh", model, "1", "1", out], capture_output=True)
+			for name in sorted(os.listdir(folder)) if os.path.isdir(folder) else []:
+				with open(os.path.join(folder, name), "rb") as file:
 					data = file.read()
-				await socket.send(wire.pack({"type": "file", "task": identity, "path": os.path.relpath(path, out), "size": len(data)}, data))
+				await socket.send(wire.pack({"type": "file", "task": identity, "path": os.path.join("previews", model, name), "size": len(data)}, data))
+			await socket.send(json.dumps({"type": "preview-ready", "task": identity, "name": model}))
 		await socket.send(json.dumps({"type": "previews-done", "task": identity}))
 		self.idle_until = time.monotonic() + self.idle_seconds
 

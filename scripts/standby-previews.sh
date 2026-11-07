@@ -10,7 +10,9 @@
 # build reads) into <results>/previews/<Name>/: preview.png and four turns,
 # view0-3.png. A model that fails leaves its build.log ending in FAILED.
 # Renders are 384 pixels: they travel through the coordinator's tunnel, which
-# is slow, and four make a 768-pixel sheet.
+# is slow, and four make a 768-pixel sheet. They build with modelkit's
+# --preview, at half the texel density, which is quicker and plenty at that
+# size.
 
 set -uo pipefail
 
@@ -26,7 +28,7 @@ for name in "${list[@]}"; do
 	[ $(((n - 1) % count + 1)) -eq "${index}" ] || continue
 	dir="${out}/previews/${name}"
 	mkdir -p "${dir}"
-	if scripts/build-model.sh "${name}" -- --turntable 4 --size "${PREVIEW_SIZE:-384}" > "${dir}/build.log" 2>&1; then
+	if scripts/build-model.sh "${name}" -- --preview --turntable 4 --size "${PREVIEW_SIZE:-384}" > "${dir}/build.log" 2>&1; then
 		cp "art/models/${name}/preview.png" "${dir}/preview.png"
 		for turn in 0 1 2 3; do
 			cp "art/models/${name}/turntable/000${turn}.png" "${dir}/view${turn}.png"

@@ -24,6 +24,7 @@ import glob
 import json
 import os
 import sys
+import time
 
 import websockets
 
@@ -84,6 +85,7 @@ async def build(url, ref, upload, wait, previews=()):
 		failed = False
 		task = None
 		finished = None
+		started = time.time()
 		quiet = 0
 		while True:
 			try:
@@ -114,7 +116,7 @@ async def build(url, ref, upload, wait, previews=()):
 				print(f"upload {event['done']}/{event['of']}: {event['label']} {state}", flush=True)
 				failed = failed or not event.get("asset")
 			elif kind == "preview":
-				print(f"preview {event['name']}: {event['path']}", flush=True)
+				print(f"preview {event['name']} after {time.time() - started:.0f}s: {event['path']}", flush=True)
 			elif kind == "previews-done" and event["task"] == task and event["left"] == 0 and finished is not None:
 				return finished
 			elif kind == "warning":
