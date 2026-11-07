@@ -1,4 +1,4 @@
-local CACHE_KEY = "JunkrotDrippiDroppi-8073772ee9dd9382"
+local CACHE_KEY = "JunkrotDrippiDroppi-4f4c57579f97374d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -842,7 +842,9 @@ end
 --                  heights in cuts, each piece its own metal, rivets along
 --                  the seams; place(m) positions a piece; returns the dark
 --                  core to emit; pieces and rivets come out with the panel
---                  parts (Scrap.panelParts)
+--                  parts (Scrap.panelParts); palette: {name, colour}s for
+--                  the pieces (Scrap.BACK_METALS by default; the panel
+--                  parts emit pieces whose metal names they share)
 -- Scrap.panels(loft, spec) -> panels    plates tiling the skin:
 --   spec.bands     { {a0, a1, {x cuts...}}, ... } nominal angle bands with
 --                  their own cuts along x
@@ -3811,7 +3813,8 @@ end
 Scrap.clipBand = clipBand
 
 local finPieces, finRivets = {}, {}
-function Scrap.metalFin(outline, thick, span, cuts, place, first)
+function Scrap.metalFin(outline, thick, span, cuts, place, first, palette)
+	palette = palette or Scrap.BACK_METALS
 	local edges = { -10 }
 	for _, c in cuts do
 		table.insert(edges, c)
@@ -3822,8 +3825,8 @@ function Scrap.metalFin(outline, thick, span, cuts, place, first)
 		local hi = edges[k + 1] - (if k < #edges - 1 then 0.012 else 0)
 		local piece = clipBand(outline, lo, hi)
 		if #piece >= 3 then
-			local metal = Scrap.BACK_METALS[(first + k - 1) % #Scrap.BACK_METALS + 1]
-			table.insert(finPieces, { metal = metal[1], mesh = place(Scrap.fin(piece, thick, span)) })
+			local metal = palette[(first + k - 1) % #palette + 1]
+			table.insert(finPieces, { metal = metal[1], colour = metal[2], mesh = place(Scrap.fin(piece, thick, span)) })
 		end
 	end
 	for _, c in cuts do
@@ -3945,6 +3948,9 @@ function Scrap.panelParts(loft, panels, spec)
 		for _, m in list do
 			metals[m[1]] = metals[m[1]] or m[2]
 		end
+	end
+	for _, piece in finPieces do
+		metals[piece.metal] = metals[piece.metal] or piece.colour
 	end
 	local names = {}
 	for metal in metals do
