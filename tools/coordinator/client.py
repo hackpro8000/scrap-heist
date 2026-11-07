@@ -122,6 +122,15 @@ async def build(url, ref, upload, wait):
 				for identity, error in event["failed"].items():
 					print(f"upload of {identity} failed: {error}")
 					failed = True
+				merged = event.get("merged")
+				if merged and merged.get("error"):
+					print(f"merge failed: {merged['error']}")
+					failed = True
+				elif merged:
+					new = merged.get("new_assets", [])
+					print(f"merged into the game's tables; {len(new)} new assets need the game's permission")
+					with open(os.path.join(out, "new-assets.txt"), "w") as file:
+						file.write("\n".join(new) + ("\n" if new else ""))
 				return 1 if failed else 0
 
 

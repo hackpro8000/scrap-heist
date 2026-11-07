@@ -159,6 +159,7 @@ class RemoteUploader:
 class Coordinator:
 	def __init__(self, layout, dry, test_without_identity=False, git_link=False, uploads_on_machine=False):
 		self.layout = layout
+		self.dry = dry
 		self.git_link = git_link
 		self.test_without_identity = test_without_identity
 		self.uploads_on_machine = uploads_on_machine
@@ -315,10 +316,27 @@ class Coordinator:
 				f"uploaded={len(task.sent & set(self.uploader.record))}\nfailed={len(failed)}\n")
 		if self.git_link:
 			await asyncio.to_thread(self.push_results, task)
+		merged = None
+		# Fake uploads must never reach the game's tables.
+		if task.upload and not failed and not self.git_link and not self.dry and not self.test_without_identity:
+			merged = await asyncio.to_thread(self.merge, task)
 		await self.emit({"type": "finished", "task": task.id, "out": task.out, "built": round(built),
 			"total": round(time.time() - task.started), "objects": len(task.handed), "uploaded": len(task.sent & set(self.uploader.record)), "failed": failed,
-			"width": round(self.uploader.throttle.limit, 1)})
+			"width": round(self.uploader.throttle.limit, 1), "merged": merged})
 		del self.tasks[task.id]
+
+	def merge(self, task):
+		"""Merges a finished task into the game's tables (scripts/merge-shards.sh)
+		and returns the asset ids that are new, which need the game's
+		permission; or the merge's error."""
+		shards = sorted(os.path.join(task.out, name) for name in os.listdir(task.out) if name.startswith("S"))
+		result = subprocess.run(["scripts/merge-shards.sh", self.layout, *shards], cwd=ROOT, capture_output=True, text=True)
+		if result.returncode != 0:
+			say(f"task {task.id}: merge failed: {result.stderr.strip()[-300:]}")
+			return {"error": result.stderr.strip()[-300:]}
+		new = [line for line in result.stdout.split() if line.isdigit()]
+		say(f"task {task.id}: merged; {len(new)} new assets need the game's permission")
+		return {"new_assets": new}
 
 	async def post(self, identity, ref, upload):
 		task = Task(identity, ref, upload, self.count)

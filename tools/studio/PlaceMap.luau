@@ -39,6 +39,7 @@
 ]]
 
 local AssetService = game:GetService("AssetService")
+local ContentProvider = game:GetService("ContentProvider")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 
@@ -398,3 +399,24 @@ print(
 	`PlaceMap: hooked up {#spots:GetChildren()} yard spots, filed {kitCount} kit models `
 		.. `and {if spawn then "placed the spawn" else "found NO spawn"}`
 )
+
+-- Wait for the placed meshes and textures to load, by Roblox's own load
+-- callback (one call per asset as it finishes), not a fixed delay, so
+-- whatever comes next (a screenshot) sees the map as players will.
+local toLoad = {}
+for _, root in { folder, ServerStorage } do
+	for _, descendant in root:GetDescendants() do
+		if descendant:IsA("MeshPart") or descendant:IsA("SurfaceAppearance") then
+			table.insert(toLoad, descendant)
+		end
+	end
+end
+local loaded, failedLoads, started = 0, 0, os.clock()
+ContentProvider:PreloadAsync(toLoad, function(_content, status)
+	if status == Enum.AssetFetchStatus.Success then
+		loaded += 1
+	else
+		failedLoads += 1
+	end
+end)
+print(string.format("PlaceMap: %d assets loaded, %d failed, in %.0fs", loaded, failedLoads, os.clock() - started))

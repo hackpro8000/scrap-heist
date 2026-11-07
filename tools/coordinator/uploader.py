@@ -129,6 +129,8 @@ class Uploader:
 		self.pending = set()
 		self.failed = {}
 		self.sent = 0
+		# Seconds an upload usually takes until Roblox has the asset ready.
+		self.typical_processing = 3.0
 		if not dry and not api_key():
 			raise RuntimeError(f"no Roblox API key: set ROBLOX_API_KEY or put it in {KEY_FILE}")
 
@@ -236,18 +238,32 @@ class Uploader:
 			open(path, "rb").read(),
 			f"\r\n--{boundary}--\r\n".encode(),
 		])
-		operation = self._request(f"{API}/assets", body, f"multipart/form-data; boundary={boundary}").get("path")
+		started = time.time()
+		created = self._request(f"{API}/assets", body, f"multipart/form-data; boundary={boundary}")
+		operation = created.get("path")
 		if not operation:
 			raise RuntimeError("rejected: no operation returned")
-		gap, waited = 1.0, 0.0
-		while waited < PROCESS_TIMEOUT:
+		# Roblox doesn't push a finished upload, so it has to be asked; but a
+		# finished answer is taken at once, and the first question waits about
+		# as long as Roblox has lately taken, not a fixed time.
+		answer = created
+		gap = max(0.5, self.typical_processing * 0.8)
+		checks = 0
+		while not answer.get("done"):
+			if time.time() - started > PROCESS_TIMEOUT:
+				raise RuntimeError(f"still processing after {PROCESS_TIMEOUT}s: {operation}")
 			time.sleep(gap)
-			waited += gap
 			answer = self._request(f"{API}/{operation}")
-			if answer.get("done"):
-				asset = answer.get("response", {}).get("assetId")
-				if not asset:
-					raise RuntimeError(f"failed: {json.dumps(answer)[:300]}")
-				return asset
-			gap = min(5.0, gap * 1.5)
-		raise RuntimeError(f"still processing after {waited:.0f}s: {operation}")
+			# After the first, informed wait: soon again, then less often.
+			gap = 1.0 if checks == 0 else min(5.0, gap * 1.5)
+			checks += 1
+		asset = answer.get("response", {}).get("assetId")
+		if not asset:
+			raise RuntimeError(f"failed: {json.dumps(answer)[:300]}")
+		self._learn(time.time() - started)
+		return asset
+
+	def _learn(self, seconds):
+		"""Keeps a running estimate of how long an upload takes, end to end."""
+		with self.lock:
+			self.typical_processing = 0.7 * self.typical_processing + 0.3 * seconds
