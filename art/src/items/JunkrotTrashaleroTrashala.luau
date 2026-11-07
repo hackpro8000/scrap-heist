@@ -137,6 +137,27 @@ end
 local function skinZ(x, a) -- from the axis, in the model's frame
 	return skin(x, a)[3]
 end
+-- The skin's outward direction at x, a, from neighbouring points.
+local function skinNormal(x, a)
+	local p = skin(x, a)
+	local px, pa = skin(x + 0.01, a), skin(x, a + 0.5)
+	local u = { px[1] - p[1], px[2] - p[2], px[3] - p[3] }
+	local v = { pa[1] - p[1], pa[2] - p[2], pa[3] - p[3] }
+	local n = { u[2] * v[3] - u[3] * v[2], u[3] * v[1] - u[1] * v[3], u[1] * v[2] - u[2] * v[1] }
+	local len = math.sqrt(n[1] ^ 2 + n[2] ^ 2 + n[3] ^ 2)
+	n = { n[1] / len, n[2] / len, n[3] / len }
+	-- Outward: away from the axis.
+	local mid = select(1, station(x)) + select(2, station(x))
+	local away = { 0, p[2], p[3] - mid / 2 }
+	if n[1] * away[1] + n[2] * away[2] + n[3] * away[3] < 0 then
+		n = { -n[1], -n[2], -n[3] }
+	end
+	return p, n
+end
+local function onSkin(x, a, lift)
+	local p, n = skinNormal(x, a)
+	return { p[1] + n[1] * lift, p[2] + n[2] * lift, p[3] + n[3] * lift + MIDDLE }
+end
 -- The roof of the mouth, the plane the jaw splits off along: the rim's
 -- height at the corners, a touch up.
 local ROOF = skinZ(CORNER.x + 0.001, 150) + 0.03
@@ -173,10 +194,10 @@ local function shark()
 	-- Eye sockets, sunk into the sides of the head over the mouth's front.
 	for _, side in { -1, 1 } do
 		local socket = m:select("face", "facing", { 0, side, 0.35 }, 24):filter(function(p)
-			return p[1] > 1.7 and p[1] < 1.85 and p[3] > -0.05 and p[3] < 0.2
+			return p[1] > 1.66 and p[1] < 1.88 and p[3] > -0.06 and p[3] < 0.22
 		end)
 		if socket:count() > 0 then
-			m:extrude(m:inset(socket, 0.015, 0), -0.04)
+			m:extrude(m:inset(socket, 0.015, 0), -0.05)
 		end
 	end
 	-- The nostrils under the snout, recessed.
@@ -213,6 +234,24 @@ end, true, 0.4)
 part("Belly", nil, { 0.3, 0.3, 0.3 }, function(mesh)
 	skinPart(body:copy(), true):emit(mesh)
 end, true, 0.3)
+-- The scrap the shark is made of: darker metals over the back and on the
+-- fins, pale ones under the belly.
+local BACK_METALS = {
+	{ "BLUE_GREY", { 0.4, 0.47, 0.52 } },
+	{ "OLIVE", { 0.42, 0.45, 0.36 } },
+	{ "RUST", { 0.55, 0.35, 0.16 } },
+	{ "GUNMETAL", { 0.3, 0.33, 0.37 } },
+	{ "PAINTED", { 0.36, 0.5, 0.62 } },
+	{ "BRASS", { 0.7, 0.58, 0.3 } },
+}
+local BELLY_METALS = {
+	{ "TIN", { 0.72, 0.7, 0.66 } },
+	{ "GALVANISED", { 0.6, 0.63, 0.62 } },
+	{ "ENAMEL", { 0.86, 0.86, 0.82 } },
+	{ "ALUMINIUM", { 0.78, 0.8, 0.8 } },
+	{ "TIN", { 0.72, 0.7, 0.66 } },
+	{ "ENAMEL", { 0.86, 0.86, 0.82 } },
+}
 -- A fin from its outline in x (along the body) and z (out from the root
 -- at 0), thick at the root and thinning toward its edges and tip.
 local function fin(outline, thick, span)
@@ -225,43 +264,122 @@ local function fin(outline, thick, span)
 	end)
 	return m
 end
-part("Fins", nil, { 0.4, 0.47, 0.52 }, function(mesh)
+-- Clips an x-z outline to lo <= z <= hi (Sutherland-Hodgman).
+local function clipBand(outline, lo, hi)
+	local function clip(poly, keep, cross)
+		local out = {}
+		for i, a in poly do
+			local b = poly[i % #poly + 1]
+			local ka, kb = keep(a), keep(b)
+			if ka then
+				table.insert(out, a)
+			end
+			if ka ~= kb then
+				table.insert(out, cross(a, b))
+			end
+		end
+		return out
+	end
+	local function at(a, b, z)
+		local t = (z - a[2]) / (b[2] - a[2])
+		return { a[1] + (b[1] - a[1]) * t, z }
+	end
+	local poly = clip(outline, function(q)
+		return q[2] >= lo
+	end, function(a, b)
+		return at(a, b, lo)
+	end)
+	return clip(poly, function(q)
+		return q[2] <= hi
+	end, function(a, b)
+		return at(a, b, hi)
+	end)
+end
+-- Every fin is sheet metal in pieces: the outline cut into bands along its
+-- span at the given heights, each band a plate of its own metal with the
+-- fin's thickness rule, a dark steel core showing in the seams. Pieces are
+-- made once and placed with the fin's own turns; the metal parts emit
+-- them, and Rivets the rivets along the seams.
+local FIN_PIECES, FIN_RIVETS = {}, {}
+local function metalFin(outline, thick, span, cuts, place, first)
+	local edges = { -10 }
+	for _, c in cuts do
+		table.insert(edges, c)
+	end
+	table.insert(edges, 10)
+	for k = 1, #edges - 1 do
+		local lo = edges[k] + (if k > 1 then 0.012 else 0)
+		local hi = edges[k + 1] - (if k < #edges - 1 then 0.012 else 0)
+		local piece = clipBand(outline, lo, hi)
+		if #piece >= 3 then
+			local metal = BACK_METALS[(first + k - 1) % #BACK_METALS + 1]
+			table.insert(FIN_PIECES, { metal = metal[1], mesh = place(fin(piece, thick, span)) })
+		end
+	end
+	-- Rivets either side of each seam, on both faces.
+	for _, c in cuts do
+		local band = clipBand(outline, c - 0.001, c + 0.001)
+		local xs = {}
+		for _, q in band do
+			table.insert(xs, q[1])
+		end
+		table.sort(xs)
+		if #xs >= 2 then
+			local x0, x1 = xs[1], xs[#xs]
+			local out = math.clamp(c / span, 0, 1)
+			local half = thick / 2 * math.max(0.12, 1 - 0.85 * out)
+			for _, t in { 0.2, 0.5, 0.8 } do
+				for _, side in { -1, 1 } do
+					for _, dz in { -0.045, 0.045 } do
+						local r = EditMesh.sphere(0.02, 6)
+						r:translate(x0 + (x1 - x0) * t, side * (half + 0.004) - half + half, c + dz)
+						table.insert(FIN_RIVETS, place(r))
+					end
+				end
+			end
+		end
+	end
+	-- The core: the whole outline, a little thinner, in dark steel.
+	local core = fin(outline, thick * 0.8, span)
+	return place(core)
+end
+part("Fins", nil, { 0.18, 0.19, 0.21 }, function(mesh)
 	-- The first dorsal, over the back's high point: a straight leading edge
 	-- raked back to the tip, a concave trailing edge down to a free tip.
-	local dorsal = fin({ { 0.95, -0.15 }, { 0.6, 0.4 }, { 0.2, 0.9 }, { 0.05, 0.98 }, { 0.12, 0.6 }, { 0.2, 0.25 }, { 0.1, -0.15 } }, 0.14, 0.98)
-	dorsal:translate(0, 0, MIDDLE + 0.46)
-	dorsal:emit(mesh)
+	metalFin({ { 0.95, -0.15 }, { 0.6, 0.4 }, { 0.2, 0.9 }, { 0.05, 0.98 }, { 0.12, 0.6 }, { 0.2, 0.25 }, { 0.1, -0.15 } }, 0.14, 0.98, { 0.3, 0.62 }, function(m)
+		return m:translate(0, 0, MIDDLE + 0.46)
+	end, 1):emit(mesh)
 	-- The second dorsal, small, near the tail.
-	local second = fin({ { 0.25, -0.1 }, { 0.08, 0.16 }, { -0.02, 0.2 }, { 0.0, 0.06 }, { -0.06, -0.1 } }, 0.08, 0.2)
-	second:translate(-0.95, 0, MIDDLE + 0.22)
-	second:emit(mesh)
+	metalFin({ { 0.25, -0.1 }, { 0.08, 0.16 }, { -0.02, 0.2 }, { 0.0, 0.06 }, { -0.06, -0.1 } }, 0.08, 0.2, {}, function(m)
+		return m:translate(-0.95, 0, MIDDLE + 0.22)
+	end, 4):emit(mesh)
 	-- The tail: a long upper lobe sweeping up and back, a shorter lower
 	-- one, both from the tail root.
-	local tail = fin({ { 0.12, 0.12 }, { -0.55, 1.0 }, { -0.75, 1.08 }, { -0.5, 0.4 }, { -0.32, 0.12 }, { -0.5, -0.38 }, { -0.62, -0.55 }, { -0.1, -0.16 }, { 0.12, -0.1 } }, 0.12, 1.08)
-	tail:transform(function(p)
-		-- Thinning the lower lobe too, which the span rule above leaves.
-		local down = math.clamp(-p[3] / 0.55, 0, 1)
-		return { p[1], p[2] * math.max(0.15, 1 - 0.85 * down), p[3] }
-	end)
-	tail:translate(-1.62, 0, MIDDLE + 0.01)
-	tail:emit(mesh)
+	metalFin({ { 0.12, 0.12 }, { -0.55, 1.0 }, { -0.75, 1.08 }, { -0.5, 0.4 }, { -0.32, 0.12 }, { -0.5, -0.38 }, { -0.62, -0.55 }, { -0.1, -0.16 }, { 0.12, -0.1 } }, 0.12, 1.08, { -0.2, 0.3, 0.7 }, function(m)
+		m:transform(function(p)
+			-- Thinning the lower lobe too, which the span rule leaves.
+			local down = math.clamp(-p[3] / 0.55, 0, 1)
+			return { p[1], p[2] * math.max(0.15, 1 - 0.85 * down), p[3] }
+		end)
+		return m:translate(-1.62, 0, MIDDLE + 0.01)
+	end, 2):emit(mesh)
 end, 40, 0.35)
-part("ShodFins", nil, { 0.6, 0.63, 0.62 }, function(mesh)
+part("ShodFins", nil, { 0.18, 0.19, 0.21 }, function(mesh)
 	-- The pectorals and the fin under the tail, from fin outlines like the
 	-- rest, turned down to the ground.
-	for _, f in SHOD do
+	for n, f in SHOD do
 		local c = f.chord / 2
+		local out = (90 - f.down) * (if f.side == 0 then 1 else f.side)
 		-- Narrowing fast in the lower half, so only a slim tip goes into the
 		-- sneaker's collar.
-		local m = fin({ { c, -0.12 }, { c * 0.42, f.span * 0.5 }, { c * 0.18, f.span }, { -c * 0.18, f.span }, { -c * 0.5, f.span * 0.45 }, { -c, -0.12 } }, 0.12, f.span)
-		local out = (90 - f.down) * (if f.side == 0 then 1 else f.side)
-		Kit.turn(m, "x", 180)
-		Kit.turn(m, "x", out)
-		Kit.turn(m, "y", f.back)
-		m:translate(f.root[1], f.root[2], MIDDLE + f.root[3])
-		m:emit(mesh)
+		metalFin({ { c, -0.12 }, { c * 0.42, f.span * 0.5 }, { c * 0.18, f.span }, { -c * 0.18, f.span }, { -c * 0.5, f.span * 0.45 }, { -c, -0.12 } }, 0.12, f.span, { f.span * 0.42 }, function(m)
+			Kit.turn(m, "x", 180)
+			Kit.turn(m, "x", out)
+			Kit.turn(m, "y", f.back)
+			return m:translate(f.root[1], f.root[2], MIDDLE + f.root[3])
+		end, 2 + n):emit(mesh)
 	end
-end, 40, 0.35)
+end, 40, 0.4)
 -- Each sneaker stands on the ground with its collar over its fin's tip:
 -- the shoe's own origin is the middle of its sole, the collar sits back
 -- from it. Kit.shoe's proportions: toe +x, collar over the heel third.
@@ -427,12 +545,54 @@ part("Mouth", nil, { 0.3, 0.07, 0.09 }, function(mesh)
 	floor:solidify(0.012)
 	onJaw(floor):emit(mesh)
 end, true, 0)
-part("Eyes", nil, { 0.04, 0.04, 0.05 }, function(mesh)
+local function eyeAt(side)
+	local p, n = skinNormal(1.77, side * 72)
+	return p, n
+end
+part("Eyes", nil, { 0.03, 0.03, 0.04 }, function(mesh)
 	for _, side in { -1, 1 } do
-		local p = skin(1.77, side * 72)
-		local eye = EditMesh.sphere(0.065, 8)
-		eye:translate(p[1], p[2] * 0.93, p[3] + MIDDLE)
+		local p, n = eyeAt(side)
+		local eye = EditMesh.sphere(0.08, 10)
+		eye:translate(p[1] + n[1] * 0.01, p[2] + n[2] * 0.01, p[3] + n[3] * 0.01 + MIDDLE)
 		eye:emit(mesh)
+	end
+end, true, 0)
+part("EyeRings", nil, { 0.86, 0.86, 0.82 }, function(mesh)
+	-- A white enamel washer round each eye, standing off the socket so the
+	-- black eye reads against it and it against the dark plating.
+	for _, side in { -1, 1 } do
+		local p, n = eyeAt(side)
+		local ring = EditMesh.torus(0.095, 0.022, 16, 6)
+		Kit.turn(ring, "x", 90)
+		Kit.turn(ring, "z", side * -math.deg(math.atan2(n[1], math.abs(n[2]))))
+		ring:translate(p[1] + n[1] * 0.035, p[2] + n[2] * 0.035, p[3] + n[3] * 0.035 + MIDDLE)
+		ring:emit(mesh)
+	end
+end, true, 0.1)
+part("Lips", nil, { 0.1, 0.1, 0.12 }, function(mesh)
+	-- Dark rubber beading round the mouth's rim above, and along the jaw's
+	-- edge below: the grin stands out dark against the enamel head, the
+	-- white teeth between.
+	local path = {}
+	for k = 0, 24 do
+		table.insert(path, rimPoint(-1 + k / 12, 0.02))
+	end
+	Kit.tube(path, 0.036, 8):emit(mesh)
+	local lower = {}
+	for k = 0, 24 do
+		local q = rimPoint(-1 + k / 12)
+		table.insert(lower, { q[1] * 0.985 + CORNER.x * 0.015, q[2] * 0.95, ROOF - 0.03 })
+	end
+	onJaw(Kit.tube(lower, 0.03, 8)):emit(mesh)
+end, true, 0.1)
+part("NostrilPits", nil, { 0.05, 0.05, 0.06 }, function(mesh)
+	-- Dark pits on the plated snout, under its tip.
+	for _, side in { -1, 1 } do
+		local o = onSkin(2.1, side * 165, 0.03)
+		local pit = EditMesh.sphere(0.03, 6)
+		Kit.size(pit, { 1.4, 1, 0.6 })
+		pit:translate(o[1], o[2], o[3])
+		pit:emit(mesh)
 	end
 end, true, 0)
 -- A tooth: a flat triangle standing up from the origin, facing +-y, its
@@ -480,22 +640,6 @@ end, 40, 0)
 -- the belly, each lifted a hair off the skin with its own thickness and
 -- riveted at the corners, a seam of dark steel showing between them. The
 -- eyes and the mouth are left open.
-local BACK_METALS = {
-	{ "BLUE_GREY", { 0.4, 0.47, 0.52 } },
-	{ "OLIVE", { 0.42, 0.45, 0.36 } },
-	{ "RUST", { 0.55, 0.35, 0.16 } },
-	{ "GUNMETAL", { 0.3, 0.33, 0.37 } },
-	{ "PAINTED", { 0.36, 0.5, 0.62 } },
-	{ "BRASS", { 0.7, 0.58, 0.3 } },
-}
-local BELLY_METALS = {
-	{ "TIN", { 0.72, 0.7, 0.66 } },
-	{ "GALVANISED", { 0.6, 0.63, 0.62 } },
-	{ "ENAMEL", { 0.86, 0.86, 0.82 } },
-	{ "ALUMINIUM", { 0.78, 0.8, 0.8 } },
-	{ "TIN", { 0.72, 0.7, 0.66 } },
-	{ "ENAMEL", { 0.86, 0.86, 0.82 } },
-}
 -- Bands round the section by nominal angle, and each band's cuts along x.
 local BANDS = {
 	{ 0, 32, { -1.7, -1.05, -0.35, 0.4, 1.0, 1.55, 2.05, 2.3 } },
@@ -522,6 +666,11 @@ for b, band in BANDS do
 				local pale = band[1] >= 80
 				local palette = if pale then BELLY_METALS else BACK_METALS
 				local pick = palette[(b * 3 + seg * 5 + (if side < 0 then 2 else 0)) % #palette + 1]
+				-- The head plainer, so the face reads: gunmetal above, enamel
+				-- below.
+				if x0 >= 1.45 then
+					pick = if pale then BELLY_METALS[3] else BACK_METALS[4]
+				end
 				table.insert(PANELS, { x0 + 0.012, x1 - 0.012, side * (band[1] + 1.2), side * (band[2] - 1.2), pick[1], pick[2] })
 			end
 		end
@@ -531,26 +680,8 @@ local PANEL_METALS = {}
 for _, q in PANELS do
 	PANEL_METALS[q[5]] = q[6]
 end
--- The skin's outward direction at x, a, from neighbouring points.
-local function skinNormal(x, a)
-	local p = skin(x, a)
-	local px, pa = skin(x + 0.01, a), skin(x, a + 0.5)
-	local u = { px[1] - p[1], px[2] - p[2], px[3] - p[3] }
-	local v = { pa[1] - p[1], pa[2] - p[2], pa[3] - p[3] }
-	local n = { u[2] * v[3] - u[3] * v[2], u[3] * v[1] - u[1] * v[3], u[1] * v[2] - u[2] * v[1] }
-	local len = math.sqrt(n[1] ^ 2 + n[2] ^ 2 + n[3] ^ 2)
-	n = { n[1] / len, n[2] / len, n[3] / len }
-	-- Outward: away from the axis.
-	local mid = select(1, station(x)) + select(2, station(x))
-	local away = { 0, p[2], p[3] - mid / 2 }
-	if n[1] * away[1] + n[2] * away[2] + n[3] * away[3] < 0 then
-		n = { -n[1], -n[2], -n[3] }
-	end
-	return p, n
-end
-local function onSkin(x, a, lift)
-	local p, n = skinNormal(x, a)
-	return { p[1] + n[1] * lift, p[2] + n[2] * lift, p[3] + n[3] * lift + MIDDLE }
+for _, m in BACK_METALS do
+	PANEL_METALS[m[1]] = m[2]
 end
 local function panel(x0, x1, a0, a1)
 	local m = EditMesh.new()
@@ -595,9 +726,17 @@ for metal, colour in PANEL_METALS do
 				panel(q[1], q[2], q[3], q[4]):emit(mesh)
 			end
 		end
+		for _, piece in FIN_PIECES do
+			if piece.metal == metal then
+				piece.mesh:emit(mesh)
+			end
+		end
 	end, 40, if metal == "RUST" then 0.7 elseif metal == "BRASS" or metal == "ENAMEL" then 0.3 else 0.5)
 end
 part("Rivets", nil, DARK_STEEL, function(mesh)
+	for _, r in FIN_RIVETS do
+		r:emit(mesh)
+	end
 	-- A dome rivet in each panel's corners, half sunk into it.
 	for _, q in PANELS do
 		local dx, da = (q[2] - q[1]) * 0.1, (q[4] - q[3]) * 0.15
