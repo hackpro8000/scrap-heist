@@ -4,6 +4,9 @@
   tools/coordinator/client.py status          # the run, machines up, tasks
   tools/coordinator/client.py build <commit> [--no-upload] [--wait S]
   tools/coordinator/client.py stop-machines   # standby machines end now
+  tools/coordinator/client.py wait-machines [N] [--wait S]
+                                              # returns once N machines are up
+                                              # (default: all of the run)
 
 `build` posts a task and prints each machine's result the moment it
 arrives, then the upload's, and exits 0 when every machine built and every
@@ -41,6 +44,23 @@ async def status(url):
 	up = answer["up"]
 	print(f"run={answer['run']} machines={answer['count']} up={len(up)} tasks={len(answer['tasks'])}")
 	return 0
+
+
+async def wait_machines(url, wanted, wait):
+	async with websockets.connect(url) as socket:
+		await socket.send(json.dumps({"type": "watch"}))
+		while True:
+			try:
+				event = json.loads(await asyncio.wait_for(socket.recv(), wait))
+			except asyncio.TimeoutError:
+				print(f"no machine connected for {wait}s")
+				return 1
+			if event["type"] in ("machines", "machine"):
+				need = wanted or event["count"]
+				if event["count"]:
+					print(f"{event['up']} of {event['count']} machines up", file=sys.stderr)
+				if need and event["up"] >= need:
+					return 0
 
 
 async def stop_machines(url):
@@ -90,7 +110,7 @@ async def build(url, ref, upload, wait):
 
 def main():
 	parser = argparse.ArgumentParser()
-	parser.add_argument("command", choices=["status", "build", "stop-machines"])
+	parser.add_argument("command", choices=["status", "build", "stop-machines", "wait-machines"])
 	parser.add_argument("ref", nargs="?")
 	parser.add_argument("--no-upload", action="store_true")
 	parser.add_argument("--wait", type=int, default=600)
@@ -101,6 +121,8 @@ def main():
 		sys.exit(2)
 	if arguments.command == "status":
 		code = asyncio.run(status(url))
+	elif arguments.command == "wait-machines":
+		code = asyncio.run(wait_machines(url, int(arguments.ref or 0), arguments.wait))
 	elif arguments.command == "stop-machines":
 		code = asyncio.run(stop_machines(url))
 	else:

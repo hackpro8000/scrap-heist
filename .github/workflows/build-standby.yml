@@ -13,14 +13,18 @@
 # posted and results and objects go straight back, so nothing polls. A
 # machine proves who it is with this job's GitHub identity token; a ws://
 # address is a tailnet one, reached by joining the tailnet with TS_AUTHKEY.
-# Without one, machines wait on the build-queue branch (scripts/standby.sh).
+# With coordinator=machine-1 (scripts/standby-start.sh --on-machine, for a
+# session that can't connect out), machine 1 runs the coordinator and does
+# the uploads itself, reached by the others over the tailnet, and takes
+# tasks from the build-queue branch. Without one, machines wait on the
+# build-queue branch (scripts/standby.sh).
 #
 #   scripts/standby-start.sh 20
 #   gh workflow run build-standby.yml -f ref=wip/coordinator -f shards=20
 name: Build standby
 # The run's title carries its settings, so scripts/standby-status.sh can read
 # them from the run list (workflow inputs aren't in the runs API).
-run-name: "Standby ${{ inputs.layout }} x${{ inputs.shards }} from ${{ inputs.ref }} (idle ${{ inputs.minutes }}m, max ${{ inputs.max_minutes }}m)${{ inputs.coordinator != '' && ' live' || '' }}"
+run-name: "Standby ${{ inputs.layout }} x${{ inputs.shards }} from ${{ inputs.ref }} (idle ${{ inputs.minutes }}m, max ${{ inputs.max_minutes }}m)${{ inputs.coordinator == 'machine-1' && ' live on machine 1' || inputs.coordinator != '' && ' live' || '' }}"
 
 on:
   workflow_dispatch:
@@ -45,7 +49,7 @@ on:
         type: boolean
         default: false
       coordinator:
-        description: Coordinator address (ws:// on the tailnet, wss:// through a tunnel); empty for the build-queue branch
+        description: Coordinator address (ws:// on the tailnet, wss:// through a tunnel), machine-1 to host it on machine 1, or empty for the build-queue branch
         default: ""
 
 permissions:
@@ -79,6 +83,7 @@ jobs:
             /art/src/
             /art/models/*/model.luau
             /tools/modelkit/
+            /tools/coordinator/
       - name: Restore this shard's build cache
         if: ${{ !inputs.cold }}
         uses: actions/cache/restore@v4
@@ -87,10 +92,11 @@ jobs:
           key: shard-cache-${{ inputs.layout }}-${{ inputs.shards }}-${{ matrix.shard }}-${{ github.run_id }}
           restore-keys: shard-cache-${{ inputs.layout }}-${{ inputs.shards }}-${{ matrix.shard }}-
       - name: Join the tailnet
-        if: ${{ startsWith(inputs.coordinator, 'ws://') }}
+        if: ${{ startsWith(inputs.coordinator, 'ws://') || inputs.coordinator == 'machine-1' }}
         uses: tailscale/github-action@v3
         with:
           authkey: ${{ secrets.TS_AUTHKEY }}
+          hostname: ${{ matrix.shard == 1 && format('scrap-coordinator-{0}', github.run_id) || format('scrap-builder-{0}-{1}', github.run_id, matrix.shard) }}
       - name: Install the agent's websocket library
         if: ${{ inputs.coordinator != '' }}
         run: python3 -m pip install --user --break-system-packages --quiet websockets==10.4
@@ -102,6 +108,12 @@ jobs:
           max_minutes=$(( ${{ inputs.max_minutes }} > 300 ? 300 : ${{ inputs.max_minutes }} ))
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ "$COORDINATOR" = "machine-1" ]; then
+            if [ "${{ matrix.shard }}" = "1" ]; then
+              nohup python3 tools/coordinator/coordinator.py serve --git-link --agent-host "$(tailscale ip -4 | head -n 1)" > coordinator.log 2>&1 &
+            fi
+            COORDINATOR="ws://scrap-coordinator-${{ github.run_id }}:8765"
+          fi
           if [ -n "$COORDINATOR" ]; then
             scripts/standby-agent.py "$COORDINATOR" "${{ inputs.layout }}" "${{ matrix.shard }}" "${{ inputs.shards }}" "$minutes" "$max_minutes"
           else

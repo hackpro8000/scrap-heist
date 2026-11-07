@@ -154,12 +154,28 @@ A layout is uploaded one object at a time, and only the objects that changed:
    its cache key, and the ledger `art/src/layouts/ServerMapUploads.tsv` says
    which ids already have an asset; each machine hands over only the objects
    that don't (`scripts/standby-task.sh`).
-2. Once every build is in, `scripts/send-build.sh` has one machine, shard 1,
-   upload everything handed over with `scripts/upload-objects.py` (the key
-   needs `asset:write`). One machine sends it all so one throttle sees every
-   answer: it starts with 8 uploads in flight, allows one more after each
-   success up to 64, and halves the number and waits whenever Roblox turns a
-   request away. A build after a small change uploads a few small files.
+2. The uploads overlap the builds. With a coordinator running in the session
+   (`scripts/coordinator.sh start`, then `scripts/standby-start.sh 20`), every
+   machine keeps a live connection to it (`scripts/standby-agent.py`, over
+   Tailscale or a Cloudflare quick tunnel; each proves it is one of this
+   repo's standby machines with its GitHub identity token, so no secret rides
+   in the public workflow inputs). `scripts/send-build.sh` hands the task to
+   them all at once, each machine's results and objects come straight back
+   into `.standby-results/<task>/S<i>/`, and the session's one uploader
+   (`tools/coordinator/uploader.py`) sends each object the moment it lands.
+   Its width grows by 0.5 per round of successes up to 64, halves when Roblox
+   turns a request away (waiting out `Retry-After`), and is kept in
+   `art/models/ServerMap/upload-width.txt` for the next run. Nothing polls.
+   The session needs the Roblox key (`ROBLOX_API_KEY`, or
+   `~/.config/scrap-heist/roblox-api-key`); `--dry-upload` fakes uploads for
+   tests (never merge a dry run's results).
+   A session that can't connect out starts standby with `--on-machine`:
+   machine 1 runs the coordinator and does the uploads, the others reach it
+   over the tailnet (the repo's `TS_AUTHKEY` secret), and the session posts
+   tasks to the build-queue branch and gets each task's results back as one
+   commit on `build-results/coordinator`, checked every 10 s. Without either,
+   machines fall back to the build-queue branch and shard 1 uploads at the end
+   (`scripts/standby.sh`, `scripts/upload-objects.py`).
 3. `scripts/merge-shards.sh ServerMap .standby-results/<task>/S*` adds the new
    uploads to the ledger and writes `Assets.MapChunks` (each object's asset
    ID) and `src/shared/Config/MapChunks.luau` (every placement). Commit all

@@ -36,6 +36,15 @@ if python3 tools/coordinator/client.py status > /dev/null 2>&1; then
 	exec python3 tools/coordinator/client.py build "${commit}" "${flags[@]}"
 fi
 
+# Machine 1 runs the coordinator (scripts/standby-start.sh --on-machine): the
+# task goes on the build-queue branch for it, and the whole task's results
+# come back as one commit on build-results/coordinator, checked for every
+# LINK_SECONDS. The only polling left, for a session that can't connect out.
+LINK_SECONDS=10
+if [ "${count}" = "auto" ] && scripts/standby-status.sh --line 2> /dev/null | grep -q "on-machine=yes"; then
+	on_machine=yes
+fi
+
 if [ "${count}" = "auto" ]; then
 	if ! status="$(scripts/standby-status.sh --line)"; then
 		scripts/standby-status.sh >&2 || true
@@ -90,6 +99,26 @@ id="t$(date +%s)-$$"
 post_task "${id}" "$(printf 'ref=%s\nupload=%s' "${commit}" "${upload}")" || exit 1
 started=$(date +%s)
 echo "posted task ${id} (${commit:0:7}); waiting for ${count} shards" >&2
+
+if [ "${on_machine:-}" = yes ]; then
+	out=".standby-results/${id}"
+	while [ $(($(date +%s) - started)) -lt "${wait_seconds}" ]; do
+		sleep "${LINK_SECONDS}"
+		git fetch -q origin "+refs/heads/build-results/coordinator:refs/remotes/origin/build-results/coordinator" 2> /dev/null || continue
+		sha="$(git log -n 50 --format='%H %s' origin/build-results/coordinator | awk -v want="task ${id}" '$2 " " $3 == want { print $1; exit }' || true)"
+		[ -n "${sha}" ] || continue
+		mkdir -p "${out}"
+		git archive "${sha}" | tar -x -C "${out}"
+		for summary in "${out}"/S*/summary.txt; do
+			echo "$(basename "$(dirname "${summary}")"): $(tr '\n' ' ' < "${summary}")"
+		done
+		echo "task ${id} on machine 1: $(tr '\n' ' ' < "${out}/summary.txt"); results in ${out}"
+		grep -q "failed=0" "${out}/summary.txt" && ! grep -L "status=DONE" "${out}"/S*/summary.txt | grep -q .
+		exit $?
+	done
+	echo "task ${id}: no result from machine 1 in ${wait_seconds}s"
+	exit 1
+fi
 
 out=".standby-results/${id}"
 mkdir -p "${out}"

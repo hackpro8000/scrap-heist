@@ -24,12 +24,20 @@ written and the session told.
 
 If a machine reconnects mid-task, it is sent the task again; it resends
 what it already built instead of building twice.
+
+With --git-link, the coordinator runs on build machine 1, for a session
+that can't connect out (scripts/standby-start.sh --on-machine): it takes
+build tasks from the build-queue branch (scripts/send-build.sh posts them
+there; the one link that still polls) and pushes each finished task's
+results, objects left out, as one commit to build-results/coordinator.
 """
 import argparse
 import asyncio
 import json
 import os
+import subprocess
 import sys
+import tempfile
 import time
 
 import websockets
@@ -43,6 +51,8 @@ REPOSITORY = "hackpro8000/scrap-heist"
 WORKFLOW = ".github/workflows/build-standby.yml"
 MAX_MESSAGE = 64 * 1024 * 1024
 STATE = os.path.expanduser("~/.cache/scrap-heist/coordinator.json")
+LINK_RESULTS = "build-results/coordinator"
+LINK_INTERVAL = 3
 
 
 def say(message):
@@ -65,8 +75,9 @@ class Task:
 
 
 class Coordinator:
-	def __init__(self, layout, dry, test_without_identity=False):
+	def __init__(self, layout, dry, test_without_identity=False, git_link=False):
 		self.layout = layout
+		self.git_link = git_link
 		self.test_without_identity = test_without_identity
 		self.uploader = uploading.Uploader(ROOT, layout, say, dry=dry)
 		self.run_id = None
@@ -175,10 +186,73 @@ class Coordinator:
 				asset = self.uploader.asset_of(identity)
 				if asset:
 					file.write(f"{identity}\t{asset}\t{shard}\n")
+		with open(os.path.join(task.out, "summary.txt"), "w") as file:
+			file.write(f"built={round(built)}\ntotal={round(time.time() - task.started)}\nobjects={len(task.handed)}\n"
+				f"uploaded={len(task.sent & set(self.uploader.record))}\nfailed={len(failed)}\n")
+		if self.git_link:
+			await asyncio.to_thread(self.push_results, task)
 		await self.emit({"type": "finished", "task": task.id, "out": task.out, "built": round(built),
 			"total": round(time.time() - task.started), "objects": len(task.handed), "uploaded": len(task.sent & set(self.uploader.record)), "failed": failed,
 			"width": round(self.uploader.throttle.limit, 1)})
 		del self.tasks[task.id]
+
+	async def post(self, identity, ref, upload):
+		task = Task(identity, ref, upload, self.count)
+		self.tasks[identity] = task
+		for agent in list(self.agents.values()):
+			await agent.send(json.dumps({"type": "task", "id": identity, "task": task.text()}))
+		return task
+
+	# --- a session reached through git (--git-link) ---
+
+	def git(self, *arguments, **options):
+		return subprocess.run(["git", *arguments], cwd=ROOT, capture_output=True, text=True, **options)
+
+	async def link(self):
+		"""Takes tasks posted to build-queue since this coordinator started."""
+		since, seen, taken = int(time.time()), "", set()
+		while True:
+			head = (await asyncio.to_thread(self.git, "ls-remote", "origin", "refs/heads/build-queue")).stdout.split("\t")[0]
+			if head and head != seen and self.count:
+				fetched = await asyncio.to_thread(self.git, "fetch", "-q", "--depth=1", "origin", head)
+				if fetched.returncode == 0:
+					seen = head
+					files = (await asyncio.to_thread(self.git, "ls-tree", "--name-only", head, "tasks/")).stdout.split()
+					for name in sorted(files):
+						identity = os.path.basename(name)[:-4]
+						posted = identity[1:].split("-")[0]
+						if identity in taken or not posted.isdigit() or int(posted) < since:
+							continue
+						taken.add(identity)
+						text = (await asyncio.to_thread(self.git, "show", f"{head}:{name}")).stdout
+						fields = dict(line.split("=", 1) for line in text.splitlines() if "=" in line)
+						if "ref" in fields and "upload-of" not in fields:
+							say(f"task {identity} from the build-queue branch")
+							await self.post(identity, fields["ref"], fields.get("upload") != "no")
+			await asyncio.sleep(LINK_INTERVAL)
+
+	def push_results(self, task):
+		"""One commit on build-results/coordinator with the task's results,
+		objects left out, through a temporary index."""
+		index = tempfile.mktemp()
+		environment = {**os.environ, "GIT_INDEX_FILE": index}
+		for directory, _, names in os.walk(task.out):
+			for name in names:
+				if name.endswith(".glb"):
+					continue
+				path = os.path.join(directory, name)
+				blob = self.git("hash-object", "-w", path).stdout.strip()
+				relative = os.path.relpath(path, task.out)
+				self.git("update-index", "--add", "--cacheinfo", f"100644,{blob},{relative}", env=environment)
+		tree = self.git("write-tree", env=environment).stdout.strip()
+		if os.path.exists(index):
+			os.remove(index)
+		parent = []
+		if self.git("fetch", "-q", "--depth=1", "origin", f"refs/heads/{LINK_RESULTS}").returncode == 0:
+			parent = ["-p", self.git("rev-parse", "FETCH_HEAD").stdout.strip()]
+		commit = self.git("commit-tree", tree, *parent, "-m", f"task {task.id}").stdout.strip()
+		pushed = self.git("push", "-q", "origin", f"{commit}:refs/heads/{LINK_RESULTS}")
+		say(f"task {task.id}: results pushed" if pushed.returncode == 0 else f"task {task.id}: push failed {pushed.stderr}")
 
 	# --- the session ---
 
@@ -192,6 +266,18 @@ class Coordinator:
 			await socket.send(json.dumps({"type": "status", "run": self.run_id, "count": self.count,
 				"up": sorted(self.agents), "tasks": list(self.tasks)}))
 			return
+		if kind == "watch":
+			# Streams machine and task events until the watcher hangs up.
+			await socket.send(json.dumps({"type": "machines", "run": self.run_id, "count": self.count, "up": len(self.agents)}))
+			self.watchers.add(socket)
+			try:
+				async for _ in socket:
+					pass
+			except websockets.ConnectionClosed:
+				pass
+			finally:
+				self.watchers.discard(socket)
+			return
 		if kind == "stop-machines":
 			for agent in list(self.agents.values()):
 				await agent.send(json.dumps({"type": "stop"}))
@@ -204,12 +290,9 @@ class Coordinator:
 			await socket.send(json.dumps({"type": "error", "text": "no standby machines have connected"}))
 			return
 		identity = f"t{int(time.time())}-{os.getpid()}-{len(self.tasks)}"
-		task = Task(identity, request["ref"], request.get("upload", True), self.count)
-		self.tasks[identity] = task
 		self.watchers.add(socket)
+		task = await self.post(identity, request["ref"], request.get("upload", True))
 		await socket.send(json.dumps({"type": "posted", "task": identity, "count": task.count, "up": len(self.agents)}))
-		for agent in list(self.agents.values()):
-			await agent.send(json.dumps({"type": "task", "id": identity, "task": task.text()}))
 		try:
 			async for _ in socket:
 				pass
@@ -222,7 +305,7 @@ class Coordinator:
 async def serve(arguments):
 	if arguments.test_without_identity and (arguments.agent_host != "127.0.0.1" or not arguments.dry_upload):
 		sys.exit("--test-without-identity is only for a local dry run (agent host 127.0.0.1, --dry-upload)")
-	coordinator = Coordinator(arguments.layout, arguments.dry_upload, arguments.test_without_identity)
+	coordinator = Coordinator(arguments.layout, arguments.dry_upload, arguments.test_without_identity, arguments.git_link)
 	agents = await websockets.serve(coordinator.agent, arguments.agent_host, arguments.agent_port, max_size=MAX_MESSAGE)
 	control = await websockets.serve(coordinator.control, "127.0.0.1", arguments.control_port, max_size=MAX_MESSAGE)
 	os.makedirs(os.path.dirname(STATE), exist_ok=True)
@@ -239,7 +322,10 @@ async def serve(arguments):
 		json.dump(state, file)
 	say(f"machines on {arguments.agent_host}:{arguments.agent_port}, control on 127.0.0.1:{arguments.control_port}"
 		+ (" (dry upload)" if arguments.dry_upload else ""))
-	await asyncio.gather(agents.wait_closed(), control.wait_closed())
+	waits = [agents.wait_closed(), control.wait_closed()]
+	if arguments.git_link:
+		waits.append(coordinator.link())
+	await asyncio.gather(*waits)
 
 
 def main():
@@ -253,6 +339,7 @@ def main():
 	# Local tests only: agents may connect with the token "test". Never with
 	# a tunnel, which makes every outside connection look local.
 	parser.add_argument("--test-without-identity", action="store_true")
+	parser.add_argument("--git-link", action="store_true")
 	asyncio.run(serve(parser.parse_args()))
 
 

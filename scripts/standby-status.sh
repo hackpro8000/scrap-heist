@@ -36,7 +36,9 @@ for i in $(seq 1 "${shards}"); do
 done
 
 if [ "${1:-}" = "--line" ]; then
-	echo "run=${id} layout=${layout} shards=${shards} ready=${ready} ref=${ref}"
+	on_machine=no
+	case "${title}" in *"live on machine 1"*) on_machine=yes ;; esac
+	echo "run=${id} layout=${layout} shards=${shards} ready=${ready} ref=${ref} on-machine=${on_machine}"
 else
 	echo "standby run ${id}: ${layout} on ${shards} machines, ${ready} up and waiting (started ${created})"
 	echo "  ${title}"
