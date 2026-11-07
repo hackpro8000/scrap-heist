@@ -1,0 +1,16 @@
+slab Bridge3	1.025
+slab Bridge3 #split	1
+ProofKettle 1 x	0.070
+ProofKettle 1 x #split	1
+RebirthPress 1 x	0.379
+RebirthPress 1 x #split	1
+JunkrotCanettoRustini 1 x	0.428
+JunkrotCanettoRustini 1 x #split	1
+JunkrotPannettoPatchato 1 x	0.438
+JunkrotPannettoPatchato 1 x #split	1
+JunkrotMixerellaVroom 1 x	0.518
+JunkrotMixerellaVroom 1 x #split	1
+JunkrotLeafblowaWhooshini 1 x	0.499
+JunkrotLeafblowaWhooshini 1 x #split	1
+JunkrotTorquoWrenchelli 1 x	0.724
+JunkrotTorquoWrenchelli 1 x #split	1
