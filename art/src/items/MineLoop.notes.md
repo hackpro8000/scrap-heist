@@ -5,15 +5,16 @@
 ## Decided
 - A hill swept from one cross-section read as a smooth tube; three chunkier hill shapes (tiered, faceted, mesa) still didn't fit the art style. The user wants the cave composed of rocks, not a hill with rock decoration.
 - The user's reference replaces the old sketch: rounded, chunky boulders stacked in tiers to a peak, and a square timber porch at each mouth (log posts, header and side beams, plank deck) instead of the stone arch and plank band.
-- A dark core sits behind the rocks so gaps read as shadow; the black inside shades stay, as the user asked.
+- The black inside shades stay, as the user asked.
 - Opening 6.4 wide by 6.6 tall: the 4 by 5.5 capsule has 1.2 spare each side and 1.1 overhead; the cart (3.6 by 4.9) passes.
 - First build, three critic rounds: rocks made broad and squat with hard tilts, the far side a tier higher than the hub side, the peak a wide slab stepping down in overlapping slabs; flank rocks butt the porch boards; posts 1.2 thick; lantern hung on a bracket on the hub-side front post.
+- The dark core behind the rocks showed as a "master rock"; the user wants the whole cave made of rocks. Removed: only the tunnel's thin dark lining (Bore) is left, with the walls leaning in against it and the roof slabs lying on it, so crevices read as shadow.
 - Renders and checkpoints run on the cloud machines (`FROM=` on `scripts/checkpoint-model.sh`); eyes 7 and 8 are raised overviews of the whole pile.
 
 ## Open
 - Critic (round 3, LOW only): the peak is only about a boulder above the rest, where the reference climbs higher; the flank rocks at the mouths are smooth, tall blocks; the stone lacks the reference's light edge highlights.
 - The plan check's clearance can't measure this opening: it looks along X or Z, and the tunnel runs along Y.
-- The clipping check flags the intended seating (core inside the rocks, boards and pebbles tucked into them).
+- The clipping check flags the intended seating (boards, beams and pebbles tucked into the rocks).
 
 ## Next
 - Raise the peak 1 to 2 studs so the pile climbs like the reference.
