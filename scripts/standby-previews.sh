@@ -42,8 +42,8 @@ for name in "${list[@]}"; do
 	fi
 	# art/src/items/<Name>.preview-flags adds modelkit flags, say --eye views
 	# from chosen spots; their renders come back too. Its own --size replaces
-	# the default, and --full bakes at full texel density instead of
-	# --preview's half.
+	# the default, --full bakes at full texel density instead of --preview's
+	# half, and --max-detail (passed through) puts every texture at the cap.
 	flags=()
 	[ -f "art/src/items/${model}.preview-flags" ] && read -ra flags < "art/src/items/${model}.preview-flags"
 	extra=()

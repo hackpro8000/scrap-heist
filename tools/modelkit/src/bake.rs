@@ -369,6 +369,10 @@ pub struct Shading {
 	pub height_range: Option<[f64; 2]>,
 	// Strokes drawn over the coat, such as cracks.
 	pub strokes: Vec<crate::brush::Stroke>,
+	// Lays the coat on texel by texel in the exact colours `paint` returns
+	// instead of as brush strokes, for machine finishes (hazard tape, a
+	// ribbed belt) that strokes would smear. Strokes over the coat are skipped.
+	pub crisp: bool,
 }
 
 // The thinnest a corner-tapered highlight gets, as a share of its full width.
@@ -735,8 +739,13 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 	}));
 	let (coat_layer, wear_layer, shade_layer) = std::thread::scope(|scope| {
 		let shade = scope.spawn(bake_shade);
-		let coat_numbers = [&[look.gradient, look.brush][..], &range_key, &drawn_key].concat();
+		let coat_numbers = [&[look.gradient, look.brush, f64::from(u8::from(shading.crisp))][..], &range_key, &drawn_key].concat();
 		let coat_layer = profiled(1, || cached_layer(cache::layer_path("coat", mesh, &neighbours, false, &coat_numbers, Some(&*image), source), || {
+			if shading.crisp {
+				// `base` calls into Lua, so this runs on this thread alone.
+				let colours: Vec<[f32; 3]> = full.iter().map(|t| to_f32(coat::base_at(look, &wear, base, t.position, t.face_normal))).collect();
+				return vec![layer_image(width, height, &full, &colours)];
+			}
 			let mut canvas = coat::coat(mesh, look, &wear, base);
 			for stroke in &shading.strokes {
 				canvas.add(stroke.clone());

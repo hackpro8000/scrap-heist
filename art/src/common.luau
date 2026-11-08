@@ -18,9 +18,13 @@ local GRID = 0.4
 -- instead of the fixed TEXTURE, so a layout reads at one texel density.
 -- A part's own `texture` size still wins.
 local texelDensity: number? = nil
+-- The density the layout asked for, before TEXEL_SCALE: chunk sizes follow
+-- this one, so a max-detail preview keeps the chunks it would ship with.
+local layoutDensity: number? = nil
 
 -- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
 local function useTexelDensity(pixelsPerStud: number)
+	layoutDensity = pixelsPerStud
 	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
 end
 
@@ -607,6 +611,9 @@ end
 -- `strokes` lists brush strokes painted over the coat ({start, along, normal,
 -- length, width, tail, color, brush}, color in sRGB), such as cracks or dabs;
 -- `brush` is "taper" (crisp lines, the default), "round" or "sponge".
+-- `crisp` lays the coat on texel by texel in the paint fn's exact colours
+-- instead of brush strokes, for machine finishes (hazard tape, ribbed
+-- rubber) that strokes would smear; shading still goes over it.
 local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
@@ -635,7 +642,7 @@ end
 -- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
 -- on across chunks instead of restarting in each (a flat chunk would go dark).
 local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
-	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	local CHUNK = if layoutDensity then math.min(128, 1024 / layoutDensity) else 128
 	-- Smallest cell a chunk is halved down to while looking for a split.
 	local MIN_CELL = 2
 	local positions, faces = {}, {}
@@ -701,7 +708,9 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		if texelDensity then
 			local mesh = chunkMesh(chunkFaces)
 			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
-			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			-- Split by the layout's density; the scale only sizes the texture.
+			local unwrap = mesh:unwrap()
+			local needed = math.ceil((layoutDensity or texelDensity) / unwrap / 4) * 4
 			if needed > 1024 and #chunkFaces > 1 then
 				local half = size / 2
 				local octants, octantOrder = {}, {}
@@ -733,7 +742,7 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 					return
 				end
 			end
-			texture = math.clamp(needed, 16, 1024)
+			texture = math.clamp(math.ceil(texelDensity / unwrap / 4) * 4, 16, 1024)
 		end
 		part(label, bone, color, function(mesh)
 			local handles = {}
@@ -803,6 +812,7 @@ local function finishParts()
 			softTaper = entry.softTaper,
 			strokes = entry.strokes,
 			heightRange = entry.heightRange,
+			crisp = entry.crisp,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end

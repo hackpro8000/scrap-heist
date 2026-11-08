@@ -226,6 +226,7 @@ impl UserData for MeshHandle {
 				reach: get("reach", bake::CONTACT_REACH)?.clamp(0.02, 4.0),
 				highlight_width: get("highlightWidth", 1.0)?.clamp(0.1, 8.0),
 				painted_highlights: options.as_ref().map(|o| o.get::<Option<bool>>("paintedHighlights")).transpose()?.flatten().unwrap_or(false),
+				crisp: options.as_ref().map(|o| o.get::<Option<bool>>("crisp")).transpose()?.flatten().unwrap_or(false),
 				corner_taper: get("cornerTaper", 0.0)?.clamp(0.0, 16.0),
 				soft_highlight: get("softHighlight", 0.0)?.clamp(0.0, 1.0),
 				soft_reach: get("softReach", 1.0)?.clamp(0.02, 8.0),
@@ -816,7 +817,10 @@ fn main() {
 	// --preview builds texels at half the density, for quick looks, and with
 	// --eye bakes far parts at less detail still.
 	let preview = args.iter().any(|a| a == "--preview");
-	let texel_scale = if preview { 0.5 } else { 1.0 };
+	// --max-detail raises the density so far that every part's texture hits
+	// the 1024 cap, for previews judged up close on the build machines.
+	let max_detail = args.iter().any(|a| a == "--max-detail");
+	let texel_scale = if max_detail { 64.0 } else if preview { 0.5 } else { 1.0 };
 	let detail_eyes = if preview { eyes.clone() } else { Vec::new() };
 	let chunks = args.iter().any(|a| a == "--chunks");
 	let shard = match args.iter().position(|a| a == "--shard") {

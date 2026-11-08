@@ -135,8 +135,15 @@ fn scatter(mesh: &Mesh, look: &Look, density: f64, least: u32, salt: u32, mut pl
 // Paints the part. `base` gives the sRGB coat color at a point and normal.
 // The base colour at a spot, darkened toward the bottom of the part.
 fn coat_at(look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3], spot: &Spot) -> [f64; 3] {
-	let color = linear(base(spot.at, spot.normal));
-	let low = (wear.low)(spot.at);
+	base_at(look, wear, base, spot.at, spot.normal)
+}
+
+// The coat colour at one point, for a part painted crisply texel by texel
+// (machine finishes such as hazard tape or a ribbed belt, which brush
+// strokes would smear): the base colour, darkened toward the bottom.
+pub fn base_at(look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3], at: Vec3, normal: Vec3) -> [f64; 3] {
+	let color = linear(base(at, normal));
+	let low = (wear.low)(at);
 	let fade = low * low * (3.0 - 2.0 * low) * look.gradient;
 	let tint = linear([0.45, 0.42, 0.6]);
 	std::array::from_fn::<f64, 3, _>(|k| color[k] + (color[k] * tint[k] - color[k]) * fade)
