@@ -696,6 +696,12 @@ local ROCK = { 0.52, 0.54, 0.6 }
 -- The highlight band's reach from an edge, in studs, its strength, and how
 -- far from a corner its strokes taper away.
 local ROCK_EDGE, ROCK_LIT, ROCK_TAPER = 0.6, 1.8, 0.8
+-- A wide, very soft highlight under the rims: how strong at an edge, how
+-- many studs it fades out over at its widest (rocks, then pebbles), how far
+-- its width wanders along the edge, and the studs it thins over away from
+-- a corner.
+local ROCK_GLOW, ROCK_GLOW_EDGE, PEBBLE_GLOW_EDGE = 0.22, 2.2, 0.5
+local ROCK_GLOW_UNEVEN, ROCK_GLOW_TAPER = 0.65, 2
 -- Chunks are small, so their rims are narrower and fainter.
 local PEBBLE_EDGE, PEBBLE_LIT = 0.25, 0.7
 
@@ -815,6 +821,10 @@ local function boldRims()
 	parts[#parts].painted = true
 	parts[#parts].blend = 0.65
 	parts[#parts].taper = ROCK_TAPER
+	parts[#parts].softLit = ROCK_GLOW
+	parts[#parts].softEdge = ROCK_GLOW_EDGE
+	parts[#parts].softUneven = ROCK_GLOW_UNEVEN
+	parts[#parts].softTaper = ROCK_GLOW_TAPER
 end
 
 -- How each kind of block is cut by plane slicing, the way stylized rocks
@@ -1299,6 +1309,7 @@ end, nil, function(x, y, z, nx, ny, nz)
 	return r * 0.88, g * 0.88, b * 0.88
 end, nil, nil, true, PEBBLE_EDGE, nil, PEBBLE_LIT)
 boldRims()
+parts[#parts].softEdge = PEBBLE_GLOW_EDGE
 
 -- ------------------------------------------------------------ the shades
 

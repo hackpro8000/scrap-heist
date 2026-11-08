@@ -31,6 +31,7 @@
 - Edge and corner chipping (user): about 60% of top corners chipped along the corner's bisector, about 45% of top edges take a tapering bite toward one end, 0.2 to 0.55 deep. Three review rounds over these three changes.
 - Seams sealed (user): full-height upright corner chamfers opened shafts where three columns met. Each upright corner's bevel now leans 8 to 16 degrees in, widest at the top and running out a couple of studs down, so below that the corners stay whole and meet their neighbours. One review round.
 - Timber improved (user picked A of three, from subtle to bold with knee braces; compared at 1024 textures): posts 1.3 thick and 10% thicker at the foot, slightly off true; beams 0.85, faintly hand-hewn, cut ends showing rings; a little more grain contrast, sparse cracks, soft worn edges, plank ends roughly sawn. The bore now follows the post size (4.6 either side of the track). One review round.
+- Soft edge highlight (user): a second highlight layer under the crisp rims, new in the bake (`softLit`, `softEdge`, `softUneven`, `softTaper` on a part entry): a smooth glow with no brush, up to 2.2 studs wide on the rocks and 0.5 on the chunks, 22% at the edge, its width wandering along each edge and thinning away from the corners. 30% washed the rocks pale; 16% barely showed. Two review rounds.
 
 ## Open
 - A few texels still take a neighbour's tone where a small rock tucks in front of a big one with faces turned the same way (LOW).

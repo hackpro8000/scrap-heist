@@ -1,4 +1,4 @@
-local CACHE_KEY = "MineLoop-af5885249658cd70"
+local CACHE_KEY = "MineLoop-3c776fe5bdf3210e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -611,6 +611,9 @@ end
 -- to paint its highlights as bold, fully loaded strokes instead of dry ones,
 -- `blend` (0-1) to tint them from cream toward a lighter part colour, and
 -- `taper` (studs) to run them full width at corners, thinning along each edge.
+-- `softLit` (0-1) adds a wide, very soft highlight under the strokes, fading
+-- out over `softEdge` studs from each edge; `softUneven` (0-1) makes its width
+-- wander along the edge and `softTaper` (studs) thins it away from corners.
 -- `strokes` lists brush strokes painted over the coat ({start, along, normal,
 -- length, width, tail, color, brush}, color in sRGB), such as cracks or dabs;
 -- `brush` is "taper" (crisp lines, the default), "round" or "sponge".
@@ -804,6 +807,10 @@ local function finishParts()
 			highlightWidth = entry.wide,
 			paintedHighlights = entry.painted,
 			cornerTaper = entry.taper,
+			softHighlight = entry.softLit,
+			softReach = entry.softEdge,
+			softUneven = entry.softUneven,
+			softTaper = entry.softTaper,
 			strokes = entry.strokes,
 			heightRange = entry.heightRange,
 		})
@@ -4111,6 +4118,12 @@ local ROCK = { 0.52, 0.54, 0.6 }
 -- The highlight band's reach from an edge, in studs, its strength, and how
 -- far from a corner its strokes taper away.
 local ROCK_EDGE, ROCK_LIT, ROCK_TAPER = 0.6, 1.8, 0.8
+-- A wide, very soft highlight under the rims: how strong at an edge, how
+-- many studs it fades out over at its widest (rocks, then pebbles), how far
+-- its width wanders along the edge, and the studs it thins over away from
+-- a corner.
+local ROCK_GLOW, ROCK_GLOW_EDGE, PEBBLE_GLOW_EDGE = 0.22, 2.2, 0.5
+local ROCK_GLOW_UNEVEN, ROCK_GLOW_TAPER = 0.65, 2
 -- Chunks are small, so their rims are narrower and fainter.
 local PEBBLE_EDGE, PEBBLE_LIT = 0.25, 0.7
 
@@ -4230,6 +4243,10 @@ local function boldRims()
 	parts[#parts].painted = true
 	parts[#parts].blend = 0.65
 	parts[#parts].taper = ROCK_TAPER
+	parts[#parts].softLit = ROCK_GLOW
+	parts[#parts].softEdge = ROCK_GLOW_EDGE
+	parts[#parts].softUneven = ROCK_GLOW_UNEVEN
+	parts[#parts].softTaper = ROCK_GLOW_TAPER
 end
 
 -- How each kind of block is cut by plane slicing, the way stylized rocks
@@ -4714,6 +4731,7 @@ end, nil, function(x, y, z, nx, ny, nz)
 	return r * 0.88, g * 0.88, b * 0.88
 end, nil, nil, true, PEBBLE_EDGE, nil, PEBBLE_LIT)
 boldRims()
+parts[#parts].softEdge = PEBBLE_GLOW_EDGE
 
 -- ------------------------------------------------------------ the shades
 
