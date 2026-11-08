@@ -1,4 +1,4 @@
-local CACHE_KEY = "MineLoop-4229db91612ce445"
+local CACHE_KEY = "MineLoop-a460d256e0426b07"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -611,6 +611,9 @@ end
 -- to paint its highlights as bold, fully loaded strokes instead of dry ones,
 -- `blend` (0-1) to tint them from cream toward a lighter part colour, and
 -- `taper` (studs) to run them full width at corners, thinning along each edge.
+-- `strokes` lists brush strokes painted over the coat ({start, along, normal,
+-- length, width, tail, color, brush}, color in sRGB), such as cracks or dabs;
+-- `brush` is "taper" (crisp lines, the default), "round" or "sponge".
 local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
@@ -801,6 +804,7 @@ local function finishParts()
 			highlightWidth = entry.wide,
 			paintedHighlights = entry.painted,
 			cornerTaper = entry.taper,
+			strokes = entry.strokes,
 			heightRange = entry.heightRange,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
@@ -3655,14 +3659,30 @@ local BOULDER_KINDS = {
 
 -- One boulder `n` of a kind, w by d by h about its middle: a block with
 -- every edge chamfered (each face inset and lifted, so the rings slope off
--- at 45 degrees), then shaped by its kind.
-local function boulder(n: number, w: number, d: number, h: number, kindName: string?)
+-- at 45 degrees), then shaped by its kind. A `grounded` one has its bottom
+-- cut flat across its full footprint, so it sits flat on the ground with
+-- no rounded underside.
+local function boulder(n: number, w: number, d: number, h: number, kindName: string?, grounded: boolean?)
 	local kind = BOULDER_KINDS[kindName or "block"]
 	local size = math.min(w, d, h)
 	local chamfer = kind.chamfer * size * (1 + 0.2 * jitter(n, 13))
 	local m = EditMesh.box({ w - 2 * chamfer, d - 2 * chamfer, h - 2 * chamfer })
 	m:inset(m:select("face", "all"), chamfer, chamfer, { each = true })
-	if kind.round then
+	if kind.round and grounded then
+		-- Rounded off from its middle up only, so its lower sides stay full
+		-- down to the ground instead of tucking in to a small base.
+		local radius, count = 0, 0
+		m:transform(function(p)
+			radius += EditMesh.vec.length(p)
+			count += 1
+			return p
+		end)
+		radius /= count
+		m:transform(function(p)
+			local pull = kind.round * math.clamp(p[3] / (0.25 * h), 0, 1)
+			return EditMesh.vec.add(p, EditMesh.vec.scale(EditMesh.vec.sub(EditMesh.vec.scale(EditMesh.vec.unit(p), radius), p), pull))
+		end)
+	elseif kind.round then
 		m:toSphere(m:select("vertex", "all"), kind.round)
 	end
 	if kind.plateau and n % 3 ~= 0 then
@@ -3708,19 +3728,51 @@ local function boulder(n: number, w: number, d: number, h: number, kindName: str
 			p[3] + s * math.noise(p[1] / size, p[2] / size, p[3] / size + n),
 		}
 	end)
+	if grounded then
+		-- Everything below a plane above the bottom chamfer (and above the
+		-- corners a round rock pulls up) pressed flat onto it, then
+		-- stretched back down so that plane is its base and its top stays
+		-- put.
+		local floor = 0.3 * size - h / 2
+		m:transform(function(p)
+			return { p[1], p[2], -h / 2 + (math.max(p[3], floor) - floor) * h / (h / 2 - floor) }
+		end)
+	end
 	return m
 end
 
-part("Rocks", nil, ROCK, function(mesh)
-	for n, rock in ROCKS do
-		local out, middle, base, w, d, h, turn, lean, kind = table.unpack(rock)
-		local m = boulder(n, w, d, h, kind)
-		m:select("vertex", "all"):rotate({ 1, 0, 0 }, lean, { 0, 0, -h / 2 })
-		m:select("vertex", "all"):rotate({ 0, 0, 1 }, turn, { 0, 0, 0 })
-		placed(m, 1, out, HALF_LENGTH - middle, base, h):emit(mesh)
-	end
-end, nil, rockPaint, nil, nil, true, ROCK_EDGE, nil, ROCK_LIT)
-boldRims()
+-- The rocks go in four parts, one per quarter of the pile (hub or far
+-- side, either half along), so each part's texture stays within 1024
+-- texels square at the item's texel density.
+local function rockQuarter(rock): number
+	return (if rock[1] < 0 then 1 else 2) + (if rock[2] < 0 then 0 else 2)
+end
+for quarter = 1, 4 do
+	part(`Rocks{quarter}`, nil, ROCK, function(mesh)
+		for n, rock in ROCKS do
+			if rockQuarter(rock) ~= quarter then
+				continue
+			end
+			local out, middle, base, w, d, h, turn, lean, kind = table.unpack(rock)
+			-- A rock on the ground leans by shearing, so its base stays flat on
+			-- the ground; one higher up tips over its bottom edge.
+			local grounded = base <= 0
+			local m = boulder(n, w, d, h, kind, grounded)
+			if grounded then
+				local shear = math.tan(math.rad(lean))
+				m:transform(function(p)
+					return { p[1], p[2] - shear * (p[3] + h / 2), p[3] }
+				end)
+			else
+				m:select("vertex", "all"):rotate({ 1, 0, 0 }, lean, { 0, 0, -h / 2 })
+			end
+			m:select("vertex", "all"):rotate({ 0, 0, 1 }, turn, { 0, 0, 0 })
+			placed(m, 1, out, HALF_LENGTH - middle, base, h)
+			m:emit(mesh)
+		end
+	end, nil, rockPaint, nil, nil, true, ROCK_EDGE, nil, ROCK_LIT)
+	boldRims()
+end
 
 -- ------------------------------------------------------------ the porches
 
@@ -3881,7 +3933,7 @@ part("Stones", nil, ROCK, function(mesh)
 	for _, side in { -1, 1 } do
 		for n, pebble in PEBBLES do
 			local out, along, w, d, h = table.unpack(pebble)
-			local m = boulder(100 + n + side * 10, w, d, h, "round")
+			local m = boulder(100 + n + side * 10, w, d, h, "round", true)
 			m:select("vertex", "all"):rotate({ 0, 0, 1 }, 40 * jitter(n, side), { 0, 0, 0 })
 			placed(m, side, side * out, along, -0.25 * h, h):emit(mesh)
 		end
@@ -3972,7 +4024,7 @@ part("Sleepers", nil, SLEEPER, function(mesh)
 		local a = math.rad(d)
 		local z = trackHeight(d)
 		local inner, outer = TRACK_RADIUS - TRACK_GAUGE / 2 - 0.8, TRACK_RADIUS + TRACK_GAUGE / 2 + 0.8
-		bar(mesh, math.cos(a) * inner, math.sin(a) * inner, math.cos(a) * outer, math.sin(a) * outer, 0.8, z - 0.1, z + 0.35, z - 0.1, z + 0.35)
+		bar(mesh, math.cos(a) * inner, math.sin(a) * inner, math.cos(a) * outer, math.sin(a) * outer, 0.8, z - 0.15, z + 0.35, z - 0.15, z + 0.35)
 	end
 end, nil, 0, nil, nil, true)
 finishParts()

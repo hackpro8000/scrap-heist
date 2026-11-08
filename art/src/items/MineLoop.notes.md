@@ -16,6 +16,9 @@
 - Sizes made less uniform (user): about 50 rocks in a clear spread, a few big (a 10.5-wide boulder in the hub wall, an 11-wide 13-tall one in the far wall with a rock leaning on its foot, an 11 by 10 by 7 peak slab, a 14-wide roof slab), medium walls and roof, small 1.6 to 3 stud rocks at the foot and in the joints on top. Two review rounds; the far-side slit closed with a filler rock by the + porch.
 - More detail (user): timber braces tried in three layouts and dropped; texture picked from three variants (worn rims / plus cracks / plus lichen): A, worn rims. Bold painted highlight strokes on every rock edge, tinted toward the stone, tapering from full width at corners to 15% mid-edge (falloff 0.6 studs, via the bake's cornerTaper, now passed through `taper` on a part entry in common.luau); each boulder its own tone. Pebbles get narrower, fainter rims and a darker base. Two review rounds.
 - Rocks too uniform (user): each visible rock has a kind (BOULDER_KINDS): slab (steep sloped top, small chamfers), crag (narrows toward the top, two chipped corners), round (big chamfers, pulled 15% round), block (chamfered with a stepped plateau); chamfers vary per rock; pebbles round. Pulling round 30% softened edge folds below the highlight threshold and lost the rims, hence 15%. Rims raised to strength 1.8, band 0.6 studs. Three review rounds.
+- Splotching tried and held (user): noise patches, then brush dabs (first square, then the bake's round brush, picked from three sizes); the user didn't like any of them, so the rocks have none for now. Strokes on a part entry can name their brush (`taper`, `round`, `sponge`) should it come back.
+- The rocks are four parts, one per quarter of the pile, so each texture holds the item's 16 px per stud within 1024 (one was squeezed to about 10 before).
+- Everything sits flat on the ground (user): rocks and pebbles on the ground have their undersides pressed flat across the footprint, lean by shearing so the base stays flat, and round ones round off only from the middle up; sleepers sit on the deck. Two review rounds; the rock that looks perched in the ground-level view is a flat base turned 45 degrees, seen with no ground drawn.
 
 ## Open
 - Critic (after three rounds on the shape kinds): MED, rim highlights still faint on many boulders against the reference's bold bright rims (needs contrast, not just width); MED, the pile reads as one blue-grey mass from the far side (wider per-rock tone spread, darker joints). LOW: crag and round read alike; some lower-ring boulders still tall prisms; the big far-side boulder a tall flat-faced slab; flanks could use a few more mid-size rocks.
@@ -24,6 +27,8 @@
 - The clipping check flags the intended seating (boards, beams and pebbles tucked into the rocks).
 
 ## Next
+- Remove the lanterns (user).
+- Each rock its own gradient (user).
 - Bolder rims: paint them clearly lighter than the face, the same on the lower rocks.
 - Wider per-rock tone spread with darker joints.
 - Shorter, rounder lower-ring rocks and a stepped face on the big far boulder.
