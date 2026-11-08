@@ -20,15 +20,17 @@
 - The rocks are four parts, one per quarter of the pile, so each texture holds the item's 16 px per stud within 1024 (one was squeezed to about 10 before).
 - Everything sits flat on the ground (user): rocks and pebbles on the ground have their undersides pressed flat across the footprint, lean by shearing so the base stays flat, and round ones round off only from the middle up; sleepers sit on the deck. Two review rounds; the rock that looks perched in the ground-level view is a flat base turned 45 degrees, seen with no ground drawn.
 - Lanterns removed (user), with their bracket arms; the porches are timber only. One review round.
+- Each rock its own gradient (user): darker and cooler at its foot, lighter at its top, tilted its own way, about a quarter either way with feet darkening a fifth more, small rocks stronger, each rock its own lightness and warmth. Which rock a texel is on comes from points sampled over each rock's real faces (nearest point on a face turned the same way); boxes misassigned texels where a small rock sits in front of a big one. Pebbles shade by height. Six review rounds.
 
 ## Open
+- A few texels still take a neighbour's tone where a small rock tucks in front of a big one with faces turned the same way (LOW).
 - Critic (after three rounds on the shape kinds): MED, rim highlights still faint on many boulders against the reference's bold bright rims (needs contrast, not just width); MED, the pile reads as one blue-grey mass from the far side (wider per-rock tone spread, darker joints). LOW: crag and round read alike; some lower-ring boulders still tall prisms; the big far-side boulder a tall flat-faced slab; flanks could use a few more mid-size rocks.
 - The mouth shades stay opaque 4.5 in, as the user asked.
 - The plan check's clearance can't measure this opening: it looks along X or Z, and the tunnel runs along Y.
 - The clipping check flags the intended seating (boards, beams and pebbles tucked into the rocks).
 
 ## Next
-- Each rock its own gradient (user).
+- Uneven chamfering (user), then edge chipping (user).
 - Bolder rims: paint them clearly lighter than the face, the same on the lower rocks.
 - Wider per-rock tone spread with darker joints.
 - Shorter, rounder lower-ring rocks and a stepped face on the big far boulder.

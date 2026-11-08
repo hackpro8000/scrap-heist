@@ -1,4 +1,4 @@
-local CACHE_KEY = "MineLoop-c7af15b3a0135c61"
+local CACHE_KEY = "MineLoop-baccb177d0df449a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3609,32 +3609,115 @@ local ROCK_EDGE, ROCK_LIT, ROCK_TAPER = 0.6, 1.8, 0.8
 -- Pebbles are small, so their rims are narrower and fainter.
 local PEBBLE_EDGE, PEBBLE_LIT = 0.25, 0.7
 
--- Each rock's middle in the model, to tell which rock a texel is on.
-local rockMiddles = {}
-for n, rock in ROCKS do
-	local out, middle, base, _w, _d, h = table.unpack(rock)
-	rockMiddles[n] = caveAt(1, out, base + h / 2, HALF_LENGTH - middle)
+-- Which rock a texel is on. As each rock is built, points are scattered
+-- over its faces about SAMPLE apart into a grid of SAMPLE_CELL cells, each
+-- point tagged with its rock; a texel lies on its own rock's surface, so the
+-- nearest point on a face turned the same way names it. Most cells hold one
+-- rock's points, so the search only runs where rocks meet.
+local SAMPLE, SAMPLE_CELL = 0.35, 0.5
+local rockSamples = {}
+local function sampleCell(x: number, y: number, z: number): string
+	return `{math.floor(x / SAMPLE_CELL)},{math.floor(y / SAMPLE_CELL)},{math.floor(z / SAMPLE_CELL)}`
 end
-local function nearestRock(x: number, y: number, z: number): number
-	local best, nearest = math.huge, 1
-	for n, p in rockMiddles do
-		local d = (p[1] - x) ^ 2 + (p[2] - y) ^ 2 + (p[3] - z) ^ 2
-		if d < best then
-			best, nearest = d, n
+local function sampleRock(m, n: number)
+	local vec = EditMesh.vec
+	for id, face in m.faces do
+		local normal = m:faceNormal(id)
+		local a = m.verts[face.verts[1]].position
+		for k = 2, #face.verts - 1 do
+			local b, c = m.verts[face.verts[k]].position, m.verts[face.verts[k + 1]].position
+			local longest = math.max(vec.length(vec.sub(b, a)), vec.length(vec.sub(c, a)), vec.length(vec.sub(c, b)))
+			local steps = math.max(1, math.ceil(longest / SAMPLE))
+			for i = 0, steps do
+				for j = 0, steps - i do
+					local p = vec.add(a, vec.add(vec.scale(vec.sub(b, a), i / steps), vec.scale(vec.sub(c, a), j / steps)))
+					local key = sampleCell(p[1], p[2], p[3])
+					local cell = rockSamples[key]
+					if not cell then
+						cell = { rocks = {}, points = {} }
+						rockSamples[key] = cell
+					end
+					cell.rocks[n] = true
+					table.insert(cell.points, { p[1], p[2], p[3], n, normal })
+				end
+			end
 		end
 	end
-	return nearest
 end
 
--- Blue-grey stone in broad soft patches, lighter on tops, each boulder a
--- little lighter or darker, warmer or cooler than its neighbours.
-local function rockPaint(x: number, y: number, z: number, _nx: number, _ny: number, nz: number): (number, number, number)
-	local n = nearestRock(x, y, z)
-	local k = (0.92 + 0.1 * math.noise(x / 3, y / 3, z / 3)) * (1 + 0.09 * jitter(n, 5))
-	if nz > 0.6 then
-		k *= 1.1
+-- The texel's place in rock n (-1..1 each way: out, along, up), in the
+-- rock's own frame, with a grounded rock's lean undone.
+local function rockFrame(n: number, x: number, y: number, z: number): (number, number, number)
+	local rockOut, rockMiddle, base, w, d, h, turn, lean = table.unpack(ROCKS[n])
+	-- The rock's frame runs along toward the -CAVE_HALF mouth.
+	local dx = math.sqrt(x * x + y * y) - TRACK_RADIUS - rockOut
+	local dy = rockMiddle - math.deg(math.atan2(y, x)) / DEGREES_PER_STUD
+	local c, s = math.cos(math.rad(turn)), math.sin(math.rad(turn))
+	local v = dy * c - dx * s
+	if base <= 0 then
+		v += math.tan(math.rad(lean)) * (z - base)
 	end
-	local warm = 0.025 * jitter(n, 9)
+	return math.clamp((dx * c + dy * s) / (w / 2), -1, 1), math.clamp(v / (d / 2), -1, 1), math.clamp((z - base - h / 2) / (h / 2), -1, 1)
+end
+
+local function rockAt(x: number, y: number, z: number, nx: number, ny: number, nz: number): number?
+	local cx, cy, cz = math.floor(x / SAMPLE_CELL), math.floor(y / SAMPLE_CELL), math.floor(z / SAMPLE_CELL)
+	local home = rockSamples[`{cx},{cy},{cz}`]
+	if home then
+		local only = next(home.rocks)
+		if next(home.rocks, only) == nil then
+			return only
+		end
+	end
+	-- The nearest point on a face turned the texel's way, else the nearest.
+	local best, nearest, anyBest, any = math.huge, nil, math.huge, nil
+	for ix = cx - 1, cx + 1 do
+		for iy = cy - 1, cy + 1 do
+			for iz = cz - 1, cz + 1 do
+				local cell = rockSamples[`{ix},{iy},{iz}`]
+				if cell then
+					for _, p in cell.points do
+						local d = (p[1] - x) ^ 2 + (p[2] - y) ^ 2 + (p[3] - z) ^ 2
+						if d < anyBest then
+							anyBest, any = d, p[4]
+						end
+						if d < best and p[5][1] * nx + p[5][2] * ny + p[5][3] * nz > 0.5 then
+							best, nearest = d, p[4]
+						end
+					end
+				end
+			end
+		end
+	end
+	return nearest or any
+end
+
+-- Blue-grey stone, each rock its own gradient: darker and cooler at its
+-- foot, lighter at its top, the shade running its own way (tilted a little
+-- off upright), as strong (about a quarter either way) and as warm or cool
+-- as that rock has it. Broad soft patches over it, and tops a little lighter.
+local function rockPaint(x: number, y: number, z: number, nx: number, ny: number, nz: number): (number, number, number)
+	-- Pebbles aren't sampled: the first rock's tones, shaded by height alone.
+	local n = rockAt(x, y, z, nx, ny, nz)
+	local shade
+	if n then
+		local u, v, t = rockFrame(n, x, y, z)
+		shade = 0.8 * t + 0.35 * jitter(n, 21) * u + 0.35 * jitter(n, 22) * v
+	else
+		n, shade = 1, math.clamp(z / 0.5 - 1, -1, 1)
+	end
+	-- Feet darken a fifth more than tops lighten; small rocks a stronger
+	-- gradient, so they stand apart from the big ones behind them.
+	if shade < 0 then
+		shade *= 1.2
+	end
+	local _out, _middle, _base, w, d, h = table.unpack(ROCKS[n])
+	local strength = 0.24 + 0.05 * jitter(n, 23) + (if math.min(w, d, h) < 3 then 0.06 else 0)
+	local k = (0.94 + 0.06 * math.noise(x / 3, y / 3, z / 3)) * (1 + 0.12 * jitter(n, 5)) * (1 + strength * shade)
+	if nz > 0.6 then
+		k *= 1.08
+	end
+	local warm = 0.03 * jitter(n, 9) + 0.03 * shade * (0.5 + 0.5 * jitter(n, 24))
 	return (ROCK[1] + warm) * k, ROCK[2] * k, (ROCK[3] - warm) * k
 end
 -- The last part added gets bold, fully loaded highlight strokes on its
@@ -3767,6 +3850,7 @@ for quarter = 1, 4 do
 			end
 			m:select("vertex", "all"):rotate({ 0, 0, 1 }, turn, { 0, 0, 0 })
 			placed(m, 1, out, HALF_LENGTH - middle, base, h)
+			sampleRock(m, n)
 			m:emit(mesh)
 		end
 	end, nil, rockPaint, nil, nil, true, ROCK_EDGE, nil, ROCK_LIT)
