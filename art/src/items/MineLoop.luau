@@ -32,7 +32,7 @@ local CAVE_HALF = 11
 -- The track's ends, in degrees from the cave's middle, and where it starts
 -- to dive (inside the tunnel, out of sight from the mouth).
 local TRACK_END, DIVE_FROM = 4, 9
--- The shade fills the bore from the porch's boards to SHADE_DEPTH in.
+-- The shade fills the bore from halfway along the porch to SHADE_DEPTH in.
 local SHADE_DEPTH = 6
 
 -- The opening, as {out from the track's middle, up from the deck}, from
@@ -135,10 +135,17 @@ local TIMBER = { radius = 0.65, taper = 1.1, wander = 0.06, hewn = 0.04, beam = 
 -- In front of each mouth the hill carries on and the tunnel bores on
 -- through it: BORE out from the track's middle each way, just past the
 -- porch's posts (its roof's eaves tuck into the stone), the stone over it
--- standing on the roof at BORE_TOP, out to
--- BORE_REACH along the track, where the hill's face stands; the porch
--- sticks out of it, its frame covering the bore's edges.
+-- standing on the roof at BORE_TOP. The hill's face stands about BORE_REACH
+-- along the track, following the columns' own outlines; the porch sticks
+-- out of it, its frame covering the bore's edges.
 local BORE, BORE_TOP, BORE_REACH = OPEN_HALF + 2 * TIMBER.radius + 0.1, OPEN_TALL + TIMBER.beam + 0.7 + 0.45 + 0.1, HALF_LENGTH + 2.3
+-- A column takes its side of the bore, or its face beside the track past
+-- the hill's face, at up to this many degrees off the track's line.
+local BORE_SLANT, PAST_FACE_SLANT = 12, 30
+-- How far from the bore's side, and how far back in from the mouth, a
+-- column counts as right beside the opening, and about how far above the
+-- porch's roof such a column stops.
+local FLANK_NEAR, FLANK_BACK, FLANK_ABOVE = 5, 2.5, 1.5
 -- Rocks are built in bands about BAND tall, so their edges have points to
 -- be chipped at.
 local BAND = 1.2
@@ -150,7 +157,7 @@ local PEAK, SUMMIT, CROWN, BOWL = { 2, -2 }, 18.5, 0.1, 0.2
 -- each porch: RIDGE tall out to RIDGE_FLAT either side of the track,
 -- falling away over RIDGE_WIDTH beyond that, and running RIDGE_PAST past
 -- each mouth (to the hill's face) before dropping over RIDGE_FALL.
-local RIDGE, RIDGE_FLAT, RIDGE_WIDTH, RIDGE_PAST, RIDGE_FALL = 13.5, 9.5, 7, 2.2, 6
+local RIDGE, RIDGE_FLAT, RIDGE_WIDTH, RIDGE_PAST, RIDGE_FALL = 13.5, 5.5, 11, 2.2, 11
 -- Stone sizes at the summit and at the foot, and the shortest a column
 -- stands.
 local SMALLEST, LARGEST, MIN_LENGTH = 3.2, 4.6, 2.5
@@ -392,22 +399,21 @@ do
 	-- on the slope they sit.
 	-- Round each mouth, rows of like-sized stones set so their cells meet
 	-- right on the lines the tunnel and bore cut along (the tunnel's walls,
-	-- the mouth, the bore's sides and the hill's face), so no cut leaves a
-	-- thin sliver of a column: one row just inside the mouth, one between
-	-- the mouth and the face, one just past the face.
+	-- the mouth and the bore's sides), so no cut leaves a thin sliver of a
+	-- column: one row just inside the mouth and one between the mouth and
+	-- the face, shifted stone by stone so the face has no straight line.
 	local stones = {}
 	local ROW_SIZE = 2.6
 	local rowDepth = (BORE_REACH - LINTEL_REACH) / 2
 	local rows = {
 		{ LINTEL_REACH - rowDepth, WALL * 2 / 3 },
-		{ LINTEL_REACH + rowDepth, BORE * 2 / 3 },
-		{ BORE_REACH + rowDepth, BORE * 2 / 3 },
+		{ LINTEL_REACH + rowDepth, BORE * 2 / 3, 1.2 },
 	}
 	for _, side in { -1, 1 } do
 		for _, row in rows do
-			local along, spacing = row[1], row[2]
+			local along, spacing, shift = row[1], row[2], row[3] or 0
 			for k = -3, 3 do
-				table.insert(stones, { k * spacing, side * along, ROW_SIZE })
+				table.insert(stones, { k * spacing, side * (along + shift * (random(k + 4, 95 + side) - 0.5)), ROW_SIZE })
 			end
 		end
 	end
@@ -469,18 +475,37 @@ do
 			{ outline = clipOutline(clipOutline(inside, -1, 0, WALL), 1, 0, WALL), base = LINTEL_TOP - 0.3, inside = true, over = true },
 			{ outline = clipOutline(inside, -1, 0, -WALL), base = -0.5, inside = true },
 		}
+		-- Whole columns decide where the hill ends, so its face follows their
+		-- own outlines, and each takes its side of the bore at its own slight
+		-- angle: a column reaching in beside the bore wraps round it, the
+		-- part over the porch standing on its roof if the column's middle is
+		-- short of the face; one wholly past the face stands only beside the
+		-- track, clear of the porch's eaves.
 		for _, side in { -1, 1 } do
 			local front = clipOutline(cell, 0, -side, -LINTEL_REACH)
-			local bore = clipOutline(front, 0, side, BORE_REACH)
-			table.insert(pieces, { outline = clipOutline(bore, 1, 0, -BORE), base = -0.5, flank = true })
-			table.insert(pieces, { outline = clipOutline(clipOutline(bore, -1, 0, BORE), 1, 0, BORE), base = BORE_TOP, over = true })
-			table.insert(pieces, { outline = clipOutline(bore, -1, 0, -BORE), base = -0.5, flank = true })
-			-- Past the face the hill beside the track stands clear of the
-			-- porch's eaves and steps in and out from column to column.
-			local past = clipOutline(front, 0, -side, -BORE_REACH)
-			local step = OPEN_HALF + TIMBER.radius + 1.5 + 0.6 * random(index, 8)
-			table.insert(pieces, { outline = clipOutline(past, 1, 0, -step), base = -0.5, step = step })
-			table.insert(pieces, { outline = clipOutline(past, -1, 0, -step), base = -0.5, step = step })
+			if #front < 3 then
+				continue
+			end
+			local lowest, highest = math.huge, -math.huge
+			for _, q in front do
+				lowest, highest = math.min(lowest, q[2]), math.max(highest, q[2])
+			end
+			local reachesBore = math.min(math.abs(lowest), math.abs(highest)) < BORE_REACH
+			local slantLimit = if reachesBore then BORE_SLANT else PAST_FACE_SLANT
+			local least = if reachesBore then BORE else OPEN_HALF + TIMBER.radius + 1.5 + 0.6 * random(index, 8)
+			local across = {}
+			for n, flank in { -1, 1 } do
+				local slant = math.tan(math.rad(slantLimit * (2 * random(index, 8 + n) - 1)))
+				local clear = least + math.abs(slant) * (highest - lowest) / 2
+				across[flank] = { slant, -clear + slant * (lowest + highest) / 2 }
+				local seams = if reachesBore then { { -flank, slant, across[flank][2] } } else nil
+				table.insert(pieces, { outline = clipOutline(front, -flank, slant, across[flank][2]), base = -0.5, flank = reachesBore, seams = seams })
+			end
+			if reachesBore and math.abs(cellMiddle) < BORE_REACH then
+				local over = clipOutline(clipOutline(front, 1, -across[1][1], -across[1][2]), -1, -across[-1][1], -across[-1][2])
+				local seams = { { 1, -across[1][1], -across[1][2] }, { -1, -across[-1][1], -across[-1][2] } }
+				table.insert(pieces, { outline = over, base = BORE_TOP, over = true, seams = seams })
+			end
 		end
 		-- A column stands to the slope halfway between its middle and its
 		-- lowest corner, so a broad one on a steep slope doesn't tower over
@@ -525,6 +550,12 @@ do
 				rise = math.max(rise, piece.base + 4 + random(key, 6))
 			elseif (piece.inside or piece.flank) and math.abs(cx) < BORE + 3 then
 				rise = math.max(rise, LINTEL_TOP + 0.8 + random(key, 6))
+			end
+			-- The columns right beside each opening stop a little above the
+			-- porch's roof, so the opening isn't framed by two tall pillars
+			-- and the full height of the hill starts one column further back.
+			if not piece.over and math.abs(cx) < BORE + FLANK_NEAR and math.abs(cellMiddle) > LINTEL_REACH - FLANK_BACK then
+				rise = math.min(rise, BORE_TOP + FLANK_ABOVE * (0.6 + 0.8 * random(key, 7)))
 			end
 			local corners = {}
 			for i, corner in outline do
@@ -598,8 +629,16 @@ do
 					end
 					return false
 				end
-				local step = piece.step or BORE
-				return same(1, { -WALL, WALL, -BORE, BORE, -step, step }) or same(2, { -LINTEL_REACH, LINTEL_REACH, -BORE_REACH, BORE_REACH })
+				for _, seam in piece.seams or {} do
+					local length = math.sqrt(seam[1] ^ 2 + seam[2] ^ 2)
+					local function off(q)
+						return math.abs(seam[1] * q[1] + seam[2] * q[2] - seam[3]) / length
+					end
+					if off(a) < 0.05 and off(b) < 0.05 then
+						return true
+					end
+				end
+				return same(1, { -WALL, WALL }) or same(2, { -LINTEL_REACH, LINTEL_REACH })
 			end
 			local function bevel(n, depth)
 				local farthest = -math.huge
@@ -1314,17 +1353,18 @@ parts[#parts].softEdge = PEBBLE_GLOW_EDGE
 -- ------------------------------------------------------------ the shades
 
 -- (Open at the mouth on purpose: `-- open: Shades` above.)
--- Each mouth's shade: the bore's own shape drawn in a hair, from the
--- boards to SHADE_DEPTH in, closed at the far end and open at the mouth,
--- its faces turned inward so the inside is what shows. Black and unlit,
--- clear at the mouth and opaque toward the back.
+-- Each mouth's shade: the bore's own shape drawn in a hair, from halfway
+-- along the porch's timber to SHADE_DEPTH in, closed at the far end and
+-- open at the front, its faces turned inward so the inside is what shows.
+-- Black and unlit, clear at its front and opaque SHADE_OPAQUE in.
+local SHADE_FROM, SHADE_OPAQUE = (FRONT_POSTS + BACK_POSTS) / 2, BOARDS_AT + SHADE_DEPTH * 0.75
 part("Shades", nil, { 0, 0, 0 }, function(mesh)
 	for _, side in { -1, 1 } do
 		local m = EditMesh.new()
-		local STEPS = 6
+		local STEPS = 8
 		local rings = {}
 		for k = 0, STEPS do
-			local along = BOARDS_AT + (SHADE_DEPTH - BOARDS_AT) * k / STEPS
+			local along = SHADE_FROM + (SHADE_DEPTH - SHADE_FROM) * k / STEPS
 			local ring = {}
 			for i, p in MOUTH do
 				ring[i] = m:addVertex(table.unpack(caveAt(side, p[1] * 0.97, math.max(p[2] * 0.97, 0.02), along)))
@@ -1348,7 +1388,7 @@ part("Shades", nil, { 0, 0, 0 }, function(mesh)
 	end
 end, nil, function(x, y)
 	local _, along = caveOf(x, y)
-	return 0, 0, 0, math.clamp((along - BOARDS_AT) / (SHADE_DEPTH * 0.75), 0, 1)
+	return 0, 0, 0, math.clamp((along - SHADE_FROM) / (SHADE_OPAQUE - SHADE_FROM), 0, 1)
 end, nil, 1, true)
 
 -- ------------------------------------------------------------- the track
