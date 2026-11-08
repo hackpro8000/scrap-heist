@@ -26,15 +26,17 @@
 - No thin slivers by the mouths (user): three rows of like-sized columns round each mouth, set so their cells meet right on the tunnel-wall, mouth, bore and face lines. Chunks moved beside the track past each porch. Five review rounds.
 - Bigger cells flatter on top (user): by the cell's footprint (none at 4 square studs, full at 12), less tilt (at most 70% less), a lower ridge point and cuts biting nearer level, so each still keeps a gentle break; the crown's columns keep their tilts so the summit stays a peak. Two review rounds.
 - Bigger cells away from the openings (user): stones on the hill's middle slopes grow up to 1.4 times from 7 to 16 studs out from a mouth's face; the crown, the foot and the columns round the mouths keep their sizes (1.6 times everywhere made a few huge summit blocks and paving slabs at the foot). Two review rounds.
+- Less crystal-like (user: pointed faceted tops, too tall and slender): each top is one flat tilted plane, cuts bite gently and steeper than the top so no streaky near-level creases; stones 3.2 to 4.6 wide; crown 18.5, ridge 13.5; columns stand to the slope halfway between their middle and lowest corner, neighbour heights more even.
+- Uneven chamfering and sub-chamfering (user): every upright and top edge bevelled 0.12 to 0.6, each its own width, top bevels 45 degrees give or take 15; a narrower sub-bevel trims each crease (only on bevels over 0.22, never flatter than 62 degrees, so no slivers). Edges along the tunnel, bore and face cuts stay sharp.
+- Edge and corner chipping (user): about 60% of top corners chipped along the corner's bisector, about 45% of top edges take a tapering bite toward one end, 0.2 to 0.55 deep. Three review rounds over these three changes.
 
 ## Open
 - A few texels still take a neighbour's tone where a small rock tucks in front of a big one with faces turned the same way (LOW).
-- Critic (after the flat tops), all LOW: bright edge lines on big flat tops read as outlines; columns over each porch close to one height; the rows beside the porch read a little like a picket row; light lines at some column bases from the ground level; tall faces show big texels.
+- Critic (after the chipping), all LOW: wide chamfers make some columns read rounded (cap near 0.4 and leave a few edges sharp?); chip faces show coarse texels in close ground views; columns over each porch close to one height; the rows beside the porch read a little like a picket row; light lines at some column bases from the ground level; tall faces show big texels.
 - The mouth shades stay opaque 4.5 in, as the user asked.
 - The plan check's clearance can't measure this opening: it looks along X or Z, and the tunnel runs along Y.
 - The clipping check flags the intended seating (boards, beams and pebbles tucked into the rocks).
 
 ## Next
-- Less crystal-like (user): no pointed, faceted tops; chunkier, less slender columns.
 - Vary the over-porch columns' heights and stagger the rows beside each porch.
 - Then IslandPreview re-rendered with the approved cave.
