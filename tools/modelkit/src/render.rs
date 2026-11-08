@@ -132,16 +132,40 @@ pub fn legend(parts: &[&Part]) -> String {
 		.collect()
 }
 
-// Splits the frame into a `count`×`count` grid, columns A, B, C... from the
-// left and rows 1, 2, 3... from the top, and lists the parts showing in each
-// cell with their share of it, largest first; slivers under 2% are left out.
+// Splits the part of the frame the model covers (with a small margin) into a
+// `count`×`count` grid, columns A, B, C... from the left and rows 1, 2, 3...
+// from the top, and lists the parts showing in each cell with their share of
+// it, largest first; slivers under 2% are left out. The first line gives the
+// grid's bounds in picture pixels, `bounds: x0,y0,x1,y1`, for drawing it.
 pub fn cells(frame: &Frame, parts: &[&Part], count: usize) -> String {
 	let size = frame.owner_size;
-	let mut out = String::new();
+	let (mut low, mut high) = ([size, size], [0, 0]);
+	for y in 0..size {
+		for x in 0..size {
+			if frame.owner[y * size + x] != NO_PART {
+				low = [low[0].min(x), low[1].min(y)];
+				high = [high[0].max(x + 1), high[1].max(y + 1)];
+			}
+		}
+	}
+	if low[0] >= high[0] {
+		return String::new();
+	}
+	let margin = (high[0] - low[0]).max(high[1] - low[1]) / 20;
+	let (x_start, y_start) = (low[0].saturating_sub(margin), low[1].saturating_sub(margin));
+	let (x_end, y_end) = ((high[0] + margin).min(size), (high[1] + margin).min(size));
+	let mut out = format!(
+		"bounds: {},{},{},{}\n",
+		x_start / SUPERSAMPLE,
+		y_start / SUPERSAMPLE,
+		x_end / SUPERSAMPLE,
+		y_end / SUPERSAMPLE
+	);
+	let split = |start: usize, end: usize, i: usize| start + (end - start) * i / count;
 	for row in 0..count {
 		for column in 0..count {
-			let (x0, x1) = (column * size / count, (column + 1) * size / count);
-			let (y0, y1) = (row * size / count, (row + 1) * size / count);
+			let (x0, x1) = (split(x_start, x_end, column), split(x_start, x_end, column + 1));
+			let (y0, y1) = (split(y_start, y_end, row), split(y_start, y_end, row + 1));
 			let mut shares: Vec<(String, usize)> = Vec::new();
 			for y in y0..y1 {
 				for x in x0..x1 {
@@ -157,7 +181,7 @@ pub fn cells(frame: &Frame, parts: &[&Part], count: usize) -> String {
 				}
 			}
 			shares.sort_by(|a, b| b.1.cmp(&a.1));
-			let area = ((x1 - x0) * (y1 - y0)) as f64;
+			let area = ((x1 - x0) * (y1 - y0)).max(1) as f64;
 			let listed: Vec<String> = shares
 				.iter()
 				.filter(|(_, pixels)| *pixels as f64 / area >= 0.02)
