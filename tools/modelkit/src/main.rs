@@ -18,6 +18,10 @@
 //                                                face_front.png ... (and face_front_parts.png
 //                                                with --parts), with stud lines every
 //                                                --grid studs
+//   modelkit art/models/StarterWeapon --eye ... --renders 3/8
+//                                                render only this machine's share of the
+//                                                renders (every 8th, from the 3rd, in a
+//                                                fixed order), under their usual names
 //   modelkit art/models/ServerMap --chunks
 //                                                also split the GLB into uploadable
 //                                                chunks (see write_chunks)
@@ -543,17 +547,19 @@ fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<R
 }
 
 fn write_png(path: &Path, size: usize, data: &[u8]) -> std::io::Result<()> {
-	std::fs::write(path, image::encode_rgb(size, size, data))
+	std::fs::write(path, image::encode_render(size, size, data))
 }
 
 // A close-up: focus point x, y, z, framing radius, and camera spin in degrees.
 type Closeup = (f64, f64, f64, f64, f64);
 
-// Review renders: part colours, side views and their stud grid.
+// Review renders: part colours, side views and their stud grid, and which
+// share of all the renders this machine makes (--renders INDEX/COUNT).
 struct Review {
 	parts: bool,
 	sides: Vec<render::Side>,
 	grid: Option<f64>,
+	share: Option<(usize, usize)>,
 }
 
 fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[(mesh::Vec3, mesh::Vec3)], shown_clip: Option<&str>, texel_scale: f64, detail_eyes: &[(mesh::Vec3, mesh::Vec3)], chunks: bool, shard: Option<(usize, usize)>, review: &Review) -> Result<(), String> {
@@ -632,14 +638,22 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 		}
 	}
 	let shown: Vec<&Part> = parts.iter().filter(|p| p.preview).collect();
+	// Every render below counts as one job, in a fixed order; with a share
+	// this machine makes only its jobs, so machines split one model's renders.
+	let job = std::cell::Cell::new(0usize);
+	let mine = || {
+		let at = job.get();
+		job.set(at + 1);
+		review.share.map_or(true, |(index, count)| at % count == index - 1)
+	};
 	// A shard holds a scattered share of a layout, so nobody looks at its
 	// preview; skip the render. Asked-for views (turntable, closeups, eyes) still run.
-	if shard.is_none() {
+	if shard.is_none() && mine() {
 		progress::say(&format!("rendering preview of {} parts", shown.len()));
 		let preview = render::render(&shown, &render::View { size, spin: 0.0, focus: None, eye: None, ..Default::default() });
 		write_png(&dir.join("preview.png"), size, &preview).map_err(|e| e.to_string())?;
 	}
-	if review.parts && shard.is_none() {
+	if review.parts && shard.is_none() && mine() {
 		let frame = render::render_frame(&shown, &render::View { size, parts: true, ..Default::default() });
 		write_png(&dir.join("parts.png"), size, &frame.pixels).map_err(|e| e.to_string())?;
 		let legend = render::legend(&shown);
@@ -648,6 +662,9 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 		std::fs::write(dir.join("cells.txt"), render::cells(&frame, &shown, 6)).map_err(|e| e.to_string())?;
 	}
 	for &side in &review.sides {
+		if !mine() {
+			continue;
+		}
 		let view = |parts| render::View { size, side: Some(side), parts, grid: review.grid, ..Default::default() };
 		write_png(&dir.join(format!("face_{}.png", side.name())), size, &render::render(&shown, &view(false))).map_err(|e| e.to_string())?;
 		if review.parts {
@@ -659,17 +676,26 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 		let frames = dir.join("turntable");
 		std::fs::create_dir_all(&frames).map_err(|e| e.to_string())?;
 		for frame in 0..turntable {
+			if !mine() {
+				continue;
+			}
 			let spin = frame as f64 / turntable as f64 * std::f64::consts::TAU;
 			let data = render::render(&shown, &render::View { size, spin, focus: None, eye: None, ..Default::default() });
 			write_png(&frames.join(format!("{frame:04}.png")), size, &data).map_err(|e| e.to_string())?;
 		}
 	}
 	for (n, &(x, y, z, radius, degrees)) in closeups.iter().enumerate() {
+		if !mine() {
+			continue;
+		}
 		let focus = Some(([x, y, z], radius));
 		let data = render::render(&shown, &render::View { size, spin: degrees.to_radians(), focus, eye: None, ..Default::default() });
 		write_png(&dir.join(format!("closeup_{}.png", n + 1)), size, &data).map_err(|e| e.to_string())?;
 	}
 	for (n, &(eye, target)) in eyes.iter().enumerate() {
+		if !mine() {
+			continue;
+		}
 		progress::say(&format!("rendering eye {}/{}", n + 1, eyes.len()));
 		let data = render::render(&shown, &render::View { size, spin: 0.0, focus: None, eye: Some((eye, target)), ..Default::default() });
 		write_png(&dir.join(format!("eye_{}.png", n + 1)), size, &data).map_err(|e| e.to_string())?;
@@ -753,7 +779,7 @@ fn write_chunks(dir: &Path, name: &str, tag: &str, parts: &[Part], rigged: bool)
 fn main() {
 	let args: Vec<String> = std::env::args().skip(1).collect();
 	let Some(dir) = args.first() else {
-		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--eye EX,EY,EZ,TX,TY,TZ]... [--clip NAME] [--parts] [--view SIDE]... [--grid STUDS] [--chunks] [--shard INDEX/COUNT]");
+		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--eye EX,EY,EZ,TX,TY,TZ]... [--clip NAME] [--parts] [--view SIDE]... [--grid STUDS] [--chunks] [--shard INDEX/COUNT] [--renders INDEX/COUNT]");
 		std::process::exit(2);
 	};
 	let turntable = match args.iter().position(|a| a == "--turntable") {
@@ -811,7 +837,20 @@ fn main() {
 		sides.push(side);
 	}
 	let grid = args.iter().position(|a| a == "--grid").and_then(|at| args.get(at + 1)).and_then(|n| n.parse().ok()).filter(|&n: &f64| n > 0.0);
-	let review = Review { parts: args.iter().any(|a| a == "--parts"), sides, grid };
+	let share = match args.iter().position(|a| a == "--renders") {
+		Some(at) => {
+			let parsed = args.get(at + 1).and_then(|s| s.split_once('/')).and_then(|(i, n)| Some((i.parse::<usize>().ok()?, n.parse::<usize>().ok()?)));
+			match parsed {
+				Some((index, count)) if index >= 1 && index <= count => Some((index, count)),
+				_ => {
+					eprintln!("error: --renders needs INDEX/COUNT with 1 <= INDEX <= COUNT, like 3/8");
+					std::process::exit(2);
+				}
+			}
+		}
+		None => None,
+	};
+	let review = Review { parts: args.iter().any(|a| a == "--parts"), sides, grid, share };
 	if let Err(error) = run(Path::new(dir), turntable, size, &closeups, &eyes, clip.map(|c| c.as_str()), texel_scale, &detail_eyes, chunks, shard, &review) {
 		eprintln!("error: {error}");
 		std::process::exit(1);

@@ -91,6 +91,22 @@ pub fn encode_rgb(width: usize, height: usize, data: &[u8]) -> Vec<u8> {
 	encode(width, height, data, png::ColorType::Rgb)
 }
 
+// A render: compressed hard, since renders travel back from the build
+// machines through a slow tunnel (a flat side view goes from about 2 MB to
+// under 100 KB). Textures keep encode's bytes, so their assets don't change.
+pub fn encode_render(width: usize, height: usize, data: &[u8]) -> Vec<u8> {
+	let mut bytes = Vec::new();
+	let mut encoder = png::Encoder::new(&mut bytes, width as u32, height as u32);
+	encoder.set_color(png::ColorType::Rgb);
+	encoder.set_depth(png::BitDepth::Eight);
+	encoder.set_compression(png::Compression::Best);
+	encoder.set_adaptive_filter(png::AdaptiveFilterType::Adaptive);
+	let mut writer = encoder.write_header().expect("png header");
+	writer.write_image_data(data).expect("png data");
+	drop(writer);
+	bytes
+}
+
 fn encode(width: usize, height: usize, data: &[u8], color: png::ColorType) -> Vec<u8> {
 	let mut bytes = Vec::new();
 	let mut encoder = png::Encoder::new(&mut bytes, width as u32, height as u32);

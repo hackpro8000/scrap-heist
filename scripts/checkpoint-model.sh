@@ -11,7 +11,9 @@
 # screenshot-grid and views to the user.
 #
 #   scripts/checkpoint-model.sh StarterWeapon "phase 1: StarterWeapon - shape the grip"
-#   FROM=.standby-results/<task>/S1/previews/MineLoop scripts/checkpoint-model.sh MineLoop "..."
+#   FROM=.standby-results/<task>/previews/MineLoop scripts/checkpoint-model.sh MineLoop "..."
+#   (a model split over several machines is merged there; one rendered whole
+#   on one machine is in .standby-results/<task>/S<i>/previews/<Name>)
 
 set -euo pipefail
 

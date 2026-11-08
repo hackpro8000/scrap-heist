@@ -77,8 +77,18 @@ class Task:
 		# Without a build the shards only render the previews.
 		self.build = build
 		# Models whose previews the shards render, shared out between them,
-		# and the shards whose previews haven't all come yet.
+		# and the shards whose previews haven't all come yet. With fewer
+		# models than machines each model's renders are split between several
+		# machines, as shares named <Name>@<i>@<n>, so every machine works;
+		# shares_in counts the shares of each model that have come back.
 		self.previews = list(previews)
+		self.units = self.previews
+		if self.previews and len(self.previews) < count:
+			self.units = []
+			for k, name in enumerate(self.previews):
+				shares = count // len(self.previews) + (1 if k < count % len(self.previews) else 0)
+				self.units += [f"{name}@{i}@{shares}" for i in range(1, shares + 1)]
+		self.shares_in = {}
 		self.previews_waiting = set(range(1, count + 1)) if self.previews else set()
 		self.started = time.time()
 		self.done = {}  # shard -> summary text
@@ -95,7 +105,7 @@ class Task:
 		hand_over = "branch" if self.by_branch else "coordinator"
 		return (f"ref={self.ref}\nhand-over={hand_over}\n" + ("" if self.upload else "upload=no\n")
 			+ ("" if self.build else "build=no\n")
-			+ (f"preview={','.join(self.previews)}\n" if self.previews else ""))
+			+ (f"preview={','.join(self.units)}\n" if self.units else ""))
 
 
 class RemoteUploader:
@@ -368,6 +378,24 @@ class Coordinator:
 			return
 		name = os.path.basename(event["name"])
 		source = os.path.join(task.out, f"S{shard}", "previews", name)
+		if "@" in name:
+			# One share of a model's renders: merge it into the model's
+			# folder, and carry on once every share is in.
+			name, share, shares = name.split("@")
+			merged = os.path.join(task.out, "previews", name)
+			os.makedirs(merged, exist_ok=True)
+			for file in os.listdir(source):
+				if file == "build.log":
+					shutil.copy(os.path.join(source, file), os.path.join(merged, f"build-{share}.log"))
+				else:
+					shutil.copy(os.path.join(source, file), os.path.join(merged, file))
+			failed = "FAILED" in open(os.path.join(source, "build.log")).read() if os.path.isfile(os.path.join(source, "build.log")) else True
+			if failed:
+				await self.emit({"type": "preview", "task": task.id, "name": name, "path": f"FAILED, see {os.path.join(source, 'build.log')}"})
+			task.shares_in.setdefault(name, set()).add(share)
+			if len(task.shares_in[name]) < int(shares):
+				return
+			source = merged
 		model = os.path.join(ROOT, "art", "models", name)
 		if not os.path.isfile(os.path.join(source, "preview.png")):
 			await self.emit({"type": "preview", "task": task.id, "name": name, "path": f"FAILED, see {os.path.join(source, 'build.log')}"})
