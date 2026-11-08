@@ -1,4 +1,4 @@
-local CACHE_KEY = "MineLoop-ba05d04e31ba807c"
+local CACHE_KEY = "MineLoop-0a47b43563fc0ad6"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3545,13 +3545,27 @@ local ROCKS = {
 	{ 7.6, 5.5, -0.5, 7, 8, 9.5, -7, 8 },
 	{ 7, 11, -0.5, 6, 6, 8, 7, 6 },
 	-- flanking each porch, overlapping its boards
-	{ -7.4, -12.9, -0.5, 4.5, 5.5, 7.5, 5, -4 },
-	{ 7.4, -13, -0.5, 4.5, 5.5, 8.5, -6, 4 },
-	{ -7.4, 12.9, -0.5, 4.5, 5.5, 6.5, -4, -4 },
-	{ 7.4, 13, -0.5, 4.5, 5.5, 8, 7, 4 },
+	{ -7.6, -12.9, -0.5, 5.5, 6, 6, 12, -8 },
+	{ 7.6, -13, -0.5, 5.5, 6, 6.5, -12, 8 },
+	{ -7.6, 12.9, -0.5, 5.5, 6, 5.5, -10, -8 },
+	{ 7.6, 13, -0.5, 5.5, 6, 6.5, 12, 8 },
+	-- shoulders, wedged where the porch, its lintel rock and the flanking
+	-- rock meet
+	{ -6.4, -12, 4.5, 4, 4, 4.5, 15, 0 },
+	{ 6.4, -12, 4.5, 4, 4, 4.5, -15, 0 },
+	{ -6.4, 12, 4.5, 4, 4, 4.5, -15, 0 },
+	{ 6.4, 12, 4.5, 4, 4, 4.5, 15, 0 },
 	-- over each porch
 	{ 0, -12.2, 7.2, 12, 4.5, 3.5, 4, 0 },
 	{ 0, 12.2, 7.2, 12, 4.5, 3.2, -5, 0 },
+	-- the backing, mostly hidden: flat slabs right over the opening and long
+	-- rocks along each wall, so a crevice anywhere shows rock
+	{ 0, -6, 6.75, 9, 12.5, 2.5, 0, 0 },
+	{ 0, 6, 6.75, 9, 12.5, 2.5, 0, 0 },
+	{ -4.9, -6, -0.5, 3, 12.5, 7.5, 0, 0 },
+	{ -4.9, 6, -0.5, 3, 12.5, 7.5, 0, 0 },
+	{ 4.9, -6, -0.5, 3, 12.5, 7.5, 0, 0 },
+	{ 4.9, 6, -0.5, 3, 12.5, 7.5, 0, 0 },
 	-- the roof: wide flat slabs right over the opening, overlapping each
 	-- other and both walls
 	{ -2, -6.5, 6.9, 13, 8, 3.2, 6, 2 },
@@ -3569,21 +3583,64 @@ local ROCKS = {
 	{ 0, -10, 9.8, 5, 4.5, 3, 30, 0 },
 }
 local ROCK = { 0.5, 0.54, 0.62 }
+-- One boulder `n`, w by d by h about its middle: a block with every edge
+-- chamfered (each face inset and lifted, so the rings slope off at 45
+-- degrees), one or two corners chipped off flat, most tops stepped up into
+-- a smaller plateau and tilted a little, narrowing toward the top.
+local function boulder(n: number, w: number, d: number, h: number)
+	local size = math.min(w, d, h)
+	local chamfer = 0.16 * size
+	local m = EditMesh.box({ w - 2 * chamfer, d - 2 * chamfer, h - 2 * chamfer })
+	m:inset(m:select("face", "all"), chamfer, chamfer, { each = true })
+	if n % 3 ~= 0 then
+		m:inset(m:select("face", "facing", { 0, 0, 1 }, 5), 0.2 * size, 0.06 * h)
+	end
+	m:select("vertex", "where", function(p)
+		return p[3] > h / 2 - chamfer
+	end):rotate({ 1, 0, 0 }, 7 * jitter(n, 11), { 0, 0, h / 2 })
+	-- Chips: every point within `reach` of a corner (summing the three
+	-- axes) pushed back onto the plane that far from it, so the corner is
+	-- cut off in one flat face. Only top corners, so no rock is cut away
+	-- where it meets its neighbours below.
+	for k = 1, 1 + n % 2 do
+		local corner = {
+			if jitter(n, k * 3) > 0 then w / 2 else -w / 2,
+			if jitter(n, k * 3 + 1) > 0 then d / 2 else -d / 2,
+			h / 2,
+		}
+		local reach = (0.55 + 0.25 * jitter(n, k * 3 + 7)) * size
+		m:transform(function(p)
+			local depth = 0
+			for axis = 1, 3 do
+				depth += math.abs(p[axis] - corner[axis])
+			end
+			if depth >= reach then
+				return p
+			end
+			local back = (reach - depth) / 3
+			return {
+				p[1] - math.sign(corner[1]) * back,
+				p[2] - math.sign(corner[2]) * back,
+				p[3] - math.sign(corner[3]) * back,
+			}
+		end)
+	end
+	m:transform(function(p)
+		local taper = 1 - 0.12 * (p[3] / h + 0.5)
+		local s = 0.03 * size
+		return {
+			p[1] * taper + s * math.noise(p[1] / size + n, p[2] / size, p[3] / size),
+			p[2] * taper + s * math.noise(p[1] / size, p[2] / size + n, p[3] / size),
+			p[3] + s * math.noise(p[1] / size, p[2] / size, p[3] / size + n),
+		}
+	end)
+	return m
+end
+
 part("Rocks", nil, ROCK, function(mesh)
 	for n, rock in ROCKS do
 		local out, middle, base, w, d, h, turn, lean = table.unpack(rock)
-		local size = math.min(w, d, h)
-		local m = EditMesh.roundedBox({ w, d, h }, 0.14 * size, 2, { 2, 2, 2 })
-		-- A little narrower toward the top, and gently uneven.
-		m:transform(function(p)
-			local taper = 1 - 0.12 * (p[3] / h + 0.5)
-			local s = 0.05 * size
-			return {
-				p[1] * taper + s * math.noise(p[1] / size + n, p[2] / size, p[3] / size),
-				p[2] * taper + s * math.noise(p[1] / size, p[2] / size + n, p[3] / size),
-				p[3] + s * math.noise(p[1] / size, p[2] / size, p[3] / size + n),
-			}
-		end)
+		local m = boulder(n, w, d, h)
 		m:select("vertex", "all"):rotate({ 1, 0, 0 }, lean, { 0, 0, -h / 2 })
 		m:select("vertex", "all"):rotate({ 0, 0, 1 }, turn, { 0, 0, 0 })
 		placed(m, 1, out, HALF_LENGTH - middle, base, h):emit(mesh)
@@ -3738,7 +3795,7 @@ end, nil, 1, true)
 
 -- ------------------------------------------------------------ the stones
 
--- Pebbles round each porch's foot, partly buried: {out, along from the
+-- Pebbles round each porch's foot, small chipped boulders partly buried: {out, along from the
 -- mouth, width, depth, height}; the far mouth's are mirrored across.
 local PEBBLES = {
 	{ -5.3, -2.4, 1.3, 1.1, 0.8 },
@@ -3756,7 +3813,7 @@ part("Stones", nil, ROCK, function(mesh)
 	for _, side in { -1, 1 } do
 		for n, pebble in PEBBLES do
 			local out, along, w, d, h = table.unpack(pebble)
-			local m = EditMesh.roundedBox({ w, d, h }, 0.35 * math.min(w, d, h), 2, { 1, 1, 1 })
+			local m = boulder(100 + n + side * 10, w, d, h)
 			m:select("vertex", "all"):rotate({ 0, 0, 1 }, 40 * jitter(n, side), { 0, 0, 0 })
 			placed(m, side, side * out, along, -0.25 * h, h):emit(mesh)
 		end

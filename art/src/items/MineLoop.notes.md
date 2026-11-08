@@ -10,14 +10,17 @@
 - First build, three critic rounds: rocks made broad and squat with hard tilts, the far side a tier higher than the hub side, the peak a wide slab stepping down in overlapping slabs; flank rocks butt the porch boards; posts 1.2 thick; lantern hung on a bracket on the hub-side front post.
 - The dark core behind the rocks showed as a "master rock"; the user wants the whole cave made of rocks. Removed.
 - A thin dark tunnel lining left in its place still showed in the V-gaps between rounded slabs, so it went too: the rocks themselves wall and roof the tunnel, hub-side walls up to the roof with low steps outside, wider roof slabs overlapping both walls, every rock overlapping its neighbours by a stud or more. Only the mouths' shades are dark.
+- Those two changes skipped review; the user called it out. From here every change goes through review rounds (cloud renders + model-critic) before its checkpoint.
+- Rocks given real meshwork with EditMesh: every edge chamfered (each face inset and lifted), one or two top corners chipped off flat, most tops stepped into a raised plateau and tilted, sides tapering. Pebbles the same, smaller. Chips only on top corners so no rock is cut away where it meets its neighbours. A hidden backing of rocks (flat slabs over the opening, long rocks along each wall) and four shoulder rocks at the porch corners close the gaps; flank rocks squatter and tilted.
 - Renders and checkpoints run on the cloud machines (`FROM=` on `scripts/checkpoint-model.sh`); eyes 7 and 8 are raised overviews of the whole pile.
 
 ## Open
-- Critic (round 3, LOW only): the peak is only about a boulder above the rest, where the reference climbs higher; the flank rocks at the mouths are smooth, tall blocks; the stone lacks the reference's light edge highlights.
+- Critic (after three rounds on the rock meshwork): MED, a thin dark slit on the far side of the top, between the far middle-tier slabs near the ridge's middle. LOW: the lower ring boulders still read as tall faceted prisms; no tall peak; every boulder the same grey, so the top-down view merges.
+- The mouth shades stay opaque 4.5 in, as the user asked (the critic suggested less).
 - The plan check's clearance can't measure this opening: it looks along X or Z, and the tunnel runs along Y.
 - The clipping check flags the intended seating (boards, beams and pebbles tucked into the rocks).
 
 ## Next
+- Close the far-side slit with a wedge rock between the far middle-tier slabs.
 - Raise the peak 1 to 2 studs so the pile climbs like the reference.
-- Lighter top faces and edges on the rocks.
-- Wooden braces between rocks, as in the reference.
+- A slightly different tone per boulder, so the pile doesn't merge from above.
