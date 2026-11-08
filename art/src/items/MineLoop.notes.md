@@ -29,6 +29,7 @@
 - Less crystal-like (user: pointed faceted tops, too tall and slender): each top is one flat tilted plane, cuts bite gently and steeper than the top so no streaky near-level creases; stones 3.2 to 4.6 wide; crown 18.5, ridge 13.5; columns stand to the slope halfway between their middle and lowest corner, neighbour heights more even.
 - Uneven chamfering and sub-chamfering (user): every upright and top edge bevelled 0.12 to 0.6, each its own width, top bevels 45 degrees give or take 15; a narrower sub-bevel trims each crease (only on bevels over 0.22, never flatter than 62 degrees, so no slivers). Edges along the tunnel, bore and face cuts stay sharp.
 - Edge and corner chipping (user): about 60% of top corners chipped along the corner's bisector, about 45% of top edges take a tapering bite toward one end, 0.2 to 0.55 deep. Three review rounds over these three changes.
+- Seams sealed (user): full-height upright corner chamfers opened shafts where three columns met. Each upright corner's bevel now leans 8 to 16 degrees in, widest at the top and running out a couple of studs down, so below that the corners stay whole and meet their neighbours. One review round.
 
 ## Open
 - A few texels still take a neighbour's tone where a small rock tucks in front of a big one with faces turned the same way (LOW).

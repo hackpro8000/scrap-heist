@@ -163,6 +163,9 @@ local CUT_SPREAD = math.rad(55)
 -- SUB_CHAMFER of that width, trims each crease the chamfer left. Top edges
 -- lean up to CHAMFER_LEAN either way of 45 degrees.
 local CHAMFER, SUB_CHAMFER, CHAMFER_LEAN = { 0.12, 0.6 }, 0.35, math.rad(15)
+-- How far an upright corner's chamfer leans in from upright (degrees,
+-- least and most), so it runs out a couple of studs below the top.
+local CORNER_LEAN = { 8, 16 }
 -- Chips knocked off a column's top: the share of corners and of edges
 -- chipped, and how deep a chip bites (studs, smallest and biggest).
 local CORNER_CHIPS, EDGE_CHIPS, CHIP_SIZE = 0.6, 0.45, { 0.2, 0.55 }
@@ -183,28 +186,6 @@ local function clipOutline(outline, a: number, b: number, c: number)
 		end
 	end
 	return kept
-end
--- An outline with each corner bevelled off: width(i) studs in from corner
--- i along its bisector (none where it is 0).
-local function chamferOutline(outline, width: (number) -> number)
-	local count = #outline
-	local cut = outline
-	for i, v in outline do
-		local p, q = outline[(i - 2) % count + 1], outline[i % count + 1]
-		local ax, ay = v[2] - p[2], p[1] - v[1]
-		local bx, by = q[2] - v[2], v[1] - q[1]
-		local la, lb = math.sqrt(ax * ax + ay * ay), math.sqrt(bx * bx + by * by)
-		local d = width(i)
-		if la > 1e-6 and lb > 1e-6 and d > 0 then
-			local nx, ny = ax / la + bx / lb, ay / la + by / lb
-			local ln = math.sqrt(nx * nx + ny * ny)
-			if ln > 1e-6 then
-				nx, ny = nx / ln, ny / ln
-				cut = clipOutline(cut, nx, ny, nx * v[1] + ny * v[2] - d)
-			end
-		end
-	end
-	return cut
 end
 -- An outline's area and centroid.
 local function outlineCentre(outline): (number, number, number)
@@ -469,17 +450,6 @@ do
 		if #cell < 3 then
 			continue
 		end
-		-- The column's upright edges chamfered unevenly, then each new
-		-- crease sub-chamfered.
-		cell = chamferOutline(cell, function(i)
-			return CHAMFER[1] + (CHAMFER[2] - CHAMFER[1]) * random(index, 100 + i)
-		end)
-		cell = chamferOutline(cell, function(i)
-			return SUB_CHAMFER * CHAMFER[1] * (0.5 + random(index, 130 + i))
-		end)
-		if #cell < 3 then
-			continue
-		end
 		local cellArea, cellOut, cellMiddle = outlineCentre(cell)
 		-- Between the mouths a cell splits at the tunnel's walls, its part
 		-- over the tunnel standing on the lintels; in front of each mouth the
@@ -642,6 +612,23 @@ do
 					if isClosed(carved) then
 						faces = carved
 					end
+				end
+			end
+			-- Upright corners chamfered unevenly, each bevel leaning in a
+			-- little so it is widest at the top and runs out a couple of
+			-- studs down: below that the corner stays whole, so where
+			-- columns meet the seam stays sealed.
+			for i, v in outline do
+				local p, q = outline[(i - 2) % #outline + 1], outline[i % #outline + 1]
+				local ax, ay = v[2] - p[2], p[1] - v[1]
+				local bx, by = q[2] - v[2], v[1] - q[1]
+				local la, lb = math.sqrt(ax * ax + ay * ay), math.sqrt(bx * bx + by * by)
+				if la > 0.3 and lb > 0.3 and not onSplit(p, v) and not onSplit(v, q) then
+					local nx, ny = ax / la + bx / lb, ay / la + by / lb
+					local ln = math.sqrt(nx * nx + ny * ny)
+					local lift = math.rad(CORNER_LEAN[1] + (CORNER_LEAN[2] - CORNER_LEAN[1]) * random(key, 140 + i))
+					local width = CHAMFER[1] + (CHAMFER[2] - CHAMFER[1]) * random(key, 100 + i)
+					bevel({ nx / ln * math.cos(lift), ny / ln * math.cos(lift), math.sin(lift) }, width)
 				end
 			end
 			for i, a in outline do
