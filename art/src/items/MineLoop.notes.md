@@ -34,15 +34,15 @@
 - Soft edge highlight (user): a second highlight layer under the crisp rims, new in the bake (`softLit`, `softEdge`, `softUneven`, `softTaper` on a part entry): a smooth glow with no brush, up to 2.2 studs wide on the rocks and 0.5 on the chunks, 22% at the edge, its width wandering along each edge and thinning away from the corners. 30% washed the rocks pale; 16% barely showed. Two review rounds.
 - No straight cuts at the mouths (user: "it's supposed to be a tunnel"): whole columns decide where the hill ends, so its face follows their outlines; columns reaching in beside the bore wrap round it, each at its own slant up to 12 degrees, the stone over the porch flush with them; columns wholly past the face stand beside the track on faces up to 30 degrees off its line. The ridge is full height only 5.5 either side of the track and falls away over 11 studs sideways and past the face, in mid-height shoulders. Columns within 5 of the bore near a mouth stop 0.9 to 2.1 above the porch roof, so the opening isn't framed by two pillars. Four review rounds.
 - Mouth shadow extended (user): the black gradient now starts halfway along the porch's timber and is still fully black 4.25 in.
+- In place on the island (user approved the cave, then asked for both fixes from the IslandPreview render): the porch's boards stop just past the bore's sides so none show through gaps in the columns; the far foot ends short of the plaza's yellow ring (no column reaches past 11.5 out), whole columns dropped rather than a line cut, and the far side's ridge falls away over 6.5 studs. One review round.
 
 ## Open
 - A few texels still take a neighbour's tone where a small rock tucks in front of a big one with faces turned the same way (LOW).
 - Critic (after the chipping), all LOW: wide chamfers make some columns read rounded (cap near 0.4 and leave a few edges sharp?); chip faces show coarse texels in close ground views; columns over each porch close to one height; the rows beside the porch read a little like a picket row; light lines at some column bases from the ground level; tall faces show big texels.
-- A board shows edge-on in a gap between rocks beside the + mouth's post from one side view (LOW).
+- From the far side a front column stands a little apart with a low block in the gap beside it, where a column that would have reached the ring was dropped (LOW).
 - The mouth shades stay fully black 4.25 in past the boards, as the user asked.
 - The plan check's clearance can't measure this opening: it looks along X or Z, and the tunnel runs along Y.
 - The clipping check flags the intended seating (boards, beams and pebbles tucked into the rocks).
 
 ## Next
 - Vary the over-porch columns' heights and stagger the rows beside each porch.
-- Then IslandPreview re-rendered with the approved cave.

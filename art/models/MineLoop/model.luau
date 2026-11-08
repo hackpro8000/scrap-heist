@@ -1,4 +1,4 @@
-local CACHE_KEY = "MineLoop-0a54d79cde5af0ac"
+local CACHE_KEY = "MineLoop-ac2520c123c6895a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3580,6 +3580,9 @@ local PEAK, SUMMIT, CROWN, BOWL = { 2, -2 }, 18.5, 0.1, 0.2
 -- falling away over RIDGE_WIDTH beyond that, and running RIDGE_PAST past
 -- each mouth (to the hill's face) before dropping over RIDGE_FALL.
 local RIDGE, RIDGE_FLAT, RIDGE_WIDTH, RIDGE_PAST, RIDGE_FALL = 13.5, 5.5, 11, 2.2, 11
+-- The far side falls away sooner, its foot ending short of the plaza's
+-- painted ring: no part of a column stands further than FAR_LIMIT out.
+local RIDGE_WIDTH_FAR, FAR_LIMIT = 6.5, 11.5
 -- Stone sizes at the summit and at the foot, and the shortest a column
 -- stands.
 local SMALLEST, LARGEST, MIN_LENGTH = 3.2, 4.6, 2.5
@@ -3794,7 +3797,7 @@ do
 	end
 	-- The footprint, out (hub side, far side) and along either way from the
 	-- summit's line.
-	local FOOT_OUT, FOOT_ALONG = { -12.5, 13.5 }, 24
+	local FOOT_OUT, FOOT_ALONG = { -12.5, 9.5 }, 24
 	-- How far a point sits from the summit toward the foot (0 to 1): on a
 	-- squared-off oval (power `square`) for the footprint, so it stays wide
 	-- out to the mouths; on a plain oval (power 2) for the slope, so heights
@@ -3813,7 +3816,7 @@ do
 		local r = math.clamp((fromSummit(out, middle, 2) - CROWN) / (1 - CROWN), 0, 1)
 		local cone = (1 - r) ^ 1.25
 		local dome = math.sqrt(1 - r * r)
-		local across = math.clamp(1 - (math.abs(out) - RIDGE_FLAT) / RIDGE_WIDTH, 0, 1)
+		local across = math.clamp(1 - (math.abs(out) - RIDGE_FLAT) / (if out > 0 then RIDGE_WIDTH_FAR else RIDGE_WIDTH), 0, 1)
 		local along = math.clamp((LINTEL_REACH + RIDGE_PAST - math.abs(middle)) / RIDGE_FALL, 0, 1)
 		return math.max(SUMMIT * (cone + (dome - cone) * BOWL), RIDGE * across ^ 0.7 * along)
 	end
@@ -3882,6 +3885,15 @@ do
 			end
 		end
 		if #cell < 3 then
+			continue
+		end
+		-- A column that would reach the plaza's painted ring isn't built, so
+		-- the far foot ends in the columns' own outlines.
+		local reachesRing = false
+		for _, q in cell do
+			reachesRing = reachesRing or q[1] > FAR_LIMIT
+		end
+		if reachesRing then
 			continue
 		end
 		local cellArea, cellOut, cellMiddle = outlineCentre(cell)
@@ -4714,11 +4726,13 @@ end, nil, nil, true, nil, nil, TIMBER.worn)
 wornEdges()
 
 -- Upright boards in the rock face behind the back posts: down each side
--- of the opening, and across above the headers, up to the rocks.
+-- of the opening, and across above the headers, up to the rocks; none
+-- past BOARDS_OUT, so none can show through a gap in the columns.
+local BOARDS_OUT = BORE + 0.8
 part("Boards", nil, WOOD, function(mesh)
 	for _, side in { -1, 1 } do
 		for _, flank in { -1, 1 } do
-			for i = 0, 4 do
+			for i = 0, math.ceil((BOARDS_OUT - OPEN_HALF - 0.1) / BOARD_WIDE) - 1 do
 				local out = flank * (OPEN_HALF + 0.1 + (i + 0.5) * BOARD_WIDE)
 				local tall = HEADER_TOP + 0.4 * jitter(i, flank + side * 5)
 				local m = EditMesh.roundedBox({ BOARD_WIDE - 0.08, BOARD_THICK, tall }, 0.08, 1, { 1, 1, 4 })
@@ -4729,8 +4743,10 @@ part("Boards", nil, WOOD, function(mesh)
 		for i = 0, 14 do
 			local out = -6.4 + (i + 0.5) * 12.8 / 15
 			local tall = 2.4 + 0.3 * jitter(i, side)
-			local m = EditMesh.roundedBox({ 12.8 / 15 - 0.08, BOARD_THICK, tall }, 0.08, 1, { 1, 1, 2 })
-			placed(m, side, out, BOARDS_AT, OPEN_TALL, tall):emit(mesh)
+			if math.abs(out) < BOARDS_OUT then
+				local m = EditMesh.roundedBox({ 12.8 / 15 - 0.08, BOARD_THICK, tall }, 0.08, 1, { 1, 1, 2 })
+				placed(m, side, out, BOARDS_AT, OPEN_TALL, tall):emit(mesh)
+			end
 		end
 	end
 end, nil, function(x, y, z)
