@@ -601,6 +601,9 @@ end
 -- to paint its highlights as bold, fully loaded strokes instead of dry ones,
 -- `blend` (0-1) to tint them from cream toward a lighter part colour, and
 -- `taper` (studs) to run them full width at corners, thinning along each edge.
+-- `softLit` (0-1) adds a wide, very soft highlight under the strokes, fading
+-- out over `softEdge` studs from each edge; `softUneven` (0-1) makes its width
+-- wander along the edge and `softTaper` (studs) thins it away from corners.
 -- `strokes` lists brush strokes painted over the coat ({start, along, normal,
 -- length, width, tail, color, brush}, color in sRGB), such as cracks or dabs;
 -- `brush` is "taper" (crisp lines, the default), "round" or "sponge".
@@ -794,6 +797,10 @@ local function finishParts()
 			highlightWidth = entry.wide,
 			paintedHighlights = entry.painted,
 			cornerTaper = entry.taper,
+			softHighlight = entry.softLit,
+			softReach = entry.softEdge,
+			softUneven = entry.softUneven,
+			softTaper = entry.softTaper,
 			strokes = entry.strokes,
 			heightRange = entry.heightRange,
 		})

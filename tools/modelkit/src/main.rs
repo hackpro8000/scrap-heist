@@ -227,6 +227,10 @@ impl UserData for MeshHandle {
 				highlight_width: get("highlightWidth", 1.0)?.clamp(0.1, 8.0),
 				painted_highlights: options.as_ref().map(|o| o.get::<Option<bool>>("paintedHighlights")).transpose()?.flatten().unwrap_or(false),
 				corner_taper: get("cornerTaper", 0.0)?.clamp(0.0, 16.0),
+				soft_highlight: get("softHighlight", 0.0)?.clamp(0.0, 1.0),
+				soft_reach: get("softReach", 1.0)?.clamp(0.02, 8.0),
+				soft_uneven: get("softUneven", 0.0)?.clamp(0.0, 1.0),
+				soft_taper: get("softTaper", 0.0)?.clamp(0.0, 16.0),
 				// heightRange = {bottom, top}: share one gradient across chunks.
 				height_range: match options.as_ref().map(|o| o.get::<Option<Vec<f64>>>("heightRange")).transpose()?.flatten().as_deref() {
 					Some(&[bottom, top]) if top > bottom => Some([bottom, top]),

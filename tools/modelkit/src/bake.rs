@@ -352,6 +352,14 @@ pub struct Shading {
 	// edge, falling off over this many studs from the nearest corner. 0 keeps
 	// them even along the whole edge.
 	pub corner_taper: f64,
+	// A second, wide and very soft highlight under the strokes: its strength
+	// at an edge (0 for none) and how many studs it fades out over.
+	pub soft_highlight: f64,
+	pub soft_reach: f64,
+	// 0-1: how far the soft highlight's width wanders along an edge, and the
+	// studs it thins over away from a corner (0 keeps it even).
+	pub soft_uneven: f64,
+	pub soft_taper: f64,
 	// How far highlights and contact shadows reach from an edge, in studs.
 	// Bigger stones want a wider band, the way a thicker brush reads on them.
 	pub reach: f64,
@@ -390,6 +398,23 @@ pub const CONTACT_REACH: f64 = 0.2;
 // Folds gentler than this (as a fraction of a half turn) cast nothing,
 // so the facets inside a rounded hollow stay clean.
 const CONTACT_MIN_FOLD: f64 = 1.0 / 6.0;
+
+// The soft highlight counts folds from SOFT_MIN_FOLD (a fraction of a half
+// turn) and is at full strength from SOFT_FULL_FOLD, so a chamfer's gentle
+// folds still glow.
+const SOFT_MIN_FOLD: f64 = 0.08;
+const SOFT_FULL_FOLD: f64 = 0.3;
+// Studs between the soft highlight's width changes along an edge.
+const SOFT_WANDER_STEP: f64 = 0.9;
+
+// A smooth value from 0 to 1 wandering along an edge, t studs along it.
+fn soft_wander(seed: u32, t: f64) -> f64 {
+	let x = t / SOFT_WANDER_STEP;
+	let cell = x.floor();
+	let f = x - cell;
+	let at = |k: i64| hash(seed.wrapping_add((k as u32).wrapping_mul(2_654_435_761)));
+	at(cell as i64) + (at(cell as i64 + 1) - at(cell as i64)) * f * f * (3.0 - 2.0 * f)
+}
 
 // Brush passes: (width, length, step, pressure).
 const BRUSH_PASSES: [(f64, f64, f64, f64); 2] = [(0.16, 0.6, 0.4, 0.75), (0.08, 0.35, 0.22, 1.0)];
@@ -733,6 +758,97 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 		(coat_layer, wear_layer, shade.join().expect("shade thread"))
 	});
 
+	// The soft highlight: a smooth glow falling away from this part's exterior
+	// edges, with no brush in it. It reaches further than the strokes, so it
+	// has its own grid of the part's surfaces.
+	let soft_reach = shading.soft_reach.max(0.02);
+	let soft_layer = (shading.soft_highlight > 0.0).then(|| cached_layer(cache::layer_path("soft", mesh, &neighbours, true, &[width as f64, height as f64, soft_reach, shading.soft_uneven, shading.soft_taper], None, source), || {
+		let mut triangles = mesh_triangles(mesh);
+		for other in group {
+			if within_reach(mesh, other, soft_reach) {
+				triangles.extend(mesh_triangles(other));
+			}
+		}
+		let planes: Vec<([Vec3; 3], Vec3)> = triangles
+			.into_iter()
+			.filter_map(|t| {
+				let n = cross(sub(t[1], t[0]), sub(t[2], t[0]));
+				let length = dot(n, n).sqrt();
+				(length > 1e-12).then(|| (t, scale(n, 1.0 / length)))
+			})
+			.collect();
+		let key = |p: Vec3| p.map(|c| (c / soft_reach).floor() as i64);
+		let cell_reach = soft_reach * 3f64.sqrt() / 2.0;
+		let mut grid: CellMap<Vec<usize>> = CellMap::default();
+		for (index, (t, facing)) in planes.iter().enumerate() {
+			let low = key([0, 1, 2].map(|k| t[0][k].min(t[1][k]).min(t[2][k])));
+			let high = key([0, 1, 2].map(|k| t[0][k].max(t[1][k]).max(t[2][k])));
+			for x in low[0]..=high[0] {
+				for y in low[1]..=high[1] {
+					for z in low[2]..=high[2] {
+						let centre = [x, y, z].map(|c| (c as f64 + 0.5) * soft_reach);
+						if dot(*facing, sub(centre, t[0])).abs() <= cell_reach {
+							grid.entry([x, y, z]).or_default().push(index);
+						}
+					}
+				}
+			}
+		}
+		let mut near: CellMap<Vec<usize>> = CellMap::default();
+		for texel in &full {
+			let home = key(texel.position);
+			near.entry(home).or_insert_with(|| {
+				let mut list = Vec::new();
+				for x in -1..=1 {
+					for y in -1..=1 {
+						for z in -1..=1 {
+							list.extend(grid.get(&[home[0] + x, home[1] + y, home[2] + z]).into_iter().flatten());
+						}
+					}
+				}
+				list.sort_unstable();
+				list.dedup();
+				list
+			});
+		}
+		let min_cos = (SOFT_MIN_FOLD * std::f64::consts::PI).cos();
+		let values: Vec<[f32; 3]> = parallel(&full, |texel| {
+			let (p, n) = (texel.position, texel.face_normal);
+			let mut glow = 0.0f64;
+			for &index in &near[&key(p)] {
+				let (triangle, facing) = planes[index];
+				if dot(n, facing) >= min_cos || dot(facing, sub(p, triangle[0])).abs() >= soft_reach {
+					continue;
+				}
+				let offset = sub(p, closest_on_triangle(p, triangle));
+				let distance = dot(offset, offset).sqrt();
+				// Only exterior angles glow: the texel sits behind the surface's plane.
+				if distance < 1e-6 || distance >= soft_reach || dot(facing, offset) >= 0.0 || dot(n, offset) > 0.3 * distance {
+					continue;
+				}
+				let fold = dot(n, facing).clamp(-1.0, 1.0).acos() / std::f64::consts::PI;
+				let sharpness = ((fold - SOFT_MIN_FOLD) / (SOFT_FULL_FOLD - SOFT_MIN_FOLD)).clamp(0.0, 1.0);
+				// The width wanders along the edge, the same for every triangle
+				// on it, and thins away from the edge's corners.
+				let crease = normalize(cross(n, facing));
+				let seed = [n[0] * 8.0, n[1] * 8.0, n[2] * 8.0, facing[0] * 8.0, facing[1] * 8.0, facing[2] * 8.0, dot(facing, triangle[0]) * 20.0]
+					.map(|c| c.round() as i64 as u32)
+					.into_iter()
+					.fold(0x811c_9dc5u32, |h, c| (h ^ c).wrapping_mul(0x0100_0193));
+				let wander = 1.0 - shading.soft_uneven + shading.soft_uneven * soft_wander(seed, dot(p, crease) + 1000.0);
+				let taper = if shading.soft_taper > 0.0 { corner_taper(p, n, sub(p, offset), triangle, shading.soft_taper) } else { 1.0 };
+				let fade = soft_reach * wander * taper;
+				if distance >= fade {
+					continue;
+				}
+				let t = 1.0 - distance / fade;
+				glow = glow.max(sharpness * t * t * (3.0 - 2.0 * t));
+			}
+			[glow as f32, 0.0, 0.0]
+		});
+		vec![layer_image(width, height, &full, &values)]
+	}));
+
 	// Combine the layers per texel: the wear over the coat, then the lit and
 	// dark creases, then the bands.
 	let colors = profiled(3, || parallel(&full, |texel| {
@@ -745,6 +861,9 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 		let low = 1.0 - g[2];
 		let ramp = 1.0 + shading.highlight_ramp * low * low * (3.0 - 2.0 * low);
 		let lit = (outward * (1.0 - shade) * shading.highlight * ramp).clamp(0.0, 1.0);
+		let soft = soft_layer.as_ref().map_or(0.0, |layer| f64::from(layer[0].pixels[texel.pixel][0]));
+		let glow = (soft * (1.0 - shade) * shading.soft_highlight).clamp(0.0, 1.0);
+		let lit = 1.0 - (1.0 - lit) * (1.0 - glow);
 		let dark = (shade * 1.6 * shading.shadow).clamp(0.0, 1.0);
 		let cream = [1.0, 0.97, 0.85].map(to_linear_f64);
 		let screen: [f64; 3] = std::array::from_fn(|k| {
