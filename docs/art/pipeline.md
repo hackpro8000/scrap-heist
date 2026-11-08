@@ -243,7 +243,7 @@ scripts/checkpoint-model.sh <Name> "phase N: <Name> - <change>"
 The checkpoint also renders four turns round the model into `views.png`, so a
 change needs no separate preview pass.
 
-It rebuilds the model, copies `preview.png` to `screenshot.png`, and commits and pushes the `model.luau` source on the current branch (`main`). Send that screenshot to the user after each change.
+It rebuilds the model, copies `preview.png` to `screenshot.png`, and commits and pushes the `model.luau` source and the model's `art/src` files (source, plan, notes, preview flags) on the current branch (`main`). It also writes `screenshot-grid.png`: the screenshot with a labelled 6×6 grid over the model (A1 top left), beside the model's sketch. `cells.txt` names the parts in each cell. Send `screenshot-grid.png` and `views.png` to the user after each change. Each screenshot is also kept as `history/<commit>.png`. `scripts/model-history.sh <Name> [count]` lays the last ones side by side.
 
 ### Branch
 Code, tooling and models all live on `main`; there is no separate models branch. Generated files (`.glb`, textures, `preview.png`, `screenshot.png`) are gitignored; rebuild them with `scripts/build-model.sh <Name>`. Only `model.luau` (and a `sketch.png`, if any) is committed.
@@ -269,11 +269,76 @@ Sources live in `art/src`, and `art/models/<Name>/model.luau` is generated from 
 - Bots: `art/src/bots/<Name>/{head,body}.luau`, assembled as head + `common.luau` + body.
 - Items: `art/src/items/<Name>.luau`, assembled as `rarity.luau` + `common.luau` + item.
 
-Loop for each change:
-1. Get the user to approve a sketch before modeling anything new.
-2. Edit `art/src`, then `scripts/assemble-model.sh <Name>`.
-3. `scripts/view-model.sh <Name> <out.png>` (4 turntable angles). Shrink the render before viewing it to save context.
-4. `scripts/checkpoint-model.sh <n> "<msg>"`, which commits and pushes, then send the user the screenshot.
+A new item or bot goes through the first build below. After that, the loop for each change is:
+1. Edit `art/src`, then `scripts/assemble-model.sh <Name>`.
+2. `scripts/view-model.sh <Name> <out.png>` (4 turntable angles). Shrink the render before viewing it to save context.
+3. `scripts/checkpoint-model.sh <n> "<msg>"`, which commits and pushes. Update the notes file (below) in the same checkpoint. Send the user the gridded screenshot, then end with "Where we are": the goal, what's done, and 2–3 suggested next changes to pick from.
+
+### First build
+The aim is a first screenshot that is already good. The steps follow what
+worked in agentic modelling research: Procedura (planning was its biggest
+single gain), ShapeCraft (parts with explicit boxes, about 3 refine rounds),
+and LL3M (geometric checks catch what eyes miss, and edit in place).
+
+1. **Sketch and part plan, approved together.** Write
+   `art/src/items/<Name>.plan.luau` (bots: `art/src/bots/<Name>/plan.luau`).
+   It is a flat list of the parts the game camera sees, with these rules:
+   - The core part comes first, and every later part `attaches` to an earlier one.
+   - Each part gets a centre `at` and `size` in studs.
+   - Mirrors (`mirror = "DoorLeft"`) and repeats (`count = 6`) are declared once.
+   - Names match `model.part` names.
+   - Spaces a player uses get a `clearance` entry against the 4×5.5 capsule.
+
+   ```luau
+   return {
+   	parts = {
+   		{ name = "Frame", level = "core", at = { 0, 0, 6 }, size = { 8, 6, 12 }, note = "upright arch the rest hangs on" },
+   		{ name = "DoorLeft", level = "major", attaches = "Frame", at = { -2, -3, 3 }, size = { 2, 0.5, 6 } },
+   		{ name = "DoorRight", mirror = "DoorLeft" },
+   		{ name = "Rivet", level = "detail", attaches = "Frame", count = 6 },
+   	},
+   	clearance = { { part = "Frame", width = 5, height = 6.5 } },
+   }
+   ```
+
+   Send the sketch and the plan as a short table (part, attaches to, size,
+   note) for approval.
+2. **Draft** the parts in plan order, core first, from the shapes in
+   `docs/art/shapes.md`. Small detail is painted. Run
+   `lune run tools/modelcheck/check <Name>` until the plan check passes.
+3. **Critique, at most 3 rounds, stopping early once nothing is HIGH or MED.** Each round:
+   - Run `scripts/review-model.sh <Name>`. It writes `review.png` (sketch, preview, part colours, front/right/top on a 1-stud grid) and prints the part legend and check output.
+   - Send the `model-critic` agent the paths of `review.png`, the sketch and the plan, plus the legend and check output. From round 2, also send its previous list. Reuse the same agent across rounds with SendMessage.
+   - Fix only what it listed, editing in place. Don't regenerate parts it didn't flag.
+4. **Checkpoint once** with `checkpoint-model.sh`. Write the notes file, then send the gridded screenshot and anything the critic still lists. From here it's one change per checkpoint.
+
+### When the feedback is vague
+"Something's off", "meh", "not quite": don't guess and edit. People find
+problems more easily than they describe them, and criticise more freely
+when shown alternatives.
+1. If they point ("C4", "that thing at B2"), look the cell up in `cells.txt`.
+2. Otherwise, run the critic on the current build. Turn its top 3–4 issues
+   into a multi-select question in plain words (`docs/art/feedback-words.md`),
+   plus "none of these".
+3. For what they pick, or for "none", build 2–3 variants with
+   `--preview` in fixed scratch folders (the `model-previewer` agent), nothing
+   committed. Lay them out as A/B/C beside the current version and send the
+   sheet.
+4. Checkpoint only the pick. "Closer to B but more" gets a second set
+   around B.
+
+### Keeping the direction
+`art/src/items/<Name>.notes.md` (bots: `art/src/bots/<Name>/notes.md`) is
+committed with each checkpoint and holds:
+- **Goal:** one line from the approved sketch.
+- **Decided:** what was settled and why, newest last.
+- **Open:** the critic's last list and anything the user raised.
+- **Next:** 2–3 suggested changes.
+
+Read it first when resuming a model. If the user is lost, send the "Where
+we are" from it and the strip from `scripts/model-history.sh <Name>`. If they
+pick an older checkpoint, restore its sources (`git checkout <commit> --
+<paths>`) and checkpoint that as a new commit.
 
 Rules:
 - Batch small models into one pass.
