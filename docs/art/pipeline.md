@@ -308,7 +308,8 @@ and LL3M (geometric checks catch what eyes miss, and edit in place).
    `lune run tools/modelcheck/check <Name>` until the plan check passes.
 3. **Critique, at most 3 rounds, stopping early once nothing is HIGH or MED.** Each round:
    - Run `scripts/review-model.sh <Name>`. It writes `review.png` (sketch, preview, part colours, front/right/top on a 1-stud grid) and prints the part legend and check output.
-   - Send the `model-critic` agent the paths of `review.png`, the sketch and the plan, plus the legend and check output. From round 2, also send its previous list. Reuse the same agent across rounds with SendMessage.
+   - Send the `model-critic` agent the paths of `review.png`, the sketch and the plan, plus the legend and check output. From round 2, also send its previous list. Reuse the same agent across rounds with SendMessage. Run `scripts/critic-atlas.sh <Name>` and send it the atlases it prints, not separate images, so it can review in a couple of tool calls.
+   - If its reply has `VIEW:` lines, run `scripts/critic-views.sh <Name> "<flags>" ...` with what it asked for and send it the one atlas it prints. The round isn't done until it stops asking.
    - Fix only what it listed, editing in place. Don't regenerate parts it didn't flag.
 4. **Checkpoint once** with `checkpoint-model.sh`. Write the notes file, then send the gridded screenshot and anything the critic still lists. From here it's one change per checkpoint.
 
@@ -326,6 +327,14 @@ when shown alternatives.
    sheet.
 4. Checkpoint only the pick. "Closer to B but more" gets a second set
    around B.
+
+### When the critic misses something
+When the user points out a defect in a model and the critic's last list doesn't have it, the critic's rules grow, in that same turn and without being asked:
+1. Add a rule to `docs/art/critic-rules.md` for the kind of defect, not the one instance, so it applies to any model. Don't name the model or the instance. If a rule nearly covers it, sharpen that rule instead.
+2. Prove it works: a fresh `model-critic`, given the same render and none of the user's words, has to list the defect. If it doesn't, sharpen the rule and try once more, then tell the user how that went.
+3. Fix the defect the usual way, commit the rule with the model's checkpoint, and tell the user the new rule in one line.
+
+A matter of taste or a change of mind ("make it bluer") isn't a miss and makes no rule.
 
 ### Keeping the direction
 `art/src/items/<Name>.notes.md` (bots: `art/src/bots/<Name>/notes.md`) is

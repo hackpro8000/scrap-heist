@@ -10,6 +10,16 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'If this message points out a defect in a model that the critic did not list, follow \"When the critic misses something\" in docs/art/pipeline.md in this turn, without being asked.'"
+          }
+        ]
+      }
     ]
   }
 }
