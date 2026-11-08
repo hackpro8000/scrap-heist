@@ -1,6 +1,6 @@
 # MineLoop notes
 
-**Goal:** the hub's minecart loop diving into a cave made of a stacked pile of chunky blue-grey boulders, with a timber porch at each mouth (art/concepts/mine-portal-reference.png).
+**Goal:** the hub's minecart loop diving into a hill of carved blue-grey stone columns, tunnelled through, with a timber porch sticking out of each mouth (art/concepts/mine-column-reference.png).
 
 ## Decided
 - A hill swept from one cross-section read as a smooth tube; three chunkier hill shapes (tiered, faceted, mesa) still didn't fit the art style. The user wants the cave composed of rocks, not a hill with rock decoration.
@@ -21,16 +21,17 @@
 - Everything sits flat on the ground (user): rocks and pebbles on the ground have their undersides pressed flat across the footprint, lean by shearing so the base stays flat, and round ones round off only from the middle up; sleepers sit on the deck. Two review rounds; the rock that looks perched in the ground-level view is a flat base turned 45 degrees, seen with no ground drawn.
 - Lanterns removed (user), with their bracket arms; the porches are timber only. One review round.
 - Each rock its own gradient (user): darker and cooler at its foot, lighter at its top, tilted its own way, about a quarter either way with feet darkening a fifth more, small rocks stronger, each rock its own lightness and warmth. Which rock a texel is on comes from points sampled over each rock's real faces (nearest point on a face turned the same way); boxes misassigned texels where a small rock sits in front of a big one. Pebbles shade by height. Six review rounds.
+- Cave rebuilt from scratch (user): the boulder pile, then sliced-rock piles, were dropped; the user asked for the Column Island method. A power diagram of stones (small near the summit, big at the foot), each cell a column rising to the slope with a tilted top and low ridge point, chiselled by 1 to 3 angled cuts and 3 to 6 chips facing out from the summit (only where the column stays closed). Inner columns taller than outer: a crown about 25 tall near the track, a ridge 17 tall along it, falling to the foot.
+- The ends: first cut off, then cuttings (user: "cut into them"), then tunnelled through (user): the hill carries on past each mouth and the tunnel bores through it 4.9 either side of the track, the stone over each porch standing on its roof; the porch sticks out about 3.5 past the hill's face, its frame covering the bore's edges (user).
+- No thin slivers by the mouths (user): three rows of like-sized columns round each mouth, set so their cells meet right on the tunnel-wall, mouth, bore and face lines. Chunks moved beside the track past each porch. Five review rounds.
 
 ## Open
 - A few texels still take a neighbour's tone where a small rock tucks in front of a big one with faces turned the same way (LOW).
-- Critic (after three rounds on the shape kinds): MED, rim highlights still faint on many boulders against the reference's bold bright rims (needs contrast, not just width); MED, the pile reads as one blue-grey mass from the far side (wider per-rock tone spread, darker joints). LOW: crag and round read alike; some lower-ring boulders still tall prisms; the big far-side boulder a tall flat-faced slab; flanks could use a few more mid-size rocks.
+- Critic (round 5 on the column hill), all LOW: columns over each porch close to one height; the rows beside the porch read a little like a picket row; light lines at some column bases from the ground level; tall faces show big texels.
 - The mouth shades stay opaque 4.5 in, as the user asked.
 - The plan check's clearance can't measure this opening: it looks along X or Z, and the tunnel runs along Y.
 - The clipping check flags the intended seating (boards, beams and pebbles tucked into the rocks).
 
 ## Next
-- Uneven chamfering (user), then edge chipping (user).
-- Bolder rims: paint them clearly lighter than the face, the same on the lower rocks.
-- Wider per-rock tone spread with darker joints.
-- Shorter, rounder lower-ring rocks and a stepped face on the big far boulder.
+- Vary the over-porch columns' heights and stagger the rows beside each porch.
+- Then IslandPreview re-rendered with the approved cave.

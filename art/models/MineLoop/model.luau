@@ -1,4 +1,4 @@
-local CACHE_KEY = "MineLoop-baccb177d0df449a"
+local CACHE_KEY = "MineLoop-233bc72175df3df4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -811,29 +811,29 @@ local function finishParts()
 	end
 end
 -- Mine Loop: the hub's minecart track and the cave it runs into, as one
--- model (art/concepts/mine-portal-reference.png), at full size in studs.
+-- model (art/concepts/mine-column-reference.png: a hill of carved columns
+-- built the Column Island way), at full size in studs.
 -- The origin is the middle of the hub at deck level; the layout puts it on
 -- the plaza.
--- The track is one lap of radius TRACK_RADIUS. Round 0 degrees a pile of
--- big rounded boulders sits over it, CAVE_HALF degrees either side, with a
--- tunnel through it; both track ends run into the tunnel and dive down out
--- of sight in its middle, so carts come up out of the ground and go back
--- down at one spot.
--- The cave is the boulders themselves: a wall of them down each side of
--- the tunnel, a roof tier across it, a higher tier on the side away from
--- the hub and a peak on top, so from the hub the pile steps up away from
--- you. The rocks themselves wall and roof the tunnel, overlapping so no
--- gap shows through: nothing but rock. Each mouth has a timber porch: two log posts a side, header
--- beams, side beams and a deck of planks, with upright boards closing the
--- gap between the porch and the rocks, and pebbles round its foot. A black, unlit shade fills each mouth from the
--- inside, its faces turned in, clear at the mouth and opaque a few studs
--- in, so the tunnel reads as dark however it's lit.
+-- The track is one lap of radius TRACK_RADIUS. Round 0 degrees a cluster
+-- of sliced rocks clipped into each other sits over it, CAVE_HALF degrees either
+-- side, with a tunnel through it; both track ends run into the tunnel and
+-- dive down out of sight in its middle, so carts come up out of the ground
+-- and go back down at one spot.
+-- The rocks pile up from small ones on the hub side to a tower of stacked
+-- rocks on the far side; squared lintels laid across the tunnel roof it,
+-- rocks sitting on them. Each mouth has a timber porch: two log posts a side,
+-- header beams, side beams and a deck of planks, with upright boards
+-- closing the gap between the porch and the stone, and broken-off chunks
+-- round its foot. A black, unlit shade fills each mouth from the inside,
+-- its faces turned in, clear at the mouth and opaque a few studs in, so the
+-- tunnel reads as dark however it's lit.
 -- The opening is 6.4 wide between the posts and 6.6 tall under the
 -- headers: a cart (3.6 wide, 4.9 tall with its capsule) passes, and a
 -- player (4 by 5.5) fits, though the floor drops away just inside.
 -- open: Shades
 -- floats: Sleepers, Stones
--- (Each sleeper and pebble lies on the plaza on its own.)
+-- (Each sleeper and chunk lies on the plaza on its own.)
 -- Edit Mesh: a mesh that can be edited after it's made, down to every
 -- vertex, edge and face, then handed to the engine as one part
 -- (`m:emit(mesh)` inside a part's build function). Include it with
@@ -3527,99 +3527,471 @@ local function placed(m, side: number, out: number, along: number, base: number,
 	return m
 end
 
--- ------------------------------------------------------------- the rocks
+-- ------------------------------------------------------------- the stone
 
--- Boulders, each {out (- toward the hub), along from the cave's middle
--- (+ toward the +CAVE_HALF mouth), base height, width out, depth along,
--- height, turn, lean, kind (BOULDER_KINDS, block when unset)}. The walls
--- stand just clear of the opening and the roof slabs lie right over it,
--- every rock overlapping its neighbours so no gap shows through; the rocks
--- flanking each porch overlap its boards, so no gap shows beside it.
-local ROCKS = {
-	-- the hub side's wall, up to the roof: one big boulder among medium
-	-- ones, with a big low slab, a medium rock and small ones outside it
-	{ -7, -11, -0.5, 6, 6, 7.6, 6, -5, "round" },
-	{ -9.1, -3, -0.5, 10.5, 10, 8.4, -5, -6 },
-	{ -7.4, 4.5, -0.5, 6.5, 7, 7.7, 8, -5, "crag" },
-	{ -6.6, 9.8, -0.5, 5, 5.5, 7.6, -6, -6, "round" },
-	{ -12.5, -2, -0.5, 6, 9, 3.5, 15, -10, "slab" },
-	{ -11.2, -9.5, -0.5, 4.5, 5, 4, 25, -6, "round" },
-	{ -11.5, 6.5, -0.5, 3, 3, 2.2, -20, -8, "crag" },
-	{ -11.6, 8.2, -0.5, 2, 2.2, 1.6, 30, 0, "round" },
-	{ -13.3, -5.6, -0.5, 1.8, 2, 1.4, 10, 0, "round" },
-	-- the far side's wall, a tier higher, round one tall boulder with a
-	-- rock leaning on its foot, small rocks outside it
-	{ 7.2, -10.5, -0.5, 6.5, 6, 7.5, -6, 7, "round" },
-	{ 9.5, -2.5, -0.5, 11, 10, 13, 6, 10, "crag" },
-	{ 7.3, 5.5, -0.5, 6, 6.5, 9, -7, 8, "round" },
-	{ 6.9, 10.5, -0.5, 6, 5, 7, 7, 6, "round" },
-	{ 10.6, 8, -0.5, 3, 3.5, 2.5, 20, 6, "round" },
-	{ 13.4, -1, -0.5, 4, 5, 4.5, 20, 10, "slab" },
-	{ 12.6, -7.6, -0.5, 2.2, 2.4, 1.7, -15, 0, "round" },
-	{ 14.2, 3, -0.5, 1.6, 1.8, 1.2, 40, 0, "crag" },
-	-- flanking each porch, overlapping its boards
-	{ -7.6, -12.9, -0.5, 5.5, 6, 6, 12, -8, "round" },
-	{ 7.9, -13, -0.5, 6.5, 6, 7.5, -12, 8, "crag" },
-	{ -7.3, 12.9, -0.5, 4.5, 5, 5, -10, -8, "round" },
-	{ 7.6, 13, -0.5, 5.5, 6, 6, 12, 8, "round" },
-	-- shoulders, wedged where the porch, its lintel rock and the flanking
-	-- rock meet
-	{ -6.4, -12, 4.5, 4, 4, 4.5, 15, 0, "round" },
-	{ 6.4, -12, 4.5, 4, 4, 4.5, -15, 0 },
-	{ -6.4, 12, 4.5, 4, 4, 4.5, -15, 0, "crag" },
-	{ 6.4, 12, 4.5, 4, 4, 4.5, 15, 0, "round" },
-	-- over each porch
-	{ 0, -12.2, 7.2, 12, 4.5, 3.5, 4, 0, "slab" },
-	{ 0, 12.2, 7.2, 10, 4, 2.8, -5, 0, "slab" },
-	-- the backing, mostly hidden: flat slabs right over the opening and long
-	-- rocks along each wall, so a crevice anywhere shows rock
-	{ 0, -6, 6.75, 9, 12.5, 2.5, 0, 0 },
-	{ 0, 6, 6.75, 9, 12.5, 2.5, 0, 0 },
-	{ -4.9, -6, -0.5, 3, 12.5, 7.5, 0, 0 },
-	{ -4.9, 6, -0.5, 3, 12.5, 7.5, 0, 0 },
-	{ 4.9, -6, -0.5, 3, 12.5, 7.5, 0, 0 },
-	{ 4.9, 6, -0.5, 3, 12.5, 7.5, 0, 0 },
-	-- the roof: slabs of different sizes right over the opening,
-	-- overlapping each other and both walls
-	{ -2, -6.5, 6.9, 14, 9, 3, 6, 2, "slab" },
-	{ -2, -1, 6.9, 9, 4, 2.6, 15, 2 },
-	{ -2, 3, 6.9, 13, 8, 4, -5, -2, "slab" },
-	{ -2, 8.5, 6.9, 11, 6, 2.8, 6, 2 },
-	-- the far side's middle tier, a big slab, a medium one, a small one
-	-- between them and one by the + porch
-	{ 4.5, -5.5, 8.6, 8, 9, 4.5, -8, 4, "slab" },
-	{ 5.5, 4.5, 8.6, 6, 6.5, 3, 12, 3, "round" },
-	{ 4.5, -0.3, 8.6, 4, 4, 3.2, 25, 3, "crag" },
-	{ 5.5, 8.5, 7.2, 5, 5, 3, 10, 3, "round" },
-	-- the ridge: a big peak slab toward the hub, stepping down in smaller
-	-- slabs toward the +CAVE_HALF mouth, small rocks in its joints
-	{ -1, -4, 9.8, 11, 10, 7, 14, -7, "crag" },
-	{ 1.5, 3, 10.2, 7, 6, 3.6, -8, 5, "slab" },
-	{ 2, 8, 9.8, 5, 4.5, 2.5, 10, 4, "round" },
-	{ 0, -10, 9.8, 4, 3.5, 2.6, 30, 0, "crag" },
-	{ -5.5, 1, 9.8, 2.5, 3, 2, 20, 10, "round" },
-	{ -6, -8.5, 9.6, 3, 2.5, 2, -25, 8, "crag" },
-	{ 6.5, 1.5, 11.4, 2, 2.2, 1.6, 15, 0, "round" },
-}
+-- The cave is a hill of carved stone columns, built the way Column Island
+-- builds the islands' stone (art/src/shared/ColumnIsland.luau). Squared
+-- lintel blocks laid flat across the tunnel just over the opening roof it;
+-- columns stand on the ground down each side of it and on the lintels over
+-- it.
+local CRACK = 0.15
+local LINTEL_BASE, LINTEL_TALL, LINTEL_WIDE = OPEN_TALL + 0.15, 2.8, 8.6
+local LINTEL_TOP = LINTEL_BASE + LINTEL_TALL
+-- The stone runs to just past each mouth, into the back of the porch's
+-- boards (which stand a quarter stud out in front of it).
+local LINTEL_REACH = HALF_LENGTH + 0.15
+-- The tunnel's walls, out from the track's middle each way.
+local WALL = 3.75
+-- In front of each mouth the hill carries on and the tunnel bores on
+-- through it: BORE out from the track's middle each way, just past the
+-- porch's posts (its roof's eaves tuck into the stone), the stone over it standing on the roof at BORE_TOP, out to
+-- BORE_REACH along the track, where the hill's face stands; the porch
+-- sticks out of it, its frame covering the bore's edges.
+local BORE, BORE_TOP, BORE_REACH = 4.9, 8.7, HALF_LENGTH + 2.3
+-- Rocks are built in bands about BAND tall, so their edges have points to
+-- be chipped at.
+local BAND = 1.2
+-- The summit: where it stands ({out, along}) and how tall, flat out to
+-- CROWN of the way to the foot so a cluster of columns stands at the top;
+-- the slope is a cone rounded BOWL of the way toward a dome.
+local PEAK, SUMMIT, CROWN, BOWL = { 2, -2 }, 25, 0.18, 0.2
+-- A ridge along the track keeps the hill high round the tunnel and over
+-- each porch: RIDGE tall out to RIDGE_FLAT either side of the track,
+-- falling away over RIDGE_WIDTH beyond that, and running RIDGE_PAST past
+-- each mouth (to the hill's face) before dropping over RIDGE_FALL.
+local RIDGE, RIDGE_FLAT, RIDGE_WIDTH, RIDGE_PAST, RIDGE_FALL = 17, 9.5, 7, 2.2, 6
+-- Stone sizes at the summit and at the foot, and the shortest a column
+-- stands.
+local SMALLEST, LARGEST, MIN_LENGTH = 2.4, 3.8, 2.5
+-- Chisel cuts per column, at most, and how deep one bites as a share of the
+-- stone's size; fine chips per column (fewest, most) and how deep one bites
+-- in studs; how far a cut's heading may swing from straight out.
+local MAX_CUTS, CUT_DEPTH = 3, { 0.25, 0.65 }
+local CHIPS, CHIP_DEPTH = { 3, 6 }, { 0.2, 0.55 }
+local CUT_SPREAD = math.rad(55)
+
+-- A convex outline ({{x, y}, ...}, counter-clockwise) cut down to the side
+-- where a x + b y <= c.
+local function clipOutline(outline, a: number, b: number, c: number)
+	local kept = {}
+	for i, p in outline do
+		local q = outline[i % #outline + 1]
+		local sp, sq = a * p[1] + b * p[2] - c, a * q[1] + b * q[2] - c
+		if sp <= 0 then
+			table.insert(kept, p)
+		end
+		if (sp < 0 and sq > 0) or (sp > 0 and sq < 0) then
+			local t = sp / (sp - sq)
+			table.insert(kept, { p[1] + t * (q[1] - p[1]), p[2] + t * (q[2] - p[2]) })
+		end
+	end
+	return kept
+end
+-- An outline's area and centroid.
+local function outlineCentre(outline): (number, number, number)
+	local area, cx, cy = 0, 0, 0
+	for i, p in outline do
+		local q = outline[i % #outline + 1]
+		local cross = p[1] * q[2] - q[1] * p[2]
+		area += cross / 2
+		cx += (p[1] + q[1]) * cross
+		cy += (p[2] + q[2]) * cross
+	end
+	if math.abs(area) < 0.05 then
+		-- Too thin for a steady centroid: the points' average.
+		local sx, sy = 0, 0
+		for _, p in outline do
+			sx, sy = sx + p[1], sy + p[2]
+		end
+		return area, sx / #outline, sy / #outline
+	end
+	return area, cx / (6 * area), cy / (6 * area)
+end
+-- The convex hull of some points ({{x, y}, ...}), counter-clockwise.
+local function convexHull(points)
+	local sorted = table.clone(points)
+	table.sort(sorted, function(a, b)
+		return a[1] < b[1] or (a[1] == b[1] and a[2] < b[2])
+	end)
+	local function turn(o, a, b)
+		return (a[1] - o[1]) * (b[2] - o[2]) - (a[2] - o[2]) * (b[1] - o[1])
+	end
+	local hull = {}
+	for _, pass in { 1, -1 } do
+		local start = #hull
+		local first, last = if pass == 1 then 1 else #sorted, if pass == 1 then #sorted else 1
+		for k = first, last, pass do
+			while #hull >= start + 2 and turn(hull[#hull - 1], hull[#hull], sorted[k]) <= 0 do
+				table.remove(hull)
+			end
+			table.insert(hull, sorted[k])
+		end
+		table.remove(hull)
+	end
+	return hull
+end
+
+-- Whether a solid's faces close up: every edge used once each way.
+local function isClosed(faces): boolean
+	local function key(p)
+		return `{math.round(p[1] * 1e4)},{math.round(p[2] * 1e4)},{math.round(p[3] * 1e4)}`
+	end
+	local edges = {}
+	for _, face in faces do
+		for i, a in face do
+			local b = face[i % #face + 1]
+			local ka, kb = key(a), key(b)
+			if ka ~= kb then
+				edges[`{ka}|{kb}`] = (edges[`{ka}|{kb}`] or 0) + 1
+			end
+		end
+	end
+	for edge, uses in edges do
+		local ka, kb = string.match(edge, "^(.-)|(.*)$")
+		if uses ~= 1 or edges[`{kb}|{ka}`] ~= 1 then
+			return false
+		end
+	end
+	return true
+end
+
+-- Cuts a solid (faces as lists of points, wound outward) down to the side
+-- of the plane n . p = d it lies behind, closing the wound with a cap
+-- facing along n; as Column Island carves its stone.
+local function carveSolid(faces, n, d)
+	local kept, cut = {}, {}
+	for _, face in faces do
+		local out = {}
+		for i, a in face do
+			local b = face[i % #face + 1]
+			local sa = a[1] * n[1] + a[2] * n[2] + a[3] * n[3] - d
+			local sb = b[1] * n[1] + b[2] * n[2] + b[3] * n[3] - d
+			if sa <= 0 then
+				table.insert(out, a)
+			end
+			if (sa <= 0) ~= (sb <= 0) then
+				local t = sa / (sa - sb)
+				local p = { a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t }
+				table.insert(out, p)
+				table.insert(cut, p)
+			end
+		end
+		if #out >= 3 then
+			table.insert(kept, out)
+		end
+	end
+	if #cut < 3 then
+		return kept
+	end
+	-- The cap's corners, sorted round their centre in the plane.
+	local mx, my, mz = 0, 0, 0
+	for _, p in cut do
+		mx, my, mz = mx + p[1] / #cut, my + p[2] / #cut, mz + p[3] / #cut
+	end
+	local ux, uy, uz = if math.abs(n[3]) < 0.9 then -n[2] else 0, if math.abs(n[3]) < 0.9 then n[1] else -n[3], if math.abs(n[3]) < 0.9 then 0 else n[2]
+	local length = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / length, uy / length, uz / length
+	local vx, vy, vz = n[2] * uz - n[3] * uy, n[3] * ux - n[1] * uz, n[1] * uy - n[2] * ux
+	local cap = {}
+	for _, p in cut do
+		local ox, oy, oz = p[1] - mx, p[2] - my, p[3] - mz
+		local angle = math.atan2(ox * vx + oy * vy + oz * vz, ox * ux + oy * uy + oz * uz)
+		local duplicate = false
+		for _, other in cap do
+			duplicate = duplicate or math.abs(other[2] - angle) < 1e-4
+		end
+		if not duplicate then
+			table.insert(cap, { p, angle })
+		end
+	end
+	table.sort(cap, function(a, b)
+		return a[2] < b[2]
+	end)
+	if #cap >= 3 then
+		local face = {}
+		for i, entry in cap do
+			face[i] = entry[1]
+		end
+		table.insert(kept, face)
+	end
+	return kept
+end
+
+-- Every block of the cave: {out (- toward the hub), along from the cave's
+-- middle (+ toward the +CAVE_HALF mouth), base height, width out, depth
+-- along, height, turn, lean out, lean along (degrees), lintel, outline in
+-- the block's own frame (x out, y along toward the -CAVE_HALF mouth), for
+-- a block meeting a mouth which way that mouth is in its frame, and for a
+-- column its carved faces in (out, along, up)}.
+local BLOCKS = {}
+local function rectangle(w: number, d: number)
+	return { { -w / 2, -d / 2 }, { w / 2, -d / 2 }, { w / 2, d / 2 }, { -w / 2, d / 2 } }
+end
+do
+	-- The lintels, end to end along the tunnel.
+	local from, n = -LINTEL_REACH, 0
+	while LINTEL_REACH - from > 0.5 do
+		n += 1
+		local depth = 5.5 + (jitter(n, 51) + 1)
+		if LINTEL_REACH - (from + depth) < 3 then
+			depth = LINTEL_REACH - from
+		end
+		local middle = from + depth / 2
+		local mouth = if middle - depth / 2 <= -LINTEL_REACH + 0.01 then { 0, 1 } elseif middle + depth / 2 >= LINTEL_REACH - 0.01 then { 0, -1 } else nil
+		table.insert(BLOCKS, {
+			0.3 * jitter(n, 52), middle, LINTEL_BASE, LINTEL_WIDE, depth - CRACK, LINTEL_TALL,
+			1.5 * jitter(n, 53), 0, 0, true, rectangle(LINTEL_WIDE, depth - CRACK), mouth,
+		})
+		from += depth
+	end
+	-- The columns, built the way Column Island builds its stone
+	-- (art/src/shared/ColumnIsland.luau), the mountain way up: stones
+	-- scattered over the cave's footprint, small near the summit and big
+	-- toward the foot; each stone's cell of a power diagram (so big stones
+	-- claim big cells) raised as a column to the slope's height, its top
+	-- tilted and rising to a low ridge point, so neighbours step against
+	-- each other in tiers; then chiselled by a few angled cuts and fine
+	-- chips, all facing out from the summit. Cells crossing the tunnel are
+	-- split at its walls: the parts beside it stand on the ground, the part
+	-- over it stands on the lintels.
+	local function random(i: number, j: number): number
+		return (jitter(i, j) + 1) / 2
+	end
+	-- The footprint, out (hub side, far side) and along either way from the
+	-- summit's line.
+	local FOOT_OUT, FOOT_ALONG = { -12.5, 13.5 }, 24
+	-- How far a point sits from the summit toward the foot (0 to 1): on a
+	-- squared-off oval (power `square`) for the footprint, so it stays wide
+	-- out to the mouths; on a plain oval (power 2) for the slope, so heights
+	-- fall away steadily in every direction and inner columns stand taller
+	-- than outer ones.
+	local SQUARE = 4
+	local function fromSummit(out: number, middle: number, square: number?): number
+		local power = square or SQUARE
+		local dx = (out - PEAK[1]) / (if out < PEAK[1] then PEAK[1] - FOOT_OUT[1] else FOOT_OUT[2] - PEAK[1])
+		local dy = (middle - PEAK[2]) / (if middle < PEAK[2] then FOOT_ALONG + PEAK[2] else FOOT_ALONG - PEAK[2])
+		return (math.abs(dx) ^ power + math.abs(dy) ^ power) ^ (1 / power)
+	end
+	-- The slope's height: a cone rounded BOWL of the way toward a dome, or
+	-- the ridge along the track where that stands higher.
+	local function slopeAt(out: number, middle: number): number
+		local r = math.clamp((fromSummit(out, middle, 2) - CROWN) / (1 - CROWN), 0, 1)
+		local cone = (1 - r) ^ 1.25
+		local dome = math.sqrt(1 - r * r)
+		local across = math.clamp(1 - (math.abs(out) - RIDGE_FLAT) / RIDGE_WIDTH, 0, 1)
+		local along = math.clamp((LINTEL_REACH + RIDGE_PAST - math.abs(middle)) / RIDGE_FALL, 0, 1)
+		return math.max(SUMMIT * (cone + (dome - cone) * BOWL), RIDGE * across ^ 0.7 * along)
+	end
+	-- Stones, by dart throwing: none crowding another, sized by how high
+	-- on the slope they sit.
+	-- Round each mouth, rows of like-sized stones set so their cells meet
+	-- right on the lines the tunnel and bore cut along (the tunnel's walls,
+	-- the mouth, the bore's sides and the hill's face), so no cut leaves a
+	-- thin sliver of a column: one row just inside the mouth, one between
+	-- the mouth and the face, one just past the face.
+	local stones = {}
+	local ROW_SIZE = 2.6
+	local rowDepth = (BORE_REACH - LINTEL_REACH) / 2
+	local rows = {
+		{ LINTEL_REACH - rowDepth, WALL * 2 / 3 },
+		{ LINTEL_REACH + rowDepth, BORE * 2 / 3 },
+		{ BORE_REACH + rowDepth, BORE * 2 / 3 },
+	}
+	for _, side in { -1, 1 } do
+		for _, row in rows do
+			local along, spacing = row[1], row[2]
+			for k = -3, 3 do
+				table.insert(stones, { k * spacing, side * along, ROW_SIZE })
+			end
+		end
+	end
+	for dart = 1, 4000 do
+		local out = FOOT_OUT[1] - 4 + (FOOT_OUT[2] - FOOT_OUT[1] + 8) * random(dart, 91)
+		local middle = (FOOT_ALONG + 4) * (2 * random(dart, 92) - 1)
+		if fromSummit(out, middle) <= 1.3 then
+			local height = math.clamp(slopeAt(out, middle) / SUMMIT, 0, 1)
+			local size = (LARGEST + (SMALLEST - LARGEST) * height ^ 0.5) * (0.6 + 0.65 * random(dart, 93))
+			local clear = true
+			for _, other in stones do
+				if (out - other[1]) ^ 2 + (middle - other[2]) ^ 2 < ((size + other[3]) * 0.72) ^ 2 then
+					clear = false
+					break
+				end
+			end
+			if clear then
+				table.insert(stones, { out, middle, size })
+			end
+		end
+	end
+	-- Stones scattered past the footprint only bound their neighbours'
+	-- cells, so the foot ends in the stones' own broken edges rather than a
+	-- smooth trimmed wall.
+	for index, stone in stones do
+		-- Stones round the porches are always built, so each porch has stone
+		-- round it out to its front.
+		local byPorches = math.abs(stone[1]) < 9 and math.abs(stone[2]) < BORE_REACH + 1
+		if fromSummit(stone[1], stone[2]) > 1 and not byPorches then
+			continue
+		end
+		-- The stone's power cell, never reaching more than 1.4 times the
+		-- stone's size from it, so a cell at the foot with no stone beyond it
+		-- doesn't sprawl.
+		local reach = 1.4 * stone[3]
+		local cell = { { stone[1] - reach, stone[2] - reach }, { stone[1] + reach, stone[2] - reach }, { stone[1] + reach, stone[2] + reach }, { stone[1] - reach, stone[2] + reach } }
+		for other, q in stones do
+			if other ~= index and #cell >= 3 and (q[1] - stone[1]) ^ 2 + (q[2] - stone[2]) ^ 2 < (3 * LARGEST) ^ 2 then
+				local limit = (q[1] ^ 2 + q[2] ^ 2 - stone[1] ^ 2 - stone[2] ^ 2 - q[3] ^ 2 + stone[3] ^ 2) / 2
+				cell = clipOutline(cell, q[1] - stone[1], q[2] - stone[2], limit)
+			end
+		end
+		if #cell < 3 then
+			continue
+		end
+		local _cellArea, cellOut, cellMiddle = outlineCentre(cell)
+		-- Between the mouths a cell splits at the tunnel's walls, its part
+		-- over the tunnel standing on the lintels; in front of each mouth the
+		-- tunnel bores on through the hill round the porch, the part over it
+		-- standing on the porch's roof; the porch sticks out past the hill's
+		-- face, its frame covering the bore's edges. The pieces of a cell
+		-- share its height and tilt, so they meet flush.
+		local inside = clipOutline(clipOutline(cell, 0, 1, LINTEL_REACH), 0, -1, LINTEL_REACH)
+		local pieces = {
+			{ outline = clipOutline(inside, 1, 0, -WALL), base = -0.5, inside = true },
+			{ outline = clipOutline(clipOutline(inside, -1, 0, WALL), 1, 0, WALL), base = LINTEL_TOP - 0.3, inside = true, over = true },
+			{ outline = clipOutline(inside, -1, 0, -WALL), base = -0.5, inside = true },
+		}
+		for _, side in { -1, 1 } do
+			local front = clipOutline(cell, 0, -side, -LINTEL_REACH)
+			local bore = clipOutline(front, 0, side, BORE_REACH)
+			table.insert(pieces, { outline = clipOutline(bore, 1, 0, -BORE), base = -0.5, flank = true })
+			table.insert(pieces, { outline = clipOutline(clipOutline(bore, -1, 0, BORE), 1, 0, BORE), base = BORE_TOP, over = true })
+			table.insert(pieces, { outline = clipOutline(bore, -1, 0, -BORE), base = -0.5, flank = true })
+			-- Past the face the hill beside the track stands clear of the
+			-- porch's eaves and steps in and out from column to column.
+			local past = clipOutline(front, 0, -side, -BORE_REACH)
+			local step = BORE + 0.4 + 0.6 * random(index, 8)
+			table.insert(pieces, { outline = clipOutline(past, 1, 0, -step), base = -0.5 })
+			table.insert(pieces, { outline = clipOutline(past, -1, 0, -step), base = -0.5 })
+		end
+		local cellRise = slopeAt(cellOut, cellMiddle) + (random(index, 1) - 0.5) * (2.5 + 0.5 * stone[3])
+		local tiltX, tiltY = (random(index, 2) - 0.5) * 0.6, (random(index, 3) - 0.5) * 0.6
+		for p, piece in pieces do
+			local outline = piece.outline
+			-- Each column pulled in a hairline, so neighbours don't share
+			-- their walls' corners.
+			if #outline >= 3 then
+				local shrunk = outline
+				for i, a in outline do
+					local b = outline[i % #outline + 1]
+					local nx, ny = b[2] - a[2], a[1] - b[1]
+					local length = math.sqrt(nx * nx + ny * ny)
+					if length > 1e-6 then
+						shrunk = clipOutline(shrunk, nx / length, ny / length, (nx * a[1] + ny * a[2]) / length - 0.01)
+					end
+				end
+				outline = shrunk
+			end
+			local area, cx, cy = outlineCentre(outline)
+			if #outline < 3 or area < 0.5 then
+				continue
+			end
+			local key = index * 7 + p
+			local rise = math.max(MIN_LENGTH * (0.8 + 0.4 * random(index, 5)), cellRise)
+			-- Over the tunnel and the porches, and beside them, the stone
+			-- stands clear of the lintels and roofs.
+			if piece.over then
+				rise = math.max(rise, piece.base + 4 + random(key, 6))
+			elseif (piece.inside or piece.flank) and math.abs(cx) < BORE + 3 then
+				rise = math.max(rise, LINTEL_TOP + 0.8 + random(key, 6))
+			end
+			local corners = {}
+			for i, corner in outline do
+				corners[i] = { corner[1], corner[2], rise + (corner[1] - cellOut) * tiltX + (corner[2] - cellMiddle) * tiltY }
+			end
+			local peak = { cx, cy, rise + (cx - cellOut) * tiltX + (cy - cellMiddle) * tiltY + 0.07 * stone[3] * (0.5 + random(key, 4)) }
+			-- The column as a closed solid, faces wound outward.
+			local faces = {}
+			local count = #corners
+			local foot = {}
+			for i = count, 1, -1 do
+				table.insert(foot, { corners[i][1], corners[i][2], piece.base })
+			end
+			table.insert(faces, foot)
+			for i = 1, count do
+				local a, b = corners[i], corners[i % count + 1]
+				table.insert(faces, { { a[1], a[2], piece.base }, { b[1], b[2], piece.base }, { b[1], b[2], b[3] }, { a[1], a[2], a[3] } })
+				table.insert(faces, { peak, a, b })
+			end
+			-- Chisel cuts, then fine chips: each faces out from the summit
+			-- within CUT_SPREAD and up at its own angle, biting a set depth
+			-- in from the farthest point along it. By the porches none faces
+			-- a mouth, so the porch boards keep stone behind them.
+			local outward = math.atan2(cy - PEAK[2], cx - PEAK[1])
+			local cuts = {}
+			for k = 1, 1 + math.floor(random(key, 40) * MAX_CUTS) do
+				table.insert(cuts, { outward + (random(key, 40 + k) - 0.5) * 2 * CUT_SPREAD, 0.35 + random(key, 50 + k) * 0.85, stone[3] * (CUT_DEPTH[1] + (CUT_DEPTH[2] - CUT_DEPTH[1]) * random(key, 60 + k)) })
+			end
+			for k = 1, CHIPS[1] + math.floor(random(key, 70) * (CHIPS[2] - CHIPS[1] + 1)) do
+				table.insert(cuts, { outward + (random(key, 70 + k) - 0.5) * 2 * CUT_SPREAD, 0.35 + random(key, 80 + k) * 1.05, CHIP_DEPTH[1] + (CHIP_DEPTH[2] - CHIP_DEPTH[1]) * random(key, 90 + k) })
+			end
+			for _, cut in cuts do
+				local heading, lift, depth = cut[1], cut[2], cut[3]
+				local n = { math.cos(heading) * math.cos(lift), math.sin(heading) * math.cos(lift), math.sin(lift) }
+				if piece.inside and math.abs(cx) < 8.5 and math.abs(cy) > LINTEL_REACH - 4 and n[2] * cy > 0 then
+					n[2] = -n[2]
+				end
+				local farthest = -math.huge
+				for _, face in faces do
+					for _, q in face do
+						farthest = math.max(farthest, q[1] * n[1] + q[2] * n[2] + q[3] * n[3])
+					end
+				end
+				-- A cut stays clear of the column's whole foot, so the column
+				-- still stands on its full outline (and the porch boards keep
+				-- stone behind them); over a porch it leaves the face above the
+				-- roof standing upright for a few studs, so no wedge opens
+				-- between the roof and the stone.
+				local footMost = -math.huge
+				for _, corner in corners do
+					footMost = math.max(footMost, corner[1] * n[1] + corner[2] * n[2] + piece.base * n[3])
+				end
+				local plane = math.max(farthest - depth, footMost + (if piece.over then 3 else 0.4))
+				if plane < farthest then
+					-- A cut whose cap fails to close (a sliver) is left out.
+					local carved = carveSolid(faces, n, plane)
+					if isClosed(carved) then
+						faces = carved
+					end
+				end
+			end
+			local low, high = { math.huge, math.huge }, { -math.huge, -math.huge }
+			for _, q in outline do
+				low = { math.min(low[1], q[1]), math.min(low[2], q[2]) }
+				high = { math.max(high[1], q[1]), math.max(high[2], q[2]) }
+			end
+			table.insert(BLOCKS, { cx, cy, piece.base, high[1] - low[1], high[2] - low[2], rise - piece.base, 0, 0, 0, false, nil, nil, faces })
+		end
+	end
+end
 local ROCK = { 0.52, 0.54, 0.6 }
 
 -- The highlight band's reach from an edge, in studs, its strength, and how
 -- far from a corner its strokes taper away.
 local ROCK_EDGE, ROCK_LIT, ROCK_TAPER = 0.6, 1.8, 0.8
--- Pebbles are small, so their rims are narrower and fainter.
+-- Chunks are small, so their rims are narrower and fainter.
 local PEBBLE_EDGE, PEBBLE_LIT = 0.25, 0.7
 
--- Which rock a texel is on. As each rock is built, points are scattered
+-- Which block a texel is on. As each block is built, points are scattered
 -- over its faces about SAMPLE apart into a grid of SAMPLE_CELL cells, each
--- point tagged with its rock; a texel lies on its own rock's surface, so the
--- nearest point on a face turned the same way names it. Most cells hold one
--- rock's points, so the search only runs where rocks meet.
+-- point tagged with its block; a texel lies on its own block's surface, so
+-- the nearest point on a face turned the same way names it. Most cells hold
+-- one block's points, so the search only runs where blocks meet.
 local SAMPLE, SAMPLE_CELL = 0.35, 0.5
-local rockSamples = {}
+local blockSamples = {}
 local function sampleCell(x: number, y: number, z: number): string
 	return `{math.floor(x / SAMPLE_CELL)},{math.floor(y / SAMPLE_CELL)},{math.floor(z / SAMPLE_CELL)}`
 end
-local function sampleRock(m, n: number)
+local function sampleBlock(m, n: number)
 	local vec = EditMesh.vec
 	for id, face in m.faces do
 		local normal = m:faceNormal(id)
@@ -3632,12 +4004,12 @@ local function sampleRock(m, n: number)
 				for j = 0, steps - i do
 					local p = vec.add(a, vec.add(vec.scale(vec.sub(b, a), i / steps), vec.scale(vec.sub(c, a), j / steps)))
 					local key = sampleCell(p[1], p[2], p[3])
-					local cell = rockSamples[key]
+					local cell = blockSamples[key]
 					if not cell then
-						cell = { rocks = {}, points = {} }
-						rockSamples[key] = cell
+						cell = { blocks = {}, points = {} }
+						blockSamples[key] = cell
 					end
-					cell.rocks[n] = true
+					cell.blocks[n] = true
 					table.insert(cell.points, { p[1], p[2], p[3], n, normal })
 				end
 			end
@@ -3645,27 +4017,25 @@ local function sampleRock(m, n: number)
 	end
 end
 
--- The texel's place in rock n (-1..1 each way: out, along, up), in the
--- rock's own frame, with a grounded rock's lean undone.
-local function rockFrame(n: number, x: number, y: number, z: number): (number, number, number)
-	local rockOut, rockMiddle, base, w, d, h, turn, lean = table.unpack(ROCKS[n])
-	-- The rock's frame runs along toward the -CAVE_HALF mouth.
-	local dx = math.sqrt(x * x + y * y) - TRACK_RADIUS - rockOut
-	local dy = rockMiddle - math.deg(math.atan2(y, x)) / DEGREES_PER_STUD
+-- The texel's place in block n (-1..1 each way: out, along, up), in the
+-- block's own frame, with its lean undone.
+local function blockFrame(n: number, x: number, y: number, z: number): (number, number, number)
+	local blockOut, blockMiddle, base, w, d, h, turn, leanOut, leanAlong = table.unpack(BLOCKS[n])
+	-- The block's frame runs along toward the -CAVE_HALF mouth.
+	local dx = math.sqrt(x * x + y * y) - TRACK_RADIUS - blockOut
+	local dy = blockMiddle - math.deg(math.atan2(y, x)) / DEGREES_PER_STUD
 	local c, s = math.cos(math.rad(turn)), math.sin(math.rad(turn))
-	local v = dy * c - dx * s
-	if base <= 0 then
-		v += math.tan(math.rad(lean)) * (z - base)
-	end
-	return math.clamp((dx * c + dy * s) / (w / 2), -1, 1), math.clamp(v / (d / 2), -1, 1), math.clamp((z - base - h / 2) / (h / 2), -1, 1)
+	local u = dx * c + dy * s - math.tan(math.rad(leanOut)) * (z - base)
+	local v = dy * c - dx * s - math.tan(math.rad(leanAlong)) * (z - base)
+	return math.clamp(u / (w / 2), -1, 1), math.clamp(v / (d / 2), -1, 1), math.clamp((z - base - h / 2) / (h / 2), -1, 1)
 end
 
-local function rockAt(x: number, y: number, z: number, nx: number, ny: number, nz: number): number?
+local function blockAt(x: number, y: number, z: number, nx: number, ny: number, nz: number): number?
 	local cx, cy, cz = math.floor(x / SAMPLE_CELL), math.floor(y / SAMPLE_CELL), math.floor(z / SAMPLE_CELL)
-	local home = rockSamples[`{cx},{cy},{cz}`]
+	local home = blockSamples[`{cx},{cy},{cz}`]
 	if home then
-		local only = next(home.rocks)
-		if next(home.rocks, only) == nil then
+		local only = next(home.blocks)
+		if next(home.blocks, only) == nil then
 			return only
 		end
 	end
@@ -3674,7 +4044,7 @@ local function rockAt(x: number, y: number, z: number, nx: number, ny: number, n
 	for ix = cx - 1, cx + 1 do
 		for iy = cy - 1, cy + 1 do
 			for iz = cz - 1, cz + 1 do
-				local cell = rockSamples[`{ix},{iy},{iz}`]
+				local cell = blockSamples[`{ix},{iy},{iz}`]
 				if cell then
 					for _, p in cell.points do
 						local d = (p[1] - x) ^ 2 + (p[2] - y) ^ 2 + (p[3] - z) ^ 2
@@ -3692,26 +4062,26 @@ local function rockAt(x: number, y: number, z: number, nx: number, ny: number, n
 	return nearest or any
 end
 
--- Blue-grey stone, each rock its own gradient: darker and cooler at its
+-- Blue-grey stone, each block its own gradient: darker and cooler at its
 -- foot, lighter at its top, the shade running its own way (tilted a little
 -- off upright), as strong (about a quarter either way) and as warm or cool
--- as that rock has it. Broad soft patches over it, and tops a little lighter.
+-- as that block has it. Broad soft patches over it, and tops a little lighter.
 local function rockPaint(x: number, y: number, z: number, nx: number, ny: number, nz: number): (number, number, number)
-	-- Pebbles aren't sampled: the first rock's tones, shaded by height alone.
-	local n = rockAt(x, y, z, nx, ny, nz)
+	-- Chunks aren't sampled: the first block's tones, shaded by height alone.
+	local n = blockAt(x, y, z, nx, ny, nz)
 	local shade
 	if n then
-		local u, v, t = rockFrame(n, x, y, z)
+		local u, v, t = blockFrame(n, x, y, z)
 		shade = 0.8 * t + 0.35 * jitter(n, 21) * u + 0.35 * jitter(n, 22) * v
 	else
 		n, shade = 1, math.clamp(z / 0.5 - 1, -1, 1)
 	end
-	-- Feet darken a fifth more than tops lighten; small rocks a stronger
+	-- Feet darken a fifth more than tops lighten; small blocks a stronger
 	-- gradient, so they stand apart from the big ones behind them.
 	if shade < 0 then
 		shade *= 1.2
 	end
-	local _out, _middle, _base, w, d, h = table.unpack(ROCKS[n])
+	local _out, _middle, _base, w, d, h = table.unpack(BLOCKS[n])
 	local strength = 0.24 + 0.05 * jitter(n, 23) + (if math.min(w, d, h) < 3 then 0.06 else 0)
 	local k = (0.94 + 0.06 * math.noise(x / 3, y / 3, z / 3)) * (1 + 0.12 * jitter(n, 5)) * (1 + strength * shade)
 	if nz > 0.6 then
@@ -3728,132 +4098,284 @@ local function boldRims()
 	parts[#parts].blend = 0.65
 	parts[#parts].taper = ROCK_TAPER
 end
--- The kinds of boulder, so the pile isn't one shape over and over: how
--- big its chamfers are (share of its smallest side), how much it narrows to
--- the top, how far its top tilts, how many top corners are chipped off,
--- and whether its top steps up into a plateau or it is pulled round.
-local BOULDER_KINDS = {
-	block = { chamfer = 0.16, taper = 0.12, tilt = 7, chips = 1, plateau = true },
-	slab = { chamfer = 0.12, taper = 0.08, tilt = 20, chips = 1 },
-	crag = { chamfer = 0.14, taper = 0.38, tilt = 10, chips = 2 },
-	round = { chamfer = 0.24, taper = 0.06, tilt = 5, chips = 0, round = 0.15 },
+
+-- How each kind of block is cut by plane slicing, the way stylized rocks
+-- are chipped: one big slab cut `slab` studs deep
+-- across its top, `tops` more shallow cuts break the rest into facets,
+-- `chips` small cuts take bites out of the edges, and on a third of the
+-- taller blocks a corner of the top is stepped down `notch` studs.
+local CUTS = {
+	rock = { slab = 0.8, tops = 2, chips = 3, notch = 1 },
+	lintel = { slab = 0, tops = 1, chips = 2, notch = 0 },
+	chunk = { slab = 0.3, tops = 3, chips = 1, notch = 0 },
 }
 
--- One boulder `n` of a kind, w by d by h about its middle: a block with
--- every edge chamfered (each face inset and lifted, so the rings slope off
--- at 45 degrees), then shaped by its kind. A `grounded` one has its bottom
--- cut flat across its full footprint, so it sits flat on the ground with
--- no rounded underside.
-local function boulder(n: number, w: number, d: number, h: number, kindName: string?, grounded: boolean?)
-	local kind = BOULDER_KINDS[kindName or "block"]
-	local size = math.min(w, d, h)
-	local chamfer = kind.chamfer * size * (1 + 0.2 * jitter(n, 13))
-	local m = EditMesh.box({ w - 2 * chamfer, d - 2 * chamfer, h - 2 * chamfer })
-	m:inset(m:select("face", "all"), chamfer, chamfer, { each = true })
-	if kind.round and grounded then
-		-- Rounded off from its middle up only, so its lower sides stay full
-		-- down to the ground instead of tucking in to a small base.
-		local radius, count = 0, 0
-		m:transform(function(p)
-			radius += EditMesh.vec.length(p)
-			count += 1
-			return p
-		end)
-		radius /= count
-		m:transform(function(p)
-			local pull = kind.round * math.clamp(p[3] / (0.25 * h), 0, 1)
-			return EditMesh.vec.add(p, EditMesh.vec.scale(EditMesh.vec.sub(EditMesh.vec.scale(EditMesh.vec.unit(p), radius), p), pull))
-		end)
-	elseif kind.round then
-		m:toSphere(m:select("vertex", "all"), kind.round)
-	end
-	if kind.plateau and n % 3 ~= 0 then
-		m:inset(m:select("face", "facing", { 0, 0, 1 }, 5), 0.2 * size, 0.06 * h)
-	end
-	local tilt = kind.tilt * (if jitter(n, 11) > 0 then 1 else -1) * (0.7 + 0.3 * math.abs(jitter(n, 12)))
-	m:select("vertex", "where", function(p)
-		return p[3] > h / 2 - chamfer
-	end):rotate({ 1, 0, 0 }, tilt, { 0, 0, h / 2 })
-	-- Chips: every point within `reach` of a corner (summing the three
-	-- axes) pushed back onto the plane that far from it, so the corner is
-	-- cut off in one flat face. Only top corners, so no rock is cut away
-	-- where it meets its neighbours below.
-	for k = 1, kind.chips + (if kind.plateau then n % 2 else 0) do
-		local corner = {
-			if jitter(n, k * 3) > 0 then w / 2 else -w / 2,
-			if jitter(n, k * 3 + 1) > 0 then d / 2 else -d / 2,
-			h / 2,
-		}
-		local reach = (0.55 + 0.25 * jitter(n, k * 3 + 7)) * size
-		m:transform(function(p)
-			local depth = 0
-			for axis = 1, 3 do
-				depth += math.abs(p[axis] - corner[axis])
-			end
-			if depth >= reach then
-				return p
-			end
-			local back = (reach - depth) / 3
-			return {
-				p[1] - math.sign(corner[1]) * back,
-				p[2] - math.sign(corner[2]) * back,
-				p[3] - math.sign(corner[3]) * back,
-			}
-		end)
-	end
+-- One cut: a plane tangent at a point (along unit direction u) of the
+-- ellipsoid with radii r about `centre`, moved `depth` inward; every point
+-- past it (and, when `reach` is set, within reach of the touching point)
+-- pressed back onto it. Pressing keeps the mesh as it is, faces flattened.
+local function slice(m, centre, r, u, depth: number, reach: number?)
+	local vec = EditMesh.vec
+	local touch = vec.add(centre, { r[1] * u[1], r[2] * u[2], r[3] * u[3] })
+	local normal = vec.unit({ u[1] / r[1], u[2] / r[2], u[3] / r[3] })
 	m:transform(function(p)
-		local taper = 1 - kind.taper * (p[3] / h + 0.5)
-		local s = 0.03 * size
+		local over = vec.dot(vec.sub(p, touch), normal) + depth
+		if over <= 0 or (reach and vec.length(vec.sub(p, touch)) > reach) then
+			return p
+		end
+		return vec.sub(p, vec.scale(normal, over))
+	end)
+end
+
+-- One block n: its outline (convex, counter-clockwise, about its middle)
+-- raised h tall in bands, every edge chamfered unevenly (the outline pulled
+-- in by each side's own depth, then each side and the top and bottom
+-- pushed back out by their depth and inset by their own width, so each
+-- chamfer is wider on one side and slopes off at its own angle), then cut
+-- by plane slicing as its kind says, and given a slight taper. A
+-- `grounded` one has its underside pressed flat so it sits flat on the
+-- ground. No cut faces `mouth` (a direction in the block's frame), so the
+-- side a porch's boards rest on stays whole.
+local function stoneBlock(n: number, outline, h: number, kind: string, grounded: boolean, mouth: { number }?)
+	local vec = EditMesh.vec
+	local cuts = CUTS[kind]
+	local low, high = { math.huge, math.huge }, { -math.huge, -math.huge }
+	for _, p in outline do
+		low = { math.min(low[1], p[1]), math.min(low[2], p[2]) }
+		high = { math.max(high[1], p[1]), math.max(high[2], p[2]) }
+	end
+	local narrow = math.min(high[1] - low[1], high[2] - low[2])
+	local size = math.min(narrow, h)
+	local chamfer = math.min((if kind == "rock" then 0.12 elseif h < 4.5 then 0.2 else 0.12) * narrow * (1 + 0.25 * jitter(n, 13)), 0.2 * h)
+	-- Each side's depth and its outward direction; the outline pulled in.
+	local sides, inner = {}, outline
+	for i, p in outline do
+		local q = outline[i % #outline + 1]
+		local dx, dy = q[1] - p[1], q[2] - p[2]
+		local length = math.sqrt(dx * dx + dy * dy)
+		local normal = { dy / length, -dx / length }
+		local depth = chamfer * (1 + 0.5 * jitter(n, 30 + i))
+		table.insert(sides, { normal = normal, depth = depth, length = length })
+		inner = clipOutline(inner, normal[1], normal[2], normal[1] * p[1] + normal[2] * p[2] - depth)
+	end
+	local top, bottom = chamfer * (1 + 0.5 * jitter(n, 28)), chamfer * (1 + 0.5 * jitter(n, 29))
+	-- The prism: rings of the pulled-in outline up its height.
+	local m = EditMesh.new()
+	local z0, z1 = -h / 2 + bottom, h / 2 - top
+	local bands = math.max(1, math.round((z1 - z0) / BAND))
+	local rings = {}
+	for k = 0, bands do
+		local z = z0 + (z1 - z0) * k / bands
+		rings[k] = {}
+		for i, p in inner do
+			rings[k][i] = m:addVertex(p[1], p[2], z)
+		end
+	end
+	-- Each side's faces and each cap's, kept to inset exactly those.
+	local count = #inner
+	local sideFaces = {}
+	for i = 1, count do
+		sideFaces[i] = {}
+		local j = i % count + 1
+		for k = 0, bands - 1 do
+			table.insert(sideFaces[i], m:addFace({ rings[k][i], rings[k][j], rings[k + 1][j], rings[k + 1][i] }))
+		end
+	end
+	-- The caps, as a fan of quads (and one triangle when the sides are odd)
+	-- round a middle point.
+	local _area, cx, cy = outlineCentre(inner)
+	local capFaces = { top = {}, bottom = {} }
+	for _, cap in { { ring = rings[bands], z = z1, up = true }, { ring = rings[0], z = z0, up = false } } do
+		local ring = cap.ring
+		local made = if cap.up then capFaces.top else capFaces.bottom
+		local function face(ids)
+			if not cap.up then
+				local flipped = {}
+				for k = #ids, 1, -1 do
+					table.insert(flipped, ids[k])
+				end
+				ids = flipped
+			end
+			table.insert(made, m:addFace(ids))
+		end
+		if count <= 4 then
+			face(table.clone(ring))
+		else
+			local middle = m:addVertex(cx, cy, cap.z)
+			local i = 1
+			while i <= count do
+				if i + 1 <= count then
+					face({ middle, ring[i], ring[i + 1], ring[(i + 1) % count + 1] })
+					i += 2
+				else
+					face({ middle, ring[i], ring[1] })
+					i += 1
+				end
+			end
+		end
+	end
+	-- The chamfers: each side, the top and the bottom pushed back out to the
+	-- outline by its depth and inset by its own width, never past a third of
+	-- the face.
+	-- A pulled-in side that vanished (a short edge between two deep ones)
+	-- has no faces; the others are matched by the way they face.
+	for i, side in sides do
+		local facing = { side.normal[1], side.normal[2], 0 }
+		local ids = nil
+		for k, faces in sideFaces do
+			if #faces > 0 and EditMesh.vec.dot(m:faceNormal(faces[1]), facing) > 0.999 then
+				ids = faces
+				sideFaces[k] = {}
+				break
+			end
+		end
+		if ids then
+			local width = math.min(side.depth * (1 + 0.35 * jitter(n, 40 + i)), side.length / 3, (z1 - z0) / 3)
+			m:inset(m:select("face", "ids", ids), width, side.depth)
+		end
+	end
+	m:inset(m:select("face", "ids", capFaces.top), math.min(top * (1 + 0.35 * jitter(n, 47)), narrow / 3), top)
+	m:inset(m:select("face", "ids", capFaces.bottom), math.min(bottom * (1 + 0.35 * jitter(n, 48)), narrow / 3), bottom)
+	-- Plane slicing. The top cuts touch an ellipsoid round the block's top
+	-- (as wide as the block, as tall as it is wide or the block's height,
+	-- whichever is less), from directions tipped 25 to 55 degrees off
+	-- upright; the chips touch one round a spot up the block's side, from
+	-- near-level directions, and reach only a little way.
+	local function awayFromMouth(u)
+		if mouth and u[1] * mouth[1] + u[2] * mouth[2] > 0 then
+			return { -u[1], -u[2], u[3] }
+		end
+		return u
+	end
+	local half = { (high[1] - low[1]) / 2, (high[2] - low[2]) / 2 }
+	local centre = { (high[1] + low[1]) / 2, (high[2] + low[2]) / 2 }
+	local capTall = math.min(h / 2, 1.2 * math.max(half[1], half[2]))
+	local cap = { centre[1], centre[2], h / 2 - capTall }
+	for k = 0, cuts.tops do
+		-- Cut 0 is the slab: 45 to 55 degrees, deep. The rest are shallow,
+		-- set out past the ellipsoid so they only shave.
+		local around = math.pi * jitter(n, 100 + k)
+		local tip = math.rad(if k == 0 then 50 + 5 * jitter(n, 110) else 40 + 15 * jitter(n, 110 + k))
+		local u = awayFromMouth({ math.sin(tip) * math.cos(around), math.sin(tip) * math.sin(around), math.cos(tip) })
+		local depth = if k == 0 then math.min(cuts.slab * (1 + 0.25 * jitter(n, 120)), 0.3 * h) - 0.25 * size else -0.25 * size + 0.1 * jitter(n, 120 + k)
+		if k > 0 or cuts.slab > 0 then
+			slice(m, cap, { half[1], half[2], capTall }, u, depth)
+		end
+	end
+	-- The notch: a near-level cut at a top corner, only that corner, so it
+	-- steps down.
+	if cuts.notch > 0 and h > 4 and jitter(n, 125) > 0.33 then
+		local toward = awayFromMouth({ math.cos(math.pi * jitter(n, 126)), math.sin(math.pi * jitter(n, 126)), 0 })
+		local corner = { centre[1] + half[1] * toward[1], centre[2] + half[2] * toward[2], h / 2 }
+		slice(m, corner, { 1, 1, 1 }, { 0, 0, 1 }, cuts.notch, 0.35 * narrow)
+	end
+	for k = 1, cuts.chips + math.floor(h / 6) do
+		local around = math.pi * jitter(n, 130 + k)
+		local tip = math.rad(90 + 25 * jitter(n, 140 + k))
+		local u = awayFromMouth({ math.sin(tip) * math.cos(around), math.sin(tip) * math.sin(around), math.cos(tip) })
+		local at = { centre[1], centre[2], (h / 2 - 0.6) * jitter(n, 150 + k) }
+		slice(m, at, { half[1], half[2], math.min(half[1], half[2]) }, u, -0.04 * size, (0.35 + 0.15 * jitter(n, 160 + k)) * narrow)
+	end
+	-- A slight taper and a little unevenness.
+	local taper = 0.03 + 0.03 * jitter(n, 80)
+	m:transform(function(p)
+		local k = 1 - taper * (p[3] / h + 0.5)
+		local s = 0.02 * size
 		return {
-			p[1] * taper + s * math.noise(p[1] / size + n, p[2] / size, p[3] / size),
-			p[2] * taper + s * math.noise(p[1] / size, p[2] / size + n, p[3] / size),
+			p[1] * k + s * math.noise(p[1] / size + n, p[2] / size, p[3] / size),
+			p[2] * k + s * math.noise(p[1] / size, p[2] / size + n, p[3] / size),
 			p[3] + s * math.noise(p[1] / size, p[2] / size, p[3] / size + n),
 		}
 	end)
 	if grounded then
-		-- Everything below a plane above the bottom chamfer (and above the
-		-- corners a round rock pulls up) pressed flat onto it, then
-		-- stretched back down so that plane is its base and its top stays
-		-- put.
-		local floor = 0.3 * size - h / 2
+		-- Everything below a plane above the bottom chamfer pressed flat
+		-- onto it, then stretched back down so that plane is its base and
+		-- its top stays put.
+		local floor = math.min(0.3 * size, 0.6) - h / 2
 		m:transform(function(p)
 			return { p[1], p[2], -h / 2 + (math.max(p[3], floor) - floor) * h / (h / 2 - floor) }
 		end)
 	end
+	faceOut(m)
 	return m
 end
 
--- The rocks go in four parts, one per quarter of the pile (hub or far
+-- A block leaned by shearing (so its base stays flat), turned, and set in
+-- place.
+local function placedBlock(m, n: number, block)
+	local out, middle, base, _w, _d, h, turn, leanOut, leanAlong = table.unpack(block)
+	local tanOut, tanAlong = math.tan(math.rad(leanOut)), math.tan(math.rad(leanAlong))
+	m:transform(function(p)
+		return { p[1] + tanOut * (p[3] + h / 2), p[2] + tanAlong * (p[3] + h / 2), p[3] }
+	end)
+	m:select("vertex", "all"):rotate({ 0, 0, 1 }, turn, { 0, 0, 0 })
+	placed(m, 1, out, HALF_LENGTH - middle, base, h)
+	sampleBlock(m, n)
+	return m
+end
+
+part("Lintels", nil, ROCK, function(mesh)
+	for n, block in BLOCKS do
+		if block[10] then
+			placedBlock(stoneBlock(n, block[11], block[6], "lintel", false, block[12]), n, block):emit(mesh)
+		end
+	end
+end, nil, rockPaint, nil, nil, true, ROCK_EDGE, nil, ROCK_LIT)
+boldRims()
+
+-- A column's carved faces, set along the track's curve and sampled for
+-- the paint.
+local function emitColumn(mesh, n: number, faces)
+	local vec = EditMesh.vec
+	for _, face in faces do
+		local points, ids = {}, {}
+		for k, p in face do
+			points[k] = caveAt(1, p[1], p[3], HALF_LENGTH - p[2])
+			ids[k] = mesh:vertex(table.unpack(points[k]))
+		end
+		mesh:face(ids)
+		-- Points over the face for which block a texel is on.
+		local normal = vec.cross(vec.sub(points[2], points[1]), vec.sub(points[3], points[1]))
+		if vec.length(normal) > 1e-9 then
+			normal = vec.unit(normal)
+			local a = points[1]
+			for k = 2, #points - 1 do
+				local b, c = points[k], points[k + 1]
+				local longest = math.max(vec.length(vec.sub(b, a)), vec.length(vec.sub(c, a)), vec.length(vec.sub(c, b)))
+				local steps = math.max(1, math.ceil(longest / SAMPLE))
+				for i = 0, steps do
+					for j = 0, steps - i do
+						local p = vec.add(a, vec.add(vec.scale(vec.sub(b, a), i / steps), vec.scale(vec.sub(c, a), j / steps)))
+						local key = sampleCell(p[1], p[2], p[3])
+						local cell = blockSamples[key]
+						if not cell then
+							cell = { blocks = {}, points = {} }
+							blockSamples[key] = cell
+						end
+						cell.blocks[n] = true
+						table.insert(cell.points, { p[1], p[2], p[3], n, normal })
+					end
+				end
+			end
+		end
+	end
+end
+
+-- The columns go in four parts, one per quarter of the hill (hub or far
 -- side, either half along), so each part's texture stays within 1024
 -- texels square at the item's texel density.
-local function rockQuarter(rock): number
-	return (if rock[1] < 0 then 1 else 2) + (if rock[2] < 0 then 0 else 2)
+local function columnQuarter(block): number
+	return (if block[1] < 0 then 1 else 2) + (if block[2] < 0 then 0 else 2)
 end
 for quarter = 1, 4 do
 	part(`Rocks{quarter}`, nil, ROCK, function(mesh)
-		for n, rock in ROCKS do
-			if rockQuarter(rock) ~= quarter then
-				continue
+		for n, block in BLOCKS do
+			if block[13] and columnQuarter(block) == quarter then
+				emitColumn(mesh, n, block[13])
 			end
-			local out, middle, base, w, d, h, turn, lean, kind = table.unpack(rock)
-			-- A rock on the ground leans by shearing, so its base stays flat on
-			-- the ground; one higher up tips over its bottom edge.
-			local grounded = base <= 0
-			local m = boulder(n, w, d, h, kind, grounded)
-			if grounded then
-				local shear = math.tan(math.rad(lean))
-				m:transform(function(p)
-					return { p[1], p[2] - shear * (p[3] + h / 2), p[3] }
-				end)
-			else
-				m:select("vertex", "all"):rotate({ 1, 0, 0 }, lean, { 0, 0, -h / 2 })
-			end
-			m:select("vertex", "all"):rotate({ 0, 0, 1 }, turn, { 0, 0, 0 })
-			placed(m, 1, out, HALF_LENGTH - middle, base, h)
-			sampleRock(m, n)
-			m:emit(mesh)
 		end
-	end, nil, rockPaint, nil, nil, true, ROCK_EDGE, nil, ROCK_LIT)
+		-- Twice the contact shadow, so the joints between columns go dark.
+	end, nil, rockPaint, nil, nil, true, ROCK_EDGE, 2, ROCK_LIT)
 	boldRims()
 end
 
@@ -3976,25 +4498,26 @@ end, nil, nil, true)
 
 -- ------------------------------------------------------------ the stones
 
--- Pebbles round each porch's foot, small chipped boulders partly buried: {out, along from the
--- mouth, width, depth, height}; the far mouth's are mirrored across.
+-- Chunks beside the track past each porch's front, small squared blocks
+-- broken off the hill's face, partly buried: {out, along from the mouth,
+-- width, depth, height}; the far mouth's are mirrored across.
 local PEBBLES = {
-	{ -5.3, -2.4, 1.3, 1.1, 0.8 },
-	{ -6.2, -0.9, 1.8, 1.5, 1.1 },
-	{ -5.8, -5.2, 0.9, 0.8, 0.55 },
-	{ 5.4, -3, 1.1, 1, 0.65 },
-	{ 6.3, -1.4, 2, 1.6, 1.2 },
-	{ 4.9, -5.6, 1.2, 1, 0.6 },
-	{ -4.6, -1.2, 0.7, 0.6, 0.45 },
-	{ 5.1, -0.6, 0.8, 0.7, 0.5 },
-	{ -7, -3.6, 1.4, 1.2, 0.9 },
-	{ 7.3, -4.2, 1, 0.9, 0.6 },
+	{ -3.8, -8.4, 0.98, 0.83, 0.6 },
+	{ -4.2, -6.9, 1.35, 1.12, 0.83 },
+	{ -4.0, -11.2, 0.68, 0.6, 0.41 },
+	{ 3.8, -9, 0.83, 0.75, 0.49 },
+	{ 4.3, -7.4, 1.5, 1.2, 0.9 },
+	{ 3.6, -11.6, 0.9, 0.75, 0.45 },
+	{ -3.4, -7.2, 0.52, 0.45, 0.34 },
+	{ 3.7, -6.6, 0.6, 0.52, 0.38 },
+	{ -4.6, -9.6, 1.05, 0.9, 0.68 },
+	{ 4.8, -10.2, 0.75, 0.68, 0.45 },
 }
 part("Stones", nil, ROCK, function(mesh)
 	for _, side in { -1, 1 } do
 		for n, pebble in PEBBLES do
 			local out, along, w, d, h = table.unpack(pebble)
-			local m = boulder(100 + n + side * 10, w, d, h, "round", true)
+			local m = stoneBlock(200 + n + side * 10, rectangle(w, d), h, "chunk", true)
 			m:select("vertex", "all"):rotate({ 0, 0, 1 }, 40 * jitter(n, side), { 0, 0, 0 })
 			placed(m, side, side * out, along, -0.25 * h, h):emit(mesh)
 		end

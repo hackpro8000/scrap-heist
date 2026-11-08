@@ -1,43 +1,51 @@
 -- Part plan for MineLoop, after the reference the user picked
--- (art/concepts/mine-portal-reference.png): a pile of chunky rounded
--- boulders over the track with a timber porch at each mouth. In the model's
--- own studs: origin the hub's middle at deck level, Z up, the cave
--- straddling the track at +X (radius 72), its mouths at Y = -13.7 and
--- +13.7, each porch running about 3.5 on out of its mouth. The rocks are
--- four parts, one per quarter of the pile. Paired pieces
+-- (Column Island's carved stone columns): a hill of carved columns over the
+-- track, with a timber porch at each mouth. In the model's own studs: origin
+-- the hub's middle at deck level, Z up, the cave straddling the track at +X
+-- (radius 72), its mouths at Y = -13.7 and +13.7, each porch running about
+-- 3.5 on out of its mouth. The rocks are four parts, one per quarter of
+-- the pile, so each texture holds the item's texel density. Paired pieces
 -- (one per mouth) are one part each, so their boxes cover both mouths.
 return {
 	parts = {
 		{
-			name = "Rocks1",
+			name = "Lintels",
 			level = "core",
-			at = { 66.4, -5.9, 8.3 },
-			size = { 21.5, 16.3, 17.6 },
-			note = "about 47 chunky boulders and flat slabs of very different sizes (a few big ones, medium walls and roof, small ones at the foot and in the joints) with rounded edges and broad faces, blue-grey, stacked in tiers to a tall peak toward the hub; rocks flank each porch against its boards; the rocks themselves wall and roof the tunnel, overlapping so no gap shows through: nothing but rock. Those on the ground sit flat on it: the hub side, toward the - mouth quarter"
+			at = { 71.4, 0, 8.2 },
+			size = { 9.9, 28.8, 2.8 },
+			note = "big squared stone blocks laid flat across the tunnel just over the 6.6 opening, front to back, roofing it and carrying the columns above; their ends show over each porch",
+		},
+		{
+			name = "Rocks1",
+			level = "major",
+			attaches = "Lintels",
+			at = { 65.1, -10.5, 10.8 },
+			size = { 16.2, 22.2, 22.6 },
+			note = "a hill of carved stone columns built the Column Island way: a power diagram of stones (small near a summit on the far side, big toward the foot), each cell a column rising to the slope's height with a tilted top and a low ridge point, chiselled by 1 to 3 angled cuts and 3 to 6 chips all facing out from the summit; cells crossing the tunnel split at its walls, the part over it standing on the lintels; the hill carries on past each mouth and the tunnel bores on through it, the stone over each porch standing on its roof, each porch sticking out of the hill's face about 3.5, its frame covering the bore's edges; a ridge about 17 tall along the track keeps the hill high over the tunnel and porches, under a crown of columns about 25 tall: the hub side, toward the - mouth quarter",
 		},
 		{
 			name = "Rocks2",
-			level = "core",
-			attaches = "Rocks1",
-			at = { 76.4, -7, 6.7 },
-			size = { 22.9, 20.7, 14.4 },
-			note = "the same pile: the far side, toward the - mouth quarter"
+			level = "major",
+			attaches = "Lintels",
+			at = { 76.7, -12.6, 12.5 },
+			size = { 16.1, 26.8, 25.9 },
+			note = "the same pile: the far side, toward the - mouth quarter",
 		},
 		{
 			name = "Rocks3",
-			level = "core",
-			attaches = "Rocks1",
-			at = { 67.7, 6.2, 5.7 },
-			size = { 17.9, 14.8, 12.3 },
-			note = "the same pile: the hub side, toward the + mouth quarter"
+			level = "major",
+			attaches = "Lintels",
+			at = { 65.6, 10.4, 9.8 },
+			size = { 16.6, 24.7, 20.6 },
+			note = "the same pile: the hub side, toward the + mouth quarter",
 		},
 		{
 			name = "Rocks4",
-			level = "core",
-			attaches = "Rocks1",
-			at = { 76.5, 8.8, 7 },
-			size = { 21.1, 18, 15 },
-			note = "the same pile: the far side, toward the + mouth quarter"
+			level = "major",
+			attaches = "Lintels",
+			at = { 77.6, 13.3, 12.7 },
+			size = { 18, 31.3, 26.3 },
+			note = "the same pile: the far side, toward the + mouth quarter",
 		},
 		{
 			name = "Posts",
@@ -75,9 +83,9 @@ return {
 			name = "Stones",
 			level = "detail",
 			attaches = "Rocks1",
-			at = { 71, 0, 0.3 },
-			size = { 14, 42, 1.2 },
-			note = "a few small rounded pebbles and rocks round each porch's foot",
+			at = { 68.4, 0.2, 0.2 },
+			size = { 10.7, 52.8, 0.9 },
+			note = "a few small broken-off column chunks, squared with chipped edges, beside the track past each porch's front",
 		},
 		{
 			name = "Shades",
