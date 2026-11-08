@@ -1,4 +1,4 @@
-local CACHE_KEY = "MineLoop-a460d256e0426b07"
+local CACHE_KEY = "MineLoop-c7af15b3a0135c61"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -825,8 +825,7 @@ end
 -- you. The rocks themselves wall and roof the tunnel, overlapping so no
 -- gap shows through: nothing but rock. Each mouth has a timber porch: two log posts a side, header
 -- beams, side beams and a deck of planks, with upright boards closing the
--- gap between the porch and the rocks, a lantern hung on one front post and
--- pebbles round its foot. A black, unlit shade fills each mouth from the
+-- gap between the porch and the rocks, and pebbles round its foot. A black, unlit shade fills each mouth from the
 -- inside, its faces turned in, clear at the mouth and opaque a few studs
 -- in, so the tunnel reads as dark however it's lit.
 -- The opening is 6.4 wide between the posts and 6.6 tall under the
@@ -3788,10 +3787,6 @@ local DECK_THICK, DECK_PLANK = 0.45, 0.9
 local DECK_FROM, DECK_TO = FRONT_POSTS - 0.7, BACK_POSTS + 0.5
 local BOARDS_AT, BOARD_THICK, BOARD_WIDE = -0.25, 0.35, 0.8
 local WOOD = { 0.66, 0.38, 0.2 }
--- The lanterns hang this high, under a bracket off the hub-side front
--- post.
-local LANTERN_AT = 2.6
-local LANTERN_OUT = -POST_OUT - POST_RADIUS - 0.3
 
 -- Wood: each piece `index` its own shade, with fine grain lines.
 local function wood(index: number, grain: number, x: number, y: number, z: number, spread: number?): (number, number, number)
@@ -3811,9 +3806,6 @@ part("Posts", nil, WOOD, function(mesh)
 				placed(m, side, flank * POST_OUT, along, -0.3, OPEN_TALL + 0.3):emit(mesh)
 			end
 		end
-		-- The lantern's bracket: an arm out of the post over the lantern.
-		local arm = EditMesh.roundedBox({ 1.3, 0.3, 0.3 }, 0.06, 1, { 2, 1, 1 })
-		placed(arm, side, LANTERN_OUT + 0.25, FRONT_POSTS, LANTERN_AT + 1.1, 0.3):emit(mesh)
 	end
 end, nil, function(x, y, z)
 	local out, along = caveOf(x, y)
@@ -3897,21 +3889,6 @@ end, nil, function(x, y, z)
 	local out = caveOf(x, y)
 	return wood(math.floor(out / BOARD_WIDE) + (if z > OPEN_TALL then 30 else 0) + 120, z, x, y, z)
 end, nil, nil, true)
-
--- A lantern hung on the hub-side front post of each mouth, against its
--- outer side: a glowing glass body between a dark cap and base.
-local GLOW = { 1, 0.78, 0.35 }
-part("Lanterns", nil, GLOW, function(mesh)
-	for _, side in { -1, 1 } do
-		local m = EditMesh.roundedBox({ 0.7, 0.7, 1.1 }, 0.15, 1, { 1, 1, 2 })
-		placed(m, side, LANTERN_OUT, FRONT_POSTS, LANTERN_AT, 1.1):emit(mesh)
-	end
-end, nil, function(_x, _y, z)
-	if z > LANTERN_AT + 0.85 or z < LANTERN_AT + 0.15 then
-		return 0.25, 0.2, 0.15
-	end
-	return GLOW[1], GLOW[2], GLOW[3]
-end, nil, 1, true)
 
 -- ------------------------------------------------------------ the stones
 

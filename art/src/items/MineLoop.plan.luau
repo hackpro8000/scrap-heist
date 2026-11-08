@@ -72,15 +72,6 @@ return {
 			note = "upright boards behind the back posts closing the gap between the porch and the rocks",
 		},
 		{
-			name = "Lanterns",
-			level = "detail",
-			attaches = "Posts",
-			count = 1,
-			at = { 65.2, 0, 3.15 },
-			size = { 0.8, 35, 1.1 },
-			note = "a small glowing lantern hung on the hub-side front post of each mouth, painted glow only",
-		},
-		{
 			name = "Stones",
 			level = "detail",
 			attaches = "Rocks1",

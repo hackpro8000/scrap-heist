@@ -19,6 +19,7 @@
 - Splotching tried and held (user): noise patches, then brush dabs (first square, then the bake's round brush, picked from three sizes); the user didn't like any of them, so the rocks have none for now. Strokes on a part entry can name their brush (`taper`, `round`, `sponge`) should it come back.
 - The rocks are four parts, one per quarter of the pile, so each texture holds the item's 16 px per stud within 1024 (one was squeezed to about 10 before).
 - Everything sits flat on the ground (user): rocks and pebbles on the ground have their undersides pressed flat across the footprint, lean by shearing so the base stays flat, and round ones round off only from the middle up; sleepers sit on the deck. Two review rounds; the rock that looks perched in the ground-level view is a flat base turned 45 degrees, seen with no ground drawn.
+- Lanterns removed (user), with their bracket arms; the porches are timber only. One review round.
 
 ## Open
 - Critic (after three rounds on the shape kinds): MED, rim highlights still faint on many boulders against the reference's bold bright rims (needs contrast, not just width); MED, the pile reads as one blue-grey mass from the far side (wider per-rock tone spread, darker joints). LOW: crag and round read alike; some lower-ring boulders still tall prisms; the big far-side boulder a tall flat-faced slab; flanks could use a few more mid-size rocks.
@@ -27,7 +28,6 @@
 - The clipping check flags the intended seating (boards, beams and pebbles tucked into the rocks).
 
 ## Next
-- Remove the lanterns (user).
 - Each rock its own gradient (user).
 - Bolder rims: paint them clearly lighter than the face, the same on the lower rocks.
 - Wider per-rock tone spread with darker joints.
