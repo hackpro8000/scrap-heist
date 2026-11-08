@@ -1,4 +1,4 @@
-local CACHE_KEY = "RebirthPress-ef69cfe0d79d81ad"
+local CACHE_KEY = "RebirthPress-5637efb951b5cdc8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -834,8 +834,9 @@ end
 -- -y side. Riveted dark steel with bronze caps and plate, crisp hazard tape,
 -- the yard's scrap heaped on the anvil under the platen.
 
--- Baked at the map's density, as it is in game.
-useTexelDensity(16)
+-- Baked at the yard kit's density (KIT_DENSITY in the ServerMap layout), as it
+-- is in game.
+useTexelDensity(40)
 
 local PRESS_DARK = { 0.2, 0.21, 0.24 }
 local PRESS_STEEL = { 0.42, 0.45, 0.5 }
@@ -854,6 +855,10 @@ local BUTTON_RED = { 1.0, 0.2, 0.15 }
 -- The anvil, ram and platen share one axis; the console sits at the +x end.
 local MID_X, MID_Y = -1.5, 0.4
 local PLINTH_TOP = 1.2
+-- The game centres a yard thing's bounding box on its cells, so nothing
+-- reaches past the concrete pad's 16 x 8. The steel bed stands back from the
+-- pad's front edge, leaving room for the medal's ramp.
+local PLINTH_HALF_X, PLINTH_FRONT, PLINTH_BACK = 7.8, -2.6, 3.8
 local ANVIL_TOP = PLINTH_TOP + 1.3
 local PLATEN_BASE, PLATEN_TOP = 5.6, 6.5
 local COLUMN_X = { -6.2, 3.2 }
@@ -881,28 +886,26 @@ end
 
 -- -------------------------------------------------------------- the bed
 part("Plinth", nil, PRESS_DARK, function(mesh)
-	box(mesh, 0, 0, 0, 16.4, 8.4, 0.3)
-	box(mesh, 0, 0, 0.3, 16, 8, PLINTH_TOP - 0.3)
-	-- The medal slot's lip, standing a little proud of the front face.
-	box(mesh, MID_X, -4.1, 0.5, 3.4, 0.2, 0.5)
-	-- Rivets round the top edge.
-	rivets(mesh, -7.4, -3.75, 0.75, 7.4, -3.75, 0.75, 8, "y", 0.09)
-	rivets(mesh, -7.4, 3.75, 0.75, 7.4, 3.75, 0.75, 8, "y", 0.09)
-	rivets(mesh, -7.75, -3.2, 0.75, -7.75, 3.2, 0.75, 4, "x", 0.09)
-	rivets(mesh, 7.75, -3.2, 0.75, 7.75, 3.2, 0.75, 4, "x", 0.09)
+	-- A concrete pad the size of the press's cells, the steel bed on it.
+	box(mesh, 0, 0, 0, 16, 8, 0.3)
+	box(mesh, 0, (PLINTH_FRONT + PLINTH_BACK) / 2, 0.3, 2 * PLINTH_HALF_X, PLINTH_BACK - PLINTH_FRONT, PLINTH_TOP - 0.3)
+	-- Rivets along each face, under the hazard band.
+	for _, y in { PLINTH_FRONT, PLINTH_BACK } do
+		rivets(mesh, -7.4, y, 0.6, 7.4, y, 0.6, 8, "y", 0.09)
+	end
+	for _, x in { -PLINTH_HALF_X, PLINTH_HALF_X } do
+		rivets(mesh, x, PLINTH_FRONT + 0.4, 0.6, x, PLINTH_BACK - 0.4, 0.6, 4, "x", 0.09)
+	end
 end, nil, function(x, y, z)
-	if z < 0.3 then
+	if z < 0.32 then
 		local k = 0.92 + 0.08 * math.noise(x * 0.8, y * 0.8, 3.1)
 		return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * k
 	end
-	-- The slot, black inside its lip.
-	if math.abs(x - MID_X) < 1.5 and y < -3.9 and z > 0.6 and z < 0.9 then
-		return 0.02, 0.02, 0.02
-	end
 	-- The hazard band round the top.
-	if z > PLINTH_TOP - 0.3 and z < PLINTH_TOP + 0.01 and (math.abs(x) > 7.9 or math.abs(y) > 3.9) then
-		local along = if math.abs(y) > 3.9 then x else y
-		if tape(along, z) then
+	local onEnd = math.abs(x) > PLINTH_HALF_X - 0.1
+	local onLong = y < PLINTH_FRONT + 0.1 or y > PLINTH_BACK - 0.1
+	if z > PLINTH_TOP - 0.3 and z < PLINTH_TOP + 0.01 and (onEnd or onLong) then
+		if tape(if onLong then x else y, z) then
 			return TAPE_BLACK[1], TAPE_BLACK[2], TAPE_BLACK[3]
 		end
 		return HAZARD[1], HAZARD[2], HAZARD[3]
@@ -1155,27 +1158,86 @@ end, nil, function(x, y, z)
 end, nil, nil, nil, 0.1)
 
 -- ------------------------------------------------------- front and side
+-- The medal's way out: a ramp from a dark mouth at the anvil's front edge
+-- down to a lip at the pad's front, the medal resting at its foot and leaning
+-- back, so its face is toward whoever walks up.
+local RAMP_ANGLE = math.rad(52)
+local RAMP_COS, RAMP_SIN = math.cos(RAMP_ANGLE), math.sin(RAMP_ANGLE)
+local RAMP_FOOT_Y, RAMP_FOOT_Z, RAMP_TOP_Y = -3.6, 0.5, MID_Y - 2.5
+local RAMP_TOP_Z = RAMP_FOOT_Z + (RAMP_TOP_Y - RAMP_FOOT_Y) * math.tan(RAMP_ANGLE)
+local RAMP_LENGTH = (RAMP_TOP_Y - RAMP_FOOT_Y) / RAMP_COS
+local MEDAL_R, MEDAL_BACK = 1.1, 0.13
+local MEDAL_UP_RAMP = MEDAL_R + 0.06
+local MEDAL_Y = RAMP_FOOT_Y + RAMP_COS * MEDAL_UP_RAMP - RAMP_SIN * (MEDAL_BACK - 0.01)
+local MEDAL_Z = RAMP_FOOT_Z + RAMP_SIN * MEDAL_UP_RAMP + RAMP_COS * (MEDAL_BACK - 0.01)
+
 part("Tray", nil, PRESS_STEEL, function(mesh)
-	box(mesh, MID_X, -4.7, 0.75, 3.2, 1.6, 0.12)
-	box(mesh, MID_X - 1.5, -4.7, 0.87, 0.1, 1.6, 0.38)
-	box(mesh, MID_X + 1.5, -4.7, 0.87, 0.1, 1.6, 0.38)
-	box(mesh, MID_X, -5.4, 0.87, 3.0, 0.1, 0.38)
-	-- Two legs down to the ground.
-	for _, dx in { -1.3, 1.3 } do
-		box(mesh, MID_X + dx, -5.3, 0, 0.2, 0.2, 0.75)
+	-- The ramp, a wedge across x: (y, z) corners anticlockwise from +x.
+	local outline = { { RAMP_FOOT_Y, 0.3 }, { RAMP_TOP_Y, 0.3 }, { RAMP_TOP_Y, RAMP_TOP_Z }, { RAMP_FOOT_Y, RAMP_FOOT_Z } }
+	local near, far = {}, {}
+	for i, corner in outline do
+		near[i] = mesh:vertex(MID_X - 1.5, corner[1], corner[2])
+		far[i] = mesh:vertex(MID_X + 1.5, corner[1], corner[2])
 	end
-	-- The medal lying in the tray, a raised rim and a boss.
-	cylinder(mesh, MID_X + 0.1, -4.6, 1.0, 1.1, 0.26, "z", 20)
-	ring(mesh, MID_X + 0.1, -4.6, 1.16, 0.86, 1.04, 0.1, "z", 20)
-	cylinder(mesh, MID_X + 0.1, -4.6, 1.18, 0.36, 0.16, "z", 10)
+	for i = 1, #outline do
+		local j = i % #outline + 1
+		mesh:face({ near[i], near[j], far[j], far[i] })
+	end
+	mesh:face({ near[4], near[3], near[2], near[1] })
+	mesh:face(far)
+	-- The floor at its foot and the lip that stops the medal.
+	box(mesh, MID_X, -3.78, 0.29, 2.8, 0.44, 0.2)
+	box(mesh, MID_X, -3.91, 0.28, 3.2, 0.14, 0.5)
 end, nil, function(x, y, z)
-	if z > 0.85 and math.sqrt((x - MID_X - 0.1) ^ 2 + (y + 4.6) ^ 2) < 1.15 then
-		local k = 1.08 + 0.1 * math.noise(x * 3, y * 3, 1.1)
-		return BRASS[1] * k, BRASS[2] * k, BRASS[3] * k
-	end
+	local along = (y - RAMP_FOOT_Y) * RAMP_COS + (z - RAMP_FOOT_Z) * RAMP_SIN
+	local off = (z - RAMP_FOOT_Z) * RAMP_COS - (y - RAMP_FOOT_Y) * RAMP_SIN
 	local k = 0.9 + 0.1 * math.noise(x * 1.2, y * 1.2, z * 1.2)
+	if math.abs(off) < 0.02 then
+		-- The mouth at the top, dark, and the middle worn bright by medals.
+		if along > RAMP_LENGTH - 0.5 and math.abs(x - MID_X) < 1.25 then
+			return 0.02, 0.02, 0.02
+		end
+		if math.abs(x - MID_X) < 0.95 then
+			k += 0.28
+		end
+	end
 	return PRESS_STEEL[1] * k, PRESS_STEEL[2] * k, PRESS_STEEL[3] * k
-end, nil, nil, nil, 0.15)
+end, nil, nil, true, 0.12)
+crisp()
+
+part("Medal", nil, BRASS, function(mesh)
+	-- Back to front: { radius, height off its middle plane }, a raised rim
+	-- and a boss.
+	local profile = { { MEDAL_R, -MEDAL_BACK }, { MEDAL_R, 0.08 }, { MEDAL_R - 0.07, 0.15 }, { 0.86, 0.15 }, { 0.8, 0.08 }, { 0.4, 0.08 }, { 0.34, 0.2 } }
+	local SIDES = 24
+	local rows = {}
+	for k, step in profile do
+		local row = {}
+		for i = 1, SIDES do
+			local t = (i - 1) / SIDES * TAU
+			local v, d = math.sin(t) * step[1], step[2]
+			row[i] = mesh:vertex(MID_X + math.cos(t) * step[1], MEDAL_Y + v * RAMP_COS - d * RAMP_SIN, MEDAL_Z + v * RAMP_SIN + d * RAMP_COS)
+		end
+		rows[k] = row
+	end
+	for k = 1, #rows - 1 do
+		for i = 1, SIDES do
+			local j = i % SIDES + 1
+			mesh:face({ rows[k][i], rows[k][j], rows[k + 1][j], rows[k + 1][i] })
+		end
+	end
+	local back = {}
+	for i = SIDES, 1, -1 do
+		table.insert(back, rows[1][i])
+	end
+	mesh:face(back)
+	mesh:face(rows[#rows])
+end, nil, function(x, y, z)
+	local up = (y - MEDAL_Y) * RAMP_COS + (z - MEDAL_Z) * RAMP_SIN
+	local r = math.sqrt((x - MID_X) ^ 2 + up * up)
+	local k = (if r > 0.42 and r < 0.82 then 0.86 else 1.1) + 0.06 * math.noise(x * 3, y * 3, z * 3)
+	return math.min(BRASS[1] * k, 1), math.min(BRASS[2] * k, 1), math.min(BRASS[3] * k, 1)
+end, nil, nil, true, 0.08)
 
 part("Console", nil, PRESS_DARK, function(mesh)
 	box(mesh, CONSOLE_X, CONSOLE_Y, PLINTH_TOP, 2.4, 2.4, 2.8)
@@ -1236,7 +1298,7 @@ end, true, 0, nil, 1.2)
 
 -- The hoses run from the cylinder over the crown's back edge and down the
 -- back of the -x column to the pump behind it.
-local PUMP_X, PUMP_Y = COLUMN_X[1] - 0.9, MID_Y + 2.6
+local PUMP_X, PUMP_Y = COLUMN_X[1] - 0.65, MID_Y + 2.7
 part("Hoses", nil, HOSE_GREY, function(mesh)
 	for i, dy in { -0.5, 0.5 } do
 		local x = PUMP_X - 0.35 + (i - 1) * 0.7
@@ -1251,7 +1313,7 @@ part("Hoses", nil, HOSE_GREY, function(mesh)
 end, nil, 0.1, nil, nil, nil, 0.1)
 
 part("Pump", nil, PRESS_STEEL, function(mesh)
-	box(mesh, PUMP_X, PUMP_Y, PLINTH_TOP, 1.8, 1.6, 1.5)
+	box(mesh, PUMP_X, PUMP_Y, PLINTH_TOP, 1.8, 1.3, 1.5)
 	sphere(mesh, PUMP_X - 0.35, PUMP_Y - 0.2, PLINTH_TOP + 1.48, 0.55, 0.55, 0.5, 4, 12)
 	cylinder(mesh, PUMP_X + 0.5, PUMP_Y - 0.4, PLINTH_TOP + 1.6, 0.16, 0.34, "z", 8)
 	-- Collars where the hoses enter the top.

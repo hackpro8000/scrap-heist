@@ -5,8 +5,9 @@
 -- on the -y side. Twice the old one's height: a plinth with a hazard band,
 -- two riveted box columns under a crown beam, the cylinder on top, its ram
 -- holding the hazard-taped platen over a heap of scrap on the anvil, the
--- medal dropping into a tray at the front, a console with a caged red
--- button at the +x end.
+-- medal sliding down a ramp to the front, a console with a caged red button
+-- at the +x end. Everything stays inside the 16 x 8: the game centres a yard
+-- thing's bounding box on its cells.
 return {
 	parts = {
 		{
@@ -14,7 +15,7 @@ return {
 			level = "core",
 			at = { 0, 0, 0.6 },
 			size = { 16, 8, 1.2 },
-			note = "dark riveted steel bed on a concrete kerb, a crisp hazard band round its top edge, a slot in its front face for the medal",
+			note = "a concrete pad exactly the press's 16 by 8 cells, the dark riveted steel bed on it, set back 1.4 from the pad's front edge, a crisp hazard band round the bed's top edge",
 		},
 		{
 			name = "Anvil",
@@ -84,9 +85,17 @@ return {
 			name = "Tray",
 			level = "detail",
 			attaches = "Plinth",
-			at = { -1.5, -4.6, 0.6 },
-			size = { 3.2, 1.8, 1.3 },
-			note = "a steel tray on two legs under the plinth's slot at the front, a brass medal 1.8 across lying in it, rimmed and bossed",
+			at = { -1.5, -3, 1.3 },
+			size = { 3.2, 1.9, 2.1 },
+			note = "a steel ramp from a dark mouth at the anvil's front edge down to a floor and a lip at the pad's front, its middle worn bright; seated into the bed's front",
+		},
+		{
+			name = "Medal",
+			level = "detail",
+			attaches = "Tray",
+			at = { -1.5, -3, 1.5 },
+			size = { 2.2, 1.5, 1.9 },
+			note = "a bright brass medal 2.2 across at the ramp's foot, leaning back on it so its face is toward whoever walks up, a raised rim and boss",
 		},
 		{
 			name = "Console",
