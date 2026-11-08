@@ -8,6 +8,7 @@
 #
 #   ref=<commit>                      build this shard of the layout
 #   upload=no                         ... without handing its objects over
+#   build=no                          skip the build: render the previews only
 #   upload-of=<build task id>         upload what that build handed over
 #   hand-over=coordinator             leave the objects in <results>/handed/
 #                                     for scripts/standby-agent.py to send
@@ -166,7 +167,11 @@ upload() {
 }
 
 of="$(field upload-of)"
-if [ -z "${of}" ]; then
+if [ "$(field build)" = "no" ]; then
+	# Previews only: they render once this result has gone.
+	printf 'status=DONE\nbuild=-\nupload=skipped\ntotal=0\nparts=0\n' > "${out}/summary.txt"
+	echo "DONE: no build, previews only"
+elif [ -z "${of}" ]; then
 	build
 elif [ "${index}" = "${UPLOADER}" ]; then
 	upload "${of}"

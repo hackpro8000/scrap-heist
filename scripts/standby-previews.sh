@@ -9,10 +9,10 @@
 # its committed model.luau (assembling here would rewrite the file a layout
 # build reads) into <results>/previews/<Name>/: preview.png and four turns,
 # view0-3.png. A model that fails leaves its build.log ending in FAILED.
-# Renders are 384 pixels: they travel through the coordinator's tunnel, which
-# is slow, and four make a 768-pixel sheet. They build with modelkit's
-# --preview, at half the texel density, which is quicker and plenty at that
-# size.
+# Renders are 384 pixels unless the model's flags say otherwise: they travel
+# through the coordinator's tunnel, which is slow, and four make a 768-pixel
+# sheet. They build with modelkit's --preview, at half the texel density,
+# unless the flags say --full.
 
 set -uo pipefail
 
@@ -29,10 +29,22 @@ for name in "${list[@]}"; do
 	dir="${out}/previews/${name}"
 	mkdir -p "${dir}"
 	# art/src/items/<Name>.preview-flags adds modelkit flags, say --eye views
-	# from chosen spots; their renders come back too.
+	# from chosen spots; their renders come back too. Its own --size replaces
+	# the default, and --full bakes at full texel density instead of
+	# --preview's half.
+	flags=()
+	[ -f "art/src/items/${name}.preview-flags" ] && read -ra flags < "art/src/items/${name}.preview-flags"
 	extra=()
-	[ -f "art/src/items/${name}.preview-flags" ] && read -ra extra < "art/src/items/${name}.preview-flags"
-	if scripts/build-model.sh "${name}" -- --preview --turntable 4 --size "${PREVIEW_SIZE:-384}" "${extra[@]}" > "${dir}/build.log" 2>&1; then
+	quality=(--preview)
+	size=(--size "${PREVIEW_SIZE:-384}")
+	for flag in "${flags[@]}"; do
+		case "${flag}" in
+			--full) quality=() ;;
+			--size) size=() ;;
+		esac
+		[ "${flag}" = "--full" ] || extra+=("${flag}")
+	done
+	if scripts/build-model.sh "${name}" -- "${quality[@]}" --turntable 4 "${size[@]}" "${extra[@]}" > "${dir}/build.log" 2>&1; then
 		cp "art/models/${name}/preview.png" "${dir}/preview.png"
 		for turn in 0 1 2 3; do
 			cp "art/models/${name}/turntable/000${turn}.png" "${dir}/view${turn}.png"

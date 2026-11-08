@@ -601,6 +601,9 @@ end
 -- to paint its highlights as bold, fully loaded strokes instead of dry ones,
 -- `blend` (0-1) to tint them from cream toward a lighter part colour, and
 -- `taper` (studs) to run them full width at corners, thinning along each edge.
+-- `strokes` lists brush strokes painted over the coat ({start, along, normal,
+-- length, width, tail, color, brush}, color in sRGB), such as cracks or dabs;
+-- `brush` is "taper" (crisp lines, the default), "round" or "sponge".
 local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
@@ -791,6 +794,7 @@ local function finishParts()
 			highlightWidth = entry.wide,
 			paintedHighlights = entry.painted,
 			cornerTaper = entry.taper,
+			strokes = entry.strokes,
 			heightRange = entry.heightRange,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })

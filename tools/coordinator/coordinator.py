@@ -72,8 +72,10 @@ def say(message):
 
 
 class Task:
-	def __init__(self, identity, ref, upload, count, previews=()):
+	def __init__(self, identity, ref, upload, count, previews=(), build=True):
 		self.id, self.ref, self.upload, self.count = identity, ref, upload, count
+		# Without a build the shards only render the previews.
+		self.build = build
 		# Models whose previews the shards render, shared out between them,
 		# and the shards whose previews haven't all come yet.
 		self.previews = list(previews)
@@ -92,6 +94,7 @@ class Task:
 		# When machine 1 uploads, objects go to it through GitHub, not this link.
 		hand_over = "branch" if self.by_branch else "coordinator"
 		return (f"ref={self.ref}\nhand-over={hand_over}\n" + ("" if self.upload else "upload=no\n")
+			+ ("" if self.build else "build=no\n")
 			+ (f"preview={','.join(self.previews)}\n" if self.previews else ""))
 
 
@@ -446,8 +449,8 @@ class Coordinator:
 		say(f"task {task.id}: merged; {len(new)} new assets need the game's permission")
 		return {"new_assets": new}
 
-	async def post(self, identity, ref, upload, previews=()):
-		task = Task(identity, ref, upload, self.count, previews)
+	async def post(self, identity, ref, upload, previews=(), build=True):
+		task = Task(identity, ref, upload, self.count, previews, build)
 		task.by_branch = self.uploads_on_machine
 		self.tasks[identity] = task
 		for agent in list(self.agents.values()):
@@ -542,7 +545,8 @@ class Coordinator:
 			return
 		identity = f"t{int(time.time())}-{os.getpid()}-{len(self.tasks)}"
 		self.watchers.add(socket)
-		task = await self.post(identity, request["ref"], request.get("upload", True), request.get("previews", []))
+		task = await self.post(identity, request["ref"], request.get("upload", True), request.get("previews", []),
+			request.get("build", True))
 		await socket.send(json.dumps({"type": "posted", "task": identity, "count": task.count, "up": len(self.agents)}))
 		try:
 			async for _ in socket:

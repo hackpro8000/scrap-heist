@@ -228,8 +228,10 @@ impl UserData for MeshHandle {
 					Some(&[bottom, top]) if top > bottom => Some([bottom, top]),
 					_ => None,
 				},
-				// strokes = {{start, along, normal, length, width, tail, color}, ...}:
-				// lines drawn over the coat with the Taper brush, color in sRGB.
+				// strokes = {{start, along, normal, length, width, tail, color, brush}, ...}:
+				// lines drawn over the coat, color in sRGB. brush is "taper"
+				// (the default, crisp lines), "round" (a bristly mark pointed at
+				// both ends) or "sponge" (a lobed dab).
 				strokes: match options.as_ref().map(|o| o.get::<Option<Vec<Table>>>("strokes")).transpose()?.flatten() {
 					Some(list) => list
 						.iter()
@@ -240,7 +242,12 @@ impl UserData for MeshHandle {
 							let across = mesh::cross(normal, along);
 							let length = dot(across, across).sqrt().max(1e-9);
 							Ok(brush::Stroke {
-								brush: brush::Brush::Taper,
+								brush: match stroke.get::<Option<String>>("brush")?.as_deref() {
+									None | Some("taper") => brush::Brush::Taper,
+									Some("round") => brush::Brush::Round,
+									Some("sponge") => brush::Brush::Sponge,
+									Some(other) => return Err(mlua::Error::RuntimeError(format!("unknown stroke brush {other}"))),
+								},
 								start: stroke.get::<[f64; 3]>("start")?,
 								along,
 								across: scale(across, 1.0 / length),

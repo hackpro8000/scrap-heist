@@ -57,6 +57,8 @@ if python3 tools/coordinator/client.py status > /dev/null 2>&1; then
 		done
 	fi
 	[ -n "${previews}" ] && flags+=(--preview "${previews}")
+	# PREVIEW_ONLY=1: the machines skip the layout build and only render.
+	[ "${PREVIEW_ONLY:-}" = "1" ] && flags+=(--preview-only)
 	exec python3 tools/coordinator/client.py build "${commit}" "${flags[@]}"
 fi
 

@@ -2,7 +2,7 @@
 """Talks to the running coordinator (coordinator.py) from this session.
 
   tools/coordinator/client.py status          # the run, machines up, tasks
-  tools/coordinator/client.py build <commit> [--no-upload] [--wait S] [--preview A,B]
+  tools/coordinator/client.py build <commit> [--no-upload] [--wait S] [--preview A,B] [--preview-only]
   tools/coordinator/client.py stop-machines   # standby machines end now
   tools/coordinator/client.py wait-machines [N] [--wait S]
                                               # returns once N machines are up
@@ -79,9 +79,9 @@ async def stop_machines(url):
 STALL_SECONDS = 30
 
 
-async def build(url, ref, upload, wait, previews=()):
+async def build(url, ref, upload, wait, previews=(), layout=True):
 	async with websockets.connect(url, max_size=MAX_MESSAGE) as socket:
-		await socket.send(json.dumps({"type": "build", "ref": ref, "upload": upload, "previews": list(previews)}))
+		await socket.send(json.dumps({"type": "build", "ref": ref, "upload": upload, "previews": list(previews), "build": layout}))
 		failed = False
 		task = None
 		finished = None
@@ -159,6 +159,7 @@ def main():
 	parser.add_argument("--no-upload", action="store_true")
 	parser.add_argument("--wait", type=int, default=600)
 	parser.add_argument("--preview", default="", help="models to render, comma-separated")
+	parser.add_argument("--preview-only", action="store_true", help="render the previews without building the layout")
 	arguments = parser.parse_args()
 	url = control_url()
 	if not url:
@@ -174,7 +175,7 @@ def main():
 		if not arguments.ref:
 			parser.error("build needs a commit")
 		previews = [name for name in arguments.preview.split(",") if name]
-		code = asyncio.run(build(url, arguments.ref, not arguments.no_upload, arguments.wait, previews))
+		code = asyncio.run(build(url, arguments.ref, not arguments.no_upload, arguments.wait, previews, not arguments.preview_only))
 	sys.exit(code)
 
 
