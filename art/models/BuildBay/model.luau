@@ -1,4 +1,4 @@
-local CACHE_KEY = "BuildBay-c0f8ebecb8773872"
+local CACHE_KEY = "BuildBay-d74007e67b0bb91d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -868,7 +868,7 @@ local SEAT_Z, CRADLE_R = 1.7, 2.6
 local FRAME_Y, POST_X, POST_HALF = 3.9, 3.7, 0.45
 local BEAM_HALF, BEAM_Z0, BEAM_Z1 = 4.4, 6.6, 7.5
 local BOARD_Y, TOOL_Y = 3.95, 3.75
-local PANEL_X, DIAL_Z = 2.5, 4.25
+local PANEL_X, DIAL_Z = 2.25, 4.25
 local LAMP_POST, LAMP_TOP = 4.55, 4.5
 local CRATE_X, CRATE_Y = -3.6, 2.5
 local OIL_X, OIL_Y = 3.6, 2.6
@@ -1096,8 +1096,13 @@ part("Frame", nil, FRAME_STEEL, function(mesh)
 	end
 	-- Two braces crossing behind the board.
 	for _, side in { -1, 1 } do
-		strut(mesh, side * 3.25, BOARD_Y + 0.2, 1, -side * 3.25, BOARD_Y + 0.2, 6.3, 0.22)
+		strut(mesh, side * 3.25, BOARD_Y + 0.2, 0.85, -side * 3.25, BOARD_Y + 0.2, 6.35, 0.22)
+		for _, z0 in { 0.55, 5.95 } do
+			box(mesh, side * 2.95, BOARD_Y + 0.34, z0, 0.72, 0.06, 0.62)
+			bolt(mesh, side * 2.8, BOARD_Y + 0.38, z0 + 0.31, "y", 0.08)
+		end
 	end
+	bolt(mesh, 0, BOARD_Y + 0.33, 3.6, "y", 0.1)
 end, nil, function(x, y, z)
 	if z >= BEAM_Z0 then
 		local k = 0.94 + 0.1 * math.noise(x * 0.6, z * 0.6, 7.7)
@@ -1154,15 +1159,15 @@ end
 
 part("Board", nil, BOARD_GREY, function(mesh)
 	box(mesh, 0, BOARD_Y, DECK_TOP - 0.02, 6.6, 0.2, BEAM_Z0 - DECK_TOP + 0.04)
-	for _, x in { -3, 3 } do
-		for _, z in { 1.05, 6.25 } do
+	for _, x in { hole(-6), hole(5) } do
+		for _, z in { hole(1), hole(12) } do
 			bolt(mesh, x, BOARD_Y - 0.1, z, "y", 0.11)
 		end
 	end
 end, nil, function(x, y, z)
-	-- The stencil and the pegboard holes, across the front.
-	if y < BOARD_Y - 0.09 then
-		if stencilAt(x, z) then
+	-- The stencil across the front, the pegboard's holes right through.
+	if math.abs(y - BOARD_Y) > 0.09 then
+		if y < BOARD_Y and stencilAt(x, z) then
 			return HAZARD[1], HAZARD[2], HAZARD[3]
 		end
 		local u, v = x % HOLE_PITCH - HOLE_PITCH / 2, z % HOLE_PITCH - HOLE_PITCH / 2
@@ -1174,52 +1179,114 @@ end, nil, function(x, y, z)
 end, nil, nil, true, 0.15)
 crisp()
 
--- A spanner in { across, along } units, the ring's middle at the origin and
--- the open jaw at the far end, clockwise as x-z outlines must be.
+-- A double open-ended spanner, traced from a photo of a real one. { across,
+-- along } as fractions of its length, the middle at the origin, clockwise as
+-- x-z outlines must be.
 local SPANNER_OUTLINE = {
-	{ -0.21, 0.3 },
-	{ -0.21, 2.25 },
-	{ -0.45, 2.37 },
-	{ -0.65, 2.75 },
-	{ -0.62, 3.3 },
-	{ -0.3, 3.45 },
-	{ -0.24, 3.37 },
-	{ -0.24, 2.8 },
-	{ 0.24, 2.8 },
-	{ 0.24, 3.37 },
-	{ 0.3, 3.45 },
-	{ 0.62, 3.3 },
-	{ 0.65, 2.75 },
-	{ 0.45, 2.37 },
-	{ 0.21, 2.25 },
-	{ 0.21, 0.3 },
+	{ 0.0465, 0.4882 },
+	{ 0.0728, 0.4575 },
+	{ 0.0871, 0.4309 },
+	{ 0.0934, 0.4037 },
+	{ 0.0900, 0.3752 },
+	{ 0.0541, 0.3243 },
+	{ 0.0443, 0.3023 },
+	{ 0.0395, 0.2768 },
+	{ 0.0425, -0.2710 },
+	{ 0.0597, -0.2921 },
+	{ 0.0842, -0.3176 },
+	{ 0.0931, -0.3319 },
+	{ 0.1024, -0.3599 },
+	{ 0.1045, -0.3930 },
+	{ 0.0954, -0.4448 },
+	{ 0.0884, -0.4596 },
+	{ 0.0812, -0.4649 },
+	{ 0.0731, -0.4545 },
+	{ 0.0565, -0.3961 },
+	{ 0.0478, -0.3846 },
+	{ 0.0315, -0.3783 },
+	{ 0.0112, -0.3780 },
+	{ -0.0087, -0.3830 },
+	{ -0.0227, -0.3915 },
+	{ -0.0344, -0.4028 },
+	{ -0.0389, -0.4155 },
+	{ -0.0249, -0.4797 },
+	{ -0.0262, -0.4926 },
+	{ -0.0323, -0.4972 },
+	{ -0.0607, -0.4743 },
+	{ -0.0743, -0.4579 },
+	{ -0.0915, -0.4278 },
+	{ -0.0989, -0.3955 },
+	{ -0.0955, -0.3679 },
+	{ -0.0507, -0.3034 },
+	{ -0.0422, -0.2720 },
+	{ -0.0431, 0.2744 },
+	{ -0.0540, 0.2982 },
+	{ -0.0926, 0.3437 },
+	{ -0.0998, 0.3703 },
+	{ -0.1010, 0.3938 },
+	{ -0.0914, 0.4405 },
+	{ -0.0855, 0.4535 },
+	{ -0.0786, 0.4583 },
+	{ -0.0708, 0.4516 },
+	{ -0.0560, 0.3987 },
+	{ -0.0478, 0.3872 },
+	{ -0.0334, 0.3829 },
+	{ -0.0143, 0.3837 },
+	{ 0.0167, 0.3982 },
+	{ 0.0298, 0.4109 },
+	{ 0.0338, 0.4207 },
+	{ 0.0197, 0.4852 },
+	{ 0.0217, 0.4949 },
+	{ 0.0286, 0.4978 },
 }
+-- Where the underside of the top head meets a pair of pegs half a hole apart
+-- on the Big Spanner, and how far the head's flare sits off the shank's middle.
+local SPANNER_REST_ALONG, SPANNER_REST_ACROSS = 0.3299, -0.0114
+
 -- A peg out of the board with a small head, so what hangs on it stays on.
 local function peg(mesh, x: number, z: number, radius: number)
 	cylinder(mesh, x, TOOL_Y - 0.06, z, radius, 0.4, "y", 8)
 	cylinder(mesh, x, TOOL_Y - 0.25, z, radius * 1.5, 0.05, "y", 8)
 end
--- A spanner hanging by its ring from a peg, the jaw at the bottom: the outline
--- turned half round, which keeps it clockwise, and the peg bearing on the top
--- of the ring's hole.
-local function spanner(mesh, ringX: number, pegZ: number, size: number)
-	local pegRadius = math.max(0.1 * size, 0.06)
-	local ringZ = pegZ - (0.24 * size - pegRadius)
+
+-- The Big Spanner hangs with its head resting on two pegs, the shank between
+-- them. The small one lies across two pegs, its heads stopping it sliding off.
+local BIG_LENGTH, BIG_PEG_Z, BIG_PEG_RADIUS = 3.6, hole(11), 0.07
+local BIG_X = (hole(-6) + hole(-5)) / 2 - SPANNER_REST_ACROSS * BIG_LENGTH
+local BIG_Z = BIG_PEG_Z + BIG_PEG_RADIUS + 0.03 - SPANNER_REST_ALONG * BIG_LENGTH
+local SMALL_LENGTH, SMALL_PEG_Z, SMALL_PEG_RADIUS = 1.2, hole(11), 0.05
+local SMALL_X = (hole(4) + hole(5)) / 2
+local SMALL_Z = SMALL_PEG_Z + SMALL_PEG_RADIUS + 0.05
+local function onBigSpanner(across: number, along: number): (number, number)
+	return BIG_X + across * BIG_LENGTH, BIG_Z + along * BIG_LENGTH
+end
+-- Turned a quarter round, which keeps the outline clockwise.
+local function onSmallSpanner(across: number, along: number): (number, number)
+	return SMALL_X + along * SMALL_LENGTH, SMALL_Z - across * SMALL_LENGTH
+end
+local function spanner(mesh, place, depth: number, bevel: number)
 	local outline = {}
 	for i, point in SPANNER_OUTLINE do
-		outline[i] = { ringX - point[1] * size, ringZ - point[2] * size }
+		local x, z = place(point[1], point[2])
+		outline[i] = { x, z }
 	end
-	plate(mesh, outline, TOOL_Y, 0.1, 0.02)
-	ring(mesh, ringX, TOOL_Y, ringZ, 0.24 * size, 0.5 * size, 0.1, "y", 16)
-	peg(mesh, ringX, pegZ, pegRadius)
+	plate(mesh, outline, TOOL_Y, depth, bevel)
+end
+-- The shank's recessed middle, narrowing out at each end as on the real thing.
+local function inShankRecess(across: number, along: number): boolean
+	return math.abs(across) < 0.024 * math.clamp((0.29 - math.abs(along)) / 0.03, 0, 1)
 end
 
 local HAMMER_LEFT_PEG, HAMMER_RIGHT_PEG, HAMMER_PEG_Z = hole(1), hole(2), hole(11)
 local HAMMER_X, HEAD_BASE = (HAMMER_LEFT_PEG + HAMMER_RIGHT_PEG) / 2, HAMMER_PEG_Z + 0.07
 part("Tools", nil, TOOL_STEEL, function(mesh)
 	-- The Big Spanner left of the capsule, a small one above the panel.
-	spanner(mesh, hole(-5), hole(11), 1)
-	spanner(mesh, hole(4), hole(12), 0.3)
+	spanner(mesh, onBigSpanner, 0.1, 0.012)
+	peg(mesh, hole(-6), BIG_PEG_Z, BIG_PEG_RADIUS)
+	peg(mesh, hole(-5), BIG_PEG_Z, BIG_PEG_RADIUS)
+	spanner(mesh, onSmallSpanner, 0.06, 0.004)
+	peg(mesh, hole(4), SMALL_PEG_Z, SMALL_PEG_RADIUS)
+	peg(mesh, hole(5), SMALL_PEG_Z, SMALL_PEG_RADIUS)
 	-- A hammer hanging head up: its head rests on two pegs, the handle between.
 	box(mesh, HAMMER_X, TOOL_Y, HEAD_BASE - 1.38, 0.16, 0.1, 1.42)
 	box(mesh, HAMMER_X, TOOL_Y, HEAD_BASE, 0.76, 0.16, 0.34)
@@ -1231,17 +1298,21 @@ end, nil, function(x, y, z)
 	elseif math.abs(x - HAMMER_X) < 0.4 and z >= HEAD_BASE then
 		return DECK_STEEL[1], DECK_STEEL[2], DECK_STEEL[3]
 	end
-	-- Forged steel, ground lengthwise.
-	local k = 0.97 + 0.04 * math.sin(x * 50)
+	-- Forged steel, darker in the shank's recess on the front face.
+	local across, along = (x - BIG_X) / BIG_LENGTH, (z - BIG_Z) / BIG_LENGTH
+	if x > 0 then
+		across, along = (SMALL_Z - z) / SMALL_LENGTH, (x - SMALL_X) / SMALL_LENGTH
+	end
+	local k = if y < TOOL_Y - 0.025 and inShankRecess(across, along) then 0.74 else 1
 	return TOOL_STEEL[1] * k, TOOL_STEEL[2] * k, TOOL_STEEL[3] * k
 end, nil, nil, true, 0.06, nil, 0.5)
 machined()
 
 part("Panel", nil, PANEL_STEEL, function(mesh)
 	box(mesh, PANEL_X, TOOL_Y, 2.5, 1.3, 0.26, 2.4)
-	for _, across in { -0.52, 0.52 } do
-		for _, z in { 2.65, 4.75 } do
-			bolt(mesh, PANEL_X + across, TOOL_Y - 0.13, z, "y", 0.07)
+	for _, x in { hole(3), hole(5) } do
+		for _, z in { hole(5), hole(9) } do
+			bolt(mesh, x, TOOL_Y - 0.13, z, "y", 0.07)
 		end
 	end
 	-- The dial, its bezel, and a lever in a slotted plate.
@@ -1271,10 +1342,9 @@ end, nil, function(x, y, z)
 		end
 		return CREAM[1], CREAM[2], CREAM[3]
 	end
-	local k = 0.94 + 0.1 * math.noise(x * 1.2, z * 1.2, 2.6)
-	return PANEL_STEEL[1] * k, PANEL_STEEL[2] * k, PANEL_STEEL[3] * k
-end, nil, nil, true, 0.12)
-crisp()
+	return PANEL_STEEL[1], PANEL_STEEL[2], PANEL_STEEL[3]
+end, nil, nil, true, 0.06)
+machined()
 
 -- ---------------------------------------------------------- the lighting
 part("Arm", nil, FRAME_STEEL, function(mesh)
@@ -1376,6 +1446,9 @@ part("Drum", nil, OIL_BLUE, function(mesh)
 	end
 	-- The funnel in its filler hole.
 	lathe(mesh, { OIL_X + 0.2, OIL_Y, 2.06 }, { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 }, { { 0.07, 0 }, { 0.07, 0.2 }, { 0.26, 0.42 }, { 0.22, 0.42 }, { 0.05, 0.22 } }, 12)
-end, nil, 0.45, nil, nil, nil, 0.12)
+end, nil, function(_x, _y, _z)
+	return OIL_BLUE[1], OIL_BLUE[2], OIL_BLUE[3]
+end, nil, nil, nil, 0.08)
+machined()
 
 finishParts()

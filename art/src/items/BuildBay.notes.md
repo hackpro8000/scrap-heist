@@ -16,11 +16,13 @@
 - Second pass, after the critic gained its rules (`docs/art/critic-rules.md`): the tools hang as they really would, with every peg placed from the same numbers as the board's painted holes. The claws are swept cast arms pinned between steel lugs on the deck. The seat has lathe rings. Machine parts use the crisp coat with bold edge highlights in their own colour, and riveted parts have light contact shadows.
 - The bronze here is yellower than the family's, because the old tone read as wood. The press and sky props still have the old one, and the press should be matched when it's next reviewed.
 
+- The spanners are double open-ended ones traced from the user's photo (66 outline points cleaned to 55, length to head width about 5). They have no ring: the Big Spanner's head rests on two pegs with the shank between them, the small one lies across two pegs. Board and panel bolts are on hole positions too, and the panel moved to x 2.25 for that. The sketch still shows a ring spanner.
+
 ## Open
 - Whether a capsule really lands on the drum depends on Roblox's collision shapes, which can't be tested from the preview. Check in Studio once the new kit is uploaded.
-- Critic, all LOW: bolt heads are close to the plate's tone; the lugs have no foot plates; a speckled band inside the rubber ring; soft wisps on the Big Spanner's shaft; blocky patches on the crate; no holes on the board's back; lamps bloom near-white; HATCH is bitmap lettering; no cable glands.
+- Critic, all LOW: HATCH is bitmap lettering and paints over holes; the dial has no scale and there's no ARMED label; the lever's slot plate runs into a panel bolt; the funnel should sit in a rim bung; frame and panel bolts read as fuzzy cogs up close.
 
 ## Next
-- Bolt heads a step brighter than their plates.
-- Bolted foot plates on the claws' lugs.
-- Lamps held to amber, with sockets.
+- A stencil letterform for HATCH, with breaks that leave the holes open.
+- A scale on the dial and an ARMED plate under the lamp.
+- Clear the lever's slot plate of the bolt.

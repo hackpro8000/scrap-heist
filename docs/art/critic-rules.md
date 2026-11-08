@@ -17,6 +17,9 @@ Where one thing mounts on, plugs into or sits in another, the two must agree. A 
 ## Parts meet properly
 Parts should join through something: a weld, flange, collar, bracket or seam. Flag parts simply pushed through each other where a player can see the join. Things should look as if they could be assembled and serviced.
 
+## Familiar objects look like themselves
+Being recognisable isn't enough, because a crude version still reads through context. For each object a player knows from real life, name it, state the real thing's key ratios from what you know (overall length to width, head to handle, thickest to thinnest), and measure the same ratios on the model in the flat views. Give the numbers for each object in your RULES line. A ratio off by more than a third, or an outline the real thing doesn't have, is MED.
+
 ## Forms aren't just primitives
 Flag objects that read as stacks of boxes, cylinders and spheres. Flag heaps and rocks that read as lumpy blobs or crystals, organic forms ended by a straight cut, and unrelated parts that all share one proportion.
 
