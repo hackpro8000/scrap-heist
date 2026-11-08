@@ -1,4 +1,4 @@
-local CACHE_KEY = "MineLoop-bc87563a8c6a9199"
+local CACHE_KEY = "MineLoop-fd69ddf92d9056fe"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3554,15 +3554,15 @@ local BAND = 1.2
 -- The summit: where it stands ({out, along}) and how tall, flat out to
 -- CROWN of the way to the foot so a cluster of columns stands at the top;
 -- the slope is a cone rounded BOWL of the way toward a dome.
-local PEAK, SUMMIT, CROWN, BOWL = { 2, -2 }, 25, 0.1, 0.2
+local PEAK, SUMMIT, CROWN, BOWL = { 2, -2 }, 18.5, 0.1, 0.2
 -- A ridge along the track keeps the hill high round the tunnel and over
 -- each porch: RIDGE tall out to RIDGE_FLAT either side of the track,
 -- falling away over RIDGE_WIDTH beyond that, and running RIDGE_PAST past
 -- each mouth (to the hill's face) before dropping over RIDGE_FALL.
-local RIDGE, RIDGE_FLAT, RIDGE_WIDTH, RIDGE_PAST, RIDGE_FALL = 17, 9.5, 7, 2.2, 6
+local RIDGE, RIDGE_FLAT, RIDGE_WIDTH, RIDGE_PAST, RIDGE_FALL = 13.5, 9.5, 7, 2.2, 6
 -- Stone sizes at the summit and at the foot, and the shortest a column
 -- stands.
-local SMALLEST, LARGEST, MIN_LENGTH = 2.4, 3.8, 2.5
+local SMALLEST, LARGEST, MIN_LENGTH = 3.2, 4.6, 2.5
 -- Stones on the hill's middle slopes grow away from the openings: as they
 -- are within OPENING_NEAR studs of a mouth's face, up to GROW times as big
 -- from OPENING_FAR on; the crown and the foot keep their sizes.
@@ -3570,9 +3570,17 @@ local GROW, OPENING_NEAR, OPENING_FAR = 1.4, 7, 16
 -- Chisel cuts per column, at most, and how deep one bites as a share of the
 -- stone's size; fine chips per column (fewest, most) and how deep one bites
 -- in studs; how far a cut's heading may swing from straight out.
-local MAX_CUTS, CUT_DEPTH = 3, { 0.25, 0.65 }
+local MAX_CUTS, CUT_DEPTH = 2, { 0.15, 0.4 }
 local CHIPS, CHIP_DEPTH = { 3, 6 }, { 0.2, 0.55 }
 local CUT_SPREAD = math.rad(55)
+-- Each column's edges are chamfered unevenly, each edge its own width
+-- (studs, narrowest and widest), then sub-chamfered: a narrower bevel,
+-- SUB_CHAMFER of that width, trims each crease the chamfer left. Top edges
+-- lean up to CHAMFER_LEAN either way of 45 degrees.
+local CHAMFER, SUB_CHAMFER, CHAMFER_LEAN = { 0.12, 0.6 }, 0.35, math.rad(15)
+-- Chips knocked off a column's top: the share of corners and of edges
+-- chipped, and how deep a chip bites (studs, smallest and biggest).
+local CORNER_CHIPS, EDGE_CHIPS, CHIP_SIZE = 0.6, 0.45, { 0.2, 0.55 }
 
 -- A convex outline ({{x, y}, ...}, counter-clockwise) cut down to the side
 -- where a x + b y <= c.
@@ -3590,6 +3598,28 @@ local function clipOutline(outline, a: number, b: number, c: number)
 		end
 	end
 	return kept
+end
+-- An outline with each corner bevelled off: width(i) studs in from corner
+-- i along its bisector (none where it is 0).
+local function chamferOutline(outline, width: (number) -> number)
+	local count = #outline
+	local cut = outline
+	for i, v in outline do
+		local p, q = outline[(i - 2) % count + 1], outline[i % count + 1]
+		local ax, ay = v[2] - p[2], p[1] - v[1]
+		local bx, by = q[2] - v[2], v[1] - q[1]
+		local la, lb = math.sqrt(ax * ax + ay * ay), math.sqrt(bx * bx + by * by)
+		local d = width(i)
+		if la > 1e-6 and lb > 1e-6 and d > 0 then
+			local nx, ny = ax / la + bx / lb, ay / la + by / lb
+			local ln = math.sqrt(nx * nx + ny * ny)
+			if ln > 1e-6 then
+				nx, ny = nx / ln, ny / ln
+				cut = clipOutline(cut, nx, ny, nx * v[1] + ny * v[2] - d)
+			end
+		end
+	end
+	return cut
 end
 -- An outline's area and centroid.
 local function outlineCentre(outline): (number, number, number)
@@ -3753,9 +3783,9 @@ do
 	-- scattered over the cave's footprint, small near the summit and big
 	-- toward the foot; each stone's cell of a power diagram (so big stones
 	-- claim big cells) raised as a column to the slope's height, its top
-	-- tilted and rising to a low ridge point, so neighbours step against
-	-- each other in tiers; then chiselled by a few angled cuts and fine
-	-- chips, all facing out from the summit. Cells crossing the tunnel are
+	-- one flat tilted plane, so neighbours step against each other in
+	-- tiers; then chiselled by a cut or two biting gently into the top and
+	-- fine chips at its edges, all facing out from the summit. Cells crossing the tunnel are
 	-- split at its walls: the parts beside it stand on the ground, the part
 	-- over it stands on the lintels.
 	local function random(i: number, j: number): number
@@ -3854,6 +3884,17 @@ do
 		if #cell < 3 then
 			continue
 		end
+		-- The column's upright edges chamfered unevenly, then each new
+		-- crease sub-chamfered.
+		cell = chamferOutline(cell, function(i)
+			return CHAMFER[1] + (CHAMFER[2] - CHAMFER[1]) * random(index, 100 + i)
+		end)
+		cell = chamferOutline(cell, function(i)
+			return SUB_CHAMFER * CHAMFER[1] * (0.5 + random(index, 130 + i))
+		end)
+		if #cell < 3 then
+			continue
+		end
 		local cellArea, cellOut, cellMiddle = outlineCentre(cell)
 		-- Between the mouths a cell splits at the tunnel's walls, its part
 		-- over the tunnel standing on the lintels; in front of each mouth the
@@ -3877,15 +3918,22 @@ do
 			-- porch's eaves and steps in and out from column to column.
 			local past = clipOutline(front, 0, -side, -BORE_REACH)
 			local step = BORE + 0.4 + 0.6 * random(index, 8)
-			table.insert(pieces, { outline = clipOutline(past, 1, 0, -step), base = -0.5 })
-			table.insert(pieces, { outline = clipOutline(past, -1, 0, -step), base = -0.5 })
+			table.insert(pieces, { outline = clipOutline(past, 1, 0, -step), base = -0.5, step = step })
+			table.insert(pieces, { outline = clipOutline(past, -1, 0, -step), base = -0.5, step = step })
 		end
-		local cellRise = slopeAt(cellOut, cellMiddle) + (random(index, 1) - 0.5) * (2.5 + 0.5 * stone[3])
-		-- Bigger stones stand flatter on top: less tilt, a lower ridge point
-		-- and cuts that bite more nearly level (flat 0 for cells of 4 square
-		-- studs or less, 1 for 12 or more), each still with a gentle break;
+		-- A column stands to the slope halfway between its middle and its
+		-- lowest corner, so a broad one on a steep slope doesn't tower over
+		-- its neighbours.
+		local lowest = math.huge
+		for _, q in cell do
+			lowest = math.min(lowest, slopeAt(q[1], q[2]))
+		end
+		local cellRise = (slopeAt(cellOut, cellMiddle) + lowest) / 2 + (random(index, 1) - 0.5) * (1.4 + 0.3 * stone[3])
+		-- Bigger stones stand flatter on top: less tilt and cuts that bite
+		-- more nearly level (flat 0 for cells of 8 square studs or less, 1
+		-- for 20 or more), each still with a gentle break;
 		-- the crown's columns keep their tilts so the summit stays a peak.
-		local flat = math.clamp((cellArea - 4) / 8, 0, 1) * math.clamp((fromSummit(cellOut, cellMiddle, 2) - 0.1) / 0.25, 0, 1)
+		local flat = math.clamp((cellArea - 8) / 12, 0, 1) * math.clamp((fromSummit(cellOut, cellMiddle, 2) - 0.1) / 0.25, 0, 1)
 		local tilt = 0.6 * (1 - 0.7 * flat)
 		local tiltX, tiltY = (random(index, 2) - 0.5) * tilt, (random(index, 3) - 0.5) * tilt
 		for p, piece in pieces do
@@ -3921,7 +3969,7 @@ do
 			for i, corner in outline do
 				corners[i] = { corner[1], corner[2], rise + (corner[1] - cellOut) * tiltX + (corner[2] - cellMiddle) * tiltY }
 			end
-			local peak = { cx, cy, rise + (cx - cellOut) * tiltX + (cy - cellMiddle) * tiltY + 0.07 * stone[3] * (1 - 0.6 * flat) * (0.5 + random(key, 4)) }
+			local peak = { cx, cy, rise + (cx - cellOut) * tiltX + (cy - cellMiddle) * tiltY }
 			-- The column as a closed solid, faces wound outward.
 			local faces = {}
 			local count = #corners
@@ -3942,10 +3990,10 @@ do
 			local outward = math.atan2(cy - PEAK[2], cx - PEAK[1])
 			local cuts = {}
 			for k = 1, 1 + math.floor(random(key, 40) * MAX_CUTS) do
-				table.insert(cuts, { outward + (random(key, 40 + k) - 0.5) * 2 * CUT_SPREAD, 0.35 + 0.6 * flat + random(key, 50 + k) * 0.85 * (1 - 0.5 * flat), stone[3] * (CUT_DEPTH[1] + (CUT_DEPTH[2] - CUT_DEPTH[1]) * random(key, 60 + k)) })
+				table.insert(cuts, { outward + (random(key, 40 + k) - 0.5) * 2 * CUT_SPREAD, 0.72 + 0.1 * flat + random(key, 50 + k) * 0.3 * (1 - 0.5 * flat), stone[3] * (CUT_DEPTH[1] + (CUT_DEPTH[2] - CUT_DEPTH[1]) * random(key, 60 + k)) })
 			end
 			for k = 1, CHIPS[1] + math.floor(random(key, 70) * (CHIPS[2] - CHIPS[1] + 1)) do
-				table.insert(cuts, { outward + (random(key, 70 + k) - 0.5) * 2 * CUT_SPREAD, 0.35 + 0.6 * flat + random(key, 80 + k) * 1.05 * (1 - 0.5 * flat), CHIP_DEPTH[1] + (CHIP_DEPTH[2] - CHIP_DEPTH[1]) * random(key, 90 + k) })
+				table.insert(cuts, { outward + (random(key, 70 + k) - 0.5) * 2 * CUT_SPREAD, 0.6 + 0.1 * flat + random(key, 80 + k) * 0.45 * (1 - 0.5 * flat), CHIP_DEPTH[1] + (CHIP_DEPTH[2] - CHIP_DEPTH[1]) * random(key, 90 + k) })
 			end
 			for _, cut in cuts do
 				local heading, lift, depth = cut[1], cut[2], cut[3]
@@ -3975,6 +4023,85 @@ do
 					if isClosed(carved) then
 						faces = carved
 					end
+				end
+			end
+			-- Top edges chamfered unevenly and sub-chamfered, all but those
+			-- along a line the cell was split on (where its pieces meet flush,
+			-- or the tunnel and bore are cut).
+			local function onSplit(a, b): boolean
+				local function same(i, values)
+					for _, value in values do
+						if math.abs(a[i] - value) < 0.05 and math.abs(b[i] - value) < 0.05 then
+							return true
+						end
+					end
+					return false
+				end
+				local step = piece.step or BORE
+				return same(1, { -WALL, WALL, -BORE, BORE, -step, step }) or same(2, { -LINTEL_REACH, LINTEL_REACH, -BORE_REACH, BORE_REACH })
+			end
+			local function bevel(n, depth)
+				local farthest = -math.huge
+				for _, face in faces do
+					for _, q in face do
+						farthest = math.max(farthest, q[1] * n[1] + q[2] * n[2] + q[3] * n[3])
+					end
+				end
+				local footMost = -math.huge
+				for _, corner in corners do
+					footMost = math.max(footMost, corner[1] * n[1] + corner[2] * n[2] + piece.base * n[3])
+				end
+				local plane = math.max(farthest - depth, footMost + (if piece.over then 3 else 0.4))
+				if plane < farthest then
+					local carved = carveSolid(faces, n, plane)
+					if isClosed(carved) then
+						faces = carved
+					end
+				end
+			end
+			for i, a in outline do
+				local b = outline[i % #outline + 1]
+				local ex, ey = b[2] - a[2], a[1] - b[1]
+				local length = math.sqrt(ex * ex + ey * ey)
+				if length > 0.3 and not onSplit(a, b) then
+					ex, ey = ex / length, ey / length
+					local width = CHAMFER[1] + (CHAMFER[2] - CHAMFER[1]) * random(key, 160 + i)
+					local lean = math.rad(45) + (random(key, 190 + i) - 0.5) * 2 * CHAMFER_LEAN
+					bevel({ ex * math.cos(lean), ey * math.cos(lean), math.sin(lean) }, width * 0.7)
+					-- The sub-chamfers stay steep enough to read as edges, and
+					-- deep enough not to leave slivers.
+					if width > 0.22 then
+						for _, turn in { -1, 1 } do
+							local subLean = math.min(lean + turn * math.rad(20), math.rad(62))
+							bevel({ ex * math.cos(subLean), ey * math.cos(subLean), math.sin(subLean) }, width * 0.7 * SUB_CHAMFER)
+						end
+					end
+				end
+			end
+			-- Chips knocked off the top's corners and along its edges, each
+			-- its own size and angle: a corner chip faces out along the
+			-- corner's bisector, an edge chip out from the edge but swung
+			-- along it, so it takes a tapering bite toward one end.
+			local count = #outline
+			for i, v in outline do
+				local p, q = outline[(i - 2) % count + 1], outline[i % count + 1]
+				local ax, ay = v[2] - p[2], p[1] - v[1]
+				local bx, by = q[2] - v[2], v[1] - q[1]
+				local la, lb = math.sqrt(ax * ax + ay * ay), math.sqrt(bx * bx + by * by)
+				if la > 0.3 and lb > 0.3 and not onSplit(p, v) and not onSplit(v, q) and random(key, 220 + i) < CORNER_CHIPS then
+					local nx, ny = ax / la + bx / lb, ay / la + by / lb
+					local ln = math.sqrt(nx * nx + ny * ny)
+					local lift = math.rad(35 + 25 * random(key, 240 + i))
+					local depth = CHIP_SIZE[1] + (CHIP_SIZE[2] - CHIP_SIZE[1]) * random(key, 260 + i)
+					bevel({ nx / ln * math.cos(lift), ny / ln * math.cos(lift), math.sin(lift) }, depth)
+				end
+				if lb > 0.8 and not onSplit(v, q) and random(key, 280 + i) < EDGE_CHIPS then
+					local ox, oy, ex, ey = bx / lb, by / lb, (q[1] - v[1]) / lb, (q[2] - v[2]) / lb
+					local swing = math.rad(35 + 20 * random(key, 300 + i)) * (if random(key, 320 + i) < 0.5 then -1 else 1)
+					local hx, hy = ox * math.cos(swing) + ex * math.sin(swing), oy * math.cos(swing) + ey * math.sin(swing)
+					local lift = math.rad(30 + 25 * random(key, 340 + i))
+					local depth = CHIP_SIZE[1] + (CHIP_SIZE[2] - CHIP_SIZE[1]) * random(key, 360 + i)
+					bevel({ hx * math.cos(lift), hy * math.cos(lift), math.sin(lift) }, depth * 0.8)
 				end
 			end
 			local low, high = { math.huge, math.huge }, { -math.huge, -math.huge }
