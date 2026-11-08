@@ -24,10 +24,11 @@
 - Cave rebuilt from scratch (user): the boulder pile, then sliced-rock piles, were dropped; the user asked for the Column Island method. A power diagram of stones (small near the summit, big at the foot), each cell a column rising to the slope with a tilted top and low ridge point, chiselled by 1 to 3 angled cuts and 3 to 6 chips facing out from the summit (only where the column stays closed). Inner columns taller than outer: a crown about 25 tall near the track, a ridge 17 tall along it, falling to the foot.
 - The ends: first cut off, then cuttings (user: "cut into them"), then tunnelled through (user): the hill carries on past each mouth and the tunnel bores through it 4.9 either side of the track, the stone over each porch standing on its roof; the porch sticks out about 3.5 past the hill's face, its frame covering the bore's edges (user).
 - No thin slivers by the mouths (user): three rows of like-sized columns round each mouth, set so their cells meet right on the tunnel-wall, mouth, bore and face lines. Chunks moved beside the track past each porch. Five review rounds.
+- Bigger cells flatter on top (user): by the cell's footprint (none at 4 square studs, full at 12), less tilt (at most 70% less), a lower ridge point and cuts biting nearer level, so each still keeps a gentle break; the crown's columns keep their tilts so the summit stays a peak. Two review rounds.
 
 ## Open
 - A few texels still take a neighbour's tone where a small rock tucks in front of a big one with faces turned the same way (LOW).
-- Critic (round 5 on the column hill), all LOW: columns over each porch close to one height; the rows beside the porch read a little like a picket row; light lines at some column bases from the ground level; tall faces show big texels.
+- Critic (after the flat tops), all LOW: bright edge lines on big flat tops read as outlines; columns over each porch close to one height; the rows beside the porch read a little like a picket row; light lines at some column bases from the ground level; tall faces show big texels.
 - The mouth shades stay opaque 4.5 in, as the user asked.
 - The plan check's clearance can't measure this opening: it looks along X or Z, and the tunnel runs along Y.
 - The clipping check flags the intended seating (boards, beams and pebbles tucked into the rocks).

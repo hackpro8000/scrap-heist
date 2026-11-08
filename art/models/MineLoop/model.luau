@@ -1,4 +1,4 @@
-local CACHE_KEY = "MineLoop-233bc72175df3df4"
+local CACHE_KEY = "MineLoop-46e1b405fa25b013"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3554,7 +3554,7 @@ local BAND = 1.2
 -- The summit: where it stands ({out, along}) and how tall, flat out to
 -- CROWN of the way to the foot so a cluster of columns stands at the top;
 -- the slope is a cone rounded BOWL of the way toward a dome.
-local PEAK, SUMMIT, CROWN, BOWL = { 2, -2 }, 25, 0.18, 0.2
+local PEAK, SUMMIT, CROWN, BOWL = { 2, -2 }, 25, 0.1, 0.2
 -- A ridge along the track keeps the hill high round the tunnel and over
 -- each porch: RIDGE tall out to RIDGE_FLAT either side of the track,
 -- falling away over RIDGE_WIDTH beyond that, and running RIDGE_PAST past
@@ -3847,7 +3847,7 @@ do
 		if #cell < 3 then
 			continue
 		end
-		local _cellArea, cellOut, cellMiddle = outlineCentre(cell)
+		local cellArea, cellOut, cellMiddle = outlineCentre(cell)
 		-- Between the mouths a cell splits at the tunnel's walls, its part
 		-- over the tunnel standing on the lintels; in front of each mouth the
 		-- tunnel bores on through the hill round the porch, the part over it
@@ -3874,7 +3874,13 @@ do
 			table.insert(pieces, { outline = clipOutline(past, -1, 0, -step), base = -0.5 })
 		end
 		local cellRise = slopeAt(cellOut, cellMiddle) + (random(index, 1) - 0.5) * (2.5 + 0.5 * stone[3])
-		local tiltX, tiltY = (random(index, 2) - 0.5) * 0.6, (random(index, 3) - 0.5) * 0.6
+		-- Bigger stones stand flatter on top: less tilt, a lower ridge point
+		-- and cuts that bite more nearly level (flat 0 for cells of 4 square
+		-- studs or less, 1 for 12 or more), each still with a gentle break;
+		-- the crown's columns keep their tilts so the summit stays a peak.
+		local flat = math.clamp((cellArea - 4) / 8, 0, 1) * math.clamp((fromSummit(cellOut, cellMiddle, 2) - 0.1) / 0.25, 0, 1)
+		local tilt = 0.6 * (1 - 0.7 * flat)
+		local tiltX, tiltY = (random(index, 2) - 0.5) * tilt, (random(index, 3) - 0.5) * tilt
 		for p, piece in pieces do
 			local outline = piece.outline
 			-- Each column pulled in a hairline, so neighbours don't share
@@ -3908,7 +3914,7 @@ do
 			for i, corner in outline do
 				corners[i] = { corner[1], corner[2], rise + (corner[1] - cellOut) * tiltX + (corner[2] - cellMiddle) * tiltY }
 			end
-			local peak = { cx, cy, rise + (cx - cellOut) * tiltX + (cy - cellMiddle) * tiltY + 0.07 * stone[3] * (0.5 + random(key, 4)) }
+			local peak = { cx, cy, rise + (cx - cellOut) * tiltX + (cy - cellMiddle) * tiltY + 0.07 * stone[3] * (1 - 0.6 * flat) * (0.5 + random(key, 4)) }
 			-- The column as a closed solid, faces wound outward.
 			local faces = {}
 			local count = #corners
@@ -3929,10 +3935,10 @@ do
 			local outward = math.atan2(cy - PEAK[2], cx - PEAK[1])
 			local cuts = {}
 			for k = 1, 1 + math.floor(random(key, 40) * MAX_CUTS) do
-				table.insert(cuts, { outward + (random(key, 40 + k) - 0.5) * 2 * CUT_SPREAD, 0.35 + random(key, 50 + k) * 0.85, stone[3] * (CUT_DEPTH[1] + (CUT_DEPTH[2] - CUT_DEPTH[1]) * random(key, 60 + k)) })
+				table.insert(cuts, { outward + (random(key, 40 + k) - 0.5) * 2 * CUT_SPREAD, 0.35 + 0.6 * flat + random(key, 50 + k) * 0.85 * (1 - 0.5 * flat), stone[3] * (CUT_DEPTH[1] + (CUT_DEPTH[2] - CUT_DEPTH[1]) * random(key, 60 + k)) })
 			end
 			for k = 1, CHIPS[1] + math.floor(random(key, 70) * (CHIPS[2] - CHIPS[1] + 1)) do
-				table.insert(cuts, { outward + (random(key, 70 + k) - 0.5) * 2 * CUT_SPREAD, 0.35 + random(key, 80 + k) * 1.05, CHIP_DEPTH[1] + (CHIP_DEPTH[2] - CHIP_DEPTH[1]) * random(key, 90 + k) })
+				table.insert(cuts, { outward + (random(key, 70 + k) - 0.5) * 2 * CUT_SPREAD, 0.35 + 0.6 * flat + random(key, 80 + k) * 1.05 * (1 - 0.5 * flat), CHIP_DEPTH[1] + (CHIP_DEPTH[2] - CHIP_DEPTH[1]) * random(key, 90 + k) })
 			end
 			for _, cut in cuts do
 				local heading, lift, depth = cut[1], cut[2], cut[3]
