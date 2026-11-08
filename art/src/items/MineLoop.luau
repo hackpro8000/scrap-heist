@@ -148,6 +148,10 @@ local RIDGE, RIDGE_FLAT, RIDGE_WIDTH, RIDGE_PAST, RIDGE_FALL = 17, 9.5, 7, 2.2, 
 -- Stone sizes at the summit and at the foot, and the shortest a column
 -- stands.
 local SMALLEST, LARGEST, MIN_LENGTH = 2.4, 3.8, 2.5
+-- Stones on the hill's middle slopes grow away from the openings: as they
+-- are within OPENING_NEAR studs of a mouth's face, up to GROW times as big
+-- from OPENING_FAR on; the crown and the foot keep their sizes.
+local GROW, OPENING_NEAR, OPENING_FAR = 1.4, 7, 16
 -- Chisel cuts per column, at most, and how deep one bites as a share of the
 -- stone's size; fine chips per column (fewest, most) and how deep one bites
 -- in studs; how far a cut's heading may swing from straight out.
@@ -396,6 +400,9 @@ do
 		if fromSummit(out, middle) <= 1.3 then
 			local height = math.clamp(slopeAt(out, middle) / SUMMIT, 0, 1)
 			local size = (LARGEST + (SMALLEST - LARGEST) * height ^ 0.5) * (0.6 + 0.65 * random(dart, 93))
+			local fromOpening = math.sqrt(out * out + (math.abs(middle) - BORE_REACH) ^ 2)
+			local midSlope = math.clamp(height / 0.3, 0, 1) * math.clamp((1 - height) / 0.3, 0, 1)
+			size *= 1 + (GROW - 1) * midSlope * math.clamp((fromOpening - OPENING_NEAR) / (OPENING_FAR - OPENING_NEAR), 0, 1)
 			local clear = true
 			for _, other in stones do
 				if (out - other[1]) ^ 2 + (middle - other[2]) ^ 2 < ((size + other[3]) * 0.72) ^ 2 then
@@ -424,7 +431,7 @@ do
 		local reach = 1.4 * stone[3]
 		local cell = { { stone[1] - reach, stone[2] - reach }, { stone[1] + reach, stone[2] - reach }, { stone[1] + reach, stone[2] + reach }, { stone[1] - reach, stone[2] + reach } }
 		for other, q in stones do
-			if other ~= index and #cell >= 3 and (q[1] - stone[1]) ^ 2 + (q[2] - stone[2]) ^ 2 < (3 * LARGEST) ^ 2 then
+			if other ~= index and #cell >= 3 and (q[1] - stone[1]) ^ 2 + (q[2] - stone[2]) ^ 2 < (3 * GROW * LARGEST) ^ 2 then
 				local limit = (q[1] ^ 2 + q[2] ^ 2 - stone[1] ^ 2 - stone[2] ^ 2 - q[3] ^ 2 + stone[3] ^ 2) / 2
 				cell = clipOutline(cell, q[1] - stone[1], q[2] - stone[2], limit)
 			end

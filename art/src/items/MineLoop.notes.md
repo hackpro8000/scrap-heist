@@ -25,6 +25,7 @@
 - The ends: first cut off, then cuttings (user: "cut into them"), then tunnelled through (user): the hill carries on past each mouth and the tunnel bores through it 4.9 either side of the track, the stone over each porch standing on its roof; the porch sticks out about 3.5 past the hill's face, its frame covering the bore's edges (user).
 - No thin slivers by the mouths (user): three rows of like-sized columns round each mouth, set so their cells meet right on the tunnel-wall, mouth, bore and face lines. Chunks moved beside the track past each porch. Five review rounds.
 - Bigger cells flatter on top (user): by the cell's footprint (none at 4 square studs, full at 12), less tilt (at most 70% less), a lower ridge point and cuts biting nearer level, so each still keeps a gentle break; the crown's columns keep their tilts so the summit stays a peak. Two review rounds.
+- Bigger cells away from the openings (user): stones on the hill's middle slopes grow up to 1.4 times from 7 to 16 studs out from a mouth's face; the crown, the foot and the columns round the mouths keep their sizes (1.6 times everywhere made a few huge summit blocks and paving slabs at the foot). Two review rounds.
 
 ## Open
 - A few texels still take a neighbour's tone where a small rock tucks in front of a big one with faces turned the same way (LOW).
@@ -34,5 +35,6 @@
 - The clipping check flags the intended seating (boards, beams and pebbles tucked into the rocks).
 
 ## Next
+- Less crystal-like (user): no pointed, faceted tops; chunkier, less slender columns.
 - Vary the over-porch columns' heights and stagger the rows beside each porch.
 - Then IslandPreview re-rendered with the approved cave.
