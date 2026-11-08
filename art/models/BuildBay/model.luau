@@ -1,4 +1,4 @@
-local CACHE_KEY = "BuildBay-d74007e67b0bb91d"
+local CACHE_KEY = "BuildBay-3a7d029a1116e95f"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -303,15 +303,57 @@ end
 -- strands, and bolts on curved faces.
 local function tube(mesh, points, radius, sides)
 	sides = sides or 8
+	local function unit(a, b)
+		local x, y, z = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local length = math.sqrt(x * x + y * y + z * z)
+		if length < 1e-6 then
+			return nil
+		end
+		return { x / length, y / length, z / length }
+	end
 	local rings = {}
+	local carried
 	for i, p in points do
-		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
-		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local before, after = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local into, out = i > 1 and unit(before, p) or nil, i < #points and unit(p, after) or nil
+		-- Each ring lies across the bisector of its bend.
+		local dx, dy, dz = after[1] - before[1], after[2] - before[2], after[3] - before[3]
+		if into and out then
+			local x, y, z = into[1] + out[1], into[2] + out[2], into[3] + out[3]
+			if x * x + y * y + z * z > 1e-6 then
+				dx, dy, dz = x, y, z
+			end
+		end
+		local tx, ty, tz, ux, uy, uz, vx, vy, vz = crossFrame(dx, dy, dz)
+		-- Carry the last ring's frame round the bend, so the tube can't twist.
+		if carried then
+			local along = carried[1] * tx + carried[2] * ty + carried[3] * tz
+			local x, y, z = carried[1] - tx * along, carried[2] - ty * along, carried[3] - tz * along
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				ux, uy, uz = x / length, y / length, z / length
+				vx, vy, vz = ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+			end
+		end
+		carried = { ux, uy, uz }
+		-- A ring across a bend is widened toward the bend's outside, or the tube
+		-- would pinch there.
+		local stretch, bx, by, bz = 1, 0, 0, 0
+		if into and out then
+			local x, y, z = out[1] - into[1], out[2] - into[2], out[3] - into[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				bx, by, bz = x / length, y / length, z / length
+				stretch = 1 / math.max(tx * out[1] + ty * out[2] + tz * out[3], 0.5)
+			end
+		end
 		local ring = {}
 		for k = 0, sides - 1 do
 			local t = k / sides * TAU
 			local c, n = math.cos(t) * radius, math.sin(t) * radius
-			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+			local x, y, z = ux * c + vx * n, uy * c + vy * n, uz * c + vz * n
+			local extra = (x * bx + y * by + z * bz) * (stretch - 1)
+			ring[k + 1] = mesh:vertex(p[1] + x + bx * extra, p[2] + y + by * extra, p[3] + z + bz * extra)
 		end
 		rings[i] = ring
 	end
@@ -328,6 +370,34 @@ local function tube(mesh, points, radius, sides)
 	end
 	mesh:face(cap)
 	mesh:face(rings[#rings])
+end
+
+-- `points` with each inner corner replaced by a curve starting up to `reach`
+-- studs before it, for wires and hoses that shouldn't have sharp elbows.
+local function roundedPath(points, reach, steps)
+	steps = steps or 4
+	local path = { points[1] }
+	for i = 2, #points - 1 do
+		local a, p, b = points[i - 1], points[i], points[i + 1]
+		local function towards(q)
+			local x, y, z = q[1] - p[1], q[2] - p[2], q[3] - p[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			local r = math.min(reach, length / 2) / length
+			return { p[1] + x * r, p[2] + y * r, p[3] + z * r }
+		end
+		local first, last = towards(a), towards(b)
+		for s = 0, steps do
+			local t = s / steps
+			local m0, m1, m2 = (1 - t) ^ 2, 2 * t * (1 - t), t * t
+			table.insert(path, {
+				first[1] * m0 + p[1] * m1 + last[1] * m2,
+				first[2] * m0 + p[2] * m1 + last[2] * m2,
+				first[3] * m0 + p[3] * m1 + last[3] * m2,
+			})
+		end
+	end
+	table.insert(path, points[#points])
+	return path
 end
 
 -- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
@@ -891,11 +961,9 @@ end
 local function crisp()
 	parts[#parts].crisp = true
 end
--- Crisp, with clean bold edge highlights in a lighter shade of the part's own
--- colour instead of dry-brushed ones.
-local function machined()
-	local entry = parts[#parts]
-	entry.crisp, entry.painted, entry.blend = true, true, 0.8
+-- Dry-brushed edge highlights, full at the corners and thinning along each edge.
+local function tapered()
+	parts[#parts].taper = 0.5
 end
 -- A shape turned round an axis through `origin`: `profile` lists { radius,
 -- distance along the axis }. `u` and `v` are unit vectors across the axis,
@@ -964,8 +1032,9 @@ end, nil, function(x, y, z)
 		end
 	end
 	return DECK_STEEL[1] * k, DECK_STEEL[2] * k, DECK_STEEL[3] * k
-end, nil, nil, true, 0.06, 0.3, 0.35)
-machined()
+end, nil, nil, true, 0.2)
+crisp()
+tapered()
 
 -- ----------------------------------------------------------- the cradle
 part("Cradle", nil, PANEL_STEEL, function(mesh)
@@ -1003,9 +1072,11 @@ end, nil, function(x, y, z)
 		end
 		return HAZARD[1], HAZARD[2], HAZARD[3]
 	end
-	return PANEL_STEEL[1], PANEL_STEEL[2], PANEL_STEEL[3]
-end, nil, nil, true, 0.07)
-machined()
+	local k = 0.94 + 0.1 * math.noise(x * 0.9, y * 0.9, z * 2)
+	return PANEL_STEEL[1] * k, PANEL_STEEL[2] * k, PANEL_STEEL[3] * k
+end, nil, nil, true, 0.15, nil, 0.25)
+crisp()
+tapered()
 
 -- A cast arm swept along `spine` in the upright plane through the bay's middle
 -- at direction (c, s), or `offset` to one side of it. Each spine entry is
@@ -1044,36 +1115,38 @@ for i, degrees in { 90, 210, 330 } do
 		return c * r, s * r, z
 	end
 	part(`Clamp{i}`, nil, BRONZE, function(mesh)
-		local hingeX, hingeY, hingeZ = at(3.02, 1.02)
+		local hingeX, hingeY, hingeZ = at(3.02, 1.1)
 		-- The claw: heavy at the hinge, tapering, curling in to its rubber pad.
 		castArm(mesh, c, s, {
-			{ 3.02, 0.9, 0.3, 0.3 },
+			{ 3.02, 1.05, 0.27, 0.3 },
 			{ 3.16, 1.6, 0.26, 0.27 },
 			{ 3.12, 2.3, 0.21, 0.23 },
 			{ 2.92, 2.92, 0.17, 0.2 },
 			{ 2.62, 3.2, 0.15, 0.19 },
-			{ 2.5, 3.18, 0.2, 0.27 },
-			{ 2.33, 3.18, 0.2, 0.27 },
+			{ 2.5, 3.18, 0.15, 0.19 },
 		})
+		-- The knuckle round the pin.
+		local sideX, sideY = -s * 0.3, c * 0.3
+		tube(mesh, { { hingeX - sideX, hingeY - sideY, hingeZ }, { hingeX + sideX, hingeY + sideY, hingeZ } }, 0.3, 16)
 		-- A lug either side of the claw's heel, standing on the deck, and the
 		-- hinge pin through them, so the claw hangs clear and can swing.
 		for _, side in { -1, 1 } do
-			castArm(mesh, c, s, { { 3.02, 0.48, 0.34, 0.06 }, { 3.02, 1.02, 0.3, 0.06 }, { 3.02, 1.3, 0.16, 0.06 } }, side * 0.37)
+			castArm(mesh, c, s, { { 3.02, 0.48, 0.34, 0.06 }, { 3.02, 1.1, 0.3, 0.06 }, { 3.02, 1.42, 0.16, 0.06 } }, side * 0.37)
 		end
 		local acrossX, acrossY = -s * 0.5, c * 0.5
-		tube(mesh, { { hingeX - acrossX, hingeY - acrossY, hingeZ }, { hingeX + acrossX, hingeY + acrossY, hingeZ } }, 0.2, 10)
+		tube(mesh, { { hingeX - acrossX, hingeY - acrossY, hingeZ }, { hingeX + acrossX, hingeY + acrossY, hingeZ } }, 0.16, 10)
 	end, nil, function(px, py, pz)
-		local r = math.sqrt(px * px + py * py)
-		if pz > 2.7 and r < 2.52 then
-			return RUBBER_BLACK[1], RUBBER_BLACK[2], RUBBER_BLACK[3]
-		end
 		local k = 0.96 + 0.06 * math.noise(px * 0.9, py * 0.9, pz * 0.9)
-		if math.abs(-s * px + c * py) > 0.31 and pz < 1.4 then
+		if math.abs(-s * px + c * py) > 0.31 and pz < 1.5 then
 			return PANEL_STEEL[1] * k, PANEL_STEEL[2] * k, PANEL_STEEL[3] * k
 		end
 		return BRONZE[1] * k, BRONZE[2] * k, BRONZE[3] * k
-	end, nil, nil, true, 0.06)
-	machined()
+	end, nil, nil, true, 0.1)
+	tapered()
+	-- The pad, a solid rubber block standing proud of the claw's tip.
+	part(`Pad{i}`, nil, RUBBER_BLACK, function(mesh)
+		castArm(mesh, c, s, { { 2.56, 3.18, 0.23, 0.31 }, { 2.33, 3.18, 0.23, 0.31 } })
+	end, nil, 0, nil, nil, true, 0.05, nil, 0.2)
 end
 
 -- ------------------------------------------------------------ the frame
@@ -1094,6 +1167,14 @@ part("Frame", nil, FRAME_STEEL, function(mesh)
 		rivets(mesh, -4.1, FRAME_Y - 0.45, z, 4.1, FRAME_Y - 0.45, z, 9, "y", 0.09)
 		rivets(mesh, -4.1, FRAME_Y + 0.45, z, 4.1, FRAME_Y + 0.45, z, 9, "y", 0.09)
 	end
+	-- Riveted ends on the beam.
+	for _, side in { -1, 1 } do
+		for _, across in { -0.25, 0.25 } do
+			for _, z in { BEAM_Z0 + 0.22, BEAM_Z1 - 0.22 } do
+				bolt(mesh, side * BEAM_HALF, FRAME_Y + across, z, "x", 0.09)
+			end
+		end
+	end
 	-- Two braces crossing behind the board.
 	for _, side in { -1, 1 } do
 		strut(mesh, side * 3.25, BOARD_Y + 0.2, 0.85, -side * 3.25, BOARD_Y + 0.2, 6.35, 0.22)
@@ -1110,8 +1191,8 @@ end, nil, function(x, y, z)
 	end
 	local k = 0.94 + 0.1 * math.noise(x * 0.6, z * 0.6, 6.4)
 	return FRAME_STEEL[1] * k, FRAME_STEEL[2] * k, FRAME_STEEL[3] * k
-end, nil, nil, true, 0.06, 0.3, 0.35)
-machined()
+end, nil, nil, true, 0.2)
+tapered()
 
 -- The bronze bands at each post's foot and cap, a part of their own so they go
 -- on crisp while the posts stay brushed.
@@ -1124,8 +1205,8 @@ part("Bands", nil, BRONZE, function(mesh)
 end, nil, function(x, y, z)
 	local k = 0.9 + 0.12 * math.noise(x * 1.3, y * 1.3, z * 1.3)
 	return BRONZE[1] * k, BRONZE[2] * k, BRONZE[3] * k
-end, nil, nil, true, 0.06)
-machined()
+end, nil, nil, true, 0.2)
+tapered()
 
 -- Block letters for the stencil on the board, five wide and seven tall. It
 -- sits low, so a seated capsule mostly hides it: it speaks for an empty bay.
@@ -1175,9 +1256,11 @@ end, nil, function(x, y, z)
 			return 0.09, 0.1, 0.11
 		end
 	end
-	return BOARD_GREY[1], BOARD_GREY[2], BOARD_GREY[3]
+	local k = 0.94 + 0.1 * math.noise(x * 0.7, z * 0.7, 5.5)
+	return BOARD_GREY[1] * k, BOARD_GREY[2] * k, BOARD_GREY[3] * k
 end, nil, nil, true, 0.15)
 crisp()
+tapered()
 
 -- A double open-ended spanner, traced from a photo of a real one. { across,
 -- along } as fractions of its length, the middle at the origin, clockwise as
@@ -1305,8 +1388,8 @@ end, nil, function(x, y, z)
 	end
 	local k = if y < TOOL_Y - 0.025 and inShankRecess(across, along) then 0.74 else 1
 	return TOOL_STEEL[1] * k, TOOL_STEEL[2] * k, TOOL_STEEL[3] * k
-end, nil, nil, true, 0.06, nil, 0.5)
-machined()
+end, nil, nil, true, 0.06)
+tapered()
 
 part("Panel", nil, PANEL_STEEL, function(mesh)
 	box(mesh, PANEL_X, TOOL_Y, 2.5, 1.3, 0.26, 2.4)
@@ -1322,9 +1405,14 @@ part("Panel", nil, PANEL_STEEL, function(mesh)
 	strut(mesh, PANEL_X + 0.32, 3.6, 2.9, PANEL_X + 0.32, 3.3, 3.42, 0.08)
 	sphere(mesh, PANEL_X + 0.32, 3.3, 3.42, 0.18, 0.18, 0.18, 5, 10)
 	-- The cable down the board and across the deck to the drum.
-	tube(mesh, { { PANEL_X - 0.3, 3.7, 2.55 }, { PANEL_X - 0.3, 3.62, 0.62 }, { 2.55, 2.6, 0.6 }, { 2.35, 1.75, 0.62 }, { 1.95, 1.6, 0.95 } }, 0.1, 8)
+	tube(mesh, roundedPath({ { PANEL_X - 0.3, 3.7, 2.55 }, { PANEL_X - 0.3, 3.62, 0.62 }, { 2.6, 2.75, 0.6 }, { 2.75, 2.25, 0.8 }, { 1.98, 1.62, 0.95 } }, 0.3), 0.1, 10)
+	-- The gland where it enters the drum.
+	tube(mesh, { { 1.98, 1.62, 0.95 }, { 2.25, 1.84, 0.95 } }, 0.16, 12)
 end, nil, function(x, y, z)
 	if z < 2.45 then
+		if (x - 2.11) ^ 2 + (y - 1.73) ^ 2 < 0.05 then
+			return PANEL_STEEL[1], PANEL_STEEL[2], PANEL_STEEL[3]
+		end
 		return RUBBER_BLACK[1], RUBBER_BLACK[2], RUBBER_BLACK[3]
 	end
 	-- The lever: a red knob on a dark stem, so it doesn't read as a button.
@@ -1342,9 +1430,11 @@ end, nil, function(x, y, z)
 		end
 		return CREAM[1], CREAM[2], CREAM[3]
 	end
-	return PANEL_STEEL[1], PANEL_STEEL[2], PANEL_STEEL[3]
-end, nil, nil, true, 0.06)
-machined()
+	local k = 0.94 + 0.1 * math.noise(x * 1.2, z * 1.2, 2.6)
+	return PANEL_STEEL[1] * k, PANEL_STEEL[2] * k, PANEL_STEEL[3] * k
+end, nil, nil, true, 0.12)
+crisp()
+tapered()
 
 -- ---------------------------------------------------------- the lighting
 part("Arm", nil, FRAME_STEEL, function(mesh)
@@ -1370,7 +1460,7 @@ end, nil, function(x, y, z)
 	local k = 0.94 + 0.1 * math.noise(y * 1.5, z * 1.5, 3.3)
 	return FRAME_STEEL[1] * k, FRAME_STEEL[2] * k, FRAME_STEEL[3] * k
 end, nil, nil, true, 0.1)
-crisp()
+tapered()
 
 part("Posts", nil, PANEL_STEEL, function(mesh)
 	for _, side in { -1, 1 } do
@@ -1380,10 +1470,8 @@ part("Posts", nil, PANEL_STEEL, function(mesh)
 		-- The bracket arm reaching in over the deck.
 		tube(mesh, { { x, y, LAMP_TOP - 0.2 }, { x - side * 0.42, y + 0.42, LAMP_TOP + 0.02 } }, 0.07, 6)
 	end
-end, nil, function(_x, _y, _z)
-	return PANEL_STEEL[1], PANEL_STEEL[2], PANEL_STEEL[3]
-end, nil, nil, true, 0.06)
-machined()
+end, nil, 0.3, nil, nil, true, 0.1)
+tapered()
 
 -- The glowing lamps, as two parts so that neither reaches across the seat:
 -- the pair at the front, and the rest, all behind the middle.
@@ -1414,23 +1502,85 @@ end, true, function(x, y, z)
 end, nil, 1.4)
 
 -- ------------------------------------------------------------- the clutter
+-- `mesh` turned about a point, so any shape can be drawn tipped: pitch about x
+-- and roll about y first, then yaw about z, in degrees.
+local function tippedAbout(mesh, ox: number, oy: number, oz: number, yaw: number, pitch: number, roll: number)
+	local ca, sa = math.cos(math.rad(yaw)), math.sin(math.rad(yaw))
+	local cp, sp = math.cos(math.rad(pitch)), math.sin(math.rad(pitch))
+	local cr, sr = math.cos(math.rad(roll)), math.sin(math.rad(roll))
+	local ux, uy, uz = ca * cr - sa * sp * sr, sa * cr + ca * sp * sr, -cp * sr
+	local vx, vy, vz = -sa * cp, ca * cp, sp
+	local wx, wy, wz = ca * sr + sa * sp * cr, sa * sr - ca * sp * cr, cp * cr
+	return {
+		vertex = function(_self, x: number, y: number, z: number)
+			local dx, dy, dz = x - ox, y - oy, z - oz
+			return mesh:vertex(ox + ux * dx + vx * dy + wx * dz, oy + uy * dx + vy * dy + wy * dz, oz + uz * dx + vz * dy + wz * dz)
+		end,
+		face = function(_self, face)
+			return mesh:face(face)
+		end,
+	}
+end
+
+-- The junk thrown in the crate, heaped to the back left, a gap at the front
+-- right. Offsets from the crate's middle, with heights above the ground.
+local CRATE_GEAR = { -0.26, 0.14, 1.86 }
+local CRATE_COG = { 0.02, 0.22, 1.72 }
+local CRATE_PIPE = { { -0.12, -0.1, 1.5 }, { 0.36, 0.3, 2.16 } }
+local CRATE_ROD = { { -0.55, 0.33, 1.55 }, { -0.05, -0.22, 1.98 } }
+local function nearSegment(px: number, py: number, pz: number, segment): number
+	local a, b = segment[1], segment[2]
+	local ex, ey, ez = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+	local t = math.clamp(((px - a[1]) * ex + (py - a[2]) * ey + (pz - a[3]) * ez) / (ex * ex + ey * ey + ez * ez), 0, 1)
+	return math.sqrt((px - a[1] - ex * t) ^ 2 + (py - a[2] - ey * t) ^ 2 + (pz - a[3] - ez * t) ^ 2)
+end
+
 part("Crate", nil, WOOD, function(mesh)
 	box(mesh, CRATE_X, CRATE_Y, DECK_TOP - 0.02, 1.5, 1.2, 1.02)
 	for _, side in { -1, 1 } do
 		box(mesh, CRATE_X, CRATE_Y + side * 0.62, DECK_TOP - 0.02, 1.7, 0.16, 1.22)
 		box(mesh, CRATE_X + side * 0.77, CRATE_Y, DECK_TOP - 0.02, 0.16, 1.1, 1.2)
 	end
-	-- What's in it: a gear standing up, a pipe end, a washer.
-	gear(mesh, CRATE_X - 0.3, CRATE_Y + 0.1, 1.72, 0.42, 0.14, 9, "y")
-	tube(mesh, { { CRATE_X + 0.1, CRATE_Y - 0.2, 1.42 }, { CRATE_X + 0.52, CRATE_Y - 0.1, 1.95 } }, 0.1, 8)
-	ring(mesh, CRATE_X + 0.25, CRATE_Y + 0.3, 1.53, 0.12, 0.24, 0.1, "z", 10)
+	local function inCrate(offset)
+		return CRATE_X + offset[1], CRATE_Y + offset[2], offset[3]
+	end
+	local function pathInCrate(segment)
+		local a, b = { inCrate(segment[1]) }, { inCrate(segment[2]) }
+		return { a, b }
+	end
+	sphere(mesh, CRATE_X - 0.2, CRATE_Y + 0.12, 1.46, 0.5, 0.38, 0.26, 5, 10)
+	local x, y, z = inCrate(CRATE_GEAR)
+	gear(tippedAbout(mesh, x, y, z, 24, -38, 17), x, y, z, 0.42, 0.14, 9, "y")
+	x, y, z = inCrate(CRATE_COG)
+	gear(tippedAbout(mesh, x, y, z, -50, 30, -25), x, y, z, 0.22, 0.1, 8, "y")
+	x, y, z = inCrate({ -0.42, -0.2, 1.66 })
+	ring(tippedAbout(mesh, x, y, z, 40, 28, -35), x, y, z, 0.12, 0.24, 0.08, "z", 10)
+	tube(mesh, pathInCrate(CRATE_PIPE), 0.1, 8)
+	tube(mesh, pathInCrate(CRATE_ROD), 0.05, 6)
+	-- A few loose bolts, close together.
+	for _, loose in { { -0.16, -0.36, 1.58, 12, 40, 70 }, { -0.06, -0.31, 1.6, 80, -25, 15 }, { -0.13, -0.27, 1.64, -35, 65, -40 } } do
+		x, y, z = inCrate(loose)
+		bolt(tippedAbout(mesh, x, y, z, loose[4], loose[5], loose[6]), x, y, z, "z", 0.09)
+	end
 end, nil, function(x, y, z)
 	local k = 0.9 + 0.14 * math.noise(x * 1.5, y * 1.5, z * 3)
-	if z > 1.5 and math.abs(x - CRATE_X) < 0.69 and math.abs(y - CRATE_Y) < 0.54 then
-		if x < CRATE_X then
-			return BRASS[1] * k, BRASS[2] * k, BRASS[3] * k
+	if z > 1.46 and math.abs(x - CRATE_X) < 0.69 and math.abs(y - CRATE_Y) < 0.54 then
+		local dx, dy = x - CRATE_X, y - CRATE_Y
+		local function nearPoint(offset, r: number): boolean
+			return (dx - offset[1]) ^ 2 + (dy - offset[2]) ^ 2 + (z - offset[3]) ^ 2 < r * r
 		end
-		return BARE[1] * k, BARE[2] * k, BARE[3] * k
+		if nearSegment(dx, dy, z, CRATE_PIPE) < 0.13 then
+			return BARE[1] * k, BARE[2] * k, BARE[3] * k
+		elseif nearSegment(dx, dy, z, CRATE_ROD) < 0.08 then
+			return 0.42 * k, 0.26 * k, 0.16 * k
+		elseif nearPoint(CRATE_COG, 0.28) then
+			return DECK_STEEL[1] * 1.7 * k, DECK_STEEL[2] * 1.7 * k, DECK_STEEL[3] * 1.7 * k
+		elseif nearPoint(CRATE_GEAR, 0.5) then
+			return BRASS[1] * k, BRASS[2] * k, BRASS[3] * k
+		elseif z > 1.6 or dy < -0.2 then
+			return BARE[1] * k, BARE[2] * k, BARE[3] * k
+		end
+		return 0.3 * k, 0.2 * k, 0.13 * k
 	end
 	-- Planks, with dark gaps between them.
 	if (z - DECK_TOP) % 0.4 < 0.03 then
@@ -1446,9 +1596,7 @@ part("Drum", nil, OIL_BLUE, function(mesh)
 	end
 	-- The funnel in its filler hole.
 	lathe(mesh, { OIL_X + 0.2, OIL_Y, 2.06 }, { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 }, { { 0.07, 0 }, { 0.07, 0.2 }, { 0.26, 0.42 }, { 0.22, 0.42 }, { 0.05, 0.22 } }, 12)
-end, nil, function(_x, _y, _z)
-	return OIL_BLUE[1], OIL_BLUE[2], OIL_BLUE[3]
-end, nil, nil, nil, 0.08)
-machined()
+end, nil, 0.45, nil, nil, nil, 0.12)
+tapered()
 
 finishParts()

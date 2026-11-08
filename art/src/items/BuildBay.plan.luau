@@ -40,10 +40,13 @@ return {
 			attaches = "Cradle",
 			at = { 0, 2.88, 1.93 },
 			size = { 1, 1.1, 2.9 },
-			note = "a cast bronze claw behind the capsule, pinned between two steel lugs standing on the deck, heavy at the hinge, tapering and curling in to a rubber pad at z 3.2 that stops at radius 2.33",
+			note = "a cast bronze claw behind the capsule, with a rounded knuckle pinned between two steel lugs standing on the deck, tapering and curling in over the seat to its pad",
 		},
 		{ name = "Clamp2", level = "major", attaches = "Cradle", at = { -2.4, -1.4, 2.1 }, size = { 1, 0.9, 2.6 }, note = "the same claw on the front left" },
 		{ name = "Clamp3", level = "major", attaches = "Cradle", at = { 2.4, -1.4, 2.1 }, size = { 1, 0.9, 2.6 }, note = "the same claw on the front right" },
+		{ name = "Pad1", level = "detail", attaches = "Clamp1", at = { 0, 2.445, 3.18 }, size = { 0.62, 0.23, 0.46 }, note = "a solid rubber block on the claw's tip, standing proud of it, stopping at radius 2.33" },
+		{ name = "Pad2", level = "detail", attaches = "Clamp2", at = { -2.117, -1.22, 3.18 }, size = { 0.51, 0.65, 0.46 }, note = "the same pad on the front left claw" },
+		{ name = "Pad3", level = "detail", attaches = "Clamp3", at = { 2.117, -1.22, 3.18 }, size = { 0.51, 0.65, 0.46 }, note = "the same pad on the front right claw" },
 		{
 			name = "Frame",
 			level = "major",
@@ -122,7 +125,7 @@ return {
 			attaches = "Deck",
 			at = { -3.6, 2.5, 1.3 },
 			size = { 1.7, 1.4, 1.7 },
-			note = "a parts crate in the back left corner, gears and pipe ends showing over its rim",
+			note = "a parts crate in the back left corner with junk thrown in it: gears, a washer, pipe and rod, a few bolts, heaped to one side and overlapping at unrelated angles",
 		},
 		{
 			name = "Drum",

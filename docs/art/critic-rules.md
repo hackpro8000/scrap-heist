@@ -20,6 +20,9 @@ Parts should join through something: a weld, flange, collar, bracket or seam. Fl
 ## Familiar objects look like themselves
 Being recognisable isn't enough, because a crude version still reads through context. For each object a player knows from real life, name it, state the real thing's key ratios from what you know (overall length to width, head to handle, thickest to thinnest), and measure the same ratios on the model in the flat views. Give the numbers for each object in your RULES line. A ratio off by more than a third, or an outline the real thing doesn't have, is MED.
 
+## Swept shapes keep their section
+Anything swept along a path, such as a wire, pipe, hose, cable or rail, must keep a steady thickness through every bend. Flag pinches, kinks, twists and sudden sharp elbows, and bends that should be curves. Ask for a close view of each bend. A visible pinch or twist is MED.
+
 ## Forms aren't just primitives
 Flag objects that read as stacks of boxes, cylinders and spheres. Flag heaps and rocks that read as lumpy blobs or crystals, organic forms ended by a straight cut, and unrelated parts that all share one proportion.
 
@@ -30,16 +33,19 @@ There should be large, medium and small forms, and one area that leads the eye. 
 Structure may mirror, but damage, wear and clutter should not. Fasteners belong along seams and plate joins, not everywhere at even spacing. A tilt should come from what the thing rests on, not a small random angle. Flag clutter scattered by rule, and repeated props that differ only in size or rotation.
 
 ## Materials read as what they are
-Judge from player views whether metal reads as metal through colour, painted highlights and wear. Flag a material that reads as another, such as bronze that looks like wood. Machined, printed or stamped finishes must not show brush strokes.
+Judge from player views whether metal reads as metal through colour, painted highlights and wear. Flag a material that reads as another, such as bronze that looks like wood. Printed markings such as tape and labels must not show brush strokes.
 
 ## The bake is clean
 Stripes and patterns should close at seams and corners. Flag smeared decals, visible tiling, smears along diagonal joins, crisp and blurry surfaces side by side, and paint flecks with no chip or old coat to explain them.
+
+## Wear is uneven
+Edge highlights and wear must vary in width, strength and length, with gaps. Flag the same stroke outlining every edge, and metal with no wear at all: clean doesn't mean new. Only printed markings stay crisp.
 
 ## Wear and damage have a cause
 Wear belongs where hands, feet, water or impacts would put it. Damage should have a cause and leave debris. Flag even all-over noise.
 
 ## Scrap looks like scrap
-Most junk should be torn, crushed, bent or partial. One or two readable pieces are fine. A pile of intact icons is not scrap.
+Most junk should be torn, crushed, bent or partial. One or two readable pieces are fine. A pile of intact icons is not scrap. Loose pieces must lie as if dropped: clusters and gaps, mixed sizes, pieces overlapping and leaning on each other at unrelated angles. Pieces spread evenly, one to a region or in a row, are at least MED where a player can see them. Ask for a close view of every pile or container of loose pieces, however small it looks, and never skip one as low stakes.
 
 ## Text and lights earn their place
 Text must be correctly spelled and readable from where it's meant to be read. Blocky bitmap letters are LOW. The prop must still say what it does with its text hidden. Each light needs a job.
