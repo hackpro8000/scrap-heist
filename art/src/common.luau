@@ -599,7 +599,8 @@ end
 -- heavier shadow than the standard wear. `lit` scales the highlight strength
 -- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
 -- to paint its highlights as bold, fully loaded strokes instead of dry ones,
--- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+-- `blend` (0-1) to tint them from cream toward a lighter part colour, and
+-- `taper` (studs) to run them full width at corners, thinning along each edge.
 local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
@@ -789,6 +790,7 @@ local function finishParts()
 			reach = entry.edge,
 			highlightWidth = entry.wide,
 			paintedHighlights = entry.painted,
+			cornerTaper = entry.taper,
 			heightRange = entry.heightRange,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })

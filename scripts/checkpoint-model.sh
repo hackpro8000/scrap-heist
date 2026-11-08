@@ -11,6 +11,7 @@
 # screenshot-grid and views to the user.
 #
 #   scripts/checkpoint-model.sh StarterWeapon "phase 1: StarterWeapon - shape the grip"
+#   FROM=.standby-results/<task>/S1/previews/MineLoop scripts/checkpoint-model.sh MineLoop "..."
 
 set -euo pipefail
 
@@ -28,7 +29,18 @@ fi
 
 # Four turns round the model in the same build, so a checkpoint needs no
 # separate preview pass to show its sides; --parts writes cells.txt.
-"${root}/scripts/build-model.sh" "${name}" -- --turntable 4 --parts >/dev/null
+# With FROM set to a cloud preview's results folder (.standby-results/<task>/
+# S<i>/previews/<Name>, rendered with --parts in the model's preview flags),
+# its renders are used instead, so nothing builds on this machine.
+if [ -n "${FROM:-}" ]; then
+	mkdir -p "${dir}/turntable"
+	cp "${FROM}/preview.png" "${FROM}/cells.txt" "${dir}/"
+	for turn in 0 1 2 3; do
+		cp "${FROM}/view${turn}.png" "${dir}/turntable/000${turn}.png"
+	done
+else
+	"${root}/scripts/build-model.sh" "${name}" -- --turntable 4 --parts >/dev/null
+fi
 cp "${dir}/preview.png" "${shot}"
 views="${dir}/views.png"
 montage "${dir}"/turntable/000[0-3].png -tile 2x2 -geometry +4+4 "${views}"

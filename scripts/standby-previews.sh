@@ -37,7 +37,9 @@ for name in "${list[@]}"; do
 		for turn in 0 1 2 3; do
 			cp "art/models/${name}/turntable/000${turn}.png" "${dir}/view${turn}.png"
 		done
-		cp art/models/"${name}"/eye_*.png art/models/"${name}"/closeup_*.png "${dir}/" 2> /dev/null || true
+		# Review renders too, when the flags ask for them (--parts, --view):
+		# a review sheet, or a checkpoint (FROM=), can be made from them.
+		cp art/models/"${name}"/eye_*.png art/models/"${name}"/closeup_*.png art/models/"${name}"/parts.png art/models/"${name}"/face_*.png art/models/"${name}"/cells.txt "${dir}/" 2> /dev/null || true
 	else
 		echo "FAILED" >> "${dir}/build.log"
 	fi
