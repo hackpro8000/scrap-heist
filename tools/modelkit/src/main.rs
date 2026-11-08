@@ -7,6 +7,17 @@
 //                                                render previews at 2048px square
 //   modelkit art/models/Scrapper --clip Idle
 //                                                also write the clip's frames
+//   modelkit art/models/StarterWeapon --parts
+//                                                also write parts.png (each part in its
+//                                                own flat colour), parts.txt (the colour
+//                                                legend, also on stdout) and cells.txt
+//                                                (the parts in each cell of a 6×6 grid
+//                                                over the preview, A1 at the top left)
+//   modelkit art/models/StarterWeapon --view front --view top --grid 1
+//                                                also write square-on side views,
+//                                                face_front.png ... (and face_front_parts.png
+//                                                with --parts), with stud lines every
+//                                                --grid studs
 //   modelkit art/models/ServerMap --chunks
 //                                                also split the GLB into uploadable
 //                                                chunks (see write_chunks)
@@ -531,7 +542,14 @@ fn write_png(path: &Path, size: usize, data: &[u8]) -> std::io::Result<()> {
 // A close-up: focus point x, y, z, framing radius, and camera spin in degrees.
 type Closeup = (f64, f64, f64, f64, f64);
 
-fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[(mesh::Vec3, mesh::Vec3)], shown_clip: Option<&str>, texel_scale: f64, detail_eyes: &[(mesh::Vec3, mesh::Vec3)], chunks: bool, shard: Option<(usize, usize)>) -> Result<(), String> {
+// Review renders: part colours, side views and their stud grid.
+struct Review {
+	parts: bool,
+	sides: Vec<render::Side>,
+	grid: Option<f64>,
+}
+
+fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[(mesh::Vec3, mesh::Vec3)], shown_clip: Option<&str>, texel_scale: f64, detail_eyes: &[(mesh::Vec3, mesh::Vec3)], chunks: bool, shard: Option<(usize, usize)>, review: &Review) -> Result<(), String> {
 	let started = Instant::now();
 	let name = dir.file_name().and_then(|n| n.to_str()).ok_or("bad model folder")?.to_string();
 	let script = dir.join("model.luau");
@@ -611,8 +629,23 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 	// preview; skip the render. Asked-for views (turntable, closeups, eyes) still run.
 	if shard.is_none() {
 		progress::say(&format!("rendering preview of {} parts", shown.len()));
-		let preview = render::render(&shown, &render::View { size, spin: 0.0, focus: None, eye: None });
+		let preview = render::render(&shown, &render::View { size, spin: 0.0, focus: None, eye: None, ..Default::default() });
 		write_png(&dir.join("preview.png"), size, &preview).map_err(|e| e.to_string())?;
+	}
+	if review.parts && shard.is_none() {
+		let frame = render::render_frame(&shown, &render::View { size, parts: true, ..Default::default() });
+		write_png(&dir.join("parts.png"), size, &frame.pixels).map_err(|e| e.to_string())?;
+		let legend = render::legend(&shown);
+		print!("{legend}");
+		std::fs::write(dir.join("parts.txt"), legend).map_err(|e| e.to_string())?;
+		std::fs::write(dir.join("cells.txt"), render::cells(&frame, &shown, 6)).map_err(|e| e.to_string())?;
+	}
+	for &side in &review.sides {
+		let view = |parts| render::View { size, side: Some(side), parts, grid: review.grid, ..Default::default() };
+		write_png(&dir.join(format!("face_{}.png", side.name())), size, &render::render(&shown, &view(false))).map_err(|e| e.to_string())?;
+		if review.parts {
+			write_png(&dir.join(format!("face_{}_parts.png", side.name())), size, &render::render(&shown, &view(true))).map_err(|e| e.to_string())?;
+		}
 	}
 
 	if turntable > 0 {
@@ -620,18 +653,18 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 		std::fs::create_dir_all(&frames).map_err(|e| e.to_string())?;
 		for frame in 0..turntable {
 			let spin = frame as f64 / turntable as f64 * std::f64::consts::TAU;
-			let data = render::render(&shown, &render::View { size, spin, focus: None, eye: None });
+			let data = render::render(&shown, &render::View { size, spin, focus: None, eye: None, ..Default::default() });
 			write_png(&frames.join(format!("{frame:04}.png")), size, &data).map_err(|e| e.to_string())?;
 		}
 	}
 	for (n, &(x, y, z, radius, degrees)) in closeups.iter().enumerate() {
 		let focus = Some(([x, y, z], radius));
-		let data = render::render(&shown, &render::View { size, spin: degrees.to_radians(), focus, eye: None });
+		let data = render::render(&shown, &render::View { size, spin: degrees.to_radians(), focus, eye: None, ..Default::default() });
 		write_png(&dir.join(format!("closeup_{}.png", n + 1)), size, &data).map_err(|e| e.to_string())?;
 	}
 	for (n, &(eye, target)) in eyes.iter().enumerate() {
 		progress::say(&format!("rendering eye {}/{}", n + 1, eyes.len()));
-		let data = render::render(&shown, &render::View { size, spin: 0.0, focus: None, eye: Some((eye, target)) });
+		let data = render::render(&shown, &render::View { size, spin: 0.0, focus: None, eye: Some((eye, target)), ..Default::default() });
 		write_png(&dir.join(format!("eye_{}.png", n + 1)), size, &data).map_err(|e| e.to_string())?;
 	}
 	if let Some(wanted) = shown_clip {
@@ -654,7 +687,7 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 		std::fs::create_dir_all(&frames).map_err(|e| e.to_string())?;
 		for frame in 0..clip.frames() {
 			let skin = clip.skin(&bones, frame as f64 / anim::FPS);
-			let data = render::render_posed(&shown, &skin, &render::View { size, spin: 0.0, focus: Some((center, radius)), eye: None });
+			let data = render::render_posed(&shown, &skin, &render::View { size, spin: 0.0, focus: Some((center, radius)), eye: None, ..Default::default() });
 			write_png(&frames.join(format!("{frame:04}.png")), size, &data).map_err(|e| e.to_string())?;
 		}
 	}
@@ -713,7 +746,7 @@ fn write_chunks(dir: &Path, name: &str, tag: &str, parts: &[Part], rigged: bool)
 fn main() {
 	let args: Vec<String> = std::env::args().skip(1).collect();
 	let Some(dir) = args.first() else {
-		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--eye EX,EY,EZ,TX,TY,TZ]... [--clip NAME] [--chunks] [--shard INDEX/COUNT]");
+		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--eye EX,EY,EZ,TX,TY,TZ]... [--clip NAME] [--parts] [--view SIDE]... [--grid STUDS] [--chunks] [--shard INDEX/COUNT]");
 		std::process::exit(2);
 	};
 	let turntable = match args.iter().position(|a| a == "--turntable") {
@@ -762,7 +795,17 @@ fn main() {
 		}
 		None => None,
 	};
-	if let Err(error) = run(Path::new(dir), turntable, size, &closeups, &eyes, clip.map(|c| c.as_str()), texel_scale, &detail_eyes, chunks, shard) {
+	let mut sides = Vec::new();
+	for (at, _) in args.iter().enumerate().filter(|(_, a)| *a == "--view") {
+		let Some(side) = args.get(at + 1).and_then(|name| render::Side::parse(name)) else {
+			eprintln!("--view takes front, back, left, right, top or bottom");
+			std::process::exit(2);
+		};
+		sides.push(side);
+	}
+	let grid = args.iter().position(|a| a == "--grid").and_then(|at| args.get(at + 1)).and_then(|n| n.parse().ok()).filter(|&n: &f64| n > 0.0);
+	let review = Review { parts: args.iter().any(|a| a == "--parts"), sides, grid };
+	if let Err(error) = run(Path::new(dir), turntable, size, &closeups, &eyes, clip.map(|c| c.as_str()), texel_scale, &detail_eyes, chunks, shard, &review) {
 		eprintln!("error: {error}");
 		std::process::exit(1);
 	}

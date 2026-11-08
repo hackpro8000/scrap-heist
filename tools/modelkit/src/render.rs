@@ -16,6 +16,7 @@ const SUPERSAMPLE: usize = 2;
 // How much of an emissive surface's glow spills around it in previews.
 const BLOOM: f32 = 2.5;
 
+#[derive(Default)]
 pub struct View {
 	pub size: usize,
 	// Camera orbit around Z, in radians; 0 is the classic 3/4 view.
@@ -27,6 +28,146 @@ pub struct View {
 	// Perspective camera standing at an eye point and looking at a target,
 	// for seeing the model from right beside it as a player would.
 	pub eye: Option<(Vec3, Vec3)>,
+	// Square-on orthographic view of one side, fitted tight to the model, so
+	// lengths within it can be measured against each other.
+	pub side: Option<Side>,
+	// Each part in its own flat colour instead of its texture, so parts can be
+	// told apart and named (see legend).
+	pub parts: bool,
+	// Stud lines this far apart over a side view, every fifth one stronger.
+	pub grid: Option<f64>,
+}
+
+#[derive(Clone, Copy)]
+pub enum Side {
+	Front,
+	Back,
+	Left,
+	Right,
+	Top,
+	Bottom,
+}
+
+impl Side {
+	pub const ALL: [Side; 6] = [Side::Front, Side::Back, Side::Left, Side::Right, Side::Top, Side::Bottom];
+
+	pub fn name(self) -> &'static str {
+		match self {
+			Side::Front => "front",
+			Side::Back => "back",
+			Side::Left => "left",
+			Side::Right => "right",
+			Side::Top => "top",
+			Side::Bottom => "bottom",
+		}
+	}
+
+	pub fn parse(name: &str) -> Option<Side> {
+		Side::ALL.into_iter().find(|side| side.name() == name)
+	}
+
+	// The direction from the model toward the camera (the front faces -Y, as
+	// the 3/4 preview shows it), and the world direction that is up on screen.
+	fn axes(self) -> (Vec3, Vec3) {
+		match self {
+			Side::Front => ([0.0, -1.0, 0.0], [0.0, 0.0, 1.0]),
+			Side::Back => ([0.0, 1.0, 0.0], [0.0, 0.0, 1.0]),
+			Side::Left => ([-1.0, 0.0, 0.0], [0.0, 0.0, 1.0]),
+			Side::Right => ([1.0, 0.0, 0.0], [0.0, 0.0, 1.0]),
+			Side::Top => ([0.0, 0.0, 1.0], [0.0, 1.0, 0.0]),
+			Side::Bottom => ([0.0, 0.0, -1.0], [0.0, 1.0, 0.0]),
+		}
+	}
+}
+
+// A rendered picture, and which part shows at each supersampled pixel
+// (`NO_PART` where only background shows), for looking parts up by position.
+pub struct Frame {
+	pub pixels: Vec<u8>,
+	pub owner: Vec<u32>,
+	pub owner_size: usize,
+}
+
+pub const NO_PART: u32 = u32::MAX;
+
+// Each distinct part name's flat colour, in order of first appearance, so a
+// script that adds the same parts gets the same colours. Hues step by the
+// golden ratio and alternate in saturation and value, so neighbours in the
+// list stay far apart.
+pub fn part_colours(parts: &[&Part]) -> Vec<(String, [f32; 3])> {
+	let mut names: Vec<String> = Vec::new();
+	for part in parts {
+		if !names.contains(&part.name) {
+			names.push(part.name.clone());
+		}
+	}
+	names
+		.into_iter()
+		.enumerate()
+		.map(|(i, name)| {
+			let hue = (i as f32 * 0.618_034).fract();
+			let saturation = if i % 2 == 0 { 0.75 } else { 0.45 };
+			let value = if (i / 2) % 2 == 0 { 0.95 } else { 0.7 };
+			(name, hsv(hue, saturation, value))
+		})
+		.collect()
+}
+
+fn hsv(hue: f32, saturation: f32, value: f32) -> [f32; 3] {
+	let k = |n: f32| {
+		let k = (n + hue * 6.0) % 6.0;
+		value - value * saturation * k.min(4.0 - k).clamp(0.0, 1.0)
+	};
+	[k(5.0), k(3.0), k(1.0)]
+}
+
+// One line per part colour: `#rrggbb Name`.
+pub fn legend(parts: &[&Part]) -> String {
+	part_colours(parts)
+		.iter()
+		.map(|(name, c)| {
+			let [r, g, b] = c.map(|v| (v * 255.0 + 0.5) as u8);
+			format!("#{r:02x}{g:02x}{b:02x} {name}\n")
+		})
+		.collect()
+}
+
+// Splits the frame into a `count`×`count` grid, columns A, B, C... from the
+// left and rows 1, 2, 3... from the top, and lists the parts showing in each
+// cell with their share of it, largest first; slivers under 2% are left out.
+pub fn cells(frame: &Frame, parts: &[&Part], count: usize) -> String {
+	let size = frame.owner_size;
+	let mut out = String::new();
+	for row in 0..count {
+		for column in 0..count {
+			let (x0, x1) = (column * size / count, (column + 1) * size / count);
+			let (y0, y1) = (row * size / count, (row + 1) * size / count);
+			let mut shares: Vec<(String, usize)> = Vec::new();
+			for y in y0..y1 {
+				for x in x0..x1 {
+					let owner = frame.owner[y * size + x];
+					if owner == NO_PART {
+						continue;
+					}
+					let name = &parts[owner as usize].name;
+					match shares.iter_mut().find(|(n, _)| n == name) {
+						Some((_, pixels)) => *pixels += 1,
+						None => shares.push((name.clone(), 1)),
+					}
+				}
+			}
+			shares.sort_by(|a, b| b.1.cmp(&a.1));
+			let area = ((x1 - x0) * (y1 - y0)) as f64;
+			let listed: Vec<String> = shares
+				.iter()
+				.filter(|(_, pixels)| *pixels as f64 / area >= 0.02)
+				.map(|(name, pixels)| format!("{name} {:.0}%", *pixels as f64 / area * 100.0))
+				.collect();
+			let label = format!("{}{}", (b'A' + column as u8) as char, row + 1);
+			out.push_str(&format!("{label}: {}\n", if listed.is_empty() { "-".to_string() } else { listed.join(", ") }));
+		}
+	}
+	out
 }
 
 // Horizontal field of view of the perspective camera, in degrees.
@@ -103,14 +244,24 @@ impl Mips {
 const NEAR: f64 = 0.05;
 
 pub fn render(parts: &[&Part], view: &View) -> Vec<u8> {
-	render_posed(parts, &[], view)
+	draw(parts, &[], view).pixels
 }
 
 // Renders with each part moved by its bone's skinning transform from `skin`.
 pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
+	draw(parts, skin, view).pixels
+}
+
+// Renders and keeps which part shows at each pixel.
+pub fn render_frame(parts: &[&Part], view: &View) -> Frame {
+	draw(parts, &[], view)
+}
+
+fn draw(parts: &[&Part], skin: &[Pose], view: &View) -> Frame {
 	let triangles: Vec<_> = parts
 		.iter()
-		.map(|part| {
+		.enumerate()
+		.map(|(index, part)| {
 			let mut list = part.mesh.borrow().triangles();
 			if let Some(pose) = part.bone.and_then(|b| skin.get(b)) {
 				for corner in list.iter_mut().flatten() {
@@ -118,13 +269,13 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 					corner.normal = pose.turn(corner.normal);
 				}
 			}
-			(list, part)
+			(list, index as u32, part)
 		})
 		.collect();
 
 	let mut low = [f64::MAX; 3];
 	let mut high = [f64::MIN; 3];
-	for (list, _) in &triangles {
+	for (list, _, _) in &triangles {
 		for corner in list.iter().flatten() {
 			for axis in 0..3 {
 				low[axis] = low[axis].min(corner.position[axis]);
@@ -141,24 +292,32 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 	};
 
 	let (sin, cos) = view.spin.sin_cos();
-	let toward = match view.eye {
-		Some((eye, target)) => sub(eye, target),
-		None => [cos + sin, sin - cos, 0.8],
+	let (toward, screen_up) = match (view.side, view.eye) {
+		(Some(side), _) => side.axes(),
+		(None, Some((eye, target))) => (sub(eye, target), [0.0, 0.0, 1.0]),
+		(None, None) => ([cos + sin, sin - cos, 0.8], [0.0, 0.0, 1.0]),
 	};
 	let forward = normalize(scale(toward, -1.0));
-	let right = normalize(cross(forward, [0.0, 0.0, 1.0]));
+	let right = normalize(cross(forward, screen_up));
 	let up = cross(right, forward);
 	// `toward` is a length when an eye is given and roughly unit otherwise, so
 	// it is normalized before it tilts the light: an unnormalized one swings
 	// the light toward horizontal at eye distance and flat tops go dark.
 	let tilt = normalize(toward);
 	let light = normalize([tilt[0] * 0.3 - right[0], tilt[1] * 0.3 - right[1], 1.5]);
-	let width = extent * 2.2 / 1.4;
+	// A side view fits the model's box tightly, with a small margin.
+	let span = |axis: Vec3| (0..3).map(|a| (high[a] - low[a]) * axis[a].abs()).sum::<f64>();
+	let width = match view.side {
+		Some(_) => span(right).max(span(up)).max(1e-6) * 1.1,
+		None => extent * 2.2 / 1.4,
+	};
+	let colours = if view.parts { part_colours(parts) } else { Vec::new() };
 
 	let size = view.size * SUPERSAMPLE;
 	let mut color = vec![BACKGROUND; size * size];
 	let mut depth = vec![f64::MAX; size * size];
 	let mut glow = vec![[0.0f32; 3]; size * size];
+	let mut owner = vec![NO_PART; size * size];
 	let spread = (EYE_FOV.to_radians() / 2.0).tan() * 2.0;
 	let to_screen = |p: Vec3| -> [f64; 3] {
 		if let Some((eye, _)) = view.eye {
@@ -180,7 +339,7 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 
 	// Parts can share an image, so each chain is built once.
 	let mut chains: Vec<(*const RefCell<Image>, Mips)> = Vec::new();
-	for (_, part) in &triangles {
+	for (_, _, part) in &triangles {
 		let key = Rc::as_ptr(&part.image);
 		if !chains.iter().any(|(k, _)| *k == key) {
 			chains.push((key, Mips::new(&part.image.borrow())));
@@ -192,10 +351,11 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 
 	// Solid parts first; see-through parts then blend over them, tested
 	// against the depth but not writing it.
-	let layered = [false, true].map(|see_through| triangles.iter().filter(move |(_, part)| part.image.borrow().alpha.is_some() == see_through));
-	for (list, part) in layered.into_iter().flatten() {
+	let layered = [false, true].map(|see_through| triangles.iter().filter(move |(_, _, part)| part.image.borrow().alpha.is_some() == see_through));
+	for (list, index, part) in layered.into_iter().flatten() {
 		let image = part.image.borrow();
 		let see_through = image.alpha.is_some();
+		let flat = colours.iter().find(|(name, _)| *name == part.name).map(|(_, c)| *c);
 		let key = Rc::as_ptr(&part.image);
 		let mips = &chains.iter().find(|(k, _)| *k == key).unwrap().1;
 		for triangle in list {
@@ -246,6 +406,7 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 					}
 					if !see_through {
 						depth[at] = z;
+						owner[at] = *index;
 					}
 					let blend = |f: &dyn Fn(usize) -> f64| w0 * f(0) + w1 * f(1) + w2 * f(2);
 					let u = blend(&|k| triangle[k].uv[0]);
@@ -256,6 +417,15 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 						normal = scale(normal, -1.0);
 					}
 					let shade = (0.72 + 0.38 * dot(normal, light).max(0.0)) as f32;
+					// Flat part colours carry no painted shading, so the light
+					// does more of the work of showing the form.
+					if let Some(tone) = flat {
+						let shade = (0.45 + 0.6 * dot(normal, light).max(0.0)) as f32;
+						let opacity = if see_through { 0.4 } else { 1.0 };
+						let under = color[at];
+						color[at] = [0, 1, 2].map(|a| under[a] + (tone[a] * shade - under[a]) * opacity);
+						continue;
+					}
 					// Emission adds to the lighting before the albedo, as
 					// SurfaceAppearance does, and spills into a bloom.
 					let footprint = if view.eye.is_some() { texels_per_pixel * z } else { texels_per_pixel };
@@ -271,6 +441,10 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 				}
 			}
 		}
+	}
+
+	if let (Some(_), Some(step)) = (view.side, view.grid) {
+		draw_grid(&mut color, size, width, [dot(center, right), dot(center, up)], step);
 	}
 
 	let bloom = blur(&glow, size, size / 150);
@@ -292,7 +466,47 @@ pub fn render_posed(parts: &[&Part], skin: &[Pose], view: &View) -> Vec<u8> {
 		}
 	}
 	fxaa(&mut data, view.size, view.size);
-	data
+	Frame { pixels: data, owner, owner_size: size }
+}
+
+// Light lines every `step` studs across and up a side view, every fifth one
+// stronger, so sizes can be read off in studs. `offset` is the view centre's
+// position along the screen's right and up directions. Too fine a step to see
+// keeps only the strong lines.
+fn draw_grid(color: &mut [[f32; 3]], size: usize, width: f64, offset: [f64; 2], step: f64) {
+	let pixels_per_step = step / width * size as f64;
+	let at = |pixel: usize, axis: usize| {
+		let studs = ((pixel as f64 + 0.5) / size as f64 - 0.5) * width;
+		offset[axis] + if axis == 0 { studs } else { -studs }
+	};
+	// The line index a pixel falls in and whether a line runs along its edge.
+	let line = |pixel: usize, axis: usize| -> Option<bool> {
+		if pixel + 1 >= size {
+			return None;
+		}
+		let (a, b) = ((at(pixel, axis) / step).floor(), (at(pixel + 1, axis) / step).floor());
+		if a == b {
+			return None;
+		}
+		let index = a.max(b) as i64;
+		Some(index % 5 == 0)
+	};
+	let columns: Vec<Option<bool>> = (0..size).map(|x| line(x, 0).or(if x > 0 { line(x - 1, 0) } else { None })).collect();
+	let rows: Vec<Option<bool>> = (0..size).map(|y| line(y, 1).or(if y > 0 { line(y - 1, 1) } else { None })).collect();
+	for y in 0..size {
+		for x in 0..size {
+			let strong = match (columns[x], rows[y]) {
+				(None, None) => continue,
+				(c, r) => c.unwrap_or(false) || r.unwrap_or(false),
+			};
+			if !strong && pixels_per_step < 6.0 {
+				continue;
+			}
+			let alpha = if strong { 0.55 } else { 0.25 };
+			let pixel = &mut color[y * size + x];
+			*pixel = pixel.map(|c| c + (1.0 - c) * alpha);
+		}
+	}
 }
 
 // Fast approximate anti-aliasing: where the picture changes sharply, each
