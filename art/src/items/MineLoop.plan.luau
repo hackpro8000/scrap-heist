@@ -27,8 +27,8 @@ return {
 			name = "Rocks2",
 			level = "major",
 			attaches = "Lintels",
-			at = { 74.9, -7.9, 6.9 },
-			size = { 12.7, 25.5, 14.8 },
+			at = { 75.5, -7.9, 6.9 },
+			size = { 14, 25.5, 14.8 },
 			note = "the same pile: the far side, toward the - mouth quarter",
 		},
 		{

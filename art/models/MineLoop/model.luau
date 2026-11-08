@@ -1,4 +1,4 @@
-local CACHE_KEY = "MineLoop-ac2520c123c6895a"
+local CACHE_KEY = "MineLoop-3ddb2b97002e6914"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3581,8 +3581,9 @@ local PEAK, SUMMIT, CROWN, BOWL = { 2, -2 }, 18.5, 0.1, 0.2
 -- each mouth (to the hill's face) before dropping over RIDGE_FALL.
 local RIDGE, RIDGE_FLAT, RIDGE_WIDTH, RIDGE_PAST, RIDGE_FALL = 13.5, 5.5, 11, 2.2, 11
 -- The far side falls away sooner, its foot ending short of the plaza's
--- painted ring: no part of a column stands further than FAR_LIMIT out.
-local RIDGE_WIDTH_FAR, FAR_LIMIT = 6.5, 11.5
+-- painted ring: no part of a column stands further than FAR_LIMIT out, each
+-- trimmed at up to FAR_SLANT degrees off the track's line.
+local RIDGE_WIDTH_FAR, FAR_LIMIT, FAR_SLANT = 6.5, 11.5, 25
 -- Stone sizes at the summit and at the foot, and the shortest a column
 -- stands.
 local SMALLEST, LARGEST, MIN_LENGTH = 3.2, 4.6, 2.5
@@ -3887,14 +3888,21 @@ do
 		if #cell < 3 then
 			continue
 		end
-		-- A column that would reach the plaza's painted ring isn't built, so
-		-- the far foot ends in the columns' own outlines.
-		local reachesRing = false
+		-- A column that would reach the plaza's painted ring takes a face of
+		-- its own angle and depth short of it, so the far foot closes up with
+		-- no line running along it; one left a sliver isn't built.
+		local beyond, lowest, highest = -math.huge, math.huge, -math.huge
 		for _, q in cell do
-			reachesRing = reachesRing or q[1] > FAR_LIMIT
+			beyond, lowest, highest = math.max(beyond, q[1]), math.min(lowest, q[2]), math.max(highest, q[2])
 		end
-		if reachesRing then
-			continue
+		if beyond > FAR_LIMIT then
+			local slant = math.tan(math.rad(FAR_SLANT * (2 * random(index, 11) - 1)))
+			local face = FAR_LIMIT - 1.2 * random(index, 12) - math.abs(slant) * (highest - lowest) / 2
+			local whole = outlineCentre(cell)
+			cell = clipOutline(cell, 1, -slant, face - slant * (lowest + highest) / 2)
+			if #cell < 3 or outlineCentre(cell) < 0.3 * whole then
+				continue
+			end
 		end
 		local cellArea, cellOut, cellMiddle = outlineCentre(cell)
 		-- Between the mouths a cell splits at the tunnel's walls, its part
