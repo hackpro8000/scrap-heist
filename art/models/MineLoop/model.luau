@@ -1,4 +1,4 @@
-local CACHE_KEY = "MineLoop-f00f12d7585a2144"
+local CACHE_KEY = "MineLoop-dafd7bc7a35237b0"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -609,7 +609,8 @@ end
 -- heavier shadow than the standard wear. `lit` scales the highlight strength
 -- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
 -- to paint its highlights as bold, fully loaded strokes instead of dry ones,
--- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+-- `blend` (0-1) to tint them from cream toward a lighter part colour, and
+-- `taper` (studs) to run them full width at corners, thinning along each edge.
 local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
@@ -799,6 +800,7 @@ local function finishParts()
 			reach = entry.edge,
 			highlightWidth = entry.wide,
 			paintedHighlights = entry.painted,
+			cornerTaper = entry.taper,
 			heightRange = entry.heightRange,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
@@ -3596,7 +3598,50 @@ local ROCKS = {
 	{ -6, -8.5, 9.6, 3, 2.5, 2, -25, 8 },
 	{ 6.5, 1.5, 11.4, 2, 2.2, 1.6, 15, 0 },
 }
-local ROCK = { 0.5, 0.54, 0.62 }
+local ROCK = { 0.52, 0.54, 0.6 }
+
+-- The highlight band's reach from an edge, in studs, its strength, and how
+-- far from a corner its strokes taper away.
+local ROCK_EDGE, ROCK_LIT, ROCK_TAPER = 0.5, 1.35, 0.6
+-- Pebbles are small, so their rims are narrower and fainter.
+local PEBBLE_EDGE, PEBBLE_LIT = 0.25, 0.7
+
+-- Each rock's middle in the model, to tell which rock a texel is on.
+local rockMiddles = {}
+for n, rock in ROCKS do
+	local out, middle, base, _w, _d, h = table.unpack(rock)
+	rockMiddles[n] = caveAt(1, out, base + h / 2, HALF_LENGTH - middle)
+end
+local function nearestRock(x: number, y: number, z: number): number
+	local best, nearest = math.huge, 1
+	for n, p in rockMiddles do
+		local d = (p[1] - x) ^ 2 + (p[2] - y) ^ 2 + (p[3] - z) ^ 2
+		if d < best then
+			best, nearest = d, n
+		end
+	end
+	return nearest
+end
+
+-- Blue-grey stone in broad soft patches, lighter on tops, each boulder a
+-- little lighter or darker, warmer or cooler than its neighbours.
+local function rockPaint(x: number, y: number, z: number, _nx: number, _ny: number, nz: number): (number, number, number)
+	local n = nearestRock(x, y, z)
+	local k = (0.92 + 0.1 * math.noise(x / 3, y / 3, z / 3)) * (1 + 0.09 * jitter(n, 5))
+	if nz > 0.6 then
+		k *= 1.1
+	end
+	local warm = 0.025 * jitter(n, 9)
+	return (ROCK[1] + warm) * k, ROCK[2] * k, (ROCK[3] - warm) * k
+end
+-- The last part added gets bold, fully loaded highlight strokes on its
+-- edges, tinted toward a lighter stone, full width at the corners and
+-- tapering along each edge.
+local function boldRims()
+	parts[#parts].painted = true
+	parts[#parts].blend = 0.65
+	parts[#parts].taper = ROCK_TAPER
+end
 -- One boulder `n`, w by d by h about its middle: a block with every edge
 -- chamfered (each face inset and lifted, so the rings slope off at 45
 -- degrees), one or two corners chipped off flat, most tops stepped up into
@@ -3659,14 +3704,8 @@ part("Rocks", nil, ROCK, function(mesh)
 		m:select("vertex", "all"):rotate({ 0, 0, 1 }, turn, { 0, 0, 0 })
 		placed(m, 1, out, HALF_LENGTH - middle, base, h):emit(mesh)
 	end
-end, nil, function(x, y, z, _nx, _ny, nz)
-	-- Blue-grey stone in broad soft patches, lighter on tops.
-	local k = 0.92 + 0.1 * math.noise(x / 3, y / 3, z / 3)
-	if nz > 0.6 then
-		k *= 1.1
-	end
-	return ROCK[1] * k, ROCK[2] * k, ROCK[3] * k
-end, nil, nil, true)
+end, nil, rockPaint, nil, nil, true, ROCK_EDGE, nil, ROCK_LIT)
+boldRims()
 
 -- ------------------------------------------------------------ the porches
 
@@ -3832,13 +3871,11 @@ part("Stones", nil, ROCK, function(mesh)
 			placed(m, side, side * out, along, -0.25 * h, h):emit(mesh)
 		end
 	end
-end, nil, function(x, y, z, _nx, _ny, nz)
-	local k = 0.95 + 0.08 * math.noise(x / 1.4, y / 1.4, z / 1.4)
-	if nz > 0.6 then
-		k *= 1.1
-	end
-	return ROCK[1] * k, ROCK[2] * k, ROCK[3] * k
-end, nil, nil, true)
+end, nil, function(x, y, z, nx, ny, nz)
+	local r, g, b = rockPaint(x, y, z, nx, ny, nz)
+	return r * 0.88, g * 0.88, b * 0.88
+end, nil, nil, true, PEBBLE_EDGE, nil, PEBBLE_LIT)
+boldRims()
 
 -- ------------------------------------------------------------ the shades
 
