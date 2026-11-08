@@ -8,7 +8,8 @@
 - The black inside shades stay, as the user asked.
 - Opening 6.4 wide by 6.6 tall: the 4 by 5.5 capsule has 1.2 spare each side and 1.1 overhead; the cart (3.6 by 4.9) passes.
 - First build, three critic rounds: rocks made broad and squat with hard tilts, the far side a tier higher than the hub side, the peak a wide slab stepping down in overlapping slabs; flank rocks butt the porch boards; posts 1.2 thick; lantern hung on a bracket on the hub-side front post.
-- The dark core behind the rocks showed as a "master rock"; the user wants the whole cave made of rocks. Removed: only the tunnel's thin dark lining (Bore) is left, with the walls leaning in against it and the roof slabs lying on it, so crevices read as shadow.
+- The dark core behind the rocks showed as a "master rock"; the user wants the whole cave made of rocks. Removed.
+- A thin dark tunnel lining left in its place still showed in the V-gaps between rounded slabs, so it went too: the rocks themselves wall and roof the tunnel, hub-side walls up to the roof with low steps outside, wider roof slabs overlapping both walls, every rock overlapping its neighbours by a stud or more. Only the mouths' shades are dark.
 - Renders and checkpoints run on the cloud machines (`FROM=` on `scripts/checkpoint-model.sh`); eyes 7 and 8 are raised overviews of the whole pile.
 
 ## Open

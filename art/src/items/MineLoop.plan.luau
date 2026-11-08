@@ -12,15 +12,7 @@ return {
 			level = "core",
 			at = { 72, 0, 8.5 },
 			size = { 28, 30, 18 },
-			note = "about 23 chunky boulders and flat slabs with rounded edges and broad faces, blue-grey, stacked in tiers to a tall peak toward the hub; rocks flank each porch against its boards; the walls lean in against the bore's lining and the roof slabs lie on it, so only rock shows",
-		},
-		{
-			name = "Bore",
-			level = "detail",
-			attaches = "Rocks",
-			at = { 72, 0, 3.35 },
-			size = { 7.6, 28, 7.7 },
-			note = "the tunnel's thin dark lining, the square opening pushed out 0.6, hidden behind the rocks packed round it; no core block",
+			note = "about 23 chunky boulders and flat slabs with rounded edges and broad faces, blue-grey, stacked in tiers to a tall peak toward the hub; rocks flank each porch against its boards; the rocks themselves wall and roof the tunnel, overlapping so no gap shows through: nothing but rock",
 		},
 		{
 			name = "Posts",
@@ -74,7 +66,7 @@ return {
 		{
 			name = "Shades",
 			level = "detail",
-			attaches = "Bore",
+			attaches = "Rocks",
 			at = { 72, 0, 3.3 },
 			size = { 6.2, 26, 6.4 },
 			note = "black unlit inside of each mouth, clear at the mouth, opaque 4.5 in (kept as the user asked)",

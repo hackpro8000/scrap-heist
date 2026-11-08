@@ -10,8 +10,8 @@
 -- The cave is the boulders themselves: a wall of them down each side of
 -- the tunnel, a roof tier across it, a higher tier on the side away from
 -- the hub and a peak on top, so from the hub the pile steps up away from
--- you. They are packed round the tunnel's thin dark lining, so a crevice
--- between them reads as shadow; nothing but rock shows outside. Each mouth has a timber porch: two log posts a side, header
+-- you. The rocks themselves wall and roof the tunnel, overlapping so no
+-- gap shows through: nothing but rock. Each mouth has a timber porch: two log posts a side, header
 -- beams, side beams and a deck of planks, with upright boards closing the
 -- gap between the porch and the rocks, a lantern hung on one front post and
 -- pebbles round its foot. A black, unlit shade fills each mouth from the
@@ -117,43 +117,47 @@ end
 
 -- Boulders, each {out (- toward the hub), along from the cave's middle
 -- (+ toward the +CAVE_HALF mouth), base height, width out, depth along,
--- height, turn, lean}. The walls lean in against the bore's lining and
--- the roof slabs lie on it, so the opening stays clear; the rocks flanking
+-- height, turn, lean}. The walls stand just clear of the opening and the
+-- roof slabs lie right over it, every rock overlapping its neighbours so
+-- no gap shows through; the rocks flanking
 -- each porch overlap its boards, so no gap shows beside it.
 local ROCKS = {
-	-- the hub side's wall, the lowest tier: broad and squat, with a low
-	-- step outside it
-	{ -7.4, -10.5, -0.5, 7, 6, 5.5, 6, -8 },
-	{ -7.95, -4, -0.5, 8, 7, 6.5, -6, -9 },
-	{ -7.6, 3, -0.5, 7, 8, 6, 8, -7 },
-	{ -6.85, 9.5, -0.5, 6, 5, 5, -6, -10 },
-	{ -11.5, -1, -0.5, 4.5, 5.5, 3, 20, -12 },
+	-- the hub side's wall, up to the roof, with low steps outside it
+	{ -7.3, -10.5, -0.5, 7, 7, 8, 6, -5 },
+	{ -7.8, -3.5, -0.5, 8, 8, 8.2, -5, -6 },
+	{ -7.6, 3.5, -0.5, 7, 8.5, 7.8, 7, -5 },
+	{ -7, 10, -0.5, 6, 7, 7.6, -6, -6 },
+	{ -11.6, -1.5, -0.5, 4.5, 7, 4, 15, -10 },
+	{ -11, 7, -0.5, 4, 5, 3, -20, -8 },
+	{ -11.2, -9, -0.5, 4, 5, 3.5, 25, -6 },
 	-- the far side's wall, a tier higher
-	{ 7.45, -10, -0.5, 7, 7, 8, -6, 7 },
-	{ 8, -2.5, -0.5, 8, 8, 9.5, 6, 6 },
-	{ 7.6, 5.5, -0.5, 7, 7, 8.5, -8, 8 },
-	{ 6.9, 10.5, -0.5, 6, 5, 7, 7, 6 },
+	{ 7.4, -10, -0.5, 7, 7, 9, -6, 7 },
+	{ 8, -2.5, -0.5, 8, 8.5, 10, 6, 6 },
+	{ 7.6, 5.5, -0.5, 7, 8, 9.5, -7, 8 },
+	{ 7, 11, -0.5, 6, 6, 8, 7, 6 },
 	-- flanking each porch, overlapping its boards
 	{ -7.4, -12.9, -0.5, 4.5, 5.5, 7.5, 5, -4 },
 	{ 7.4, -13, -0.5, 4.5, 5.5, 8.5, -6, 4 },
 	{ -7.4, 12.9, -0.5, 4.5, 5.5, 6.5, -4, -4 },
 	{ 7.4, 13, -0.5, 4.5, 5.5, 8, 7, 4 },
 	-- over each porch
-	{ 0, -12.2, 7.4, 12, 4, 3.5, 4, 0 },
-	{ 0, 12.2, 7.4, 12, 4, 3.2, -5, 0 },
-	-- the roof tier: wide flat slabs laid on the bore
-	{ -3, -6.5, 7.2, 10, 7, 3, 8, 3 },
-	{ -2.5, -1, 7.2, 9, 4, 3.2, 20, 2 },
-	{ -2, 3, 7.2, 11, 8, 3.5, -5, -3 },
-	{ -3, 9, 7.2, 9, 5, 3, 6, 2 },
+	{ 0, -12.2, 7.2, 12, 4.5, 3.5, 4, 0 },
+	{ 0, 12.2, 7.2, 12, 4.5, 3.2, -5, 0 },
+	-- the roof: wide flat slabs right over the opening, overlapping each
+	-- other and both walls
+	{ -2, -6.5, 6.9, 13, 8, 3.2, 6, 2 },
+	{ -2, -1, 6.9, 12, 5, 3.4, 15, 2 },
+	{ -2, 3, 6.9, 13, 8, 3.6, -5, -2 },
+	{ -2, 8.5, 6.9, 12, 6.5, 3.2, 6, 2 },
+	-- the far side's middle tier
 	{ 4.5, -5, 8.6, 7, 8, 4, -8, 4 },
-	{ 5, 4.5, 8.6, 7, 7, 3.5, 12, 3 },
+	{ 5, 4.5, 8.6, 7, 7.5, 3.5, 12, 3 },
 	-- the ridge: a wide peak slab toward the hub, stepping down in
 	-- overlapping slabs toward the +CAVE_HALF mouth
-	{ -1, -4, 10.2, 9, 8, 6, 14, -7 },
+	{ -1, -4, 9.8, 9, 8, 6, 14, -7 },
 	{ 1, 2.5, 10.2, 8, 7, 4, -8, 5 },
 	{ 2, 8, 9.8, 7, 6, 2.8, 10, 4 },
-	{ 0, -10, 10.2, 5, 4.5, 3, 30, 0 },
+	{ 0, -10, 9.8, 5, 4.5, 3, 30, 0 },
 }
 local ROCK = { 0.5, 0.54, 0.62 }
 part("Rocks", nil, ROCK, function(mesh)
@@ -182,43 +186,6 @@ end, nil, function(x, y, z, _nx, _ny, nz)
 		k *= 1.1
 	end
 	return ROCK[1] * k, ROCK[2] * k, ROCK[3] * k
-end, nil, nil, true)
-
--- -------------------------------------------------------------- the bore
-
--- The tunnel's own lining: the opening pushed out BORE_WALL, from mouth to
--- mouth, dark, and hidden behind the rocks packed round it, so any crevice
--- between them reads as shadow rather than sky.
-local BORE_WALL = 0.6
-local BORE_STEP = 1
-local BORE = { 0.22, 0.23, 0.27 }
-part("Bore", nil, BORE, function(mesh)
-	local m = EditMesh.new()
-	local outside = {}
-	for i, p in MOUTH do
-		local sideways = if p[1] < 0 then -BORE_WALL else BORE_WALL
-		outside[i] = { p[1] + sideways, if p[2] == 0 then -0.5 elseif p[2] == OPEN_TALL then OPEN_TALL + BORE_WALL else p[2] }
-	end
-	local rings, holes = {}, {}
-	local steps = math.floor(2 * HALF_LENGTH / BORE_STEP)
-	for k = 0, steps do
-		local ring = 2 * HALF_LENGTH * k / steps
-		local fromMouth = HALF_LENGTH - math.abs(ring - HALF_LENGTH)
-		local side = if ring < HALF_LENGTH then -1 else 1
-		local o, h = {}, {}
-		for i, p in MOUTH do
-			o[i] = caveAt(side, outside[i][1], outside[i][2], fromMouth)
-			h[i] = caveAt(side, p[1], p[2], fromMouth)
-		end
-		table.insert(rings, o)
-		table.insert(holes, h)
-	end
-	ringTube(m, rings, holes)
-	faceOut(m)
-	m:emit(mesh)
-end, nil, function(x, y, z)
-	local k = 0.9 + 0.12 * math.noise(x / 2.5, y / 2.5, z / 2.5)
-	return BORE[1] * k, BORE[2] * k, BORE[3] * k
 end, nil, nil, true)
 
 -- ------------------------------------------------------------ the porches
