@@ -15,14 +15,15 @@
 - Renders and checkpoints run on the cloud machines (`FROM=` on `scripts/checkpoint-model.sh`); eyes 7 and 8 are raised overviews of the whole pile.
 - Sizes made less uniform (user): about 50 rocks in a clear spread, a few big (a 10.5-wide boulder in the hub wall, an 11-wide 13-tall one in the far wall with a rock leaning on its foot, an 11 by 10 by 7 peak slab, a 14-wide roof slab), medium walls and roof, small 1.6 to 3 stud rocks at the foot and in the joints on top. Two review rounds; the far-side slit closed with a filler rock by the + porch.
 - More detail (user): timber braces tried in three layouts and dropped; texture picked from three variants (worn rims / plus cracks / plus lichen): A, worn rims. Bold painted highlight strokes on every rock edge, tinted toward the stone, tapering from full width at corners to 15% mid-edge (falloff 0.6 studs, via the bake's cornerTaper, now passed through `taper` on a part entry in common.luau); each boulder its own tone. Pebbles get narrower, fainter rims and a darker base. Two review rounds.
+- Rocks too uniform (user): each visible rock has a kind (BOULDER_KINDS): slab (steep sloped top, small chamfers), crag (narrows toward the top, two chipped corners), round (big chamfers, pulled 15% round), block (chamfered with a stepped plateau); chamfers vary per rock; pebbles round. Pulling round 30% softened edge folds below the highlight threshold and lost the rims, hence 15%. Rims raised to strength 1.8, band 0.6 studs. Three review rounds.
 
 ## Open
-- Critic (texture change, LOW only): rims a little faint on lower, shadowed boulders; base grey slightly cool against the reference; big flat faces look noisy in the half-resolution preview.
-- The user says the rocks still look too uniform: the next change gives the rocks distinct shape types.
-- The mouth shades stay opaque 4.5 in, as the user asked (the critic suggested less).
+- Critic (after three rounds on the shape kinds): MED, rim highlights still faint on many boulders against the reference's bold bright rims (needs contrast, not just width); MED, the pile reads as one blue-grey mass from the far side (wider per-rock tone spread, darker joints). LOW: crag and round read alike; some lower-ring boulders still tall prisms; the big far-side boulder a tall flat-faced slab; flanks could use a few more mid-size rocks.
+- The mouth shades stay opaque 4.5 in, as the user asked.
 - The plan check's clearance can't measure this opening: it looks along X or Z, and the tunnel runs along Y.
 - The clipping check flags the intended seating (boards, beams and pebbles tucked into the rocks).
 
 ## Next
-- Rock shape types (slab, crag, round, block) and per-rock chamfer and chip variety, so the rocks stop looking uniform.
-- Raise the peak slab 1 to 2 studs so the pile climbs like the reference.
+- Bolder rims: paint them clearly lighter than the face, the same on the lower rocks.
+- Wider per-rock tone spread with darker joints.
+- Shorter, rounder lower-ring rocks and a stepped face on the big far boulder.

@@ -117,46 +117,46 @@ end
 
 -- Boulders, each {out (- toward the hub), along from the cave's middle
 -- (+ toward the +CAVE_HALF mouth), base height, width out, depth along,
--- height, turn, lean}. The walls stand just clear of the opening and the
--- roof slabs lie right over it, every rock overlapping its neighbours so
--- no gap shows through; the rocks flanking
--- each porch overlap its boards, so no gap shows beside it.
+-- height, turn, lean, kind (BOULDER_KINDS, block when unset)}. The walls
+-- stand just clear of the opening and the roof slabs lie right over it,
+-- every rock overlapping its neighbours so no gap shows through; the rocks
+-- flanking each porch overlap its boards, so no gap shows beside it.
 local ROCKS = {
 	-- the hub side's wall, up to the roof: one big boulder among medium
 	-- ones, with a big low slab, a medium rock and small ones outside it
-	{ -7, -11, -0.5, 6, 6, 7.6, 6, -5 },
+	{ -7, -11, -0.5, 6, 6, 7.6, 6, -5, "round" },
 	{ -9.1, -3, -0.5, 10.5, 10, 8.4, -5, -6 },
-	{ -7.4, 4.5, -0.5, 6.5, 7, 7.7, 8, -5 },
-	{ -6.6, 9.8, -0.5, 5, 5.5, 7.6, -6, -6 },
-	{ -12.5, -2, -0.5, 6, 9, 3.5, 15, -10 },
-	{ -11.2, -9.5, -0.5, 4.5, 5, 4, 25, -6 },
-	{ -11.5, 6.5, -0.5, 3, 3, 2.2, -20, -8 },
-	{ -11.6, 8.2, -0.5, 2, 2.2, 1.6, 30, 0 },
-	{ -13.3, -5.6, -0.5, 1.8, 2, 1.4, 10, 0 },
+	{ -7.4, 4.5, -0.5, 6.5, 7, 7.7, 8, -5, "crag" },
+	{ -6.6, 9.8, -0.5, 5, 5.5, 7.6, -6, -6, "round" },
+	{ -12.5, -2, -0.5, 6, 9, 3.5, 15, -10, "slab" },
+	{ -11.2, -9.5, -0.5, 4.5, 5, 4, 25, -6, "round" },
+	{ -11.5, 6.5, -0.5, 3, 3, 2.2, -20, -8, "crag" },
+	{ -11.6, 8.2, -0.5, 2, 2.2, 1.6, 30, 0, "round" },
+	{ -13.3, -5.6, -0.5, 1.8, 2, 1.4, 10, 0, "round" },
 	-- the far side's wall, a tier higher, round one tall boulder with a
 	-- rock leaning on its foot, small rocks outside it
-	{ 7.2, -10.5, -0.5, 6.5, 6, 8.5, -6, 7 },
-	{ 9.5, -2.5, -0.5, 11, 10, 13, 6, 6 },
-	{ 7.3, 5.5, -0.5, 6, 6.5, 9, -7, 8 },
-	{ 6.9, 10.5, -0.5, 6, 5, 8, 7, 6 },
-	{ 10.6, 8, -0.5, 3, 3.5, 2.5, 20, 6 },
-	{ 13.4, -1, -0.5, 4, 5, 4.5, 20, 10 },
-	{ 12.6, -7.6, -0.5, 2.2, 2.4, 1.7, -15, 0 },
-	{ 14.2, 3, -0.5, 1.6, 1.8, 1.2, 40, 0 },
+	{ 7.2, -10.5, -0.5, 6.5, 6, 7.5, -6, 7, "round" },
+	{ 9.5, -2.5, -0.5, 11, 10, 13, 6, 10, "crag" },
+	{ 7.3, 5.5, -0.5, 6, 6.5, 9, -7, 8, "round" },
+	{ 6.9, 10.5, -0.5, 6, 5, 7, 7, 6, "round" },
+	{ 10.6, 8, -0.5, 3, 3.5, 2.5, 20, 6, "round" },
+	{ 13.4, -1, -0.5, 4, 5, 4.5, 20, 10, "slab" },
+	{ 12.6, -7.6, -0.5, 2.2, 2.4, 1.7, -15, 0, "round" },
+	{ 14.2, 3, -0.5, 1.6, 1.8, 1.2, 40, 0, "crag" },
 	-- flanking each porch, overlapping its boards
-	{ -7.6, -12.9, -0.5, 5.5, 6, 6, 12, -8 },
-	{ 7.9, -13, -0.5, 6.5, 6, 7.5, -12, 8 },
-	{ -7.3, 12.9, -0.5, 4.5, 5, 5, -10, -8 },
-	{ 7.6, 13, -0.5, 5.5, 6, 6.5, 12, 8 },
+	{ -7.6, -12.9, -0.5, 5.5, 6, 6, 12, -8, "round" },
+	{ 7.9, -13, -0.5, 6.5, 6, 7.5, -12, 8, "crag" },
+	{ -7.3, 12.9, -0.5, 4.5, 5, 5, -10, -8, "round" },
+	{ 7.6, 13, -0.5, 5.5, 6, 6, 12, 8, "round" },
 	-- shoulders, wedged where the porch, its lintel rock and the flanking
 	-- rock meet
-	{ -6.4, -12, 4.5, 4, 4, 4.5, 15, 0 },
+	{ -6.4, -12, 4.5, 4, 4, 4.5, 15, 0, "round" },
 	{ 6.4, -12, 4.5, 4, 4, 4.5, -15, 0 },
-	{ -6.4, 12, 4.5, 4, 4, 4.5, -15, 0 },
-	{ 6.4, 12, 4.5, 4, 4, 4.5, 15, 0 },
+	{ -6.4, 12, 4.5, 4, 4, 4.5, -15, 0, "crag" },
+	{ 6.4, 12, 4.5, 4, 4, 4.5, 15, 0, "round" },
 	-- over each porch
-	{ 0, -12.2, 7.2, 12, 4.5, 3.5, 4, 0 },
-	{ 0, 12.2, 7.2, 10, 4, 2.8, -5, 0 },
+	{ 0, -12.2, 7.2, 12, 4.5, 3.5, 4, 0, "slab" },
+	{ 0, 12.2, 7.2, 10, 4, 2.8, -5, 0, "slab" },
 	-- the backing, mostly hidden: flat slabs right over the opening and long
 	-- rocks along each wall, so a crevice anywhere shows rock
 	{ 0, -6, 6.75, 9, 12.5, 2.5, 0, 0 },
@@ -167,31 +167,31 @@ local ROCKS = {
 	{ 4.9, 6, -0.5, 3, 12.5, 7.5, 0, 0 },
 	-- the roof: slabs of different sizes right over the opening,
 	-- overlapping each other and both walls
-	{ -2, -6.5, 6.9, 14, 9, 3, 6, 2 },
+	{ -2, -6.5, 6.9, 14, 9, 3, 6, 2, "slab" },
 	{ -2, -1, 6.9, 9, 4, 2.6, 15, 2 },
-	{ -2, 3, 6.9, 13, 8, 4, -5, -2 },
+	{ -2, 3, 6.9, 13, 8, 4, -5, -2, "slab" },
 	{ -2, 8.5, 6.9, 11, 6, 2.8, 6, 2 },
 	-- the far side's middle tier, a big slab, a medium one, a small one
 	-- between them and one by the + porch
-	{ 4.5, -5.5, 8.6, 8, 9, 4.5, -8, 4 },
-	{ 5.5, 4.5, 8.6, 6, 6.5, 3, 12, 3 },
-	{ 4.5, -0.3, 8.6, 4, 4, 3.2, 25, 3 },
-	{ 5.5, 8.5, 7.2, 5, 5, 3, 10, 3 },
+	{ 4.5, -5.5, 8.6, 8, 9, 4.5, -8, 4, "slab" },
+	{ 5.5, 4.5, 8.6, 6, 6.5, 3, 12, 3, "round" },
+	{ 4.5, -0.3, 8.6, 4, 4, 3.2, 25, 3, "crag" },
+	{ 5.5, 8.5, 7.2, 5, 5, 3, 10, 3, "round" },
 	-- the ridge: a big peak slab toward the hub, stepping down in smaller
 	-- slabs toward the +CAVE_HALF mouth, small rocks in its joints
-	{ -1, -4, 9.8, 11, 10, 7, 14, -7 },
-	{ 1.5, 3, 10.2, 7, 6, 3.6, -8, 5 },
-	{ 2, 8, 9.8, 5, 4.5, 2.5, 10, 4 },
-	{ 0, -10, 9.8, 4, 3.5, 2.6, 30, 0 },
-	{ -5.5, 1, 9.8, 2.5, 3, 2, 20, 10 },
-	{ -6, -8.5, 9.6, 3, 2.5, 2, -25, 8 },
-	{ 6.5, 1.5, 11.4, 2, 2.2, 1.6, 15, 0 },
+	{ -1, -4, 9.8, 11, 10, 7, 14, -7, "crag" },
+	{ 1.5, 3, 10.2, 7, 6, 3.6, -8, 5, "slab" },
+	{ 2, 8, 9.8, 5, 4.5, 2.5, 10, 4, "round" },
+	{ 0, -10, 9.8, 4, 3.5, 2.6, 30, 0, "crag" },
+	{ -5.5, 1, 9.8, 2.5, 3, 2, 20, 10, "round" },
+	{ -6, -8.5, 9.6, 3, 2.5, 2, -25, 8, "crag" },
+	{ 6.5, 1.5, 11.4, 2, 2.2, 1.6, 15, 0, "round" },
 }
 local ROCK = { 0.52, 0.54, 0.6 }
 
 -- The highlight band's reach from an edge, in studs, its strength, and how
 -- far from a corner its strokes taper away.
-local ROCK_EDGE, ROCK_LIT, ROCK_TAPER = 0.5, 1.35, 0.6
+local ROCK_EDGE, ROCK_LIT, ROCK_TAPER = 0.6, 1.8, 0.8
 -- Pebbles are small, so their rims are narrower and fainter.
 local PEBBLE_EDGE, PEBBLE_LIT = 0.25, 0.7
 
@@ -231,26 +231,41 @@ local function boldRims()
 	parts[#parts].blend = 0.65
 	parts[#parts].taper = ROCK_TAPER
 end
--- One boulder `n`, w by d by h about its middle: a block with every edge
--- chamfered (each face inset and lifted, so the rings slope off at 45
--- degrees), one or two corners chipped off flat, most tops stepped up into
--- a smaller plateau and tilted a little, narrowing toward the top.
-local function boulder(n: number, w: number, d: number, h: number)
+-- The kinds of boulder, so the pile isn't one shape over and over: how
+-- big its chamfers are (share of its smallest side), how much it narrows to
+-- the top, how far its top tilts, how many top corners are chipped off,
+-- and whether its top steps up into a plateau or it is pulled round.
+local BOULDER_KINDS = {
+	block = { chamfer = 0.16, taper = 0.12, tilt = 7, chips = 1, plateau = true },
+	slab = { chamfer = 0.12, taper = 0.08, tilt = 20, chips = 1 },
+	crag = { chamfer = 0.14, taper = 0.38, tilt = 10, chips = 2 },
+	round = { chamfer = 0.24, taper = 0.06, tilt = 5, chips = 0, round = 0.15 },
+}
+
+-- One boulder `n` of a kind, w by d by h about its middle: a block with
+-- every edge chamfered (each face inset and lifted, so the rings slope off
+-- at 45 degrees), then shaped by its kind.
+local function boulder(n: number, w: number, d: number, h: number, kindName: string?)
+	local kind = BOULDER_KINDS[kindName or "block"]
 	local size = math.min(w, d, h)
-	local chamfer = 0.16 * size
+	local chamfer = kind.chamfer * size * (1 + 0.2 * jitter(n, 13))
 	local m = EditMesh.box({ w - 2 * chamfer, d - 2 * chamfer, h - 2 * chamfer })
 	m:inset(m:select("face", "all"), chamfer, chamfer, { each = true })
-	if n % 3 ~= 0 then
+	if kind.round then
+		m:toSphere(m:select("vertex", "all"), kind.round)
+	end
+	if kind.plateau and n % 3 ~= 0 then
 		m:inset(m:select("face", "facing", { 0, 0, 1 }, 5), 0.2 * size, 0.06 * h)
 	end
+	local tilt = kind.tilt * (if jitter(n, 11) > 0 then 1 else -1) * (0.7 + 0.3 * math.abs(jitter(n, 12)))
 	m:select("vertex", "where", function(p)
 		return p[3] > h / 2 - chamfer
-	end):rotate({ 1, 0, 0 }, 7 * jitter(n, 11), { 0, 0, h / 2 })
+	end):rotate({ 1, 0, 0 }, tilt, { 0, 0, h / 2 })
 	-- Chips: every point within `reach` of a corner (summing the three
 	-- axes) pushed back onto the plane that far from it, so the corner is
 	-- cut off in one flat face. Only top corners, so no rock is cut away
 	-- where it meets its neighbours below.
-	for k = 1, 1 + n % 2 do
+	for k = 1, kind.chips + (if kind.plateau then n % 2 else 0) do
 		local corner = {
 			if jitter(n, k * 3) > 0 then w / 2 else -w / 2,
 			if jitter(n, k * 3 + 1) > 0 then d / 2 else -d / 2,
@@ -274,7 +289,7 @@ local function boulder(n: number, w: number, d: number, h: number)
 		end)
 	end
 	m:transform(function(p)
-		local taper = 1 - 0.12 * (p[3] / h + 0.5)
+		local taper = 1 - kind.taper * (p[3] / h + 0.5)
 		local s = 0.03 * size
 		return {
 			p[1] * taper + s * math.noise(p[1] / size + n, p[2] / size, p[3] / size),
@@ -287,8 +302,8 @@ end
 
 part("Rocks", nil, ROCK, function(mesh)
 	for n, rock in ROCKS do
-		local out, middle, base, w, d, h, turn, lean = table.unpack(rock)
-		local m = boulder(n, w, d, h)
+		local out, middle, base, w, d, h, turn, lean, kind = table.unpack(rock)
+		local m = boulder(n, w, d, h, kind)
 		m:select("vertex", "all"):rotate({ 1, 0, 0 }, lean, { 0, 0, -h / 2 })
 		m:select("vertex", "all"):rotate({ 0, 0, 1 }, turn, { 0, 0, 0 })
 		placed(m, 1, out, HALF_LENGTH - middle, base, h):emit(mesh)
@@ -455,7 +470,7 @@ part("Stones", nil, ROCK, function(mesh)
 	for _, side in { -1, 1 } do
 		for n, pebble in PEBBLES do
 			local out, along, w, d, h = table.unpack(pebble)
-			local m = boulder(100 + n + side * 10, w, d, h)
+			local m = boulder(100 + n + side * 10, w, d, h, "round")
 			m:select("vertex", "all"):rotate({ 0, 0, 1 }, 40 * jitter(n, side), { 0, 0, 0 })
 			placed(m, side, side * out, along, -0.25 * h, h):emit(mesh)
 		end
