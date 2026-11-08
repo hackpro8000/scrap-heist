@@ -13,14 +13,15 @@
 - Those two changes skipped review; the user called it out. From here every change goes through review rounds (cloud renders + model-critic) before its checkpoint.
 - Rocks given real meshwork with EditMesh: every edge chamfered (each face inset and lifted), one or two top corners chipped off flat, most tops stepped into a raised plateau and tilted, sides tapering. Pebbles the same, smaller. Chips only on top corners so no rock is cut away where it meets its neighbours. A hidden backing of rocks (flat slabs over the opening, long rocks along each wall) and four shoulder rocks at the porch corners close the gaps; flank rocks squatter and tilted.
 - Renders and checkpoints run on the cloud machines (`FROM=` on `scripts/checkpoint-model.sh`); eyes 7 and 8 are raised overviews of the whole pile.
+- Sizes made less uniform (user): about 50 rocks in a clear spread, a few big (a 10.5-wide boulder in the hub wall, an 11-wide 13-tall one in the far wall with a rock leaning on its foot, an 11 by 10 by 7 peak slab, a 14-wide roof slab), medium walls and roof, small 1.6 to 3 stud rocks at the foot and in the joints on top. Two review rounds; the far-side slit closed with a filler rock by the + porch.
 
 ## Open
-- Critic (after three rounds on the rock meshwork): MED, a thin dark slit on the far side of the top, between the far middle-tier slabs near the ridge's middle. LOW: the lower ring boulders still read as tall faceted prisms; no tall peak; every boulder the same grey, so the top-down view merges.
+- Critic (after two rounds on the size change), LOW only: one small rock at the far wall's foot sits slightly off the big boulder; a few tall wall and flank boulders read a little crystalline; the peak is only modestly above the rest.
 - The mouth shades stay opaque 4.5 in, as the user asked (the critic suggested less).
 - The plan check's clearance can't measure this opening: it looks along X or Z, and the tunnel runs along Y.
 - The clipping check flags the intended seating (boards, beams and pebbles tucked into the rocks).
 
 ## Next
-- Close the far-side slit with a wedge rock between the far middle-tier slabs.
-- Raise the peak 1 to 2 studs so the pile climbs like the reference.
+- Raise the peak slab 1 to 2 studs so the pile climbs like the reference.
+- Wider vertical chamfers on the tallest boulders, so they read as lumps, not crystals.
 - A slightly different tone per boulder, so the pile doesn't merge from above.

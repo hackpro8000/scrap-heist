@@ -12,7 +12,7 @@ return {
 			level = "core",
 			at = { 72, 0, 8.5 },
 			size = { 28, 30, 18 },
-			note = "about 23 chunky boulders and flat slabs with rounded edges and broad faces, blue-grey, stacked in tiers to a tall peak toward the hub; rocks flank each porch against its boards; the rocks themselves wall and roof the tunnel, overlapping so no gap shows through: nothing but rock",
+			note = "about 47 chunky boulders and flat slabs of very different sizes (a few big ones, medium walls and roof, small ones at the foot and in the joints) with rounded edges and broad faces, blue-grey, stacked in tiers to a tall peak toward the hub; rocks flank each porch against its boards; the rocks themselves wall and roof the tunnel, overlapping so no gap shows through: nothing but rock",
 		},
 		{
 			name = "Posts",

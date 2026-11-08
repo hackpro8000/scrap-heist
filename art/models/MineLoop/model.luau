@@ -1,4 +1,4 @@
-local CACHE_KEY = "MineLoop-0a47b43563fc0ad6"
+local CACHE_KEY = "MineLoop-f00f12d7585a2144"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -3531,23 +3531,31 @@ end
 -- no gap shows through; the rocks flanking
 -- each porch overlap its boards, so no gap shows beside it.
 local ROCKS = {
-	-- the hub side's wall, up to the roof, with low steps outside it
-	{ -7.3, -10.5, -0.5, 7, 7, 8, 6, -5 },
-	{ -7.8, -3.5, -0.5, 8, 8, 8.2, -5, -6 },
-	{ -7.6, 3.5, -0.5, 7, 8.5, 7.8, 7, -5 },
-	{ -7, 10, -0.5, 6, 7, 7.6, -6, -6 },
-	{ -11.6, -1.5, -0.5, 4.5, 7, 4, 15, -10 },
-	{ -11, 7, -0.5, 4, 5, 3, -20, -8 },
-	{ -11.2, -9, -0.5, 4, 5, 3.5, 25, -6 },
-	-- the far side's wall, a tier higher
-	{ 7.4, -10, -0.5, 7, 7, 9, -6, 7 },
-	{ 8, -2.5, -0.5, 8, 8.5, 10, 6, 6 },
-	{ 7.6, 5.5, -0.5, 7, 8, 9.5, -7, 8 },
-	{ 7, 11, -0.5, 6, 6, 8, 7, 6 },
+	-- the hub side's wall, up to the roof: one big boulder among medium
+	-- ones, with a big low slab, a medium rock and small ones outside it
+	{ -7, -11, -0.5, 6, 6, 7.6, 6, -5 },
+	{ -9.1, -3, -0.5, 10.5, 10, 8.4, -5, -6 },
+	{ -7.4, 4.5, -0.5, 6.5, 7, 7.7, 8, -5 },
+	{ -6.6, 9.8, -0.5, 5, 5.5, 7.6, -6, -6 },
+	{ -12.5, -2, -0.5, 6, 9, 3.5, 15, -10 },
+	{ -11.2, -9.5, -0.5, 4.5, 5, 4, 25, -6 },
+	{ -11.5, 6.5, -0.5, 3, 3, 2.2, -20, -8 },
+	{ -11.6, 8.2, -0.5, 2, 2.2, 1.6, 30, 0 },
+	{ -13.3, -5.6, -0.5, 1.8, 2, 1.4, 10, 0 },
+	-- the far side's wall, a tier higher, round one tall boulder with a
+	-- rock leaning on its foot, small rocks outside it
+	{ 7.2, -10.5, -0.5, 6.5, 6, 8.5, -6, 7 },
+	{ 9.5, -2.5, -0.5, 11, 10, 13, 6, 6 },
+	{ 7.3, 5.5, -0.5, 6, 6.5, 9, -7, 8 },
+	{ 6.9, 10.5, -0.5, 6, 5, 8, 7, 6 },
+	{ 10.6, 8, -0.5, 3, 3.5, 2.5, 20, 6 },
+	{ 13.4, -1, -0.5, 4, 5, 4.5, 20, 10 },
+	{ 12.6, -7.6, -0.5, 2.2, 2.4, 1.7, -15, 0 },
+	{ 14.2, 3, -0.5, 1.6, 1.8, 1.2, 40, 0 },
 	-- flanking each porch, overlapping its boards
 	{ -7.6, -12.9, -0.5, 5.5, 6, 6, 12, -8 },
-	{ 7.6, -13, -0.5, 5.5, 6, 6.5, -12, 8 },
-	{ -7.6, 12.9, -0.5, 5.5, 6, 5.5, -10, -8 },
+	{ 7.9, -13, -0.5, 6.5, 6, 7.5, -12, 8 },
+	{ -7.3, 12.9, -0.5, 4.5, 5, 5, -10, -8 },
 	{ 7.6, 13, -0.5, 5.5, 6, 6.5, 12, 8 },
 	-- shoulders, wedged where the porch, its lintel rock and the flanking
 	-- rock meet
@@ -3557,7 +3565,7 @@ local ROCKS = {
 	{ 6.4, 12, 4.5, 4, 4, 4.5, 15, 0 },
 	-- over each porch
 	{ 0, -12.2, 7.2, 12, 4.5, 3.5, 4, 0 },
-	{ 0, 12.2, 7.2, 12, 4.5, 3.2, -5, 0 },
+	{ 0, 12.2, 7.2, 10, 4, 2.8, -5, 0 },
 	-- the backing, mostly hidden: flat slabs right over the opening and long
 	-- rocks along each wall, so a crevice anywhere shows rock
 	{ 0, -6, 6.75, 9, 12.5, 2.5, 0, 0 },
@@ -3566,21 +3574,27 @@ local ROCKS = {
 	{ -4.9, 6, -0.5, 3, 12.5, 7.5, 0, 0 },
 	{ 4.9, -6, -0.5, 3, 12.5, 7.5, 0, 0 },
 	{ 4.9, 6, -0.5, 3, 12.5, 7.5, 0, 0 },
-	-- the roof: wide flat slabs right over the opening, overlapping each
-	-- other and both walls
-	{ -2, -6.5, 6.9, 13, 8, 3.2, 6, 2 },
-	{ -2, -1, 6.9, 12, 5, 3.4, 15, 2 },
-	{ -2, 3, 6.9, 13, 8, 3.6, -5, -2 },
-	{ -2, 8.5, 6.9, 12, 6.5, 3.2, 6, 2 },
-	-- the far side's middle tier
-	{ 4.5, -5, 8.6, 7, 8, 4, -8, 4 },
-	{ 5, 4.5, 8.6, 7, 7.5, 3.5, 12, 3 },
-	-- the ridge: a wide peak slab toward the hub, stepping down in
-	-- overlapping slabs toward the +CAVE_HALF mouth
-	{ -1, -4, 9.8, 9, 8, 6, 14, -7 },
-	{ 1, 2.5, 10.2, 8, 7, 4, -8, 5 },
-	{ 2, 8, 9.8, 7, 6, 2.8, 10, 4 },
-	{ 0, -10, 9.8, 5, 4.5, 3, 30, 0 },
+	-- the roof: slabs of different sizes right over the opening,
+	-- overlapping each other and both walls
+	{ -2, -6.5, 6.9, 14, 9, 3, 6, 2 },
+	{ -2, -1, 6.9, 9, 4, 2.6, 15, 2 },
+	{ -2, 3, 6.9, 13, 8, 4, -5, -2 },
+	{ -2, 8.5, 6.9, 11, 6, 2.8, 6, 2 },
+	-- the far side's middle tier, a big slab, a medium one, a small one
+	-- between them and one by the + porch
+	{ 4.5, -5.5, 8.6, 8, 9, 4.5, -8, 4 },
+	{ 5.5, 4.5, 8.6, 6, 6.5, 3, 12, 3 },
+	{ 4.5, -0.3, 8.6, 4, 4, 3.2, 25, 3 },
+	{ 5.5, 8.5, 7.2, 5, 5, 3, 10, 3 },
+	-- the ridge: a big peak slab toward the hub, stepping down in smaller
+	-- slabs toward the +CAVE_HALF mouth, small rocks in its joints
+	{ -1, -4, 9.8, 11, 10, 7, 14, -7 },
+	{ 1.5, 3, 10.2, 7, 6, 3.6, -8, 5 },
+	{ 2, 8, 9.8, 5, 4.5, 2.5, 10, 4 },
+	{ 0, -10, 9.8, 4, 3.5, 2.6, 30, 0 },
+	{ -5.5, 1, 9.8, 2.5, 3, 2, 20, 10 },
+	{ -6, -8.5, 9.6, 3, 2.5, 2, -25, 8 },
+	{ 6.5, 1.5, 11.4, 2, 2.2, 1.6, 15, 0 },
 }
 local ROCK = { 0.5, 0.54, 0.62 }
 -- One boulder `n`, w by d by h about its middle: a block with every edge
