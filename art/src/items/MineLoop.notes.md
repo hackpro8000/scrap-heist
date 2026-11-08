@@ -30,10 +30,12 @@
 - Uneven chamfering and sub-chamfering (user): every upright and top edge bevelled 0.12 to 0.6, each its own width, top bevels 45 degrees give or take 15; a narrower sub-bevel trims each crease (only on bevels over 0.22, never flatter than 62 degrees, so no slivers). Edges along the tunnel, bore and face cuts stay sharp.
 - Edge and corner chipping (user): about 60% of top corners chipped along the corner's bisector, about 45% of top edges take a tapering bite toward one end, 0.2 to 0.55 deep. Three review rounds over these three changes.
 - Seams sealed (user): full-height upright corner chamfers opened shafts where three columns met. Each upright corner's bevel now leans 8 to 16 degrees in, widest at the top and running out a couple of studs down, so below that the corners stay whole and meet their neighbours. One review round.
+- Timber improved (user picked A of three, from subtle to bold with knee braces; compared at 1024 textures): posts 1.3 thick and 10% thicker at the foot, slightly off true; beams 0.85, faintly hand-hewn, cut ends showing rings; a little more grain contrast, sparse cracks, soft worn edges, plank ends roughly sawn. The bore now follows the post size (4.6 either side of the track). One review round.
 
 ## Open
 - A few texels still take a neighbour's tone where a small rock tucks in front of a big one with faces turned the same way (LOW).
 - Critic (after the chipping), all LOW: wide chamfers make some columns read rounded (cap near 0.4 and leave a few edges sharp?); chip faces show coarse texels in close ground views; columns over each porch close to one height; the rows beside the porch read a little like a picket row; light lines at some column bases from the ground level; tall faces show big texels.
+- A board shows edge-on in a gap between rocks beside the + mouth's post from one side view (LOW).
 - The mouth shades stay opaque 4.5 in, as the user asked.
 - The plan check's clearance can't measure this opening: it looks along X or Z, and the tunnel runs along Y.
 - The clipping check flags the intended seating (boards, beams and pebbles tucked into the rocks).

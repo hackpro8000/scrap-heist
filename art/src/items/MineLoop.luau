@@ -127,12 +127,18 @@ local LINTEL_TOP = LINTEL_BASE + LINTEL_TALL
 local LINTEL_REACH = HALF_LENGTH + 0.15
 -- The tunnel's walls, out from the track's middle each way.
 local WALL = 3.75
+-- The porch timber's look: post radius, how much thicker a post is at its
+-- foot, how far a post or beam wanders from true (studs), how rough its
+-- hewn faces are, the beam's thickness and edge round-off, and the paint:
+-- grain contrast, cracks and worn light edges.
+local TIMBER = { radius = 0.65, taper = 1.1, wander = 0.06, hewn = 0.04, beam = 0.85, round = 0.16, grain = 1.3, cracks = 0.5, worn = 0.7 }
 -- In front of each mouth the hill carries on and the tunnel bores on
 -- through it: BORE out from the track's middle each way, just past the
--- porch's posts (its roof's eaves tuck into the stone), the stone over it standing on the roof at BORE_TOP, out to
+-- porch's posts (its roof's eaves tuck into the stone), the stone over it
+-- standing on the roof at BORE_TOP, out to
 -- BORE_REACH along the track, where the hill's face stands; the porch
 -- sticks out of it, its frame covering the bore's edges.
-local BORE, BORE_TOP, BORE_REACH = 4.9, 8.7, HALF_LENGTH + 2.3
+local BORE, BORE_TOP, BORE_REACH = OPEN_HALF + 2 * TIMBER.radius + 0.1, OPEN_TALL + TIMBER.beam + 0.7 + 0.45 + 0.1, HALF_LENGTH + 2.3
 -- Rocks are built in bands about BAND tall, so their edges have points to
 -- be chipped at.
 local BAND = 1.2
@@ -472,7 +478,7 @@ do
 			-- Past the face the hill beside the track stands clear of the
 			-- porch's eaves and steps in and out from column to column.
 			local past = clipOutline(front, 0, -side, -BORE_REACH)
-			local step = BORE + 0.4 + 0.6 * random(index, 8)
+			local step = OPEN_HALF + TIMBER.radius + 1.5 + 0.6 * random(index, 8)
 			table.insert(pieces, { outline = clipOutline(past, 1, 0, -step), base = -0.5, step = step })
 			table.insert(pieces, { outline = clipOutline(past, -1, 0, -step), base = -0.5, step = step })
 		end
@@ -1095,10 +1101,10 @@ end
 
 -- Along from each mouth (negative is out in front): the back posts stand
 -- just before the boards, the front posts PORCH_DEPTH further out.
-local POST_RADIUS = 0.6
+local POST_RADIUS = TIMBER.radius
 local POST_OUT = OPEN_HALF + POST_RADIUS
 local BACK_POSTS, FRONT_POSTS = -0.75, -0.75 - 3.4
-local BEAM = 0.8
+local BEAM = TIMBER.beam
 local HEADER_TOP = OPEN_TALL + BEAM
 local SIDE_TOP = HEADER_TOP + 0.7
 local DECK_THICK, DECK_PLANK = 0.45, 0.9
@@ -1106,21 +1112,52 @@ local DECK_FROM, DECK_TO = FRONT_POSTS - 0.7, BACK_POSTS + 0.5
 local BOARDS_AT, BOARD_THICK, BOARD_WIDE = -0.25, 0.35, 0.8
 local WOOD = { 0.66, 0.38, 0.2 }
 
--- Wood: each piece `index` its own shade, with fine grain lines.
+-- Wood: each piece `index` its own shade, with grain lines along `grain`
+-- (TIMBER.grain sets their contrast) and now and then a dark crack running
+-- with the grain.
 local function wood(index: number, grain: number, x: number, y: number, z: number, spread: number?): (number, number, number)
 	local k = 0.9 + (spread or 0.12) * jitter(index, 3) + 0.05 * math.noise(x / 2, y / 2, z / 2)
 	if math.abs(math.sin(grain * 6 + 1.5 * math.noise(x * 0.7, y * 0.7, z * 0.7))) < 0.14 then
-		k -= 0.12
+		k -= 0.09 * TIMBER.grain
+	end
+	if math.abs(math.sin(grain * 2.3 + 0.8 * math.noise(x * 0.4, y * 0.4, index))) < 0.02 * TIMBER.cracks and math.noise(x * 0.9, y * 0.9, z * 0.9 + index) > 0.15 then
+		k -= 0.35
 	end
 	return WOOD[1] * k, WOOD[2] * k, WOOD[3] * k
+end
+-- A cut end's rings: lighter heartwood rings round the log's middle, `r`
+-- studs out from it.
+local function rings(index: number, r: number): (number, number, number)
+	local k = 1.05 + 0.08 * jitter(index, 5) - 0.12 * (if math.sin(r * 14) > 0.6 then 1 else 0)
+	return WOOD[1] * 1.12 * k, WOOD[2] * 1.15 * k, WOOD[3] * 1.15 * k
+end
+-- Hand-hewn timber: every point pushed a little off true by smooth noise
+-- (`seed` per piece), so posts and beams wander and their faces undulate.
+local function hewn(m, seed: number)
+	return m:transform(function(p)
+		local w, h = TIMBER.wander, TIMBER.hewn
+		return {
+			p[1] + w * math.noise(p[3] * 0.25, seed, 0.3) + h * math.noise(p[1] * 1.7, p[2] * 1.7 + seed, p[3] * 1.7),
+			p[2] + w * math.noise(p[3] * 0.25, seed, 5.1) + h * math.noise(p[1] * 1.7 + 3.1, p[2] * 1.7, p[3] * 1.7 + seed),
+			p[3] + h * 0.5 * math.noise(p[1] * 1.3 + seed, p[2] * 1.3, p[3] * 1.3),
+		}
+	end)
+end
+-- Worn timber: soft light strokes along the edges, thinning away from the
+-- corners.
+local function wornEdges()
+	parts[#parts].blend = 0.8
+	parts[#parts].taper = 0.5
 end
 
 part("Posts", nil, WOOD, function(mesh)
 	for _, side in { -1, 1 } do
 		for _, along in { BACK_POSTS, FRONT_POSTS } do
 			for _, flank in { -1, 1 } do
-				local m = EditMesh.cylinder(POST_RADIUS, OPEN_TALL + 0.3, 8, 3)
-				m:select("vertex", "all"):rotate({ 1, 0, 0 }, 1.5 * jitter(along * 10, flank + side * 3), { 0, 0, 0 })
+				local seed = along * 10 + flank * 3 + side * 7
+				local m = EditMesh.cone(POST_RADIUS * TIMBER.taper, POST_RADIUS, OPEN_TALL + 0.3, 12, 6)
+				m:select("vertex", "all"):rotate({ 0, 0, 1 }, 1.5 * jitter(along * 10, flank + side * 3), { 0, 0, 0 })
+				hewn(m, seed)
 				placed(m, side, flank * POST_OUT, along, -0.3, OPEN_TALL + 0.3):emit(mesh)
 			end
 		end
@@ -1128,46 +1165,66 @@ part("Posts", nil, WOOD, function(mesh)
 end, nil, function(x, y, z)
 	local out, along = caveOf(x, y)
 	return wood(math.floor(out) + math.floor(along) * 7, z, x, y, z)
-end, nil, nil, true)
+end, nil, nil, true, nil, nil, TIMBER.worn)
+wornEdges()
 
+-- How far a beam end sticks out past the post or beam it sits on.
+local HEADER_LENGTH = 2 * POST_OUT + 1.6
+local SIDE_LENGTH = BACK_POSTS - FRONT_POSTS + 1.4
 part("Beams", nil, WOOD, function(mesh)
 	for _, side in { -1, 1 } do
 		-- A header across each pair of posts, and a side beam along each
 		-- side on top of them.
 		for _, along in { BACK_POSTS, FRONT_POSTS } do
-			local length = 2 * POST_OUT + 1.6
-			local m = EditMesh.roundedBox({ length, BEAM, BEAM }, 0.12, 1, { 4, 1, 1 })
+			local m = EditMesh.roundedBox({ HEADER_LENGTH, BEAM, BEAM }, TIMBER.round, 1, { 8, 2, 2 })
+			hewn(m, along * 3 + side)
 			placed(m, side, 0, along, OPEN_TALL, BEAM):emit(mesh)
 		end
 		for _, flank in { -1, 1 } do
-			local length = BACK_POSTS - FRONT_POSTS + 1.4
-			local m = EditMesh.roundedBox({ BEAM, length, 0.7 }, 0.12, 1, { 1, 4, 1 })
+			local m = EditMesh.roundedBox({ BEAM, SIDE_LENGTH, 0.7 }, TIMBER.round, 1, { 2, 6, 2 })
+			hewn(m, flank * 5 + side * 11)
 			placed(m, side, flank * POST_OUT, (BACK_POSTS + FRONT_POSTS) / 2, HEADER_TOP, 0.7):emit(mesh)
 		end
 	end
 end, nil, function(x, y, z)
 	local out, along = caveOf(x, y)
+	-- Cut ends show their rings.
+	if z < HEADER_TOP and math.abs(out) > HEADER_LENGTH / 2 - 0.15 then
+		local middle = if math.abs(along - BACK_POSTS) < math.abs(along - FRONT_POSTS) then BACK_POSTS else FRONT_POSTS
+		return rings(math.floor(along * 2), math.sqrt((along - middle) ^ 2 + (z - OPEN_TALL - BEAM / 2) ^ 2))
+	end
+	if z > HEADER_TOP and math.abs(along - (BACK_POSTS + FRONT_POSTS) / 2) > SIDE_LENGTH / 2 - 0.15 then
+		return rings(math.floor(out), math.sqrt((math.abs(out) - POST_OUT) ^ 2 + (z - HEADER_TOP - 0.35) ^ 2))
+	end
 	local index = if z > HEADER_TOP then math.floor(out) else math.floor(along * 2)
 	return wood(index + 40, if z > HEADER_TOP then along else out, x, y, z)
-end, nil, nil, true)
+end, nil, nil, true, nil, nil, TIMBER.worn)
+wornEdges()
 
 -- The deck: planks laid across the side beams, side by side out to the
--- front, each a little different in length, set and tilt.
+-- front, each a little different in length, set and tilt, their ends
+-- roughly sawn.
 local function deckPlanks(): { { number } }
 	local planks = {}
 	local n = math.floor((DECK_TO - DECK_FROM) / DECK_PLANK)
 	for i = 1, n do
 		local along = DECK_FROM + (i - 0.5) * (DECK_TO - DECK_FROM) / n
-		local length = 2 * POST_OUT + 2 + 0.5 * jitter(i, 1)
-		table.insert(planks, { along, length, 0.3 * jitter(i, 2), 2 * jitter(i, 4) })
+		local length = 2 * POST_OUT + 2 + (0.5 + 2 * TIMBER.wander) * jitter(i, 1)
+		table.insert(planks, { along, length, 0.3 * jitter(i, 2), (2 + 10 * TIMBER.wander) * jitter(i, 4) })
 	end
 	return planks
 end
 part("Roofs", nil, WOOD, function(mesh)
 	for _, side in { -1, 1 } do
-		for _, plank in deckPlanks() do
+		for i, plank in deckPlanks() do
 			local along, length, shift, tilt = table.unpack(plank)
-			local m = EditMesh.roundedBox({ length, DECK_PLANK - 0.1, DECK_THICK }, 0.08, 1, { 4, 1, 1 })
+			local m = EditMesh.roundedBox({ length, DECK_PLANK - 0.1, DECK_THICK }, 0.08, 1, { 6, 1, 1 })
+			-- Each end sawn a little off square.
+			m:transform(function(p)
+				local endward = math.clamp(math.abs(p[1]) / (length / 2), 0, 1) ^ 6
+				return { p[1] + endward * 0.25 * jitter(i, if p[1] > 0 then 7 else 8) * p[2] / ((DECK_PLANK - 0.1) / 2), p[2], p[3] }
+			end)
+			hewn(m, i * 5 + side)
 			m:select("vertex", "all"):rotate({ 0, 1, 0 }, tilt, { 0, 0, 0 })
 			placed(m, side, shift, along, SIDE_TOP, DECK_THICK):emit(mesh)
 		end
@@ -1182,7 +1239,8 @@ end, nil, function(x, y, z)
 		return 0.2, 0.19, 0.2
 	end
 	return wood(i + 80, out, x, y, z, 0.22)
-end, nil, nil, true)
+end, nil, nil, true, nil, nil, TIMBER.worn)
+wornEdges()
 
 -- Upright boards in the rock face behind the back posts: down each side
 -- of the opening, and across above the headers, up to the rocks.
@@ -1193,6 +1251,7 @@ part("Boards", nil, WOOD, function(mesh)
 				local out = flank * (OPEN_HALF + 0.1 + (i + 0.5) * BOARD_WIDE)
 				local tall = HEADER_TOP + 0.4 * jitter(i, flank + side * 5)
 				local m = EditMesh.roundedBox({ BOARD_WIDE - 0.08, BOARD_THICK, tall }, 0.08, 1, { 1, 1, 4 })
+				hewn(m, i * 3 + flank * 7 + side)
 				placed(m, side, out, BOARDS_AT, -0.2, tall):emit(mesh)
 			end
 		end
@@ -1206,7 +1265,8 @@ part("Boards", nil, WOOD, function(mesh)
 end, nil, function(x, y, z)
 	local out = caveOf(x, y)
 	return wood(math.floor(out / BOARD_WIDE) + (if z > OPEN_TALL then 30 else 0) + 120, z, x, y, z)
-end, nil, nil, true)
+end, nil, nil, true, nil, nil, TIMBER.worn)
+wornEdges()
 
 -- ------------------------------------------------------------ the stones
 
