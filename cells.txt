@@ -1,0 +1,37 @@
+bounds: 157,348,855,726
+A1: -
+B1: Tread_-2_0_0 7%, BeltRails_-2_0_0 4%
+C1: Tread_-1_0_0_010_000 9%, BeltRails_-1_0_0_010 7%, Tread_-2_0_0 4%
+D1: Tread_-1_0_0_010_110 9%, BeltRails_-1_0_0_010 7%, Tread_-1_1_0 4%
+E1: Tread_-1_1_0 7%, BeltRails_-1_1_0 4%
+F1: -
+A2: Tread_-2_-1_0 11%, BeltRails_-2_-1_0 4%
+B2: Tread_-2_0_0 8%, BeltRails_-2_0_0 5%, Tread_-2_-1_0 4%, BeltRails_-2_-1_0 2%
+C2: -
+D2: -
+E2: Tread_-1_1_0 8%, BeltRails_-1_1_0 5%, Tread_0_1_0 3%, BeltRails_0_1_0 2%
+F2: Tread_0_1_0 11%, BeltRails_0_1_0 4%
+A3: Tread_-1_-1_0_000_010 10%, Tread_-2_-1_0 5%, BeltRails_-1_-1_0_000 3%, Tread_-1_-1_0_000_000 2%
+B3: -
+C3: -
+D3: -
+E3: -
+F3: Tread_0_0_0_110_010 10%, Tread_0_1_0 5%, BeltRails_0_0_0_110 3%, Tread_0_0_0_110_110 2%
+A4: Tread_-1_-1_0_000_100 10%, Tread_-1_-2_0 6%, BeltRails_-1_-1_0_000 3%, BeltRails_-1_-2_0 2%, Tread_-1_-1_0_000_000 2%
+B4: -
+C4: -
+D4: -
+E4: Hopper 6%, Press 3%
+F4: Tread_0_0_0_110_100 10%, Tread_1_0_0 6%, BeltRails_0_0_0_110 3%, BeltRails_1_0_0 2%, Stack 2%, Tread_0_0_0_110_110 2%
+A5: Tread_-1_-2_0 10%, BeltRails_-1_-2_0 5%
+B5: Tread_0_-2_0 9%, BeltRails_0_-2_0 5%, Tread_-1_-2_0 4%
+C5: -
+D5: -
+E5: Roof 16%, Shed 13%, Press 5%, Tread_1_-1_0 5%, Curtains 5%, Frames 4%, BeltRails_1_-1_0 3%
+F5: Shed 6%, Roof 5%, Tread_1_0_0 4%, DrivePlate 3%, BeltRails_1_0_0 2%
+A6: -
+B6: Tread_0_-2_0 6%, BeltRails_0_-2_0 4%
+C6: Tread_0_-1_0_100_000 9%, BeltRails_0_-1_0_100 7%, Tread_0_-2_0 4%, BeltRails_0_-2_0 3%
+D6: Tread_0_-1_0_100_110 9%, BeltRails_0_-1_0_100 7%, Tread_1_-1_0 4%, BeltRails_1_-1_0 3%
+E6: Tread_1_-1_0 6%, BeltRails_1_-1_0 5%
+F6: -
