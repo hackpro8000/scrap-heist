@@ -36,6 +36,39 @@ pub struct Look {
 	// Strokes are this many times larger, and fewer to match, where an eye
 	// preview shrank the texture: a far part can't show fine strokes.
 	pub brush: f64,
+	// Lay the coat with scanned stroke stamps instead of the flat brush.
+	pub stamps: bool,
+	// Paint the coat the way a hand would, in this material's marks.
+	pub hand: Option<Hand>,
+	pub tuning: Option<crate::hand::Tuning>,
+	// Where a hand-painted coat gathers its finest strokes: a point and radius.
+	pub focus: Option<(Vec3, f64)>,
+	pub brushes: Brushes,
+}
+
+type Motion = Option<std::sync::Arc<crate::marks::Marks>>;
+
+// The motions a part's coat and wear are drawn with, if not the brushes' own.
+#[derive(Default)]
+pub struct Brushes {
+	pub coat: Motion,
+	pub grime: Motion,
+	pub rust: Motion,
+	pub drip: Motion,
+	pub scratch: Motion,
+}
+
+impl Brushes {
+	pub fn wear_numbers(&self) -> Vec<f64> {
+		[&self.grime, &self.rust, &self.drip, &self.scratch].into_iter().flat_map(|motion| motion.iter().flat_map(|marks| marks.numbers()).chain([-1.0])).collect()
+	}
+}
+
+#[derive(Clone, Copy)]
+pub enum Hand {
+	Rock,
+	Wood,
+	Metal,
 }
 
 // Where wear gathers, each 0-1: near sharp edges, in creases, low down.
@@ -100,7 +133,15 @@ impl Spot {
 			opacity,
 			seed,
 			tail: 1.0,
+			marks: None,
 		}
+	}
+}
+
+impl Stroke {
+	fn marked(mut self, motion: &Motion) -> Stroke {
+		self.marks.clone_from(motion);
+		self
 	}
 }
 
@@ -160,7 +201,8 @@ pub fn coat(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Ve
 		let warm = (r(7) - 0.5) * 0.14;
 		let coat = coat_at(look, wear, base, &spot);
 		let color = [coat[0] * shade * (1.0 + warm), coat[1] * shade, coat[2] * shade * (1.0 - warm)];
-		canvas.add(spot.stroke(Brush::Flat, spot.at, spot.heading(angle), 0.35 + 0.35 * r(5), 0.16 + 0.08 * r(6), color, 1.0, id));
+		let (kind, length, width) = if look.stamps { (Brush::Stamp, 0.7 + 0.9 * r(5), 0.3 + 0.35 * r(6)) } else { (Brush::Flat, 0.35 + 0.35 * r(5), 0.16 + 0.08 * r(6)) };
+		canvas.add(spot.stroke(kind, spot.at, spot.heading(angle), length, width, color, 1.0, id).marked(&look.brushes.coat));
 	});
 	canvas
 }
@@ -191,7 +233,7 @@ pub fn wear(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Ve
 			std::array::from_fn(|k| coat[k] * tint[k])
 		};
 		let width = 0.12 + 0.2 * r(3);
-		canvas.add(spot.stroke(Brush::Sponge, spot.at, spot.heading(r(4) * 6.3), width, width, color, 0.25 + 0.2 * r(5), id));
+		canvas.add(spot.stroke(Brush::Sponge, spot.at, spot.heading(r(4) * 6.3), width, width, color, 0.25 + 0.2 * r(5), id).marked(&look.brushes.grime));
 	});
 
 	if look.rubber {
@@ -202,7 +244,7 @@ pub fn wear(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Ve
 				return;
 			}
 			let color = coat_at(look, wear, base, &spot).map(|c| (c * 1.8).min(1.0));
-			canvas.add(spot.stroke(Brush::Liner, spot.at, spot.heading(r(3) * 6.3), 0.1 + 0.2 * r(4), 0.02, color, 0.5, id));
+			canvas.add(spot.stroke(Brush::Liner, spot.at, spot.heading(r(3) * 6.3), 0.1 + 0.2 * r(4), 0.02, color, 0.5, id).marked(&look.brushes.scratch));
 		});
 		return canvas;
 	}
@@ -231,23 +273,23 @@ pub fn wear(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Ve
 			let centre = around(size * 0.7);
 			let width = size * (0.7 + 0.7 * r(100 + k));
 			lowest = lowest.min(dot(sub(centre, spot.at), spot.up) - width / 2.0);
-			canvas.add(spot.stroke(Brush::Sponge, centre, spot.heading(r(120 + k) * 6.3), width, width, linear(RUST_DARK), 1.0, id ^ k));
+			canvas.add(spot.stroke(Brush::Sponge, centre, spot.heading(r(120 + k) * 6.3), width, width, linear(RUST_DARK), 1.0, id ^ k).marked(&look.brushes.rust));
 		}
 		for k in 0..dabs {
 			let centre = around(size * 0.5);
 			let along = spot.heading(r(140 + k) * 6.3);
-			canvas.add(spot.stroke(Brush::Round, centre, along, size * (0.6 + 0.6 * r(160 + k)), size * (0.3 + 0.25 * r(180 + k)), linear(RUST_ORANGE), 0.9, id ^ (k + 50)));
+			canvas.add(spot.stroke(Brush::Round, centre, along, size * (0.6 + 0.6 * r(160 + k)), size * (0.3 + 0.25 * r(180 + k)), linear(RUST_ORANGE), 0.9, id ^ (k + 50)).marked(&look.brushes.rust));
 		}
 		for k in 0..2 + (r(4) * 2.0) as u32 {
 			let centre = add(around(size * 0.4), scale(spot.up, size * 0.35));
-			canvas.add(spot.stroke(Brush::Dry, centre, spot.heading((r(200 + k) - 0.5) * 0.6), size * 0.8, size * 0.35, linear(RUST_FLAKE), 0.9, id ^ (k + 90)));
+			canvas.add(spot.stroke(Brush::Dry, centre, spot.heading((r(200 + k) - 0.5) * 0.6), size * 0.8, size * 0.35, linear(RUST_FLAKE), 0.9, id ^ (k + 90)).marked(&look.brushes.rust));
 		}
 		// Chipped paint: a shadow lined in under the top edge, and a lit lip
 		// lined along under the bottom edge.
 		let lip = coat_at(look, wear, base, &spot).map(|c| (c * 1.45 + 0.03).min(1.0));
 		let dark = linear(RUST_DARK).map(|c| c * 0.45);
-		canvas.add(spot.stroke(Brush::Liner, spot.moved((r(5) - 0.5) * size * 0.4, size * 0.7), spot.side, size * 1.3, 0.02, dark, 0.9, id ^ 7));
-		canvas.add(spot.stroke(Brush::Liner, spot.moved((r(6) - 0.5) * size * 0.4, lowest - 0.012), spot.side, size * 1.4, 0.02, lip, 0.9, id ^ 8));
+		canvas.add(spot.stroke(Brush::Liner, spot.moved((r(5) - 0.5) * size * 0.4, size * 0.7), spot.side, size * 1.3, 0.02, dark, 0.9, id ^ 7).marked(&look.brushes.rust));
+		canvas.add(spot.stroke(Brush::Liner, spot.moved((r(6) - 0.5) * size * 0.4, lowest - 0.012), spot.side, size * 1.4, 0.02, lip, 0.9, id ^ 8).marked(&look.brushes.rust));
 		// Drips pulled down the wall, each ending in a bead.
 		if spot.normal[2].abs() > WALL {
 			return;
@@ -258,8 +300,8 @@ pub fn wear(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Ve
 			let length = size * (1.5 + 3.0 * r(240 + k)) * (0.5 + amount);
 			let width = size * (0.14 + 0.08 * r(260 + k));
 			let orange = linear(RUST_ORANGE);
-			canvas.add(spot.stroke(Brush::Liner, add(top, scale(down, length / 2.0)), down, length, width, orange, 0.85, id ^ (k + 300)));
-			canvas.add(spot.stroke(Brush::Round, add(top, scale(down, length)), down, width * 2.2, width * 1.8, orange, 0.85, id ^ (k + 400)));
+			canvas.add(spot.stroke(Brush::Liner, add(top, scale(down, length / 2.0)), down, length, width, orange, 0.85, id ^ (k + 300)).marked(&look.brushes.drip));
+			canvas.add(spot.stroke(Brush::Round, add(top, scale(down, length)), down, width * 2.2, width * 1.8, orange, 0.85, id ^ (k + 400)).marked(&look.brushes.drip));
 		}
 	});
 
@@ -277,7 +319,7 @@ pub fn wear(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Ve
 		for k in 0..3 + (r(4) * 4.0) as u32 {
 			let offset = add(scale(across, (r(10 + k) - 0.5) * 0.12), scale(along, (r(20 + k) - 0.5) * 0.15));
 			let centre = add(spot.at, offset);
-			canvas.add(spot.stroke(Brush::Liner, centre, along, 0.1 + 0.25 * r(30 + k), 0.01 + 0.008 * r(40 + k), color, 0.9, id ^ (k + 500)));
+			canvas.add(spot.stroke(Brush::Liner, centre, along, 0.1 + 0.25 * r(30 + k), 0.01 + 0.008 * r(40 + k), color, 0.9, id ^ (k + 500)).marked(&look.brushes.scratch));
 		}
 	});
 	canvas

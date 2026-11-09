@@ -20,8 +20,8 @@ local SEAT_STEEL = { 0.46, 0.48, 0.52 }
 local PANEL_STEEL = { 0.42, 0.45, 0.5 }
 local BARE = { 0.68, 0.7, 0.73 }
 local TOOL_STEEL = { 0.62, 0.64, 0.68 }
--- Yellower than the crate's wood, so the cast parts can't be taken for timber.
-local BRONZE = { 0.66, 0.5, 0.2 }
+-- Darker and greener than wood, so the cast parts can't be taken for timber.
+local BRONZE = { 0.5, 0.4, 0.17 }
 local BRASS = { 0.86, 0.68, 0.32 }
 local HAZARD = { 0.86, 0.64, 0.16 }
 local TAPE_BLACK = { 0.08, 0.08, 0.09 }
@@ -242,7 +242,7 @@ for i, degrees in { 90, 210, 330 } do
 			return PANEL_STEEL[1] * k, PANEL_STEEL[2] * k, PANEL_STEEL[3] * k
 		end
 		return BRONZE[1] * k, BRONZE[2] * k, BRONZE[3] * k
-	end, nil, nil, true, 0.1)
+	end, nil, nil, true, 0.1, nil, 1.5)
 	tapered()
 	-- The pad, a solid rubber block standing proud of the claw's tip.
 	part(`Pad{i}`, nil, RUBBER_BLACK, function(mesh)
@@ -306,7 +306,7 @@ part("Bands", nil, BRONZE, function(mesh)
 end, nil, function(x, y, z)
 	local k = 0.9 + 0.12 * math.noise(x * 1.3, y * 1.3, z * 1.3)
 	return BRONZE[1] * k, BRONZE[2] * k, BRONZE[3] * k
-end, nil, nil, true, 0.2)
+end, nil, nil, true, 0.2, nil, 1.5)
 tapered()
 
 -- Block letters for the stencil on the board, five wide and seven tall. It
@@ -623,17 +623,45 @@ local function tippedAbout(mesh, ox: number, oy: number, oz: number, yaw: number
 	}
 end
 
--- The junk thrown in the crate, heaped to the back left, a gap at the front
--- right. Offsets from the crate's middle, with heights above the ground.
-local CRATE_GEAR = { -0.26, 0.14, 1.86 }
-local CRATE_COG = { 0.02, 0.22, 1.72 }
-local CRATE_PIPE = { { -0.12, -0.1, 1.5 }, { 0.36, 0.3, 2.16 } }
-local CRATE_ROD = { { -0.55, 0.33, 1.55 }, { -0.05, -0.22, 1.98 } }
-local function nearSegment(px: number, py: number, pz: number, segment): number
-	local a, b = segment[1], segment[2]
-	local ex, ey, ez = b[1] - a[1], b[2] - a[2], b[3] - a[3]
-	local t = math.clamp(((px - a[1]) * ex + (py - a[2]) * ey + (pz - a[3]) * ez) / (ex * ex + ey * ey + ez * ez), 0, 1)
-	return math.sqrt((px - a[1] - ex * t) ^ 2 + (py - a[2] - ey * t) ^ 2 + (pz - a[3] - ez * t) ^ 2)
+-- The crate's heap: a rusty mound with pieces bedded into it. They may sink into
+-- the mound but never into each other. Offsets from the crate's middle, with
+-- heights above the ground.
+local MOUND_X, MOUND_Y, MOUND_Z = 0.66, 0.5, 0.36
+local CRATE_RUST = { 0.42, 0.26, 0.16 }
+local CRATE_GEAR = { -0.3, 0.18, 1.913 }
+local CRATE_COG = { 0.33, -0.2, 1.817 }
+local CRATE_WASHER = { -0.4, -0.3, 1.718 }
+-- Each bolt: its offset, then yaw, pitch and roll.
+local CRATE_BOLTS = { { -0.04, -0.4, 1.715, 30, 18, -22 }, { 0.15, -0.44, 1.65, 70, -30, 14 } }
+-- Bent where it crosses the rim, its upper end kicked up and aside.
+local CRATE_PIPE = { { 0.26, 0.26, 1.76 }, { 0.69, 0.3, 1.86 } }
+local CRATE_PIPE_END = { { 0.69, 0.3, 1.86 }, { 0.84, 0.22, 2.05 } }
+-- A cog with a third of it snapped off, clockwise in { across, up } as x-z
+-- outlines must be: teeth from the top round the right, then the broken edge.
+local function brokenCogOutline(cx: number, cz: number)
+	local outline = {}
+	local function add(degrees: number, radius: number)
+		local t = math.rad(degrees)
+		table.insert(outline, { cx + math.cos(t) * radius, cz + math.sin(t) * radius })
+	end
+	for tooth = 0, 5 do
+		local start = 90 - tooth * 45
+		add(start + 10, 0.22)
+		add(start - 10, 0.22)
+		add(start - 13, 0.18)
+		add(start - 32, 0.18)
+	end
+	add(-205, 0.11)
+	add(-228, 0.05)
+	add(-250, 0.13)
+	return outline
+end
+local function inCrate(offset)
+	return CRATE_X + offset[1], CRATE_Y + offset[2], offset[3]
+end
+local function pathInCrate(segment)
+	local a, b = { inCrate(segment[1]) }, { inCrate(segment[2]) }
+	return { a, b }
 end
 
 part("Crate", nil, WOOD, function(mesh)
@@ -642,45 +670,10 @@ part("Crate", nil, WOOD, function(mesh)
 		box(mesh, CRATE_X, CRATE_Y + side * 0.62, DECK_TOP - 0.02, 1.7, 0.16, 1.22)
 		box(mesh, CRATE_X + side * 0.77, CRATE_Y, DECK_TOP - 0.02, 0.16, 1.1, 1.2)
 	end
-	local function inCrate(offset)
-		return CRATE_X + offset[1], CRATE_Y + offset[2], offset[3]
-	end
-	local function pathInCrate(segment)
-		local a, b = { inCrate(segment[1]) }, { inCrate(segment[2]) }
-		return { a, b }
-	end
-	sphere(mesh, CRATE_X - 0.2, CRATE_Y + 0.12, 1.46, 0.5, 0.38, 0.26, 5, 10)
-	local x, y, z = inCrate(CRATE_GEAR)
-	gear(tippedAbout(mesh, x, y, z, 24, -38, 17), x, y, z, 0.42, 0.14, 9, "y")
-	x, y, z = inCrate(CRATE_COG)
-	gear(tippedAbout(mesh, x, y, z, -50, 30, -25), x, y, z, 0.22, 0.1, 8, "y")
-	x, y, z = inCrate({ -0.42, -0.2, 1.66 })
-	ring(tippedAbout(mesh, x, y, z, 40, 28, -35), x, y, z, 0.12, 0.24, 0.08, "z", 10)
-	tube(mesh, pathInCrate(CRATE_PIPE), 0.1, 8)
-	tube(mesh, pathInCrate(CRATE_ROD), 0.05, 6)
-	-- A few loose bolts, close together.
-	for _, loose in { { -0.16, -0.36, 1.58, 12, 40, 70 }, { -0.06, -0.31, 1.6, 80, -25, 15 }, { -0.13, -0.27, 1.64, -35, 65, -40 } } do
-		x, y, z = inCrate(loose)
-		bolt(tippedAbout(mesh, x, y, z, loose[4], loose[5], loose[6]), x, y, z, "z", 0.09)
-	end
 end, nil, function(x, y, z)
 	local k = 0.9 + 0.14 * math.noise(x * 1.5, y * 1.5, z * 3)
+	-- The floor inside, in shadow.
 	if z > 1.46 and math.abs(x - CRATE_X) < 0.69 and math.abs(y - CRATE_Y) < 0.54 then
-		local dx, dy = x - CRATE_X, y - CRATE_Y
-		local function nearPoint(offset, r: number): boolean
-			return (dx - offset[1]) ^ 2 + (dy - offset[2]) ^ 2 + (z - offset[3]) ^ 2 < r * r
-		end
-		if nearSegment(dx, dy, z, CRATE_PIPE) < 0.13 then
-			return BARE[1] * k, BARE[2] * k, BARE[3] * k
-		elseif nearSegment(dx, dy, z, CRATE_ROD) < 0.08 then
-			return 0.42 * k, 0.26 * k, 0.16 * k
-		elseif nearPoint(CRATE_COG, 0.28) then
-			return DECK_STEEL[1] * 1.7 * k, DECK_STEEL[2] * 1.7 * k, DECK_STEEL[3] * 1.7 * k
-		elseif nearPoint(CRATE_GEAR, 0.5) then
-			return BRASS[1] * k, BRASS[2] * k, BRASS[3] * k
-		elseif z > 1.6 or dy < -0.2 then
-			return BARE[1] * k, BARE[2] * k, BARE[3] * k
-		end
 		return 0.3 * k, 0.2 * k, 0.13 * k
 	end
 	-- Planks, with dark gaps between them.
@@ -689,6 +682,33 @@ end, nil, function(x, y, z)
 	end
 	return WOOD[1] * k, WOOD[2] * k, WOOD[3] * k
 end, nil, nil, true, 0.12)
+
+-- The heap and its pieces are separate parts so one's brush strokes can't land
+-- on another.
+part("CrateHeap", nil, CRATE_RUST, function(mesh)
+	sphere(mesh, CRATE_X, CRATE_Y, 1.5, MOUND_X, MOUND_Y, MOUND_Z, 6, 14)
+end, nil, 0.5, nil, nil, nil, 0.1)
+
+part("CrateGear", nil, BRONZE, function(mesh)
+	local x, y, z = inCrate(CRATE_GEAR)
+	gear(tippedAbout(mesh, x, y, z, 15, -30, 12), x, y, z, 0.36, 0.14, 9, "y")
+end, nil, 0.25, nil, nil, true, 0.06)
+tapered()
+
+part("CrateScrap", nil, BARE, function(mesh)
+	local x, y, z = inCrate(CRATE_COG)
+	plate(tippedAbout(mesh, x, y, z, -50, -60, 20), brokenCogOutline(x, z), y, 0.1, 0.008)
+	x, y, z = inCrate(CRATE_WASHER)
+	ring(tippedAbout(mesh, x, y, z, 40, 28, -35), x, y, z, 0.1, 0.2, 0.08, "z", 10)
+	local bent = pathInCrate(CRATE_PIPE)
+	table.insert(bent, { inCrate(CRATE_PIPE_END[2]) })
+	tube(mesh, roundedPath(bent, 0.1), 0.1, 8)
+	for _, loose in CRATE_BOLTS do
+		x, y, z = inCrate(loose)
+		bolt(tippedAbout(mesh, x, y, z, loose[4], loose[5], loose[6]), x, y, z, "z", 0.09)
+	end
+end, nil, 0.25, nil, nil, true, 0.06)
+tapered()
 
 part("Drum", nil, OIL_BLUE, function(mesh)
 	cylinder(mesh, OIL_X, OIL_Y, DECK_TOP + 0.8, 0.62, 1.6, "z", 20)
@@ -699,5 +719,51 @@ part("Drum", nil, OIL_BLUE, function(mesh)
 	lathe(mesh, { OIL_X + 0.2, OIL_Y, 2.06 }, { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 }, { { 0.07, 0 }, { 0.07, 0.2 }, { 0.26, 0.42 }, { 0.22, 0.42 }, { 0.05, 0.22 } }, 12)
 end, nil, 0.45, nil, nil, nil, 0.12)
 tapered()
+
+-- The hand-painted finish. On a crisp part with a hand coat, such as the hazard
+-- strips, the shapes stay exact and only the brushwork's tone is laid on top.
+local HAND_COAT = {
+	Deck = "metal",
+	Cradle = "metal",
+	Frame = "metal",
+	Bands = "metal",
+	Tools = "metal",
+	Arm = "metal",
+	Posts = "metal",
+	Crate = "wood",
+	CrateHeap = "rock",
+	CrateGear = "metal",
+	CrateScrap = "metal",
+}
+-- These parts are small and detailed, so their marks are too.
+local SMALL_PART_STROKES = {
+	big_length_min = 0.4,
+	big_length_max = 0.75,
+	big_width_min = 0.14,
+	big_width_max = 0.28,
+	mid_length_min = 0.2,
+	mid_length_max = 0.4,
+	mid_width_min = 0.07,
+	mid_width_max = 0.13,
+	edge_opacity = 0,
+}
+local NO_EDGE_WORK = { PostLamps = true, BackLamps = true }
+
+for _, entry in parts do
+	if NO_EDGE_WORK[entry.name] then
+		continue
+	end
+	entry.hand = HAND_COAT[entry.name]
+	if entry.hand == nil then
+		entry.litMotion = "worn"
+	elseif entry.hand == "metal" then
+		entry.handTune = SMALL_PART_STROKES
+	end
+	entry.softLit, entry.softEdge, entry.softUneven, entry.softTaper = 0.25, 0.22, 0, 0.8
+	entry.softToZero, entry.softPower = true, 2
+	entry.taper = entry.taper or 0.5
+	entry.litToZero, entry.litUneven, entry.litUnevenStep = true, 0.6, 0.5
+	entry.brushes = { shade = { motion = "feather", tune = { width = 0.02 } } }
+end
 
 finishParts()

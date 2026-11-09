@@ -20,11 +20,14 @@
 
 - The crate's junk is thrown in: a mixed heap to one side, overlapping at unrelated angles, a gap at the other corner. The cable is one rounded run ending in a steel gland on the drum, and the shared tube helper no longer pinches or twists at bends.
 
+- New finish: hand coats on unmarked parts, crisp parts keep exact shapes with brushwork tone (crisp plus hand), soft and hard edge layers tapering to nothing, material-matched edge motions and feathered crease shadows. Not yet through the critic.
+
 ## Open
 - Whether a capsule really lands on the drum depends on Roblox's collision shapes, which can't be tested from the preview. Check in Studio once the new kit is uploaded.
 - Critic, all LOW: HATCH is bitmap lettering and sits close to the panel; the seat has no scuffs; the lamps have no sockets; the cable drops straight and unclipped; most crate junk is intact; the small spanner is a little stubby; a corner bolt is hidden behind the Big Spanner.
 
 ## Next
+- In progress, set aside: the crate's pieces are spread one to a region and the mound is a smooth dome (critic MEDs). The solved fix, checked so no piece passes through another: lumps at { x, y, rx, ry, rz } = { -0.2, 0.12, 0.48, 0.4, 0.42 }, { 0.2, 0.16, 0.38, 0.3, 0.3 }, { -0.42, -0.2, 0.26, 0.26, 0.27 }, { 0.05, -0.2, 0.3, 0.22, 0.22 }; gear { -0.3, 0.18, 2.006 }; cog { 0.193, -0.105, 1.854 }; washer { -0.38, -0.232, 1.817 } turned 25, -55, 10; bolts { -0.1, -0.138, 1.714 } and { 0.229, -0.326, 1.715 }; pipe unchanged. Mound repaint: darker uneven rust with orange patches.
 - A stencil letterform for HATCH.
 - Scuffs on the seat.
 - Sockets for the lamps.

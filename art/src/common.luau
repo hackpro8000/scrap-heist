@@ -663,6 +663,8 @@ local function setLook(entry, color, rust)
 	entry.rubber = rust == RUBBER
 end
 
+local HAND_EDGE_MOTION = { rock = "feather", wood = "flick", metal = "worn" }
+
 -- `rust` can also be a paint fn for surfaces with their own look.
 -- `texture` overrides the texture size for parts that need more detail.
 -- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
@@ -678,9 +680,21 @@ end
 -- `softLit` (0-1) adds a wide, very soft highlight under the strokes, fading
 -- out over `softEdge` studs from each edge; `softUneven` (0-1) makes its width
 -- wander along the edge and `softTaper` (studs) thins it away from corners.
+-- `softToZero` lets that thinning reach nothing, and `softPower` steepens the fade.
 -- `strokes` lists brush strokes painted over the coat ({start, along, normal,
 -- length, width, tail, color, brush}, color in sRGB), such as cracks or dabs;
 -- `brush` is "taper" (crisp lines, the default), "round" or "sponge".
+-- `stamps` lays the coat with scanned stroke shapes instead of the flat brush.
+-- `hand` ("rock", "wood" or "metal") paints the coat the way a hand would, and
+-- `handFocus` ({x, y, z, radius}) is where it gathers its finest strokes.
+-- `handTune` sets any of its numbers by name (settings! in tools/modelkit/src/hand.rs).
+-- `litMotion` draws the hard edge highlight with a moving hand, `litTune` sets its
+-- numbers by name (tools/modelkit/src/marks.rs). A hand-painted part gets its
+-- material's motion unless it names another, or `false` for the default strokes.
+-- `brushes` draws any layer with a motion: edge, shade, soft, coat, grime, rust,
+-- drip or scratch, each {motion = "press", tune = {name = value}}. A `strokes`
+-- entry takes `motion` and `tune` the same way.
+-- With `hand` as well, `crisp` keeps the shapes exact and takes only the brushwork's tone.
 -- `crisp` lays the coat on texel by texel in the paint fn's exact colours
 -- instead of brush strokes, for machine finishes (hazard tape, ribbed
 -- rubber) that strokes would smear; shading still goes over it.
@@ -871,16 +885,30 @@ local function finishParts()
 			custom = entry.custom,
 			salt = if entry.custom then CACHE_KEY else nil,
 			rust = entry.rust * WEAR,
+			stamps = entry.stamps,
+			hand = entry.hand,
+			handFocus = entry.handFocus,
+			handTune = entry.handTune,
 			rubber = entry.rubber,
 			reach = entry.edge,
 			highlightWidth = entry.wide,
+			highlightUneven = entry.litUneven,
+			highlightUnevenStep = entry.litUnevenStep,
+			highlightMotion = if entry.litMotion == nil then (entry.hand and HAND_EDGE_MOTION[entry.hand]) else (entry.litMotion or nil),
+			highlightMotionTune = entry.litTune,
+			highlightToZero = entry.litToZero,
+			highlightEnd = entry.litEnd,
 			paintedHighlights = entry.painted,
 			cornerTaper = entry.taper,
 			softHighlight = entry.softLit,
 			softReach = entry.softEdge,
 			softUneven = entry.softUneven,
 			softTaper = entry.softTaper,
+			softToZero = entry.softToZero,
+			softPower = entry.softPower,
+			softEnd = entry.softEnd,
 			strokes = entry.strokes,
+			brushes = entry.brushes,
 			heightRange = entry.heightRange,
 			crisp = entry.crisp,
 		})

@@ -3,6 +3,7 @@
 // run on across UV seams. Strokes composite in the order they were added.
 
 use std::collections::HashMap;
+use std::sync::OnceLock;
 
 use crate::bake::hash;
 use crate::mesh::{add, dot, scale, sub, Vec3};
@@ -11,7 +12,7 @@ use crate::mesh::{add, dot, scale, sub, Vec3};
 // with a warped panel but stops short of a bolt or lip standing off it.
 const PLANE: f64 = 0.025;
 // Lightness variation between bristles, per brush in the order of `Brush`.
-const BRISTLE_TONE: [f64; 6] = [0.35, 0.25, 0.15, 0.2, 0.3, 0.0];
+const BRISTLE_TONE: [f64; 7] = [0.35, 0.25, 0.15, 0.2, 0.3, 0.0, 0.0];
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum Brush {
@@ -28,6 +29,63 @@ pub enum Brush {
 	// Pointed liner for drawn lines such as cracks: full width at its start,
 	// thinning evenly to `tail` of that at its end, and never running dry.
 	Taper,
+	// A scanned stroke's shape, its length along the stroke (stamps/README.md).
+	Stamp,
+}
+
+// The stamps' alpha, decoded once from the images built into the engine.
+struct StampImage {
+	width: usize,
+	height: usize,
+	alpha: Vec<u8>,
+}
+
+const STAMP_FILES: [&[u8]; 12] = [
+	include_bytes!("stamps/00.png"),
+	include_bytes!("stamps/01.png"),
+	include_bytes!("stamps/02.png"),
+	include_bytes!("stamps/03.png"),
+	include_bytes!("stamps/04.png"),
+	include_bytes!("stamps/05.png"),
+	include_bytes!("stamps/06.png"),
+	include_bytes!("stamps/07.png"),
+	include_bytes!("stamps/08.png"),
+	include_bytes!("stamps/09.png"),
+	include_bytes!("stamps/10.png"),
+	include_bytes!("stamps/11.png"),
+];
+
+fn stamps() -> &'static [StampImage] {
+	static STAMPS: OnceLock<Vec<StampImage>> = OnceLock::new();
+	STAMPS.get_or_init(|| {
+		STAMP_FILES
+			.iter()
+			.map(|bytes| {
+				let mut reader = png::Decoder::new(std::io::Cursor::new(*bytes)).read_info().expect("stamp image");
+				let mut alpha = vec![0; reader.output_buffer_size()];
+				let info = reader.next_frame(&mut alpha).expect("stamp image");
+				StampImage { width: info.width as usize, height: info.height as usize, alpha }
+			})
+			.collect()
+	})
+}
+
+// A stamp's alpha at (u, v); `seed` picks which stamp.
+pub fn stamp_alpha(seed: u32, u: f64, v: f64) -> f64 {
+	let all = stamps();
+	all[seed as usize % all.len()].sample(u, v)
+}
+
+impl StampImage {
+	// Alpha (0-1) at (u, v), each 0-1, blended between the four nearest texels.
+	fn sample(&self, u: f64, v: f64) -> f64 {
+		let (x, y) = (u * (self.width - 1) as f64, v * (self.height - 1) as f64);
+		let (x0, y0) = (x.floor() as usize, y.floor() as usize);
+		let (x1, y1) = ((x0 + 1).min(self.width - 1), (y0 + 1).min(self.height - 1));
+		let (fx, fy) = (x - x0 as f64, y - y0 as f64);
+		let at = |px: usize, py: usize| f64::from(self.alpha[py * self.width + px]) / 255.0;
+		(at(x0, y0) * (1.0 - fx) + at(x1, y0) * fx) * (1.0 - fy) + (at(x0, y1) * (1.0 - fx) + at(x1, y1) * fx) * fy
+	}
 }
 
 #[derive(Clone)]
@@ -47,6 +105,8 @@ pub struct Stroke {
 	pub seed: u32,
 	// The width left at the stroke's end, as a share of `width` (Taper only).
 	pub tail: f64,
+	// Drawn with this motion instead of the brush's own shape.
+	pub marks: Option<std::sync::Arc<crate::marks::Marks>>,
 }
 
 // How many bristles each brush has, and how far each may run dry early.
@@ -58,6 +118,7 @@ fn bristles(brush: Brush) -> (f64, f64) {
 		Brush::Sponge => (1.0, 0.0),
 		Brush::Dry => (10.0, 0.5),
 		Brush::Taper => (1.0, 0.0),
+		Brush::Stamp => (1.0, 0.0),
 	}
 }
 
@@ -68,7 +129,7 @@ impl Stroke {
 
 	// How far the stroke reaches from its centre.
 	fn reach(&self) -> f64 {
-		self.length / 2.0 + self.width
+		self.length / 2.0 + self.marks.as_ref().map_or(self.width, |marks| self.width.max(marks.reach_on(self.width)))
 	}
 
 	// Lightness of the bristle under p, so a stroke streaks lighter and darker
@@ -94,6 +155,18 @@ impl Stroke {
 		let r = |k: u32| hash(self.seed.wrapping_mul(16).wrapping_add(k));
 		let t = dot(offset, self.along);
 		let side = dot(offset, self.across);
+		if let Some(marks) = &self.marks {
+			return marks.paint_stroke(self.seed, t, side, self.length, self.width, side * self.across[2] <= 0.0) * self.opacity;
+		}
+		if self.brush == Brush::Stamp {
+			let (u, v) = (t / self.length, side / self.width + 0.5);
+			if !(0.0..=1.0).contains(&u) || !(0.0..=1.0).contains(&v) {
+				return 0.0;
+			}
+			let (u, v) = (if r(2) < 0.5 { u } else { 1.0 - u }, if r(3) < 0.5 { v } else { 1.0 - v });
+			let all = stamps();
+			return all[self.seed as usize % all.len()].sample(u, v) * self.opacity;
+		}
 		if self.brush == Brush::Sponge {
 			return self.sponge(p, t - self.length / 2.0, side) * self.opacity;
 		}
@@ -223,7 +296,7 @@ impl Canvas {
 		let mut under = (f64::MAX, [0.5; 3]);
 		for &index in nearby {
 			let stroke = &self.strokes[index];
-			if stroke.brush != Brush::Flat || dot(n, stroke.normal) < 0.3 {
+			if !matches!(stroke.brush, Brush::Flat | Brush::Stamp) || dot(n, stroke.normal) < 0.3 {
 				continue;
 			}
 			let offset = sub(p, stroke.centre());

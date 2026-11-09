@@ -27,7 +27,7 @@ Anything swept along a path, such as a wire, pipe, hose, cable or rail, must kee
 Flag objects that read as stacks of boxes, cylinders and spheres. Flag heaps and rocks that read as lumpy blobs or crystals, organic forms ended by a straight cut, and unrelated parts that all share one proportion.
 
 ## Detail has a hierarchy
-There should be large, medium and small forms, and one area that leads the eye. Flag detail spread evenly over everything, and an outline that stays a plain block.
+There should be large, medium and small forms, and one area that leads the eye. Flag detail spread evenly over everything, and an outline that stays a plain block. Also judge how much there is overall. A piece players stand beside needs main masses, then secondary fixtures (brackets, pipes, panels, hatches, cable runs), then fine marks (bolts, handles, labels), and signs of use with a reason, such as tools left out, stored supplies or repairs. Look at any stretch about 10 studs wide from player distance: if it shows only flat faces and one or two kinds of small fixing, the piece is under-detailed, even when every single part is correct. That is MED, and HIGH on a landmark or a main building.
 
 ## Order has a cause
 Structure may mirror, but damage, wear and clutter should not. Fasteners belong along seams and plate joins, not everywhere at even spacing. A tilt should come from what the thing rests on, not a small random angle. Flag clutter scattered by rule, and repeated props that differ only in size or rotation.
@@ -45,7 +45,7 @@ Edge highlights and wear must vary in width, strength and length, with gaps. Fla
 Wear belongs where hands, feet, water or impacts would put it. Damage should have a cause and leave debris. Flag even all-over noise.
 
 ## Scrap looks like scrap
-Most junk should be torn, crushed, bent or partial. One or two readable pieces are fine. A pile of intact icons is not scrap. Loose pieces must lie as if dropped: clusters and gaps, mixed sizes, pieces overlapping and leaning on each other at unrelated angles. Pieces spread evenly, one to a region or in a row, are at least MED where a player can see them. Ask for a close view of every pile or container of loose pieces, however small it looks, and never skip one as low stakes.
+Most junk should be torn, crushed, bent or partial. One or two readable pieces are fine. A pile of intact icons is not scrap. Loose pieces must lie as if dropped: clusters and gaps, mixed sizes, pieces resting on and leaning against each other at unrelated angles. Pieces may bed into the heap's own body, but must never pass through one another, and a few pieces that truly rest beat many that clip. The check can't see clipping inside one part, so look for it; a visible clip is MED. Pieces spread evenly, one to a region or in a row, are at least MED where a player can see them. Ask for a close view of every pile or container of loose pieces, however small it looks, and never skip one as low stakes.
 
 ## Text and lights earn their place
 Text must be correctly spelled and readable from where it's meant to be read. Blocky bitmap letters are LOW. The prop must still say what it does with its text hidden. Each light needs a job.

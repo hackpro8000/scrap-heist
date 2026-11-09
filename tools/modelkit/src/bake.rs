@@ -5,6 +5,7 @@
 
 use std::collections::HashMap;
 use std::hash::{BuildHasherDefault, Hasher};
+use std::sync::Arc;
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 use std::time::Instant;
@@ -345,6 +346,19 @@ pub struct Shading {
 	pub highlight_ramp: f64,
 	// How much wider the highlight brush is than the shadow brush, per stroke.
 	pub highlight_width: f64,
+	// 0-1: how far the hard highlight's thickness wanders along an edge, and
+	// the studs between its changes.
+	pub highlight_uneven: f64,
+	pub highlight_uneven_step: f64,
+	// Tapers the highlight to exactly nothing `highlight_end` taper lengths from
+	// a corner of its edge, instead of to TAPER_MIN.
+	pub highlight_to_zero: bool,
+	pub highlight_end: f64,
+	// Draws the highlight, the crease shadow or the soft highlight with a moving
+	// hand instead of the default strokes.
+	pub edge_marks: Option<Arc<crate::marks::Marks>>,
+	pub shade_marks: Option<Arc<crate::marks::Marks>>,
+	pub soft_marks: Option<Arc<crate::marks::Marks>>,
 	// Paints highlights as a few bold, fully loaded strokes along each edge
 	// instead of dry bristly ones, for a hand-painted look.
 	pub painted_highlights: bool,
@@ -360,6 +374,12 @@ pub struct Shading {
 	// studs it thins over away from a corner (0 keeps it even).
 	pub soft_uneven: f64,
 	pub soft_taper: f64,
+	// Let the soft highlight thin all the way to nothing away from corners, and
+	// how much steeper its fade from the edge is (1 for the plain curve).
+	pub soft_to_zero: bool,
+	pub soft_power: f64,
+	// How many taper lengths from a corner the soft highlight reaches nothing.
+	pub soft_end: f64,
 	// How far highlights and contact shadows reach from an edge, in studs.
 	// Bigger stones want a wider band, the way a thicker brush reads on them.
 	pub reach: f64,
@@ -386,6 +406,127 @@ const TAPER_PLANE: f64 = 0.05;
 // corners are those of the facing triangle lying in the texel's plane, which
 // for a polygon's edge are its two ends. `q` is the edge point nearest p.
 fn corner_taper(p: Vec3, n: Vec3, q: Vec3, triangle: [Vec3; 3], taper: f64) -> f64 {
+	TAPER_MIN + (1.0 - TAPER_MIN) * (-corner_distance(p, n, q, triangle) / taper).exp()
+}
+
+type EdgeKey = ([i64; 3], [i64; 3]);
+
+fn edge_key(a: Vec3, b: Vec3) -> EdgeKey {
+	let round = |p: Vec3| p.map(|c| (c * 1e4).round() as i64);
+	let (a, b) = (round(a), round(b));
+	if a < b { (a, b) } else { (b, a) }
+}
+
+// Each sharp edge's whole straight run, end to end, so an edge built from many
+// grid cells still counts as one edge with two real corners.
+fn crease_runs(planes: &[([Vec3; 3], Vec3)], min_cos: f64) -> HashMap<EdgeKey, (Vec3, Vec3)> {
+	let mut faces: HashMap<EdgeKey, (Vec3, Vec3, Vec<Vec3>)> = HashMap::new();
+	for (triangle, facing) in planes {
+		for k in 0..3 {
+			let (a, b) = (triangle[k], triangle[(k + 1) % 3]);
+			faces.entry(edge_key(a, b)).or_insert((a, b, Vec::new())).2.push(*facing);
+		}
+	}
+	let sharp: Vec<(EdgeKey, Vec3, Vec3)> = faces
+		.into_iter()
+		.filter(|(_, (_, _, normals))| normals.iter().any(|n| normals.iter().any(|m| dot(*n, *m) < min_cos)))
+		.map(|(key, (a, b, _))| (key, a, b))
+		.collect();
+	let round = |p: Vec3| p.map(|c| (c * 1e4).round() as i64);
+	let mut at_vertex: HashMap<[i64; 3], Vec<usize>> = HashMap::new();
+	for (index, (_, a, b)) in sharp.iter().enumerate() {
+		at_vertex.entry(round(*a)).or_default().push(index);
+		at_vertex.entry(round(*b)).or_default().push(index);
+	}
+	let mut parent: Vec<usize> = (0..sharp.len()).collect();
+	fn find(parent: &mut [usize], mut i: usize) -> usize {
+		while parent[i] != i {
+			parent[i] = parent[parent[i]];
+			i = parent[i];
+		}
+		i
+	}
+	for list in at_vertex.values() {
+		if let [first, second] = list[..] {
+			let direction = |i: usize| normalize(sub(sharp[i].2, sharp[i].1));
+			if dot(direction(first), direction(second)).abs() > 0.999 {
+				let (a, b) = (find(&mut parent, first), find(&mut parent, second));
+				parent[a] = b;
+			}
+		}
+	}
+	let mut ends: HashMap<usize, (Vec3, Vec3)> = HashMap::new();
+	for index in 0..sharp.len() {
+		let root = find(&mut parent, index);
+		let axis = normalize(sub(sharp[root].2, sharp[root].1));
+		let (_, a, b) = sharp[index];
+		let run = ends.entry(root).or_insert((a, a));
+		for p in [a, b] {
+			if dot(p, axis) < dot(run.0, axis) {
+				run.0 = p;
+			}
+			if dot(p, axis) > dot(run.1, axis) {
+				run.1 = p;
+			}
+		}
+	}
+	let mut runs = HashMap::new();
+	for index in 0..sharp.len() {
+		let root = find(&mut parent, index);
+		runs.insert(sharp[index].0, ends[&root]);
+		// Each end also keyed alone, so a point can be asked if it is on a run.
+		runs.insert(edge_key(sharp[index].1, sharp[index].1), ends[&root]);
+		runs.insert(edge_key(sharp[index].2, sharp[index].2), ends[&root]);
+	}
+	runs
+}
+
+// How far q is from the nearer end of the straight run it lies on, when q is on
+// one of this triangle's own sharp edges.
+fn run_distance(q: Vec3, triangle: [Vec3; 3], runs: &HashMap<EdgeKey, (Vec3, Vec3)>) -> Option<f64> {
+	let mut best: Option<(f64, EdgeKey)> = None;
+	for k in 0..3 {
+		let (a, b) = (triangle[k], triangle[(k + 1) % 3]);
+		let e = sub(b, a);
+		let t = (dot(sub(q, a), e) / dot(e, e).max(1e-12)).clamp(0.0, 1.0);
+		let d = sub(q, add(a, scale(e, t)));
+		let distance = dot(d, d);
+		if distance < 1e-10 && best.is_none_or(|(old, _)| distance < old) && runs.contains_key(&edge_key(a, b)) {
+			best = Some((distance, edge_key(a, b)));
+		}
+	}
+	let (ends_a, ends_b) = runs[&best?.1];
+	let (da, db) = (sub(q, ends_a), sub(q, ends_b));
+	Some(dot(da, da).sqrt().min(dot(db, db).sqrt()))
+}
+
+// What both faces of an edge agree on, so marks can cross between them: a seed,
+// which side of the edge this face is on (1 or -1), and the studs along the edge.
+fn edge_frame(n: Vec3, facing: Vec3, p: Vec3, on_facing: Vec3, crease: Vec3) -> (u32, f64, f64) {
+	let plane = |m: Vec3, at: Vec3| [m[0] * 8.0, m[1] * 8.0, m[2] * 8.0, dot(m, at) * 20.0].map(|c| c.round() as i64 as u32);
+	let rounded = |m: Vec3| m.map(|c| (c * 1000.0).round() as i64);
+	let first = rounded(n) < rounded(facing);
+	let sign = if first { 1.0 } else { -1.0 };
+	let (one, two) = (plane(n, p), plane(facing, on_facing));
+	let seed = if first { one.into_iter().chain(two) } else { two.into_iter().chain(one) }.fold(0x811c_9dc5u32, |h, c| (h ^ c).wrapping_mul(0x0100_0193));
+	(seed, sign, dot(p, scale(crease, sign)) + 1000.0)
+}
+
+// A highlight's share at the edge point q, 1 at a corner and exactly nothing
+// `end` taper lengths from it. None for a triangle that meets a run only at a
+// vertex: the triangles lying along the run paint that edge.
+fn to_zero_taper(p: Vec3, n: Vec3, q: Vec3, triangle: [Vec3; 3], runs: &HashMap<EdgeKey, (Vec3, Vec3)>, taper: f64, end: f64) -> Option<f64> {
+	let along = match run_distance(q, triangle, runs) {
+		Some(distance) => distance,
+		None if triangle.iter().any(|v| runs.contains_key(&edge_key(*v, *v))) => return None,
+		None => corner_distance(p, n, q, triangle),
+	};
+	let far = (-end).exp();
+	Some((((-along / taper).exp() - far) / (1.0 - far)).max(0.0))
+}
+
+// How far the edge point q is from the nearest corner of its facing polygon.
+fn corner_distance(p: Vec3, n: Vec3, q: Vec3, triangle: [Vec3; 3]) -> f64 {
 	let mut nearest = f64::MAX;
 	for v in triangle {
 		if dot(n, sub(v, p)).abs() < TAPER_PLANE {
@@ -393,7 +534,7 @@ fn corner_taper(p: Vec3, n: Vec3, q: Vec3, triangle: [Vec3; 3], taper: f64) -> f
 			nearest = nearest.min(dot(gap, gap).sqrt());
 		}
 	}
-	TAPER_MIN + (1.0 - TAPER_MIN) * (-nearest / taper).exp()
+	nearest
 }
 
 // How far a contact shadow spreads from the corner that casts it, unless the
@@ -535,7 +676,8 @@ fn parallel<T: Send, F: Fn(&Texel) -> T + Sync>(texels: &[Texel], work: F) -> Ve
 
 pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &mut Image, shading: &Shading, look: &coat::Look, base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3], source: &cache::Source) {
 	let (width, height) = (image.width, image.height);
-	let reach = shading.reach.max(0.02);
+	let marks_reach = [&shading.edge_marks, &shading.shade_marks].into_iter().flatten().map(|marks| marks.reach()).fold(0.0, f64::max);
+	let reach = shading.reach.max(0.02).max(marks_reach);
 	let width_scale = shading.highlight_width.max(0.1);
 	// Shadows and highlights both come from the corners a texel sits in: a
 	// surface nearby that faces it makes an interior angle, which shades, and
@@ -622,6 +764,11 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 		let home = contact_key(texel.position);
 		neighbourhoods.entry(home).or_insert_with(|| neighbourhood(home));
 	}
+	let highlight_runs = if shading.highlight_to_zero || shading.edge_marks.is_some() || shading.shade_marks.is_some() {
+		crease_runs(&surfaces.iter().filter(|s| s.2).map(|s| (s.0, s.1)).collect::<Vec<_>>(), min_cos)
+	} else {
+		HashMap::new()
+	};
 	// Paint laid along the corners at p, `outward` for exterior angles.
 	// One pass over the surfaces near p: the strongest interior-angle paint, and
 	// the strongest exterior-angle paint from this part's own surfaces.
@@ -672,7 +819,38 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 			// stroke than as a hairline.
 			// A tapered highlight narrows both its strokes and the reach it
 			// fades out over, so it really thins away from a corner.
-			let taper = if behind && shading.corner_taper > 0.0 { corner_taper(p, n, sub(p, offset), triangle, shading.corner_taper) } else { 1.0 };
+			let mut taper = if behind && shading.corner_taper > 0.0 && shading.highlight_to_zero {
+				let Some(share) = to_zero_taper(p, n, sub(p, offset), triangle, &highlight_runs, shading.corner_taper, shading.highlight_end) else {
+					continue;
+				};
+				share
+			} else if behind && shading.corner_taper > 0.0 {
+				corner_taper(p, n, sub(p, offset), triangle, shading.corner_taper)
+			} else {
+				1.0
+			};
+			if behind && shading.highlight_uneven > 0.0 {
+				taper *= 1.0 - shading.highlight_uneven + shading.highlight_uneven * soft_wander(seed, along * SOFT_WANDER_STEP / shading.highlight_uneven_step.max(0.01));
+			}
+			let marks = if behind { shading.edge_marks.as_ref() } else { shading.shade_marks.as_ref() };
+			if let Some(marks) = marks {
+				let (shared, sign, along_edge) = edge_frame(n, facing, p, triangle[0], crease);
+				let place = crate::marks::Place {
+					seed: shared,
+					along: along_edge,
+					off: sign * distance,
+					taper,
+					corner: run_distance(sub(p, offset), triangle, &highlight_runs),
+					below: n[2] <= facing[2] + 1e-6,
+				};
+				let paint = sharpness * marks.paint(&place);
+				if behind {
+					outward = outward.max(paint);
+				} else {
+					inward = inward.max(paint);
+				}
+				continue;
+			}
 			let fade = reach * taper;
 			if distance >= fade {
 				continue;
@@ -720,27 +898,61 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 	// A shared height range changes where low wear and the gradient fall, so
 	// it keys the layers; without one the keys stay as they were.
 	let range_key: Vec<f64> = shading.height_range.map_or_else(Vec::new, |r| r.to_vec());
-	let drawn_key: Vec<f64> = if shading.strokes.is_empty() { Vec::new() } else { vec![shading.strokes.len() as f64] };
+	let drawn_key: Vec<f64> = if shading.strokes.is_empty() { Vec::new() } else { std::iter::once(shading.strokes.len() as f64).chain(shading.strokes.iter().flat_map(|stroke| stroke.marks.iter().flat_map(|marks| marks.numbers()))).collect() };
 	// No colour goes in, so the texture size keys the layer instead, with the
 	// reach and highlight width that shape the strokes.
 	let shade_size: Vec<f64> = [width as f64, height as f64, reach, width_scale]
 		.into_iter()
 		.chain(shading.painted_highlights.then_some(2.0))
 		.chain((shading.corner_taper > 0.0).then_some(shading.corner_taper + 4.0))
+		.chain((shading.highlight_uneven > 0.0).then_some(shading.highlight_uneven + 8.0))
+		.chain((shading.highlight_uneven > 0.0).then_some(shading.highlight_uneven_step + 16.0))
+		.chain(shading.highlight_to_zero.then_some(shading.highlight_end + 40.0))
+		.chain([&shading.edge_marks, &shading.shade_marks].into_iter().flat_map(|motion| motion.iter().flat_map(|marks| marks.numbers()).chain([-1.0])))
 		.collect();
 	// The shade layer reads no colour, so it bakes on the other threads while
 	// this one runs the coat, whose `base` calls back into Lua and so can only
 	// run here. Its cache path is found here too: the paint cache is per thread.
 	let shade_path = cache::layer_path("shade", mesh, &neighbours, true, &shade_size, None, source);
 	let bake_shade = || profiled(0, || cached_layer(shade_path, || {
-		let creases = gpu::crease(&full, &surfaces, &contact_grid, min_cos, reach, width_scale, shading.painted_highlights, shading.corner_taper).unwrap_or_else(|| parallel(&full, |t| crease_paint(t.position, t.face_normal)));
+		// Uneven, to-nothing and hand-moved highlights are CPU only.
+		let on_gpu = if shading.highlight_uneven > 0.0 || shading.highlight_to_zero || shading.edge_marks.is_some() || shading.shade_marks.is_some() { None } else { gpu::crease(&full, &surfaces, &contact_grid, min_cos, reach, width_scale, shading.painted_highlights, shading.corner_taper) };
+		let creases = on_gpu.unwrap_or_else(|| parallel(&full, |t| crease_paint(t.position, t.face_normal)));
 		let values: Vec<[f32; 3]> = creases.into_iter().map(|(shade, outward)| [shade as f32, outward as f32, 0.0]).collect();
 		vec![layer_image(width, height, &full, &values)]
 	}));
 	let (coat_layer, wear_layer, shade_layer) = std::thread::scope(|scope| {
 		let shade = scope.spawn(bake_shade);
-		let coat_numbers = [&[look.gradient, look.brush, f64::from(u8::from(shading.crisp))][..], &range_key, &drawn_key].concat();
+		// Only the new coats add to the key, so every other part keeps its cached coat.
+		let style_numbers: Vec<f64> = if look.stamps || look.hand.is_some() {
+			vec![f64::from(u8::from(look.stamps)), look.hand.map_or(0.0, |hand| 1.0 + hand as u8 as f64), crate::hand::VERSION, look.focus.map_or(0.0, |f| f.1), look.focus.map_or(0.0, |f| f.0[0]), look.focus.map_or(0.0, |f| f.0[1]), look.focus.map_or(0.0, |f| f.0[2])].into_iter().chain(look.tuning.iter().flat_map(|t| t.numbers())).collect()
+		} else {
+			Vec::new()
+		};
+		let coat_marks: Vec<f64> = look.brushes.coat.iter().flat_map(|marks| marks.numbers()).collect();
+		let coat_numbers = [&[look.gradient, look.brush, f64::from(u8::from(shading.crisp))][..], &style_numbers, &coat_marks, &range_key, &drawn_key].concat();
 		let coat_layer = profiled(1, || cached_layer(cache::layer_path("coat", mesh, &neighbours, false, &coat_numbers, Some(&*image), source), || {
+			if let Some(hand) = look.hand {
+				let tuning = look.tuning.as_ref().expect("hand coat has tuning");
+				if shading.crisp {
+					// Shapes stay exact: the brushwork is painted in plain grey, and only
+					// its lightening and darkening reach the part's own colours.
+					let painting = crate::hand::prepare(mesh, look, hand, tuning, &wear, &mut |_, _| [0.5; 3]);
+					let grey = to_linear(0.5);
+					let brushed = parallel(&full, |t| painting.colour(t.position, t.face_normal));
+					let colours: Vec<[f32; 3]> = full.iter().zip(brushed).map(|(t, brush)| {
+						let exact = base(t.position, t.face_normal).map(|c| to_linear(c as f32));
+						to_f32(std::array::from_fn(|k| {
+							let ratio = (brush[k] / grey).clamp(0.5, 1.7);
+							exact[k] * ratio + (ratio - 1.0).max(0.0) * 0.04
+						}))
+					}).collect();
+					return vec![layer_image(width, height, &full, &colours)];
+				}
+				let painting = crate::hand::prepare(mesh, look, hand, tuning, &wear, base);
+				let colours: Vec<[f32; 3]> = parallel(&full, |t| to_f32(painting.colour(t.position, t.face_normal)));
+				return vec![layer_image(width, height, &full, &colours)];
+			}
 			if shading.crisp {
 				// `base` calls into Lua, so this runs on this thread alone.
 				let colours: Vec<[f32; 3]> = full.iter().map(|t| to_f32(coat::base_at(look, &wear, base, t.position, t.face_normal))).collect();
@@ -756,7 +968,7 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 			};
 			vec![layer_image(width, height, &full, &colours)]
 		}));
-		let wear_numbers = [&[look.rust, f64::from(u8::from(look.rubber)), look.gradient, look.brush][..], &range_key].concat();
+		let wear_numbers = [&[look.rust, f64::from(u8::from(look.rubber)), look.gradient, look.brush][..], &range_key, &look.brushes.wear_numbers()].concat();
 		let wear_layer = profiled(2, || cached_layer(cache::layer_path("wear", mesh, &neighbours, true, &wear_numbers, Some(&*image), source), || {
 			let canvas = coat::wear(mesh, look, &wear, base);
 			let over = gpu::canvas(&canvas, &full, true).unwrap_or_else(|| parallel(&full, |t| canvas.over(t.position, t.face_normal)));
@@ -771,7 +983,12 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 	// edges, with no brush in it. It reaches further than the strokes, so it
 	// has its own grid of the part's surfaces.
 	let soft_reach = shading.soft_reach.max(0.02);
-	let soft_layer = (shading.soft_highlight > 0.0).then(|| cached_layer(cache::layer_path("soft", mesh, &neighbours, true, &[width as f64, height as f64, soft_reach, shading.soft_uneven, shading.soft_taper], None, source), || {
+	let mut soft_numbers = vec![width as f64, height as f64, soft_reach, shading.soft_uneven, shading.soft_taper];
+	if shading.soft_to_zero || shading.soft_power != 1.0 {
+		soft_numbers.extend([f64::from(u8::from(shading.soft_to_zero)), shading.soft_power, shading.soft_end, 4.0]);
+	}
+	soft_numbers.extend(shading.soft_marks.iter().flat_map(|marks| marks.numbers()));
+	let soft_layer = (shading.soft_highlight > 0.0).then(|| cached_layer(cache::layer_path("soft", mesh, &neighbours, true, &soft_numbers, None, source), || {
 		let mut triangles = mesh_triangles(mesh);
 		for other in group {
 			if within_reach(mesh, other, soft_reach) {
@@ -821,6 +1038,7 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 			});
 		}
 		let min_cos = (SOFT_MIN_FOLD * std::f64::consts::PI).cos();
+		let runs = if shading.soft_to_zero { crease_runs(&planes, min_cos) } else { HashMap::new() };
 		let values: Vec<[f32; 3]> = parallel(&full, |texel| {
 			let (p, n) = (texel.position, texel.face_normal);
 			let mut glow = 0.0f64;
@@ -845,13 +1063,30 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], occluders: &[&Mesh], image: &
 					.into_iter()
 					.fold(0x811c_9dc5u32, |h, c| (h ^ c).wrapping_mul(0x0100_0193));
 				let wander = 1.0 - shading.soft_uneven + shading.soft_uneven * soft_wander(seed, dot(p, crease) + 1000.0);
-				let taper = if shading.soft_taper > 0.0 { corner_taper(p, n, sub(p, offset), triangle, shading.soft_taper) } else { 1.0 };
+				let mut strength = 1.0;
+				let taper = if shading.soft_to_zero && shading.soft_taper > 0.0 {
+					let Some(share) = to_zero_taper(p, n, sub(p, offset), triangle, &runs, shading.soft_taper, shading.soft_end) else {
+						continue;
+					};
+					strength = share;
+					strength
+				} else if shading.soft_taper > 0.0 {
+					corner_taper(p, n, sub(p, offset), triangle, shading.soft_taper)
+				} else {
+					1.0
+				};
 				let fade = soft_reach * wander * taper;
 				if distance >= fade {
 					continue;
 				}
 				let t = 1.0 - distance / fade;
-				glow = glow.max(sharpness * t * t * (3.0 - 2.0 * t));
+				// A motion masks the glow, scaled so it fills the soft reach.
+				let mask = shading.soft_marks.as_ref().map_or(1.0, |marks| {
+					let (shared, sign, along_edge) = edge_frame(n, facing, p, triangle[0], crease);
+					let size = soft_reach / marks.reach().max(1e-6);
+					marks.paint(&crate::marks::Place { seed: shared, along: along_edge / size, off: sign * distance / size, taper: 1.0, corner: None, below: n[2] <= facing[2] + 1e-6 })
+				});
+				glow = glow.max(sharpness * strength * mask * (t * t * (3.0 - 2.0 * t)).powf(shading.soft_power));
 			}
 			[glow as f32, 0.0, 0.0]
 		});

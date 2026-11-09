@@ -269,6 +269,9 @@ pub fn crease<S: BuildHasher>(texels: &[Texel], surfaces: &[([Vec3; 3], Vec3, bo
 // Canvas::paint (`over` false) or Canvas::over (`over` true) at every texel:
 // the linear color, and how much the strokes cover (1 for paint).
 pub fn canvas(canvas: &Canvas, texels: &[Texel], over: bool) -> Option<Vec<([f64; 3], f64)>> {
+	if canvas.strokes().iter().any(|s| s.brush == Brush::Stamp || s.marks.is_some()) {
+		return None;
+	}
 	let gpu = gpu()?.lock().ok()?;
 	let (slots, items, mask) = hash_table(canvas.grid())?;
 	let strokes: Vec<GpuStroke> = canvas
@@ -308,5 +311,7 @@ fn brush_index(brush: Brush) -> u32 {
 		Brush::Sponge => 3,
 		Brush::Dry => 4,
 		Brush::Taper => 5,
+		// Never uploaded: `canvas` leaves stamped strokes to the CPU.
+		Brush::Stamp => 0,
 	}
 }

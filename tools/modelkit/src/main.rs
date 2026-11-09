@@ -42,8 +42,10 @@ mod cache;
 mod coat;
 mod detail;
 mod glb;
+mod hand;
 mod gpu;
 mod image;
+mod marks;
 mod mesh;
 mod progress;
 mod render;
@@ -52,12 +54,45 @@ use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
+use std::sync::Arc;
 use std::time::Instant;
 
 use mlua::{AnyUserData, Lua, Table, UserData, UserDataMethods, Value};
 
 use image::Image;
 use mesh::{dot, scale, sub, Face, Mesh};
+
+// The numbers set by name in a `tune` table.
+fn tune_numbers(tune: Option<Table>) -> mlua::Result<Vec<(String, f64)>> {
+	match tune {
+		Some(table) => table.pairs::<String, f64>().collect(),
+		None => Ok(Vec::new()),
+	}
+}
+
+// One brush: {motion = "press", tune = {name = value, ...}}.
+fn brush_spec(spec: &Table) -> mlua::Result<Arc<marks::Marks>> {
+	let motion: String = spec.get("motion")?;
+	let overrides = tune_numbers(spec.get("tune")?)?;
+	marks::Marks::new(&motion, &overrides).map(Arc::new).map_err(mlua::Error::RuntimeError)
+}
+
+// The brush a part names for one of its layers in its `brushes` table.
+fn brush_slot(options: Option<&Table>, slot: &str) -> mlua::Result<Option<Arc<marks::Marks>>> {
+	let Some(brushes) = options.map(|o| o.get::<Option<Table>>("brushes")).transpose()?.flatten() else {
+		return Ok(None);
+	};
+	brushes.get::<Option<Table>>(slot)?.map(|spec| brush_spec(&spec)).transpose()
+}
+
+// The edge highlight's shorthand: `litMotion` and `litTune`.
+fn edge_shorthand(options: &Table) -> mlua::Result<Option<Arc<marks::Marks>>> {
+	let Some(motion) = options.get::<Option<String>>("highlightMotion")? else {
+		return Ok(None);
+	};
+	let overrides = tune_numbers(options.get("highlightMotionTune")?)?;
+	marks::Marks::new(&motion, &overrides).map(|marks| Some(Arc::new(marks))).map_err(mlua::Error::RuntimeError)
+}
 
 const DEFAULT_PREVIEW_SIZE: usize = 768;
 
@@ -225,6 +260,16 @@ impl UserData for MeshHandle {
 				highlight_ramp: get("highlightRamp", 0.0)?.max(0.0),
 				reach: get("reach", bake::CONTACT_REACH)?.clamp(0.02, 4.0),
 				highlight_width: get("highlightWidth", 1.0)?.clamp(0.1, 8.0),
+				highlight_uneven: get("highlightUneven", 0.0)?.clamp(0.0, 1.0),
+				highlight_uneven_step: get("highlightUnevenStep", 0.5)?.clamp(0.01, 16.0),
+				edge_marks: match brush_slot(options.as_ref(), "edge")? {
+					Some(marks) => Some(marks),
+					None => options.as_ref().map(edge_shorthand).transpose()?.flatten(),
+				},
+				shade_marks: brush_slot(options.as_ref(), "shade")?,
+				soft_marks: brush_slot(options.as_ref(), "soft")?,
+				highlight_to_zero: options.as_ref().map(|o| o.get::<Option<bool>>("highlightToZero")).transpose()?.flatten().unwrap_or(false),
+				highlight_end: get("highlightEnd", 3.0)?.clamp(0.1, 16.0),
 				painted_highlights: options.as_ref().map(|o| o.get::<Option<bool>>("paintedHighlights")).transpose()?.flatten().unwrap_or(false),
 				crisp: options.as_ref().map(|o| o.get::<Option<bool>>("crisp")).transpose()?.flatten().unwrap_or(false),
 				corner_taper: get("cornerTaper", 0.0)?.clamp(0.0, 16.0),
@@ -232,6 +277,9 @@ impl UserData for MeshHandle {
 				soft_reach: get("softReach", 1.0)?.clamp(0.02, 8.0),
 				soft_uneven: get("softUneven", 0.0)?.clamp(0.0, 1.0),
 				soft_taper: get("softTaper", 0.0)?.clamp(0.0, 16.0),
+				soft_to_zero: options.as_ref().map(|o| o.get::<Option<bool>>("softToZero")).transpose()?.flatten().unwrap_or(false),
+				soft_power: get("softPower", 1.0)?.clamp(0.25, 8.0),
+				soft_end: get("softEnd", 3.0)?.clamp(0.1, 16.0),
 				// heightRange = {bottom, top}: share one gradient across chunks.
 				height_range: match options.as_ref().map(|o| o.get::<Option<Vec<f64>>>("heightRange")).transpose()?.flatten().as_deref() {
 					Some(&[bottom, top]) if top > bottom => Some([bottom, top]),
@@ -267,6 +315,7 @@ impl UserData for MeshHandle {
 								opacity: 1.0,
 								seed: index as u32,
 								tail: stroke.get::<Option<f64>>("tail")?.unwrap_or(0.0).clamp(0.0, 1.0),
+								marks: if stroke.contains_key("motion")? { Some(brush_spec(stroke)?) } else { None },
 							})
 						})
 						.collect::<mlua::Result<Vec<_>>>()?,
@@ -279,11 +328,34 @@ impl UserData for MeshHandle {
 				Some(detail) => detail.shrink(&mesh, &mut image.borrow_mut()),
 				None => 1.0,
 			};
+			let hand = match options.as_ref().map(|o| o.get::<Option<String>>("hand")).transpose()?.flatten().as_deref() {
+				None => None,
+				Some("rock") => Some(coat::Hand::Rock),
+				Some("wood") => Some(coat::Hand::Wood),
+				Some("metal") => Some(coat::Hand::Metal),
+				Some(other) => return Err(mlua::Error::RuntimeError(format!("unknown hand style {other}"))),
+			};
+			let overrides: Vec<(String, f64)> = match options.as_ref().map(|o| o.get::<Option<Table>>("handTune")).transpose()?.flatten() {
+				Some(table) => table.pairs::<String, f64>().collect::<mlua::Result<_>>()?,
+				None => Vec::new(),
+			};
+			let tuning = hand.map(|h| hand::Tuning::new(h, &overrides)).transpose().map_err(mlua::Error::RuntimeError)?;
 			let look = coat::Look {
 				rust: get("rust", 0.0)?.clamp(0.0, 1.0),
 				rubber: options.as_ref().map(|o| o.get::<Option<bool>>("rubber")).transpose()?.flatten().unwrap_or(false),
 				gradient: get("gradient", 0.0)?.clamp(0.0, 1.0),
 				brush,
+				stamps: options.as_ref().map(|o| o.get::<Option<bool>>("stamps")).transpose()?.flatten().unwrap_or(false),
+				hand,
+				tuning,
+				focus: options.as_ref().map(|o| o.get::<Option<Vec<f64>>>("handFocus")).transpose()?.flatten().filter(|f| f.len() == 4).map(|f| ([f[0], f[1], f[2]], f[3])),
+				brushes: coat::Brushes {
+					coat: brush_slot(options.as_ref(), "coat")?,
+					grime: brush_slot(options.as_ref(), "grime")?,
+					rust: brush_slot(options.as_ref(), "rust")?,
+					drip: brush_slot(options.as_ref(), "drip")?,
+					scratch: brush_slot(options.as_ref(), "scratch")?,
+				},
 			};
 			let paint = options.as_ref().map(|o| o.get::<Option<mlua::Function>>("paint")).transpose()?.flatten();
 			// A custom paint fn is keyed by `salt`, the item's source key, since its code can't be hashed.
