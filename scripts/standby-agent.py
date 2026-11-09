@@ -29,6 +29,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import urllib.request
@@ -84,6 +85,25 @@ def trim_log(path):
 	if len(lines) > LOG_LINES_KEPT:
 		with open(path, "w") as file:
 			file.writelines(lines[-LOG_LINES_KEPT:])
+
+
+def push_bakes(model, share, out, since):
+	"""Pushes the paint layers saved since `since`; returns the commit, or ""."""
+	cache = os.path.join("art", "models", model, ".cache")
+	fresh = tempfile.mkdtemp(dir=out)
+	try:
+		for entry in os.scandir(cache) if os.path.isdir(cache) else []:
+			if entry.stat().st_mtime >= since:
+				os.link(entry.path, os.path.join(fresh, entry.name))
+		if not os.listdir(fresh):
+			return ""
+		pushed = subprocess.run(["scripts/push-folder.sh", fresh, "build-bakes/" + share.replace("@", "-"), f"bakes {share}"], capture_output=True, text=True)
+		if pushed.returncode != 0:
+			say(f"could not push bakes of {share}: {pushed.stderr.strip()[-200:]}")
+			return ""
+		return pushed.stdout.strip()
+	finally:
+		shutil.rmtree(fresh, ignore_errors=True)
 
 
 def push_preview(folder, share):
@@ -247,17 +267,20 @@ class Agent:
 			folder = os.path.join(out, "previews", model)
 			if not os.path.isdir(folder):
 				env, server = dict(os.environ), None
+				log = os.path.join(folder, "build.log")
 				if "@" in model and int(model.rsplit("@", 1)[1]) > 1:
-					server = await self.claim_server(identity, model.split("@")[0])
+					os.makedirs(out, exist_ok=True)
+					self.timings.setdefault((identity, model.split("@")[0]), {})["bake_start"] = time.monotonic()
+					# A second back, for a file saved in the second this began.
+					server = await self.claim_server(identity, model, out, time.time() - 1)
 					env["WORK_PORT"] = str(server.sockets[0].getsockname()[1])
-					await self.share_bakes(identity, model, out, env)
-				self.begin(identity, "render", os.path.join(folder, "build.log"), model)
-				render_started = time.monotonic()
+					self.begin(identity, "bake", log, model)
+				else:
+					self.begin(identity, "render", log, model)
 				await asyncio.to_thread(subprocess.run, ["scripts/standby-previews.sh", model, "1", "1", out], capture_output=True, env=env)
 				if server:
 					server.close()
-				timing = self.timings.setdefault((identity, model.split("@")[0]), {})
-				timing["render_start"], timing["render_end"] = render_started, time.monotonic()
+				self.timings.setdefault((identity, model.split("@")[0]), {})["render_end"] = time.monotonic()
 			trim_log(os.path.join(folder, "build.log"))
 			pushed = await asyncio.to_thread(push_preview, folder, model) if os.path.isdir(folder) else ""
 			if pushed:
@@ -280,8 +303,8 @@ class Agent:
 		gap = lambda start, end: f"{timing[end] - timing[start]:.1f}" if start in timing and end in timing else "-"
 		say(f"timing {share} script={gap('bake_start', 'first_bake')} chunks={gap('first_bake', 'last_bake')} "
 			f"claims={timing.get('bake_claims', 0)} claim_wait={timing.get('bake_claim_wait', 0):.1f} "
-			f"push={gap('last_bake', 'bake_end')} wait={gap('pushed', 'ready')} fetch={gap('ready', 'fetched')} "
-			f"render={gap('render_start', 'render_end')} send={time.monotonic() - timing.get('render_end', time.monotonic()):.1f}")
+			f"push={gap('bake_end', 'pushed')} wait={gap('pushed', 'ready')} fetch={gap('ready', 'fetched')} "
+			f"render={gap('fetched', 'render_end')} send={time.monotonic() - timing.get('render_end', time.monotonic()):.1f}")
 
 	async def claim(self, identity, model, kind, total):
 		"""The next job of this kind for this machine, -1 when none are left.
@@ -308,43 +331,43 @@ class Agent:
 				self.claims.pop(number, None)
 		return -1
 
-	async def claim_server(self, identity, model):
-		"""A local port where this machine's engine asks for its next job."""
+	async def claim_server(self, identity, share, out, since):
+		"""A local port where this machine's engine asks for its next job, and
+		says when its baking is done."""
+		model = share.split("@")[0]
 
 		async def serve(reader, writer):
 			while line := await reader.readline():
 				kind, total = line.decode().split()
-				writer.write(f"{await self.claim(identity, model, kind, int(total))}\n".encode())
+				if kind == "swap":
+					await self.share_bakes(identity, share, out, since)
+					answer = 0
+				else:
+					answer = await self.claim(identity, model, kind, int(total))
+				writer.write(f"{answer}\n".encode())
 				await writer.drain()
 			writer.close()
 
 		return await asyncio.start_server(serve, "127.0.0.1", 0)
 
-	async def share_bakes(self, identity, share, out, env):
-		"""Bakes the texture chunks this machine claims and takes every other
-		machine's, so no two machines bake the same texture. Anything
-		that doesn't arrive is simply baked by the render that follows."""
+	async def share_bakes(self, identity, share, out, since):
+		"""Asked by the engine once it has baked what it claimed: pushes those
+		layers and takes every other machine's, so no two machines bake the
+		same texture. Anything that doesn't arrive, the engine bakes itself."""
 		model = share.split("@")[0]
-		folder = os.path.join(out, "bakes", share)
-		log = os.path.join(folder, "build.log")
-		self.begin(identity, "bake", log, share)
-		ready = self.bakes_ready[(identity, model)] = asyncio.get_running_loop().create_future()
-		started = time.monotonic()
-		await asyncio.to_thread(subprocess.run, ["scripts/standby-previews.sh", share, "1", "1", out],
-			capture_output=True, env={**env, "BAKE_ONLY": "1"})
-		baked = time.monotonic() - started
+		log = os.path.join(out, "previews", share, "build.log")
 		timing = self.timings.setdefault((identity, model), {})
-		timing["bake_start"], timing["bake_end"] = started, started + baked
-		path = os.path.join(folder, "commit.txt")
-		mine = open(path).read().strip() if os.path.isfile(path) else ""
-		await self.send(json.dumps({"type": "bakes-pushed", "task": identity, "share": share, "commit": mine}))
+		timing["bake_end"] = time.monotonic()
 		self.begin(identity, "swap", log, share)
+		ready = self.bakes_ready[(identity, model)] = asyncio.get_running_loop().create_future()
+		mine = await asyncio.to_thread(push_bakes, model, share, out, since)
 		timing["pushed"] = time.monotonic()
+		await self.send(json.dumps({"type": "bakes-pushed", "task": identity, "share": share, "commit": mine}))
 		try:
-			commits = await asyncio.wait_for(ready, max(SWAP_WAIT_SECONDS, baked * 4))
+			commits = await asyncio.wait_for(ready, max(SWAP_WAIT_SECONDS, (timing["bake_end"] - timing["bake_start"]) * 4))
 		except asyncio.TimeoutError:
 			say(f"task {identity}: could not get every machine's bakes of {model} in time; the render bakes what's missing")
-			return
+			commits = []
 		finally:
 			self.bakes_ready.pop((identity, model), None)
 		timing["ready"] = time.monotonic()
@@ -353,6 +376,7 @@ class Agent:
 		timing["fetched"] = time.monotonic()
 		for error in [result for result in fetched if isinstance(result, Exception)]:
 			say(f"task {identity}: could not fetch bakes of {model}: {error}")
+		self.begin(identity, "render", log, share)
 
 	def answer(self, identity, asset, error):
 		"""From the uploader's threads: send the result on the live socket."""

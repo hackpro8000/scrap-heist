@@ -377,7 +377,7 @@ impl UserData for MeshHandle {
 			}
 			let name = options.as_ref().map(|o| o.get::<Option<String>>("name")).transpose()?.flatten().unwrap_or_default();
 			let source = cache::Source { custom, salt };
-			if cache::bake_only() {
+			if cache::sharing() {
 				let chunk = cache::bake_chunk(&name, &mesh);
 				let mesh = (*mesh).clone();
 				work::defer(chunk, Box::new(move || paint_part(&name, &mesh, &group, &occluders, &image, &shading, &look, paint.as_ref(), &source).map_err(|e| e.to_string())));
@@ -572,6 +572,9 @@ fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<R
 	// {name, mesh, image, preview, emissive}, loading them from the cache when this key
 	// was built before. The key must change whenever the result would.
 	let folder = dir.to_path_buf();
+	// With --share-bakes a part's save waits for its paint, so a later placement
+	// of the same key takes the first one's parts from here, not from the file.
+	let built_this_run: RefCell<HashMap<PathBuf, Table>> = RefCell::new(HashMap::new());
 	model_api.set(
 		"cached",
 		lua.create_function(move |lua, (key, build): (String, mlua::Function)| {
@@ -579,6 +582,9 @@ fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<R
 			let key = if texel_scale == 1.0 { key } else { format!("{key} @{texel_scale}{eye_key}") };
 			let path = cache::path(&folder, &key);
 			used.borrow_mut().push(path.clone());
+			if let Some(list) = built_this_run.borrow().get(&path) {
+				return Ok(list.clone());
+			}
 			if let Some(saved) = cache::load(&path) {
 				progress::say(&format!("cached {}", progress::label(&key)));
 				let list = lua.create_table()?;
@@ -605,9 +611,18 @@ fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<R
 				let image = entry.get::<AnyUserData>("image")?.borrow::<ImageHandle>()?.0.clone();
 				built.push((entry.get::<String>("name")?, entry.get::<Option<bool>>("preview")?.unwrap_or(true), entry.get::<Option<f32>>("emissive")?.unwrap_or(0.0), mesh, image));
 			}
-			let borrowed: Vec<_> = built.iter().map(|(n, p, e, m, i)| (n.clone(), *p, *e, m.borrow(), i.borrow())).collect();
-			let refs: Vec<_> = borrowed.iter().map(|(n, p, e, m, i)| (n.clone(), *p, *e, &**m, &**i)).collect();
-			cache::save(&path, &refs).map_err(mlua::Error::external)?;
+			let saved_at = path.clone();
+			let save = move || {
+				let borrowed: Vec<_> = built.iter().map(|(n, p, e, m, i)| (n.clone(), *p, *e, m.borrow(), i.borrow())).collect();
+				let refs: Vec<_> = borrowed.iter().map(|(n, p, e, m, i)| (n.clone(), *p, *e, &**m, &**i)).collect();
+				cache::save(&path, &refs).map_err(|e| e.to_string())
+			};
+			if cache::sharing() {
+				built_this_run.borrow_mut().insert(saved_at, list.clone());
+				work::defer_save(Box::new(save));
+			} else {
+				save().map_err(mlua::Error::external)?;
+			}
 			Ok(list)
 		})?,
 	)?;
@@ -687,10 +702,8 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 	// A shard uses only part of the cache, so pruning would throw away the
 	// other shards' entries, unless the cache is the shard's own
 	// (MODELKIT_PRUNE=1, as the build-map-shards workflow sets).
-	if cache::bake_only() {
-		work::bake_claimed(review.work_port.ok_or("--bake-only needs --work-port")?)?;
-		progress::say("baked every chunk this machine claimed");
-		return Ok(());
+	if cache::sharing() {
+		work::bake_and_swap(review.work_port.ok_or("--share-bakes needs --work-port")?)?;
 	}
 	if shard.is_none() || std::env::var("MODELKIT_PRUNE").is_ok_and(|v| v == "1") {
 		cache::prune(dir, &used.borrow());
@@ -894,7 +907,7 @@ fn share_flag(args: &[String], flag: &str) -> Option<(usize, usize)> {
 fn main() {
 	let args: Vec<String> = std::env::args().skip(1).collect();
 	let Some(dir) = args.first() else {
-		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--eye EX,EY,EZ,TX,TY,TZ]... [--clip NAME] [--parts] [--view SIDE]... [--grid STUDS] [--chunks] [--shard INDEX/COUNT] [--renders INDEX/COUNT] [--bake-only] [--work-port PORT]");
+		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--eye EX,EY,EZ,TX,TY,TZ]... [--clip NAME] [--parts] [--view SIDE]... [--grid STUDS] [--chunks] [--shard INDEX/COUNT] [--renders INDEX/COUNT] [--share-bakes] [--work-port PORT]");
 		std::process::exit(2);
 	};
 	let turntable = match args.iter().position(|a| a == "--turntable") {
@@ -944,8 +957,8 @@ fn main() {
 	}
 	let grid = args.iter().position(|a| a == "--grid").and_then(|at| args.get(at + 1)).and_then(|n| n.parse().ok()).filter(|&n: &f64| n > 0.0);
 	let share = share_flag(&args, "--renders");
-	if args.iter().any(|a| a == "--bake-only") {
-		cache::set_bake_only();
+	if args.iter().any(|a| a == "--share-bakes") {
+		cache::set_sharing();
 	}
 	let work_port = args.iter().position(|a| a == "--work-port").and_then(|at| args.get(at + 1)).and_then(|p| p.parse().ok());
 	let review = Review { parts: args.iter().any(|a| a == "--parts"), sides, grid, share, work_port };

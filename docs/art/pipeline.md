@@ -179,7 +179,7 @@ A layout is uploaded one object at a time, and only the objects that changed:
    (`preview-results/` branches), not the tunnel, which only carries short
    messages for previews. When a model is shared between machines, each
    claims texture chunks from one queue until none are left (`modelkit
-   --bake-only --work-port`), so a machine that finishes early takes more,
+   --share-bakes --work-port`), so a machine that finishes early takes more,
    pushes those paint layers to its `build-bakes/<Name>-<i>-<n>` branch and
    fetches everyone else's, so no two machines bake the same texture. Then
    they claim the views from a queue the same way. A layer that doesn't arrive is baked

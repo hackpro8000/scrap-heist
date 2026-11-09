@@ -3,7 +3,7 @@
 // line each way, so a machine that finishes early simply takes more and no
 // work waits on a busy machine.
 
-use crate::cache;
+use crate::{cache, progress};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::{BufRead, BufReader, Write};
@@ -12,13 +12,19 @@ use std::net::TcpStream;
 type Job = Box<dyn FnOnce() -> Result<(), String>>;
 
 thread_local! {
-	// With --bake-only, the paints the script asked for, by chunk, to bake
+	// With --share-bakes, the paints the script asked for, by chunk, to bake
 	// once it has run: only then can a machine take them in any order.
 	static DEFERRED: RefCell<HashMap<usize, Vec<Job>>> = RefCell::new(HashMap::new());
+	// Whole-part saves, which must wait for those paints.
+	static SAVES: RefCell<Vec<Job>> = const { RefCell::new(Vec::new()) };
 }
 
 pub fn defer(chunk: usize, job: Job) {
 	DEFERRED.with(|jobs| jobs.borrow_mut().entry(chunk).or_default().push(job));
+}
+
+pub fn defer_save(job: Job) {
+	SAVES.with(|saves| saves.borrow_mut().push(job));
 }
 
 struct Queue {
@@ -39,15 +45,28 @@ impl Queue {
 	}
 }
 
-// Bakes chunks until none are left. Every machine's script run defers the
-// same paints, so any machine can bake any chunk.
-pub fn bake_claimed(port: u16) -> Result<(), String> {
+// Bakes chunks until none are left, waits while the agent swaps baked layers
+// with the other machines, then paints everything still held back: the layers
+// this machine didn't bake now load from the cache, and any that never arrived
+// are baked here. Every machine's script defers the same paints, so any machine
+// can bake any chunk.
+pub fn bake_and_swap(port: u16) -> Result<(), String> {
 	let mut queue = Queue::connect(port).map_err(|e| e.to_string())?;
 	let mut jobs = DEFERRED.with(|jobs| std::mem::take(&mut *jobs.borrow_mut()));
 	while let Some(chunk) = queue.next("bake", cache::BAKE_CHUNKS) {
 		for job in jobs.remove(&chunk).into_iter().flatten() {
 			job()?;
 		}
+	}
+	progress::say("baked every chunk this machine claimed");
+	queue.next("swap", 1);
+	let mut chunks: Vec<_> = jobs.into_iter().collect();
+	chunks.sort_by_key(|(chunk, _)| *chunk);
+	for job in chunks.into_iter().flat_map(|(_, jobs)| jobs) {
+		job()?;
+	}
+	for save in SAVES.with(|saves| std::mem::take(&mut *saves.borrow_mut())) {
+		save()?;
 	}
 	Ok(())
 }

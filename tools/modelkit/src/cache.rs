@@ -31,17 +31,16 @@ pub fn disabled() -> bool {
 	*DISABLED.get_or_init(|| std::env::var("MODELKIT_NO_CACHE").is_ok_and(|v| v == "1"))
 }
 
-// --bake-only: this run only bakes paint layers for the build machines to
-// swap (work.rs) and stops. Its parts are half-painted, so whole-part saves
-// wait for the full run that follows.
-static BAKE_ONLY: std::sync::OnceLock<()> = std::sync::OnceLock::new();
+// --share-bakes: this run holds its paints and whole-part saves back until the
+// script has run, so the build machines can share the baking (work.rs).
+static SHARING: std::sync::OnceLock<()> = std::sync::OnceLock::new();
 
-pub fn set_bake_only() {
-	let _ = BAKE_ONLY.set(());
+pub fn set_sharing() {
+	let _ = SHARING.set(());
 }
 
-pub fn bake_only() -> bool {
-	BAKE_ONLY.get().is_some()
+pub fn sharing() -> bool {
+	SHARING.get().is_some()
 }
 
 // How many chunks a model's paints are grouped into for machines to claim.
@@ -62,7 +61,7 @@ pub fn path(dir: &Path, key: &str) -> PathBuf {
 }
 
 pub fn save(path: &Path, parts: &[(String, bool, f32, &Mesh, &Image)]) -> std::io::Result<()> {
-	if disabled() || bake_only() {
+	if disabled() {
 		return Ok(());
 	}
 	let mut out = Vec::new();
