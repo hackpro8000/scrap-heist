@@ -1,0 +1,11 @@
+[    0.0s] running PlotMarker/model.luau
+[    2.3s] baking on CPU (no GPU)
+[    2.7s] shaded Lamp 256×256 in 0.39s
+[    5.9s] baked every chunk this machine claimed
+[    7.9s] shaded Sign 256×256 in 0.01s
+[    7.9s] shaded Post 256×256 in 0.01s
+[    8.0s] shaded Fittings 256×256 in 0.01s
+[    8.0s] writing PlotMarker.glb and 4 textures
+[    8.2s] rendering preview of 4 parts
+[    9.3s] rendering eye 2/3
+PlotMarker: 4 parts, script 7.96s, total 9.63s
