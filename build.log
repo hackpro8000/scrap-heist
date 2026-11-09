@@ -1,0 +1,46 @@
+[    0.0s] running RebirthPress/model.luau
+[    1.8s] baking on CPU (no GPU)
+[    2.6s] shaded Pile 1024×1024 in 0.84s
+[    4.0s] shaded Bands 1024×1024 in 0.65s
+[    5.5s] shaded Tray 1024×1024 in 0.43s
+[    7.4s] shaded Platen 1024×1024 in 0.32s
+[    8.4s] shaded Console 1024×1024 in 0.64s
+[    9.7s] shaded Pump 1024×1024 in 0.87s
+[    9.9s] baked every chunk this machine claimed
+[   33.6s] shaded Medal 1024×1024 in 0.14s
+[   33.8s] shaded PileJunk 1024×1024 in 0.15s
+[   34.0s] shaded Cylinder 1024×1024 in 0.14s
+[   34.3s] shaded Columns 1024×1024 in 0.15s
+[   34.5s] shaded Crown 1024×1024 in 0.14s
+[   34.8s] shaded Plinth 1024×1024 in 0.16s
+[   34.9s] shaded Hoses 1024×1024 in 0.14s
+[   35.1s] shaded Collars 1024×1024 in 0.14s
+[   35.5s] shaded Cage 1024×1024 in 0.36s
+[   35.8s] shaded Anvil 1024×1024 in 0.17s
+[   36.4s] shaded Ram 1024×1024 in 0.52s
+[   36.4s] writing RebirthPress.glb and 19 textures
+[   36.9s] rendering preview of 19 parts
+[   44.1s] rendering eye 1/8
+[   44.9s] rendering eye 2/8
+[   45.7s] rendering eye 4/8
+[   46.5s] rendering eye 8/8
+RebirthPress: 19 parts, script 36.44s, total 47.66s
+#f23d3d Plinth
+#85a5f2 Anvil
+#7bb32d Columns
+#b362a8 Bands
+#3df2d4 Crown
+#f2c085 Cylinder
+#4e2db3 Ram
+#66b362 Platen
+#f23d79 Pile
+#85c9f2 PileJunk
+#a8b32d Tray
+#a262b3 Medal
+#3df297 Console
+#f29c85 Cage
+#2d38b3 Button
+#80b362 Hoses
+#f23db6 Pump
+#85eef2 Collars
+#b3912d Beacons
