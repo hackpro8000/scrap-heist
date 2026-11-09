@@ -1,0 +1,11 @@
+[    0.0s] running ScrapTreeAntenna/model.luau
+[    3.2s] shaded Fill 256×256 in 0.01s
+[    6.7s] shaded Tyre 256×256 in 0.01s
+[    7.6s] shaded Mast 256×256 in 0.01s
+[    9.2s] shaded Elements 256×256 in 0.01s
+[   11.7s] baked every chunk this machine claimed
+[   12.0s] shaded Cable 256×256 in 0.00s
+[   12.0s] writing ScrapTreeAntenna.glb and 5 textures
+[   12.1s] rendering preview of 5 parts
+[   14.1s] rendering eye 1/2
+ScrapTreeAntenna: 5 parts, script 11.97s, total 14.41s
