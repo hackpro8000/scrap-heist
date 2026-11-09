@@ -1,0 +1,25 @@
+[    0.0s] running BuildBay/model.luau
+[    3.6s] baking on CPU (no GPU)
+[    5.2s] shaded Clamp1 1024×1024 in 1.68s
+[    6.6s] shaded Clamp2 1024×1024 in 1.34s
+[    8.0s] shaded Frame 1024×1024 in 1.10s
+[   13.0s] shaded CrateScrap 1024×1024 in 4.37s
+[   14.3s] shaded Posts 1024×1024 in 1.10s
+[   23.0s] shaded CrateGear 1024×1024 in 8.04s
+[   23.2s] baked every chunk this machine claimed
+[   82.4s] shaded Pad1 1024×1024 in 0.89s
+[   82.7s] shaded Cradle 1024×1024 in 0.23s
+[   83.6s] shaded Pad3 1024×1024 in 0.81s
+[   85.6s] shaded Bands 1024×1024 in 1.89s
+[   85.8s] shaded Panel 1024×1024 in 0.17s
+[   87.9s] shaded Deck 1024×1024 in 1.97s
+[   89.6s] shaded Drum 1024×1024 in 1.58s
+[   89.9s] shaded Clamp3 1024×1024 in 0.18s
+[   90.6s] shaded Board 1024×1024 in 0.62s
+[   90.8s] shaded Tools 1024×1024 in 0.17s
+[   97.3s] shaded CrateHeap 1024×1024 in 6.48s
+[  106.3s] shaded Crate 1024×1024 in 8.84s
+[  108.0s] shaded Arm 1024×1024 in 1.59s
+[  108.2s] shaded Pad2 1024×1024 in 0.19s
+[  108.2s] writing BuildBay.glb and 22 textures
+BuildBay: 22 parts, script 108.25s, total 108.82s
