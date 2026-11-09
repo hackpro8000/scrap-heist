@@ -1,0 +1,11 @@
+[    0.0s] running ScrapPalm/model.luau
+[    5.7s] baked every chunk this machine claimed
+[    8.7s] shaded Footing 256×256 in 0.01s
+[    8.7s] shaded TyreCollar 256×256 in 0.01s
+[    8.7s] shaded Cans 256×256 in 0.01s
+[    8.8s] baking on CPU (no GPU)
+[    8.8s] shaded Fronds 256×256 in 0.02s
+[    8.8s] shaded Couplings 256×256 in 0.01s
+[    8.8s] shaded Trunk 256×256 in 0.01s
+[    8.8s] writing ScrapPalm.glb and 6 textures
+ScrapPalm: 6 parts, script 8.79s, total 10.03s
