@@ -4,8 +4,9 @@
 // they cross, and the last marks sharpen some edges while leaving others lost.
 
 use std::collections::HashMap;
+use std::hash::{BuildHasherDefault, Hasher};
 
-use crate::bake::hash;
+use crate::bake::{hash, parallel};
 use crate::brush::stamp_alpha;
 use crate::coat::{self, Hand, Look, Wear};
 use crate::mesh::{add, cross, dot, normalize, scale, sub, Mesh, Vec3};
@@ -88,6 +89,9 @@ struct Sweep {
 	reach: f64,
 	tolerance: f64,
 	points: [(f64, f64); STEPS + 1],
+	// The box round the path that paint can't leave: lowest and highest
+	// along the heading, then along the side. Painting::add fills it in.
+	limits: [f64; 4],
 	// 0 slow and heavy, 1 fast and dry.
 	speed: f64,
 	color: [f64; 3],
@@ -99,6 +103,14 @@ struct Sweep {
 }
 
 impl Sweep {
+	// Whether this stroke could paint anywhere within `radius` of a point.
+	fn can_reach(&self, p: Vec3, radius: f64) -> bool {
+		let offset = sub(p, self.origin);
+		let [low_x, high_x, low_y, high_y] = self.limits;
+		let (x, y) = (dot(offset, self.heading), dot(offset, self.side));
+		dot(offset, self.normal).abs() <= self.tolerance + radius && x >= low_x - radius && x <= high_x + radius && y >= low_y - radius && y <= high_y + radius
+	}
+
 	// How far along (0-1) and how far off the path p lies, with the paint's
 	// coverage there.
 	fn cover(&self, p: Vec3, n: Vec3, t: &Tuning) -> Option<(f64, f64)> {
@@ -110,6 +122,12 @@ impl Sweep {
 			return None;
 		}
 		let (x, y) = (dot(offset, self.heading), dot(offset, self.side));
+		// Most strokes listed for a texel can't reach it: cheaper to say so
+		// here than to walk the whole path.
+		let [low_x, high_x, low_y, high_y] = self.limits;
+		if x < low_x || x > high_x || y < low_y || y > high_y {
+			return None;
+		}
 		let (mut best, mut along, mut signed) = (f64::MAX, 0.0, 0.0);
 		for k in 0..STEPS {
 			let ((ax, ay), (bx, by)) = (self.points[k], self.points[k + 1]);
@@ -157,9 +175,39 @@ impl Sweep {
 	}
 }
 
+// The grid is looked up once per texel per stroke added, so its hash is a
+// plain multiply; nothing here reads the map's order.
+#[derive(Default)]
+struct CellHasher(u64);
+
+impl Hasher for CellHasher {
+	fn write(&mut self, bytes: &[u8]) {
+		for &byte in bytes {
+			self.0 = (self.0 ^ u64::from(byte)).wrapping_mul(0x0000_0100_0000_01b3);
+		}
+	}
+
+	fn finish(&self) -> u64 {
+		self.0 ^ (self.0 >> 29)
+	}
+}
+
+type Cells = HashMap<[i32; 3], Vec<u32>, BuildHasherDefault<CellHasher>>;
+
+// A first-coat stroke, for finding what shows through a gap in the paint.
+struct FirstCoat {
+	normal: Vec3,
+	centre: Vec3,
+	color: [f64; 3],
+}
+
 pub struct Painting {
 	strokes: Vec<Sweep>,
-	grid: HashMap<[i32; 3], Vec<u32>>,
+	// Per cell, the strokes that can leave paint there.
+	grid: Cells,
+	// Per cell, the first-coat strokes around it, which needn't touch it.
+	first_coats: Vec<FirstCoat>,
+	first_coat_grid: Cells,
 	// Grown with the strokes, so each still spans a few cells.
 	cell_size: f64,
 	tuning: Tuning,
@@ -170,16 +218,38 @@ impl Painting {
 		p.map(|c| (c / self.cell_size).floor() as i32)
 	}
 
-	fn add(&mut self, stroke: Sweep) {
+	fn add(&mut self, mut stroke: Sweep) {
+		let t = &self.tuning;
+		let off_path = match &stroke.marks {
+			Some(marks) => marks.limit_on(stroke.half_width * 2.0),
+			// The widest cover() can make the stroke: landing and lift at their most.
+			None => stroke.half_width * t.landing.max(1.12) * (1.0 - t.lift_amount).max(1.0),
+		};
+		let along_path = |pick: fn(&(f64, f64)) -> f64| stroke.points.iter().map(pick).fold((f64::MAX, f64::MIN), |(low, high), v| (low.min(v), high.max(v)));
+		let (low_x, high_x) = along_path(|p| p.0);
+		let (low_y, high_y) = along_path(|p| p.1);
+		stroke.limits = [low_x - off_path, high_x + off_path, low_y - off_path, high_y + off_path];
 		let centre = add(stroke.origin, scale(stroke.heading, stroke.reach * 0.5));
 		let reach = stroke.marks.as_ref().map_or(stroke.half_width, |marks| stroke.half_width.max(marks.reach_on(stroke.half_width * 2.0)));
 		let spread = stroke.reach * 0.75 + reach + stroke.tolerance;
 		let (low, high) = (self.cell(centre.map(|c| c - spread)), self.cell(centre.map(|c| c + spread)));
 		let index = self.strokes.len() as u32;
+		let first_coat = (stroke.layer == 0).then(|| {
+			self.first_coats.push(FirstCoat { normal: stroke.normal, centre, color: stroke.color });
+			self.first_coats.len() as u32 - 1
+		});
+		// A hair over the distance from a cell's middle to its corner.
+		let cell_radius = self.cell_size * 0.5 * 3f64.sqrt() * 1.01;
 		for x in low[0]..=high[0] {
 			for y in low[1]..=high[1] {
 				for z in low[2]..=high[2] {
-					self.grid.entry([x, y, z]).or_default().push(index);
+					if let Some(first_coat) = first_coat {
+						self.first_coat_grid.entry([x, y, z]).or_default().push(first_coat);
+					}
+					// A stroke is flat, so most of this cube is out of its reach.
+					if stroke.can_reach([x, y, z].map(|c| (f64::from(c) + 0.5) * self.cell_size), cell_radius) {
+						self.grid.entry([x, y, z]).or_default().push(index);
+					}
 				}
 			}
 		}
@@ -199,16 +269,17 @@ impl Painting {
 	}
 
 	pub fn colour(&self, p: Vec3, n: Vec3) -> [f64; 3] {
-		let list = self.grid.get(&self.cell(p)).map(Vec::as_slice).unwrap_or(&[]);
+		let cell = self.cell(p);
+		let list = self.grid.get(&cell).map(Vec::as_slice).unwrap_or(&[]);
 		// Where the big strokes left a gap, the nearest one's paint shows through.
 		let mut under = (f64::MAX, self.strokes.first().map_or([0.5; 3], |s| s.color));
-		for &index in list {
-			let stroke = &self.strokes[index as usize];
-			if stroke.layer == 0 && dot(n, stroke.normal) > 0.35 {
-				let d = sub(p, add(stroke.origin, scale(stroke.heading, stroke.reach * 0.5)));
+		for &index in self.first_coat_grid.get(&cell).map(Vec::as_slice).unwrap_or(&[]) {
+			let first_coat = &self.first_coats[index as usize];
+			if dot(n, first_coat.normal) > 0.35 {
+				let d = sub(p, first_coat.centre);
 				let distance = dot(d, d);
 				if distance < under.0 {
-					under = (distance, stroke.color);
+					under = (distance, first_coat.color);
 				}
 			}
 		}
@@ -285,84 +356,106 @@ fn grain_axis(mesh: &Mesh) -> Vec3 {
 	std::array::from_fn(|k| if k == longest { 1.0 } else { 0.0 })
 }
 
+// Where one layer's strokes might start, in a fixed order, each with its seed.
+#[derive(Clone, Copy)]
+struct Candidate {
+	at: Vec3,
+	normal: Vec3,
+	form: Vec3,
+	id: u32,
+}
+
+fn candidates(mesh: &Mesh, layer: usize, density: f64, grain: Option<Vec3>) -> Vec<Candidate> {
+	let mut spots = Vec::new();
+	for (face_index, face) in mesh.faces.iter().enumerate() {
+		let normal = mesh.face_normal(face);
+		let form = form_direction(mesh, &face.verts, normal, grain);
+		for tri in 1..face.verts.len().saturating_sub(1) {
+			let (a, b, c) = (mesh.positions[face.verts[0]], mesh.positions[face.verts[tri]], mesh.positions[face.verts[tri + 1]]);
+			let n = cross(sub(b, a), sub(c, a));
+			let expected = dot(n, n).sqrt() / 2.0 * density;
+			let seed = (face_index as u32).wrapping_mul(2_654_435_761) ^ (tri as u32).wrapping_mul(40_503) ^ ((layer as u32 + 1).wrapping_mul(0x9e37_79b9));
+			let count = (expected.floor() as u32 + u32::from(hash(seed) < expected.fract())).max(u32::from(layer == 0));
+			for k in 0..count {
+				let id = (seed ^ k.wrapping_mul(0x85eb_ca6b)).wrapping_mul(0xc2b2_ae35);
+				let r = |j: u32| hash(id.wrapping_add(j));
+				let (mut across_ab, mut across_ac) = (r(0), r(1));
+				if across_ab + across_ac > 1.0 {
+					(across_ab, across_ac) = (1.0 - across_ab, 1.0 - across_ac);
+				}
+				spots.push(Candidate { at: add(a, add(scale(sub(b, a), across_ab), scale(sub(c, a), across_ac))), normal, form, id });
+			}
+		}
+	}
+	spots
+}
+
 pub fn prepare(mesh: &Mesh, look: &Look, hand: Hand, tuning: &Tuning, wear: &Wear, base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3]) -> Painting {
 	let t = tuning;
 	let layers = [((t.big_length_min, t.big_length_max), (t.big_width_min, t.big_width_max), t.big_cover), ((t.mid_length_min, t.mid_length_max), (t.mid_width_min, t.mid_width_max), t.mid_cover), ((t.small_length_min, t.small_length_max), (t.small_width_min, t.small_width_max), t.small_cover)];
 	let grain = matches!(hand, Hand::Wood).then(|| grain_axis(mesh));
-	let mut painting = Painting { strokes: Vec::new(), grid: HashMap::new(), cell_size: CELL * look.brush, tuning: tuning.clone() };
+	let mut painting = Painting { strokes: Vec::new(), grid: Cells::default(), first_coats: Vec::new(), first_coat_grid: Cells::default(), cell_size: CELL * look.brush, tuning: tuning.clone() };
 	let tolerance = |length: f64| 0.05 + 0.06 * length;
 	// Big strokes first, then smaller ones, each on top of the last.
 	for (layer, &(mark_length, mark_width, cover)) in layers.iter().enumerate() {
 		let area = lerp(mark_length, 0.5) * lerp(mark_width, 0.5);
 		let density = cover / area / (look.brush * look.brush);
-		for (face_index, face) in mesh.faces.iter().enumerate() {
-			let normal = mesh.face_normal(face);
-			let form = form_direction(mesh, &face.verts, normal, grain);
-			for tri in 1..face.verts.len().saturating_sub(1) {
-				let (a, b, c) = (mesh.positions[face.verts[0]], mesh.positions[face.verts[tri]], mesh.positions[face.verts[tri + 1]]);
-				let n = cross(sub(b, a), sub(c, a));
-				let expected = dot(n, n).sqrt() / 2.0 * density;
-				let seed = (face_index as u32).wrapping_mul(2_654_435_761) ^ (tri as u32).wrapping_mul(40_503) ^ ((layer as u32 + 1).wrapping_mul(0x9e37_79b9));
-				let count = (expected.floor() as u32 + u32::from(hash(seed) < expected.fract())).max(u32::from(layer == 0));
-				for k in 0..count {
-					let id = (seed ^ k.wrapping_mul(0x85eb_ca6b)).wrapping_mul(0xc2b2_ae35);
-					let r = |j: u32| hash(id.wrapping_add(j));
-					let (mut across_ab, mut across_ac) = (r(0), r(1));
-					if across_ab + across_ac > 1.0 {
-						(across_ab, across_ac) = (1.0 - across_ab, 1.0 - across_ac);
-					}
-					let at = add(a, add(scale(sub(b, a), across_ab), scale(sub(c, a), across_ac)));
-					// Mark economy: fine strokes gather at edges and the focus.
-					let near_focus = look.focus.map_or(0.0, |(centre, radius)| {
-						let d = sub(at, centre);
-						(1.0 - dot(d, d).sqrt() / radius.max(1e-3)).max(0.0)
-					});
-					let interest = (wear.edge)(at, normal).max(near_focus).min(1.0);
-					let keep = match layer {
-						0 => 1.0,
-						1 => t.mid_keep + (1.0 - t.mid_keep) * interest,
-						_ => interest.powf(t.small_power),
-					};
-					if r(2) > keep {
-						continue;
-					}
-					let speed = r(3);
-					let length = lerp(mark_length, r(4)) * (t.speed_length_min + t.speed_length * speed) * look.brush;
-					let half_width = lerp(mark_width, r(5)) * (t.speed_width_max - t.speed_width * speed) * look.brush / 2.0;
-					// Along the form, leaning the painter's way, some reversed.
-					let up = cross(normal, form);
-					let angle = t.habit + (r(6) - 0.5) * std::f64::consts::PI * (1.0 - t.follow);
-					let mut heading = add(scale(form, angle.cos()), scale(up, angle.sin()));
-					if r(7) < t.reversed {
-						heading = scale(heading, -1.0);
-					}
-					let side = cross(normal, heading);
-					// Lit from above, darker low down.
-					let mut color = coat::base_at(look, wear, base, at, normal);
-					let light = (1.0 + t.light_up * normal[2]) * (1.0 - t.light_low * (wear.low)(at)) * (1.0 + (r(8) - 0.5) * [t.shade_big, t.shade_mid, t.shade_small][layer]) * (if layer == 2 { t.accent_light } else { 1.0 });
-					let warm = (r(9) - 0.5) * t.warm;
-					color = [color[0] * light * (1.0 + warm), color[1] * light, color[2] * light * (1.0 - warm)];
-					let origin = sub(at, scale(heading, length / 2.0));
-					let dragged = painting.beneath(origin, normal, color);
-					painting.add(Sweep {
-						origin,
-						heading,
-						side,
-						normal,
-						half_width,
-						reach: length,
-						tolerance: tolerance(length),
-						points: path(id, length, t.curve, t.wobble, speed, t.overshoot),
-						speed,
-						color,
-						dragged,
-						opacity: t.opacity,
-						seed: id,
-						layer: layer as u8,
-						marks: look.brushes.coat.clone(),
-					});
-				}
+		let spots = candidates(mesh, layer, density, grain);
+		// How near an edge each spot sits is the slow part of setting up, so it
+		// runs on every core; the first coat keeps all its strokes and never asks.
+		let edges = if layer == 0 { vec![0.0; spots.len()] } else { parallel(&spots, |spot| (wear.edge)(spot.at, spot.normal)) };
+		for (&Candidate { at, normal, form, id }, edge) in spots.iter().zip(edges) {
+			let r = |j: u32| hash(id.wrapping_add(j));
+			// Mark economy: fine strokes gather at edges and the focus.
+			let near_focus = look.focus.map_or(0.0, |(centre, radius)| {
+				let d = sub(at, centre);
+				(1.0 - dot(d, d).sqrt() / radius.max(1e-3)).max(0.0)
+			});
+			let interest = edge.max(near_focus).min(1.0);
+			let keep = match layer {
+				0 => 1.0,
+				1 => t.mid_keep + (1.0 - t.mid_keep) * interest,
+				_ => interest.powf(t.small_power),
+			};
+			if r(2) > keep {
+				continue;
 			}
+			let speed = r(3);
+			let length = lerp(mark_length, r(4)) * (t.speed_length_min + t.speed_length * speed) * look.brush;
+			let half_width = lerp(mark_width, r(5)) * (t.speed_width_max - t.speed_width * speed) * look.brush / 2.0;
+			// Along the form, leaning the painter's way, some reversed.
+			let up = cross(normal, form);
+			let angle = t.habit + (r(6) - 0.5) * std::f64::consts::PI * (1.0 - t.follow);
+			let mut heading = add(scale(form, angle.cos()), scale(up, angle.sin()));
+			if r(7) < t.reversed {
+				heading = scale(heading, -1.0);
+			}
+			let side = cross(normal, heading);
+			// Lit from above, darker low down.
+			let mut color = coat::base_at(look, wear, base, at, normal);
+			let light = (1.0 + t.light_up * normal[2]) * (1.0 - t.light_low * (wear.low)(at)) * (1.0 + (r(8) - 0.5) * [t.shade_big, t.shade_mid, t.shade_small][layer]) * (if layer == 2 { t.accent_light } else { 1.0 });
+			let warm = (r(9) - 0.5) * t.warm;
+			color = [color[0] * light * (1.0 + warm), color[1] * light, color[2] * light * (1.0 - warm)];
+			let origin = sub(at, scale(heading, length / 2.0));
+			let dragged = painting.beneath(origin, normal, color);
+			painting.add(Sweep {
+				origin,
+				heading,
+				side,
+				normal,
+				half_width,
+				reach: length,
+				tolerance: tolerance(length),
+				points: path(id, length, t.curve, t.wobble, speed, t.overshoot),
+				limits: [0.0; 4],
+				speed,
+				color,
+				dragged,
+				opacity: t.opacity,
+				seed: id,
+				layer: layer as u8,
+				marks: look.brushes.coat.clone(),
+			});
 		}
 	}
 	lost_and_found(mesh, look, t, wear, base, &mut painting);
@@ -427,6 +520,7 @@ fn lost_and_found(mesh: &Mesh, look: &Look, t: &Tuning, wear: &Wear, base: &mut 
 					reach: length,
 					tolerance: 0.04,
 					points: path(id, length, 0.03, 0.2, 0.5, t.overshoot),
+					limits: [0.0; 4],
 					speed: 0.5,
 					color,
 					dragged: color,

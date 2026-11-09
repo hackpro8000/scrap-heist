@@ -73,9 +73,9 @@ pub enum Hand {
 
 // Where wear gathers, each 0-1: near sharp edges, in creases, low down.
 pub struct Wear<'a> {
-	pub edge: &'a dyn Fn(Vec3, Vec3) -> f64,
-	pub crease: &'a dyn Fn(Vec3, Vec3) -> f64,
-	pub low: &'a dyn Fn(Vec3) -> f64,
+	pub edge: &'a (dyn Fn(Vec3, Vec3) -> f64 + Sync),
+	pub crease: &'a (dyn Fn(Vec3, Vec3) -> f64 + Sync),
+	pub low: &'a (dyn Fn(Vec3) -> f64 + Sync),
 }
 
 fn linear(c: [f64; 3]) -> [f64; 3] {

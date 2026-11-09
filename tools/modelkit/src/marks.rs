@@ -184,6 +184,18 @@ impl Marks {
 		self.reach() * self.size_on(width)
 	}
 
+	// The furthest off a stroke's centre this motion can possibly paint, which
+	// is what lets a stroke be ruled out cheaply. Stipple's dabs thin out with
+	// distance but have no hard edge, so it has no limit. A negative lean still
+	// reaches as far as a positive one.
+	pub fn limit_on(&self, width: f64) -> f64 {
+		if self.motion == Motion::Stipple {
+			return f64::INFINITY;
+		}
+		let t = &self.tuning;
+		self.reach_on(width) + (t.lean.abs() - t.lean) * t.length * self.size_on(width)
+	}
+
 	// How much is painted at this place, 0 to 1.
 	pub fn paint(&self, place: &Place) -> f64 {
 		let t = &self.tuning;

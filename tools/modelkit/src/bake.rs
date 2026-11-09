@@ -650,9 +650,9 @@ fn to_srgb(c: f64) -> f32 {
 // the others idle while it catches up.
 const BATCH: usize = 1024;
 
-fn parallel<T: Send, F: Fn(&Texel) -> T + Sync>(texels: &[Texel], work: F) -> Vec<T> {
+pub fn parallel<I: Sync, T: Send, F: Fn(&I) -> T + Sync>(texels: &[I], work: F) -> Vec<T> {
 	let threads = std::thread::available_parallelism().map_or(4, |n| n.get());
-	let batches: Vec<&[Texel]> = texels.chunks(BATCH).collect();
+	let batches: Vec<&[I]> = texels.chunks(BATCH).collect();
 	let next = AtomicUsize::new(0);
 	let mut done: Vec<(usize, Vec<T>)> = std::thread::scope(|scope| {
 		let handles: Vec<_> = (0..threads.min(batches.len()))
