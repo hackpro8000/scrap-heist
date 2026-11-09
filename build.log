@@ -1,0 +1,28 @@
+[    0.0s] running HubTinkerer/model.luau
+[    5.6s] baking on CPU (no GPU)
+[    6.3s] shaded ToolGrips 1024×1024 in 0.75s
+[    7.2s] shaded Blueprint 1024×1024 in 0.83s
+[    9.2s] shaded Roof 1024×1024 in 1.24s
+[   13.3s] shaded RobotArm 1024×1024 in 1.38s
+[   15.7s] shaded RackTools 1024×1024 in 2.01s
+[   20.5s] shaded ToolRack 1024×1024 in 4.12s
+[   21.4s] shaded Rafters 1024×1024 in 0.38s
+[   22.5s] baked every chunk this machine claimed
+[   62.8s] shaded PartsBins 1024×1024 in 0.18s
+[   63.0s] shaded HangingSign 1024×1024 in 0.17s
+[   63.2s] shaded RoofPosts 1024×1024 in 0.17s
+[   63.5s] shaded Workbench 1024×1024 in 0.18s
+[   63.6s] shaded Cables 1024×1024 in 0.12s
+[   63.9s] shaded Anvil 1024×1024 in 0.17s
+[   64.1s] shaded Fittings 1024×1024 in 0.17s
+[   64.3s] shaded TorchAndWork 1024×1024 in 0.18s
+[   64.6s] shaded LampShade 1024×1024 in 0.16s
+[   64.8s] shaded SignEmblem 1024×1024 in 0.17s
+[   65.1s] shaded Deck 1024×1024 in 0.20s
+[   65.4s] shaded BackWall 1024×1024 in 0.19s
+[   65.6s] shaded Supplies 1024×1024 in 0.17s
+[   65.9s] shaded BinParts 1024×1024 in 0.18s
+[   65.9s] writing HubTinkerer.glb and 22 textures
+[   69.1s] rendering eye 3/8
+[   70.4s] rendering eye 6/8
+HubTinkerer: 22 parts, script 65.89s, total 72.58s
