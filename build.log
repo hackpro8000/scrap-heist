@@ -1,0 +1,19 @@
+[    0.0s] running HubBeacon/model.luau
+[    2.4s] baking on CPU (no GPU)
+[    2.6s] shaded Cable 1024×1024 in 0.19s
+[    5.1s] shaded Mast 1024×1024 in 0.57s
+[    9.3s] shaded CogBoss 1024×1024 in 0.98s
+[    9.5s] baked every chunk this machine claimed
+[   29.2s] shaded CrushedBlocks 1024×1024 in 0.33s
+[   29.4s] shaded SheetLayers 1024×1024 in 0.17s
+[   29.5s] shaded BaleStraps 1024×1024 in 0.13s
+[   29.7s] shaded Supplies 1024×1024 in 0.10s
+[   29.8s] shaded PressedJunk 1024×1024 in 0.12s
+[   30.0s] shaded Plinth 1024×1024 in 0.15s
+[   30.2s] shaded Fittings 1024×1024 in 0.16s
+[   30.3s] shaded Pipes 1024×1024 in 0.09s
+[   30.5s] shaded Cables 1024×1024 in 0.12s
+[   30.6s] shaded BigCog 1024×1024 in 0.10s
+[   30.6s] writing HubBeacon.glb and 16 textures
+[   33.8s] rendering eye 4/6
+HubBeacon: 16 parts, script 30.61s, total 35.22s
