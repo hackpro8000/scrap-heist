@@ -1,0 +1,37 @@
+bounds: 5,52,1019,1015
+A1: -
+B1: -
+C1: Frame 10%, BackLamps 3%
+D1: Frame 32%
+E1: -
+F1: -
+A2: -
+B2: -
+C2: Frame 16%, Bands 4%
+D2: Board 39%, Frame 30%, Arm 17%, Tools 8%, Bands 3%, BackLamps 2%
+E2: Frame 53%, Board 16%, Tools 6%, BackLamps 3%
+F2: Frame 15%, BackLamps 4%
+A3: Posts 6%
+B3: PostLamps 3%
+C3: Frame 14%, Crate 11%, CrateHeap 6%, CrateScrap 3%
+D3: Board 66%, Frame 14%, Arm 6%, Pad1 5%, Tools 3%, Clamp1 3%, Crate 2%
+E3: Board 50%, Panel 26%, Frame 14%, Tools 5%, Bands 4%
+F3: Frame 26%, Bands 7%
+A4: Posts 11%, Deck 4%
+B4: Deck 30%, Clamp2 22%
+C4: Cradle 70%, Crate 15%, Deck 7%, Pad2 2%
+D4: Cradle 60%, Board 13%, Clamp1 12%, Clamp3 7%, Pad3 3%
+E4: Board 39%, Drum 20%, Panel 13%, Deck 13%, Frame 13%
+F4: Frame 32%
+A5: Deck 29%, Posts 4%
+B5: Deck 86%, Cradle 3%
+C5: Cradle 56%, Deck 39%, Posts 5%
+D5: Deck 37%, Cradle 37%, Clamp3 20%, Posts 5%
+E5: Deck 66%, Drum 17%, Panel 4%
+F5: Deck 25%, Bands 6%
+A6: -
+B6: Deck 4%
+C6: Deck 42%, Posts 3%
+D6: Deck 42%, Posts 3%
+E6: Deck 4%
+F6: -
