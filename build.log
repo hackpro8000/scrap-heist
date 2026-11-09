@@ -1,0 +1,8 @@
+[    0.0s] running YardFence/model.luau
+[    0.5s] baking on CPU (no GPU)
+[    0.5s] shaded Posts 256×256 in 0.04s
+[    3.3s] baked every chunk this machine claimed
+[    5.5s] shaded Sheets 256×256 in 0.02s
+[    5.5s] shaded Fittings 256×256 in 0.01s
+[    5.5s] writing YardFence.glb and 3 textures
+YardFence: 3 parts, script 5.53s, total 6.35s
