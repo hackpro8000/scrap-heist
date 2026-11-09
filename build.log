@@ -1,0 +1,7 @@
+[    0.0s] running YardFooting/model.luau
+[    1.8s] baking on CPU (no GPU)
+[    1.9s] shaded Footing 256×256 in 0.05s
+[    4.9s] baked every chunk this machine claimed
+[    6.7s] writing YardFooting.glb and 1 textures
+[    6.9s] rendering preview of 1 parts
+YardFooting: 1 parts, script 6.68s, total 8.04s
