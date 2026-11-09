@@ -1,0 +1,10 @@
+[    0.0s] running JunkMound/model.luau
+[    0.8s] baking on CPU (no GPU)
+[    0.8s] shaded Plates 256×256 in 0.09s
+[    1.0s] shaded Tyre 256×256 in 0.15s
+[    1.5s] baked every chunk this machine claimed
+[    4.1s] shaded Heap 256×256 in 0.02s
+[    4.2s] shaded Bits 256×256 in 0.02s
+[    4.2s] writing JunkMound.glb and 4 textures
+[    4.3s] rendering preview of 4 parts
+JunkMound: 4 parts, script 4.16s, total 4.85s
