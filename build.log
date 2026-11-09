@@ -1,0 +1,13 @@
+[    0.0s] running ScrapTreeExhaust/model.luau
+[   10.6s] shaded Pipes 256×256 in 0.02s
+[   14.4s] baked every chunk this machine claimed
+[   14.7s] shaded Lashing 256×256 in 0.01s
+[   14.7s] shaded Footing 256×256 in 0.01s
+[   14.7s] shaded Mufflers 256×256 in 0.01s
+[   14.7s] writing ScrapTreeExhaust.glb and 4 textures
+[   17.7s] rendering eye 2/2
+ScrapTreeExhaust: 4 parts, script 14.70s, total 17.93s
+#f23d3d Footing
+#85a5f2 Pipes
+#7bb32d Mufflers
+#b362a8 Lashing
