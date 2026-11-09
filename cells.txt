@@ -1,0 +1,37 @@
+bounds: 127,121,897,991
+A1: -
+B1: Crown 29%, Hoses 13%, Beacons 4%
+C1: Cylinder 36%, Hoses 8%, Crown 5%, Collars 5%
+D1: Cylinder 12%
+E1: -
+F1: -
+A2: Crown 2%
+B2: Crown 62%, Columns 23%, Bands 13%
+C2: Crown 59%, Cylinder 38%, Columns 3%
+D2: Crown 67%, Cylinder 15%, Beacons 2%
+E2: Crown 26%, Beacons 2%
+F2: -
+A3: -
+B3: Columns 67%, Platen 28%
+C3: Platen 44%, Ram 38%, Crown 9%, Columns 8%
+D3: Crown 45%, Columns 28%, Bands 18%, Ram 5%, Platen 5%
+E3: Columns 22%, Crown 17%, Bands 11%
+F3: -
+A4: Plinth 11%
+B4: Columns 45%, Anvil 19%, Pile 14%, Bands 9%, Plinth 8%
+C4: PileJunk 39%, Pile 27%, Platen 25%, Anvil 8%
+D4: Columns 81%, PileJunk 10%, Platen 7%, Cage 2%
+E4: Columns 42%, Cage 3%
+F4: -
+A5: Plinth 21%
+B5: Plinth 36%, Tray 15%, Medal 14%, Anvil 3%
+C5: Plinth 31%, Anvil 29%, Tray 21%, Medal 14%
+D5: Console 34%, Columns 26%, Plinth 18%, Bands 11%, Anvil 8%
+E5: Console 63%, Plinth 22%, Button 3%
+F5: Plinth 30%
+A6: -
+B6: -
+C6: Plinth 13%
+D6: Plinth 52%, Console 3%
+E6: Plinth 38%, Console 8%
+F6: Plinth 7%
