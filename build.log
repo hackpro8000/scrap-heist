@@ -1,0 +1,36 @@
+[    0.0s] running HubBeacon/model.luau
+[    2.5s] baking on CPU (no GPU)
+[    2.8s] shaded SheetLayers 1024×1024 in 0.43s
+[    5.2s] shaded PressedJunk 1024×1024 in 0.93s
+[    8.8s] shaded BigCog 1024×1024 in 0.70s
+[    9.0s] baked every chunk this machine claimed
+[   21.9s] shaded CrushedBlocks 1024×1024 in 0.38s
+[   22.0s] shaded Cable 1024×1024 in 0.11s
+[   22.2s] shaded BaleStraps 1024×1024 in 0.15s
+[   22.5s] shaded Mast 1024×1024 in 0.21s
+[   22.6s] shaded Supplies 1024×1024 in 0.13s
+[   23.0s] shaded Plinth 1024×1024 in 0.19s
+[   23.2s] shaded Fittings 1024×1024 in 0.20s
+[   23.4s] shaded Pipes 1024×1024 in 0.14s
+[   23.5s] shaded Cables 1024×1024 in 0.15s
+[   23.7s] shaded CogBoss 1024×1024 in 0.15s
+[   23.8s] writing HubBeacon.glb and 16 textures
+[   24.3s] rendering preview of 16 parts
+[   29.6s] rendering eye 5/6
+HubBeacon: 16 parts, script 23.82s, total 30.63s
+#f23d3d Plinth
+#85a5f2 CrushedBlocks
+#7bb32d SheetLayers
+#b362a8 BaleStraps
+#3df2d4 PressedJunk
+#f2c085 Mast
+#4e2db3 BigCog
+#66b362 CogBoss
+#f23d79 BeaconLamp
+#85c9f2 Pipes
+#a8b32d Cable
+#a262b3 Fittings
+#3df297 Supplies
+#f29c85 Cables
+#2d38b3 Bulbs
+#80b362 Spotlights
