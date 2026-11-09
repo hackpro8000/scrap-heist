@@ -175,13 +175,29 @@ A layout is uploaded one object at a time, and only the objects that changed:
    build result has gone (`scripts/standby-previews.sh`), so renders never
    hold a build or its uploads back. Each lands in
    `art/models/<Name>/preview.png` and `views.png` as it arrives, and the
-   client waits for the last.
+   client waits for the last. Finished pictures come back through GitHub
+   (`preview-results/` branches), not the tunnel, which only carries short
+   messages for previews. When a model is shared between machines, each
+   claims texture chunks from one queue until none are left (`modelkit
+   --bake-only --work-port`), so a machine that finishes early takes more,
+   pushes those paint layers to its `build-bakes/<Name>-<i>-<n>` branch and
+   fetches everyone else's, so no two machines bake the same texture. Then
+   they claim the views from a queue the same way. A layer that doesn't arrive is baked
+   by the render, so a failed swap costs time, never a wrong picture.
    Its width grows by 0.5 per round of successes up to 64, halves when Roblox
    turns a request away (waiting out `Retry-After`), and is kept in
    `art/models/ServerMap/upload-width.txt` for the next run. Nothing polls.
    The session needs the Roblox key (`ROBLOX_API_KEY`, or
    `~/.config/scrap-heist/roblox-api-key`); `--dry-upload` fakes uploads for
    tests (never merge a dry run's results).
+   While a job runs, each machine reports its stage and last log line every
+   10 s. `send-build.sh` prints a summary every 30 s and a `STALL S<i>` line
+   naming any machine with no new log line for 3 minutes or no report for
+   60 s (`RECOVERED S<i>` when it comes back);
+   `scripts/coordinator.sh machines` shows each machine. Agents redirect
+   `send-build.sh` to a file and watch it with Monitor, never through `tail`,
+   so progress and stalls reach the session unprompted. A machine whose
+   connection drops mid-job sends its result on the new connection.
    A session that can't connect out starts standby with `--on-machine`:
    machine 1 runs the coordinator and does the uploads, the others reach it
    over the tailnet (the repo's `TS_AUTHKEY` secret), and the session posts

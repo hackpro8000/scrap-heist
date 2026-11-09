@@ -48,6 +48,7 @@ mod image;
 mod marks;
 mod mesh;
 mod progress;
+mod work;
 mod render;
 
 use std::cell::{Cell, RefCell};
@@ -374,35 +375,47 @@ impl UserData for MeshHandle {
 					group.push(handle.borrow::<MeshHandle>()?.0.clone());
 				}
 			}
-			let borrowed: Vec<_> = occluders.iter().map(|m| m.borrow()).collect();
-			let refs: Vec<&Mesh> = borrowed.iter().map(|m| &**m).collect();
-			let borrowed_group: Vec<_> = group.iter().map(|m| m.borrow()).collect();
-			let group_refs: Vec<&Mesh> = borrowed_group.iter().map(|m| &**m).collect();
-			let painted = bake::ImageSampler::new(&mesh, &image.borrow());
-			let mut failed = None;
-			let mut base = |p: mesh::Vec3, n: mesh::Vec3| -> [f64; 3] {
-				let Some(paint) = &paint else {
-					return painted.color(p, n);
-				};
-				match paint.call::<(f64, f64, f64)>((p[0], p[1], p[2], n[0], n[1], n[2])) {
-					Ok((r, g, b)) => [r, g, b],
-					Err(error) => {
-						failed.get_or_insert(error);
-						[1.0, 0.0, 1.0]
-					}
-				}
-			};
-			let source = cache::Source { custom, salt };
-			let started = Instant::now();
-			bake::paint_shading(&mesh, &group_refs, &refs, &mut image.borrow_mut(), &shading, &look, &mut base, &source);
 			let name = options.as_ref().map(|o| o.get::<Option<String>>("name")).transpose()?.flatten().unwrap_or_default();
-			let (width, height) = (image.borrow().width, image.borrow().height);
-			progress::say(&format!("shaded {name} {width}×{height} in {:.2}s", started.elapsed().as_secs_f64()));
-			match failed {
-				Some(error) => Err(error),
-				None => Ok(()),
+			let source = cache::Source { custom, salt };
+			if cache::bake_only() {
+				let chunk = cache::bake_chunk(&name, &mesh);
+				let mesh = (*mesh).clone();
+				work::defer(chunk, Box::new(move || paint_part(&name, &mesh, &group, &occluders, &image, &shading, &look, paint.as_ref(), &source).map_err(|e| e.to_string())));
+				return Ok(());
 			}
+			paint_part(&name, &mesh, &group, &occluders, &image, &shading, &look, paint.as_ref(), &source)
 		});
+	}
+}
+
+// Paints one part's shading onto its image.
+#[allow(clippy::too_many_arguments)]
+fn paint_part(name: &str, mesh: &Mesh, group: &[Rc<RefCell<Mesh>>], occluders: &[Rc<RefCell<Mesh>>], image: &Rc<RefCell<Image>>, shading: &bake::Shading, look: &coat::Look, paint: Option<&mlua::Function>, source: &cache::Source) -> mlua::Result<()> {
+	let borrowed: Vec<_> = occluders.iter().map(|m| m.borrow()).collect();
+	let refs: Vec<&Mesh> = borrowed.iter().map(|m| &**m).collect();
+	let borrowed_group: Vec<_> = group.iter().map(|m| m.borrow()).collect();
+	let group_refs: Vec<&Mesh> = borrowed_group.iter().map(|m| &**m).collect();
+	let painted = bake::ImageSampler::new(mesh, &image.borrow());
+	let mut failed = None;
+	let mut base = |p: mesh::Vec3, n: mesh::Vec3| -> [f64; 3] {
+		let Some(paint) = paint else {
+			return painted.color(p, n);
+		};
+		match paint.call::<(f64, f64, f64)>((p[0], p[1], p[2], n[0], n[1], n[2])) {
+			Ok((r, g, b)) => [r, g, b],
+			Err(error) => {
+				failed.get_or_insert(error);
+				[1.0, 0.0, 1.0]
+			}
+		}
+	};
+	let started = Instant::now();
+	bake::paint_shading(mesh, &group_refs, &refs, &mut image.borrow_mut(), shading, look, &mut base, source);
+	let (width, height) = (image.borrow().width, image.borrow().height);
+	progress::say(&format!("shaded {name} {width}×{height} in {:.2}s", started.elapsed().as_secs_f64()));
+	match failed {
+		Some(error) => Err(error),
+		None => Ok(()),
 	}
 }
 
@@ -637,6 +650,7 @@ struct Review {
 	sides: Vec<render::Side>,
 	grid: Option<f64>,
 	share: Option<(usize, usize)>,
+	work_port: Option<u16>,
 }
 
 fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[(mesh::Vec3, mesh::Vec3)], shown_clip: Option<&str>, texel_scale: f64, detail_eyes: &[(mesh::Vec3, mesh::Vec3)], chunks: bool, shard: Option<(usize, usize)>, review: &Review) -> Result<(), String> {
@@ -673,6 +687,11 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 	// A shard uses only part of the cache, so pruning would throw away the
 	// other shards' entries, unless the cache is the shard's own
 	// (MODELKIT_PRUNE=1, as the build-map-shards workflow sets).
+	if cache::bake_only() {
+		work::bake_claimed(review.work_port.ok_or("--bake-only needs --work-port")?)?;
+		progress::say("baked every chunk this machine claimed");
+		return Ok(());
+	}
 	if shard.is_none() || std::env::var("MODELKIT_PRUNE").is_ok_and(|v| v == "1") {
 		cache::prune(dir, &used.borrow());
 	}
@@ -716,12 +735,18 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 	}
 	let shown: Vec<&Part> = parts.iter().filter(|p| p.preview).collect();
 	// Every render below counts as one job, in a fixed order; with a share
-	// this machine makes only its jobs, so machines split one model's renders.
+	// this machine makes only its jobs, so machines split one model's renders,
+	// and with a work port it claims each next job as it comes free.
+	let total = shard.is_none() as usize + (review.parts && shard.is_none()) as usize + review.sides.len() + turntable + closeups.len() + eyes.len();
+	let claims = RefCell::new(review.work_port.map(|port| work::RenderClaims::connect(port, total)).transpose()?);
 	let job = std::cell::Cell::new(0usize);
 	let mine = || {
 		let at = job.get();
 		job.set(at + 1);
-		review.share.map_or(true, |(index, count)| at % count == index - 1)
+		match claims.borrow_mut().as_mut() {
+			Some(claims) => claims.mine(at),
+			None => review.share.map_or(true, |(index, count)| at % count == index - 1),
+		}
 	};
 	// A shard holds a scattered share of a layout, so nobody looks at its
 	// preview; skip the render. Asked-for views (turntable, closeups, eyes) still run.
@@ -853,10 +878,23 @@ fn write_chunks(dir: &Path, name: &str, tag: &str, parts: &[Part], rigged: bool)
 	Ok(())
 }
 
+// A flag's INDEX/COUNT value, or None when the flag isn't given.
+fn share_flag(args: &[String], flag: &str) -> Option<(usize, usize)> {
+	let at = args.iter().position(|a| a == flag)?;
+	let parsed = args.get(at + 1).and_then(|s| s.split_once('/')).and_then(|(i, n)| Some((i.parse::<usize>().ok()?, n.parse::<usize>().ok()?)));
+	match parsed {
+		Some((index, count)) if index >= 1 && index <= count => Some((index, count)),
+		_ => {
+			eprintln!("error: {flag} needs INDEX/COUNT with 1 <= INDEX <= COUNT, like 3/8");
+			std::process::exit(2);
+		}
+	}
+}
+
 fn main() {
 	let args: Vec<String> = std::env::args().skip(1).collect();
 	let Some(dir) = args.first() else {
-		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--eye EX,EY,EZ,TX,TY,TZ]... [--clip NAME] [--parts] [--view SIDE]... [--grid STUDS] [--chunks] [--shard INDEX/COUNT] [--renders INDEX/COUNT]");
+		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--eye EX,EY,EZ,TX,TY,TZ]... [--clip NAME] [--parts] [--view SIDE]... [--grid STUDS] [--chunks] [--shard INDEX/COUNT] [--renders INDEX/COUNT] [--bake-only] [--work-port PORT]");
 		std::process::exit(2);
 	};
 	let turntable = match args.iter().position(|a| a == "--turntable") {
@@ -895,19 +933,7 @@ fn main() {
 	let texel_scale = if max_detail { 64.0 } else if preview { 0.5 } else { 1.0 };
 	let detail_eyes = if preview { eyes.clone() } else { Vec::new() };
 	let chunks = args.iter().any(|a| a == "--chunks");
-	let shard = match args.iter().position(|a| a == "--shard") {
-		Some(at) => {
-			let parsed = args.get(at + 1).and_then(|s| s.split_once('/')).and_then(|(i, n)| Some((i.parse::<usize>().ok()?, n.parse::<usize>().ok()?)));
-			match parsed {
-				Some((index, count)) if index >= 1 && index <= count => Some((index, count)),
-				_ => {
-					eprintln!("error: --shard needs INDEX/COUNT with 1 <= INDEX <= COUNT, like 3/8");
-					std::process::exit(2);
-				}
-			}
-		}
-		None => None,
-	};
+	let shard = share_flag(&args, "--shard");
 	let mut sides = Vec::new();
 	for (at, _) in args.iter().enumerate().filter(|(_, a)| *a == "--view") {
 		let Some(side) = args.get(at + 1).and_then(|name| render::Side::parse(name)) else {
@@ -917,20 +943,12 @@ fn main() {
 		sides.push(side);
 	}
 	let grid = args.iter().position(|a| a == "--grid").and_then(|at| args.get(at + 1)).and_then(|n| n.parse().ok()).filter(|&n: &f64| n > 0.0);
-	let share = match args.iter().position(|a| a == "--renders") {
-		Some(at) => {
-			let parsed = args.get(at + 1).and_then(|s| s.split_once('/')).and_then(|(i, n)| Some((i.parse::<usize>().ok()?, n.parse::<usize>().ok()?)));
-			match parsed {
-				Some((index, count)) if index >= 1 && index <= count => Some((index, count)),
-				_ => {
-					eprintln!("error: --renders needs INDEX/COUNT with 1 <= INDEX <= COUNT, like 3/8");
-					std::process::exit(2);
-				}
-			}
-		}
-		None => None,
-	};
-	let review = Review { parts: args.iter().any(|a| a == "--parts"), sides, grid, share };
+	let share = share_flag(&args, "--renders");
+	if args.iter().any(|a| a == "--bake-only") {
+		cache::set_bake_only();
+	}
+	let work_port = args.iter().position(|a| a == "--work-port").and_then(|at| args.get(at + 1)).and_then(|p| p.parse().ok());
+	let review = Review { parts: args.iter().any(|a| a == "--parts"), sides, grid, share, work_port };
 	if let Err(error) = run(Path::new(dir), turntable, size, &closeups, &eyes, clip.map(|c| c.as_str()), texel_scale, &detail_eyes, chunks, shard, &review) {
 		eprintln!("error: {error}");
 		std::process::exit(1);

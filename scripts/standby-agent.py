@@ -37,11 +37,18 @@ import websockets
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, os.path.join(ROOT, "tools", "coordinator"))
+import commits  # noqa: E402
 import uploader as uploading  # noqa: E402
 import wire  # noqa: E402
 
 MAX_MESSAGE = 64 * 1024 * 1024
 LOST_MINUTES = 3
+HEARTBEAT_SECONDS = 10
+SWAP_WAIT_SECONDS = 60
+CLAIM_WAIT_SECONDS = 15
+CLAIM_TRIES = 4
+LOG_LINES_KEPT = 200
+REQUIRED_TOOLS = ("rg", "sd", "jq")
 AUDIENCE = "scrap-heist-coordinator"
 
 
@@ -57,6 +64,47 @@ def say(message):
 	print(f"agent: {message}", file=sys.stderr, flush=True)
 	if forward:
 		forward(message)
+
+
+def ensure_tools():
+	"""Here rather than as a workflow step: a machine runs the workflow file
+	from main but this agent from the pushed work in progress, and a machine
+	that can't reach a release still takes tasks (session() names what's missing)."""
+	os.environ["PATH"] = os.path.expanduser("~/.local/bin") + os.pathsep + os.environ["PATH"]
+	subprocess.run([os.path.join(ROOT, "scripts/ensure-tools.sh")], capture_output=True)
+
+
+def trim_log(path):
+	"""A render's log runs to hundreds of KB; its end says what went wrong."""
+	try:
+		with open(path, errors="replace") as file:
+			lines = file.readlines()
+	except OSError:
+		return
+	if len(lines) > LOG_LINES_KEPT:
+		with open(path, "w") as file:
+			file.writelines(lines[-LOG_LINES_KEPT:])
+
+
+def push_preview(folder, share):
+	"""The commit holding a finished preview's files, or "" if the push failed."""
+	branch = "preview-results/" + share.replace("@", "-")
+	pushed = subprocess.run(["scripts/push-folder.sh", folder, branch, f"preview {share}"], capture_output=True, text=True)
+	if pushed.returncode != 0:
+		say(f"could not push preview {share}: {pushed.stderr.strip()[-200:]}")
+		return ""
+	return pushed.stdout.strip()
+
+
+def last_line(path):
+	try:
+		with open(path, "rb") as file:
+			file.seek(0, os.SEEK_END)
+			file.seek(max(0, file.tell() - 2000))
+			lines = file.read().decode("utf-8", "replace").splitlines()
+	except OSError:
+		return ""
+	return next((line.strip() for line in reversed(lines) if line.strip()), "")[:200]
 
 
 def identity_token():
@@ -78,7 +126,12 @@ class Agent:
 		self.built = {}  # task id -> results folder
 		self.by_branch = {}  # task id -> whether its objects went to a branch
 		self.git_lock = threading.Lock()
-		self.building = set()
+		self.handling = set()  # task ids with a handle() still running
+		self.claims = {}  # claim number -> future for the job the coordinator gives it
+		self.claim_number = 0
+		self.timings = {}  # (task id, model) -> seconds per stage, reported when the model is done
+		self.bakes_ready = {}  # (task id, model) -> future for the commits of every machine's bakes
+		self.activities = {}  # task id -> what this machine is doing for it (heartbeat() reports them)
 		self.stopped = False
 		self.uploader = None
 		self.socket = None
@@ -105,7 +158,41 @@ class Agent:
 			say(f"task {identity}: could not check out {ref}")
 		return out
 
-	async def send_results(self, socket, identity, out):
+	async def send(self, message):
+		"""Sends on whichever connection is live now. session() replaces
+		self.socket on every reconnect, so a connection that drops during a
+		long render costs a wait, not the result."""
+		while True:
+			try:
+				await self.socket.send(message)
+				return
+			except websockets.ConnectionClosed:
+				await asyncio.sleep(1)
+
+	def begin(self, identity, stage, log, model=""):
+		self.activities[identity] = {"stage": stage, "model": model, "log": log, "since": time.monotonic()}
+
+	def report(self, identity, work):
+		"""One heartbeat: the stage, the log's last line, and how long the log
+		has gone without a new one (a bake's line comes only when it ends)."""
+		seconds = time.monotonic() - work["since"]
+		try:
+			quiet = min(seconds, time.time() - os.path.getmtime(work["log"]))
+		except OSError:
+			quiet = seconds
+		return json.dumps({"type": "progress", "task": identity, "stage": work["stage"], "model": work["model"],
+			"line": last_line(work["log"]), "quiet": round(quiet), "seconds": round(seconds)})
+
+	async def heartbeat(self, socket):
+		try:
+			while True:
+				await asyncio.sleep(HEARTBEAT_SECONDS)
+				for identity, work in list(self.activities.items()):
+					await socket.send(self.report(identity, work))
+		except websockets.ConnectionClosed:
+			pass  # session() ends too; the next connection starts its own
+
+	async def send_results(self, identity, out):
 		files = []
 		for directory, _, names in os.walk(out):
 			for name in names:
@@ -121,26 +208,31 @@ class Agent:
 		for relative in files:
 			with open(os.path.join(out, relative), "rb") as file:
 				data = file.read()
-			await socket.send(wire.pack({"type": "file", "task": identity, "path": relative, "size": len(data)}, data))
+			await self.send(wire.pack({"type": "file", "task": identity, "path": relative, "size": len(data)}, data))
 		summary = open(os.path.join(out, "summary.txt")).read() if os.path.isfile(os.path.join(out, "summary.txt")) else "status=FAILED\n"
-		await socket.send(json.dumps({"type": "done", "task": identity, "summary": summary}))
+		await self.send(json.dumps({"type": "done", "task": identity, "summary": summary}))
 
-	async def handle(self, socket, identity, text):
+	async def handle(self, identity, text):
 		self.idle_until = time.monotonic() + self.idle_seconds
 		self.by_branch[identity] = "hand-over=branch" in text
-		if identity in self.building:
+		# The coordinator posts a machine's unfinished tasks again when it
+		# reconnects. The run already going answers on the new connection.
+		if identity in self.handling:
 			return
-		if identity not in self.built:
-			self.building.add(identity)
-			try:
+		self.handling.add(identity)
+		try:
+			if identity not in self.built:
+				self.begin(identity, "build", os.path.join("results", identity, "build.log"))
 				self.built[identity] = await asyncio.to_thread(self.run_task, identity, text)
-			finally:
-				self.building.discard(identity)
-		await self.send_results(socket, identity, self.built[identity])
-		self.idle_until = time.monotonic() + self.idle_seconds
-		await self.send_previews(socket, identity, text)
+			await self.send_results(identity, self.built[identity])
+			self.idle_until = time.monotonic() + self.idle_seconds
+			await self.send_previews(identity, text)
+		finally:
+			self.activities.pop(identity, None)
+			self.handling.discard(identity)
+		await self.send(json.dumps({"type": "progress", "task": identity, "stage": "done", "model": "", "line": "", "quiet": 0, "seconds": 0}))
 
-	async def send_previews(self, socket, identity, text):
+	async def send_previews(self, identity, text):
 		"""Renders this shard's share of the task's previews once its build
 		result has gone (scripts/standby-previews.sh), sends them, then says
 		so, even with nothing to render, so the coordinator can count shards."""
@@ -154,14 +246,113 @@ class Agent:
 		for model in share:
 			folder = os.path.join(out, "previews", model)
 			if not os.path.isdir(folder):
-				await asyncio.to_thread(subprocess.run, ["scripts/standby-previews.sh", model, "1", "1", out], capture_output=True)
-			for name in sorted(os.listdir(folder)) if os.path.isdir(folder) else []:
-				with open(os.path.join(folder, name), "rb") as file:
-					data = file.read()
-				await socket.send(wire.pack({"type": "file", "task": identity, "path": os.path.join("previews", model, name), "size": len(data)}, data))
-			await socket.send(json.dumps({"type": "preview-ready", "task": identity, "name": model}))
-		await socket.send(json.dumps({"type": "previews-done", "task": identity}))
+				env, server = dict(os.environ), None
+				if "@" in model and int(model.rsplit("@", 1)[1]) > 1:
+					server = await self.claim_server(identity, model.split("@")[0])
+					env["WORK_PORT"] = str(server.sockets[0].getsockname()[1])
+					await self.share_bakes(identity, model, out, env)
+				self.begin(identity, "render", os.path.join(folder, "build.log"), model)
+				render_started = time.monotonic()
+				await asyncio.to_thread(subprocess.run, ["scripts/standby-previews.sh", model, "1", "1", out], capture_output=True, env=env)
+				if server:
+					server.close()
+				timing = self.timings.setdefault((identity, model.split("@")[0]), {})
+				timing["render_start"], timing["render_end"] = render_started, time.monotonic()
+			trim_log(os.path.join(folder, "build.log"))
+			pushed = await asyncio.to_thread(push_preview, folder, model) if os.path.isdir(folder) else ""
+			if pushed:
+				await self.send(json.dumps({"type": "preview-pushed", "task": identity, "name": model, "commit": pushed}))
+			else:
+				# GitHub turned the push away: the tunnel is slower, but it works.
+				for name in sorted(os.listdir(folder)) if os.path.isdir(folder) else []:
+					with open(os.path.join(folder, name), "rb") as file:
+						data = file.read()
+					await self.send(wire.pack({"type": "file", "task": identity, "path": os.path.join("previews", model, name), "size": len(data)}, data))
+				await self.send(json.dumps({"type": "preview-ready", "task": identity, "name": model}))
+			self.report_timing(identity, model)
+		await self.send(json.dumps({"type": "previews-done", "task": identity}))
 		self.idle_until = time.monotonic() + self.idle_seconds
+
+	def report_timing(self, identity, share):
+		timing = self.timings.pop((identity, share.split("@")[0]), None)
+		if not timing or "bake_start" not in timing:
+			return
+		gap = lambda start, end: f"{timing[end] - timing[start]:.1f}" if start in timing and end in timing else "-"
+		say(f"timing {share} script={gap('bake_start', 'first_bake')} chunks={gap('first_bake', 'last_bake')} "
+			f"claims={timing.get('bake_claims', 0)} claim_wait={timing.get('bake_claim_wait', 0):.1f} "
+			f"push={gap('last_bake', 'bake_end')} wait={gap('pushed', 'ready')} fetch={gap('ready', 'fetched')} "
+			f"render={gap('render_start', 'render_end')} send={time.monotonic() - timing.get('render_end', time.monotonic()):.1f}")
+
+	async def claim(self, identity, model, kind, total):
+		"""The next job of this kind for this machine, -1 when none are left.
+		A retry repeats the number, so a lost answer can't lose a job."""
+		self.claim_number += 1
+		number = self.claim_number
+		timing = self.timings.setdefault((identity, model), {})
+		asked = time.monotonic()
+		timing.setdefault(f"first_{kind}", asked)
+		message = json.dumps({"type": "claim", "task": identity, "name": model, "kind": kind, "total": total, "id": number})
+		for _ in range(CLAIM_TRIES):
+			self.claims[number] = asyncio.get_running_loop().create_future()
+			await self.send(message)
+			try:
+				job = await asyncio.wait_for(self.claims[number], CLAIM_WAIT_SECONDS)
+				now = time.monotonic()
+				timing[f"last_{kind}"] = now
+				timing[f"{kind}_claims"] = timing.get(f"{kind}_claims", 0) + 1
+				timing[f"{kind}_claim_wait"] = timing.get(f"{kind}_claim_wait", 0) + now - asked
+				return job
+			except asyncio.TimeoutError:
+				continue
+			finally:
+				self.claims.pop(number, None)
+		return -1
+
+	async def claim_server(self, identity, model):
+		"""A local port where this machine's engine asks for its next job."""
+
+		async def serve(reader, writer):
+			while line := await reader.readline():
+				kind, total = line.decode().split()
+				writer.write(f"{await self.claim(identity, model, kind, int(total))}\n".encode())
+				await writer.drain()
+			writer.close()
+
+		return await asyncio.start_server(serve, "127.0.0.1", 0)
+
+	async def share_bakes(self, identity, share, out, env):
+		"""Bakes the texture chunks this machine claims and takes every other
+		machine's, so no two machines bake the same texture. Anything
+		that doesn't arrive is simply baked by the render that follows."""
+		model = share.split("@")[0]
+		folder = os.path.join(out, "bakes", share)
+		log = os.path.join(folder, "build.log")
+		self.begin(identity, "bake", log, share)
+		ready = self.bakes_ready[(identity, model)] = asyncio.get_running_loop().create_future()
+		started = time.monotonic()
+		await asyncio.to_thread(subprocess.run, ["scripts/standby-previews.sh", share, "1", "1", out],
+			capture_output=True, env={**env, "BAKE_ONLY": "1"})
+		baked = time.monotonic() - started
+		timing = self.timings.setdefault((identity, model), {})
+		timing["bake_start"], timing["bake_end"] = started, started + baked
+		path = os.path.join(folder, "commit.txt")
+		mine = open(path).read().strip() if os.path.isfile(path) else ""
+		await self.send(json.dumps({"type": "bakes-pushed", "task": identity, "share": share, "commit": mine}))
+		self.begin(identity, "swap", log, share)
+		timing["pushed"] = time.monotonic()
+		try:
+			commits = await asyncio.wait_for(ready, max(SWAP_WAIT_SECONDS, baked * 4))
+		except asyncio.TimeoutError:
+			say(f"task {identity}: could not get every machine's bakes of {model} in time; the render bakes what's missing")
+			return
+		finally:
+			self.bakes_ready.pop((identity, model), None)
+		timing["ready"] = time.monotonic()
+		cache = os.path.join("art", "models", model, ".cache")
+		fetched = await asyncio.gather(*[asyncio.to_thread(self.fetch_objects, commit, cache) for commit in commits if commit != mine], return_exceptions=True)
+		timing["fetched"] = time.monotonic()
+		for error in [result for result in fetched if isinstance(result, Exception)]:
+			say(f"task {identity}: could not fetch bakes of {model}: {error}")
 
 	def answer(self, identity, asset, error):
 		"""From the uploader's threads: send the result on the live socket."""
@@ -173,28 +364,9 @@ class Agent:
 			loop.call_soon_threadsafe(lambda: asyncio.ensure_future(socket.send(message)))
 
 	def fetch_objects(self, commit, into):
-		"""Machine 1: takes a builder's objects from its GitHub branch commit
-		into a bare repository of its own for that commit, so every machine's
-		objects download side by side, each on its own connection (one fetch
-		is one stream; git refuses two fetches into one repository at once).
-		A failed fetch is tried again before it counts."""
-		store = os.path.join(os.getcwd(), ".objects-store", commit)
-		if not os.path.isdir(store):
-			origin = subprocess.run(["git", "remote", "get-url", "origin"], capture_output=True, text=True).stdout.strip()
-			subprocess.run(["git", "init", "-q", "--bare", store], check=True)
-			subprocess.run(["git", "-C", store, "remote", "add", "origin", origin], check=True)
-		for attempt in range(3):
-			fetched = subprocess.run(["git", "-C", store, "fetch", "-q", "--depth=1", "origin", commit], capture_output=True, text=True)
-			if fetched.returncode == 0:
-				break
-			time.sleep(0.5 * (attempt + 1))
-		else:
-			raise RuntimeError(f"fetch of {commit[:8]} failed: {fetched.stderr.strip()[-200:]}")
-		os.makedirs(into, exist_ok=True)
-		archive = subprocess.Popen(["git", "-C", store, "archive", commit], stdout=subprocess.PIPE)
-		subprocess.run(["tar", "-x", "-C", into], stdin=archive.stdout, check=True)
-		archive.wait()
-		shutil.rmtree(store, ignore_errors=True)
+		"""Machine 1 takes a builder's objects, and every machine the others'
+		bakes, each from a GitHub commit."""
+		commits.fetch_into(os.getcwd(), os.path.join(os.getcwd(), ".objects-store"), commit, into)
 
 	async def receive_fetch(self, socket, event):
 		"""Machine 1: a builder pushed objects; fetch them and upload the ones asked for."""
@@ -258,26 +430,41 @@ class Agent:
 				loop.call_soon_threadsafe(lambda: asyncio.ensure_future(socket.send(json.dumps({"type": "log", "text": text}))))
 
 			forward = forward_line
-			async for message in socket:
-				if isinstance(message, bytes):
-					header, data = wire.unpack(message)
-					try:
-						await self.receive_upload(socket, header, data)
-					except Exception as error:
-						say(f"upload {header.get('id')}: could not start: {error}")
-						await socket.send(json.dumps({"type": "uploaded", "id": header.get("id"), "error": str(error)}))
-					continue
-				event = json.loads(message)
-				if event["type"] == "uploader":
-					self.start_width, self.start_known = event.get("width"), event.get("known")
-					say(f"this machine uploads for the coordinator, starting {self.start_width or 'fresh'} at once")
-				elif event["type"] == "fetch-objects":
-					asyncio.create_task(self.receive_fetch(socket, event))
-				elif event["type"] == "task":
-					asyncio.create_task(self.handle(socket, event["id"], event["task"]))
-				elif event["type"] == "stop":
-					self.stopped = True
-					return
+			lacking = [tool for tool in REQUIRED_TOOLS if not shutil.which(tool)]
+			if lacking:
+				say(f"could not find {', '.join(lacking)} on this machine")
+			beat = asyncio.create_task(self.heartbeat(socket))
+			try:
+				async for message in socket:
+					if isinstance(message, bytes):
+						header, data = wire.unpack(message)
+						try:
+							await self.receive_upload(socket, header, data)
+						except Exception as error:
+							say(f"upload {header.get('id')}: could not start: {error}")
+							await socket.send(json.dumps({"type": "uploaded", "id": header.get("id"), "error": str(error)}))
+						continue
+					event = json.loads(message)
+					if event["type"] == "uploader":
+						self.start_width, self.start_known = event.get("width"), event.get("known")
+						say(f"this machine uploads for the coordinator, starting {self.start_width or 'fresh'} at once")
+					elif event["type"] == "fetch-objects":
+						asyncio.create_task(self.receive_fetch(socket, event))
+					elif event["type"] == "task":
+						asyncio.create_task(self.handle(event["id"], event["task"]))
+					elif event["type"] == "claimed":
+						claim = self.claims.get(event["id"])
+						if claim and not claim.done():
+							claim.set_result(event["job"])
+					elif event["type"] == "bakes-ready":
+						ready = self.bakes_ready.get((event["task"], event["name"]))
+						if ready and not ready.done():
+							ready.set_result(event["commits"])
+					elif event["type"] == "stop":
+						self.stopped = True
+						return
+			finally:
+				beat.cancel()
 
 	async def watch_clock(self):
 		while not self.stopped:
@@ -289,6 +476,7 @@ class Agent:
 
 	async def main(self):
 		global forward
+		await asyncio.to_thread(ensure_tools)
 		self.backoff = 1
 		clock = asyncio.create_task(self.watch_clock())
 		lost_since = None

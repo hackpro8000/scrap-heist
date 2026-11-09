@@ -18,7 +18,9 @@
 # the model is baked here as usual, but only every n-th render from the
 # i-th is made (modelkit --renders i/n), into <results>/previews/<Name>@<i>@<n>/;
 # the coordinator merges the shares back into one folder. So one model's
-# renders spread over every machine.
+# renders spread over every machine, each claiming the next job as it comes
+# free. Each machine bakes only the textures it claimed first (BAKE_ONLY=1, modelkit --bake-only) and takes the rest from
+# the others, so no two bake the same one; scripts/standby-agent.py runs that.
 
 set -uo pipefail
 
@@ -27,12 +29,26 @@ index="${2:?shard index required}"
 count="${3:?shard count required}"
 out="${4:?results folder required}"
 
+# Pushes the paint layers this run just baked, alone on a branch of their own,
+# and leaves the commit in <dir>/commit.txt for the other machines to fetch.
+publish_bakes() {
+	local model="$1" dir="$2" name="$3" fresh
+	fresh="$(mktemp -d -p "${dir}")"
+	find "art/models/${model}/.cache" -type f -newer "${dir}/started" -exec cp -l -t "${fresh}" {} + 2> /dev/null
+	if [ -n "$(ls -A "${fresh}")" ]; then
+		scripts/push-folder.sh "${fresh}" "build-bakes/${name//@/-}" "bakes ${name}" > "${dir}/commit.txt" || rm -f "${dir}/commit.txt"
+		echo "pushed $(ls -A "${fresh}" | wc -l) layers, $(du -shL "${fresh}" | cut -f1)" >> "${dir}/build.log"
+	fi
+	rm -rf "${fresh}"
+}
+
 IFS=, read -ra list <<< "${names}"
 n=0
 for name in "${list[@]}"; do
 	n=$((n + 1))
 	[ $(((n - 1) % count + 1)) -eq "${index}" ] || continue
 	dir="${out}/previews/${name}"
+	[ -z "${BAKE_ONLY:-}" ] || dir="${out}/bakes/${name}"
 	mkdir -p "${dir}"
 	model="${name%%@*}"
 	share=()
@@ -40,6 +56,8 @@ for name in "${list[@]}"; do
 		part="${name#*@}"
 		share=(--renders "${part%@*}/${part#*@}")
 	fi
+	# With the agent's work port, machines claim each next job instead.
+	[ -z "${WORK_PORT:-}" ] || share=(--work-port "${WORK_PORT}")
 	# art/src/items/<Name>.preview-flags adds modelkit flags, say --eye views
 	# from chosen spots; their renders come back too. Its own --size replaces
 	# the default, --full bakes at full texel density instead of --preview's
@@ -56,6 +74,17 @@ for name in "${list[@]}"; do
 		esac
 		[ "${flag}" = "--full" ] || extra+=("${flag}")
 	done
+	# BAKE_ONLY=1 (scripts/standby-agent.py): bake this machine's share of the
+	# textures and push it, with the same flags so the layers match the render's.
+	if [ -n "${BAKE_ONLY:-}" ]; then
+		touch "${dir}/started"
+		if scripts/build-model.sh "${model}" -- "${quality[@]}" --turntable 4 "${size[@]}" --bake-only "${share[@]}" "${extra[@]}" > "${dir}/build.log" 2>&1; then
+			publish_bakes "${model}" "${dir}" "${name}"
+		else
+			echo "FAILED" >> "${dir}/build.log"
+		fi
+		continue
+	fi
 	# Renders left from an earlier task on this machine must not go back as
 	# this one's.
 	rendered="art/models/${model}"

@@ -2,11 +2,15 @@
 """Talks to the running coordinator (coordinator.py) from this session.
 
   tools/coordinator/client.py status          # the run, machines up, tasks
+  tools/coordinator/client.py machines        # what each machine is doing now
   tools/coordinator/client.py build <commit> [--no-upload] [--wait S] [--preview A,B] [--preview-only]
   tools/coordinator/client.py stop-machines   # standby machines end now
   tools/coordinator/client.py wait-machines [N] [--wait S]
                                               # returns once N machines are up
                                               # (default: all of the run)
+
+While it waits, `build` prints a summary every 30 seconds and a line starting
+STALL that names any machine that goes quiet (RECOVERED when it comes back).
 
 `build` posts a task and prints each machine's result the moment it
 arrives, then the upload's, and exits 0 when every machine built and every
@@ -76,7 +80,96 @@ async def stop_machines(url):
 	return 0
 
 
-STALL_SECONDS = 30
+async def machines(url):
+	"""One line per machine: what it is doing and when it last said so."""
+	async with websockets.connect(url) as socket:
+		await socket.send(json.dumps({"type": "status"}))
+		answer = json.loads(await socket.recv())
+	for shard in range(1, answer["count"] + 1):
+		work = answer["progress"].get(str(shard))
+		if shard not in answer["up"]:
+			print(f"S{shard}: not connected")
+		elif not work:
+			print(f"S{shard}: idle, no task reported")
+		elif work["stage"] == "done":
+			print(f"S{shard}: done with {work['task']}, {answer['now'] - work['heard']:.0f}s ago")
+		else:
+			print(f"S{shard}: {work['stage']} {work['model']} {work['seconds']}s, log quiet {work['quiet']}s, "
+				f"heard {answer['now'] - work['heard']:.0f}s ago: {work['line']}")
+	return 0
+
+
+TICK_SECONDS = 5
+SUMMARY_SECONDS = 30
+STEP_STALL_SECONDS = 180  # no new line in a machine's log
+SILENT_STALL_SECONDS = 60  # no heartbeat from a machine (they come every 10s)
+
+
+class Progress:
+	"""What each machine last said about one task, turned into a summary
+	line every SUMMARY_SECONDS and an alarm naming any machine that stalls."""
+
+	def __init__(self, count):
+		self.count = count
+		self.started = time.time()
+		self.machines = {}  # shard -> its latest progress event, plus when it came
+		self.stalled = set()
+		self.next_summary = self.started + SUMMARY_SECONDS
+
+	def update(self, event):
+		"""Returns whether this heartbeat is news: a heartbeat alone only
+		proves the machine is alive, not that its work is moving."""
+		before = self.machines.get(event["shard"])
+		self.machines[event["shard"]] = {**event, "heard": time.time()}
+		return not before or (before["stage"], before["line"]) != (event["stage"], event["line"])
+
+	def stall(self, shard, now):
+		work = self.machines.get(shard)
+		if not work:
+			waited = now - self.started
+			return f"nothing heard in the {waited:.0f}s since the task was posted" if waited >= SILENT_STALL_SECONDS else None
+		if work["stage"] == "done":
+			return None
+		unheard = now - work["heard"]
+		if unheard >= SILENT_STALL_SECONDS:
+			return f"no heartbeat for {unheard:.0f}s (was at {work['stage']} {work['model']})"
+		quiet = work["quiet"] + unheard
+		if quiet >= STEP_STALL_SECONDS:
+			return f"no new log line for {quiet:.0f}s in {work['stage']} {work['model']}; last: {work['line']}"
+		return None
+
+	def tick(self):
+		now = time.time()
+		for shard in range(1, self.count + 1):
+			problem = self.stall(shard, now)
+			if problem and shard not in self.stalled:
+				self.stalled.add(shard)
+				print(f"STALL S{shard}: {problem}", flush=True)
+			elif not problem and shard in self.stalled:
+				self.stalled.discard(shard)
+				print(f"RECOVERED S{shard}", flush=True)
+		if now >= self.next_summary:
+			self.next_summary = now + SUMMARY_SECONDS
+			print(self.summary(now), flush=True)
+
+	def summary(self, now):
+		heading = f"[{now - self.started:4.0f}s]"
+		if not self.machines:
+			return f"{heading} nothing from any of {self.count} machines yet"
+		counts = {}
+		for work in self.machines.values():
+			counts[work["stage"]] = counts.get(work["stage"], 0) + 1
+		line = ", ".join(f"{counts[stage]} {stage}" for stage in sorted(counts))
+		unheard = self.count - len(self.machines)
+		if unheard:
+			line += f", {unheard} unheard"
+		if self.stalled:
+			line += ", stalled " + " ".join(f"S{shard}" for shard in sorted(self.stalled))
+		working = [(work["quiet"] + now - work["heard"], shard, work) for shard, work in self.machines.items() if work["stage"] != "done"]
+		if working:
+			quiet, shard, work = max(working, key=lambda entry: entry[0])
+			line += f"; slowest S{shard} {work['stage']} {work['model']}, log quiet {quiet:.0f}s: {work['line']}"
+		return f"{heading} {line}"
 
 
 async def build(url, ref, upload, wait, previews=(), layout=True):
@@ -86,24 +179,32 @@ async def build(url, ref, upload, wait, previews=(), layout=True):
 		task = None
 		finished = None
 		started = time.time()
-		quiet = 0
+		progress = None
+		last_news = started
 		while True:
 			try:
-				event = json.loads(await asyncio.wait_for(socket.recv(), STALL_SECONDS))
-				quiet = 0
+				event = json.loads(await asyncio.wait_for(socket.recv(), TICK_SECONDS))
 			except asyncio.TimeoutError:
-				quiet += STALL_SECONDS
-				print(f"... nothing for {quiet}s (machines and uploads still going?)", flush=True)
-				if quiet >= wait:
-					print(f"nothing heard for {wait}s; giving up waiting (the task carries on)")
-					return 1
+				event = None
+			if progress:
+				progress.tick()
+			if time.time() - last_news >= wait:
+				print(f"no news for {wait}s; giving up waiting (the task carries on)", flush=True)
+				return 1
+			if event is None:
 				continue
 			kind = event["type"]
+			if kind == "progress":
+				if progress and event["task"] == task and progress.update(event):
+					last_news = time.time()
+				continue
+			last_news = time.time()
 			if kind == "error":
 				print(event["text"])
 				return 1
 			if kind == "posted":
 				task = event["task"]
+				progress = Progress(event["count"])
 				print(f"posted task {task} ({ref[:7]}) to {event['up']} of {event['count']} machines", file=sys.stderr)
 			elif kind == "shard":
 				summary = event["summary"].replace("\n", " ")
@@ -154,7 +255,7 @@ async def build(url, ref, upload, wait, previews=(), layout=True):
 
 def main():
 	parser = argparse.ArgumentParser()
-	parser.add_argument("command", choices=["status", "build", "stop-machines", "wait-machines"])
+	parser.add_argument("command", choices=["status", "machines", "build", "stop-machines", "wait-machines"])
 	parser.add_argument("ref", nargs="?")
 	parser.add_argument("--no-upload", action="store_true")
 	parser.add_argument("--wait", type=int, default=600)
@@ -167,6 +268,8 @@ def main():
 		sys.exit(2)
 	if arguments.command == "status":
 		code = asyncio.run(status(url))
+	elif arguments.command == "machines":
+		code = asyncio.run(machines(url))
 	elif arguments.command == "wait-machines":
 		code = asyncio.run(wait_machines(url, int(arguments.ref or 0), arguments.wait))
 	elif arguments.command == "stop-machines":

@@ -55,6 +55,7 @@ import websockets
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import oidc  # noqa: E402
+import commits  # noqa: E402
 import uploader as uploading  # noqa: E402
 import wire  # noqa: E402
 
@@ -89,6 +90,9 @@ class Task:
 				shares = count // len(self.previews) + (1 if k < count % len(self.previews) else 0)
 				self.units += [f"{name}@{i}@{shares}" for i in range(1, shares + 1)]
 		self.shares_in = {}
+		self.queues = {}  # (model, bake or render) -> the next job to hand out
+		self.job_answers = {}  # (shard, claim number) -> job, so a repeated claim gets the same one
+		self.bakes = {}  # model -> share number -> commit of that machine's baked textures
 		self.previews_waiting = set(range(1, count + 1)) if self.previews else set()
 		self.started = time.time()
 		self.done = {}  # shard -> summary text
@@ -229,6 +233,7 @@ class Coordinator:
 		self.agents = {}  # shard -> websocket
 		self.tasks = {}
 		self.watchers = set()  # control websockets waiting on events
+		self.progress = {}  # shard -> its latest heartbeat, with the time it came
 
 	async def hand_to_machine_one(self, task, shard, commit):
 		"""A builder pushed its objects to its branch: queue them and tell
@@ -290,7 +295,7 @@ class Coordinator:
 			await socket.close(code=4002, reason="an older run")
 			return
 		if run != self.run_id:
-			self.run_id, self.count, self.agents = run, count, {}
+			self.run_id, self.count, self.agents, self.progress = run, count, {}, {}
 			say(f"standby run {run} with {count} machines")
 		self.agents[shard] = socket
 		await self.emit({"type": "machine", "shard": shard, "up": len(self.agents), "count": count})
@@ -321,8 +326,17 @@ class Coordinator:
 					await self.uploaded(event["id"], event.get("asset"), event.get("error"))
 				elif event["type"] == "preview-ready":
 					await self.preview_ready(shard, event)
+				elif event["type"] == "preview-pushed":
+					await self.preview_pushed(shard, event)
 				elif event["type"] == "previews-done":
 					await self.previews_done(shard, event)
+				elif event["type"] == "claim":
+					await socket.send(json.dumps({"type": "claimed", "id": event["id"], "job": self.next_job(shard, event)}))
+				elif event["type"] == "bakes-pushed":
+					await self.bakes_pushed(event)
+				elif event["type"] == "progress":
+					self.progress[shard] = {**event, "heard": time.time()}
+					await self.emit({**event, "shard": shard})
 				elif event["type"] == "log":
 					say(f"S{shard}: {event.get('text', '')}")
 					await self.emit({"type": "log", "shard": shard, "text": event.get("text", "")})
@@ -412,6 +426,52 @@ class Coordinator:
 				file.write(hashlib.sha1(open(script, "rb").read()).hexdigest()[:16] + "\n")
 		shown = sheet if os.path.isfile(sheet) else os.path.join(model, "preview.png")
 		await self.emit({"type": "preview", "task": task.id, "name": name, "path": os.path.relpath(shown, ROOT)})
+
+	def next_job(self, shard, event):
+		"""Hands out a model's jobs in order to whichever machine asks next, so
+		one that finishes early takes more. -1 when none are left."""
+		task = self.tasks.get(event["task"])
+		if not task:
+			return -1
+		claim = (shard, event["id"])
+		if claim not in task.job_answers:
+			key = (event["name"], event["kind"])
+			job = task.queues.get(key, 0)
+			task.job_answers[claim] = job if job < event["total"] else -1
+			task.queues[key] = job + 1
+		return task.job_answers[claim]
+
+	async def bakes_pushed(self, event):
+		"""A machine has baked its share of a model's textures. Once all have,
+		tells them all which commits to fetch."""
+		task = self.tasks.get(event["task"])
+		if not task:
+			return
+		name, share, shares = event["share"].split("@")
+		pushed = task.bakes.setdefault(name, {})
+		pushed[share] = event["commit"]
+		if len(pushed) < int(shares):
+			return
+		message = json.dumps({"type": "bakes-ready", "task": task.id, "name": name, "commits": [commit for commit in pushed.values() if commit]})
+		for agent in list(self.agents.values()):
+			try:
+				await agent.send(message)
+			except websockets.ConnectionClosed:
+				pass  # its share_bakes times out and the render bakes the rest
+
+	async def preview_pushed(self, shard, event):
+		"""A machine pushed a finished preview to GitHub: take its files from
+		there, then treat it as arrived."""
+		task = self.tasks.get(event["task"])
+		if not task:
+			return
+		into = os.path.join(task.out, f"S{shard}", "previews", os.path.basename(event["name"]))
+		os.makedirs(into, exist_ok=True)
+		try:
+			await asyncio.to_thread(commits.fetch_into, ROOT, os.path.join(task.out, ".commit-stores"), event["commit"], into)
+		except Exception as error:
+			say(f"S{shard}: could not fetch preview {event['name']}: {error}")
+		await self.preview_ready(shard, event)
 
 	async def previews_done(self, shard, event):
 		"""A machine has sent every preview it had to render."""
@@ -546,7 +606,7 @@ class Coordinator:
 		kind = request.get("type")
 		if kind == "status":
 			await socket.send(json.dumps({"type": "status", "run": self.run_id, "count": self.count,
-				"up": sorted(self.agents), "tasks": list(self.tasks)}))
+				"up": sorted(self.agents), "tasks": list(self.tasks), "progress": self.progress, "now": time.time()}))
 			return
 		if kind == "watch":
 			# Streams machine and task events until the watcher hangs up.

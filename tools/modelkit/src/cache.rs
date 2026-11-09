@@ -31,6 +31,30 @@ pub fn disabled() -> bool {
 	*DISABLED.get_or_init(|| std::env::var("MODELKIT_NO_CACHE").is_ok_and(|v| v == "1"))
 }
 
+// --bake-only: this run only bakes paint layers for the build machines to
+// swap (work.rs) and stops. Its parts are half-painted, so whole-part saves
+// wait for the full run that follows.
+static BAKE_ONLY: std::sync::OnceLock<()> = std::sync::OnceLock::new();
+
+pub fn set_bake_only() {
+	let _ = BAKE_ONLY.set(());
+}
+
+pub fn bake_only() -> bool {
+	BAKE_ONLY.get().is_some()
+}
+
+// How many chunks a model's paints are grouped into for machines to claim.
+pub const BAKE_CHUNKS: usize = 128;
+
+// A part's chunk, decided from the part alone so identical parts land together.
+pub fn bake_chunk(name: &str, mesh: &Mesh) -> usize {
+	let mut hasher = DefaultHasher::new();
+	name.hash(&mut hasher);
+	hash_mesh(&mut hasher, mesh);
+	hasher.finish() as usize % BAKE_CHUNKS
+}
+
 pub fn path(dir: &Path, key: &str) -> PathBuf {
 	let mut hasher = DefaultHasher::new();
 	(VERSION, key).hash(&mut hasher);
@@ -38,7 +62,7 @@ pub fn path(dir: &Path, key: &str) -> PathBuf {
 }
 
 pub fn save(path: &Path, parts: &[(String, bool, f32, &Mesh, &Image)]) -> std::io::Result<()> {
-	if disabled() {
+	if disabled() || bake_only() {
 		return Ok(());
 	}
 	let mut out = Vec::new();

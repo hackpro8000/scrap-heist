@@ -12,6 +12,7 @@ pub struct Face {
 	pub uvs: Option<Vec<[f64; 2]>>,
 }
 
+#[derive(Clone)]
 pub struct Mesh {
 	pub positions: Vec<Vec3>,
 	pub faces: Vec<Face>,

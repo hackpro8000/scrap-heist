@@ -5,6 +5,7 @@
 #   scripts/coordinator.sh start [tailscale|cloudflare|auto] [--dry-upload]
 #   scripts/coordinator.sh url        # the address to give standby machines
 #   scripts/coordinator.sh status
+#   scripts/coordinator.sh machines   # what each machine is doing right now
 #   scripts/coordinator.sh stop
 #
 # Routes: tailscale puts the machine port on this session's tailnet address
@@ -133,5 +134,6 @@ case "${1:-status}" in
 			echo "no coordinator running"
 		fi
 		;;
+	machines) python3 "${root}/tools/coordinator/client.py" machines ;;
 	*) sed -n '2,20p' "$0" >&2; exit 1 ;;
 esac
