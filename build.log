@@ -1,0 +1,18 @@
+[    0.0s] running BusStopWreck/model.luau
+[    1.9s] shaded Timetable 256×256 in 0.01s
+[    7.1s] baked every chunk this machine claimed
+[    7.4s] shaded Frame 256×256 in 0.01s
+[    7.4s] shaded Roof 256×256 in 0.01s
+[    7.4s] shaded Sign 256×256 in 0.01s
+[    7.4s] shaded Glass 256×256 in 0.01s
+[    7.4s] shaded Bench 256×256 in 0.01s
+[    7.5s] shaded SignPole 256×256 in 0.01s
+[    7.5s] writing BusStopWreck.glb and 7 textures
+BusStopWreck: 7 parts, script 7.46s, total 9.19s
+#f23d3d Frame
+#85a5f2 Roof
+#7bb32d Glass
+#b362a8 Bench
+#3df2d4 Timetable
+#f2c085 SignPole
+#4e2db3 Sign

@@ -1,0 +1,37 @@
+bounds: 179,220,797,864
+A1: Roof 6%
+B1: Roof 49%
+C1: Roof 49%
+D1: Roof 7%
+E1: -
+F1: -
+A2: Frame 21%, Roof 19%
+B2: Roof 67%, Frame 13%
+C2: Roof 90%, Frame 9%
+D2: Roof 79%, Frame 12%
+E2: Frame 22%, Roof 7%
+F2: Frame 5%
+A3: Timetable 27%, SignPole 13%, Frame 11%
+B3: Frame 18%
+C3: Glass 68%, Roof 27%, Frame 5%
+D3: Roof 97%, Glass 3%
+E3: Roof 53%, Sign 22%, SignPole 5%
+F3: Frame 29%
+A4: Frame 28%
+B4: Frame 8%
+C4: Bench 35%, Frame 9%, Glass 9%
+D4: Bench 33%, Roof 27%, Glass 18%, Frame 5%, SignPole 3%
+E4: Roof 44%, SignPole 16%, Frame 9%, Glass 7%
+F4: Frame 30%
+A5: -
+B5: -
+C5: -
+D5: Roof 33%, SignPole 6%, Frame 4%, Glass 2%
+E5: SignPole 19%, Bench 16%, Glass 14%, Frame 13%, Roof 2%
+F5: Frame 31%, Glass 3%
+A6: -
+B6: -
+C6: -
+D6: Frame 4%, SignPole 3%, Roof 3%
+E6: SignPole 12%, Frame 5%
+F6: -
