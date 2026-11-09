@@ -1,0 +1,22 @@
+[    0.0s] running RebirthPress/model.luau
+[    1.9s] baking on CPU (no GPU)
+[    2.5s] shaded Crown 1024×1024 in 0.67s
+[    4.4s] shaded Platen 1024×1024 in 0.40s
+[    5.2s] baked every chunk this machine claimed
+[   17.1s] shaded Medal 1024×1024 in 0.19s
+[   17.4s] shaded PileJunk 1024×1024 in 0.19s
+[   17.6s] shaded Cylinder 1024×1024 in 0.18s
+[   17.9s] shaded Pile 1024×1024 in 0.19s
+[   18.2s] shaded Columns 1024×1024 in 0.20s
+[   18.5s] shaded Plinth 1024×1024 in 0.20s
+[   18.8s] shaded Bands 1024×1024 in 0.19s
+[   19.0s] shaded Hoses 1024×1024 in 0.17s
+[   19.3s] shaded Tray 1024×1024 in 0.19s
+[   19.6s] shaded Collars 1024×1024 in 0.19s
+[   19.9s] shaded Cage 1024×1024 in 0.16s
+[   20.2s] shaded Anvil 1024×1024 in 0.21s
+[   20.5s] shaded Ram 1024×1024 in 0.19s
+[   20.8s] shaded Console 1024×1024 in 0.19s
+[   21.1s] shaded Pump 1024×1024 in 0.19s
+[   21.2s] writing RebirthPress.glb and 19 textures
+RebirthPress: 19 parts, script 21.24s, total 23.25s
