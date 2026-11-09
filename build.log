@@ -1,0 +1,21 @@
+[    0.0s] running BeltCrossing/model.luau
+[    4.0s] baking on CPU (no GPU)
+[    4.2s] shaded Span 1024×1024 in 1.11s
+[   12.4s] shaded Legs 1024×1024 in 0.50s
+[   12.9s] baked every chunk this machine claimed
+[   19.8s] shaded Railings 1024×1024 in 0.10s
+[   19.9s] shaded Stairs 1024×1024 in 0.11s
+[   20.1s] shaded WarningSign 1024×1024 in 0.10s
+[   20.2s] shaded Fittings 1024×1024 in 0.10s
+[   20.2s] writing BeltCrossing.glb and 7 textures
+[   20.6s] rendering preview of 7 parts
+[   24.7s] rendering eye 2/7
+[   25.4s] rendering eye 5/7
+BeltCrossing: 7 parts, script 20.24s, total 26.33s
+#f23d3d Span
+#85a5f2 Stairs
+#7bb32d Railings
+#b362a8 Legs
+#3df2d4 Fittings
+#f2c085 WarningSign
+#4e2db3 Bulbs

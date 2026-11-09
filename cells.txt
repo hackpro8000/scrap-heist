@@ -1,0 +1,37 @@
+bounds: 161,321,862,841
+A1: -
+B1: Fittings 6%, Bulbs 2%
+C1: Railings 9%
+D1: Railings 13%
+E1: Fittings 6%, Bulbs 2%
+F1: -
+A2: Railings 3%
+B2: Railings 21%, Stairs 2%, Fittings 2%
+C2: Span 18%, Stairs 16%, Railings 15%, Fittings 6%, WarningSign 3%
+D2: Span 30%, Fittings 18%, Railings 6%
+E2: Railings 14%, Fittings 4%
+F2: -
+A3: Stairs 14%, Railings 11%
+B3: Stairs 23%, Legs 10%, Fittings 10%, Span 8%, Railings 5%
+C3: Span 47%, Fittings 23%, WarningSign 15%, Railings 10%
+D3: Span 61%, Stairs 20%, Fittings 9%, Railings 6%, Legs 4%
+E3: Stairs 35%, Railings 11%, Legs 7%, Span 7%, Fittings 4%
+F3: Railings 3%
+A4: Stairs 2%
+B4: Legs 24%
+C4: Legs 5%, Span 5%, Fittings 4%, Stairs 3%
+D4: Stairs 56%, Railings 14%, Legs 12%, Fittings 2%
+E4: Stairs 70%, Legs 7%
+F4: Railings 12%, Stairs 9%
+A5: -
+B5: -
+C5: Legs 6%
+D5: Stairs 26%, Legs 16%, Railings 7%
+E5: Stairs 66%, Railings 5%
+F5: Stairs 33%, Railings 3%
+A6: -
+B6: -
+C6: -
+D6: -
+E6: Stairs 22%, Railings 3%
+F6: -
