@@ -1,0 +1,37 @@
+bounds: 221,172,768,895
+A1: -
+B1: Fronds 10%
+C1: Fronds 29%, Couplings 2%
+D1: Fronds 41%
+E1: Fronds 6%
+F1: -
+A2: -
+B2: Fronds 51%, Cans 2%
+C2: Fronds 38%, Couplings 22%, Cans 21%, Trunk 8%
+D2: Fronds 44%, Cans 16%
+E2: Fronds 49%
+F2: Fronds 7%
+A3: -
+B3: Couplings 11%, Trunk 4%, Fronds 4%
+C3: Couplings 26%, Trunk 18%, Fronds 6%
+D3: Fronds 9%
+E3: Fronds 5%
+F3: Fronds 8%
+A4: -
+B4: Couplings 28%, Trunk 20%
+C4: Couplings 14%, Trunk 7%
+D4: -
+E4: -
+F4: -
+A5: Footing 16%, Couplings 8%, TyreCollar 6%
+B5: TyreCollar 40%, Trunk 19%, Footing 14%, Couplings 14%
+C5: TyreCollar 33%, Footing 29%, Couplings 5%, Trunk 2%
+D5: Footing 30%
+E5: -
+F5: -
+A6: Footing 3%
+B6: Footing 33%
+C6: Footing 63%
+D6: Footing 40%
+E6: Footing 4%
+F6: -

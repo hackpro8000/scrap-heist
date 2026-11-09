@@ -1,0 +1,18 @@
+[    0.0s] running ScrapPalm/model.luau
+[    0.6s] baking on CPU (no GPU)
+[    0.6s] shaded TyreCollar 256×256 in 0.03s
+[    2.9s] shaded Cans 256×256 in 0.05s
+[    3.3s] shaded Fronds 256×256 in 0.04s
+[    8.5s] shaded Trunk 256×256 in 0.05s
+[    8.7s] baked every chunk this machine claimed
+[   11.3s] shaded Footing 256×256 in 0.01s
+[   11.3s] shaded Couplings 256×256 in 0.01s
+[   11.3s] writing ScrapPalm.glb and 6 textures
+[   13.3s] rendering eye 1/1
+ScrapPalm: 6 parts, script 11.28s, total 13.45s
+#f23d3d Trunk
+#85a5f2 Couplings
+#7bb32d Fronds
+#b362a8 Cans
+#3df2d4 Footing
+#f2c085 TyreCollar
