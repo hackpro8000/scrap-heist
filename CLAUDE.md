@@ -18,6 +18,7 @@ Supplementary rules for agents working on Scrap Heist.
 ## Tooling
 - Search with `rg`, never `grep`.
 - Edit files with `sd`, never `sed`. Pass `--` before patterns that start with `-`.
+- `scripts/ensure-tools.sh` installs `rg`, `sd` and `jq` in `~/.local/bin`. A session hook and the standby agent run it, so every machine hosting the repo has them.
 
 ## Design
 - Prefer obvious over clever, and simple over comprehensive.
