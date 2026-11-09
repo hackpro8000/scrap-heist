@@ -1,0 +1,27 @@
+[    0.0s] running HubShop/model.luau
+[    2.7s] baking on CPU (no GPU)
+[    2.9s] shaded Sign 1024×1024 in 1.02s
+[    4.7s] shaded AwningPosts 1024×1024 in 0.72s
+[    7.5s] shaded Counter 1024×1024 in 1.95s
+[    8.0s] baked every chunk this machine claimed
+[   35.0s] shaded SignBraces 1024×1024 in 0.17s
+[   35.3s] shaded CounterDrums 1024×1024 in 0.19s
+[   35.6s] shaded Fittings 1024×1024 in 0.28s
+[   35.9s] shaded Awning 1024×1024 in 0.21s
+[   36.0s] shaded CraneHook 1024×1024 in 0.13s
+[   36.4s] shaded StockPiles 1024×1024 in 0.20s
+[   36.6s] shaded Crane 1024×1024 in 0.16s
+[   37.0s] shaded Slab 1024×1024 in 0.26s
+[   37.4s] shaded LowerContainers 1024×1024 in 0.35s
+[   37.8s] shaded CraneWeight 1024×1024 in 0.18s
+[   38.0s] shaded Shelves 1024×1024 in 0.17s
+[   38.3s] shaded Stencil 1024×1024 in 0.20s
+[   38.7s] shaded Supplies 1024×1024 in 0.23s
+[   38.8s] shaded Cables 1024×1024 in 0.15s
+[   39.1s] shaded PriceBoards 1024×1024 in 0.17s
+[   39.4s] shaded ShelfStock 1024×1024 in 0.20s
+[   39.7s] shaded AwningPatches 1024×1024 in 0.19s
+[   40.0s] shaded UpperContainer 1024×1024 in 0.26s
+[   40.0s] writing HubShop.glb and 22 textures
+[   42.8s] rendering eye 5/8
+HubShop: 22 parts, script 40.03s, total 44.51s
