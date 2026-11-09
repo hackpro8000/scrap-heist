@@ -1,0 +1,48 @@
+[    0.0s] running BuildBay/model.luau
+[    2.7s] baking on CPU (no GPU)
+[    2.9s] shaded Cradle 1024×1024 in 0.76s
+[    5.2s] shaded Frame 1024×1024 in 0.65s
+[    6.4s] shaded Drum 1024×1024 in 0.95s
+[   14.1s] shaded Crate 1024×1024 in 5.42s
+[   14.3s] baked every chunk this machine claimed
+[   37.4s] shaded Pad1 1024×1024 in 0.12s
+[   37.6s] shaded Clamp1 1024×1024 in 0.11s
+[   37.8s] shaded Clamp2 1024×1024 in 0.11s
+[   37.9s] shaded Pad3 1024×1024 in 0.12s
+[   38.1s] shaded Bands 1024×1024 in 0.13s
+[   38.3s] shaded Panel 1024×1024 in 0.11s
+[   38.5s] shaded Deck 1024×1024 in 0.13s
+[   39.2s] shaded Posts 1024×1024 in 0.61s
+[   39.3s] shaded CrateScrap 1024×1024 in 0.10s
+[   39.5s] shaded Clamp3 1024×1024 in 0.11s
+[   39.6s] shaded Board 1024×1024 in 0.12s
+[   39.8s] shaded Tools 1024×1024 in 0.10s
+[   39.9s] shaded CrateHeap 1024×1024 in 0.11s
+[   40.1s] shaded Arm 1024×1024 in 0.11s
+[   40.3s] shaded CrateGear 1024×1024 in 0.12s
+[   40.5s] shaded Pad2 1024×1024 in 0.11s
+[   40.5s] writing BuildBay.glb and 22 textures
+[   41.0s] rendering preview of 22 parts
+BuildBay: 22 parts, script 40.45s, total 50.77s
+#f23d3d Deck
+#85a5f2 Cradle
+#7bb32d Clamp1
+#b362a8 Pad1
+#3df2d4 Clamp2
+#f2c085 Pad2
+#4e2db3 Clamp3
+#66b362 Pad3
+#f23d79 Frame
+#85c9f2 Bands
+#a8b32d Board
+#a262b3 Tools
+#3df297 Panel
+#f29c85 Arm
+#2d38b3 Posts
+#80b362 PostLamps
+#f23db6 BackLamps
+#85eef2 Crate
+#b3912d CrateHeap
+#8762b3 CrateGear
+#3df25a CrateScrap
+#f28593 Drum
