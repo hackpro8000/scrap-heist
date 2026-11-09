@@ -1,0 +1,8 @@
+[    0.0s] running YardGate/model.luau
+[    4.9s] baked every chunk this machine claimed
+[    7.1s] shaded Hardware 256×256 in 0.01s
+[    7.2s] shaded Padlock 256×256 in 0.01s
+[    7.2s] shaded Doors 256×256 in 0.01s
+[    7.2s] shaded Frame 256×256 in 0.01s
+[    7.2s] writing YardGate.glb and 4 textures
+YardGate: 4 parts, script 7.19s, total 8.30s
