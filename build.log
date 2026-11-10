@@ -1,0 +1,17 @@
+[    0.0s] running BrushRock/model.luau
+[    0.1s] baking on CPU (no GPU)
+[    0.4s] shaded Current 1024×1024 in 0.32s
+[    1.0s] shaded Hand 1024×1024 in 0.52s
+[    2.1s] shaded Plank 1024×1024 in 1.08s
+[    3.0s] shaded Plate 1024×1024 in 0.83s
+[    3.0s] writing BrushRock.glb and 4 textures
+[    3.1s] rendering preview of 4 parts
+[    4.1s] rendering eye 1/4
+[    4.4s] rendering eye 2/4
+[    4.6s] rendering eye 3/4
+[    4.9s] rendering eye 4/4
+BrushRock: 4 parts, script 3.05s, total 5.34s
+  shade (creases, contact): 0.36s
+  coat: 0.95s
+  wear: 0.13s
+  combine: 0.05s
