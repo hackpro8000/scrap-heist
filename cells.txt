@@ -1,0 +1,37 @@
+bounds: 262,165,698,905
+A1: -
+B1: -
+C1: Fittings 20%, Lamp 3%
+D1: Lamp 33%, Fittings 31%
+E1: Fittings 17%, Lamp 2%
+F1: -
+A2: Sign 33%
+B2: Sign 41%
+C2: Post 16%, Fittings 14%, Sign 14%, Lamp 3%
+D2: Post 49%, Lamp 27%, Fittings 24%
+E2: Post 20%, Fittings 12%, Lamp 3%
+F2: -
+A3: Sign 50%
+B3: Sign 96%, Fittings 4%
+C3: Sign 97%, Fittings 3%
+D3: Sign 86%, Post 14%
+E3: Sign 56%, Post 10%, Fittings 3%
+F3: Sign 9%
+A4: Sign 11%
+B4: Sign 45%
+C4: Sign 71%, Post 3%, Fittings 3%
+D4: Sign 97%, Post 3%
+E4: Sign 100%
+F4: Sign 18%
+A5: -
+B5: Post 14%
+C5: Post 54%, Fittings 4%
+D5: Post 96%, Sign 4%
+E5: Post 51%, Sign 28%, Fittings 5%
+F5: Post 12%, Sign 5%
+A6: -
+B6: Post 10%
+C6: Post 42%
+D6: Post 59%, Fittings 6%
+E6: Post 41%
+F6: Post 8%
