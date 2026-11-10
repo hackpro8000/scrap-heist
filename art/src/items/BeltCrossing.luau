@@ -62,10 +62,10 @@ end, nil, function(x, y, z)
 		return SEAM[1], SEAM[2], SEAM[3]
 	end
 	-- Worn bright along the walked line from one stair head to the other.
-	local walked = math.abs(y) < 2.1 and math.noise(x * 1.8, y * 2.4, 2) + (2.1 - math.abs(y)) * 0.22 > 0.3
+	local walked = math.abs(y) < 2.1 and math.noise(x * 0.9, y * 1.2, 2) + (2.1 - math.abs(y)) * 0.35 > 0.25
 	if onChequer(x, y) then
 		if walked then
-			return 0.62, 0.64, 0.66
+			return 0.5, 0.52, 0.54
 		end
 		return CHEQUER[1], CHEQUER[2], CHEQUER[3]
 	end
@@ -88,6 +88,11 @@ part("Stairs", nil, TREAD, function(mesh)
 			-- A bolted foot, and a bracket onto the deck edge.
 			box(mesh, side * (SPAN_HALF + FLIGHT - 0.15), y, 0, 0.9, 0.5, 0.1)
 			box(mesh, side * (SPAN_HALF + 0.05), y, DECK_TOP - 0.75, 0.4, 0.34, 0.6)
+			-- A post under the middle of the flight, footed and bracketed to the stringer.
+			local midX = side * (SPAN_HALF + FLIGHT * 0.5)
+			box(mesh, midX, y, 0, 0.26, 0.26, DECK_TOP * 0.5 - 0.02)
+			box(mesh, midX, y, 0, 0.7, 0.5, 0.1)
+			box(mesh, midX, y, DECK_TOP * 0.5 - 0.3, 0.46, 0.34, 0.34)
 		end
 	end
 end, nil, function(x, y, z)

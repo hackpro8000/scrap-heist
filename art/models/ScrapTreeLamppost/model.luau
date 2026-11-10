@@ -1,4 +1,4 @@
-local CACHE_KEY = "ScrapTreeLamppost-5ed4db4ae7a3dacb"
+local CACHE_KEY = "ScrapTreeLamppost-a4f045cef97604b9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -28,9 +28,13 @@ local GRID = 0.4
 -- instead of the fixed TEXTURE, so a layout reads at one texel density.
 -- A part's own `texture` size still wins.
 local texelDensity: number? = nil
+-- The density the layout asked for, before TEXEL_SCALE: chunk sizes follow
+-- this one, so a max-detail preview keeps the chunks it would ship with.
+local layoutDensity: number? = nil
 
 -- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
 local function useTexelDensity(pixelsPerStud: number)
+	layoutDensity = pixelsPerStud
 	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
 end
 
@@ -299,15 +303,57 @@ end
 -- strands, and bolts on curved faces.
 local function tube(mesh, points, radius, sides)
 	sides = sides or 8
+	local function unit(a, b)
+		local x, y, z = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local length = math.sqrt(x * x + y * y + z * z)
+		if length < 1e-6 then
+			return nil
+		end
+		return { x / length, y / length, z / length }
+	end
 	local rings = {}
+	local carried
 	for i, p in points do
-		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
-		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local before, after = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local into, out = i > 1 and unit(before, p) or nil, i < #points and unit(p, after) or nil
+		-- Each ring lies across the bisector of its bend.
+		local dx, dy, dz = after[1] - before[1], after[2] - before[2], after[3] - before[3]
+		if into and out then
+			local x, y, z = into[1] + out[1], into[2] + out[2], into[3] + out[3]
+			if x * x + y * y + z * z > 1e-6 then
+				dx, dy, dz = x, y, z
+			end
+		end
+		local tx, ty, tz, ux, uy, uz, vx, vy, vz = crossFrame(dx, dy, dz)
+		-- Carry the last ring's frame round the bend, so the tube can't twist.
+		if carried then
+			local along = carried[1] * tx + carried[2] * ty + carried[3] * tz
+			local x, y, z = carried[1] - tx * along, carried[2] - ty * along, carried[3] - tz * along
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				ux, uy, uz = x / length, y / length, z / length
+				vx, vy, vz = ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+			end
+		end
+		carried = { ux, uy, uz }
+		-- A ring across a bend is widened toward the bend's outside, or the tube
+		-- would pinch there.
+		local stretch, bx, by, bz = 1, 0, 0, 0
+		if into and out then
+			local x, y, z = out[1] - into[1], out[2] - into[2], out[3] - into[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				bx, by, bz = x / length, y / length, z / length
+				stretch = 1 / math.max(tx * out[1] + ty * out[2] + tz * out[3], 0.5)
+			end
+		end
 		local ring = {}
 		for k = 0, sides - 1 do
 			local t = k / sides * TAU
 			local c, n = math.cos(t) * radius, math.sin(t) * radius
-			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+			local x, y, z = ux * c + vx * n, uy * c + vy * n, uz * c + vz * n
+			local extra = (x * bx + y * by + z * bz) * (stretch - 1)
+			ring[k + 1] = mesh:vertex(p[1] + x + bx * extra, p[2] + y + by * extra, p[3] + z + bz * extra)
 		end
 		rings[i] = ring
 	end
@@ -324,6 +370,34 @@ local function tube(mesh, points, radius, sides)
 	end
 	mesh:face(cap)
 	mesh:face(rings[#rings])
+end
+
+-- `points` with each inner corner replaced by a curve starting up to `reach`
+-- studs before it, for wires and hoses that shouldn't have sharp elbows.
+local function roundedPath(points, reach, steps)
+	steps = steps or 4
+	local path = { points[1] }
+	for i = 2, #points - 1 do
+		local a, p, b = points[i - 1], points[i], points[i + 1]
+		local function towards(q)
+			local x, y, z = q[1] - p[1], q[2] - p[2], q[3] - p[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			local r = math.min(reach, length / 2) / length
+			return { p[1] + x * r, p[2] + y * r, p[3] + z * r }
+		end
+		local first, last = towards(a), towards(b)
+		for s = 0, steps do
+			local t = s / steps
+			local m0, m1, m2 = (1 - t) ^ 2, 2 * t * (1 - t), t * t
+			table.insert(path, {
+				first[1] * m0 + p[1] * m1 + last[1] * m2,
+				first[2] * m0 + p[2] * m1 + last[2] * m2,
+				first[3] * m0 + p[3] * m1 + last[3] * m2,
+			})
+		end
+	end
+	table.insert(path, points[#points])
+	return path
 end
 
 -- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
@@ -599,6 +673,8 @@ local function setLook(entry, color, rust)
 	entry.rubber = rust == RUBBER
 end
 
+local HAND_EDGE_MOTION = { rock = "feather", wood = "flick", metal = "worn" }
+
 -- `rust` can also be a paint fn for surfaces with their own look.
 -- `texture` overrides the texture size for parts that need more detail.
 -- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
@@ -609,7 +685,29 @@ end
 -- heavier shadow than the standard wear. `lit` scales the highlight strength
 -- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
 -- to paint its highlights as bold, fully loaded strokes instead of dry ones,
--- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+-- `blend` (0-1) to tint them from cream toward a lighter part colour, and
+-- `taper` (studs) to run them full width at corners, thinning along each edge.
+-- `softLit` (0-1) adds a wide, very soft highlight under the strokes, fading
+-- out over `softEdge` studs from each edge; `softUneven` (0-1) makes its width
+-- wander along the edge and `softTaper` (studs) thins it away from corners.
+-- `softToZero` lets that thinning reach nothing, and `softPower` steepens the fade.
+-- `strokes` lists brush strokes painted over the coat ({start, along, normal,
+-- length, width, tail, color, brush}, color in sRGB), such as cracks or dabs;
+-- `brush` is "taper" (crisp lines, the default), "round" or "sponge".
+-- `stamps` lays the coat with scanned stroke shapes instead of the flat brush.
+-- `hand` ("rock", "wood" or "metal") paints the coat the way a hand would, and
+-- `handFocus` ({x, y, z, radius}) is where it gathers its finest strokes.
+-- `handTune` sets any of its numbers by name (settings! in tools/modelkit/src/hand.rs).
+-- `litMotion` draws the hard edge highlight with a moving hand, `litTune` sets its
+-- numbers by name (tools/modelkit/src/marks.rs). A hand-painted part gets its
+-- material's motion unless it names another, or `false` for the default strokes.
+-- `brushes` draws any layer with a motion: edge, shade, soft, coat, grime, rust,
+-- drip or scratch, each {motion = "press", tune = {name = value}}. A `strokes`
+-- entry takes `motion` and `tune` the same way.
+-- With `hand` as well, `crisp` keeps the shapes exact and takes only the brushwork's tone.
+-- `crisp` lays the coat on texel by texel in the paint fn's exact colours
+-- instead of brush strokes, for machine finishes (hazard tape, ribbed
+-- rubber) that strokes would smear; shading still goes over it.
 local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
@@ -638,7 +736,7 @@ end
 -- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
 -- on across chunks instead of restarting in each (a flat chunk would go dark).
 local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
-	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	local CHUNK = if layoutDensity then math.min(128, 1024 / layoutDensity) else 128
 	-- Smallest cell a chunk is halved down to while looking for a split.
 	local MIN_CELL = 2
 	local positions, faces = {}, {}
@@ -704,7 +802,9 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		if texelDensity then
 			local mesh = chunkMesh(chunkFaces)
 			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
-			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			-- Split by the layout's density; the scale only sizes the texture.
+			local unwrap = mesh:unwrap()
+			local needed = math.ceil((layoutDensity or texelDensity) / unwrap / 4) * 4
 			if needed > 1024 and #chunkFaces > 1 then
 				local half = size / 2
 				local octants, octantOrder = {}, {}
@@ -736,7 +836,7 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 					return
 				end
 			end
-			texture = math.clamp(needed, 16, 1024)
+			texture = math.clamp(math.ceil(texelDensity / unwrap / 4) * 4, 16, 1024)
 		end
 		part(label, bone, color, function(mesh)
 			local handles = {}
@@ -785,7 +885,7 @@ local function finishParts()
 		entry.mesh:paintShading(entry.image, {
 			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
 			shadow = CONTACT_SHADOW * (entry.shade or 1),
-			gradient = GRADIENT,
+			gradient = entry.gradient or GRADIENT,
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
@@ -795,11 +895,33 @@ local function finishParts()
 			custom = entry.custom,
 			salt = if entry.custom then CACHE_KEY else nil,
 			rust = entry.rust * WEAR,
+			stamps = entry.stamps,
+			hand = entry.hand,
+			handFocus = entry.handFocus,
+			handTune = entry.handTune,
 			rubber = entry.rubber,
+			rustEdges = entry.rustEdges,
 			reach = entry.edge,
 			highlightWidth = entry.wide,
+			highlightUneven = entry.litUneven,
+			highlightUnevenStep = entry.litUnevenStep,
+			highlightMotion = if entry.litMotion == nil then (entry.hand and HAND_EDGE_MOTION[entry.hand]) else (entry.litMotion or nil),
+			highlightMotionTune = entry.litTune,
+			highlightToZero = entry.litToZero,
+			highlightEnd = entry.litEnd,
 			paintedHighlights = entry.painted,
+			cornerTaper = entry.taper,
+			softHighlight = entry.softLit,
+			softReach = entry.softEdge,
+			softUneven = entry.softUneven,
+			softTaper = entry.softTaper,
+			softToZero = entry.softToZero,
+			softPower = entry.softPower,
+			softEnd = entry.softEnd,
+			strokes = entry.strokes,
+			brushes = entry.brushes,
 			heightRange = entry.heightRange,
+			crisp = entry.crisp,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
@@ -807,7 +929,140 @@ end
 -- Scrap Tree (Lamppost): a bent city lamppost standing in for a tree. Its
 -- crown is a cluster of hubcaps welded onto the lamp arms like leaves, with
 -- a rubble root ball of concrete chunks around the base.
-local CONCRETE = { 0.6, 0.59, 0.56 }
+-- The hand-painted finish for a model's parts: `coats` names a part's hand coat
+-- ("metal", "wood" or "rock"), `plain` lists parts left alone, such as lamps. A
+-- crisp part with a hand coat keeps its exact shapes and takes only the
+-- brushwork's tone. `finish` maps coat names and part names to a preset below,
+-- for props standing alone on open ground; the town models leave it nil.
+-- Call it just before finishParts().
+local SMALL_MARKS = {
+	big_length_min = 0.4,
+	big_length_max = 0.75,
+	big_width_min = 0.14,
+	big_width_max = 0.28,
+	mid_length_min = 0.2,
+	mid_length_max = 0.4,
+	mid_width_min = 0.07,
+	mid_width_max = 0.13,
+	edge_opacity = 0,
+}
+
+-- One preset per material, so tuning concrete never moves steel. A number a
+-- model set on the part before handFinish wins over the preset's. `bands`
+-- paints the stepped gradient: `steps` (default by height), `drop` (how dark
+-- the lowest step goes), `top` (the top step's brightness), `facing` (loose
+-- pieces each lit from above) and `stain` (how far a short part's steps wander
+-- as blotches instead of bands; high values fleck a dark surface).
+local PRESETS = {
+	-- Steel standing alone on open ground.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Concrete footings and plinths.
+	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
+	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
+	-- The earth body of a heap: it darkens well under everything resting on it.
+	heapBody = { gradient = 0.4, shade = 1.8, rustEdges = true, edge = 0.45, lit = 1.0, litUneven = 0.85, softLit = 0, bands = { drop = 0.48, top = 1, stain = 0.08 } },
+}
+-- The finish most props take.
+local PROP_FINISH = { metal = "propMetal", rock = "propConcrete" }
+
+-- Light at the top, stepping down to dark and cool at the base. The hand coat
+-- samples this per stroke, so each step's edge comes out brushed, not ruled.
+local function paintStepBands(entry, bands)
+	if entry.crisp and not entry.bandCrisp then
+		return
+	end
+	-- The part's height range, read off a scratch paint of its surface.
+	local low, high = math.huge, -math.huge
+	entry.mesh:paint(Image.new(32, 32), function(_x, _y, z)
+		low, high = math.min(low, z), math.max(high, z)
+		return 0, 0, 0
+	end)
+	if high - low < 0.25 then
+		return
+	end
+	-- Loose pieces listed as { x, y, z, radius } each band from their own top to
+	-- their own foot, instead of all sharing the part's height.
+	if entry.bandPieces then
+		local pieces = entry.bandPieces
+		entry.bandDepth = function(x: number, y: number, z: number): number
+			local nearest, best = pieces[1], math.huge
+			for _, piece in pieces do
+				local d = (x - piece[1]) ^ 2 + (y - piece[2]) ^ 2 + (z - piece[3]) ^ 2
+				if d < best then
+					nearest, best = piece, d
+				end
+			end
+			return 1 - math.clamp((z - nearest[3] + nearest[4]) / (2 * nearest[4]), 0, 1)
+		end
+	end
+	-- Tall parts get more steps, so any stretch of them shows some.
+	local steps = bands.steps or math.clamp(math.round((high - low) / 1.5), 4, 8)
+	local drop, top = bands.drop, bands.top
+	local paint = entry.paint
+	entry.custom = true
+	entry.paint = function(x: number, y: number, z: number, nx: number, ny: number, nz: number)
+		local r, g, b = paint(x, y, z, nx, ny, nz)
+		local depth = if entry.bandDepth then entry.bandDepth(x, y, z) else 1 - (z - low) / (high - low)
+		if bands.facing then
+			depth = depth * 0.3 + (1 - nz) * 0.35
+		end
+		depth += 0.07 * math.noise(x * 0.7, y * 0.7, z * 0.35)
+		-- A short part has no height to band, so it stains in steps instead.
+		if high - low < 1.5 then
+			depth += (bands.stain or 0.4) * math.noise(x * 0.5, y * 0.5, z * 0.3)
+		end
+		local step = math.clamp(math.floor(depth * steps), 0, steps - 1) / (steps - 1)
+		-- A small lift at the top, so near-black paint still shows its steps.
+		local lift = (1 - step) * 0.22 * (1 - math.max(r, g, b)) ^ 2
+		return r * (top - drop * step) + lift, g * (top - (drop + 0.02) * step) + lift, b * (top - (drop - 0.08) * step) + lift
+	end
+end
+
+local function applyPreset(entry, preset)
+	entry.gradient = entry.gradient or preset.gradient
+	entry.shade = entry.shade or preset.shade
+	entry.edge = entry.edge or preset.edge
+	entry.lit = entry.lit or preset.lit
+	entry.litUneven = preset.litUneven
+	if entry.rustEdges == nil then
+		entry.rustEdges = preset.rustEdges
+	end
+	-- Earth has no edge for the soft highlight to glow along; it flecks the rim.
+	if preset.softLit then
+		entry.softLit = preset.softLit
+	end
+	entry.handTune = SMALL_MARKS
+	paintStepBands(entry, preset.bands)
+end
+
+local function handFinish(coats, plain, finish)
+	for _, entry in parts do
+		-- A chunked part takes the coat of the name it was built under.
+		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
+		if plain[name] then
+			continue
+		end
+		entry.hand = coats[name]
+		if entry.hand == nil then
+			entry.litMotion = "worn"
+		elseif entry.hand == "metal" then
+			entry.handTune = SMALL_MARKS
+		end
+		entry.softLit, entry.softEdge, entry.softUneven, entry.softTaper = 0.25, 0.22, 0, 0.8
+		entry.softToZero, entry.softPower = true, 2
+		entry.taper = entry.taper or 0.5
+		entry.litToZero, entry.litUneven, entry.litUnevenStep = true, 0.6, 0.5
+		entry.brushes = { shade = { motion = "feather", tune = { width = 0.02 } } }
+		local presetName = finish and (finish[name] or finish[entry.hand])
+		if presetName then
+			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
+		end
+	end
+end
+local CONCRETE = { 0.5, 0.48, 0.44 }
 
 -- Lamp arms reaching out from the pole as branches, each with its radius.
 local ARMS = {
@@ -817,11 +1072,15 @@ local ARMS = {
 }
 
 part("Trunk", nil, DARK_STEEL, function(mesh)
-	cylinder(mesh, 0, 0, 0, 0.45, 0.6, "z", 10)
-	tube(mesh, { { 0, 0, 0.5 }, { 0.1, 0, 4 }, { 0.4, 0.1, 7.5 }, { 0.2, 0, 10 } }, 0.22, 8)
+	tube(mesh, { { 0, 0, 0 }, { 0.1, 0, 4 }, { 0.4, 0.1, 7.5 }, { 0.2, 0, 10 } }, 0.22, 8)
 	for _, arm in ARMS do
 		tube(mesh, arm.points, arm.radius, 6)
 	end
+	-- The original lamp's neck, curving out to its shade.
+	tube(mesh, { { 0.2, 0, 9.9 }, { 0.5, 0, 10.6 }, { 1.2, 0, 10.85 }, { 1.65, 0, 10.8 } }, 0.13, 8)
+	sphere(mesh, 1.75, 0, 10.62, 1.12, 0.92, 0.42, 5, 14)
+	-- The reflector's lip, standing out round the lamp.
+	ring(mesh, 1.75, 0, 10.42, 0.8, 1.22, 0.12, "z", 16)
 end, true, 0.6)
 
 -- The point `along` (0 to 1) of the way down an arm by length, and the
@@ -848,11 +1107,12 @@ end
 
 -- Builds into a mesh whose z axis points along (nx, ny, nz) from (cx, cy, cz),
 -- so round pieces made about "z" at the origin face that way.
-local function facing(mesh, cx: number, cy: number, cz: number, nx: number, ny: number, nz: number)
+local function facing(mesh, cx: number, cy: number, cz: number, nx: number, ny: number, nz: number, crush: number?)
 	local tx, ty, tz, ux, uy, uz, vx, vy, vz = crossFrame(nx, ny, nz)
 	return setmetatable({
 		vertex = function(_, x, y, z)
-			return mesh:vertex(cx + ux * x + vx * y + tx * z, cy + uy * x + vy * y + ty * z, cz + uz * x + vz * y + tz * z)
+			local across = y * (crush or 1)
+			return mesh:vertex(cx + ux * x + vx * across + tx * z, cy + uy * x + vy * across + ty * z, cz + uz * x + vz * across + tz * z)
 		end,
 	}, {
 		__index = function(_, key)
@@ -866,10 +1126,14 @@ end
 -- Hubcaps welded flat against the arms like leaves, square to the arm, each
 -- turned a different way round it: up, then out to either side.
 local HUBCAP_THICK = 0.12
-local HUBCAP_SPOTS = { 0.35, 0.6, 0.82, 1 }
-local HUBCAP_TURNS = { 0, math.rad(75), math.rad(-75), math.rad(20) }
+local HUBCAP_SPOTS = { 0.4, 0.72, 1 }
+-- Hanging tilt in degrees added per arm, and which caps are half crushed.
+local HUBCAP_SIZES = { 0.86, 0.6, 0.42 }
+local ARM_TILTS = { -18, 24, 40 }
+local CRUSHED_CAPS = { ["1-2"] = true, ["3-1"] = true }
+local HUBCAP_TURNS = { 0, math.rad(75), math.rad(-75) }
 part("Hubcaps", nil, STEEL, function(mesh)
-	for _, arm in ARMS do
+	for armIndex, arm in ARMS do
 		for j, along in HUBCAP_SPOTS do
 			local px, py, pz, dx, dy, dz = alongArm(arm.points, along)
 			local length = math.sqrt(dx * dx + dy * dy + dz * dz)
@@ -879,26 +1143,58 @@ part("Hubcaps", nil, STEEL, function(mesh)
 			local upLength = math.sqrt(upX * upX + upY * upY + upZ * upZ)
 			upX, upY, upZ = upX / upLength, upY / upLength, upZ / upLength
 			local sideX, sideY, sideZ = dy * upZ - dz * upY, dz * upX - dx * upZ, dx * upY - dy * upX
-			local turn = HUBCAP_TURNS[j]
+			local turn = HUBCAP_TURNS[j] + math.rad(ARM_TILTS[armIndex])
 			local c, s = math.cos(turn), math.sin(turn)
 			local nx, ny, nz = upX * c + sideX * s, upY * c + sideY * s, upZ * c + sideZ * s
 			-- Its back sits on the arm's surface.
 			local out = arm.radius + HUBCAP_THICK / 2
-			local cap = facing(mesh, px + nx * out, py + ny * out, pz + nz * out, nx, ny, nz)
-			ring(cap, 0, 0, 0, 0.15, 0.9, HUBCAP_THICK, "z", 12)
-			cylinder(cap, 0, 0, 0.02, 0.3, 0.16, "z", 8)
+			local cap = facing(mesh, px + nx * out, py + ny * out, pz + nz * out, nx, ny, nz, if CRUSHED_CAPS[`{armIndex}-{j}`] then 0.55 else 1)
+			-- Dished in steps, with a bolt either side of the hub holding it to the arm.
+			local size = HUBCAP_SIZES[j]
+			ring(cap, 0, 0, 0, size * 0.55, size, HUBCAP_THICK, "z", 12)
+			cylinder(cap, 0, 0, 0.05, size * 0.62, 0.16, "z", 12)
+			cylinder(cap, 0, 0, 0.13, size * 0.34, 0.12, "z", 8)
+			for _, along2 in { -1, 1 } do
+				bolt(cap, along2 * size * 0.45, 0, 0.15, "z", 0.06)
+			end
 		end
 	end
 end, nil, 0.3)
 
-part("Lamp", nil, COPPER, function(mesh)
-	box(mesh, 0.2, 0, 10, 0.8, 0.5, 0.3)
-end, nil, 0.5)
+part("Lamp", nil, { 1, 0.74, 0.3 }, function(mesh)
+	cylinder(mesh, 1.75, 0, 10.26, 0.72, 0.34, "z", 16)
+end, nil, 0, nil, 1)
+
+-- The root ball: broken slabs and lumps heaped up round the pole's foot, the
+-- higher ones leaning on those below and on the pole. Where, size, then the way
+-- each one's top faces.
+local RUBBLE = {
+	{ 1.15, 0.4, -0.05, 1.5, 1.2, 0.7, 0.15, 0.1, 1 },
+	{ -1.1, 0.65, -0.05, 1.3, 1.5, 0.6, -0.2, 0.1, 1 },
+	{ 0.2, -1.2, -0.05, 1.6, 1.05, 0.65, 0, -0.2, 1 },
+	{ -0.95, -0.85, -0.05, 1.0, 1.0, 0.45, -0.1, -0.1, 1 },
+	{ 0.3, 1.25, -0.05, 0.9, 0.75, 0.4, 0, 0.2, 1 },
+	{ 1.75, -0.65, -0.05, 0.6, 0.7, 0.28, 0.2, 0, 1 },
+	{ -1.95, -0.15, -0.05, 0.5, 0.6, 0.22, -0.2, 0, 1 },
+	{ 0.72, 0.28, 0.5, 1.0, 0.75, 0.42, -0.45, -0.15, 0.85 },
+	{ -0.68, 0.32, 0.4, 0.8, 0.85, 0.4, 0.5, -0.2, 0.85 },
+	{ 0.1, -0.74, 0.46, 0.95, 0.65, 0.38, 0.05, 0.5, 0.85 },
+	{ -0.58, -0.5, 0.3, 0.5, 0.48, 0.3, 0.4, 0.35, 0.85 },
+	{ 0.42, 0.1, 0.92, 0.56, 0.45, 0.3, -0.55, 0, 0.82 },
+	{ -0.42, 0.2, 0.8, 0.45, 0.5, 0.26, 0.55, 0, 0.82 },
+}
 
 part("Rubble", nil, CONCRETE, function(mesh)
-	box(mesh, 0.8, 0.3, 0, 0.9, 0.7, 0.4)
-	box(mesh, -0.7, 0.5, 0, 0.7, 0.8, 0.3)
-	box(mesh, 0.1, -0.9, 0, 0.8, 0.6, 0.35)
+	for _, r in RUBBLE do
+		box(facing(mesh, r[1], r[2], r[3], r[7], r[8], r[9]), 0, 0, 0, r[4], r[5], r[6])
+	end
 end, nil, 0.2)
 
+handFinish({
+	Trunk = "metal",
+	Hubcaps = "metal",
+	Rubble = "rock",
+}, {
+	Lamp = true,
+}, PROP_FINISH)
 finishParts()

@@ -4,7 +4,7 @@ return {
 	parts = {
 		{ name = "Platform", level = "core", at = { 0.0049, 2, 1.4 }, size = { 26, 22, 0.96 }, note = "steel plates on oil drums, top at 1.8" },
 		{ name = "PlatformDrums", level = "detail", attaches = "Platform", at = { 0, 2, 0.7 }, size = { 24, 18, 1.4 }, note = "oil drums the plates rest on" },
-		{ name = "Steps", level = "major", attaches = "Platform", at = { 0, -11, 0.6 }, size = { 10, 4, 1.2 }, note = "wide steps up the front" },
+		{ name = "Steps", level = "major", attaches = "Platform", at = { 0, -10.95, 0.9 }, size = { 10.4, 4.5, 1.9 }, note = "wide steps up the front, with stringers and a lip at the deck's edge" },
 		{ name = "Truss", level = "major", attaches = "Platform", at = { 0, 8, 7.2 }, size = { 26, 2.9, 11 }, note = "lattice towers; 2 of them" },
 		{ name = "TrussTop", level = "major", attaches = "Truss", at = { 0, 8, 13.5 }, size = { 26, 2, 1.8 }, note = "lattice beam across" },
 		{ name = "Backdrop", level = "major", attaches = "Truss", at = { -0.058, 9.1, 7.1 }, size = { 22, 0.52, 11 }, note = "patchwork sheet-metal backdrop" },

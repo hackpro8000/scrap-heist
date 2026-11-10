@@ -30,16 +30,20 @@ local function baleIndex(x: number, y: number, z: number): number
 	return (layer * 11 + across * 5 + deep * 3 + (layer * across) % 4) * 7 + layer
 end
 
+local LAYER_SIZES = { 1, 0.95, 0.86, 0.78 }
+
 -- The press's dents, shared by a layer's bales and the straps round them.
 local function pressed(built, layer: number, angle: number)
 	local c, s = math.cos(angle), math.sin(angle)
+	-- Each layer sits smaller and further off true than the one under it.
+	local size = LAYER_SIZES[layer]
 	return warped(built, function(x, y, h)
 		local dent = 0.34
 		local a = x + dent * math.noise(y * 1.4, h * 1.7, layer)
 		local b = y + dent * math.noise(x * 1.4, h * 1.7, layer + 5)
 		local up = h + 0.1 * math.noise(x * 1.3, y * 1.3, layer + 9)
-		local shiftX, shiftY = (layer % 2 - 0.5) * 0.5, ((layer + 1) % 3 - 1) * 0.25
-		return a * c - b * s + shiftX, a * s + b * c + shiftY, up
+		local shiftX, shiftY = (layer % 2 - 0.5) * 0.9, ((layer + 1) % 3 - 1) * 0.5
+		return (a * c - b * s) * size + shiftX, (a * s + b * c) * size + shiftY, up
 	end)
 end
 local BALE_ANGLES = { 0.09, -0.12, 0.14, -0.08 }
@@ -164,9 +168,30 @@ end)
 part("Mast", nil, GIRDER, function(mesh)
 	box(mesh, 0, 0, BALES_TOP, 4.2, 4.2, 0.3)
 	local z0 = BALES_TOP + 0.3
+	-- The frame that carries the mast down past the bales to the plinth.
+	for _, x in { -6.05, 6.05 } do
+		for _, y in { -5.45, 5.45 } do
+			box(mesh, x, y, PLINTH_TOP, 0.45, 0.45, z0 - PLINTH_TOP)
+			strut(mesh, x, y, z0 - 0.15, x * 0.3, y * 0.3, z0 - 0.15, 0.3)
+		end
+	end
+	box(mesh, 0, -5.45, BALES_TOP, 12.5, 0.32, 0.3)
+	box(mesh, 0, 5.45, BALES_TOP, 12.5, 0.32, 0.3)
+	box(mesh, -6.05, 0, BALES_TOP, 0.32, 11.4, 0.3)
+	box(mesh, 6.05, 0, BALES_TOP, 0.32, 11.4, 0.3)
+	-- Rails round the stack at each band, which the fittings bolt to.
+	for _, z in { 6, 9.2, 12.4 } do
+		box(mesh, 0, 5.45, z, 12.5, 0.3, 0.3)
+		box(mesh, 0, -5.45, z, 12.5, 0.3, 0.3)
+		box(mesh, -6.05, 0, z, 0.3, 11.4, 0.3)
+		box(mesh, 6.05, 0, z, 0.3, 11.4, 0.3)
+	end
 	for _, x in { -1.3, 1.3 } do
 		for _, y in { -1.3, 1.3 } do
 			box(mesh, x, y, z0, 0.4, 0.4, MAST_TOP - z0)
+			-- A base plate under each leg and gussets out to the frame's top bars.
+			box(mesh, x, y, z0, 1.1, 1.1, 0.18)
+			strut(mesh, x, y, z0 + 1.1, x * 1.9, y, z0, 0.2)
 		end
 	end
 	for z = z0, MAST_TOP - 3, 3 do
@@ -179,6 +204,12 @@ part("Mast", nil, GIRDER, function(mesh)
 	box(mesh, 0, 1.3, COG_Z - 0.6, 3.6, 0.5, 1.2)
 	box(mesh, 0, -1.3, COG_Z - 0.75, 4.2, 0.5, 1.5)
 	cylinder(mesh, 0, 0.3, COG_Z, 0.46, 3.4, "y", 14)
+	-- The bearing plate on the mast's face the axle runs through, braced back to its legs.
+	box(mesh, 0, -1.42, COG_Z - 1.15, 2.9, 0.24, 2.3)
+	for _, side in { -1, 1 } do
+		strut(mesh, side * 1.3, -1.3, COG_Z - 2.6, side * 1.05, -1.62, COG_Z - 0.75, 0.34)
+		strut(mesh, side * 1.3, -1.3, COG_Z + 1.9, side * 1.05, -1.62, COG_Z + 0.7, 0.34)
+	end
 	cylinder(mesh, 0, 2.05, COG_Z, 0.72, 0.2, "y", 14)
 	-- The crossmember that carries the cog's axle.
 	box(mesh, 0, -1.3, COG_Z - 0.55, 3.2, 0.5, 1.1)
@@ -282,7 +313,7 @@ part("Fittings", nil, { 0.3, 0.32, 0.36 }, function(mesh)
 	ladderOnY(mesh, 0, 5.95, PLINTH_TOP, BALES_TOP + 0.3, 1.1)
 	ladderOnY(mesh, 0, 1.92, BALES_TOP + 0.3, MAST_TOP - 0.4, 0.42)
 	-- Service runs and a patched plate on the back and sides.
-	box(mesh, 2.4, 4.9, 9, 0.5, 0.5, 0.3)
+	box(mesh, 2.4, 5.2, 9, 0.5, 0.5, 0.3)
 	cylinder(mesh, 3.6, 5.75, 8.5, 0.24, 12.6, "z", 8)
 	for _, z in { 4, 8, 12 } do
 		box(mesh, 3.6, 5.25, z, 0.7, 1.2, 0.2)
@@ -297,9 +328,9 @@ part("Fittings", nil, { 0.3, 0.32, 0.36 }, function(mesh)
 		end
 	end
 	box(mesh, -3, 5.1, 11.4, 2.6, 0.9, 2)
-	box(mesh, 5.2, 3, 8.8, 0.24, 2.4, 2.2)
-	box(mesh, -5.2, -2.2, 9.6, 0.24, 2.2, 2)
-	box(mesh, 5.35, -1.2, 12, 0.5, 1.3, 1.6)
+	box(mesh, 5.95, 3, 8.8, 0.24, 2.4, 2.2)
+	box(mesh, -5.95, -2.2, 9.4, 0.24, 2.2, 2)
+	box(mesh, 5.9, -1.2, 12, 0.5, 1.3, 1.6)
 	-- Gussets at the mast's feet.
 	for _, x in { -1.3, 1.3 } do
 		for _, y in { -1.3, 1.3 } do
@@ -308,6 +339,10 @@ part("Fittings", nil, { 0.3, 0.32, 0.36 }, function(mesh)
 	end
 	-- A service box on the mast and its conduit down the leg.
 	box(mesh, -1.72, -1.3, 19, 0.5, 1.2, 1.6)
+	-- Braces from the mast's front legs out to the cog's axle.
+	for _, x in { -1.3, 1.3 } do
+		strut(mesh, x, -1.3, COG_Z - 2.2, x * 0.2, COG_Y + 1.4, COG_Z, 0.26)
+	end
 	cylinder(mesh, -1.62, -1.3, 17.25, 0.08, 1.9, "z", 6)
 	-- A plaque on the plinth, bollards round its lower step.
 	box(mesh, 0, -6.55, 1.15, 3.4, 0.12, 0.7)

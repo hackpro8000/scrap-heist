@@ -4,9 +4,9 @@ The `model-critic` agent reads this file at the start of every round and applies
 
 Keep each rule short and true of any model. Never name a model or the defect that prompted it, or a test of the rule proves nothing. When a new miss nearly fits a rule, sharpen that rule instead of adding one.
 
-**Severity:** MED if it shows from where a player stands and makes the model look wrong or generated, otherwise LOW, unless the rule says different.
+**Severity:** MED if it shows from where a player stands and makes the model look wrong or generated, otherwise LOW, unless the rule says different. A finish finding (a missing paint layer, wear, a bake fault) is MED only with proof you name in the line: a measurement you took (brightness values down a surface, a width in studs against a known part), or a crop or close view you looked at. When something looks like a MED, take that proof: crop or zoom the render and read the values, instead of listing it LOW for want of proof you could have gathered. A finding marked LOW because you didn't check isn't a verdict, and a review that skipped a render it was given isn't finished. Identical renders have drawn LOW from one critic and MED from the next; the proof is what makes the call repeatable.
 
-**Settled, not defects:** flat material maps with no metal and full roughness; the family look of riveted dark steel, bronze, amber lamps and hazard tape; footprints in whole cells; black shading inside mouths; edges stair-stepped by single texels up close, because previews don't filter textures and the game does.
+**Settled, not defects:** flat material maps with no metal and full roughness; the family look of riveted dark steel, bronze, amber lamps and hazard tape; footprints in whole cells; black shading inside mouths; the cool violet tint every contact shadow and base gradient carries, which is the family's shadow colour, judged only for width and placement; edges stair-stepped by single texels up close, because previews don't filter textures and the game does.
 
 ## It has to hold and work
 Take each thing a player can see as a real object under gravity. Say what holds it up and whether it would stay: anything hanging, leaning, stacked or perched. Moving parts must be able to move as meant, gears must mesh, and heavy parts need something strong enough under them. Pipes, cables and hoses must connect at both ends. If the atlases are too small to judge this, ask for a closer view. Anything that couldn't stay or work as built is at least MED.
@@ -35,8 +35,15 @@ Structure may mirror, but damage, wear and clutter should not. Fasteners belong 
 ## Materials read as what they are
 Judge from player views whether metal reads as metal through colour, painted highlights and wear. Flag a material that reads as another, such as bronze that looks like wood. Printed markings such as tape and labels must not show brush strokes.
 
+## The base paint layers are all there
+Every painted part, from the largest mass to a lone prop on open ground, needs three layers, each visible from where a player stands: a contact shadow wherever it meets the ground or another part, edge wear along its hard edges, and a hand-drawn gradient, light at the top and stepping down to dark at the base in visible brush tiers. Go through the parts and name any layer missing in your RULES line. A smooth airbrushed fade or flat colour is not the gradient, rust specks are not edge wear, and a foot that meets the ground with no darkening around it has no contact shadow. Any missing layer is MED, on any part.
+
+A contact shadow is tight ambient occlusion: a thin dark line hugging the exact join, about a stud at most however large the object is. The game lights the world dynamically, so nothing may be painted that reads as a cast shadow: flag a wide pool or band of darkness on the ground, one that runs well past where the object touches, or a shadow shaped unlike the object's foot. That is MED.
+
 ## The bake is clean
 Stripes and patterns should close at seams and corners. Flag smeared decals, visible tiling, smears along diagonal joins, crisp and blurry surfaces side by side, and paint flecks with no chip or old coat to explain them.
+
+One surface wears one finish all over. A large mesh is baked in chunks, so look for a straight line across a rock, a floor or a wall where the paint changes character on either side: soft and mottled on one side, scratchy or flat on the other, a gradient that stops dead, wear that starts at the line, or brush strokes that end at the line on both sides as if cut. That is a chunk that missed its coat or was painted apart from its neighbours, and it is MED however small the chunk.
 
 ## Wear is uneven
 Edge highlights and wear must vary in width, strength and length, with gaps. Flag the same stroke outlining every edge, and metal with no wear at all: clean doesn't mean new. Only printed markings stay crisp.

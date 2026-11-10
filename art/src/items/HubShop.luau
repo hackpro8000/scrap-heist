@@ -160,6 +160,11 @@ part("CounterDrums", nil, DRUM, function(mesh)
 			cylinder(mesh, x, COUNTER_Y, FLOOR + z, 0.82, 0.12, "z", 14)
 		end
 	end
+	-- A pair of stacked crates in each long span, so no plank runs far unsupported.
+	for _, x in { -4, 4 } do
+		box(mesh, x, COUNTER_Y, FLOOR, 1.5, 1.5, 1.08)
+		box(mesh, x + 0.1, COUNTER_Y - 0.06, FLOOR + 1.08, 1.34, 1.34, 1.12)
+	end
 	box(mesh, -2.5, COUNTER_Y, 3.4, 1.6, 1.1, 0.9)
 	strut(mesh, -2.5, COUNTER_Y + 0.25, 4.3, -2.5, COUNTER_Y - 0.35, 3.75, 0.26)
 end, nil, 0.1)
@@ -207,6 +212,8 @@ part("AwningPosts", nil, PIPE, function(mesh)
 		cylinder(mesh, x, POST_Y, (FLOOR + top - 0.16) / 2, 0.3, top - 0.16 - FLOOR, "z", 10)
 		box(mesh, x, POST_Y, top - 0.2, 0.9, 0.7, 0.2)
 		box(mesh, x, POST_Y + 0.05, FLOOR, 0.86, 0.6, 0.1)
+		-- A knee brace from the post back up to the rafters.
+		strut(mesh, x, POST_Y + 0.15, top - 1.5, x, POST_Y + 1.35, top - 0.2, 0.14)
 	end
 	-- The ledger that carries the rear edge, bolted along the containers.
 	box(mesh, 0, -1.2, AWNING_Z - 0.32, 31, 0.5, 0.3)
@@ -344,6 +351,15 @@ part("Fittings", nil, { 0.3, 0.32, 0.36 }, function(mesh)
 		for _, h in { 0.9, 7 } do
 			box(mesh, 6.36, y, LOWER_TOP + h, 0.14, 0.34, 0.3)
 		end
+	end
+	-- The upper container's blind end: a bolted hatch and a downpipe on brackets.
+	box(mesh, -13.86, 4, LOWER_TOP + 1.9, 0.14, 2.6, 3)
+	for _, y in { 2.95, 5.05 } do
+		box(mesh, -13.95, y, LOWER_TOP + 3.2, 0.08, 0.3, 0.4)
+	end
+	cylinder(mesh, -14.08, 6.8, LOWER_TOP + 4, 0.12, 7.2, "z", 8)
+	for _, h in { 1, 4, 7 } do
+		box(mesh, -13.9, 6.8, LOWER_TOP + h, 0.24, 0.3, 0.15)
 	end
 	-- Roof plant: an extractor, a fan unit and a hatch.
 	cylinder(mesh, -11, 6.5, ROOF_TOP + 0.55, 0.55, 1.1, "z", 12)

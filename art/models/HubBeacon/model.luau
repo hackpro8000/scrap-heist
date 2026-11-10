@@ -1,4 +1,4 @@
-local CACHE_KEY = "HubBeacon-46075b7e139ac03d"
+local CACHE_KEY = "HubBeacon-5c136ecd6fc092b2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -885,7 +885,7 @@ local function finishParts()
 		entry.mesh:paintShading(entry.image, {
 			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
 			shadow = CONTACT_SHADOW * (entry.shade or 1),
-			gradient = GRADIENT,
+			gradient = entry.gradient or GRADIENT,
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
@@ -900,6 +900,7 @@ local function finishParts()
 			handFocus = entry.handFocus,
 			handTune = entry.handTune,
 			rubber = entry.rubber,
+			rustEdges = entry.rustEdges,
 			reach = entry.edge,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
@@ -930,7 +931,9 @@ end
 -- The hand-painted finish for a model's parts: `coats` names a part's hand coat
 -- ("metal", "wood" or "rock"), `plain` lists parts left alone, such as lamps. A
 -- crisp part with a hand coat keeps its exact shapes and takes only the
--- brushwork's tone. Call it just before finishParts().
+-- brushwork's tone. `finish` maps coat names and part names to a preset below,
+-- for props standing alone on open ground; the town models leave it nil.
+-- Call it just before finishParts().
 local SMALL_MARKS = {
 	big_length_min = 0.4,
 	big_length_max = 0.75,
@@ -943,12 +946,105 @@ local SMALL_MARKS = {
 	edge_opacity = 0,
 }
 
-local function handFinish(coats, plain)
+-- One preset per material, so tuning concrete never moves steel. A number a
+-- model set on the part before handFinish wins over the preset's. `bands`
+-- paints the stepped gradient: `steps` (default by height), `drop` (how dark
+-- the lowest step goes), `top` (the top step's brightness), `facing` (loose
+-- pieces each lit from above) and `stain` (how far a short part's steps wander
+-- as blotches instead of bands; high values fleck a dark surface).
+local PRESETS = {
+	-- Steel standing alone on open ground.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Concrete footings and plinths.
+	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
+	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
+	-- The earth body of a heap: it darkens well under everything resting on it.
+	heapBody = { gradient = 0.4, shade = 1.8, rustEdges = true, edge = 0.45, lit = 1.0, litUneven = 0.85, softLit = 0, bands = { drop = 0.48, top = 1, stain = 0.08 } },
+}
+-- The finish most props take.
+local PROP_FINISH = { metal = "propMetal", rock = "propConcrete" }
+
+-- Light at the top, stepping down to dark and cool at the base. The hand coat
+-- samples this per stroke, so each step's edge comes out brushed, not ruled.
+local function paintStepBands(entry, bands)
+	if entry.crisp and not entry.bandCrisp then
+		return
+	end
+	-- The part's height range, read off a scratch paint of its surface.
+	local low, high = math.huge, -math.huge
+	entry.mesh:paint(Image.new(32, 32), function(_x, _y, z)
+		low, high = math.min(low, z), math.max(high, z)
+		return 0, 0, 0
+	end)
+	if high - low < 0.25 then
+		return
+	end
+	-- Loose pieces listed as { x, y, z, radius } each band from their own top to
+	-- their own foot, instead of all sharing the part's height.
+	if entry.bandPieces then
+		local pieces = entry.bandPieces
+		entry.bandDepth = function(x: number, y: number, z: number): number
+			local nearest, best = pieces[1], math.huge
+			for _, piece in pieces do
+				local d = (x - piece[1]) ^ 2 + (y - piece[2]) ^ 2 + (z - piece[3]) ^ 2
+				if d < best then
+					nearest, best = piece, d
+				end
+			end
+			return 1 - math.clamp((z - nearest[3] + nearest[4]) / (2 * nearest[4]), 0, 1)
+		end
+	end
+	-- Tall parts get more steps, so any stretch of them shows some.
+	local steps = bands.steps or math.clamp(math.round((high - low) / 1.5), 4, 8)
+	local drop, top = bands.drop, bands.top
+	local paint = entry.paint
+	entry.custom = true
+	entry.paint = function(x: number, y: number, z: number, nx: number, ny: number, nz: number)
+		local r, g, b = paint(x, y, z, nx, ny, nz)
+		local depth = if entry.bandDepth then entry.bandDepth(x, y, z) else 1 - (z - low) / (high - low)
+		if bands.facing then
+			depth = depth * 0.3 + (1 - nz) * 0.35
+		end
+		depth += 0.07 * math.noise(x * 0.7, y * 0.7, z * 0.35)
+		-- A short part has no height to band, so it stains in steps instead.
+		if high - low < 1.5 then
+			depth += (bands.stain or 0.4) * math.noise(x * 0.5, y * 0.5, z * 0.3)
+		end
+		local step = math.clamp(math.floor(depth * steps), 0, steps - 1) / (steps - 1)
+		-- A small lift at the top, so near-black paint still shows its steps.
+		local lift = (1 - step) * 0.22 * (1 - math.max(r, g, b)) ^ 2
+		return r * (top - drop * step) + lift, g * (top - (drop + 0.02) * step) + lift, b * (top - (drop - 0.08) * step) + lift
+	end
+end
+
+local function applyPreset(entry, preset)
+	entry.gradient = entry.gradient or preset.gradient
+	entry.shade = entry.shade or preset.shade
+	entry.edge = entry.edge or preset.edge
+	entry.lit = entry.lit or preset.lit
+	entry.litUneven = preset.litUneven
+	if entry.rustEdges == nil then
+		entry.rustEdges = preset.rustEdges
+	end
+	-- Earth has no edge for the soft highlight to glow along; it flecks the rim.
+	if preset.softLit then
+		entry.softLit = preset.softLit
+	end
+	entry.handTune = SMALL_MARKS
+	paintStepBands(entry, preset.bands)
+end
+
+local function handFinish(coats, plain, finish)
 	for _, entry in parts do
-		if plain[entry.name] then
+		-- A chunked part takes the coat of the name it was built under.
+		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
+		if plain[name] then
 			continue
 		end
-		entry.hand = coats[entry.name]
+		entry.hand = coats[name]
 		if entry.hand == nil then
 			entry.litMotion = "worn"
 		elseif entry.hand == "metal" then
@@ -959,6 +1055,10 @@ local function handFinish(coats, plain)
 		entry.taper = entry.taper or 0.5
 		entry.litToZero, entry.litUneven, entry.litUnevenStep = true, 0.6, 0.5
 		entry.brushes = { shade = { motion = "feather", tune = { width = 0.02 } } }
+		local presetName = finish and (finish[name] or finish[entry.hand])
+		if presetName then
+			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
+		end
 	end
 end
 -- Small props and fittings shared by the town pieces. Each takes the mesh and
@@ -1081,16 +1181,20 @@ local function baleIndex(x: number, y: number, z: number): number
 	return (layer * 11 + across * 5 + deep * 3 + (layer * across) % 4) * 7 + layer
 end
 
+local LAYER_SIZES = { 1, 0.95, 0.86, 0.78 }
+
 -- The press's dents, shared by a layer's bales and the straps round them.
 local function pressed(built, layer: number, angle: number)
 	local c, s = math.cos(angle), math.sin(angle)
+	-- Each layer sits smaller and further off true than the one under it.
+	local size = LAYER_SIZES[layer]
 	return warped(built, function(x, y, h)
 		local dent = 0.34
 		local a = x + dent * math.noise(y * 1.4, h * 1.7, layer)
 		local b = y + dent * math.noise(x * 1.4, h * 1.7, layer + 5)
 		local up = h + 0.1 * math.noise(x * 1.3, y * 1.3, layer + 9)
-		local shiftX, shiftY = (layer % 2 - 0.5) * 0.5, ((layer + 1) % 3 - 1) * 0.25
-		return a * c - b * s + shiftX, a * s + b * c + shiftY, up
+		local shiftX, shiftY = (layer % 2 - 0.5) * 0.9, ((layer + 1) % 3 - 1) * 0.5
+		return (a * c - b * s) * size + shiftX, (a * s + b * c) * size + shiftY, up
 	end)
 end
 local BALE_ANGLES = { 0.09, -0.12, 0.14, -0.08 }
@@ -1215,9 +1319,30 @@ end)
 part("Mast", nil, GIRDER, function(mesh)
 	box(mesh, 0, 0, BALES_TOP, 4.2, 4.2, 0.3)
 	local z0 = BALES_TOP + 0.3
+	-- The frame that carries the mast down past the bales to the plinth.
+	for _, x in { -6.05, 6.05 } do
+		for _, y in { -5.45, 5.45 } do
+			box(mesh, x, y, PLINTH_TOP, 0.45, 0.45, z0 - PLINTH_TOP)
+			strut(mesh, x, y, z0 - 0.15, x * 0.3, y * 0.3, z0 - 0.15, 0.3)
+		end
+	end
+	box(mesh, 0, -5.45, BALES_TOP, 12.5, 0.32, 0.3)
+	box(mesh, 0, 5.45, BALES_TOP, 12.5, 0.32, 0.3)
+	box(mesh, -6.05, 0, BALES_TOP, 0.32, 11.4, 0.3)
+	box(mesh, 6.05, 0, BALES_TOP, 0.32, 11.4, 0.3)
+	-- Rails round the stack at each band, which the fittings bolt to.
+	for _, z in { 6, 9.2, 12.4 } do
+		box(mesh, 0, 5.45, z, 12.5, 0.3, 0.3)
+		box(mesh, 0, -5.45, z, 12.5, 0.3, 0.3)
+		box(mesh, -6.05, 0, z, 0.3, 11.4, 0.3)
+		box(mesh, 6.05, 0, z, 0.3, 11.4, 0.3)
+	end
 	for _, x in { -1.3, 1.3 } do
 		for _, y in { -1.3, 1.3 } do
 			box(mesh, x, y, z0, 0.4, 0.4, MAST_TOP - z0)
+			-- A base plate under each leg and gussets out to the frame's top bars.
+			box(mesh, x, y, z0, 1.1, 1.1, 0.18)
+			strut(mesh, x, y, z0 + 1.1, x * 1.9, y, z0, 0.2)
 		end
 	end
 	for z = z0, MAST_TOP - 3, 3 do
@@ -1230,6 +1355,12 @@ part("Mast", nil, GIRDER, function(mesh)
 	box(mesh, 0, 1.3, COG_Z - 0.6, 3.6, 0.5, 1.2)
 	box(mesh, 0, -1.3, COG_Z - 0.75, 4.2, 0.5, 1.5)
 	cylinder(mesh, 0, 0.3, COG_Z, 0.46, 3.4, "y", 14)
+	-- The bearing plate on the mast's face the axle runs through, braced back to its legs.
+	box(mesh, 0, -1.42, COG_Z - 1.15, 2.9, 0.24, 2.3)
+	for _, side in { -1, 1 } do
+		strut(mesh, side * 1.3, -1.3, COG_Z - 2.6, side * 1.05, -1.62, COG_Z - 0.75, 0.34)
+		strut(mesh, side * 1.3, -1.3, COG_Z + 1.9, side * 1.05, -1.62, COG_Z + 0.7, 0.34)
+	end
 	cylinder(mesh, 0, 2.05, COG_Z, 0.72, 0.2, "y", 14)
 	-- The crossmember that carries the cog's axle.
 	box(mesh, 0, -1.3, COG_Z - 0.55, 3.2, 0.5, 1.1)
@@ -1333,7 +1464,7 @@ part("Fittings", nil, { 0.3, 0.32, 0.36 }, function(mesh)
 	ladderOnY(mesh, 0, 5.95, PLINTH_TOP, BALES_TOP + 0.3, 1.1)
 	ladderOnY(mesh, 0, 1.92, BALES_TOP + 0.3, MAST_TOP - 0.4, 0.42)
 	-- Service runs and a patched plate on the back and sides.
-	box(mesh, 2.4, 4.9, 9, 0.5, 0.5, 0.3)
+	box(mesh, 2.4, 5.2, 9, 0.5, 0.5, 0.3)
 	cylinder(mesh, 3.6, 5.75, 8.5, 0.24, 12.6, "z", 8)
 	for _, z in { 4, 8, 12 } do
 		box(mesh, 3.6, 5.25, z, 0.7, 1.2, 0.2)
@@ -1348,9 +1479,9 @@ part("Fittings", nil, { 0.3, 0.32, 0.36 }, function(mesh)
 		end
 	end
 	box(mesh, -3, 5.1, 11.4, 2.6, 0.9, 2)
-	box(mesh, 5.2, 3, 8.8, 0.24, 2.4, 2.2)
-	box(mesh, -5.2, -2.2, 9.6, 0.24, 2.2, 2)
-	box(mesh, 5.35, -1.2, 12, 0.5, 1.3, 1.6)
+	box(mesh, 5.95, 3, 8.8, 0.24, 2.4, 2.2)
+	box(mesh, -5.95, -2.2, 9.4, 0.24, 2.2, 2)
+	box(mesh, 5.9, -1.2, 12, 0.5, 1.3, 1.6)
 	-- Gussets at the mast's feet.
 	for _, x in { -1.3, 1.3 } do
 		for _, y in { -1.3, 1.3 } do
@@ -1359,6 +1490,10 @@ part("Fittings", nil, { 0.3, 0.32, 0.36 }, function(mesh)
 	end
 	-- A service box on the mast and its conduit down the leg.
 	box(mesh, -1.72, -1.3, 19, 0.5, 1.2, 1.6)
+	-- Braces from the mast's front legs out to the cog's axle.
+	for _, x in { -1.3, 1.3 } do
+		strut(mesh, x, -1.3, COG_Z - 2.2, x * 0.2, COG_Y + 1.4, COG_Z, 0.26)
+	end
 	cylinder(mesh, -1.62, -1.3, 17.25, 0.08, 1.9, "z", 6)
 	-- A plaque on the plinth, bollards round its lower step.
 	box(mesh, 0, -6.55, 1.15, 3.4, 0.12, 0.7)

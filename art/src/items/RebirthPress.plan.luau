@@ -31,7 +31,15 @@ return {
 			attaches = "Plinth",
 			at = { -1.5, 0.4, 5.9 },
 			size = { 11.8, 3.4, 9.4 },
-			note = "two box columns at x = -6.2 and 3.2, each 2.4 by 3.4 in steel a step lighter than the plinth and crown, riveted along the edges, a wide bronze cap band and a bronze foot plate bolted to the plinth",
+			note = "two box columns at x = -6.2 and 3.2, each 2.4 by 3.4 in steel a step lighter than the plinth and crown, riveted along the edges",
+		},
+		{
+			name = "Bands",
+			level = "detail",
+			attaches = "Columns",
+			at = { -1.5, 0.4, 5.9 },
+			size = { 12.3, 3.9, 9.4 },
+			note = "crisp cast-bronze cap bands and foot plates on the columns, the foot plates bolted to the plinth",
 		},
 		{
 			name = "Crown",
@@ -53,33 +61,33 @@ return {
 			name = "Ram",
 			level = "major",
 			attaches = "Cylinder",
-			at = { -1.5, 0.4, 8.5 },
-			size = { 2.6, 2.6, 4.1 },
+			at = { -1.5, 0.4, 8.8 },
+			size = { 2.6, 2.6, 3.6 },
 			note = "the bare steel rod from the crown down to the platen, a collar where it meets each",
 		},
 		{
 			name = "Platen",
 			level = "major",
 			attaches = "Ram",
-			at = { -1.5, 0.4, 6 },
+			at = { -1.5, 0.4, 6.55 },
 			size = { 7, 5, 0.9 },
-			note = "the press plate hanging 3.4 above the pile, dark steel with a crisp hazard tape rim, bolt heads along its sides",
+			note = "the press plate hanging a clear 1 stud above the heap's top, dark steel with a crisp hazard tape rim, bolt heads along its sides",
 		},
 		{
 			name = "Pile",
 			level = "major",
 			attaches = "Anvil",
-			at = { -1.5, 0.3, 2.4 },
-			size = { 7.3, 4.7, 4 },
-			note = "the yard's scrap heap on the anvil, 2.4 proud of it (each mound's lower half is buried in the anvil): dented cans, a gear, pipe ends, a hubcap, springs, in rusty steel and bright paint flecks, heaped to a low peak",
+			at = { -1.5, 0.4, 3.5 },
+			size = { 6.7, 4.6, 3.05 },
+			note = "the yard's scrap heap on the anvil, 2.6 proud of it: bales of crushed sheet in layers, a fat pipe with its open end to the front, a plate bent over the left shoulder, bits fallen off along the front edge, two low mounds behind for mass, in rusty steel and bright paint flecks",
 		},
 		{
 			name = "PileJunk",
 			level = "detail",
 			attaches = "Pile",
-			at = { -1.3, 0.1, 4.2 },
-			size = { 4.1, 4, 2.9 },
-			note = "the heap's big pieces, each in its own finish: a brass gear standing in it, a silver hubcap leaning on the side, a stack of three painted cans with label bands, a steel spring",
+			at = { -0.8, -0.6, 3.8 },
+			size = { 5.5, 2.1, 2.6 },
+			note = "the heap's big pieces on its front, each in its own finish: a brass gear standing in it facing out, a silver hubcap against the right-hand bale, a stack of three painted cans with label bands, a steel spring on the bale behind them",
 		},
 		{
 			name = "Tray",
@@ -154,8 +162,8 @@ return {
 			note = "four orange beacons, one on each crown corner, glowing",
 		},
 	},
-	-- No space a player walks through: the platen hangs 3.4 above the pile
-	-- and 5.6 above the bed, under the capsule's 5.5 but over no walkway. The
+	-- No space a player walks through: the platen hangs 1 above the heap and
+	-- 6.1 above the bed, over no walkway. The
 	-- player stands on the ground at the front (y below -4) at the console and
 	-- the tray; the plinth is a 1.2 step.
 	clearance = {},

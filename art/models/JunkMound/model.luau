@@ -1,3 +1,4 @@
+local CACHE_KEY = "JunkMound-0c304b50c56a837c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -11,7 +12,9 @@ local TAU = 2 * math.pi
 
 -- Edge highlight and feathering, matching the salvage machine.
 local EDGE_HIGHLIGHT = 0.6
-local CONTACT_SHADOW = 0.85
+local CONTACT_SHADOW = 0.425
+-- Scales every part's wear (rust, grime, scratches): 57% of what each part asks for.
+local WEAR = 0.57
 local GRADIENT = 0.5
 local EDGE_BLEND = 0.7
 local SMOOTH_ANGLE = 30
@@ -20,6 +23,20 @@ local TEXTURE = 256
 -- Faces are split into a grid about every 0.4 studs so the warp in
 -- `part` can bend and dent flat panels.
 local GRID = 0.4
+
+-- When set, every part sizes its texture to this many pixels per stud
+-- instead of the fixed TEXTURE, so a layout reads at one texel density.
+-- A part's own `texture` size still wins.
+local texelDensity: number? = nil
+-- The density the layout asked for, before TEXEL_SCALE: chunk sizes follow
+-- this one, so a max-detail preview keeps the chunks it would ship with.
+local layoutDensity: number? = nil
+
+-- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
+local function useTexelDensity(pixelsPerStud: number)
+	layoutDensity = pixelsPerStud
+	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
+end
 
 local function gridFace(mesh, origin, u, v, nu, nv)
 	local rows = {}
@@ -164,6 +181,110 @@ local function strut(mesh, x0, y0, z0, x1, y1, z1, thick)
 	end
 end
 
+-- Points along a circular arc in the x-z plane, from angle a0 to a1 in
+-- degrees. Feeds plate outlines; run the angles downward for a clockwise path.
+local function arc(cx, cz, radius, a0, a1, steps)
+	local points = {}
+	for i = 0, steps do
+		local a = math.rad(a0 + (a1 - a0) * i / steps)
+		table.insert(points, { cx + math.cos(a) * radius, cz + math.sin(a) * radius })
+	end
+	return points
+end
+
+-- Splits a clockwise x-z outline into triangles by ear clipping, so concave
+-- silhouettes cap cleanly. Returns index triples into the outline.
+local function earClip(outline)
+	local left, tris = {}, {}
+	for i = 1, #outline do
+		left[i] = i
+	end
+	local function cross(a, b, c)
+		return (b[1] - a[1]) * (c[2] - a[2]) - (b[2] - a[2]) * (c[1] - a[1])
+	end
+	local guard = 0
+	while #left > 3 and guard < 10000 do
+		guard += 1
+		local clipped = false
+		for k = 1, #left do
+			local i0, i1, i2 = left[(k - 2) % #left + 1], left[k], left[k % #left + 1]
+			local a, b, c = outline[i0], outline[i1], outline[i2]
+			if cross(a, b, c) < 0 then
+				local inside = false
+				for _, j in left do
+					if j ~= i0 and j ~= i1 and j ~= i2 then
+						local p = outline[j]
+						if cross(a, b, p) <= 0 and cross(b, c, p) <= 0 and cross(c, a, p) <= 0 then
+							inside = true
+							break
+						end
+					end
+				end
+				if not inside then
+					table.insert(tris, { i0, i1, i2 })
+					table.remove(left, k)
+					clipped = true
+					break
+				end
+			end
+		end
+		if not clipped then
+			break
+		end
+	end
+	if #left == 3 then
+		table.insert(tris, { left[1], left[2], left[3] })
+	end
+	return tris
+end
+
+-- Flat cut-out plate: a clockwise x-z outline extruded `depth` along y,
+-- centred on y, with both faces chamfered inward by `bevel`. Use it for any
+-- silhouette (signs, blades, brackets) instead of stacking boxes.
+local function plate(mesh, outline, y, depth, bevel)
+	local n = #outline
+	local inset = {}
+	for i = 1, n do
+		local p0, p1, p2 = outline[(i - 2) % n + 1], outline[i], outline[i % n + 1]
+		local function inward(a, b)
+			local dx, dz = b[1] - a[1], b[2] - a[2]
+			local len = math.max(math.sqrt(dx * dx + dz * dz), 1e-6)
+			return dz / len, -dx / len
+		end
+		local n1x, n1z = inward(p0, p1)
+		local n2x, n2z = inward(p1, p2)
+		local bx, bz = n1x + n2x, n1z + n2z
+		local bl = math.max(math.sqrt(bx * bx + bz * bz), 1e-6)
+		bx, bz = bx / bl, bz / bl
+		local scale = math.min(1 / math.max(bx * n1x + bz * n1z, 0.34), 3) * bevel
+		inset[i] = { p1[1] + bx * scale, p1[2] + bz * scale }
+	end
+	local h = depth / 2
+	local layers = {
+		{ inset, y - h },
+		{ outline, y - h + bevel },
+		{ outline, y + h - bevel },
+		{ inset, y + h },
+	}
+	local rows = {}
+	for l, layer in layers do
+		rows[l] = {}
+		for i = 1, n do
+			rows[l][i] = mesh:vertex(layer[1][i][1], layer[2], layer[1][i][2])
+		end
+	end
+	for l = 1, 3 do
+		for i = 1, n do
+			local j = i % n + 1
+			mesh:face({ rows[l][i], rows[l][j], rows[l + 1][j], rows[l + 1][i] })
+		end
+	end
+	for _, t in earClip(inset) do
+		mesh:face({ rows[1][t[3]], rows[1][t[2]], rows[1][t[1]] })
+		mesh:face({ rows[4][t[1]], rows[4][t[2]], rows[4][t[3]] })
+	end
+end
+
 -- Unit tangent along (tx, ty, tz) plus two unit axes across it, right-handed,
 -- the first level with the ground unless the tangent runs nearly vertical.
 local function crossFrame(tx, ty, tz)
@@ -182,15 +303,57 @@ end
 -- strands, and bolts on curved faces.
 local function tube(mesh, points, radius, sides)
 	sides = sides or 8
+	local function unit(a, b)
+		local x, y, z = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local length = math.sqrt(x * x + y * y + z * z)
+		if length < 1e-6 then
+			return nil
+		end
+		return { x / length, y / length, z / length }
+	end
 	local rings = {}
+	local carried
 	for i, p in points do
-		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
-		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local before, after = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local into, out = i > 1 and unit(before, p) or nil, i < #points and unit(p, after) or nil
+		-- Each ring lies across the bisector of its bend.
+		local dx, dy, dz = after[1] - before[1], after[2] - before[2], after[3] - before[3]
+		if into and out then
+			local x, y, z = into[1] + out[1], into[2] + out[2], into[3] + out[3]
+			if x * x + y * y + z * z > 1e-6 then
+				dx, dy, dz = x, y, z
+			end
+		end
+		local tx, ty, tz, ux, uy, uz, vx, vy, vz = crossFrame(dx, dy, dz)
+		-- Carry the last ring's frame round the bend, so the tube can't twist.
+		if carried then
+			local along = carried[1] * tx + carried[2] * ty + carried[3] * tz
+			local x, y, z = carried[1] - tx * along, carried[2] - ty * along, carried[3] - tz * along
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				ux, uy, uz = x / length, y / length, z / length
+				vx, vy, vz = ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+			end
+		end
+		carried = { ux, uy, uz }
+		-- A ring across a bend is widened toward the bend's outside, or the tube
+		-- would pinch there.
+		local stretch, bx, by, bz = 1, 0, 0, 0
+		if into and out then
+			local x, y, z = out[1] - into[1], out[2] - into[2], out[3] - into[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				bx, by, bz = x / length, y / length, z / length
+				stretch = 1 / math.max(tx * out[1] + ty * out[2] + tz * out[3], 0.5)
+			end
+		end
 		local ring = {}
 		for k = 0, sides - 1 do
 			local t = k / sides * TAU
 			local c, n = math.cos(t) * radius, math.sin(t) * radius
-			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+			local x, y, z = ux * c + vx * n, uy * c + vy * n, uz * c + vz * n
+			local extra = (x * bx + y * by + z * bz) * (stretch - 1)
+			ring[k + 1] = mesh:vertex(p[1] + x + bx * extra, p[2] + y + by * extra, p[3] + z + bz * extra)
 		end
 		rings[i] = ring
 	end
@@ -207,6 +370,34 @@ local function tube(mesh, points, radius, sides)
 	end
 	mesh:face(cap)
 	mesh:face(rings[#rings])
+end
+
+-- `points` with each inner corner replaced by a curve starting up to `reach`
+-- studs before it, for wires and hoses that shouldn't have sharp elbows.
+local function roundedPath(points, reach, steps)
+	steps = steps or 4
+	local path = { points[1] }
+	for i = 2, #points - 1 do
+		local a, p, b = points[i - 1], points[i], points[i + 1]
+		local function towards(q)
+			local x, y, z = q[1] - p[1], q[2] - p[2], q[3] - p[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			local r = math.min(reach, length / 2) / length
+			return { p[1] + x * r, p[2] + y * r, p[3] + z * r }
+		end
+		local first, last = towards(a), towards(b)
+		for s = 0, steps do
+			local t = s / steps
+			local m0, m1, m2 = (1 - t) ^ 2, 2 * t * (1 - t), t * t
+			table.insert(path, {
+				first[1] * m0 + p[1] * m1 + last[1] * m2,
+				first[2] * m0 + p[2] * m1 + last[2] * m2,
+				first[3] * m0 + p[3] * m1 + last[3] * m2,
+			})
+		end
+	end
+	table.insert(path, points[#points])
+	return path
 end
 
 -- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
@@ -394,75 +585,22 @@ local function cornerBracket(mesh, x, y, sx, sy, z, height, size)
 	end
 end
 
--- Weathering, in sRGB: rust patches (dark pitted core, orange rust, pale
--- flaky rim) with drips running down out of them, bright scratches, and
--- grime that darkens toward the ground.
+-- Weathering colors, in sRGB. The bake paints the wear itself, stroke by
+-- stroke: rust patches, drips, grime and scratches on metal, dust and scuffs
+-- on rubber. These are for parts made of the stuff.
 local RUST_DARK = { 0.3, 0.2, 0.12 }
 local RUST_ORANGE = { 0.62, 0.36, 0.15 }
 local RUST_FLAKE = { 0.78, 0.52, 0.3 }
 local BARE_METAL = { 0.74, 0.73, 0.7 }
 
--- Scratch coverage at a point: 1 in a scratch, -1 in its dark burr, 0 clear.
--- Scratches run in clusters, each cluster in its own direction across the
--- surface, and every line starts and stops on its own so the ends taper.
-local function scratchAt(x, y, z, nx, ny, nz)
-	if math.noise(x * 1.8 + 20, y * 1.8, z * 1.8) < 0.05 then
-		return 0
-	end
-	-- Surface tangents from the normal.
-	local tx, ty, tz = 1, 0, 0
-	if math.abs(nz) < 0.9 then
-		tx, ty, tz = -ny, nx, 0
-	end
-	local tl = math.sqrt(tx * tx + ty * ty + tz * tz)
-	tx, ty, tz = tx / tl, ty / tl, tz / tl
-	local bx, by, bz = ny * tz - nz * ty, nz * tx - nx * tz, nx * ty - ny * tx
-	local angle = math.noise(x * 0.9 + 4, y * 0.9, z * 0.9) * math.pi
-	local c, s = math.cos(angle), math.sin(angle)
-	local along = (x * tx + y * ty + z * tz) * c + (x * bx + y * by + z * bz) * s
-	local across = (x * bx + y * by + z * bz) * c - (x * tx + y * ty + z * tz) * s
-	local u = across * 9 + math.noise(x * 5, y * 5, z * 5) * 0.4
-	local line = math.floor(u)
-	local reach = math.noise(along * 2.2, line * 1.37, 9)
-	if reach < 0.25 then
-		return 0
-	end
-	local width = 0.07 + (reach - 0.25) * 0.12
-	local d = math.abs(u - line - 0.5)
-	return if d < width then 1 elseif d < width * 2 then -1 else 0
-end
+-- How rusty a part painted by its own paint fn is; `rusting` sets it.
+local paintRust = setmetatable({}, { __mode = "k" })
 
--- Paint fn for `color` worn by `rust` (0 clean, 1 eaten through).
-local function weathered(color, rust)
-	local edge = 0.75 - rust * 0.6
-	return function(x, y, z, nx, ny, nz)
-		local grime = math.clamp((1.2 - z) * 0.18, 0, 0.25) + math.noise(x * 3, y * 3, z * 3) * 0.08
-		local k = 1 - math.clamp(grime, 0, 0.35)
-		local patch = math.noise(x * 2.5 + 7, y * 2.5, z * 2.5) * 0.8 + math.noise(x * 8, y * 8, z * 8 + 5) * 0.3
-		local c = color
-		if patch > edge + 0.18 then
-			local pit = if math.noise(x * 25, y * 25, z * 25) > 0.25 then 0.7 else 1
-			c = { RUST_DARK[1] * pit, RUST_DARK[2] * pit, RUST_DARK[3] * pit }
-		elseif patch > edge + 0.06 then
-			c = RUST_ORANGE
-		elseif patch > edge then
-			c = RUST_FLAKE
-		else
-			local above = math.noise(x * 2.5 + 7, y * 2.5, (z + 0.2) * 2.5) * 0.8
-			local drip = math.noise(x * 16, y * 16, z * 0.8 + 3)
-			if above > edge - 0.05 and drip > 0.3 then
-				c = RUST_ORANGE
-			else
-				local scratch = scratchAt(x, y, z, nx, ny, nz)
-				if scratch > 0 then
-					c = { (color[1] + BARE_METAL[1] * 2) / 3, (color[2] + BARE_METAL[2] * 2) / 3, (color[3] + BARE_METAL[3] * 2) / 3 }
-				elseif scratch < 0 then
-					c = { color[1] * 0.8, color[2] * 0.8, color[3] * 0.8 }
-				end
-			end
-		end
-		return c[1] * k, c[2] * k, c[3] * k
-	end
+-- Marks a paint fn as `rust` worn (0 clean, 1 eaten through), for parts
+-- whose coat has its own look but should still rust.
+local function rusting(rust, paint)
+	paintRust[paint] = rust
+	return paint
 end
 
 local RUBBER = -1
@@ -471,25 +609,6 @@ local DUST = { 0.55, 0.5, 0.42 }
 local TAPE = { 0.58, 0.58, 0.56 }
 local RUBBER_BLACK = { 0.12, 0.12, 0.13 }
 local ROPE = { 0.62, 0.5, 0.32 }
-
--- Paint fn for rubber: dust settled low and in patches, and pale scuffs where
--- it has rubbed. Rubber doesn't rust.
-local function scuffed(color)
-	return function(x, y, z, nx, ny, nz)
-		local dust = math.clamp((0.9 - z) * 0.3, 0, 0.3)
-			+ math.clamp(math.noise(x * 3 + 2, y * 3, z * 3) * 0.5, 0, 0.35)
-			+ math.clamp(nz, 0, 1) * 0.15
-		local c = {
-			color[1] + (DUST[1] - color[1]) * dust,
-			color[2] + (DUST[2] - color[2]) * dust,
-			color[3] + (DUST[3] - color[3]) * dust,
-		}
-		if scratchAt(x, y, z, nx, ny, nz) > 0 then
-			return c[1] * 1.6, c[2] * 1.6, c[3] * 1.6
-		end
-		return c[1], c[2], c[3]
-	end
-end
 
 -- Part following one bone. `smooth` overrides the auto-smooth angle (true
 -- for fully round parts like the zapper's body). `rust` sets how worn it
@@ -539,65 +658,621 @@ end
 
 local parts = {}
 
-local function part(name, bone, color, build, smooth, rust)
-	local mesh = Mesh.new()
-	build(if rust == 0 then mesh else imperfect(mesh, name))
-	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
-	mesh:unwrap()
-	local image = Image.new(TEXTURE, TEXTURE, color[1], color[2], color[3])
+-- What the bake paints on a part: `paint` gives its coat colors, `rust` how
+-- worn it is, and `rubber` that it gathers dust and scuffs instead.
+local function setLook(entry, color, rust)
 	rust = rust or 0.4
-	if rust == RUBBER then
-		mesh:paint(image, scuffed(color))
-	elseif rust > 0 then
-		mesh:paint(image, weathered(color, rust))
+	if type(rust) == "function" then
+		entry.paint, entry.rust, entry.custom = rust, paintRust[rust] or 0, true
+		return
 	end
-	table.insert(parts, { name = name, bone = bone, mesh = mesh, image = image })
+	entry.paint = function()
+		return color[1], color[2], color[3]
+	end
+	entry.rust = math.max(rust, 0)
+	entry.rubber = rust == RUBBER
+end
+
+local HAND_EDGE_MOTION = { rock = "feather", wood = "flick", metal = "worn" }
+
+-- `rust` can also be a paint fn for surfaces with their own look.
+-- `texture` overrides the texture size for parts that need more detail.
+-- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
+-- glowing parts skip painted shading. `flat` skips the warp, for parts so
+-- thin it would visibly bend them. `edge` is how far highlights and contact
+-- shadows reach from an edge, in studs: bigger surfaces take a wider band.
+-- `shade` multiplies the contact shadow strength, for parts that should sit in
+-- heavier shadow than the standard wear. `lit` scales the highlight strength
+-- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
+-- to paint its highlights as bold, fully loaded strokes instead of dry ones,
+-- `blend` (0-1) to tint them from cream toward a lighter part colour, and
+-- `taper` (studs) to run them full width at corners, thinning along each edge.
+-- `softLit` (0-1) adds a wide, very soft highlight under the strokes, fading
+-- out over `softEdge` studs from each edge; `softUneven` (0-1) makes its width
+-- wander along the edge and `softTaper` (studs) thins it away from corners.
+-- `softToZero` lets that thinning reach nothing, and `softPower` steepens the fade.
+-- `strokes` lists brush strokes painted over the coat ({start, along, normal,
+-- length, width, tail, color, brush}, color in sRGB), such as cracks or dabs;
+-- `brush` is "taper" (crisp lines, the default), "round" or "sponge".
+-- `stamps` lays the coat with scanned stroke shapes instead of the flat brush.
+-- `hand` ("rock", "wood" or "metal") paints the coat the way a hand would, and
+-- `handFocus` ({x, y, z, radius}) is where it gathers its finest strokes.
+-- `handTune` sets any of its numbers by name (settings! in tools/modelkit/src/hand.rs).
+-- `litMotion` draws the hard edge highlight with a moving hand, `litTune` sets its
+-- numbers by name (tools/modelkit/src/marks.rs). A hand-painted part gets its
+-- material's motion unless it names another, or `false` for the default strokes.
+-- `brushes` draws any layer with a motion: edge, shade, soft, coat, grime, rust,
+-- drip or scratch, each {motion = "press", tune = {name = value}}. A `strokes`
+-- entry takes `motion` and `tune` the same way.
+-- With `hand` as well, `crisp` keeps the shapes exact and takes only the brushwork's tone.
+-- `crisp` lays the coat on texel by texel in the paint fn's exact colours
+-- instead of brush strokes, for machine finishes (hazard tape, ribbed
+-- rubber) that strokes would smear; shading still goes over it.
+local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
+	local mesh = Mesh.new()
+	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
+	mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+	local fit = mesh:unwrap()
+	local size = if texture then texture
+		elseif texelDensity then math.clamp(math.ceil(texelDensity / fit / 4) * 4, 16, 1024)
+		else TEXTURE
+	local image = Image.new(size, size, color[1], color[2], color[3])
+	local entry = { name = name, bone = bone, mesh = mesh, image = image, emissive = emissive, edge = edge, shade = shade, lit = lit, wide = wide }
+	setLook(entry, color, rust)
+	-- Glowing parts skip the painted bake, so their colors go on as they are.
+	if emissive then
+		mesh:paint(image, entry.paint)
+	end
+	table.insert(parts, entry)
+end
+
+-- Large surfaces (terrain, roads, floors) are split into cubes 128 studs
+-- across, or 1024 texels at the layout's texel density if that is smaller,
+-- each its own part with a texture up to 1024, named <name>_<cx>_<cy>_<cz>. The
+-- build runs once into a recorder, then each face goes to the chunk holding
+-- its centre. Cells sit on the origin across, and centred on z = 0 up and
+-- down, so ground near sea level stays in one layer. `flat` skips the warp,
+-- as for part(). Every chunk shades against one height range, the whole
+-- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
+-- on across chunks instead of restarting in each (a flat chunk would go dark).
+local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
+	local CHUNK = if layoutDensity then math.min(128, 1024 / layoutDensity) else 128
+	-- Smallest cell a chunk is halved down to while looking for a split.
+	local MIN_CELL = 2
+	local positions, faces = {}, {}
+	local recorder = {
+		vertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		-- A vertex the rust wobble leaves alone, for surfaces that must stay flat.
+		exactVertex = function(_, x, y, z)
+			table.insert(positions, { x, y, z })
+			return #positions
+		end,
+		face = function(_, verts, uvs)
+			table.insert(faces, { verts = verts, uvs = uvs })
+		end,
+	}
+	build(if rust == 0 or flat then recorder else imperfect(recorder, name))
+	if not heightRange then
+		local bottom, top = math.huge, -math.huge
+		for _, p in positions do
+			bottom, top = math.min(bottom, p[3]), math.max(top, p[3])
+		end
+		heightRange = { bottom, top }
+	end
+
+	local chunks, order = {}, {}
+	for _, f in faces do
+		local cx, cy, cz = 0, 0, 0
+		for _, v in f.verts do
+			local p = positions[v]
+			cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+		end
+		local n = #f.verts
+		local key = `{math.floor(cx / n / CHUNK)}_{math.floor(cy / n / CHUNK)}_{math.floor(cz / n / CHUNK + 0.5)}`
+		if not chunks[key] then
+			chunks[key] = {}
+			table.insert(order, key)
+		end
+		table.insert(chunks[key], f)
+	end
+
+	-- Each chunk becomes a part. With a texel density set, a chunk whose
+	-- texture would need more than 1024 texels to hold it is split into
+	-- octants until every piece fits, so the whole surface reads at one density.
+	local function chunkMesh(chunkFaces)
+		local mesh, remap = Mesh.new(), {}
+		for _, f in chunkFaces do
+			local verts = {}
+			for i, v in f.verts do
+				if not remap[v] then
+					local p = positions[v]
+					remap[v] = mesh:vertex(p[1], p[2], p[3])
+				end
+				verts[i] = remap[v]
+			end
+			mesh:face(verts, f.uvs)
+		end
+		return mesh
+	end
+	local function emit(label, chunkFaces, size)
+		local texture = 1024
+		if texelDensity then
+			local mesh = chunkMesh(chunkFaces)
+			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
+			-- Split by the layout's density; the scale only sizes the texture.
+			local unwrap = mesh:unwrap()
+			local needed = math.ceil((layoutDensity or texelDensity) / unwrap / 4) * 4
+			if needed > 1024 and #chunkFaces > 1 then
+				local half = size / 2
+				local octants, octantOrder = {}, {}
+				for _, f in chunkFaces do
+					local cx, cy, cz = 0, 0, 0
+					for _, v in f.verts do
+						local p = positions[v]
+						cx, cy, cz = cx + p[1], cy + p[2], cz + p[3]
+					end
+					local n = #f.verts
+					local sub = `{math.floor(cx / n / half) % 2}{math.floor(cy / n / half) % 2}{math.floor(cz / n / half + 0.5) % 2}`
+					if not octants[sub] then
+						octants[sub] = {}
+						table.insert(octantOrder, sub)
+					end
+					table.insert(octants[sub], f)
+				end
+				if #octantOrder > 1 then
+					for _, sub in octantOrder do
+						emit(`{label}_{sub}`, octants[sub], half)
+					end
+					return
+				end
+				-- Everything sits in one octant, such as a curved strip whose
+				-- unwrap leaves most of the texture empty: halve the cell again
+				-- until the faces part.
+				if half >= MIN_CELL then
+					emit(label, chunkFaces, half)
+					return
+				end
+			end
+			texture = math.clamp(math.ceil(texelDensity / unwrap / 4) * 4, 16, 1024)
+		end
+		part(label, bone, color, function(mesh)
+			local handles = {}
+			for _, f in chunkFaces do
+				local verts = {}
+				for i, v in f.verts do
+					if not handles[v] then
+						local p = positions[v]
+						handles[v] = mesh:vertex(p[1], p[2], p[3])
+					end
+					verts[i] = handles[v]
+				end
+				mesh:face(verts, f.uvs)
+			end
+			-- The recorder hands over a triangle soup; weld so the crease angle
+			-- can run smooth over a chunk instead of faceting every triangle.
+			mesh:weld(1e-4)
+		end, smooth, 0, texture, nil, nil, edge, shade, lit)
+		-- The warp was applied while recording; the chunk still wears the look.
+		setLook(parts[#parts], color, rust)
+		-- Chunks of one part share a group, so their edges count as its own.
+		parts[#parts].group = name
+		parts[#parts].heightRange = heightRange
+	end
+	for _, key in order do
+		emit(`{name}_{key}`, chunks[key], CHUNK)
+	end
 end
 
 -- Shades every part with all the others as occluders, so parts darken where
 -- they touch or tuck under each other, then adds them to the model.
 local function finishParts()
 	for _, entry in parts do
-		local occluders = {}
+		if entry.emissive then
+			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
+			continue
+		end
+		local occluders, group = {}, {}
 		for _, other in parts do
-			if other ~= entry then
+			if other ~= entry and entry.group and other.group == entry.group then
+				table.insert(group, other.mesh)
+			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
 		end
 		entry.mesh:paintShading(entry.image, {
-			highlight = EDGE_HIGHLIGHT,
-			shadow = CONTACT_SHADOW,
-			gradient = GRADIENT,
-			blend = EDGE_BLEND,
+			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
+			shadow = CONTACT_SHADOW * (entry.shade or 1),
+			gradient = entry.gradient or GRADIENT,
+			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
+			group = group,
+			name = entry.name,
+			paint = entry.paint,
+			-- A custom paint fn is cached under the item's key, since its code is not hashed.
+			custom = entry.custom,
+			salt = if entry.custom then CACHE_KEY else nil,
+			rust = entry.rust * WEAR,
+			stamps = entry.stamps,
+			hand = entry.hand,
+			handFocus = entry.handFocus,
+			handTune = entry.handTune,
+			rubber = entry.rubber,
+			rustEdges = entry.rustEdges,
+			reach = entry.edge,
+			highlightWidth = entry.wide,
+			highlightUneven = entry.litUneven,
+			highlightUnevenStep = entry.litUnevenStep,
+			highlightMotion = if entry.litMotion == nil then (entry.hand and HAND_EDGE_MOTION[entry.hand]) else (entry.litMotion or nil),
+			highlightMotionTune = entry.litTune,
+			highlightToZero = entry.litToZero,
+			highlightEnd = entry.litEnd,
+			paintedHighlights = entry.painted,
+			cornerTaper = entry.taper,
+			softHighlight = entry.softLit,
+			softReach = entry.softEdge,
+			softUneven = entry.softUneven,
+			softTaper = entry.softTaper,
+			softToZero = entry.softToZero,
+			softPower = entry.softPower,
+			softEnd = entry.softEnd,
+			strokes = entry.strokes,
+			brushes = entry.brushes,
+			heightRange = entry.heightRange,
+			crisp = entry.crisp,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
--- Junk Mound: a low, wide heap of mixed scrap players can walk over, built
--- from layered rusted plates with a few recognisable bits on top. Centered
--- on the origin.
-part("Heap", nil, RUST_DARK, function(mesh)
-	for i = 0, 4 do
-		local s = 6 - i * 1.15
-		box(mesh, (i % 2) * 0.2, -(i % 3) * 0.15, i * 0.3, s, s * 0.8, 0.32)
+-- Junk Mound: a low, slumped heap of mixed scrap players can walk over, with
+-- torn sheets and bent bars sticking out of it all round and the odd
+-- recognisable bit on top. Centered on the origin.
+-- mates: Plates Heap, Bits Heap
+-- The hand-painted finish for a model's parts: `coats` names a part's hand coat
+-- ("metal", "wood" or "rock"), `plain` lists parts left alone, such as lamps. A
+-- crisp part with a hand coat keeps its exact shapes and takes only the
+-- brushwork's tone. `finish` maps coat names and part names to a preset below,
+-- for props standing alone on open ground; the town models leave it nil.
+-- Call it just before finishParts().
+local SMALL_MARKS = {
+	big_length_min = 0.4,
+	big_length_max = 0.75,
+	big_width_min = 0.14,
+	big_width_max = 0.28,
+	mid_length_min = 0.2,
+	mid_length_max = 0.4,
+	mid_width_min = 0.07,
+	mid_width_max = 0.13,
+	edge_opacity = 0,
+}
+
+-- One preset per material, so tuning concrete never moves steel. A number a
+-- model set on the part before handFinish wins over the preset's. `bands`
+-- paints the stepped gradient: `steps` (default by height), `drop` (how dark
+-- the lowest step goes), `top` (the top step's brightness), `facing` (loose
+-- pieces each lit from above) and `stain` (how far a short part's steps wander
+-- as blotches instead of bands; high values fleck a dark surface).
+local PRESETS = {
+	-- Steel standing alone on open ground.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Concrete footings and plinths.
+	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
+	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
+	-- The earth body of a heap: it darkens well under everything resting on it.
+	heapBody = { gradient = 0.4, shade = 1.8, rustEdges = true, edge = 0.45, lit = 1.0, litUneven = 0.85, softLit = 0, bands = { drop = 0.48, top = 1, stain = 0.08 } },
+}
+-- The finish most props take.
+local PROP_FINISH = { metal = "propMetal", rock = "propConcrete" }
+
+-- Light at the top, stepping down to dark and cool at the base. The hand coat
+-- samples this per stroke, so each step's edge comes out brushed, not ruled.
+local function paintStepBands(entry, bands)
+	if entry.crisp and not entry.bandCrisp then
+		return
+	end
+	-- The part's height range, read off a scratch paint of its surface.
+	local low, high = math.huge, -math.huge
+	entry.mesh:paint(Image.new(32, 32), function(_x, _y, z)
+		low, high = math.min(low, z), math.max(high, z)
+		return 0, 0, 0
+	end)
+	if high - low < 0.25 then
+		return
+	end
+	-- Loose pieces listed as { x, y, z, radius } each band from their own top to
+	-- their own foot, instead of all sharing the part's height.
+	if entry.bandPieces then
+		local pieces = entry.bandPieces
+		entry.bandDepth = function(x: number, y: number, z: number): number
+			local nearest, best = pieces[1], math.huge
+			for _, piece in pieces do
+				local d = (x - piece[1]) ^ 2 + (y - piece[2]) ^ 2 + (z - piece[3]) ^ 2
+				if d < best then
+					nearest, best = piece, d
+				end
+			end
+			return 1 - math.clamp((z - nearest[3] + nearest[4]) / (2 * nearest[4]), 0, 1)
+		end
+	end
+	-- Tall parts get more steps, so any stretch of them shows some.
+	local steps = bands.steps or math.clamp(math.round((high - low) / 1.5), 4, 8)
+	local drop, top = bands.drop, bands.top
+	local paint = entry.paint
+	entry.custom = true
+	entry.paint = function(x: number, y: number, z: number, nx: number, ny: number, nz: number)
+		local r, g, b = paint(x, y, z, nx, ny, nz)
+		local depth = if entry.bandDepth then entry.bandDepth(x, y, z) else 1 - (z - low) / (high - low)
+		if bands.facing then
+			depth = depth * 0.3 + (1 - nz) * 0.35
+		end
+		depth += 0.07 * math.noise(x * 0.7, y * 0.7, z * 0.35)
+		-- A short part has no height to band, so it stains in steps instead.
+		if high - low < 1.5 then
+			depth += (bands.stain or 0.4) * math.noise(x * 0.5, y * 0.5, z * 0.3)
+		end
+		local step = math.clamp(math.floor(depth * steps), 0, steps - 1) / (steps - 1)
+		-- A small lift at the top, so near-black paint still shows its steps.
+		local lift = (1 - step) * 0.22 * (1 - math.max(r, g, b)) ^ 2
+		return r * (top - drop * step) + lift, g * (top - (drop + 0.02) * step) + lift, b * (top - (drop - 0.08) * step) + lift
+	end
+end
+
+local function applyPreset(entry, preset)
+	entry.gradient = entry.gradient or preset.gradient
+	entry.shade = entry.shade or preset.shade
+	entry.edge = entry.edge or preset.edge
+	entry.lit = entry.lit or preset.lit
+	entry.litUneven = preset.litUneven
+	if entry.rustEdges == nil then
+		entry.rustEdges = preset.rustEdges
+	end
+	-- Earth has no edge for the soft highlight to glow along; it flecks the rim.
+	if preset.softLit then
+		entry.softLit = preset.softLit
+	end
+	entry.handTune = SMALL_MARKS
+	paintStepBands(entry, preset.bands)
+end
+
+local function handFinish(coats, plain, finish)
+	for _, entry in parts do
+		-- A chunked part takes the coat of the name it was built under.
+		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
+		if plain[name] then
+			continue
+		end
+		entry.hand = coats[name]
+		if entry.hand == nil then
+			entry.litMotion = "worn"
+		elseif entry.hand == "metal" then
+			entry.handTune = SMALL_MARKS
+		end
+		entry.softLit, entry.softEdge, entry.softUneven, entry.softTaper = 0.25, 0.22, 0, 0.8
+		entry.softToZero, entry.softPower = true, 2
+		entry.taper = entry.taper or 0.5
+		entry.litToZero, entry.litUneven, entry.litUnevenStep = true, 0.6, 0.5
+		entry.brushes = { shade = { motion = "feather", tune = { width = 0.02 } } }
+		local presetName = finish and (finish[name] or finish[entry.hand])
+		if presetName then
+			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
+		end
+	end
+end
+local MOUND_REACH, MOUND_DEPTH, MOUND_HEIGHT = 3.9, 0.76, 2.3
+-- Builds into a mesh laid along two directions from a point: local x runs along
+-- (ux, uy, uz) and local z along (wx, wy, wz), so a plate's x-z outline lies there.
+local function laidOn(mesh, ox: number, oy: number, oz: number, ux: number, uy: number, uz: number, wx: number, wy: number, wz: number)
+	local ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+	ux, uy, uz = ux / ul, uy / ul, uz / ul
+	local along = wx * ux + wy * uy + wz * uz
+	wx, wy, wz = wx - ux * along, wy - uy * along, wz - uz * along
+	local wl = math.sqrt(wx * wx + wy * wy + wz * wz)
+	wx, wy, wz = wx / wl, wy / wl, wz / wl
+	local vx, vy, vz = wy * uz - wz * uy, wz * ux - wx * uz, wx * uy - wy * ux
+	return {
+		vertex = function(_self, x: number, y: number, z: number)
+			return mesh:vertex(ox + ux * x + vx * y + wx * z, oy + uy * x + vy * y + wy * z, oz + uz * x + vz * y + wz * z)
+		end,
+		face = function(_self, face)
+			return mesh:face(face)
+		end,
+	}
+end
+-- Builds into a mesh whose z axis points along (nx, ny, nz) from (cx, cy, cz),
+-- so round pieces made about "z" at the origin face that way.
+-- Every piece set on the heap, { x, y, z, radius }, so each gets its own paint bands.
+local PIECES = {}
+local function facing(mesh, cx: number, cy: number, cz: number, nx: number, ny: number, nz: number, crush: number?)
+	table.insert(PIECES, { cx, cy, cz, 0.7 })
+	local tx, ty, tz, ux, uy, uz, vx, vy, vz = crossFrame(nx, ny, nz)
+	local squash = crush or 1
+	return {
+		vertex = function(_self, x: number, y: number, z: number)
+			local across = y * squash
+			return mesh:vertex(cx + ux * x + vx * across + tx * z, cy + uy * x + vy * across + ty * z, cz + uz * x + vz * across + tz * z)
+		end,
+		face = function(_self, face)
+			return mesh:face(face)
+		end,
+	}
+end
+
+-- A mound's outline radius on a bearing: a lopsided circle.
+local function moundReach(angle: number): number
+	return MOUND_REACH * (1 + 0.14 * math.sin(angle * 2 + 0.7) + 0.09 * math.sin(angle * 3 + 2.1) + 0.05 * math.sin(angle * 5))
+end
+
+-- How high the mound's top is above a spot: spreading out to nothing at its
+-- edge, with slumps across it.
+local function moundTop(x: number, y: number): number
+	local stretched = y / MOUND_DEPTH
+	local reach = moundReach(math.atan2(stretched, x))
+	local along = math.sqrt(x * x + stretched * stretched) / reach
+	if along >= 1 then
+		return 0
+	end
+	local slump = (0.72 + 0.34 * math.noise(x * 0.75 + 3.1, y * 0.75 - 1.7, 0.4)) * math.min(1, (1 - along) * 5 + 0.5)
+	return MOUND_HEIGHT * (1 - along * along) ^ 1.5 * slump
+end
+
+local function moundSurface(mesh)
+	local rings, sides = 10, 36
+	local rows = {}
+	for r = 1, rings do
+		rows[r] = {}
+		for s = 1, sides do
+			local a = s / sides * math.pi * 2
+			local d = moundReach(a) * r / rings
+			local x, y = math.cos(a) * d, math.sin(a) * d * MOUND_DEPTH
+			rows[r][s] = mesh:vertex(x, y, if r == rings then -0.05 else moundTop(x, y))
+		end
+	end
+	local peak = mesh:vertex(0, 0, moundTop(0, 0))
+	local floor = {}
+	for s = 1, sides do
+		local n = s % sides + 1
+		mesh:face({ peak, rows[1][s], rows[1][n] })
+		for r = 1, rings - 1 do
+			mesh:face({ rows[r][s], rows[r + 1][s], rows[r + 1][n], rows[r][n] })
+		end
+		floor[sides - s + 1] = rows[rings][s]
+	end
+	mesh:face(floor)
+end
+
+local TORN_A = {
+	{ -0.9, 0.35 }, { -0.45, 0.75 }, { -0.1, 0.5 }, { 0.35, 0.9 }, { 0.85, 0.55 }, { 0.75, 0 },
+	{ 1, -0.45 }, { 0.4, -0.8 }, { 0.05, -0.55 }, { -0.5, -0.85 }, { -0.95, -0.3 },
+}
+local TORN_B = {
+	{ -0.7, 0.6 }, { 0.1, 0.85 }, { 0.3, 0.55 }, { 0.8, 0.7 }, { 0.6, 0.1 }, { 0.9, -0.6 },
+	{ 0.2, -0.4 }, { -0.3, -0.8 }, { -0.85, -0.35 }, { -0.6, 0 },
+}
+-- A long strip torn off something, for variety against the wide sheets.
+local TORN_STRIP = {
+	{ -0.25, 1 }, { 0.2, 1.1 }, { 0.3, 0.3 }, { 0.2, -0.3 }, { 0.32, -1 }, { -0.15, -1.1 }, { -0.3, -0.2 },
+}
+-- Each sheet: where it comes out, how far its middle stands off the heap, its
+-- size and outline, then the two directions it lies along.
+local SHEETS = {
+	{ 2.7, 0.75, 0.3, 1.1, TORN_A, -0.3, 1, 0.1, 0.75, 0.2, 0.6 },
+	{ -2.9, -0.6, 0.42, 0.7, TORN_B, 0.2, 1, -0.1, -0.8, 0.1, 0.55 },
+	{ 3.0, -0.75, 0.3, 0.9, TORN_STRIP, 0.3, 1, 0.1, 0.85, -0.25, 0.5 },
+	{ 1.5, -1.6, 0.3, 0.8, TORN_B, 1, 0.3, -0.1, 0.2, -0.75, 0.55 },
+	{ -1.6, -1.25, 0.34, 0.9, TORN_STRIP, 0.8, -0.5, 0.15, -0.3, -0.5, 0.85 },
+	{ 0.2, -2.3, 0.26, 0.85, TORN_A, 1, -0.1, 0.1, 0, -0.6, 0.75 },
+	{ 2.05, -0.2, 0.2, 0.6, TORN_STRIP, 0.3, 1, 0.2, 0.9, -0.1, 0.45 },
+	{ 2.2, -2.05, 0.2, 0.55, TORN_A, 0.7, 0.6, -0.1, 0.5, -0.7, 0.5 },
+	-- One bedded nearly flat on top, half under the big piece.
+	{ -1.9, 0.95, 0.14, 0.95, TORN_B, 1, -0.2, 0.2, 0.3, 1, 0.25 },
+}
+-- Blocks of crushed stuff bedded in the heap, breaking its surface: where, size,
+-- then the way each one's top faces.
+local CRUSHED = {
+	{ -2.2, 0.75, 1.1, 0.8, 0.5, -0.4, 0.3, 0.9 },
+	{ 1.0, -1.1, 0.9, 0.7, 0.42, 0.3, -0.5, 0.8 },
+	{ 2.6, 0.0, 0.7, 0.9, 0.36, 0.6, 0.1, 0.8 },
+	{ -0.3, -1.3, 0.75, 0.55, 0.4, -0.1, -0.55, 0.85 },
+	{ 0.4, 1.35, 0.95, 0.6, 0.44, 0.2, 0.6, 0.8 },
+	{ -2.9, 0.1, 0.6, 0.7, 0.32, -0.7, 0, 0.7 },
+	{ 1.9, 1.3, 0.55, 0.5, 0.3, 0.45, 0.5, 0.75 },
+	{ -1.3, -0.5, 0.8, 0.6, 0.4, -0.2, -0.2, 0.95 },
+}
+
+part("Heap", nil, { 0.55, 0.4, 0.27 }, function(mesh)
+	moundSurface(mesh)
+	for _, c in CRUSHED do
+		box(facing(mesh, c[1], c[2], moundTop(c[1], c[2]) - 0.2, c[6], c[7], c[8]), 0, 0, 0, c[3], c[4], c[5])
 	end
 end, nil, 0.9)
 
-part("Plates", nil, RUST_ORANGE, function(mesh)
-	strut(mesh, -2.4, -1.0, 0.2, -1.2, -0.4, 0.8, 0.08)
-	box(mesh, 1.5, 1.0, 0.6, 1.2, 0.9, 0.08)
-	box(mesh, -0.8, 1.3, 0.9, 0.9, 0.7, 0.08)
+part("Plates", nil, { 0.48, 0.28, 0.13 }, function(mesh)
+	for _, s in SHEETS do
+		local size, outline = s[4], s[5]
+		local scaled = {}
+		for i, p in outline do
+			scaled[i] = { p[1] * size, p[2] * size }
+		end
+		plate(laidOn(mesh, s[1], s[2], moundTop(s[1], s[2]) + s[3] + 0.16, s[6], s[7], s[8], s[9], s[10], s[11]), scaled, 0, 0.08, 0.01)
+	end
 end, nil, 0.8)
 
-part("Bits", nil, DARK_STEEL, function(mesh)
-	ring(mesh, 0.6, -0.6, 1.55, 0.2, 0.45, 0.2, "y", 12)
-	cylinder(mesh, -1.6, 0.4, 0.75, 0.25, 1.2, "x", 10)
-	tube(mesh, { { 1.8, -1.4, 0.3 }, { 1.2, -0.8, 1.0 }, { 0.4, 0.2, 1.4 } }, 0.06, 6)
+part("Bits", nil, { 0.44, 0.45, 0.47 }, function(mesh)
+	-- Bars bent where they stick out of the heap, all the way round.
+	for _, bar in {
+		{ { 2.2, -0.9, 0.42 }, { 3.0, -1.35, 0.8 }, { 3.35, -1.2, 1.35 } },
+		{ { -1.9, 1.05, 0.95 }, { -2.7, 1.45, 1.05 }, { -2.5, 2.05, 0.85 } },
+		{ { 0.9, 1.1, 1.05 }, { 1.2, 1.6, 1.5 }, { 1.8, 1.55, 1.75 } },
+		{ { -0.8, -1.55, 0.75 }, { -1.2, -2.5, 0.75 }, { -0.8, -2.85, 1.15 } },
+		{ { 0.7, -1.4, 0.8 }, { 1.2, -2.4, 0.5 }, { 2.3, -2.75, 0.85 } },
+	} do
+		tube(mesh, roundedPath(bar, 0.14), 0.11, 6)
+	end
+	-- The one big thing on it: a crushed tank lying across the top, with a
+	-- crumpled cabinet jammed against its end.
+	cylinder(facing(mesh, 0.4, 0.55, moundTop(0.4, 0.55) + 0.55, 0.85, 0.42, 0.28, 0.72), 0, 0, 0, 0.95, 3, "z", 14)
+	-- The big pieces band over their own full height.
+	PIECES[#PIECES][4] = 1.3
+	box(facing(mesh, -2.15, -1.05, moundTop(-2.15, -1.05) + 0.05, -0.35, -0.2, 0.9, 0.8), 0, 0, 0, 1.5, 1.2, 1.5)
+	PIECES[#PIECES][4] = 1.0
+	-- Beams thrown on at odd angles, resting across the heap and each other.
+	strut(mesh, -2.4, 0.5, 0.35, -0.3, 1.25, 1.55, 0.22)
+	strut(mesh, -0.9, 1.5, 1.05, 0.9, 0.3, 1.2, 0.2)
+	strut(mesh, 2.1, 1.1, 0.85, 3.2, 1.75, 0.15, 0.18)
+	-- A beam and a bent bar leaning right out over the heap's edge.
+	strut(mesh, -3.2, -1.4, 0.04, -1.1, -0.35, 1.45, 0.26)
+	strut(mesh, 2.0, -2.2, 0.75, 3.6, -2.7, 1.35, 0.14)
+	-- Big loose pieces lying out on the sand: a plate, a drum on its side.
+	cylinder(facing(mesh, -1.0, 2.75, 0.42, 1, -0.35, 0.05), 0, 0, 0, 0.42, 1.4, "z", 12)
+	-- Spilled onto the ground all round: a crushed drum, brake discs, a dropped bar.
+	cylinder(facing(mesh, -2.9, -1.95, 0.32, 0.8, -0.5, 0.15), 0, 0, 0, 0.34, 1, "z", 10)
+	strut(mesh, -1.2, -2.9, 0.04, 0.3, -3.2, 0.03, 0.09)
+	-- A drum half sunk at an angle, and a gear thrown on beside the top sheets.
+	cylinder(facing(mesh, -1.65, 0.35, moundTop(-1.65, 0.35) + 0.2, 1, 0.3, 0.3), 0, 0, 0, 0.3, 1.25, "z", 10)
+	gear(facing(mesh, 0.75, -0.45, moundTop(0.75, -0.45) + 0.22, 0.3, -0.4, 0.85), 0, 0, 0, 0.55, 0.14, 9, "z")
 end, nil, 0.6)
 
+-- What spilled past the heap onto the ground: flat, so it banks no bands and
+-- goes darker and rustier to read as old steel.
+part("Spill", nil, { 0.27, 0.28, 0.3 }, function(mesh)
+	plate(laidOn(mesh, 3.7, -1.6, 0.08, 1, 0.3, 0.02, -0.3, 1, 0.04), { { -0.8, 0.5 }, { 0.2, 0.7 }, { 0.9, 0.3 }, { 0.7, -0.4 }, { -0.1, -0.7 }, { -0.9, -0.2 } }, 0, 0.1, 0.012)
+	ring(mesh, 3.5, 1.9, 0.06, 0.2, 0.55, 0.1, "z", 14)
+	ring(mesh, -3.4, 1.7, 0.05, 0.18, 0.46, 0.1, "z", 14)
+	ring(mesh, 2.7, -2.6, 0.05, 0.16, 0.4, 0.1, "z", 14)
+end, nil, 0.9)
+
 part("Tyre", nil, RUBBER_BLACK, function(mesh)
-	ring(mesh, -0.4, 0.2, 1.5, 0.25, 0.5, 0.25, "z", 14)
+	-- Sunk a third of its width into the front slope.
+	local x, y = 0.9, -1.75
+	ring(facing(mesh, x, y, moundTop(x, y) + 0.2, 0.1, -0.75, 0.65), 0, 0, 0, 0.26, 0.62, 0.26, "z", 14)
+	-- One more lying flat on top, and a third thrown clear on the sand.
+	ring(mesh, 0.7, 0.7, moundTop(0.7, 0.7) + 0.08, 0.26, 0.56, 0.26, "z", 14)
+	ring(mesh, -3.7, -0.9, 0.13, 0.26, 0.56, 0.26, "z", 14)
+	-- A big one leaning out over the near edge, its foot on the sand.
+	ring(facing(mesh, 3.1, 0.45, 0.72, 0.85, 0.1, 0.5), 0, 0, 0, 0.36, 0.86, 0.32, "z", 16)
 end, nil, RUBBER)
 
+for _, entry in parts do
+	if entry.name == "Heap" then
+		-- Joins with the pieces darken over a wider band.
+		entry.rust, entry.edge, entry.lit = 0.15, 0.5, 0
+	else
+		entry.bandPieces = PIECES
+	end
+	-- Small loose steel has no seams to speak of, so it rusts in patches all over.
+	if entry.name == "Bits" or entry.name == "Spill" then
+		entry.rust, entry.rustEdges = 0.45, false
+	end
+end
+handFinish({
+	Heap = "rock",
+	Plates = "metal",
+	Bits = "metal",
+	Tyre = "rock",
+}, {}, { Heap = "heapBody", metal = "heapPiece", rock = "heapPiece" })
 finishParts()

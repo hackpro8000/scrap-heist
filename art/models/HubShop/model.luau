@@ -1,4 +1,4 @@
-local CACHE_KEY = "HubShop-f6941b9a000c6c7e"
+local CACHE_KEY = "HubShop-d28bf4508d6bb561"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -885,7 +885,7 @@ local function finishParts()
 		entry.mesh:paintShading(entry.image, {
 			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
 			shadow = CONTACT_SHADOW * (entry.shade or 1),
-			gradient = GRADIENT,
+			gradient = entry.gradient or GRADIENT,
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
@@ -900,6 +900,7 @@ local function finishParts()
 			handFocus = entry.handFocus,
 			handTune = entry.handTune,
 			rubber = entry.rubber,
+			rustEdges = entry.rustEdges,
 			reach = entry.edge,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
@@ -931,7 +932,9 @@ end
 -- The hand-painted finish for a model's parts: `coats` names a part's hand coat
 -- ("metal", "wood" or "rock"), `plain` lists parts left alone, such as lamps. A
 -- crisp part with a hand coat keeps its exact shapes and takes only the
--- brushwork's tone. Call it just before finishParts().
+-- brushwork's tone. `finish` maps coat names and part names to a preset below,
+-- for props standing alone on open ground; the town models leave it nil.
+-- Call it just before finishParts().
 local SMALL_MARKS = {
 	big_length_min = 0.4,
 	big_length_max = 0.75,
@@ -944,12 +947,105 @@ local SMALL_MARKS = {
 	edge_opacity = 0,
 }
 
-local function handFinish(coats, plain)
+-- One preset per material, so tuning concrete never moves steel. A number a
+-- model set on the part before handFinish wins over the preset's. `bands`
+-- paints the stepped gradient: `steps` (default by height), `drop` (how dark
+-- the lowest step goes), `top` (the top step's brightness), `facing` (loose
+-- pieces each lit from above) and `stain` (how far a short part's steps wander
+-- as blotches instead of bands; high values fleck a dark surface).
+local PRESETS = {
+	-- Steel standing alone on open ground.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Concrete footings and plinths.
+	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
+	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
+	-- The earth body of a heap: it darkens well under everything resting on it.
+	heapBody = { gradient = 0.4, shade = 1.8, rustEdges = true, edge = 0.45, lit = 1.0, litUneven = 0.85, softLit = 0, bands = { drop = 0.48, top = 1, stain = 0.08 } },
+}
+-- The finish most props take.
+local PROP_FINISH = { metal = "propMetal", rock = "propConcrete" }
+
+-- Light at the top, stepping down to dark and cool at the base. The hand coat
+-- samples this per stroke, so each step's edge comes out brushed, not ruled.
+local function paintStepBands(entry, bands)
+	if entry.crisp and not entry.bandCrisp then
+		return
+	end
+	-- The part's height range, read off a scratch paint of its surface.
+	local low, high = math.huge, -math.huge
+	entry.mesh:paint(Image.new(32, 32), function(_x, _y, z)
+		low, high = math.min(low, z), math.max(high, z)
+		return 0, 0, 0
+	end)
+	if high - low < 0.25 then
+		return
+	end
+	-- Loose pieces listed as { x, y, z, radius } each band from their own top to
+	-- their own foot, instead of all sharing the part's height.
+	if entry.bandPieces then
+		local pieces = entry.bandPieces
+		entry.bandDepth = function(x: number, y: number, z: number): number
+			local nearest, best = pieces[1], math.huge
+			for _, piece in pieces do
+				local d = (x - piece[1]) ^ 2 + (y - piece[2]) ^ 2 + (z - piece[3]) ^ 2
+				if d < best then
+					nearest, best = piece, d
+				end
+			end
+			return 1 - math.clamp((z - nearest[3] + nearest[4]) / (2 * nearest[4]), 0, 1)
+		end
+	end
+	-- Tall parts get more steps, so any stretch of them shows some.
+	local steps = bands.steps or math.clamp(math.round((high - low) / 1.5), 4, 8)
+	local drop, top = bands.drop, bands.top
+	local paint = entry.paint
+	entry.custom = true
+	entry.paint = function(x: number, y: number, z: number, nx: number, ny: number, nz: number)
+		local r, g, b = paint(x, y, z, nx, ny, nz)
+		local depth = if entry.bandDepth then entry.bandDepth(x, y, z) else 1 - (z - low) / (high - low)
+		if bands.facing then
+			depth = depth * 0.3 + (1 - nz) * 0.35
+		end
+		depth += 0.07 * math.noise(x * 0.7, y * 0.7, z * 0.35)
+		-- A short part has no height to band, so it stains in steps instead.
+		if high - low < 1.5 then
+			depth += (bands.stain or 0.4) * math.noise(x * 0.5, y * 0.5, z * 0.3)
+		end
+		local step = math.clamp(math.floor(depth * steps), 0, steps - 1) / (steps - 1)
+		-- A small lift at the top, so near-black paint still shows its steps.
+		local lift = (1 - step) * 0.22 * (1 - math.max(r, g, b)) ^ 2
+		return r * (top - drop * step) + lift, g * (top - (drop + 0.02) * step) + lift, b * (top - (drop - 0.08) * step) + lift
+	end
+end
+
+local function applyPreset(entry, preset)
+	entry.gradient = entry.gradient or preset.gradient
+	entry.shade = entry.shade or preset.shade
+	entry.edge = entry.edge or preset.edge
+	entry.lit = entry.lit or preset.lit
+	entry.litUneven = preset.litUneven
+	if entry.rustEdges == nil then
+		entry.rustEdges = preset.rustEdges
+	end
+	-- Earth has no edge for the soft highlight to glow along; it flecks the rim.
+	if preset.softLit then
+		entry.softLit = preset.softLit
+	end
+	entry.handTune = SMALL_MARKS
+	paintStepBands(entry, preset.bands)
+end
+
+local function handFinish(coats, plain, finish)
 	for _, entry in parts do
-		if plain[entry.name] then
+		-- A chunked part takes the coat of the name it was built under.
+		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
+		if plain[name] then
 			continue
 		end
-		entry.hand = coats[entry.name]
+		entry.hand = coats[name]
 		if entry.hand == nil then
 			entry.litMotion = "worn"
 		elseif entry.hand == "metal" then
@@ -960,6 +1056,10 @@ local function handFinish(coats, plain)
 		entry.taper = entry.taper or 0.5
 		entry.litToZero, entry.litUneven, entry.litUnevenStep = true, 0.6, 0.5
 		entry.brushes = { shade = { motion = "feather", tune = { width = 0.02 } } }
+		local presetName = finish and (finish[name] or finish[entry.hand])
+		if presetName then
+			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
+		end
 	end
 end
 -- Small props and fittings shared by the town pieces. Each takes the mesh and
@@ -1211,6 +1311,11 @@ part("CounterDrums", nil, DRUM, function(mesh)
 			cylinder(mesh, x, COUNTER_Y, FLOOR + z, 0.82, 0.12, "z", 14)
 		end
 	end
+	-- A pair of stacked crates in each long span, so no plank runs far unsupported.
+	for _, x in { -4, 4 } do
+		box(mesh, x, COUNTER_Y, FLOOR, 1.5, 1.5, 1.08)
+		box(mesh, x + 0.1, COUNTER_Y - 0.06, FLOOR + 1.08, 1.34, 1.34, 1.12)
+	end
 	box(mesh, -2.5, COUNTER_Y, 3.4, 1.6, 1.1, 0.9)
 	strut(mesh, -2.5, COUNTER_Y + 0.25, 4.3, -2.5, COUNTER_Y - 0.35, 3.75, 0.26)
 end, nil, 0.1)
@@ -1258,6 +1363,8 @@ part("AwningPosts", nil, PIPE, function(mesh)
 		cylinder(mesh, x, POST_Y, (FLOOR + top - 0.16) / 2, 0.3, top - 0.16 - FLOOR, "z", 10)
 		box(mesh, x, POST_Y, top - 0.2, 0.9, 0.7, 0.2)
 		box(mesh, x, POST_Y + 0.05, FLOOR, 0.86, 0.6, 0.1)
+		-- A knee brace from the post back up to the rafters.
+		strut(mesh, x, POST_Y + 0.15, top - 1.5, x, POST_Y + 1.35, top - 0.2, 0.14)
 	end
 	-- The ledger that carries the rear edge, bolted along the containers.
 	box(mesh, 0, -1.2, AWNING_Z - 0.32, 31, 0.5, 0.3)
@@ -1395,6 +1502,15 @@ part("Fittings", nil, { 0.3, 0.32, 0.36 }, function(mesh)
 		for _, h in { 0.9, 7 } do
 			box(mesh, 6.36, y, LOWER_TOP + h, 0.14, 0.34, 0.3)
 		end
+	end
+	-- The upper container's blind end: a bolted hatch and a downpipe on brackets.
+	box(mesh, -13.86, 4, LOWER_TOP + 1.9, 0.14, 2.6, 3)
+	for _, y in { 2.95, 5.05 } do
+		box(mesh, -13.95, y, LOWER_TOP + 3.2, 0.08, 0.3, 0.4)
+	end
+	cylinder(mesh, -14.08, 6.8, LOWER_TOP + 4, 0.12, 7.2, "z", 8)
+	for _, h in { 1, 4, 7 } do
+		box(mesh, -13.9, 6.8, LOWER_TOP + h, 0.24, 0.3, 0.15)
 	end
 	-- Roof plant: an extractor, a fan unit and a hatch.
 	cylinder(mesh, -11, 6.5, ROOF_TOP + 0.55, 0.55, 1.1, "z", 12)

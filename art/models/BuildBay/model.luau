@@ -1,4 +1,4 @@
-local CACHE_KEY = "BuildBay-41fca13c407e7dc2"
+local CACHE_KEY = "BuildBay-53489079ec725d33"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -885,7 +885,7 @@ local function finishParts()
 		entry.mesh:paintShading(entry.image, {
 			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
 			shadow = CONTACT_SHADOW * (entry.shade or 1),
-			gradient = GRADIENT,
+			gradient = entry.gradient or GRADIENT,
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
@@ -900,6 +900,7 @@ local function finishParts()
 			handFocus = entry.handFocus,
 			handTune = entry.handTune,
 			rubber = entry.rubber,
+			rustEdges = entry.rustEdges,
 			reach = entry.edge,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
@@ -1468,8 +1469,8 @@ tapered()
 part("Arm", nil, FRAME_STEEL, function(mesh)
 	local ELBOW_Y, ELBOW_Z = 2.35, 7.2
 	box(mesh, 0, FRAME_Y - 0.55, BEAM_Z0 + 0.15, 0.6, 0.24, 0.6)
-	strut(mesh, 0, FRAME_Y - 0.6, BEAM_Z0 + 0.45, 0, ELBOW_Y, ELBOW_Z, 0.2)
-	strut(mesh, 0, ELBOW_Y, ELBOW_Z, 0, SHADE_Y, SHADE_Z + 0.1, 0.16)
+	strut(mesh, 0, FRAME_Y - 0.6, BEAM_Z0 + 0.45, 0, ELBOW_Y, ELBOW_Z, 0.26)
+	strut(mesh, 0, ELBOW_Y, ELBOW_Z, 0, SHADE_Y, SHADE_Z + 0.1, 0.24)
 	cylinder(mesh, 0, ELBOW_Y, ELBOW_Z, 0.2, 0.34, "x", 12)
 	-- The shade, open underneath: outside, rim, then inside.
 	lathe(mesh, { 0, SHADE_Y, SHADE_Z }, { 1, 0, 0 }, { 0, -SHADE_COS, SHADE_SIN }, { 0, -SHADE_SIN, -SHADE_COS }, { { 0.28, 0 }, { 0.55, 0.7 }, { 0.5, 0.7 }, { 0.24, 0.1 } }, 20)
@@ -1496,7 +1497,10 @@ part("Posts", nil, PANEL_STEEL, function(mesh)
 		box(mesh, x, y, DECK_TOP - 0.02, 0.5, 0.5, 0.14)
 		cylinder(mesh, x, y, (DECK_TOP + LAMP_TOP) / 2, 0.14, LAMP_TOP - DECK_TOP, "z", 10)
 		-- The bracket arm reaching in over the deck.
-		tube(mesh, { { x, y, LAMP_TOP - 0.2 }, { x - side * 0.42, y + 0.42, LAMP_TOP + 0.02 } }, 0.07, 6)
+		tube(mesh, roundedPath({ { x, y, LAMP_TOP - 0.3 }, { x - side * 0.55, y + 0.55, LAMP_TOP + 0.14 }, { x - side * 1.0, y + 1.0, LAMP_TOP + 0.12 } }, 0.1), 0.08, 6)
+		-- A flange round the post's foot, gusseted.
+		cylinder(mesh, x, y, DECK_TOP + 0.08, 0.32, 0.1, "z", 10)
+		strut(mesh, x, y, DECK_TOP + 0.75, x - side * 0.25, y + 0.25, DECK_TOP + 0.12, 0.09)
 	end
 end, nil, 0.3, nil, nil, true, 0.1)
 tapered()
@@ -1505,7 +1509,7 @@ tapered()
 -- the pair at the front, and the rest, all behind the middle.
 part("PostLamps", nil, AMBER, function(mesh)
 	for _, side in { -1, 1 } do
-		sphere(mesh, side * (LAMP_POST - 0.45), -LAMP_POST + 0.45, LAMP_TOP + 0.05, 0.26, 0.26, 0.26, 6, 10)
+		sphere(mesh, side * (LAMP_POST - 1.0), -LAMP_POST + 1.0, LAMP_TOP - 0.14, 0.26, 0.26, 0.26, 6, 10)
 	end
 end, true, 0, nil, 1.4)
 
@@ -1555,11 +1559,11 @@ end
 -- heights above the ground.
 local MOUND_X, MOUND_Y, MOUND_Z = 0.66, 0.5, 0.36
 local CRATE_RUST = { 0.42, 0.26, 0.16 }
-local CRATE_GEAR = { -0.3, 0.18, 1.913 }
-local CRATE_COG = { 0.33, -0.2, 1.817 }
-local CRATE_WASHER = { -0.4, -0.3, 1.718 }
+local CRATE_GEAR = { -0.28, 0.2, 1.72 }
+local CRATE_COG = { 0.36, -0.2, 1.76 }
+local CRATE_WASHER = { -0.42, -0.28, 1.62 }
 -- Each bolt: its offset, then yaw, pitch and roll.
-local CRATE_BOLTS = { { -0.04, -0.4, 1.715, 30, 18, -22 }, { 0.15, -0.44, 1.65, 70, -30, 14 } }
+local CRATE_BOLTS = { { -0.02, -0.38, 1.67, 30, 62, -22 }, { 0.12, 0.4, 1.63, 70, -48, 14 } }
 -- Bent where it crosses the rim, its upper end kicked up and aside.
 local CRATE_PIPE = { { 0.26, 0.26, 1.76 }, { 0.69, 0.3, 1.86 } }
 local CRATE_PIPE_END = { { 0.69, 0.3, 1.86 }, { 0.84, 0.22, 2.05 } }
@@ -1613,12 +1617,16 @@ end, nil, nil, true, 0.12)
 -- The heap and its pieces are separate parts so one's brush strokes can't land
 -- on another.
 part("CrateHeap", nil, CRATE_RUST, function(mesh)
-	sphere(mesh, CRATE_X, CRATE_Y, 1.5, MOUND_X, MOUND_Y, MOUND_Z, 6, 14)
+	-- Sits on the crate's floor, inside its walls: a high side, a low side and a dip.
+	sphere(mesh, CRATE_X, CRATE_Y, 1.6, MOUND_X * 0.98, MOUND_Y * 0.98, 0.15, 6, 14)
+	sphere(mesh, CRATE_X + 0.3, CRATE_Y - 0.14, 1.66, 0.3, 0.26, 0.2, 5, 10)
+	sphere(mesh, CRATE_X - 0.3, CRATE_Y + 0.16, 1.63, 0.26, 0.24, 0.13, 5, 10)
 end, nil, 0.5, nil, nil, nil, 0.1)
 
 part("CrateGear", nil, BRONZE, function(mesh)
 	local x, y, z = inCrate(CRATE_GEAR)
-	gear(tippedAbout(mesh, x, y, z, 15, -30, 12), x, y, z, 0.36, 0.14, 9, "y")
+	-- Half buried, with a third of it snapped away.
+	plate(tippedAbout(mesh, x, y, z, 15, -58, 34), brokenCogOutline(x, z), y, 0.13, 0.008)
 end, nil, 0.25, nil, nil, true, 0.06)
 tapered()
 
@@ -1626,10 +1634,12 @@ part("CrateScrap", nil, BARE, function(mesh)
 	local x, y, z = inCrate(CRATE_COG)
 	plate(tippedAbout(mesh, x, y, z, -50, -60, 20), brokenCogOutline(x, z), y, 0.1, 0.008)
 	x, y, z = inCrate(CRATE_WASHER)
-	ring(tippedAbout(mesh, x, y, z, 40, 28, -35), x, y, z, 0.1, 0.2, 0.08, "z", 10)
+	-- A torn scrap of plate where a washer would be, wedged against the wall.
+	plate(tippedAbout(mesh, x, y, z, 40, 62, -35), { { x - 0.2, z + 0.08 }, { x - 0.02, z + 0.17 }, { x + 0.12, z + 0.04 }, { x + 0.22, z - 0.1 }, { x + 0.02, z - 0.06 }, { x - 0.14, z - 0.15 } }, y, 0.04, 0.006)
 	local bent = pathInCrate(CRATE_PIPE)
 	table.insert(bent, { inCrate(CRATE_PIPE_END[2]) })
-	tube(mesh, roundedPath(bent, 0.1), 0.1, 8)
+	-- A sharp kink where it folded over the rim.
+	tube(mesh, roundedPath(bent, 0.025), 0.1, 8)
 	for _, loose in CRATE_BOLTS do
 		x, y, z = inCrate(loose)
 		bolt(tippedAbout(mesh, x, y, z, loose[4], loose[5], loose[6]), x, y, z, "z", 0.09)

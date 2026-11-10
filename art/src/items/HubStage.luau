@@ -111,7 +111,21 @@ end, nil, 0.15)
 part("Steps", nil, CONCRETE, function(mesh)
 	box(mesh, 0, -10.95, 0, 10, 4.3, 0.6)
 	box(mesh, 0, -9.85, 0.55, 9.8, 2.2, 0.65)
-end, nil, 0.1)
+	-- Stringers up each side, and a lip against the deck's edge.
+	for _, side in { -1, 1 } do
+		box(mesh, side * 5.1, -10.9, 0, 0.22, 4.4, 0.72)
+		box(mesh, side * 5.1, -9.85, 0.6, 0.22, 2.2, 0.82)
+	end
+	box(mesh, 0, -8.72, 1.2, 10.2, 0.18, 0.6)
+end, nil, function(x, y, z)
+	-- Hazard tape along each step's nosing, matching the deck's edge.
+	local nosing = (z > 0.55 and z < 0.65 and y < -12.75) or (z > 1.15 and z < 1.25 and y < -10.6)
+	if nosing then
+		return if (x + 20) % 1.2 < 0.6 then 0.9 else 0.08, if (x + 20) % 1.2 < 0.6 then 0.72 else 0.08, if (x + 20) % 1.2 < 0.6 then 0.15 else 0.09
+	end
+	local k = 0.94 + 0.08 * math.noise(x * 1.3, y * 1.3, z * 2)
+	return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * k
+end)
 
 part("Truss", nil, STEEL, function(mesh)
 	latticeColumn(mesh, -TRUSS_X, TRUSS_Y)

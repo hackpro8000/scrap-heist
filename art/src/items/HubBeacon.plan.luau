@@ -4,7 +4,7 @@ return {
 	parts = {
 		{ name = "Plinth", level = "core", at = { 0, 0, 1 }, size = { 16, 16, 2 }, note = "stepped concrete base" },
 		{ name = "CrushedBlocks", level = "major", attaches = "Plinth", at = { 0, 0, 8.5 }, size = { 11, 11, 13 }, note = "4 layers of crushed-metal bales, each turned a little" },
-		{ name = "Mast", level = "major", attaches = "CrushedBlocks", at = { 0, 0, 24.25 }, size = { 4.3, 4.2, 22 }, note = "riveted girder mast" },
+		{ name = "Mast", level = "major", attaches = "CrushedBlocks", at = { 0, 0, 18.75 }, size = { 13, 11.4, 33.5 }, note = "riveted girder mast" },
 		{ name = "BigCog", level = "major", attaches = "Mast", at = { 0.0044, -3, 26 }, size = { 12, 2, 12 }, note = "giant worn cog, may turn slowly" },
 		{ name = "BeaconLamp", level = "major", attaches = "Mast", at = { 0, 0, 34.75 }, size = { 2.1, 2, 2.6 }, note = "caged glowing lamp on top" },
 		{ name = "Pipes", level = "detail", attaches = "CrushedBlocks", at = { -4, -5.6, 8.1 }, size = { 1.4, 1.8, 12 }, note = "bent pipes and cable up the side; 2 of them" },

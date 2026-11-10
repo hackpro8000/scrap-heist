@@ -1,3 +1,4 @@
+-- mates: Stack Roof
 -- Capsule Loop: the hub's capsule belt and the little factory it runs
 -- through, as one model (art/concepts/capsule-loop-sketch.png), at full size
 -- in studs. The origin is the middle of the hub at deck level; the layout
@@ -14,6 +15,7 @@
 -- include: EditMesh
 -- include: EditOps
 -- include: EditShapes
+-- include: HandFinish
 useTexelDensity(16)
 
 local BELT_RADIUS, BELT_HALF_WIDTH = 72, 2.5
@@ -75,7 +77,7 @@ end
 -- or every chunk of the chunked part `group`.
 local function crisp(group: string?)
 	for _, entry in parts do
-		if (group == nil and entry == parts[#parts]) or entry.group == group then
+		if (group == nil and entry == parts[#parts]) or (group ~= nil and entry.group == group) then
 			entry.crisp = true
 		end
 	end
@@ -197,6 +199,7 @@ end, nil, function(x, y, z)
 	end
 	return 0.55, 0.16, 0.13
 end, nil, nil, true, 0.1)
+crisp()
 
 part("Curtains", nil, RUBBER, function(mesh)
 	-- Strips over each mouth, from the frame down to just over the rails.
@@ -266,13 +269,33 @@ part("Press", nil, DARK_STEEL, function(mesh)
 	mesh:face({ a4, a1, b1, b4 })
 	mesh:face({ b1, b2, b3, b4 })
 	mesh:face({ a4, a3, a2, a1 })
+	-- Stiffening ribs up each face of the housing.
+	for _, offset in { -1.5, 1.5 } do
+		for _, side in { -1, 1 } do
+			box(mesh, SHED_X + offset, PRESS_Y + side * (PRESS_HALF + 0.05), PRESS_BASE, 0.55, 0.2, PRESS_TOP - PRESS_BASE - 1)
+			box(mesh, SHED_X + side * (PRESS_HALF + 0.05), PRESS_Y + offset, PRESS_BASE, 0.2, 0.55, PRESS_TOP - PRESS_BASE - 1)
+		end
+	end
 	-- The ram, down through the ridge, with a collar where it enters the housing.
-	cylinder(mesh, SHED_X, PRESS_Y, (PRESS_BASE + roofAt(0) - 0.2) / 2, 0.95, PRESS_BASE - roofAt(0) + 0.2, "z", 16)
+	cylinder(mesh, SHED_X, PRESS_Y, (PRESS_BASE + roofAt(0)) / 2, 0.95, PRESS_BASE - roofAt(0), "z", 16)
 	ring(mesh, SHED_X, PRESS_Y, PRESS_BASE - 0.2, 0.9, 1.35, 0.4, "z", 16)
 	-- A skirt where the housing meets the roof's slope.
 	for _, a in { -1, 1 } do
-		box(mesh, SHED_X + a * PRESS_HALF, PRESS_Y, roofAt(PRESS_HALF) - 0.3, 0.5, 2 * PRESS_HALF + 0.3, PRESS_BASE - roofAt(PRESS_HALF) + 0.3)
-		box(mesh, SHED_X, PRESS_Y + a * PRESS_HALF, roofAt(0) - 0.3, 2 * PRESS_HALF + 0.3, 0.5, PRESS_BASE - roofAt(0) + 0.3)
+		box(mesh, SHED_X + a * PRESS_HALF, PRESS_Y, roofAt(PRESS_HALF) + 0.02, 0.5, 2 * PRESS_HALF + 0.3, PRESS_BASE - roofAt(PRESS_HALF) - 0.02)
+		box(mesh, SHED_X, PRESS_Y + a * PRESS_HALF, roofAt(0) + 0.02, 2 * PRESS_HALF + 0.3, 0.5, PRESS_BASE - roofAt(0) - 0.02)
+	end
+	-- The housing's frame: corner angles, a band round its middle and a
+	-- hydraulic cylinder bolted to each side.
+	local middle = (PRESS_BASE + PRESS_TOP - 1) / 2
+	for _, a in { -1, 1 } do
+		for _, b in { -1, 1 } do
+			box(mesh, SHED_X + a * (PRESS_HALF + 0.05), PRESS_Y + b * (PRESS_HALF + 0.05), PRESS_BASE, 0.34, 0.34, PRESS_TOP - 1 - PRESS_BASE)
+		end
+		cylinder(mesh, SHED_X + a * (PRESS_HALF + 0.42), PRESS_Y, middle, 0.34, 2.4, "z", 12)
+		box(mesh, SHED_X + a * (PRESS_HALF + 0.14), PRESS_Y, middle + 1, 0.3, 0.9, 0.22)
+		box(mesh, SHED_X + a * (PRESS_HALF + 0.14), PRESS_Y, middle - 1.2, 0.3, 0.9, 0.22)
+		box(mesh, SHED_X, PRESS_Y + a * (PRESS_HALF + 0.05), middle - 0.12, 2 * PRESS_HALF + 0.6, 0.22, 0.26)
+		box(mesh, SHED_X + a * (PRESS_HALF + 0.05), PRESS_Y, middle - 0.12, 0.22, 2 * PRESS_HALF + 0.6, 0.26)
 	end
 end, nil, function(x, y, z)
 	if z < PRESS_BASE - 0.2 and math.sqrt((x - SHED_X) ^ 2 + (y - PRESS_Y) ^ 2) < 1 then
@@ -311,6 +334,8 @@ part("Hopper", nil, ORANGE, function(mesh)
 	mesh:face({ high[1], high[2], high[3], high[4] })
 	mesh:face({ low[4], low[3], low[2], low[1] })
 	box(mesh, SHED_X, HOPPER_Y, roofAt(0) - 0.3, 1.5, 1.5, HOPPER_FOOT - roofAt(0) + 0.3)
+	-- The collar where the chute goes through the ridge.
+	box(mesh, SHED_X, HOPPER_Y, roofAt(0) - 0.05, 2.7, 2.7, 0.42)
 	-- The rim round its mouth.
 	for _, a in { -1, 1 } do
 		box(mesh, SHED_X + a * HOPPER_HALF, HOPPER_Y, HOPPER_TOP - 0.15, 0.3, 2 * HOPPER_HALF + 0.3, 0.3)
@@ -320,6 +345,8 @@ part("Hopper", nil, ORANGE, function(mesh)
 		for _, b in { -1, 1 } do
 			local dx, dy = a * 2.1, b * 2.1
 			strut(mesh, SHED_X + dx, HOPPER_Y + dy, roofAt(dx) - 0.15, SHED_X + dx * 0.95, HOPPER_Y + dy * 0.95, 14.1, 0.3)
+			-- A foot plate bolted to the roof under each leg.
+			box(mesh, SHED_X + dx, HOPPER_Y + dy, roofAt(dx) - 0.06, 1.0, 1.0, 0.18)
 		end
 	end
 end, nil, function(x, y, z)
@@ -334,7 +361,7 @@ paintedRims()
 
 local STACK_X, STACK_Y, STACK_R, STACK_TOP = SHED_X + 4.9, 5, 1, 16
 part("Stack", nil, DARK_STEEL, function(mesh)
-	local foot = roofAt(4.9) - 0.2
+	local foot = roofAt(4.9) + 0.02
 	cylinder(mesh, STACK_X, STACK_Y, (foot + STACK_TOP) / 2, STACK_R, STACK_TOP - foot, "z", 16)
 	ring(mesh, STACK_X, STACK_Y, STACK_TOP - 0.45, STACK_R * 0.8, STACK_R + 0.18, 0.7, "z", 16)
 	ring(mesh, STACK_X, STACK_Y, roofAt(4.9) + 0.15, STACK_R * 0.8, STACK_R + 0.3, 0.3, "z", 16)
@@ -358,11 +385,38 @@ part("Pipes", nil, RAIL_STEEL, function(mesh)
 		box(mesh, SHED_X + dx, y, roofAt(dx) - 0.1, 0.3, 0.3, z - roofAt(dx) + 0.1)
 	end
 	tube(mesh, { { SHED_X + PRESS_HALF - 0.1, PRESS_Y, 13.4 }, { SHED_X + 3.3, PRESS_Y, 13.4 }, { SHED_X + 3.5, PRESS_Y + 0.5, 11.2 }, { SHED_X + 3.5, HOPPER_Y - 0.9, 11.2 }, { SHED_X + 3.2, HOPPER_Y - 0.2, 13.2 }, { SHED_X + 1.75, HOPPER_Y, 13.2 } }, 0.2, 8)
-	tube(mesh, { { SHED_X + 2.2, HOPPER_Y + 0.6, 14.1 }, { SHED_X + 3.3, HOPPER_Y + 0.8, 14.1 }, { STACK_X - 0.9, STACK_Y, 14.1 } }, 0.16, 8)
+	tube(mesh, { { SHED_X + 2.2, HOPPER_Y + 0.6, 14.1 }, { SHED_X + 3.3, HOPPER_Y + 0.8, 14.1 }, { STACK_X - 0.9, STACK_Y, 14.1 } }, 0.24, 8)
+	-- A flanged elbow into the stack, on a bracket, and one at the hopper.
+	cylinder(mesh, STACK_X - STACK_R - 0.05, STACK_Y, 14.1, 0.36, 0.3, "x", 10)
+	cylinder(mesh, SHED_X + 2.25, HOPPER_Y + 0.6, 14.1, 0.36, 0.3, "x", 10)
+	box(mesh, STACK_X - STACK_R - 0.05, STACK_Y, roofAt(STACK_X - STACK_R - 0.05 - SHED_X) - 0.1, 0.3, 0.3, 14.1 - roofAt(STACK_X - STACK_R - 0.05 - SHED_X) + 0.1)
 	for _, y in { PRESS_Y + 2, 0, HOPPER_Y - 2 } do
 		clip(3.5, y, 11.2)
 	end
 end, nil, 0.4, nil, nil, true, 0.15)
+
+-- The sketch's cogs, on the shed's outer wall: a big gear and a small one
+-- meshing with it on a riveted backing plate, each on a bossed hub.
+local DRIVE_X = SHED_X + SHED_HALF_WIDE + 0.32
+local BIG_Y, BIG_Z, BIG_R = -1.5, 3.8, 2.3
+local SMALL_Y, SMALL_Z, SMALL_R = 1.6, 3.8, 1.05
+part("DrivePlate", nil, DARK_STEEL, function(mesh)
+	box(mesh, DRIVE_X - 0.2, (BIG_Y + SMALL_Y) / 2, 1.2, 0.18, 7.6, 5.6)
+	for _, y in { -3.1, 0.25, 3.6 } do
+		for _, z in { 1.5, 6.4 } do
+			bolt(mesh, DRIVE_X - 0.08, y, z, "x", 0.14)
+		end
+	end
+end, nil, 0.3, nil, nil, true, 0.2)
+part("DriveGears", nil, BRASS, function(mesh)
+	gear(mesh, DRIVE_X, BIG_Y, BIG_Z, BIG_R, 0.4, 14, "x")
+	gear(mesh, DRIVE_X, SMALL_Y, SMALL_Z, SMALL_R, 0.4, 9, "x")
+	for _, spot in { { BIG_Y, BIG_Z, 0.55 }, { SMALL_Y, SMALL_Z, 0.32 } } do
+		cylinder(mesh, DRIVE_X + 0.1, spot[1], spot[2], spot[3], 0.7, "x", 14)
+	end
+	-- The bar that ties the two axles together, over the hubs.
+	box(mesh, DRIVE_X + 0.48, (BIG_Y + SMALL_Y) / 2, BIG_Z - 0.17, 0.16, SMALL_Y - BIG_Y + 0.7, 0.34)
+end, nil, 0.3, nil, nil, true, 0.14)
 
 -- The drive on the shed's outer wall: a big spoked gear and a small one
 -- meshing with it on a riveted backing plate, each on a bossed hub, a
@@ -452,4 +506,38 @@ part("BeltFeet", nil, DARK_STEEL, function(mesh)
 		end
 	end
 end, nil, 0.3, nil, nil, true)
+-- The shed's seams are its look; a full contact shadow would outline every
+-- panel, and the belt's ribs would dash the rails.
+for _, entry in parts do
+	if entry.name == "Shed" or entry.name == "Roof" then
+		entry.shade = 1
+	elseif string.match(entry.name, "^BeltRails") then
+		entry.shade = 0.5
+	end
+end
+handFinish({
+	Shed = "metal",
+	Roof = "metal",
+	Frames = "metal",
+	Signs = "rock",
+	Curtains = "rock",
+	Press = "metal",
+	Hopper = "metal",
+	Stack = "metal",
+	Pipes = "metal",
+	DrivePlate = "metal",
+	DriveGears = "metal",
+	Tread = "rock",
+	BeltRails = "metal",
+	BeltFeet = "metal",
+}, {
+	Shades = true,
+	Beacons = true,
+}, PROP_FINISH)
+-- Seam rust on the crisp rails dashes their edges.
+for _, entry in parts do
+	if string.match(entry.name, "^BeltRails") then
+		entry.rustEdges = false
+	end
+end
 finishParts()

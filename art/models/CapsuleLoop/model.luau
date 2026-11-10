@@ -1,4 +1,4 @@
-local CACHE_KEY = "CapsuleLoop-e213ad969554bb45"
+local CACHE_KEY = "CapsuleLoop-2eff1653a67db3ac"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -303,15 +303,57 @@ end
 -- strands, and bolts on curved faces.
 local function tube(mesh, points, radius, sides)
 	sides = sides or 8
+	local function unit(a, b)
+		local x, y, z = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local length = math.sqrt(x * x + y * y + z * z)
+		if length < 1e-6 then
+			return nil
+		end
+		return { x / length, y / length, z / length }
+	end
 	local rings = {}
+	local carried
 	for i, p in points do
-		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
-		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local before, after = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local into, out = i > 1 and unit(before, p) or nil, i < #points and unit(p, after) or nil
+		-- Each ring lies across the bisector of its bend.
+		local dx, dy, dz = after[1] - before[1], after[2] - before[2], after[3] - before[3]
+		if into and out then
+			local x, y, z = into[1] + out[1], into[2] + out[2], into[3] + out[3]
+			if x * x + y * y + z * z > 1e-6 then
+				dx, dy, dz = x, y, z
+			end
+		end
+		local tx, ty, tz, ux, uy, uz, vx, vy, vz = crossFrame(dx, dy, dz)
+		-- Carry the last ring's frame round the bend, so the tube can't twist.
+		if carried then
+			local along = carried[1] * tx + carried[2] * ty + carried[3] * tz
+			local x, y, z = carried[1] - tx * along, carried[2] - ty * along, carried[3] - tz * along
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				ux, uy, uz = x / length, y / length, z / length
+				vx, vy, vz = ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+			end
+		end
+		carried = { ux, uy, uz }
+		-- A ring across a bend is widened toward the bend's outside, or the tube
+		-- would pinch there.
+		local stretch, bx, by, bz = 1, 0, 0, 0
+		if into and out then
+			local x, y, z = out[1] - into[1], out[2] - into[2], out[3] - into[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				bx, by, bz = x / length, y / length, z / length
+				stretch = 1 / math.max(tx * out[1] + ty * out[2] + tz * out[3], 0.5)
+			end
+		end
 		local ring = {}
 		for k = 0, sides - 1 do
 			local t = k / sides * TAU
 			local c, n = math.cos(t) * radius, math.sin(t) * radius
-			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+			local x, y, z = ux * c + vx * n, uy * c + vy * n, uz * c + vz * n
+			local extra = (x * bx + y * by + z * bz) * (stretch - 1)
+			ring[k + 1] = mesh:vertex(p[1] + x + bx * extra, p[2] + y + by * extra, p[3] + z + bz * extra)
 		end
 		rings[i] = ring
 	end
@@ -328,6 +370,34 @@ local function tube(mesh, points, radius, sides)
 	end
 	mesh:face(cap)
 	mesh:face(rings[#rings])
+end
+
+-- `points` with each inner corner replaced by a curve starting up to `reach`
+-- studs before it, for wires and hoses that shouldn't have sharp elbows.
+local function roundedPath(points, reach, steps)
+	steps = steps or 4
+	local path = { points[1] }
+	for i = 2, #points - 1 do
+		local a, p, b = points[i - 1], points[i], points[i + 1]
+		local function towards(q)
+			local x, y, z = q[1] - p[1], q[2] - p[2], q[3] - p[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			local r = math.min(reach, length / 2) / length
+			return { p[1] + x * r, p[2] + y * r, p[3] + z * r }
+		end
+		local first, last = towards(a), towards(b)
+		for s = 0, steps do
+			local t = s / steps
+			local m0, m1, m2 = (1 - t) ^ 2, 2 * t * (1 - t), t * t
+			table.insert(path, {
+				first[1] * m0 + p[1] * m1 + last[1] * m2,
+				first[2] * m0 + p[2] * m1 + last[2] * m2,
+				first[3] * m0 + p[3] * m1 + last[3] * m2,
+			})
+		end
+	end
+	table.insert(path, points[#points])
+	return path
 end
 
 -- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
@@ -603,6 +673,8 @@ local function setLook(entry, color, rust)
 	entry.rubber = rust == RUBBER
 end
 
+local HAND_EDGE_MOTION = { rock = "feather", wood = "flick", metal = "worn" }
+
 -- `rust` can also be a paint fn for surfaces with their own look.
 -- `texture` overrides the texture size for parts that need more detail.
 -- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
@@ -618,9 +690,21 @@ end
 -- `softLit` (0-1) adds a wide, very soft highlight under the strokes, fading
 -- out over `softEdge` studs from each edge; `softUneven` (0-1) makes its width
 -- wander along the edge and `softTaper` (studs) thins it away from corners.
+-- `softToZero` lets that thinning reach nothing, and `softPower` steepens the fade.
 -- `strokes` lists brush strokes painted over the coat ({start, along, normal,
 -- length, width, tail, color, brush}, color in sRGB), such as cracks or dabs;
 -- `brush` is "taper" (crisp lines, the default), "round" or "sponge".
+-- `stamps` lays the coat with scanned stroke shapes instead of the flat brush.
+-- `hand` ("rock", "wood" or "metal") paints the coat the way a hand would, and
+-- `handFocus` ({x, y, z, radius}) is where it gathers its finest strokes.
+-- `handTune` sets any of its numbers by name (settings! in tools/modelkit/src/hand.rs).
+-- `litMotion` draws the hard edge highlight with a moving hand, `litTune` sets its
+-- numbers by name (tools/modelkit/src/marks.rs). A hand-painted part gets its
+-- material's motion unless it names another, or `false` for the default strokes.
+-- `brushes` draws any layer with a motion: edge, shade, soft, coat, grime, rust,
+-- drip or scratch, each {motion = "press", tune = {name = value}}. A `strokes`
+-- entry takes `motion` and `tune` the same way.
+-- With `hand` as well, `crisp` keeps the shapes exact and takes only the brushwork's tone.
 -- `crisp` lays the coat on texel by texel in the paint fn's exact colours
 -- instead of brush strokes, for machine finishes (hazard tape, ribbed
 -- rubber) that strokes would smear; shading still goes over it.
@@ -801,7 +885,7 @@ local function finishParts()
 		entry.mesh:paintShading(entry.image, {
 			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
 			shadow = CONTACT_SHADOW * (entry.shade or 1),
-			gradient = GRADIENT,
+			gradient = entry.gradient or GRADIENT,
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
@@ -811,22 +895,38 @@ local function finishParts()
 			custom = entry.custom,
 			salt = if entry.custom then CACHE_KEY else nil,
 			rust = entry.rust * WEAR,
+			stamps = entry.stamps,
+			hand = entry.hand,
+			handFocus = entry.handFocus,
+			handTune = entry.handTune,
 			rubber = entry.rubber,
+			rustEdges = entry.rustEdges,
 			reach = entry.edge,
 			highlightWidth = entry.wide,
+			highlightUneven = entry.litUneven,
+			highlightUnevenStep = entry.litUnevenStep,
+			highlightMotion = if entry.litMotion == nil then (entry.hand and HAND_EDGE_MOTION[entry.hand]) else (entry.litMotion or nil),
+			highlightMotionTune = entry.litTune,
+			highlightToZero = entry.litToZero,
+			highlightEnd = entry.litEnd,
 			paintedHighlights = entry.painted,
 			cornerTaper = entry.taper,
 			softHighlight = entry.softLit,
 			softReach = entry.softEdge,
 			softUneven = entry.softUneven,
 			softTaper = entry.softTaper,
+			softToZero = entry.softToZero,
+			softPower = entry.softPower,
+			softEnd = entry.softEnd,
 			strokes = entry.strokes,
+			brushes = entry.brushes,
 			heightRange = entry.heightRange,
 			crisp = entry.crisp,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
+-- mates: Stack Roof
 -- Capsule Loop: the hub's capsule belt and the little factory it runs
 -- through, as one model (art/concepts/capsule-loop-sketch.png), at full size
 -- in studs. The origin is the middle of the hub at deck level; the layout
@@ -3446,6 +3546,139 @@ function EditMesh.coil(radius, wire, turns, pitch, sides, steps)
 	end
 	return EditMesh.sweep(outline, path)
 end
+-- The hand-painted finish for a model's parts: `coats` names a part's hand coat
+-- ("metal", "wood" or "rock"), `plain` lists parts left alone, such as lamps. A
+-- crisp part with a hand coat keeps its exact shapes and takes only the
+-- brushwork's tone. `finish` maps coat names and part names to a preset below,
+-- for props standing alone on open ground; the town models leave it nil.
+-- Call it just before finishParts().
+local SMALL_MARKS = {
+	big_length_min = 0.4,
+	big_length_max = 0.75,
+	big_width_min = 0.14,
+	big_width_max = 0.28,
+	mid_length_min = 0.2,
+	mid_length_max = 0.4,
+	mid_width_min = 0.07,
+	mid_width_max = 0.13,
+	edge_opacity = 0,
+}
+
+-- One preset per material, so tuning concrete never moves steel. A number a
+-- model set on the part before handFinish wins over the preset's. `bands`
+-- paints the stepped gradient: `steps` (default by height), `drop` (how dark
+-- the lowest step goes), `top` (the top step's brightness), `facing` (loose
+-- pieces each lit from above) and `stain` (how far a short part's steps wander
+-- as blotches instead of bands; high values fleck a dark surface).
+local PRESETS = {
+	-- Steel standing alone on open ground.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Concrete footings and plinths.
+	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
+	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
+	-- The earth body of a heap: it darkens well under everything resting on it.
+	heapBody = { gradient = 0.4, shade = 1.8, rustEdges = true, edge = 0.45, lit = 1.0, litUneven = 0.85, softLit = 0, bands = { drop = 0.48, top = 1, stain = 0.08 } },
+}
+-- The finish most props take.
+local PROP_FINISH = { metal = "propMetal", rock = "propConcrete" }
+
+-- Light at the top, stepping down to dark and cool at the base. The hand coat
+-- samples this per stroke, so each step's edge comes out brushed, not ruled.
+local function paintStepBands(entry, bands)
+	if entry.crisp and not entry.bandCrisp then
+		return
+	end
+	-- The part's height range, read off a scratch paint of its surface.
+	local low, high = math.huge, -math.huge
+	entry.mesh:paint(Image.new(32, 32), function(_x, _y, z)
+		low, high = math.min(low, z), math.max(high, z)
+		return 0, 0, 0
+	end)
+	if high - low < 0.25 then
+		return
+	end
+	-- Loose pieces listed as { x, y, z, radius } each band from their own top to
+	-- their own foot, instead of all sharing the part's height.
+	if entry.bandPieces then
+		local pieces = entry.bandPieces
+		entry.bandDepth = function(x: number, y: number, z: number): number
+			local nearest, best = pieces[1], math.huge
+			for _, piece in pieces do
+				local d = (x - piece[1]) ^ 2 + (y - piece[2]) ^ 2 + (z - piece[3]) ^ 2
+				if d < best then
+					nearest, best = piece, d
+				end
+			end
+			return 1 - math.clamp((z - nearest[3] + nearest[4]) / (2 * nearest[4]), 0, 1)
+		end
+	end
+	-- Tall parts get more steps, so any stretch of them shows some.
+	local steps = bands.steps or math.clamp(math.round((high - low) / 1.5), 4, 8)
+	local drop, top = bands.drop, bands.top
+	local paint = entry.paint
+	entry.custom = true
+	entry.paint = function(x: number, y: number, z: number, nx: number, ny: number, nz: number)
+		local r, g, b = paint(x, y, z, nx, ny, nz)
+		local depth = if entry.bandDepth then entry.bandDepth(x, y, z) else 1 - (z - low) / (high - low)
+		if bands.facing then
+			depth = depth * 0.3 + (1 - nz) * 0.35
+		end
+		depth += 0.07 * math.noise(x * 0.7, y * 0.7, z * 0.35)
+		-- A short part has no height to band, so it stains in steps instead.
+		if high - low < 1.5 then
+			depth += (bands.stain or 0.4) * math.noise(x * 0.5, y * 0.5, z * 0.3)
+		end
+		local step = math.clamp(math.floor(depth * steps), 0, steps - 1) / (steps - 1)
+		-- A small lift at the top, so near-black paint still shows its steps.
+		local lift = (1 - step) * 0.22 * (1 - math.max(r, g, b)) ^ 2
+		return r * (top - drop * step) + lift, g * (top - (drop + 0.02) * step) + lift, b * (top - (drop - 0.08) * step) + lift
+	end
+end
+
+local function applyPreset(entry, preset)
+	entry.gradient = entry.gradient or preset.gradient
+	entry.shade = entry.shade or preset.shade
+	entry.edge = entry.edge or preset.edge
+	entry.lit = entry.lit or preset.lit
+	entry.litUneven = preset.litUneven
+	if entry.rustEdges == nil then
+		entry.rustEdges = preset.rustEdges
+	end
+	-- Earth has no edge for the soft highlight to glow along; it flecks the rim.
+	if preset.softLit then
+		entry.softLit = preset.softLit
+	end
+	entry.handTune = SMALL_MARKS
+	paintStepBands(entry, preset.bands)
+end
+
+local function handFinish(coats, plain, finish)
+	for _, entry in parts do
+		-- A chunked part takes the coat of the name it was built under.
+		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
+		if plain[name] then
+			continue
+		end
+		entry.hand = coats[name]
+		if entry.hand == nil then
+			entry.litMotion = "worn"
+		elseif entry.hand == "metal" then
+			entry.handTune = SMALL_MARKS
+		end
+		entry.softLit, entry.softEdge, entry.softUneven, entry.softTaper = 0.25, 0.22, 0, 0.8
+		entry.softToZero, entry.softPower = true, 2
+		entry.taper = entry.taper or 0.5
+		entry.litToZero, entry.litUneven, entry.litUnevenStep = true, 0.6, 0.5
+		entry.brushes = { shade = { motion = "feather", tune = { width = 0.02 } } }
+		local presetName = finish and (finish[name] or finish[entry.hand])
+		if presetName then
+			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
+		end
+	end
+end
 useTexelDensity(16)
 
 local BELT_RADIUS, BELT_HALF_WIDTH = 72, 2.5
@@ -3507,7 +3740,7 @@ end
 -- or every chunk of the chunked part `group`.
 local function crisp(group: string?)
 	for _, entry in parts do
-		if (group == nil and entry == parts[#parts]) or entry.group == group then
+		if (group == nil and entry == parts[#parts]) or (group ~= nil and entry.group == group) then
 			entry.crisp = true
 		end
 	end
@@ -3629,6 +3862,7 @@ end, nil, function(x, y, z)
 	end
 	return 0.55, 0.16, 0.13
 end, nil, nil, true, 0.1)
+crisp()
 
 part("Curtains", nil, RUBBER, function(mesh)
 	-- Strips over each mouth, from the frame down to just over the rails.
@@ -3698,13 +3932,33 @@ part("Press", nil, DARK_STEEL, function(mesh)
 	mesh:face({ a4, a1, b1, b4 })
 	mesh:face({ b1, b2, b3, b4 })
 	mesh:face({ a4, a3, a2, a1 })
+	-- Stiffening ribs up each face of the housing.
+	for _, offset in { -1.5, 1.5 } do
+		for _, side in { -1, 1 } do
+			box(mesh, SHED_X + offset, PRESS_Y + side * (PRESS_HALF + 0.05), PRESS_BASE, 0.55, 0.2, PRESS_TOP - PRESS_BASE - 1)
+			box(mesh, SHED_X + side * (PRESS_HALF + 0.05), PRESS_Y + offset, PRESS_BASE, 0.2, 0.55, PRESS_TOP - PRESS_BASE - 1)
+		end
+	end
 	-- The ram, down through the ridge, with a collar where it enters the housing.
-	cylinder(mesh, SHED_X, PRESS_Y, (PRESS_BASE + roofAt(0) - 0.2) / 2, 0.95, PRESS_BASE - roofAt(0) + 0.2, "z", 16)
+	cylinder(mesh, SHED_X, PRESS_Y, (PRESS_BASE + roofAt(0)) / 2, 0.95, PRESS_BASE - roofAt(0), "z", 16)
 	ring(mesh, SHED_X, PRESS_Y, PRESS_BASE - 0.2, 0.9, 1.35, 0.4, "z", 16)
 	-- A skirt where the housing meets the roof's slope.
 	for _, a in { -1, 1 } do
-		box(mesh, SHED_X + a * PRESS_HALF, PRESS_Y, roofAt(PRESS_HALF) - 0.3, 0.5, 2 * PRESS_HALF + 0.3, PRESS_BASE - roofAt(PRESS_HALF) + 0.3)
-		box(mesh, SHED_X, PRESS_Y + a * PRESS_HALF, roofAt(0) - 0.3, 2 * PRESS_HALF + 0.3, 0.5, PRESS_BASE - roofAt(0) + 0.3)
+		box(mesh, SHED_X + a * PRESS_HALF, PRESS_Y, roofAt(PRESS_HALF) + 0.02, 0.5, 2 * PRESS_HALF + 0.3, PRESS_BASE - roofAt(PRESS_HALF) - 0.02)
+		box(mesh, SHED_X, PRESS_Y + a * PRESS_HALF, roofAt(0) + 0.02, 2 * PRESS_HALF + 0.3, 0.5, PRESS_BASE - roofAt(0) - 0.02)
+	end
+	-- The housing's frame: corner angles, a band round its middle and a
+	-- hydraulic cylinder bolted to each side.
+	local middle = (PRESS_BASE + PRESS_TOP - 1) / 2
+	for _, a in { -1, 1 } do
+		for _, b in { -1, 1 } do
+			box(mesh, SHED_X + a * (PRESS_HALF + 0.05), PRESS_Y + b * (PRESS_HALF + 0.05), PRESS_BASE, 0.34, 0.34, PRESS_TOP - 1 - PRESS_BASE)
+		end
+		cylinder(mesh, SHED_X + a * (PRESS_HALF + 0.42), PRESS_Y, middle, 0.34, 2.4, "z", 12)
+		box(mesh, SHED_X + a * (PRESS_HALF + 0.14), PRESS_Y, middle + 1, 0.3, 0.9, 0.22)
+		box(mesh, SHED_X + a * (PRESS_HALF + 0.14), PRESS_Y, middle - 1.2, 0.3, 0.9, 0.22)
+		box(mesh, SHED_X, PRESS_Y + a * (PRESS_HALF + 0.05), middle - 0.12, 2 * PRESS_HALF + 0.6, 0.22, 0.26)
+		box(mesh, SHED_X + a * (PRESS_HALF + 0.05), PRESS_Y, middle - 0.12, 0.22, 2 * PRESS_HALF + 0.6, 0.26)
 	end
 end, nil, function(x, y, z)
 	if z < PRESS_BASE - 0.2 and math.sqrt((x - SHED_X) ^ 2 + (y - PRESS_Y) ^ 2) < 1 then
@@ -3743,6 +3997,8 @@ part("Hopper", nil, ORANGE, function(mesh)
 	mesh:face({ high[1], high[2], high[3], high[4] })
 	mesh:face({ low[4], low[3], low[2], low[1] })
 	box(mesh, SHED_X, HOPPER_Y, roofAt(0) - 0.3, 1.5, 1.5, HOPPER_FOOT - roofAt(0) + 0.3)
+	-- The collar where the chute goes through the ridge.
+	box(mesh, SHED_X, HOPPER_Y, roofAt(0) - 0.05, 2.7, 2.7, 0.42)
 	-- The rim round its mouth.
 	for _, a in { -1, 1 } do
 		box(mesh, SHED_X + a * HOPPER_HALF, HOPPER_Y, HOPPER_TOP - 0.15, 0.3, 2 * HOPPER_HALF + 0.3, 0.3)
@@ -3752,6 +4008,8 @@ part("Hopper", nil, ORANGE, function(mesh)
 		for _, b in { -1, 1 } do
 			local dx, dy = a * 2.1, b * 2.1
 			strut(mesh, SHED_X + dx, HOPPER_Y + dy, roofAt(dx) - 0.15, SHED_X + dx * 0.95, HOPPER_Y + dy * 0.95, 14.1, 0.3)
+			-- A foot plate bolted to the roof under each leg.
+			box(mesh, SHED_X + dx, HOPPER_Y + dy, roofAt(dx) - 0.06, 1.0, 1.0, 0.18)
 		end
 	end
 end, nil, function(x, y, z)
@@ -3766,7 +4024,7 @@ paintedRims()
 
 local STACK_X, STACK_Y, STACK_R, STACK_TOP = SHED_X + 4.9, 5, 1, 16
 part("Stack", nil, DARK_STEEL, function(mesh)
-	local foot = roofAt(4.9) - 0.2
+	local foot = roofAt(4.9) + 0.02
 	cylinder(mesh, STACK_X, STACK_Y, (foot + STACK_TOP) / 2, STACK_R, STACK_TOP - foot, "z", 16)
 	ring(mesh, STACK_X, STACK_Y, STACK_TOP - 0.45, STACK_R * 0.8, STACK_R + 0.18, 0.7, "z", 16)
 	ring(mesh, STACK_X, STACK_Y, roofAt(4.9) + 0.15, STACK_R * 0.8, STACK_R + 0.3, 0.3, "z", 16)
@@ -3790,11 +4048,38 @@ part("Pipes", nil, RAIL_STEEL, function(mesh)
 		box(mesh, SHED_X + dx, y, roofAt(dx) - 0.1, 0.3, 0.3, z - roofAt(dx) + 0.1)
 	end
 	tube(mesh, { { SHED_X + PRESS_HALF - 0.1, PRESS_Y, 13.4 }, { SHED_X + 3.3, PRESS_Y, 13.4 }, { SHED_X + 3.5, PRESS_Y + 0.5, 11.2 }, { SHED_X + 3.5, HOPPER_Y - 0.9, 11.2 }, { SHED_X + 3.2, HOPPER_Y - 0.2, 13.2 }, { SHED_X + 1.75, HOPPER_Y, 13.2 } }, 0.2, 8)
-	tube(mesh, { { SHED_X + 2.2, HOPPER_Y + 0.6, 14.1 }, { SHED_X + 3.3, HOPPER_Y + 0.8, 14.1 }, { STACK_X - 0.9, STACK_Y, 14.1 } }, 0.16, 8)
+	tube(mesh, { { SHED_X + 2.2, HOPPER_Y + 0.6, 14.1 }, { SHED_X + 3.3, HOPPER_Y + 0.8, 14.1 }, { STACK_X - 0.9, STACK_Y, 14.1 } }, 0.24, 8)
+	-- A flanged elbow into the stack, on a bracket, and one at the hopper.
+	cylinder(mesh, STACK_X - STACK_R - 0.05, STACK_Y, 14.1, 0.36, 0.3, "x", 10)
+	cylinder(mesh, SHED_X + 2.25, HOPPER_Y + 0.6, 14.1, 0.36, 0.3, "x", 10)
+	box(mesh, STACK_X - STACK_R - 0.05, STACK_Y, roofAt(STACK_X - STACK_R - 0.05 - SHED_X) - 0.1, 0.3, 0.3, 14.1 - roofAt(STACK_X - STACK_R - 0.05 - SHED_X) + 0.1)
 	for _, y in { PRESS_Y + 2, 0, HOPPER_Y - 2 } do
 		clip(3.5, y, 11.2)
 	end
 end, nil, 0.4, nil, nil, true, 0.15)
+
+-- The sketch's cogs, on the shed's outer wall: a big gear and a small one
+-- meshing with it on a riveted backing plate, each on a bossed hub.
+local DRIVE_X = SHED_X + SHED_HALF_WIDE + 0.32
+local BIG_Y, BIG_Z, BIG_R = -1.5, 3.8, 2.3
+local SMALL_Y, SMALL_Z, SMALL_R = 1.6, 3.8, 1.05
+part("DrivePlate", nil, DARK_STEEL, function(mesh)
+	box(mesh, DRIVE_X - 0.2, (BIG_Y + SMALL_Y) / 2, 1.2, 0.18, 7.6, 5.6)
+	for _, y in { -3.1, 0.25, 3.6 } do
+		for _, z in { 1.5, 6.4 } do
+			bolt(mesh, DRIVE_X - 0.08, y, z, "x", 0.14)
+		end
+	end
+end, nil, 0.3, nil, nil, true, 0.2)
+part("DriveGears", nil, BRASS, function(mesh)
+	gear(mesh, DRIVE_X, BIG_Y, BIG_Z, BIG_R, 0.4, 14, "x")
+	gear(mesh, DRIVE_X, SMALL_Y, SMALL_Z, SMALL_R, 0.4, 9, "x")
+	for _, spot in { { BIG_Y, BIG_Z, 0.55 }, { SMALL_Y, SMALL_Z, 0.32 } } do
+		cylinder(mesh, DRIVE_X + 0.1, spot[1], spot[2], spot[3], 0.7, "x", 14)
+	end
+	-- The bar that ties the two axles together, over the hubs.
+	box(mesh, DRIVE_X + 0.48, (BIG_Y + SMALL_Y) / 2, BIG_Z - 0.17, 0.16, SMALL_Y - BIG_Y + 0.7, 0.34)
+end, nil, 0.3, nil, nil, true, 0.14)
 
 -- The drive on the shed's outer wall: a big spoked gear and a small one
 -- meshing with it on a riveted backing plate, each on a bossed hub, a
@@ -3884,4 +4169,38 @@ part("BeltFeet", nil, DARK_STEEL, function(mesh)
 		end
 	end
 end, nil, 0.3, nil, nil, true)
+-- The shed's seams are its look; a full contact shadow would outline every
+-- panel, and the belt's ribs would dash the rails.
+for _, entry in parts do
+	if entry.name == "Shed" or entry.name == "Roof" then
+		entry.shade = 1
+	elseif string.match(entry.name, "^BeltRails") then
+		entry.shade = 0.5
+	end
+end
+handFinish({
+	Shed = "metal",
+	Roof = "metal",
+	Frames = "metal",
+	Signs = "rock",
+	Curtains = "rock",
+	Press = "metal",
+	Hopper = "metal",
+	Stack = "metal",
+	Pipes = "metal",
+	DrivePlate = "metal",
+	DriveGears = "metal",
+	Tread = "rock",
+	BeltRails = "metal",
+	BeltFeet = "metal",
+}, {
+	Shades = true,
+	Beacons = true,
+}, PROP_FINISH)
+-- Seam rust on the crisp rails dashes their edges.
+for _, entry in parts do
+	if string.match(entry.name, "^BeltRails") then
+		entry.rustEdges = false
+	end
+end
 finishParts()

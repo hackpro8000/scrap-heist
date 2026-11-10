@@ -49,6 +49,10 @@ end)
 
 part("BackWall", nil, WALL, function(mesh)
 	box(mesh, 0, 7.5, FLOOR, 16, 0.5, 7.1)
+	-- A post closing each end of the wall.
+	for _, x in { -8.1, 8.1 } do
+		box(mesh, x, 7.5, FLOOR, 0.5, 0.7, 7.1)
+	end
 	-- Regular corrugation, in sheets that lap over each other with fixings.
 	for x = -7.8, 7.8, 0.4 do
 		box(mesh, x, 7.27, FLOOR, 0.2, 0.1, 7.1)

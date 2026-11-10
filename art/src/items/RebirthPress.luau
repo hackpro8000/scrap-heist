@@ -1,9 +1,11 @@
+-- mates: Plinth Tray, Pile Anvil, Pile PileJunk
 -- Rebirth Press: the hydraulic press in a yard that flattens its scrap pile
 -- into a medal (art/concepts/rebirth-press-sketch.png, RebirthPress.plan.luau).
 -- 16 x 8 on the ground and 15.2 tall, the origin at the middle of the
 -- footprint at ground level, z up, the front (console, medal tray) on the
 -- -y side. Riveted dark steel with bronze caps and plate, crisp hazard tape,
 -- the yard's scrap heaped on the anvil under the platen.
+-- include: HandFinish
 
 -- Baked at the yard kit's density (KIT_DENSITY in the ServerMap layout), as it
 -- is in game.
@@ -15,7 +17,9 @@ local COLUMN_STEEL = { 0.28, 0.3, 0.34 }
 local HOSE_GREY = { 0.3, 0.31, 0.34 }
 local SILVER = { 0.72, 0.74, 0.77 }
 local BARE = { 0.68, 0.7, 0.73 }
-local BRONZE = { 0.66, 0.46, 0.26 }
+-- Darker than the brushed bronze of the sky cog: on a crisp coat the lighter
+-- tone reads as planed wood.
+local BRONZE = { 0.56, 0.38, 0.19 }
 local BRASS = { 0.86, 0.68, 0.32 }
 local HAZARD = { 0.86, 0.64, 0.16 }
 local TAPE_BLACK = { 0.08, 0.08, 0.09 }
@@ -31,7 +35,7 @@ local PLINTH_TOP = 1.2
 -- pad's front edge, leaving room for the medal's ramp.
 local PLINTH_HALF_X, PLINTH_FRONT, PLINTH_BACK = 7.8, -2.6, 3.8
 local ANVIL_TOP = PLINTH_TOP + 1.3
-local PLATEN_BASE, PLATEN_TOP = 5.6, 6.5
+local PLATEN_BASE, PLATEN_TOP = 6.1, 7
 local COLUMN_X = { -6.2, 3.2 }
 local COLUMN_HALF_X, COLUMN_HALF_Y = 1.2, 1.7
 local CROWN_BASE, CROWN_TOP = 10.6, 12.8
@@ -105,9 +109,6 @@ end, nil, nil, nil, 0.2)
 part("Columns", nil, COLUMN_STEEL, function(mesh)
 	for _, x in COLUMN_X do
 		box(mesh, x, MID_Y, PLINTH_TOP, 2 * COLUMN_HALF_X, 2 * COLUMN_HALF_Y, CROWN_BASE - PLINTH_TOP)
-		-- Bronze foot plate and cap band.
-		box(mesh, x, MID_Y, PLINTH_TOP, 2 * COLUMN_HALF_X + 0.5, 2 * COLUMN_HALF_Y + 0.5, 0.7)
-		box(mesh, x, MID_Y, CROWN_BASE - 0.9, 2 * COLUMN_HALF_X + 0.3, 2 * COLUMN_HALF_Y + 0.3, 0.9)
 		-- Rivets down each front and back edge, and the side edges.
 		for _, sx in { -1, 1 } do
 			for _, sy in { -1, 1 } do
@@ -115,7 +116,27 @@ part("Columns", nil, COLUMN_STEEL, function(mesh)
 				rivets(mesh, x + sx * COLUMN_HALF_X, MID_Y + sy * (COLUMN_HALF_Y - 0.3), 2.4, x + sx * COLUMN_HALF_X, MID_Y + sy * (COLUMN_HALF_Y - 0.3), 9.4, 6, "x", 0.09)
 			end
 		end
-		-- Foot plate bolts.
+	end
+end, nil, function(x, y, z)
+	-- A step lighter than the plinth and crown, so the frame reads apart.
+	local k = 0.94 + 0.1 * math.noise(x * 0.6, z * 0.6, 6.4)
+	return COLUMN_STEEL[1] * k, COLUMN_STEEL[2] * k, COLUMN_STEEL[3] * k
+end, nil, nil, nil, 0.25)
+
+-- The bronze foot plates and cap bands, a part of their own so they go on
+-- crisp while the columns stay brushed.
+part("Bands", nil, BRONZE, function(mesh)
+	for _, x in COLUMN_X do
+		-- Collars round the column, four plates each, not blocks through it.
+		local function collar(z: number, tall: number, out: number)
+			local wx, wy = COLUMN_HALF_X + out / 2, COLUMN_HALF_Y + out / 2
+			for _, s in { -1, 1 } do
+				box(mesh, x + s * wx, MID_Y, z, out, 2 * COLUMN_HALF_Y + 2 * out, tall)
+				box(mesh, x, MID_Y + s * wy, z, 2 * COLUMN_HALF_X - 0.02, out, tall)
+			end
+		end
+		collar(PLINTH_TOP, 0.7, 0.25)
+		collar(CROWN_BASE - 0.9, 0.9, 0.15)
 		for _, sx in { -1, 1 } do
 			for _, sy in { -1, 1 } do
 				bolt(mesh, x + sx * (COLUMN_HALF_X + 0.15), MID_Y + sy * (COLUMN_HALF_Y + 0.15), PLINTH_TOP + 0.7, "z", 0.11)
@@ -123,27 +144,22 @@ part("Columns", nil, COLUMN_STEEL, function(mesh)
 		end
 	end
 end, nil, function(x, y, z)
-	local x0 = if x < -1.5 then COLUMN_X[1] else COLUMN_X[2]
-	if z < PLINTH_TOP + 0.72 or (z > CROWN_BASE - 0.92 and (math.abs(x - x0) > COLUMN_HALF_X + 0.05 or math.abs(y - MID_Y) > COLUMN_HALF_Y + 0.05)) then
-		local k = 0.9 + 0.12 * math.noise(x * 1.3, y * 1.3, z * 1.3)
-		return BRONZE[1] * k, BRONZE[2] * k, BRONZE[3] * k
-	end
-	-- A step lighter than the plinth and crown, so the frame reads apart.
-	local k = 0.94 + 0.1 * math.noise(x * 0.6, z * 0.6, 6.4)
-	return COLUMN_STEEL[1] * k, COLUMN_STEEL[2] * k, COLUMN_STEEL[3] * k
-end, nil, nil, nil, 0.25)
+	local k = 0.9 + 0.12 * math.noise(x * 1.3, y * 1.3, z * 1.3)
+	return BRONZE[1] * k, BRONZE[2] * k, BRONZE[3] * k
+end, nil, nil, true, 0.25)
+crisp()
 
 -- Block letters for the name plate, five wide and seven tall.
 local GLYPHS = {
 	R = { "1111.", "1...1", "1...1", "1111.", "1.1..", "1..1.", "1...1" },
-	E = { "11111", "1....", "1....", "1111.", "1....", "1....", "11111" },
-	B = { "1111.", "1...1", "1...1", "1111.", "1...1", "1...1", "1111." },
+	E = { "11111", "11...", "11...", "1111.", "11...", "11...", "11111" },
+	B = { "1111.", "11..1", "11..1", "1111.", "11..1", "11..1", "1111." },
 	I = { "11111", "..1..", "..1..", "..1..", "..1..", "..1..", "11111" },
 	T = { "11111", "..1..", "..1..", "..1..", "..1..", "..1..", "..1.." },
 	H = { "1...1", "1...1", "1...1", "11111", "1...1", "1...1", "1...1" },
 }
 local NAME = "REBIRTH"
-local PLATE_X0, PLATE_X1, PLATE_Z0, PLATE_Z1 = -4.6, 1.6, 11.1, 12.3
+local PLATE_X0, PLATE_X1, PLATE_Z0, PLATE_Z1 = -5.1, 2.1, 10.95, 12.45
 local function nameAt(x: number, z: number): boolean
 	local cell = (PLATE_X1 - PLATE_X0 - 0.5) / (#NAME * 6 - 1)
 	local u = (x - PLATE_X0 - 0.25) / cell
@@ -176,7 +192,7 @@ part("Crown", nil, PRESS_DARK, function(mesh)
 end, nil, function(x, y, z)
 	if y < MID_Y - 2.02 and x > PLATE_X0 and x < PLATE_X1 and z > PLATE_Z0 and z < PLATE_Z1 then
 		if nameAt(x, z) then
-			return 0.22, 0.14, 0.07
+			return 0.09, 0.06, 0.04
 		end
 		local k = 0.95 + 0.1 * math.noise(x * 1.5, z * 1.5, 2.9)
 		return BRONZE[1] * k, BRONZE[2] * k, BRONZE[3] * k
@@ -243,33 +259,89 @@ local function jitter(a: number, b: number): number
 	local s = math.sin(a * 127.1 + b * 311.7) * 43758.5453
 	return 2 * (s - math.floor(s)) - 1
 end
+-- A spot on the anvil: across and along from its middle, height above its top.
+local function onAnvil(across: number, along: number, height: number)
+	return { MID_X + across, MID_Y + along, ANVIL_TOP + height }
+end
+-- The axes of something tipped by `pitch` about its own x and `roll` about its
+-- own y, then turned by `yaw` about z (degrees).
+local function tiltAxes(yaw: number, pitch: number, roll: number)
+	local ca, sa = math.cos(math.rad(yaw)), math.sin(math.rad(yaw))
+	local cp, sp = math.cos(math.rad(pitch)), math.sin(math.rad(pitch))
+	local cr, sr = math.cos(math.rad(roll)), math.sin(math.rad(roll))
+	return { ca * cr - sa * sp * sr, sa * cr + ca * sp * sr, -cp * sr },
+		{ -sa * cp, ca * cp, sp },
+		{ ca * sr + sa * sp * cr, sa * sr - ca * sp * cr, cp * cr }
+end
+-- A tilted block, each corner pushed about by up to `dent`. `turn` is
+-- { yaw, pitch, roll }.
+local function crushedBlock(mesh, centre, size, turn, dent: number, seed: number)
+	local u, v, w = tiltAxes(turn[1], turn[2], turn[3])
+	local corners = {}
+	for i = 0, 7 do
+		local a = (if i % 2 == 0 then -0.5 else 0.5) * size[1] + dent * jitter(seed, i)
+		local b = (if i // 2 % 2 == 0 then -0.5 else 0.5) * size[2] + dent * jitter(seed, i + 8)
+		local c = (if i // 4 == 0 then -0.5 else 0.5) * size[3] + dent * jitter(seed, i + 16)
+		corners[i + 1] = mesh:vertex(centre[1] + u[1] * a + v[1] * b + w[1] * c, centre[2] + u[2] * a + v[2] * b + w[2] * c, centre[3] + u[3] * a + v[3] * b + w[3] * c)
+	end
+	for _, f in { { 1, 3, 4, 2 }, { 5, 6, 8, 7 }, { 1, 2, 6, 5 }, { 3, 7, 8, 4 }, { 1, 5, 7, 3 }, { 2, 4, 8, 6 } } do
+		mesh:face({ corners[f[1]], corners[f[2]], corners[f[3]], corners[f[4]] })
+	end
+end
+-- A bale of crushed sheet: thin layers, each knocked a little out of line.
+local function bale(mesh, centre, size, turn, seed: number)
+	local u, v, w = tiltAxes(turn[1], turn[2], turn[3])
+	local layers = math.max(math.round(size[3] / 0.38), 2)
+	local thick = size[3] / layers
+	for k = 1, layers do
+		local up = (k - (layers + 1) / 2) * thick
+		local a, b = 0.1 * jitter(seed, k), 0.1 * jitter(seed, k + 20)
+		crushedBlock(mesh, {
+			centre[1] + u[1] * a + v[1] * b + w[1] * up,
+			centre[2] + u[2] * a + v[2] * b + w[2] * up,
+			centre[3] + u[3] * a + v[3] * b + w[3] * up,
+		}, { size[1], size[2], thick + 0.04 }, turn, 0.07, seed * 10 + k)
+	end
+end
+-- A plate bent across its width: each leaf carries on from the last one's far
+-- edge. `leaves` lists { pitch, length }.
+local function bentSheet(mesh, start, width: number, yaw: number, leaves)
+	local x, y, z = start[1], start[2], start[3]
+	for i, leaf in leaves do
+		local _, _, w = tiltAxes(yaw, leaf[1], 0)
+		local length = leaf[2]
+		crushedBlock(mesh, { x + w[1] * length / 2, y + w[2] * length / 2, z + w[3] * length / 2 }, { width, 0.12, length + 0.06 }, { yaw, leaf[1], 0 }, 0.02, 40 + i)
+		x, y, z = x + w[1] * length, y + w[2] * length, z + w[3] * length
+	end
+end
+
+-- A fat pipe in the heap, its open end toward whoever walks up.
+local PIPE_AT = onAnvil(-0.9, -1, 0.55)
+local PIPE_BORE, PIPE_LENGTH = 0.3, 1.7
+
 part("Pile", nil, RUST, function(mesh)
-	-- A heap of mounds to a low peak, then junk pressed into its surface.
-	local heap = {
-		{ 0, 0, 2.4, 1.7, 2.9 },
-		{ -1.8, -0.6, 1.8, 1.3, 1.9 },
-		{ 1.6, 0.5, 1.7, 1.2, 1.7 },
-		{ -0.4, 1.2, 1.6, 1.0, 1.4 },
-		{ 0.8, -1.3, 1.5, 1.0, 1.3 },
-		{ -2.4, 0.9, 1.2, 0.8, 0.9 },
-		{ 2.3, -0.9, 1.2, 0.8, 0.9 },
-	}
-	-- Each mound's centre sits a little above the anvil, so less of it is
-	-- buried; what is buried is hidden in the anvil.
-	for _, h in heap do
-		sphere(mesh, MID_X + h[1], MID_Y + h[2], ANVIL_TOP + 0.5, h[3], h[4], h[5] - 0.5, 6, 12)
+	-- Two low mounds at the back give the heap its mass; all the rest has edges.
+	for _, h in { { -0.6, 1.2, 2.3, 1.1, 1.5 }, { 1.9, 1.1, 1.3, 1.0, 1.2 } } do
+		-- They sit on the anvil, not through it.
+		sphere(mesh, MID_X + h[1], MID_Y + h[2], ANVIL_TOP + h[5] - 0.5, h[3], h[4], h[5] - 0.5, 6, 12)
 	end
-	-- Small pipe ends and crushed cans pressed into the surface; the big
-	-- pieces are PileJunk.
-	for i = 1, 6 do
-		local a = i / 6 * TAU + 0.4
-		local r = 1.6 + 0.6 * jitter(i, 1)
-		local x, y = MID_X + math.cos(a) * r, MID_Y + math.sin(a) * r * 0.7
-		local z = ANVIL_TOP + 0.5 + 0.6 * (1 - r / 2.6) * 2
-		cylinder(mesh, x, y, z, 0.26, 0.8, if i % 3 == 0 then "z" elseif i % 3 == 1 then "x" else "y", 10)
-	end
+	-- Bales of crushed sheet, the last thrown on top of the others.
+	bale(mesh, onAnvil(0.9, 0.1, 0.6), { 3, 2.1, 1.5 }, { 14, 4, -6 }, 1)
+	bale(mesh, onAnvil(-1.3, 0.35, 0.55), { 2.4, 1.9, 1.4 }, { -16, -3, 8 }, 2)
+	bale(mesh, onAnvil(2.35, -0.2, 0.55), { 1.5, 1.4, 1.3 }, { -22, 5, 9 }, 3)
+	bale(mesh, onAnvil(0.05, 0.4, 1.8), { 2.5, 1.7, 0.95 }, { 26, 5, -9 }, 4)
+	ring(mesh, PIPE_AT[1], PIPE_AT[2], PIPE_AT[3], PIPE_BORE, 0.5, PIPE_LENGTH, "y", 14)
+	-- A plate bent over the heap's left shoulder.
+	bentSheet(mesh, onAnvil(-2.6, -1.45, -0.02), 1.5, -12, { { -18, 1.25 }, { -62, 0.8 } })
+	-- Bits that fell off, along the anvil's front edge.
+	crushedBlock(mesh, onAnvil(-2.95, -2.05, 0.07), { 0.7, 0.45, 0.16 }, { 33, 0, 6 }, 0.05, 21)
+	crushedBlock(mesh, onAnvil(1.55, -2.15, 0.07), { 0.6, 0.4, 0.14 }, { -40, 4, 0 }, 0.05, 22)
 end, nil, function(x, y, z)
-	-- Rusty steel, bare where the junk sticks out, paint flecks here and there.
+	-- Dark down the pipe's bore.
+	if (x - PIPE_AT[1]) ^ 2 + (z - PIPE_AT[3]) ^ 2 < (PIPE_BORE + 0.02) ^ 2 and y > PIPE_AT[2] - PIPE_LENGTH / 2 + 0.02 then
+		return 0.05, 0.05, 0.06
+	end
+	-- Rusty steel, bare in patches, paint flecks here and there.
 	local n = math.noise(x * 1.6, y * 1.6, z * 1.6)
 	local k = 0.85 + 0.3 * n
 	if n > 0.42 then
@@ -284,49 +356,81 @@ end, nil, function(x, y, z)
 	return RUST[1] * k, RUST[2] * k, RUST[3] * k
 end, nil, nil, nil, 0.2)
 
--- The big pieces in the heap, each in its own finish: a gear standing in
--- it, a hubcap leaning on the side, a stack of painted cans, a spring.
-local GEAR_AT = { MID_X - 1.3, MID_Y - 0.5, ANVIL_TOP + 2.3 }
-local HUBCAP_AT = { MID_X + 1.6, MID_Y - 1.7, ANVIL_TOP + 1.5 }
-local CANS_AT = { MID_X + 1.1, MID_Y + 1.1 }
-local SPRING_AT = { MID_X - 0.6, MID_Y + 1.6 }
+-- The big pieces in the heap, each in its own finish, all on its front where a
+-- player can see them: a gear standing in it facing out, a hubcap against the
+-- right-hand bale, a stack of painted cans, a spring on the bale behind them.
+local GEAR_AT = onAnvil(-1.25, -0.5, 1.2)
+local HUBCAP_AT = onAnvil(2.55, -0.85, 0.85)
+local CANS_AT = onAnvil(0.55, -1.85, 0.02)
+local CAN_TALL = 0.95
+-- One standing, one knocked over and lying along the front edge, one crushed flat.
+local CAN_RED = { 0.8, 0.22, 0.16 }
+local CAN_BLUE = { 0.2, 0.42, 0.72 }
+local CAN_CREAM = { 0.88, 0.76, 0.4 }
+local CAN_OVER_AT = { CANS_AT[1] - 1.05, CANS_AT[2] - 0.05, CANS_AT[3] + 0.42 }
+local CAN_FLAT_AT = { CANS_AT[1] + 1.25, CANS_AT[2] + 0.2, CANS_AT[3] + 0.17 }
+local SPRING_AT = onAnvil(1.75, -0.35, 1.42)
+local function tippedAbout(mesh, ox: number, oy: number, oz: number, yaw: number, pitch: number, roll: number)
+	local ca, sa = math.cos(math.rad(yaw)), math.sin(math.rad(yaw))
+	local cp, sp = math.cos(math.rad(pitch)), math.sin(math.rad(pitch))
+	local cr, sr = math.cos(math.rad(roll)), math.sin(math.rad(roll))
+	local ux, uy, uz = ca * cr - sa * sp * sr, sa * cr + ca * sp * sr, -cp * sr
+	local vx, vy, vz = -sa * cp, ca * cp, sp
+	local wx, wy, wz = ca * sr + sa * sp * cr, sa * sr - ca * sp * cr, cp * cr
+	return {
+		vertex = function(_self, x: number, y: number, z: number)
+			local dx, dy, dz = x - ox, y - oy, z - oz
+			return mesh:vertex(ox + ux * dx + vx * dy + wx * dz, oy + uy * dx + vy * dy + wy * dz, oz + uz * dx + vz * dy + wz * dz)
+		end,
+		face = function(_self, face)
+			return mesh:face(face)
+		end,
+	}
+end
+
 part("PileJunk", nil, BRASS, function(mesh)
-	gear(mesh, GEAR_AT[1], GEAR_AT[2], GEAR_AT[3], 1.05, 0.26, 12, "x")
-	ring(mesh, GEAR_AT[1], GEAR_AT[2], GEAR_AT[3], 0.55, 0.72, 0.3, "x", 16)
-	cylinder(mesh, HUBCAP_AT[1], HUBCAP_AT[2], HUBCAP_AT[3], 1.0, 0.18, "y", 16)
-	sphere(mesh, HUBCAP_AT[1], HUBCAP_AT[2] - 0.12, HUBCAP_AT[3], 0.4, 0.22, 0.4, 4, 12)
-	for _, c in { { -0.45, 0, 0.5 }, { 0.45, 0, 0.5 }, { 0, 0.05, 1.45 } } do
-		cylinder(mesh, CANS_AT[1] + c[1], CANS_AT[2] + c[2], ANVIL_TOP + 0.9 + c[3], 0.42, 0.95, "z", 12)
-	end
+	-- The gear leans back into the heap, half buried; the hubcap is thrown on at
+	-- an angle against the bale.
+	local leaning = tippedAbout(mesh, GEAR_AT[1], GEAR_AT[2], GEAR_AT[3], 22, 34, -26)
+	gear(leaning, GEAR_AT[1], GEAR_AT[2], GEAR_AT[3], 1.05, 0.26, 12, "y")
+	ring(leaning, GEAR_AT[1], GEAR_AT[2], GEAR_AT[3], 0.55, 0.72, 0.3, "y", 16)
+	local thrown = tippedAbout(mesh, HUBCAP_AT[1], HUBCAP_AT[2], HUBCAP_AT[3], -30, 40, 18)
+	cylinder(thrown, HUBCAP_AT[1], HUBCAP_AT[2], HUBCAP_AT[3], 1.0, 0.18, "y", 16)
+	sphere(thrown, HUBCAP_AT[1], HUBCAP_AT[2] - 0.12, HUBCAP_AT[3], 0.4, 0.22, 0.4, 4, 12)
+	cylinder(mesh, CANS_AT[1], CANS_AT[2], CANS_AT[3] + 0.5 * CAN_TALL, 0.42, CAN_TALL, "z", 12)
+	cylinder(mesh, CAN_OVER_AT[1], CAN_OVER_AT[2], CAN_OVER_AT[3], 0.42, CAN_TALL, "x", 12)
+	cylinder(mesh, CAN_FLAT_AT[1], CAN_FLAT_AT[2], CAN_FLAT_AT[3], 0.58, 0.34, "z", 12)
 	for i = 0, 4 do
-		ring(mesh, SPRING_AT[1], SPRING_AT[2], ANVIL_TOP + 1.3 + i * 0.22, 0.26, 0.4, 0.12, "z", 12)
+		ring(mesh, SPRING_AT[1], SPRING_AT[2], SPRING_AT[3] + i * 0.22, 0.26, 0.4, 0.12, "z", 12)
 	end
 end, nil, function(x, y, z)
-	local function near(ax, ay, az, r)
-		return (x - ax) ^ 2 + (y - ay) ^ 2 + (z - az) ^ 2 < r * r
+	-- Cans first, by where each one lies: red standing, blue fallen, cream crushed.
+	if (x - CANS_AT[1]) ^ 2 + (y - CANS_AT[2]) ^ 2 < 0.2 and z < CANS_AT[3] + CAN_TALL + 0.02 then
+		local mid = z - CANS_AT[3]
+		if mid > 0.3 and mid < 0.62 then
+			return 0.92, 0.9, 0.84
+		end
+		return CAN_RED[1], CAN_RED[2], CAN_RED[3]
 	end
-	if near(GEAR_AT[1], GEAR_AT[2], GEAR_AT[3], 1.4) then
-		local k = 0.9 + 0.12 * math.noise(y * 2, z * 2, 1.2)
+	if (y - CAN_OVER_AT[2]) ^ 2 + (z - CAN_OVER_AT[3]) ^ 2 < 0.2 and math.abs(x - CAN_OVER_AT[1]) < CAN_TALL / 2 + 0.02 then
+		return CAN_BLUE[1], CAN_BLUE[2], CAN_BLUE[3]
+	end
+	if (x - CAN_FLAT_AT[1]) ^ 2 + (y - CAN_FLAT_AT[2]) ^ 2 < 0.36 and z < CAN_FLAT_AT[3] + 0.2 then
+		return CAN_CREAM[1], CAN_CREAM[2], CAN_CREAM[3]
+	end
+	local function near(at, height: number, r: number): boolean
+		return (x - at[1]) ^ 2 + (y - at[2]) ^ 2 + (z - height) ^ 2 < r * r
+	end
+	if near(GEAR_AT, GEAR_AT[3], 1.2) then
+		local k = 0.9 + 0.12 * math.noise(x * 2, z * 2, 1.2)
 		return BRASS[1] * k, BRASS[2] * k, BRASS[3] * k
-	elseif near(HUBCAP_AT[1], HUBCAP_AT[2], HUBCAP_AT[3], 1.3) then
-		local k = 0.9 + 0.1 * math.noise(x * 2, z * 2, 2.2)
-		return SILVER[1] * k, SILVER[2] * k, SILVER[3] * k
-	elseif near(SPRING_AT[1], SPRING_AT[2], ANVIL_TOP + 1.8, 1.0) then
+	elseif near(SPRING_AT, SPRING_AT[3] + 0.45, 0.85) then
 		return PRESS_STEEL[1], PRESS_STEEL[2], PRESS_STEEL[3]
 	end
-	-- Cans: red, blue and cream, a white label band round the middle.
-	local can = if x < CANS_AT[1] - 0.1 and z < ANVIL_TOP + 1.9 then 1 elseif z < ANVIL_TOP + 1.9 then 2 else 3
-	local mid = (z - ANVIL_TOP - 0.9) % 0.95
-	if mid > 0.3 and mid < 0.62 then
-		return 0.92, 0.9, 0.84
-	end
-	if can == 1 then
-		return 0.8, 0.22, 0.16
-	elseif can == 2 then
-		return 0.2, 0.42, 0.72
-	end
-	return 0.88, 0.76, 0.4
+	local k = 0.9 + 0.1 * math.noise(x * 2, z * 2, 2.2)
+	return SILVER[1] * k, SILVER[2] * k, SILVER[3] * k
 end, nil, nil, nil, 0.1)
+crisp()
 
 -- ------------------------------------------------------- front and side
 -- The medal's way out: a ramp from a dark mouth at the anvil's front edge
@@ -511,4 +615,26 @@ part("Beacons", nil, { 1, 0.6, 0.15 }, function(mesh)
 	end
 end, true, 0, nil, 1.5)
 
+handFinish({
+	Plinth = "metal",
+	Anvil = "metal",
+	Columns = "metal",
+	Bands = "metal",
+	Crown = "metal",
+	Cylinder = "metal",
+	Ram = "metal",
+	Platen = "metal",
+	Pile = "metal",
+	PileJunk = "metal",
+	Tray = "metal",
+	Medal = "metal",
+	Console = "metal",
+	Cage = "metal",
+	Hoses = "rock",
+	Pump = "metal",
+	Collars = "metal",
+}, {
+	Button = true,
+	Beacons = true,
+}, PROP_FINISH)
 finishParts()

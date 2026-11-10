@@ -2,6 +2,7 @@
 -- so the fence meets the ground on something built. A cast strip with a
 -- narrower capping course on top, its ends knocked off where neighbouring
 -- footings meet. Runs along x under a fence panel, centered on the origin.
+-- include: HandFinish
 local CONCRETE = { 0.58, 0.57, 0.53 }
 -- Footing length, width and height, then the capping course's inset from
 -- each side and its height.
@@ -16,4 +17,7 @@ part("Footing", nil, CONCRETE, function(mesh)
 	box(mesh, -LENGTH / 2 + 0.6, -WIDTH / 2 - 0.1, 0, 0.22, 0.18, 0.1)
 end, nil, 0.35)
 
+handFinish({
+	Footing = "rock",
+}, {}, PROP_FINISH)
 finishParts()

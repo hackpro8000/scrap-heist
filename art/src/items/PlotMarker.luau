@@ -3,6 +3,7 @@
 -- post with a sign board bolted flat to its front, a blank face for the
 -- owner's name, and a warning lamp on top that will flash on a raid.
 -- Nothing reaches out past the post, so there is nothing to walk into.
+-- include: HandFinish
 local HAZARD_YELLOW = { 0.9, 0.72, 0.15 }
 local LAMP_RED = { 0.85, 0.18, 0.12 }
 
@@ -18,7 +19,7 @@ part("Sign", nil, HAZARD_YELLOW, function(mesh)
 end, nil, 0.45)
 part("Lamp", nil, LAMP_RED, function(mesh)
 	cylinder(mesh, 0, 0, 1.96, 0.16, 0.24, "z", 12)
-	sphere(mesh, 0, 0, 2.08, 0.15, 0.15, 0.12, 6, 12)
+	cylinder(mesh, 0, 0, 2.12, 0.1, 0.08, "z", 12)
 end, nil, 0)
 part("Fittings", nil, STEEL, function(mesh)
 	-- Anchor bolts on the base, and brackets holding the sign to the post.
@@ -28,14 +29,17 @@ part("Fittings", nil, STEEL, function(mesh)
 		end
 	end
 	for _, z in { 0.86, 1.36 } do
-		box(mesh, 0, -0.15, z, 0.4, 0.1, 0.1)
-		for _, x in { -0.5, 0.5 } do
+		box(mesh, 0, -0.17, z - 0.03, 0.46, 0.14, 0.16)
+		-- A bar across the board's back, carrying its outer bolts to the post.
+		box(mesh, 0, -0.18, z, 1.4, 0.04, 0.1)
+		for _, x in { -0.5, 0, 0.5 } do
 			bolt(mesh, x, -0.28, z + 0.05, "y", 0.04)
 		end
 	end
 	-- Conduit carrying power up the back of the post to the lamp.
 	box(mesh, 0, 0.2, 0.3, 0.2, 0.15, 0.25)
 	tube(mesh, { { 0, 0.17, 0.55 }, { 0, 0.16, 1.76 }, { 0, 0.08, 1.86 } }, 0.035, 6)
+	tube(mesh, { { 0, 0.2, 0.12 }, { 0, 0.2, 0.3 } }, 0.035, 6)
 	-- Wire cage guarding the lamp.
 	for i = 0, 3 do
 		local a = i * TAU / 4 + TAU / 8
@@ -44,4 +48,11 @@ part("Fittings", nil, STEEL, function(mesh)
 	ring(mesh, 0, 0, 2.16, 0.17, 0.22, 0.035, "z", 12)
 	ring(mesh, 0, 0, 1.86, 0.17, 0.23, 0.05, "z", 12)
 end, nil, 0.5)
+handFinish({
+	Post = "metal",
+	Sign = "metal",
+	Fittings = "metal",
+}, {
+	Lamp = true,
+}, PROP_FINISH)
 finishParts()
