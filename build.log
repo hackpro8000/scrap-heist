@@ -1,0 +1,13 @@
+[    0.0s] running YardFence/model.luau
+[    0.1s] baking on CPU (no GPU)
+[    0.1s] shaded Posts 256×256 in 0.05s
+[    0.2s] shaded Sheets 256×256 in 0.09s
+[    0.3s] shaded Fittings 256×256 in 0.14s
+[    0.3s] writing YardFence.glb and 3 textures
+[    0.3s] rendering preview of 3 parts
+[    2.4s] rendering eye 1/2
+[    2.5s] rendering eye 2/2
+YardFence: 3 parts, script 305.70ms, total 2.81s
+#f23d3d Posts
+#85a5f2 Sheets
+#7bb32d Fittings
