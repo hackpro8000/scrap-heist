@@ -1,0 +1,135 @@
+[    0.0s] running CapsuleLoop/model.luau
+[    3.0s] baking on CPU (no GPU)
+[    3.3s] shaded Press 1024×1024 in 1.76s
+[    3.6s] shaded BeltRails_-1_-2_0 1024×1024 in 0.30s
+[    4.2s] shaded Tread_-1_0_0_010_000 1024×1024 in 0.24s
+[    4.7s] shaded Tread_0_-1_0_100_110 1024×1024 in 0.24s
+[    5.0s] shaded BeltRails_0_1_0 1024×1024 in 0.30s
+[    5.8s] shaded Tread_-1_-1_0_000_000 1024×1024 in 0.24s
+[    6.4s] shaded Tread_-1_-1_0_000_100 1024×1024 in 0.24s
+[    7.0s] shaded BeltRails_-1_0_0_000 1024×1024 in 0.28s
+[    8.3s] shaded Tread_-2_0_0 1024×1024 in 0.50s
+[    9.9s] shaded Curtains 1024×1024 in 1.37s
+[   12.0s] shaded Signs 1024×1024 in 1.48s
+[   12.3s] shaded Tread_0_0_0_110_010 1024×1024 in 0.24s
+[   12.9s] shaded BeltRails_-1_0_0_110 1024×1024 in 0.25s
+[   14.5s] shaded Shed 1024×1024 in 1.24s
+[   14.7s] shaded Tread_0_-1_0_000 1024×1024 in 0.13s
+[   15.0s] shaded BeltRails_1_-1_0 1024×1024 in 0.27s
+[   15.1s] shaded BeltFeet 1024×1024 in 0.14s
+[   15.6s] shaded BeltRails_-1_-1_0_000 1024×1024 in 0.17s
+[   16.1s] shaded Tread_-1_0_0_110 1024×1024 in 0.13s
+[   17.4s] shaded BeltRails_0_0_0_010 1024×1024 in 0.24s
+[   18.0s] shaded BeltRails_1_0_0 1024×1024 in 0.25s
+[   18.6s] shaded Tread_-1_-1_0_010 1024×1024 in 0.13s
+[   19.0s] shaded BeltRails_-1_-1_0_100 1024×1024 in 0.24s
+[   19.4s] shaded BeltRails_-2_-1_0 1024×1024 in 0.24s
+[   20.2s] shaded BeltRails_0_0_0_100 1024×1024 in 0.24s
+[   21.0s] shaded Tread_0_0_0_110_100 1024×1024 in 0.22s
+[   21.8s] shaded BeltRails_0_-2_0 1024×1024 in 0.28s
+[   22.7s] shaded BeltRails_0_-1_0_000 1024×1024 in 0.24s
+[   23.4s] shaded Tread_-1_0_0_010_010 1024×1024 in 0.21s
+[   24.3s] shaded Tread_-1_0_0_010_110 1024×1024 in 0.22s
+[   24.5s] shaded BeltRails_0_0_0_110 1024×1024 in 0.18s
+[   25.2s] shaded Tread_-1_1_0 1024×1024 in 0.49s
+[   25.7s] shaded BeltRails_-1_-1_0_010 1024×1024 in 0.26s
+[   26.0s] shaded Tread_0_0_0_010 1024×1024 in 0.14s
+[   26.4s] shaded Tread_-1_-1_0_100 1024×1024 in 0.13s
+[   27.1s] shaded Tread_0_1_0 1024×1024 in 0.49s
+[   28.2s] shaded Roof 1024×1024 in 0.78s
+[   29.3s] shaded Hopper 1024×1024 in 1.06s
+[   29.5s] shaded BeltRails_-1_0_0_010 1024×1024 in 0.16s
+[   29.7s] baked every chunk this machine claimed
+[   75.4s] shaded Tread_0_0_0_100 1024×1024 in 0.09s
+[   75.5s] shaded Tread_1_0_0 1024×1024 in 0.13s
+[   75.6s] shaded Tread_-1_0_0_000 1024×1024 in 0.09s
+[   75.8s] shaded Tread_0_-1_0_100_100 1024×1024 in 0.11s
+[   75.9s] shaded DrivePlate 1024×1024 in 0.13s
+[   76.1s] shaded Tread_0_-2_0 1024×1024 in 0.14s
+[   76.2s] shaded Pipes 1024×1024 in 0.11s
+[   76.4s] shaded Tread_0_-1_0_100_000 1024×1024 in 0.12s
+[   76.6s] shaded Frames 1024×1024 in 0.16s
+[   76.7s] shaded Tread_0_-1_0_110 1024×1024 in 0.09s
+[   76.9s] shaded Tread_1_-1_0 1024×1024 in 0.13s
+[   77.1s] shaded Tread_-1_-2_0 1024×1024 in 0.13s
+[   77.2s] shaded Tread_-1_-1_0_000_010 1024×1024 in 0.11s
+[   77.3s] shaded Tread_0_0_0_110_110 1024×1024 in 0.12s
+[   77.5s] shaded BeltRails_0_-1_0_100 1024×1024 in 0.11s
+[   77.6s] shaded Stack 1024×1024 in 0.12s
+[   77.8s] shaded DriveGears 1024×1024 in 0.14s
+[   78.0s] shaded BeltRails_0_-1_0_110 1024×1024 in 0.12s
+[   78.1s] shaded BeltRails_-2_0_0 1024×1024 in 0.11s
+[   78.2s] shaded BeltRails_-1_1_0 1024×1024 in 0.10s
+[   78.4s] shaded Tread_-2_-1_0 1024×1024 in 0.13s
+[   78.7s] writing CapsuleLoop.glb and 62 textures
+[   79.7s] rendering preview of 62 parts
+[   84.6s] rendering eye 1/7
+[   86.0s] rendering eye 2/7
+[   87.3s] rendering eye 3/7
+[   88.6s] rendering eye 4/7
+[   89.9s] rendering eye 5/7
+[   90.9s] rendering eye 6/7
+[   92.1s] rendering eye 7/7
+CapsuleLoop: 62 parts, script 78.74s, total 92.83s
+#f23d3d Shed
+#85a5f2 Roof
+#7bb32d Frames
+#b362a8 Signs
+#3df2d4 Curtains
+#f2c085 Shades
+#4e2db3 Press
+#66b362 Hopper
+#f23d79 Stack
+#85c9f2 Pipes
+#a8b32d DrivePlate
+#a262b3 DriveGears
+#3df297 Beacons
+#f29c85 Tread_1_0_0
+#2d38b3 Tread_0_0_0_100
+#80b362 Tread_0_0_0_110_100
+#f23db6 Tread_0_0_0_110_110
+#85eef2 Tread_0_0_0_110_010
+#b3912d Tread_0_0_0_010
+#8762b3 Tread_0_1_0
+#3df25a Tread_-1_1_0
+#f28593 Tread_-1_0_0_110
+#2d65b3 Tread_-1_0_0_010_110
+#9bb362 Tread_-1_0_0_010_010
+#f23df2 Tread_-1_0_0_010_000
+#85f2d2 Tread_-1_0_0_000
+#b3642d Tread_-2_0_0
+#6c62b3 Tread_-2_-1_0
+#5cf23d Tread_-1_-1_0_010
+#f285b8 Tread_-1_-1_0_000_010
+#2d92b3 Tread_-1_-1_0_000_000
+#b3af62 Tread_-1_-1_0_000_100
+#b53df2 Tread_-1_-1_0_100
+#85f2ae Tread_-1_-2_0
+#b3372d Tread_0_-2_0
+#6273b3 Tread_0_-1_0_000
+#98f23d Tread_0_-1_0_100_000
+#f285dc Tread_0_-1_0_100_100
+#2db3a7 Tread_0_-1_0_100_110
+#b39462 Tread_0_-1_0_110
+#783df2 Tread_1_-1_0
+#85f289 BeltRails_1_0_0
+#b32d4f BeltRails_0_0_0_100
+#628eb3 BeltRails_0_0_0_110
+#d5f23d BeltRails_0_0_0_010
+#e485f2 BeltRails_0_1_0
+#2db37a BeltRails_-1_1_0
+#b37962 BeltRails_-1_0_0_110
+#3d3ef2 BeltRails_-1_0_0_010
+#a6f285 BeltRails_-1_0_0_000
+#b32d7c BeltRails_-2_0_0
+#62a9b3 BeltRails_-2_-1_0
+#f2d33d BeltRails_-1_-1_0_010
+#c085f2 BeltRails_-1_-1_0_000
+#2db34d BeltRails_-1_-1_0_100
+#b36266 BeltRails_-1_-2_0
+#3d7af2 BeltRails_0_-2_0
+#caf285 BeltRails_0_-1_0_000
+#b32da8 BeltRails_0_-1_0_100
+#62b3a1 BeltRails_0_-1_0_110
+#f2963d BeltRails_1_-1_0
+#9b85f2 BeltFeet
