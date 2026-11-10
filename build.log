@@ -1,0 +1,13 @@
+[    0.0s] running ScrapTreeRebar/model.luau
+[    6.7s] baking on CPU (no GPU)
+[    6.7s] shaded Rebar 256×256 in 0.11s
+[   11.3s] shaded Footing 256×256 in 0.21s
+[   13.5s] baked every chunk this machine claimed
+[   15.9s] shaded Ties 256×256 in 0.01s
+[   15.9s] writing ScrapTreeRebar.glb and 3 textures
+[   16.1s] rendering preview of 3 parts
+[   18.2s] rendering eye 2/2
+ScrapTreeRebar: 3 parts, script 15.88s, total 18.44s
+#f23d3d Rebar
+#85a5f2 Footing
+#7bb32d Ties
