@@ -1,0 +1,37 @@
+bounds: 312,172,683,883
+A1: Hubcaps 15%
+B1: Hubcaps 26%, Trunk 7%
+C1: Hubcaps 6%
+D1: Hubcaps 15%, Trunk 12%
+E1: Hubcaps 29%, Trunk 12%
+F1: -
+A2: -
+B2: Hubcaps 8%
+C2: Hubcaps 24%, Trunk 6%
+D2: Trunk 70%, Hubcaps 13%
+E2: Trunk 50%, Hubcaps 21%
+F2: Hubcaps 13%, Trunk 9%
+A3: -
+B3: -
+C3: -
+D3: Trunk 41%
+E3: -
+F3: -
+A4: -
+B4: -
+C4: Trunk 8%
+D4: Trunk 33%
+E4: -
+F4: -
+A5: -
+B5: Rubble 17%
+C5: Rubble 38%, Trunk 15%
+D5: Rubble 27%, Trunk 23%
+E5: Rubble 11%
+F5: -
+A6: -
+B6: Rubble 36%
+C6: Rubble 58%
+D6: Rubble 55%
+E6: Rubble 41%
+F6: -
