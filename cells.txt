@@ -1,0 +1,37 @@
+bounds: 134,352,832,750
+A1: -
+B1: -
+C1: Drums 19%
+D1: Drums 23%, Hubs 2%
+E1: -
+F1: -
+A2: -
+B2: Mound 7%, Drums 5%
+C2: Drums 90%
+D2: Drums 68%, Hubs 22%
+E2: Drums 3%
+F2: -
+A3: Mound 28%
+B3: Mound 59%, Drums 33%, Discs 5%
+C3: Drums 88%, Mound 12%
+D3: Drums 74%, Mound 26%
+E3: Drums 47%, Mound 28%
+F3: -
+A4: Mound 67%
+B4: Mound 100%
+C4: Drums 52%, Mound 42%, Hubs 7%
+D4: Mound 69%, Drums 21%, Discs 6%, Hubs 4%
+E4: Mound 42%, Discs 30%, Drums 25%, Hubs 3%
+F4: Mound 33%
+A5: Mound 10%
+B5: Mound 56%
+C5: Mound 77%, Drums 14%
+D5: Mound 86%, Drums 14%
+E5: Mound 87%, Discs 13%
+F5: Mound 69%
+A6: -
+B6: -
+C6: Mound 7%
+D6: Mound 43%
+E6: Mound 50%
+F6: Mound 18%
