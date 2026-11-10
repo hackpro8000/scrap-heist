@@ -1,0 +1,37 @@
+bounds: 306,177,728,889
+A1: StreetSigns 10%
+B1: StreetSigns 23%
+C1: WarningSigns 37%, StreetSigns 18%, Clamps 6%, Post 3%
+D1: WarningSigns 42%
+E1: WarningSigns 4%
+F1: -
+A2: StreetSigns 5%
+B2: StreetSigns 9%, WarningSigns 7%
+C2: Post 23%, StreetSigns 11%, Clamps 10%, WarningSigns 8%
+D2: StreetSigns 17%, WarningSigns 9%
+E2: StreetSigns 7%
+F2: -
+A3: -
+B3: WarningSigns 75%
+C3: Post 30%, StreetSigns 16%, Clamps 12%, WarningSigns 8%
+D3: StreetSigns 66%
+E3: StreetSigns 33%
+F3: StreetSigns 15%
+A4: -
+B4: WarningSigns 6%
+C4: Post 37%
+D4: -
+E4: -
+F4: -
+A5: -
+B5: Footing 18%
+C5: Post 42%, Footing 20%
+D5: Footing 20%
+E5: -
+F5: -
+A6: Footing 3%
+B6: Footing 41%
+C6: Footing 55%, Post 10%
+D6: Footing 47%
+E6: Footing 7%
+F6: -
