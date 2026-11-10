@@ -151,6 +151,7 @@ class Agent:
 		self.claim_number = 0
 		self.timings = {}  # (task id, model) -> seconds per stage, reported when the model is done
 		self.bakes_ready = {}  # (task id, model) -> future for the commits of every machine's bakes
+		self.bakes_seen = {}  # (task id, model) -> the commits announced so far
 		self.activities = {}  # task id -> what this machine is doing for it (heartbeat() reports them)
 		self.stopped = False
 		self.uploader = None
@@ -366,10 +367,11 @@ class Agent:
 		try:
 			commits = await asyncio.wait_for(ready, max(SWAP_WAIT_SECONDS, (timing["bake_end"] - timing["bake_start"]) * 4))
 		except asyncio.TimeoutError:
-			say(f"task {identity}: could not get every machine's bakes of {model} in time; the render bakes what's missing")
-			commits = []
+			commits = self.bakes_seen.get((identity, model), [])
+			say(f"task {identity}: could not get every machine's bakes of {model} in time; taking the {len(commits)} that arrived, the render bakes the rest")
 		finally:
 			self.bakes_ready.pop((identity, model), None)
+			self.bakes_seen.pop((identity, model), None)
 		timing["ready"] = time.monotonic()
 		cache = os.path.join("art", "models", model, ".cache")
 		fetched = await asyncio.gather(*[asyncio.to_thread(self.fetch_objects, commit, cache) for commit in commits if commit != mine], return_exceptions=True)
@@ -481,8 +483,9 @@ class Agent:
 						if claim and not claim.done():
 							claim.set_result(event["job"])
 					elif event["type"] == "bakes-ready":
+						self.bakes_seen[(event["task"], event["name"])] = event["commits"]
 						ready = self.bakes_ready.get((event["task"], event["name"]))
-						if ready and not ready.done():
+						if ready and not ready.done() and event.get("done", True):
 							ready.set_result(event["commits"])
 					elif event["type"] == "stop":
 						self.stopped = True

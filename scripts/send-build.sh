@@ -44,7 +44,9 @@ if python3 tools/coordinator/client.py status > /dev/null 2>&1; then
 	# The machines render the layout's models that changed since their last
 	# preview (or PREVIEW=Name,Name; PREVIEW=all for every one), and each
 	# render comes back with its machine's result, before the uploads end.
+	# PREVIEW=none renders nothing: a map build that only needs its objects.
 	previews="${PREVIEW:-}"
+	[ "${previews}" = "none" ] && previews="-"
 	if [ -z "${previews}" ] || [ "${previews}" = "all" ]; then
 		every="${previews}"
 		previews=""
@@ -56,7 +58,7 @@ if python3 tools/coordinator/client.py status > /dev/null 2>&1; then
 			fi
 		done
 	fi
-	[ -n "${previews}" ] && flags+=(--preview "${previews}")
+	[ -n "${previews}" ] && [ "${previews}" != "-" ] && flags+=(--preview "${previews}")
 	# PREVIEW_ONLY=1: the machines skip the layout build and only render.
 	[ "${PREVIEW_ONLY:-}" = "1" ] && flags+=(--preview-only)
 	exec python3 tools/coordinator/client.py build "${commit}" "${flags[@]}"

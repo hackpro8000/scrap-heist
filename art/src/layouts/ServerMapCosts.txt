@@ -167,3 +167,5 @@ slab Spoke7	0.084
 slab Spoke7 #split	1
 slab Spoke8	0.087
 slab Spoke8 #split	1
+MainIsland 1 x	1800
+MainIsland 1 x #split	1

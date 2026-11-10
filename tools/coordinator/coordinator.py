@@ -82,13 +82,16 @@ class Task:
 		# models than machines each model's renders are split between several
 		# machines, as shares named <Name>@<i>@<n>, so every machine works;
 		# shares_in counts the shares of each model that have come back.
-		self.previews = list(previews)
+		# A name ending in "!" is one machine's job whole, for timing a model's
+		# build on its own; the "!" is dropped from the name.
+		whole = {name[:-1] for name in previews if name.endswith("!")}
+		self.previews = [name.rstrip("!") for name in previews]
 		self.units = self.previews
 		if self.previews and len(self.previews) < count:
 			self.units = []
 			for k, name in enumerate(self.previews):
-				shares = count // len(self.previews) + (1 if k < count % len(self.previews) else 0)
-				self.units += [f"{name}@{i}@{shares}" for i in range(1, shares + 1)]
+				shares = 1 if name in whole else count // len(self.previews) + (1 if k < count % len(self.previews) else 0)
+				self.units += [name] if shares == 1 else [f"{name}@{i}@{shares}" for i in range(1, shares + 1)]
 		self.shares_in = {}
 		self.queues = {}  # (model, bake or render) -> the next job to hand out
 		self.job_answers = {}  # (shard, claim number) -> job, so a repeated claim gets the same one
@@ -450,9 +453,10 @@ class Coordinator:
 		name, share, shares = event["share"].split("@")
 		pushed = task.bakes.setdefault(name, {})
 		pushed[share] = event["commit"]
-		if len(pushed) < int(shares):
-			return
-		message = json.dumps({"type": "bakes-ready", "task": task.id, "name": name, "commits": [commit for commit in pushed.values() if commit]})
+		# Every push is announced, so a machine that gives up waiting for a
+		# slow peer still takes what has arrived and bakes only the rest.
+		message = json.dumps({"type": "bakes-ready", "task": task.id, "name": name, "done": len(pushed) >= int(shares),
+			"commits": [commit for commit in pushed.values() if commit]})
 		for agent in list(self.agents.values()):
 			try:
 				await agent.send(message)
