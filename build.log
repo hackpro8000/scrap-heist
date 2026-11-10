@@ -1,0 +1,15 @@
+[    0.0s] running YardGate/model.luau
+[    0.1s] baking on CPU (no GPU)
+[    0.1s] shaded Frame 256×256 in 0.08s
+[    0.7s] shaded Doors 1024×1024 in 0.57s
+[    1.2s] shaded Padlock 256×256 in 0.44s
+[    1.3s] shaded Hardware 256×256 in 0.16s
+[    1.3s] writing YardGate.glb and 4 textures
+[    1.3s] rendering preview of 4 parts
+[    4.0s] rendering eye 1/2
+[    4.1s] rendering eye 2/2
+YardGate: 4 parts, script 1.32s, total 4.53s
+#f23d3d Frame
+#85a5f2 Doors
+#7bb32d Padlock
+#b362a8 Hardware
