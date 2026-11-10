@@ -1,0 +1,52 @@
+[    0.0s] running HubShop/model.luau
+[    1.0s] shaded CounterDrums 1024×1024 in 0.15s
+[    2.2s] shaded Fittings 1024×1024 in 0.20s
+[    3.7s] baking on CPU (no GPU)
+[    3.8s] shaded Sign 1024×1024 in 0.60s
+[    4.8s] shaded Awning 1024×1024 in 0.17s
+[    5.4s] shaded AwningPosts 1024×1024 in 0.11s
+[    9.9s] shaded StockPiles 1024×1024 in 1.19s
+[   11.1s] shaded Slab 1024×1024 in 0.19s
+[   12.5s] shaded LowerContainers 1024×1024 in 0.25s
+[   15.6s] shaded Supplies 1024×1024 in 1.13s
+[   16.2s] shaded Cables 1024×1024 in 0.08s
+[   16.9s] shaded PriceBoards 1024×1024 in 0.44s
+[   21.1s] baked every chunk this machine claimed
+[   29.3s] shaded SignBraces 1024×1024 in 0.10s
+[   29.4s] shaded CraneHook 1024×1024 in 0.09s
+[   29.5s] shaded Crane 1024×1024 in 0.11s
+[   29.8s] shaded CraneWeight 1024×1024 in 0.13s
+[   29.9s] shaded Shelves 1024×1024 in 0.12s
+[   30.1s] shaded Stencil 1024×1024 in 0.13s
+[   30.3s] shaded Counter 1024×1024 in 0.10s
+[   30.5s] shaded ShelfStock 1024×1024 in 0.12s
+[   30.6s] shaded AwningPatches 1024×1024 in 0.12s
+[   30.9s] shaded UpperContainer 1024×1024 in 0.21s
+[   31.0s] writing HubShop.glb and 22 textures
+[   35.6s] rendering eye 1/7
+[   36.7s] rendering eye 3/7
+[   37.8s] rendering eye 4/7
+[   39.6s] rendering eye 7/7
+HubShop: 22 parts, script 30.99s, total 40.33s
+#f23d3d Slab
+#85a5f2 LowerContainers
+#7bb32d Shelves
+#b362a8 ShelfStock
+#3df2d4 UpperContainer
+#f2c085 Counter
+#4e2db3 CounterDrums
+#66b362 Awning
+#f23d79 AwningPatches
+#85c9f2 AwningPosts
+#a8b32d Sign
+#a262b3 SignBraces
+#3df297 Crane
+#f29c85 CraneWeight
+#2d38b3 CraneHook
+#80b362 StockPiles
+#f23db6 Fittings
+#85eef2 Stencil
+#b3912d PriceBoards
+#8762b3 Supplies
+#3df25a Cables
+#f28593 Bulbs
