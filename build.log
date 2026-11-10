@@ -1,0 +1,11 @@
+[    0.0s] running ScrapTreeExhaust/model.luau
+[    5.9s] baking on CPU (no GPU)
+[    6.0s] shaded Footing 256×256 in 0.16s
+[    8.7s] shaded Mufflers 256×256 in 0.12s
+[    9.4s] baked every chunk this machine claimed
+[   12.4s] shaded Lashing 256×256 in 0.01s
+[   12.4s] shaded Pipes 256×256 in 0.01s
+[   12.4s] writing ScrapTreeExhaust.glb and 4 textures
+[   12.6s] rendering preview of 4 parts
+[   14.3s] rendering eye 1/2
+ScrapTreeExhaust: 4 parts, script 12.45s, total 14.69s
