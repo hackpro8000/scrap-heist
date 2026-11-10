@@ -1,0 +1,11 @@
+[    0.0s] running RockBoulderPile/model.luau
+[    1.3s] baking on CPU (no GPU)
+[    1.4s] shaded Discs 256×256 in 0.18s
+[    5.4s] shaded Drums 256×256 in 0.15s
+[    5.7s] shaded Mound 256×256 in 0.10s
+[    8.3s] baked every chunk this machine claimed
+[   11.2s] shaded Hubs 256×256 in 0.01s
+[   11.2s] writing RockBoulderPile.glb and 4 textures
+[   11.4s] rendering preview of 4 parts
+[   13.3s] rendering eye 2/2
+RockBoulderPile: 4 parts, script 11.18s, total 13.61s
