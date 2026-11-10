@@ -1,0 +1,40 @@
+[    0.0s] running HubStage/model.luau
+[    4.3s] shaded Fittings 1024×1024 in 0.16s
+[    6.3s] baking on CPU (no GPU)
+[    6.4s] shaded Platform 1024×1024 in 0.68s
+[    9.6s] shaded Steps 1024×1024 in 0.74s
+[   11.5s] shaded Supplies 1024×1024 in 1.03s
+[   16.1s] shaded TrussTop 1024×1024 in 0.08s
+[   16.4s] shaded SpeakerSurrounds 1024×1024 in 0.07s
+[   16.5s] shaded SpeakerCones 1024×1024 in 0.08s
+[   16.9s] baked every chunk this machine claimed
+[   21.1s] shaded Banner 1024×1024 in 0.08s
+[   21.3s] shaded Speakers 1024×1024 in 0.12s
+[   21.4s] shaded LampHousings 1024×1024 in 0.08s
+[   21.6s] shaded PlatformDrums 1024×1024 in 0.13s
+[   21.7s] shaded Cables 1024×1024 in 0.06s
+[   21.8s] shaded BackdropRivets 1024×1024 in 0.08s
+[   22.0s] shaded Backdrop 1024×1024 in 0.13s
+[   22.1s] shaded Truss 1024×1024 in 0.08s
+[   22.1s] writing HubStage.glb and 16 textures
+[   22.6s] rendering preview of 16 parts
+[   27.8s] rendering eye 3/7
+[   28.6s] rendering eye 5/7
+[   29.2s] rendering eye 6/7
+HubStage: 16 parts, script 22.15s, total 30.03s
+#f23d3d Platform
+#85a5f2 PlatformDrums
+#7bb32d Steps
+#b362a8 Truss
+#3df2d4 TrussTop
+#f2c085 Backdrop
+#4e2db3 BackdropRivets
+#66b362 Speakers
+#f23d79 SpeakerSurrounds
+#85c9f2 SpeakerCones
+#a8b32d LampHousings
+#a262b3 Lamps
+#3df297 Fittings
+#f29c85 Banner
+#2d38b3 Supplies
+#80b362 Cables

@@ -1,0 +1,37 @@
+bounds: 84,123,1012,873
+A1: -
+B1: -
+C1: TrussTop 25%, Truss 3%
+D1: TrussTop 4%
+E1: -
+F1: -
+A2: -
+B2: -
+C2: Backdrop 36%, Truss 25%, Fittings 7%, TrussTop 4%, LampHousings 3%
+D2: Backdrop 28%, Banner 24%, TrussTop 21%, LampHousings 5%, Cables 2%
+E2: TrussTop 19%, Banner 5%
+F2: -
+A3: -
+B3: Speakers 26%, Fittings 13%, SpeakerCones 3%, SpeakerSurrounds 3%
+C3: Truss 24%, Platform 21%, Backdrop 19%, Fittings 18%, Speakers 4%, Supplies 2%
+D3: Backdrop 86%, Fittings 13%
+E3: Backdrop 58%, TrussTop 17%, Fittings 13%, LampHousings 6%
+F3: Truss 8%, TrussTop 7%, Fittings 3%
+A4: Platform 26%, Fittings 10%
+B4: Platform 59%, Fittings 17%, Speakers 10%, SpeakerCones 2%, SpeakerSurrounds 2%
+C4: Platform 97%
+D4: Platform 74%, Backdrop 19%, Fittings 6%
+E4: Backdrop 57%, Fittings 23%, Speakers 9%, Truss 5%, Platform 4%
+F4: Truss 16%, Fittings 7%, Platform 5%
+A5: Platform 7%, Fittings 7%, Steps 5%
+B5: Platform 52%, Fittings 30%, Steps 17%
+C5: Platform 84%, Fittings 13%
+D5: Platform 76%, Supplies 17%, Fittings 3%, Cables 2%
+E5: Platform 39%, Speakers 24%, Fittings 11%, SpeakerCones 4%, Supplies 3%, SpeakerSurrounds 3%
+F5: Platform 17%, Truss 9%, PlatformDrums 3%
+A6: -
+B6: Steps 20%, Fittings 19%
+C6: Platform 22%, Fittings 11%, Steps 4%
+D6: Platform 45%, Supplies 3%
+E6: Platform 3%
+F6: -
