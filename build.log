@@ -1,0 +1,10 @@
+[    0.0s] running ScrapTreeLamppost/model.luau
+[    5.0s] baking on CPU (no GPU)
+[    5.1s] shaded Rubble 256×256 in 0.11s
+[   10.6s] shaded Trunk 256×256 in 0.05s
+[   14.0s] baked every chunk this machine claimed
+[   17.0s] shaded Hubcaps 256×256 in 0.01s
+[   17.0s] writing ScrapTreeLamppost.glb and 4 textures
+[   17.2s] rendering preview of 4 parts
+[   19.9s] rendering eye 2/2
+ScrapTreeLamppost: 4 parts, script 17.00s, total 20.31s
