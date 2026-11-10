@@ -7,12 +7,12 @@ local SEED = 41
 -- What stands on it (IslandPreview.luau): the hub's paving and ring road out
 -- to HUB_ROAD from the middle, and eight yard plots YARD_HALF_WIDTH by
 -- YARD_HALF_DEPTH on a ring at YARD_RADIUS, yard i at (i - 0.5) * 45
--- degrees with its gate toward the middle and a trodden track TRACK_HALF
--- either side from the gate to the hub.
+-- degrees with its gate toward the middle. A kerbed track runs from the gate
+-- to the hub, so the turf wear (negative TRACK_HALF) stays inside its kerbs.
 local HUB_ROAD = 101
 local YARD_RADIUS = 210
 local YARD_HALF_WIDTH, YARD_HALF_DEPTH = 48, 56
-local TRACK_HALF = 4.5
+local TRACK_HALF = -1.5
 
 -- How far a point lies outside the hub, the nearest plot (with rounded
 -- corners) or its track.
@@ -38,5 +38,8 @@ local RIM_WOBBLE = 0.04
 local function rimShape(_angle: number): number
 	return 1
 end
+
+-- Soft turf patches and wear, for a top this big and open.
+SOFT_GRASS = true
 
 -- include: ColumnIsland

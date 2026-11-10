@@ -227,6 +227,7 @@ local DRIP_SHADE = 0.35
 local GRASS_OLIVE = { 0.6, 0.57, 0.35 }
 local GRASS_OLIVE_COVER = 0.3
 local GRASS_PATCH_SIZE = 6 * DETAIL
+local GRASS_SPLOTCH = 0.25
 -- Within about APRON_WIDTH studs of what stands on the top (wornDistance)
 -- the grass is worn down to TRODDEN dirt and gravel, in patches toward the
 -- outside. These follow what stands there, not the stones, so DETAIL leaves
@@ -1564,25 +1565,38 @@ local GRASS_DEEPEST = GRASS_LIP[1] + DRIP_LENGTH[2]
 local paintGrass = rusting(0, function(x, y, z)
 	local shade = 1 - DRIP_SHADE * math.clamp(-z / GRASS_DEEPEST, 0, 1)
 	local tone, warm = splotchAt(x, y, z)
+	-- On a big open island splotches read as hard discs, so grass takes a trace.
+	if SOFT_GRASS then
+		tone, warm = tone * GRASS_SPLOTCH, warm * GRASS_SPLOTCH
+	end
 	shade *= 1 + tone
 	-- Patch strength from soft noise: 0 outside, 1 well inside a patch
 	-- covering `cover` of the grass.
 	local function patch(cover: number, seed: number): number
 		local u, v = x / GRASS_PATCH_SIZE + seed, y / GRASS_PATCH_SIZE
 		local n = 0.5 + math.noise(u, v, seed) + 0.3 * math.noise(u * 3, v * 3, seed + 5)
-		return math.clamp((n - (1 - cover)) / 0.12, 0, 1)
+		return math.clamp((n - (1 - cover)) / (if SOFT_GRASS then 0.4 else 0.12), 0, 1)
 	end
 	local function toward(r, g, b, c, t)
 		return r + (c[1] - r) * t, g + (c[2] - g) * t, b + (c[3] - b) * t
 	end
 	local r, g, b = toward(GRASS[1], GRASS[2], GRASS[3], GRASS_OLIVE, patch(GRASS_OLIVE_COVER, 11.3))
+	-- Broad darker drifts of bare soil, so open ground isn't one even tone.
+	if SOFT_GRASS then
+		local drift = math.clamp((math.noise(x * 0.018, y * 0.018, 63.1) + 0.35 * math.noise(x * 0.07, y * 0.07, 12.4) - 0.28) / 0.45, 0, 1)
+		r, g, b = toward(r, g, b, TRODDEN, drift * 0.42)
+	end
 	-- The worn apron round what stands on the top.
 	local outside = wornDistance(x, y)
 	local wobble = 0.4 * APRON_WIDTH * math.noise(x * 0.3, y * 0.3, 71.3)
 	local wear = math.clamp(1 - (outside + wobble) / APRON_WIDTH, 0, 1)
 	if wear > 0 then
 		local patchy = 0.5 + 0.6 * math.noise(x * 0.55, y * 0.55, 93.1)
-		local worn = math.clamp((wear - 0.75 * (1 - patchy)) / 0.2, 0, 1)
+		local worn = math.clamp((wear - 0.75 * (1 - patchy)) / (if SOFT_GRASS then 0.55 else 0.2), 0, 1)
+		if SOFT_GRASS then
+			-- Wear gathers in stretches, not as an even ring round everything.
+			worn *= math.clamp(0.55 + 1.3 * math.noise(x * 0.09, y * 0.09, 41.7), 0, 1)
+		end
 		local grit = 0.9 + 0.2 * math.noise(x * 1.7, y * 1.7, 17.9)
 		r, g, b = toward(r, g, b, { TRODDEN[1] * grit, TRODDEN[2] * grit, TRODDEN[3] * grit }, worn)
 	end

@@ -1,102 +1,40 @@
--- uses: HubSectionA HubSectionB HubSectionEnd YardIsland YardFence YardFenceHalf YardFooting YardGate PlotMarker PadKitchen PadGarage PadGadget BuildBay ScrapCrate RebirthPress JunkMound CapsuleScrap CapsuleSalvaged CapsuleRefurbished CapsuleFactory CapsulePrecision CapsulePrototype CapsuleSecret JunkrotCanettoRustini JunkrotSpoonzoBentolo JunkrotKettlinaDentata JunkrotTyroFlattino JunkrotBoltoloLonelo JunkrotHubcappaWobbla JunkrotRemotinoMuto JunkrotCabloTanglino JunkrotBulboFulminato JunkrotCrumboPoppalot JunkrotPannettoPatchato JunkrotBlendroCigolante JunkrotJackoloCrickato JunkrotOilcannaGluglu JunkrotMuffleroTossetto JunkrotRadioloFruscio JunkrotFanettoWobblino JunkrotClockoTictacco JunkrotFrostboxGelatone JunkrotMicrondoBippetto JunkrotMixerellaVroom JunkrotMopaMopetta JunkrotDrilloTrapanino JunkrotGrindellaScintilla JunkrotTelefonoRingaling JunkrotTypewrittoClackini JunkrotCamerinoFlashetto JunkrotDrippiDroppi JunkrotDingDingDingDongo JunkrotGrindoBeanbasher JunkrotAirfryoCroccante JunkrotDishwashinoSplashetto JunkrotLawnmowoRuggito JunkrotLeafblowaWhooshini JunkrotPressurwashoSprizzo JunkrotConsoloJoypaddino JunkrotSpeakeroneBoomba JunkrotRobovaccoGirotondo JunkrotClankClankClankScrapur JunkrotVrrVrrPatatrim JunkrotChimneyziniSpannerini JunkrotRusteliRustela JunkrotBallerinaTincuppina JunkrotTrashaleroTrashala JunkrotSockettoSeiSette JunkrotChefbotPrecisio JunkrotSousvideSilvano JunkrotKnifeblockSlicetta JunkrotTorquoWrenchelli JunkrotLaserlevelLineo JunkrotWeldettaSparkalot JunkrotDronettoBuzzatti JunkrotTickworthPocketti JunkrotHeadphonoBassimo JunkrotGascaniniHonkini JunkrotPercolattoNinjatto JunkrotBoilerdiroCrockpotilo JunkrotSnackomaticPrototipo JunkrotHoverbikkoZoomzoom JunkrotHolofonoShimmerra JunkrotLaVacuumaSaturnita JunkrotTheMonolito JunkrotUnitZero ProofToaster ProofKettle ProofShark
--- Server Map: one server's whole map, centered on the origin, built as
--- floating islands laid out along a line (the Scrap Line). The hub is a long
--- island running along x, five sections in a row, paved from end to end: a
--- bed down the middle for the belt loop and its crane rails, a walkway along
--- each side of it and a plaza across each end, the west one with the spawn
--- ring. Eight yard islands stand in two rows, four either side of the hub
--- and a tier higher. A concrete ramp climbs from the hub's walkway to each
--- yard's bridge, a level steel span to its gate. That bridge is the only
--- way on or off a yard.
--- Each plot carries only a yard's shell (yardShell() below): players lay
--- their yards out themselves, so pads, bays, the crate and the rest are
--- placed by the game.
--- The capsule belt loops round the bed down the Line's middle, through the
--- sorter at its west end. One of each model the game places itself (the
--- kit) is built here too, out of sight, so it uploads with the map.
--- Labels: HubSection1-HubSection5, Line, Belt, Sorter, Spawn, Island1-Island8,
--- Plot1-Plot8 (1-4 along the north row from the west, 5-8 along the south),
--- Approach1-Approach8, Spoke1-Spoke8, Bridge1-Bridge8 and
--- Yard1_<piece>-Yard8_<piece>, where the
--- pieces are Gate, PlotMarker, and Fence and Footing pieces; and Kit_<model>
--- for each kit model (see KIT at the end).
+-- uses: MainIsland CapsuleLoop RebirthPress BuildBay YardFence YardFenceHalf YardFooting YardGate PlotMarker HubShop HubTinkerer HubBeacon HubStage BeltCrossing JunkMound ScrapPalm ScrapTreeAntenna ScrapTreeExhaust ScrapTreeLamppost ScrapTreeRebar ScrapTreeSignpost RockBoulderPile HubSectionA HubSectionB HubSectionEnd YardIsland PadKitchen PadGarage PadGadget ScrapCrate CapsuleScrap CapsuleSalvaged CapsuleRefurbished CapsuleFactory CapsulePrecision CapsulePrototype CapsuleSecret JunkrotCanettoRustini JunkrotSpoonzoBentolo JunkrotKettlinaDentata JunkrotTyroFlattino JunkrotBoltoloLonelo JunkrotHubcappaWobbla JunkrotRemotinoMuto JunkrotCabloTanglino JunkrotBulboFulminato JunkrotCrumboPoppalot JunkrotPannettoPatchato JunkrotBlendroCigolante JunkrotJackoloCrickato JunkrotOilcannaGluglu JunkrotMuffleroTossetto JunkrotRadioloFruscio JunkrotFanettoWobblino JunkrotClockoTictacco JunkrotFrostboxGelatone JunkrotMicrondoBippetto JunkrotMixerellaVroom JunkrotMopaMopetta JunkrotDrilloTrapanino JunkrotGrindellaScintilla JunkrotTelefonoRingaling JunkrotTypewrittoClackini JunkrotCamerinoFlashetto JunkrotDrippiDroppi JunkrotDingDingDingDongo JunkrotGrindoBeanbasher JunkrotAirfryoCroccante JunkrotDishwashinoSplashetto JunkrotLawnmowoRuggito JunkrotLeafblowaWhooshini JunkrotPressurwashoSprizzo JunkrotConsoloJoypaddino JunkrotSpeakeroneBoomba JunkrotRobovaccoGirotondo JunkrotClankClankClankScrapur JunkrotVrrVrrPatatrim JunkrotChimneyziniSpannerini JunkrotRusteliRustela JunkrotBallerinaTincuppina JunkrotTrashaleroTrashala JunkrotSockettoSeiSette JunkrotChefbotPrecisio JunkrotSousvideSilvano JunkrotKnifeblockSlicetta JunkrotTorquoWrenchelli JunkrotLaserlevelLineo JunkrotWeldettaSparkalot JunkrotDronettoBuzzatti JunkrotTickworthPocketti JunkrotHeadphonoBassimo JunkrotGascaniniHonkini JunkrotPercolattoNinjatto JunkrotBoilerdiroCrockpotilo JunkrotSnackomaticPrototipo JunkrotHoverbikkoZoomzoom JunkrotHolofonoShimmerra JunkrotLaVacuumaSaturnita JunkrotTheMonolito JunkrotUnitZero ProofToaster ProofKettle ProofShark
+-- include: HandFinish
+-- Server Map: the floating-island server map from
+-- art/concepts/server-map-island-sketch.png. Replaced the Scrap Line layout
+-- (git history, before 2026-11-10). The island was drafted as IslandPreview,
+-- which stays as the preview layout
+-- (no kit, no upload). One round column island (MainIsland) centred on the
+-- origin: an open hub with a minecart loop round it, eight fenced yards on a
+-- ring near the rim with their gates facing the hub, and open ground
+-- between with rough ground in the gaps, and a town inside the belt.
+-- Labels: Island, Plaza, Rough1-Rough10, Streets, Plot1-Plot8 with Yard1_<piece>-
+-- Yard8_<piece>, CapsuleLoop, Spawn, Market, Tinkerer, Landmark, EventStage
+-- and Crossing1-Crossing8.
 
--- Every map part is textured at one density so nothing reads sharper or
--- blurrier than its neighbours. Props keep their own texture sizes.
-local MAP_DENSITY = 16
-useTexelDensity(MAP_DENSITY)
+local GROUND_DENSITY = 8
+local YARD_DENSITY = 16
+useTexelDensity(GROUND_DENSITY)
 
--- A placed model can set its own texel density while it builds, and it only
--- builds when it isn't cached, so the map's density is set again after each
--- one. Otherwise everything after it bakes at the model's density, or not,
--- depending on what happens to be cached.
--- `scale` builds it that many times its own size (see place()).
-local function placeModel(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, scale: number?)
-	place(label, build, x, y, z, turn, nil, nil, scale)
-	useTexelDensity(MAP_DENSITY)
-end
-
--- Length of each yellow or black block in the bridges' hazard strips.
-local HAZARD_BLOCK = 0.6
--- How much wider the bridges are than their 7-stud base design. Every
--- measurement across a bridge (deck, railings, girders, end posts, seats)
--- and the gaps it lands in scale by it; lengths and thicknesses don't.
-local BRIDGE_WIDTH = 1.5
--- The Line's deck runs a little above the ground. The yards stand a tier
--- higher, level with their bridges.
+-- The island's turf top is level all over, at DECK; the plots lie on it.
 local DECK = 2
-local YARD_TIER = 6
--- The hub's island sections (HubSection*.luau) stand SECTION_SPACING apart
--- along x, overlapping at their ends. Their turf stands HUB_TURF above
--- their origin, just under the deck.
-local SECTION_SPACING = 110
-local HUB_TURF = 1.9
-local HUB_GROUND = DECK - 0.2
--- The hub's rim stands at least this far from the Line's middle where the
--- yards' bridges start.
-local HUB_RIM = 64.3
--- The Line's deck reaches LINE_HALF_LENGTH by LINE_HALF_WIDTH either side of
--- the middle. The belt's bed runs down its middle, BED_HALF_LENGTH by
--- BED_HALF_WIDTH, leaving a walkway 30 studs wide along each side (a player
--- is 4 across) and a plaza 36 deep across each end.
-local LINE_HALF_LENGTH, LINE_HALF_WIDTH = 268, 56
-local BED_HALF_LENGTH, BED_HALF_WIDTH = 232, 26
--- The yards stand in two rows, YARD_ROW studs either side of the Line, at
--- YARD_COLUMNS along it. A plot is PLOT_WIDTH across and PLOT_DEPTH deep,
--- its gate in the middle of the side facing the Line. A yard island
--- (YardIsland.luau) reaches at least YARD_ISLAND_FRONT studs toward the Line
--- from its middle, where the bridge lands; its turf stands YARD_TURF above
--- its origin. Yard islands are at most 120 across, so neighbours stand over
--- 20 studs apart, more than twice a jump.
-local YARD_ROW = 180
-local YARD_COLUMNS = { -210, -70, 70, 210 }
+local YARD_TIER = DECK
 local PLOT_WIDTH, PLOT_DEPTH = 96, 112
-local YARD_ISLAND_FRONT = 66
-local YARD_TURF = 1.76
--- Each end of a yard's bridge sits this far in from where an island's rim
--- is sure to reach. The span is level at the yard tier, so wherever the
--- yard's rim swells further out the deck still rides on top of its turf,
--- and it clears the hub's turf by 4 studs. The climb is the approach ramp's:
--- APPROACH_RUN long on the hub's walkway (leaving 20 studs of it clear, five
--- players abreast), then a level landing under the bridge's end.
-local BRIDGE_SEAT = 1.5
-local APPROACH_RUN = 14
-local APPROACH_HALF = 3.8 * BRIDGE_WIDTH
+-- Yards stand on a ring this far out, yard i at (i - 0.5) * 45 degrees.
+local YARD_RADIUS = 210
+-- The hub: paved plaza to HUB_PAVED, then the ring road to HUB_ROAD.
+local HUB_PAVED, HUB_ROAD = 84, 101
+-- MainIsland's turf thickness: the column generator's GRASS_HEIGHT, 0.45 of
+-- its DETAIL (0.34 * RADIUS / 4.5) for a RADIUS of 278.
+local ISLAND_TURF = 0.45 * 0.34 * 278 / 4.5
 
-local ROAD = { 0.42, 0.41, 0.4 }
 local CONCRETE = { 0.55, 0.54, 0.5 }
+local ROAD = { 0.42, 0.41, 0.4 }
+local DIRT = { 0.47, 0.4, 0.31 }
+local ROCK = { 0.56, 0.5, 0.42 }
 local MARK = { 0.85, 0.65, 0.15 }
-local PLOT = { 0.36, 0.33, 0.28 }
+local YARD_DIRT = { 0.42, 0.36, 0.28 }
 
--- Places one flat piece built here rather than from a model.
-local function slab(label: string, build: () -> (), x: number, y: number, turn: number?)
-	placeSlab(label, build, x, y, turn, function()
-		finishParts()
-		table.clear(parts)
-	end)
-end
-
--- Fractal noise: octaves of math.noise, each twice as fine and half as strong.
 local function fbm(x: number, y: number, z: number): number
 	local total, amplitude = 0, 0.5
 	for _ = 1, 4 do
@@ -105,518 +43,492 @@ local function fbm(x: number, y: number, z: number): number
 	end
 	return total
 end
--- fBm sampled through another fBm, so the wear twists into blotches and
--- streaks instead of even waves.
+-- Hand coats for the layout's own props. Anything not listed keeps its paint.
+local SLAB_COATS = {
+	Stones = "rock",
+	Grit = "rock",
+	Tyre = "rock",
+	PipeStone = "rock",
+	Pipe = "metal",
+	Slab = "rock",
+	SlabStone = "rock",
+	Walks = "rock",
+	Tracks = "rock",
+	Kerbs = "rock",
+	Drains = "metal",
+	Conduits = "metal",
+	LampPosts = "metal",
+}
+local ROCK_PARTS = { Stones = true, Grit = true, PipeStone = true, SlabStone = true }
+-- How far the fence footing stands out past the plot's edge.
+local FOOTING_REACH = 0.75
+-- What stands on the sand in the slab being built: { x, y, radius x, radius y, seed }.
+local groundFeet = {}
+local SHADE = { 0.13, 0.09, 0.07 }
+-- The turf stands proud of DECK; the shadow sheets lie just above it.
+local SHADE_Z = DECK + 0.85
+-- A contact shadow is ambient occlusion, not a cast shadow (the game lights the
+-- world itself): a thin stepped line hugging the foot, whatever the object's
+-- size. `past` is studs outside the foot's edge.
+local function shadeTier(past: number): number
+	return if past < -0.7 then 0 elseif past < 0.25 then 0.6 elseif past < 0.55 then 0.38 elseif past < 0.85 then 0.16 else 0
+end
+-- Studs from a point to the edge of an elliptical foot, negative inside it.
+local function pastFoot(dx: number, dy: number, foot): number
+	local rim = foot[6]
+	if rim then
+		local side = (math.atan2(dy, dx) / (2 * math.pi) % 1) * #rim
+		local low = math.floor(side)
+		local reach = rim[low + 1] + (rim[(low + 1) % #rim + 1] - rim[low + 1]) * (side - low)
+		return math.sqrt(dx * dx + dy * dy) - reach
+	end
+	local out = math.sqrt((dx / foot[3]) ^ 2 + (dy / foot[4]) ^ 2)
+	if out < 0.001 then
+		return -math.huge
+	end
+	return (out - 1) / out * math.sqrt(dx * dx + dy * dy)
+end
+-- A see-through sheet on the sand, darkened round each of groundFeet. Painted
+-- flat, so it skips the bake: `emissive` 0 glows not at all.
+local function shadeGroundFeet()
+	if #groundFeet == 0 then
+		return nil
+	end
+	local feet = table.clone(groundFeet)
+	table.clear(groundFeet)
+	local left, right, bottom, top = math.huge, -math.huge, math.huge, -math.huge
+	for _, foot in feet do
+		left, right = math.min(left, foot[1] - foot[3] - 1.2), math.max(right, foot[1] + foot[3] + 1.2)
+		bottom, top = math.min(bottom, foot[2] - foot[4] - 1.2), math.max(top, foot[2] + foot[4] + 1.2)
+	end
+	part("GroundShade", nil, SHADE, function(mesh)
+		mesh:face({ mesh:vertex(left, bottom, SHADE_Z), mesh:vertex(right, bottom, SHADE_Z), mesh:vertex(right, top, SHADE_Z), mesh:vertex(left, top, SHADE_Z) })
+	end, nil, function(px: number, py: number)
+		local dark = 0
+		for _, foot in feet do
+			local dx, dy = px - placeX - foot[1], py - placeY - foot[2]
+			dark = math.max(dark, shadeTier(pastFoot(dx, dy, foot) + 0.08 * fbm(dx * 1.4, dy * 1.4, foot[5])))
+		end
+		return SHADE[1], SHADE[2], SHADE[3], dark
+	end, nil, 0, true)
+	return feet
+end
+local function slab(label: string, build: () -> (), x: number, y: number, turn: number?)
+	placeSlab(label, build, x, y, turn, function()
+		local feet = shadeGroundFeet()
+		local untouched = {}
+		for _, entry in parts do
+			if ROCK_PARTS[entry.name] then
+				-- Stone edges catch the light in bold, wide strokes, over a light base.
+				entry.lit, entry.wide, entry.gradient = 2.2, 1.5, 0.15
+			end
+			if feet and ROCK_PARTS[entry.name] then
+				-- Bands run up each rock on its own, from the turf to its top.
+				entry.bandDepth = function(x: number, y: number, z: number): number
+					local nearest, best = feet[1], math.huge
+					for _, foot in feet do
+						local dx, dy = x - placeX - foot[1], y - placeY - foot[2]
+						local reach = (dx * dx + dy * dy) / (foot[3] * foot[3])
+						if reach < best then
+							nearest, best = foot, reach
+						end
+					end
+					-- Eased, so a rock's foot stays stone rather than going black.
+					return 1 - math.clamp((z - SHADE_Z) / (nearest[3] * 1.4), 0, 1)
+				end
+			end
+			if not SLAB_COATS[entry.name] then
+				untouched[entry.name] = true
+			end
+		end
+		handFinish(SLAB_COATS, untouched, { rock = "rock", metal = "propMetal" })
+		finishParts()
+		table.clear(parts)
+	end)
+end
+local function placeModel(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, scale: number?)
+	place(label, build, x, y, z, turn, nil, nil, scale)
+	useTexelDensity(GROUND_DENSITY)
+end
+
 local function warpedFbm(x: number, y: number, z: number): number
 	return fbm(x + 1.8 * fbm(x + 5.2, y + 1.3, z), y + 1.8 * fbm(x + 1.7, y + 9.2, z), z)
 end
--- Bridge deck: riveted steel tread plates laid across the span, with dark
--- seams, raised diamond treads worn smooth down the two wheel paths, and
--- grime and rust bleeding in from the edges. (The hazard strips are parts of
--- their own, laid on top; see bridge().) Painted in the bridge's own frame so
--- every bridge wears the same way along its length. `flareAt` says how far the
--- railings have flared at each point along it, and the edges flare with them.
-local function bridgeDeck(degrees: number, cx: number, cy: number, flareAt: (number) -> number)
-	local angle = math.rad(degrees - 90)
-	local c, s = math.cos(angle), math.sin(angle)
-	return function(x: number, y: number, _z: number)
-		local u = (x - cx) * c + (y - cy) * s
-		local v = (y - cy) * c - (x - cx) * s
-		local flare = flareAt(v)
-		local edge = (3 + 0.5 * flare) * BRIDGE_WIDTH - math.abs(u)
-		local wheel = math.exp(-((math.abs(u) - 1.4 * BRIDGE_WIDTH) / 0.5) ^ 2)
-		local k = 0.72 + fbm(u / 2, v / 2, 31) * 0.1
-		-- Diamond treads alternate direction, flattened where tyres run.
-		local du, dv = (u * 5) % 1 - 0.5, (v * 2.5) % 1 - 0.5
-		local flip = if math.floor(u * 5) % 2 == math.floor(v * 2.5) % 2 then 1 else -1
-		local tread = math.abs(du * 2 + flip * dv * 1.2) < 0.18 and math.abs(du) < 0.38
-		if tread then
-			k += 0.14 * (1 - wheel * 0.8)
-		end
-		k += wheel * (0.08 + fbm(u * 3, v / 4, 37) * 0.08)
-		-- Plate seams every 2 studs, with a bolt pair near each edge.
-		local seam = math.abs((v % 2) - 1)
-		if seam > 0.96 then
-			k -= 0.35
-		elseif seam > 0.86 and math.abs(edge - 0.35) < 0.1 then
-			k += 0.25
-		end
-		-- Edge grime and rust runs.
-		local grime = math.clamp(1 - edge / 0.9, 0, 1) * (0.6 + fbm(v / 1.5, u, 41) * 0.8)
-		k -= grime * 0.3 + math.max(0, warpedFbm(u / 3, v / 3, 43)) * 0.25
-		local rust = math.clamp(grime + math.max(0, fbm(u, v / 1.2, 47)) - 0.35, 0, 1)
-		local r, g, b = STEEL[1], STEEL[2], STEEL[3]
-		return r * k + rust * 0.12, g * k + rust * 0.02, b * k - rust * 0.06
-	end
-end
--- Bridge girders: dark paint flaking off in patches to bare rust, with
--- rivet rows along both flanges.
-local function bridgeGirders(degrees: number, cx: number, cy: number)
-	local angle = math.rad(degrees - 90)
-	local c, s = math.cos(angle), math.sin(angle)
-	return function(x: number, y: number, z: number)
-		local u = (x - cx) * c + (y - cy) * s
-		local v = (y - cy) * c - (x - cx) * s
-		local k = 1 + fbm(u + v / 2, z * 2, 51) * 0.12
-		local flake = warpedFbm(v / 2.5, z * 1.5 + u, 53)
-		local rust = math.clamp((flake - 0.1) * 4, 0, 1)
-		local flange = math.abs(z + 0.35) < 0.05 or math.abs(z + 1.25) < 0.05
-		local rivet = flange and math.abs(((v * 2) % 1) - 0.5) < 0.04
-		if rivet then k += 0.45 end
-		local r = DARK_STEEL[1] * k * (1 - rust) + 0.42 * rust * k
-		local g = DARK_STEEL[2] * k * (1 - rust) + 0.2 * rust * k
-		local b = DARK_STEEL[3] * k * (1 - rust) + 0.1 * rust * k
-		return r, g, b
-	end
+local function smooth(from: number, to: number, x: number): number
+	local t = math.clamp((x - from) / (to - from), 0, 1)
+	return t * t * (3 - 2 * t)
 end
 
--- Asphalt at u studs across and v along a road: fine aggregate, darker
--- repair patches, polished tyre lanes, oil drips between them, a web of
--- cracks, and worn paint: white edge lines and a dashed yellow centre line.
-local function asphalt(u: number, v: number, half: number, seed: number): (number, number, number)
-	local k = 1 + fbm(u * 3, v * 3, seed) * 0.12
-	k += (math.noise(u * 9.1, v * 9.1, seed + 1) > 0.35 and 0.1 or 0)
-	local patch = warpedFbm(u / 6, v / 6, seed + 2)
-	if patch > 0.22 then
-		k -= 0.16
-	end
-	local lane = math.exp(-((math.abs(u) - half / 2) / 0.6) ^ 2)
-	k += lane * (0.07 + fbm(u, v / 5, seed + 3) * 0.05)
-	local oil = math.max(0, fbm(u / 1.5, v / 3, seed + 4) - 0.15) * (1 - lane)
-	k -= oil * 0.9
-	local crack = math.abs(warpedFbm(u / 3, v / 3, seed + 5))
-	if crack < 0.012 then
-		k -= 0.35
-	end
-	local r, g, b = ROAD[1] * k, ROAD[2] * k, ROAD[3] * k * 1.02
-	local fade = math.clamp(0.75 + fbm(u * 2, v / 2, seed + 6) * 1.2 - lane * 0.3, 0, 1)
-	local edgeLine = math.abs(math.abs(u) - (half - 0.5)) < 0.1
-	if edgeLine then
-		return r + (0.82 - r) * fade, g + (0.8 - g) * fade, b + (0.74 - b) * fade
-	end
-	return r, g, b
-end
+-- The island itself, its turf top at DECK.
+placeModel("Island", buildMainIsland, 0, 0, DECK - ISLAND_TURF)
 
--- A straight block `width` wide from (ax, ay) to (bx, by), its bottom and
--- top heights at each end given as { bottom, top }, so it can slope.
-local function upstand(mesh, ax: number, ay: number, bx: number, by: number, width: number, aHeights: { number }, bHeights: { number })
-	local dx, dy = bx - ax, by - ay
-	local length = math.sqrt(dx * dx + dy * dy)
-	local px, py = -dy / length * width / 2, dx / length * width / 2
-	-- Each end's corners: right bottom, left bottom, left top, right top.
-	local function corners(x: number, y: number, heights: { number })
-		return {
-			mesh:vertex(x - px, y - py, heights[1]),
-			mesh:vertex(x + px, y + py, heights[1]),
-			mesh:vertex(x + px, y + py, heights[2]),
-			mesh:vertex(x - px, y - py, heights[2]),
-		}
-	end
-	local a, b = corners(ax, ay, aHeights), corners(bx, by, bHeights)
-	mesh:face({ a[4], b[4], b[3], a[3] })
-	mesh:face({ a[2], b[2], b[1], a[1] })
-	mesh:face({ a[1], b[1], b[4], a[4] })
-	mesh:face({ a[2], a[3], b[3], b[2] })
-	mesh:face({ a[1], a[4], a[3], a[2] })
-	mesh:face({ b[1], b[2], b[3], b[4] })
-end
--- A steel bridge on spoke `degrees`, placed at (x, y) and turned so local +y
--- runs along it, from its low end at `to` (on deck level, or at `lowZ`) to
--- its far end at `from`, which climbs to `highZ`. Every part is built flat and then sheared
--- up along its length, so posts stay upright and the end pieces sit level at
--- their own tier. A yard end lands on an apron; at any other end the
--- railings flare out to the kerb ends and stop at end posts. Across the
--- bridge everything is laid out on the 7-stud base design times
--- BRIDGE_WIDTH, through `w`.
-local function bridge(label: string, x: number, y: number, degrees: number, from: number, to: number, highZ: number, yardEnd: boolean, lowZ: number?)
-	local middle, length = (from + to) / 2, from - to
-	local w = BRIDGE_WIDTH
-	local low = lowZ or DECK
-	local function lift(py: number): number
-		return low + (highZ - low) * math.clamp((py - to) / length, 0, 1)
-	end
-	local function bridgePart(name: string, color, build: (any) -> (), paint, flat: boolean?)
-		part(name, nil, color, function(mesh)
-			build({
-				vertex = function(_, vx, vy, vz)
-					return mesh:vertex(vx, vy, vz + lift(vy))
-				end,
-				face = function(_, corners)
-					return mesh:face(corners)
-				end,
-			})
-		end, nil, paint, nil, nil, flat)
-	end
-	local postCount = math.ceil((length - 0.3) / 2.5)
-	local postGap = (length - 0.3) / postCount
-	local flareFrom = if yardEnd then from - 0.1 else from - 0.15 - postGap
-	local flareTo = to + 0.15 + postGap
-	-- Where the railings flare: each end at `edge`, its rails running
-	-- inward along +y (`inward` 1) or -y (-1) from the end post.
-	local flares = { { to, 1, flareTo } }
-	if not yardEnd then
-		table.insert(flares, { from, -1, flareFrom })
-	end
-	local function endPostAt(edge: number, inward: number): number
-		return edge + inward * 0.2
-	end
-	-- How far the railings have flared at `py`: 0 between the flares, 1 at
-	-- the end posts and beyond.
-	local function flareAt(py: number): number
-		local amount = math.clamp((flareTo - py) / (flareTo - endPostAt(to, 1)), 0, 1)
-		if yardEnd then
-			return amount
+-- The hub's paving: concrete slabs on the plaza, asphalt on the ring road,
+-- a hair over the turf.
+slab("Plaza", function()
+	chunkedPart("Paving", nil, CONCRETE, function(mesh)
+		local STEPS = 128
+		local rings = {}
+		for r = 4, HUB_ROAD, 4 do
+			table.insert(rings, r)
 		end
-		return math.max(amount, math.clamp((py - flareFrom) / (endPostAt(from, -1) - flareFrom), 0, 1))
-	end
-	-- The deck's top at `py`, above the bridge's line: level along the span,
-	-- ramping down over the last stud at a kerb end.
-	local function topAt(py: number): number
-		local inFromEdge = if yardEnd then py - to else math.min(py - to, from - py)
-		return 0.1 * math.clamp(inFromEdge, -0.4, 1)
-	end
-	slab(label, function()
-		-- Steel decking that widens with the railings where they flare, so it
-		-- runs under the upstands out to the kerb ends. At a kerb end its top
-		-- ramps down to the plaza over the last stud and runs on just under
-		-- it, so the walk off the bridge has no lip. Left unwarped so the
-		-- walking surface and its seam with the plaza stay true. Built as
-		-- rows of vertices across the deck at each station along it.
-		bridgePart("Deck", STEEL, function(mesh)
-			local stations = { to - 0.4, to, endPostAt(to, 1), to + 1 }
-			for n = 0, 8 do
-				table.insert(stations, flareTo + (flareFrom - flareTo) * n / 8)
-			end
-			if yardEnd then
-				table.insert(stations, from)
-			else
-				for _, py in { from - 1, endPostAt(from, -1), from, from + 0.4 } do
-					table.insert(stations, py)
-				end
-			end
-			local top, bottom = {}, {}
-			for k, py in stations do
-				local half = (3 + 0.5 * flareAt(py)) * w
-				top[k], bottom[k] = {}, {}
-				for i = 0, 8 do
-					local px = -half + half * i / 4
-					top[k][i] = mesh:vertex(px, py, topAt(py))
-					bottom[k][i] = mesh:vertex(px, py, -0.2)
-				end
-			end
-			local last = #stations
-			for k = 1, last - 1 do
-				for i = 0, 7 do
-					mesh:face({ top[k][i], top[k][i + 1], top[k + 1][i + 1], top[k + 1][i] })
-					mesh:face({ bottom[k][i], bottom[k + 1][i], bottom[k + 1][i + 1], bottom[k][i + 1] })
-				end
-				mesh:face({ bottom[k][8], bottom[k + 1][8], top[k + 1][8], top[k][8] })
-				mesh:face({ bottom[k][0], top[k][0], top[k + 1][0], bottom[k + 1][0] })
-			end
-			for i = 0, 7 do
-				mesh:face({ bottom[1][i], bottom[1][i + 1], top[1][i + 1], top[1][i] })
-				mesh:face({ bottom[last][i], top[last][i], top[last][i + 1], bottom[last][i + 1] })
-			end
-		end, bridgeDeck(degrees, x, y, flareAt), true)
-		-- Hazard strips along both outer plates: blocks of yellow and black laid
-		-- just proud of the deck, each colour its own part so the blocks stay
-		-- crisp and even. They run from end post to end post and step out with
-		-- the railings where they flare.
-		local first = endPostAt(to, 1)
-		local last = if yardEnd then from - 0.1 else endPostAt(from, -1)
-		local blocks = math.max(1, math.round((last - first) / HAZARD_BLOCK))
-		for k, colour in { MARK, { 0.08, 0.08, 0.08 } } do
-			bridgePart(if k == 1 then "HazardYellow" else "HazardBlack", colour, function(mesh)
-				for n = k - 1, blocks - 1, 2 do
-					local a = first + (last - first) * n / blocks
-					local b = first + (last - first) * (n + 1) / blocks
-					for _, side in { -1, 1 } do
-						local corners = {}
-						for i, py in { a, b } do
-							local centre = (2.45 + 0.6 * flareAt(py)) * w
-							local z = topAt(py) + 0.015
-							corners[i] = { side * (centre - 0.25), side * (centre + 0.25), py, z }
-						end
-						-- A thin block: its top, and the four sides down to the deck.
-						local top, base = {}, {}
-						for i, corner in { corners[1], corners[2] } do
-							local inner, outer, py, z = corner[1], corner[2], corner[3], corner[4]
-							top[i * 2 - 1] = mesh:vertex(inner, py, z)
-							top[i * 2] = mesh:vertex(outer, py, z)
-							base[i * 2 - 1] = mesh:vertex(inner, py, z - 0.03)
-							base[i * 2] = mesh:vertex(outer, py, z - 0.03)
-						end
-						local quads = {
-							{ top[1], top[2], top[4], top[3] },
-							{ base[1], base[2], top[2], top[1] },
-							{ base[4], base[3], top[3], top[4] },
-							{ base[2], base[4], top[4], top[2] },
-							{ base[3], base[1], top[1], top[3] },
-						}
-						for _, quad in quads do
-							-- The left side mirrors the right, so it winds the other way.
-							mesh:face(if side > 0 then quad else { quad[4], quad[3], quad[2], quad[1] })
-						end
-					end
-				end
-			end, 0.1, true)
+		if rings[#rings] ~= HUB_ROAD then
+			table.insert(rings, HUB_ROAD)
 		end
-		bridgePart("Girders", DARK_STEEL, function(mesh)
-			-- I-beams: a web between two flanges, ribbed on the outside, with
-			-- bolted splice plates where the beam sections join.
-			for _, side in { -2.6 * w, 2.6 * w } do
-				local out = math.sign(side)
-				box(mesh, side, middle, -1.4, 0.2, length, 1.2)
-				box(mesh, side, middle, -1.4, 0.6, length, 0.15)
-				box(mesh, side, middle, -0.4, 0.6, length, 0.15)
-				for n = 0, math.floor(length / 2) do
-					box(mesh, side + out * 0.17, to + 1 + n * 2, -1.25, 0.14, 0.1, 0.85)
-				end
-				for n = 1, math.floor(length / 8) do
-					local at = to + n * 8
-					box(mesh, side + out * 0.13, at, -1.15, 0.06, 0.9, 0.65)
-					for _, dy in { -0.3, 0.3 } do
-						for _, dz in { -1.0, -0.65 } do
-							box(mesh, side + out * 0.18, at + dy, dz, 0.06, 0.1, 0.1)
-						end
-					end
-				end
+		local middle = mesh:vertex(0, 0, DECK + 0.05)
+		local grid = {}
+		for a = 0, STEPS do
+			local theta = 2 * math.pi * a / STEPS
+			grid[a] = {}
+			for k, r in rings do
+				grid[a][k] = mesh:vertex(math.cos(theta) * r, math.sin(theta) * r, DECK + 0.05)
 			end
-			for n = 0, math.floor(length / 4) do
-				box(mesh, 0, to + 1 + n * 4, -0.6, 5.6 * w, 0.3, 0.4)
-			end
-		end, bridgeGirders(degrees, x, y))
-		-- Railing posts spaced evenly so both ends get one, each bolted down
-		-- on a base plate and capped. A flared end trades its last post for
-		-- an end post out at the kerb end.
-		bridgePart("Posts", STEEL, function(mesh)
-			for _, side in { -2.9 * w, 2.9 * w } do
-				for n = 1, if yardEnd then postCount else postCount - 1 do
-					local at = to + 0.15 + n * postGap
-					box(mesh, side, at, -0.05, 0.36, 0.36, 0.06)
-					box(mesh, side, at, 0.01, 0.14, 0.14, 1.27)
-					box(mesh, side, at, 1.28, 0.2, 0.2, 0.06)
-				end
-			end
-		end, 0.4)
-		-- Handrail on top, a thinner mid rail and a kick plate at the deck,
-		-- straight between the flares, then angled out to the end posts.
-		bridgePart("Rail", MARK, function(mesh)
-			local straight, span = (flareFrom + flareTo) / 2, flareFrom - flareTo
-			for _, side in { -2.9 * w, 2.9 * w } do
-				local out = math.sign(side)
-				box(mesh, side, straight, 1.16, 0.16, span, 0.12)
-				box(mesh, side, straight, 0.62, 0.08, span, 0.08)
-				box(mesh, side + out * 0.1, straight, -0.05, 0.04, span, 0.22)
-				for _, flare in flares do
-					local edge, inward, start = flare[1], flare[2], flare[3]
-					local postY = endPostAt(edge, inward)
-					strut(mesh, side, start, 1.22, out * 3.5 * w, postY, 1.22, 0.14)
-					strut(mesh, side, start, 0.66, out * 3.5 * w, postY, 0.66, 0.08)
-				end
-			end
-		end, 0.3)
-		-- The kerb wraps round each end: a block over the kerb end, then an
-		-- upstand under the flared rail that sinks into the deck where the
-		-- flare starts, so the railing grows out of the kerb.
-		bridgePart("KerbEnds", CONCRETE, function(mesh)
-			for _, side in { -2.9 * w, 2.9 * w } do
-				local out = math.sign(side)
-				for _, flare in flares do
-					local postY = endPostAt(flare[1], flare[2])
-					box(mesh, out * 3.5 * w, postY, -0.6, 0.7, 0.7, 0.9)
-					upstand(mesh, out * 3.5 * w, postY, side, flare[3], 0.4, { -0.6, 0.3 }, { -0.2, 0.1 })
-				end
-			end
-		end, 0.5)
-		-- End posts: heavy dark steel standing on the kerb ends, each bolted
-		-- down on a base plate and capped with a broad plate, so the railing
-		-- reads as ending.
-		bridgePart("EndPosts", DARK_STEEL, function(mesh)
-			for _, side in { -3.5 * w, 3.5 * w } do
-				for _, flare in flares do
-					local postY = endPostAt(flare[1], flare[2])
-					box(mesh, side, postY, 0.3, 0.6, 0.6, 0.06)
-					box(mesh, side, postY, 0.36, 0.4, 0.4, 1.04)
-					box(mesh, side, postY, 1.4, 0.52, 0.52, 0.1)
-				end
-			end
-		end, 0.4)
-		-- Each island end rests on a concrete seat set into the island edge,
-		-- its top clear of the island's rock top (0.2 under the deck) so the
-		-- rock never shows through. A yard end adds a low wing wall either side
-		-- for the yard edge to end against; a kerb ends inside an end post.
-		bridgePart("Abutments", CONCRETE, function(mesh)
-			for _, ends in { { to, -1 }, { from, 1 } } do
-				local edge, land = ends[1], ends[2]
-				box(mesh, 0, edge + land * 0.75, -3, 7.3 * w, 3.5, 2.92)
-				if land == 1 and yardEnd then
-					for _, side in { -3.4 * w, 3.4 * w } do
-						box(mesh, side, edge - land * 0.5, -3, 0.5, 1, 3.45)
-					end
-				end
-			end
-		end, 0.5)
-		-- A yard end lands on its apron with a steel plate over the joint.
-		if not yardEnd then return end
-		bridgePart("JointPlate", STEEL, function(mesh)
-			box(mesh, 0, from, 0.1, 6 * w, 0.8, 0.04)
-		end, 0.3, true)
-		bridgePart("Apron", CONCRETE, function(mesh)
-			box(mesh, 0, from + 2.5, 0, 7.3 * w, 5, 0.12)
-		end, 0.5)
-	end, x, y, degrees - 90)
-end
-
--- Walkway paving at u studs across and v along the Line: poured concrete
--- bays with tooled joints, each bay a shade of its own, under stains and
--- hairline cracks.
-local PAVING_BAY = 6
-local function paving(u: number, v: number, seed: number): (number, number, number)
-	local k = 1 + fbm(u * 2, v * 2, seed) * 0.1 + fbm(u / 7, v / 7, seed + 1) * 0.16
-	-- Bays are staggered from one row to the next.
-	local row = math.floor(u / PAVING_BAY)
-	local along = v + (row % 2) * PAVING_BAY / 2
-	k += math.noise(row * 0.71, math.floor(along / PAVING_BAY) * 0.37, seed + 2) * 0.12
-	local across = u % PAVING_BAY
-	local joint = math.min(across, PAVING_BAY - across, along % PAVING_BAY, PAVING_BAY - along % PAVING_BAY)
-	if joint < 0.08 then
-		k -= 0.3
-	end
-	k -= math.max(0, warpedFbm(u / 5, v / 5, seed + 3) - 0.18) * 0.8
-	if math.abs(warpedFbm(u / 4, v / 4, seed + 4)) < 0.01 then
-		k -= 0.3
-	end
-	return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * k
-end
-
--- A paved block from (x0, y0) to (x1, y1): its top and its four sides, laid
--- in cells no longer than DECK_CELL so chunkedPart can deal them out. It
--- stands on an island, so it has no underside.
-local DECK_CELL = 16
-local function pavedBlock(mesh, x0: number, y0: number, x1: number, y1: number, bottom: number, top: number)
-	local nx, ny = math.ceil((x1 - x0) / DECK_CELL), math.ceil((y1 - y0) / DECK_CELL)
-	local low, high = {}, {}
-	for i = 0, nx do
-		low[i], high[i] = {}, {}
-		for j = 0, ny do
-			local x, y = x0 + (x1 - x0) * i / nx, y0 + (y1 - y0) * j / ny
-			low[i][j], high[i][j] = mesh:vertex(x, y, bottom), mesh:vertex(x, y, top)
 		end
-	end
-	for i = 0, nx - 1 do
-		for j = 0, ny - 1 do
-			mesh:face({ high[i][j], high[i + 1][j], high[i + 1][j + 1], high[i][j + 1] })
+		for a = 0, STEPS - 1 do
+			mesh:face({ middle, grid[a][1], grid[a + 1][1] })
+			for k = 1, #rings - 1 do
+				mesh:face({ grid[a][k], grid[a][k + 1], grid[a + 1][k + 1], grid[a + 1][k] })
+			end
 		end
-		mesh:face({ low[i][0], low[i + 1][0], high[i + 1][0], high[i][0] })
-		mesh:face({ low[i + 1][ny], low[i][ny], high[i][ny], high[i + 1][ny] })
-	end
-	for j = 0, ny - 1 do
-		mesh:face({ low[0][j + 1], low[0][j], high[0][j], high[0][j + 1] })
-		mesh:face({ low[nx][j], low[nx][j + 1], high[nx][j + 1], high[nx][j] })
-	end
-end
--- A kerb from (ax, ay) to (bx, by), standing 0.3 over the deck, in pieces
--- no longer than DECK_CELL.
-local function kerbRun(mesh, ax: number, ay: number, bx: number, by: number)
-	local pieces = math.ceil(math.sqrt((bx - ax) ^ 2 + (by - ay) ^ 2) / DECK_CELL)
-	local heights = { DECK - 0.6, DECK + 0.3 }
-	for n = 1, pieces do
-		local from, to = (n - 1) / pieces, n / pieces
-		upstand(mesh, ax + (bx - ax) * from, ay + (by - ay) * from, ax + (bx - ax) * to, ay + (by - ay) * to, 0.6, heights, heights)
-	end
-end
-
--- The hub's island sections in a row along x, an end section at each end
--- turned to face outward. Neighbours overlap, so every other one sits a
--- hair lower to keep their turf from z-fighting; the deck hides the step.
-local HUB_SECTIONS = {
-	{ buildHubSectionEnd, 180 },
-	{ buildHubSectionA, 0 },
-	{ buildHubSectionB, 0 },
-	{ buildHubSectionA, 180 },
-	{ buildHubSectionEnd, 0 },
-}
-for i, section in HUB_SECTIONS do
-	placeModel(`HubSection{i}`, section[1], (i - 3) * SECTION_SPACING, 0, HUB_GROUND - HUB_TURF - (i % 2) * 0.05, section[2])
-end
-
--- The Line's deck: concrete walkways along both sides and plazas across
--- both ends, round an asphalt bed for the belt loop. A kerb runs round its
--- edge, broken where each yard's bridge lands. Chunked, as it runs the
--- whole hub.
-slab("Line", function()
-	chunkedPart("Walk", nil, CONCRETE, function(mesh)
-		pavedBlock(mesh, -LINE_HALF_LENGTH, BED_HALF_WIDTH, LINE_HALF_LENGTH, LINE_HALF_WIDTH, DECK - 0.6, DECK)
-		pavedBlock(mesh, -LINE_HALF_LENGTH, -LINE_HALF_WIDTH, LINE_HALF_LENGTH, -BED_HALF_WIDTH, DECK - 0.6, DECK)
-		pavedBlock(mesh, BED_HALF_LENGTH, -BED_HALF_WIDTH, LINE_HALF_LENGTH, BED_HALF_WIDTH, DECK - 0.6, DECK)
-		pavedBlock(mesh, -LINE_HALF_LENGTH, -BED_HALF_WIDTH, -BED_HALF_LENGTH, BED_HALF_WIDTH, DECK - 0.6, DECK)
-	end, nil, function(px, py)
-		return paving(py, px, 120)
+	end, nil, function(x, y)
+		local r = math.sqrt(x * x + y * y)
+		if r < HUB_PAVED then
+			local k = 1 + fbm(x / 4, y / 4, 120) * 0.12
+			if math.min(x % 6, 6 - x % 6, y % 6, 6 - y % 6) < 0.08 then
+				k -= 0.2
+			end
+			return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * k
+		end
+		local k = 1 + fbm(x / 2, y / 2, 50) * 0.15
+		if r > HUB_ROAD - 1 or (r > HUB_PAVED and r < HUB_PAVED + 1) then
+			return MARK[1], MARK[2], MARK[3]
+		end
+		return ROAD[1] * k, ROAD[2] * k, ROAD[3] * k
 	end, true)
-	chunkedPart("Bed", nil, ROAD, function(mesh)
-		pavedBlock(mesh, -BED_HALF_LENGTH, -BED_HALF_WIDTH, BED_HALF_LENGTH, BED_HALF_WIDTH, DECK - 0.6, DECK)
-	end, nil, function(px, py)
-		return asphalt(py, px, BED_HALF_WIDTH, 50)
-	end, true)
-	-- Each kerb run ends inside a bridge end post, 3.5 * BRIDGE_WIDTH off
-	-- the bridge's middle.
-	chunkedPart("Kerb", nil, CONCRETE, function(mesh)
-		local edge, ends = LINE_HALF_WIDTH + 0.2, LINE_HALF_LENGTH + 0.2
-		local gap = 3.5 * BRIDGE_WIDTH
-		for _, side in { -1, 1 } do
-			local from = -ends
-			for _, column in YARD_COLUMNS do
-				kerbRun(mesh, from, side * edge, column - gap, side * edge)
-				from = column + gap
-			end
-			kerbRun(mesh, from, side * edge, ends, side * edge)
-			kerbRun(mesh, side * ends, -edge, side * ends, edge)
-		end
-	end, nil, 0.5)
 end, 0, 0)
 
--- New players start on a ring painted on the west plaza.
-slab("Spawn", function()
-	part("Pad", nil, MARK, function(mesh)
-		ring(mesh, 0, 0, DECK + 0.05, 8, 9, 0.1, "z", 48)
-	end, nil, 0)
-end, -(BED_HALF_LENGTH + LINE_HALF_LENGTH) / 2, 0)
-
--- Packed dirt for a yard's floor at (u, v): trodden and uneven, with old
--- concrete slabs showing through in patches and grit scattered over it.
-local YARD_DIRT = { 0.42, 0.36, 0.28 }
-local function yardGround(u: number, v: number, seed: number): (number, number, number)
-	local slab = warpedFbm(u / 9, v / 9, seed + 2)
-	if slab > 0.2 then
-		local k = 1 + fbm(u, v, seed + 3) * 0.12
-		if math.min(u % 4, 4 - u % 4, v % 4, 4 - v % 4) < 0.06 then
-			k -= 0.25
-		end
-		return 0.56 * k, 0.55 * k, 0.52 * k
-	end
-	local k = 1 + fbm(u / 3, v / 3, seed) * 0.2 + fbm(u * 2, v * 2, seed + 1) * 0.08
-	if slab > 0.17 then
-		k -= 0.2
-	end
-	if math.noise(u * 4.3, v * 4.3, seed + 4) > 0.42 then
-		k += 0.12
-	end
-	return YARD_DIRT[1] * k, YARD_DIRT[2] * k, YARD_DIRT[3] * k
+-- Rock in bands, streaked with rust where water ran down.
+local function rockColour(x: number, y: number, z: number): (number, number, number)
+	local band = 0.82 + 0.18 * math.sin(z * 0.9 + fbm(x / 10, y / 10, 80) * 5)
+	local streak = smooth(0.15, 0.35, fbm(x / 3, y / 3, z / 20 + 81))
+	local red, green, blue = ROCK[1] * band, ROCK[2] * band, ROCK[3] * band
+	return red + (0.56 - red) * streak * 0.5, green + (0.45 - green) * streak * 0.5, blue + (0.28 - blue) * streak * 0.5
 end
 
--- Builds one yard's shell on the plot at (x, y), turned `turn` so its gate
--- (local -y) faces the Line: the fence, the gate and the plot marker. Pieces
--- are placed in studs in the yard's frame, each built `scale` times its
--- own size.
+-- A box running from (x0, y0) to (x1, y1), its top rising from z0 to z1, its
+-- sides down to `bottom`: a ramp when the ends differ, a kerb or walk if not.
+local function run(mesh, x0: number, y0: number, z0: number, x1: number, y1: number, z1: number, half: number, bottom: number)
+	local dx, dy = x1 - x0, y1 - y0
+	local length = math.sqrt(dx * dx + dy * dy)
+	local nx, ny = -dy / length * half, dx / length * half
+	local a = mesh:vertex(x0 - nx, y0 - ny, z0)
+	local b = mesh:vertex(x1 - nx, y1 - ny, z1)
+	local c = mesh:vertex(x1 + nx, y1 + ny, z1)
+	local d = mesh:vertex(x0 + nx, y0 + ny, z0)
+	local a0 = mesh:vertex(x0 - nx, y0 - ny, bottom)
+	local b0 = mesh:vertex(x1 - nx, y1 - ny, bottom)
+	local c0 = mesh:vertex(x1 + nx, y1 + ny, bottom)
+	local d0 = mesh:vertex(x0 + nx, y0 + ny, bottom)
+	mesh:face({ a, b, c, d })
+	mesh:face({ a0, b0, b, a })
+	mesh:face({ c0, d0, d, c })
+	mesh:face({ d0, a0, a, d })
+	mesh:face({ b0, c0, c, b })
+end
+
+-- A lumpy rock half sunk in the ground.
+local function boulder(mesh, cx: number, cy: number, cz: number, size: number, seed: number, heightScale: number?)
+	local SIDES = 11
+	local LEVELS = { { 0.5, 0.74 }, { 0.82, 0.48 }, { 1, 0.08 }, { 0.92, -0.6 } }
+	-- Squat or tall, broad or narrow, and split along up to two flat planes.
+	local stretchX = 0.7 + 0.6 * (0.5 + math.noise(seed, 1.3, 2.7))
+	local stretchY = 0.7 + 0.6 * (0.5 + math.noise(seed, 4.1, 2.7))
+	local stretchZ = (0.55 + 0.6 * (0.5 + math.noise(seed, 7.9, 2.7))) * (heightScale or 1)
+	local cuts = {}
+	for k = 1, 2 do
+		-- On a big rock the two breaks face opposite ways and run near vertical,
+		-- right down to the ground, so no approach sees a plain dome.
+		local yaw = if size > 2.5 then seed * 1.7 + (k - 1) * 2.1 else seed * 1.7 + k * 2.1
+		local tilt = if size > 2.5 then 0.05 + (k - 1) * 0.12 else 0.25 + 0.35 * (0.5 + math.noise(seed, k, 5.1))
+		table.insert(cuts, { math.cos(yaw) * math.cos(tilt), math.sin(yaw) * math.cos(tilt), math.sin(tilt), size * (0.62 + 0.2 * (0.5 + math.noise(seed, k, 9.3))) })
+	end
+	local function shaped(x: number, y: number, z: number): (number, number, number)
+		x, y, z = x * stretchX, y * stretchY, z * stretchZ
+		for _, cut in cuts do
+			local over = x * cut[1] + y * cut[2] + z * cut[3] - cut[4]
+			if over > 0 then
+				x, y, z = x - cut[1] * over, y - cut[2] * over, z - cut[3] * over
+			end
+		end
+		return cx + x, cy + y, cz + z
+	end
+	local function vertex(x: number, y: number, z: number)
+		return mesh:vertex(shaped(x, y, z))
+	end
+	local top = vertex(0, 0, size * 0.86)
+	local grid = {}
+	-- How far the rock reaches at turf height, side by side, for its contact line.
+	local rim, widest = table.create(SIDES, 0), 0
+	for a = 0, SIDES - 1 do
+		local theta = 2 * math.pi * a / SIDES
+		local c, s = math.cos(theta), math.sin(theta)
+		grid[a] = {}
+		local aboveX, aboveY, aboveZ
+		for n, level in LEVELS do
+			local r = size * level[1] * (1 + 0.3 * math.noise(c * 2.3, s * 2.3, seed + n) + 0.32 * math.noise(c * 7, s * 7, seed + n * 2))
+			local h = size * level[2] * (1 + 0.2 * math.noise(c * 3, s * 3, seed - n))
+			grid[a][n] = vertex(c * r, s * r, h)
+			local x, y, z = shaped(c * r, s * r, h)
+			-- Traced a little above the turf, so the line hugs what shows of a
+			-- half-buried stone rather than its wider outline underground.
+			local trace = SHADE_Z + 0.3
+			if n > 1 and aboveX and aboveZ >= trace and z < trace then
+				local t = (aboveZ - trace) / (aboveZ - z)
+				local reach = math.sqrt((aboveX + (x - aboveX) * t - cx) ^ 2 + (aboveY + (y - aboveY) * t - cy) ^ 2)
+				rim[a + 1] = reach
+				widest = math.max(widest, reach)
+			end
+			aboveX, aboveY, aboveZ = x, y, z
+		end
+	end
+	-- A stone wholly under the turf has nothing to shade.
+	if widest > 0 then
+		table.insert(groundFeet, { cx, cy, widest, widest, seed, rim })
+	end
+	for a = 0, SIDES - 1 do
+		local b = (a + 1) % SIDES
+		mesh:face({ top, grid[a][1], grid[b][1] })
+		for n = 1, #LEVELS - 1 do
+			mesh:face({ grid[a][n], grid[a][n + 1], grid[b][n + 1], grid[b][n] })
+		end
+	end
+end
+
+-- Rough ground in the gaps between yards: a rock outcrop, smaller clumps along
+-- the gap and scrap heaps, placed by hand so no two gaps match. Each is
+-- { bearing, distance, half length, height, how far the outcrop sits off the
+-- gap's centre line, its radius }: centred between the fences and small enough
+-- to leave 8 studs to walk past on each side, its clumps clear of the fences.
+local ROUGH_SITES = {
+	{ 2, 178, 30, 3.30, -6.5, 13.0 },
+	{ 45, 152, 22, 3.85, 0.0, 13.0 },
+	{ 88, 190, 34, 4.95, 7.0, 13.0 },
+	{ 131, 235, 26, 2.75, 17.5, 13.0 },
+	{ 138, 160, 20, 2.20, -7.0, 8.0 },
+	{ 183, 205, 32, 4.40, -11.5, 13.0 },
+	{ 223, 172, 22, 3.30, 6.0, 11.0 },
+	{ 227, 248, 24, 2.75, -9.5, 13.0 },
+	{ 272, 220, 30, 5.50, -8.0, 13.0 },
+	{ 318, 185, 26, 3.30, -10.5, 13.0 },
+}
+
+for n, site in ROUGH_SITES do
+	local bearing, distance, long, tall, shift, radius = site[1], site[2], site[3], site[4], site[5], site[6]
+	local x, y = math.cos(math.rad(bearing)) * distance, math.sin(math.rad(bearing)) * distance
+	local ux, uy = math.cos(math.rad(bearing)), math.sin(math.rad(bearing))
+	local function onGap(along: number, across: number): (number, number)
+		return ux * along - uy * across, uy * along + ux * across
+	end
+	slab(`Rough{n}`, function()
+		part("Stones", nil, ROCK, function(mesh)
+			-- The outcrop, with chips and loose stone bedding its foot.
+			local middleX, middleY = onGap(0, shift)
+			local main = math.min(2.2 * tall + 1.5, radius / 1.5)
+			-- Each gap's outcrop is its own kind: one big rock, a split rock wedged
+			-- against its other half, or a low cluster of three.
+			local kind = n % 3
+			if kind == 1 then
+				for s = 1, 3 do
+					local a = s * 2.1 + n * 0.7
+					boulder(mesh, middleX + math.cos(a) * main * 0.62, middleY + math.sin(a) * main * 0.62, DECK - 0.3, main * (0.82 - s * 0.1), n * 13 + s, 0.7)
+				end
+			else
+				boulder(mesh, middleX, middleY, DECK - 0.3, if kind == 0 then main * 0.92 else main, n * 13, if kind == 0 then 1.25 else 1.6)
+			end
+			if kind == 0 then
+				local a = n * 0.9
+				boulder(mesh, middleX + math.cos(a) * main * 0.8, middleY + math.sin(a) * main * 0.8, DECK - 0.3, main * 0.68, n * 13 + 5, 0.75)
+			end
+			-- Chips bunched on one side of it, the way they rolled.
+			for s = 2, (if n % 4 == 0 then 1 else 7) do
+				local a = n * 1.7 + (s - 4.5) * 0.42
+				local spread = math.min(main * 0.9, radius - 2.5)
+				boulder(mesh, middleX + math.cos(a) * spread, middleY + math.sin(a) * spread, DECK - 0.2, 0.8 + (s * 5 + n) % 3 * 0.45 + (if s % 3 == 0 then 1.2 else 0), s * 13 + n)
+			end
+			for s = 1, 10 do
+				local bunch = if s <= 7 then n * 1.7 else n * 1.7 + 2.4
+				local a = bunch + (s * 3 % 7 - 3) * 0.11
+				local spread = main * 1.02 + (s * 5 % 4) * 0.5
+				boulder(mesh, middleX + math.cos(a) * spread, middleY + math.sin(a) * spread, DECK - 0.1, 0.45 + (s * 7 % 5) * 0.3, s * 3 + n * 7)
+			end
+			-- A small clump beside the outcrop, and one far off with empty ground
+			-- between them, so a gap reads as two groups, not a row.
+			local side = if n % 2 == 0 then 1 else -1
+			local nearX, nearY = onGap(side * (radius + 1), shift - side * radius * 0.6)
+			for s = 1, (if n % 3 == 1 then 0 else 3 + n % 3) do
+				local a = s * 2.4 + n
+				local size = if s == 1 then 1.8 + (n % 3) * 0.5 else 0.6 + ((s * 5 + n) % 4) * 0.35
+				boulder(mesh, nearX + math.cos(a) * (s - 1) * 1.3, nearY + math.sin(a) * (s - 1) * 1.3, DECK - 0.1, size, s * 7 + n * 11)
+			end
+			if n % 3 ~= 0 then
+				local farX, farY = onGap(-side * (long * 0.95 + (n % 4) * 1.5), shift + side * radius * (0.3 + (n % 3) * 0.14))
+				for s = 1, 3 + n % 2 do
+					local a = s * 2.4 + 2 + n
+					local size = if s == 1 then 2.1 + (n % 3) * 0.6 else 0.7 + ((s * 5 + n) % 4) * 0.4
+					boulder(mesh, farX + math.cos(a) * (s - 1) * 1.5, farY + math.sin(a) * (s - 1) * 1.5, DECK - 0.1, size, s * 7 + n * 17)
+				end
+			end
+		end, nil, rockColour, nil, nil, true)
+	end, x, y)
+end
+
+-- A finished scrap model in each gap, none repeated side by side, placed where
+-- the first group's heap belongs: beside the outcrop, clear of it and the fences.
+-- A site marked false is left to its rocks.
+local SITE_SCRAP = { buildScrapTreeRebar, buildScrapTreeExhaust, false, buildJunkMound, buildScrapPalm, buildRockBoulderPile, buildScrapTreeSignpost, buildRockBoulderPile, buildScrapTreeAntenna, buildScrapTreeLamppost }
+-- Each model's size at its site: scrap built near player height, made to stand
+-- up against a 5.5 stud player and the rocks round it.
+-- Each model's foot on the sand before scaling: radius, and how far it sits off
+-- the model's origin along its x. False where a ring wouldn't follow the edge.
+local SITE_FOOT = { 0.9, 1.35, false, false, 2.1, false, 1.35, false, 1, 1.5 }
+local SITE_FOOT_OFF = { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 }
+local SITE_SCALE = { 1.8, 1.4, 2.5, 2.8, 1.6, 2.2, 1.4, 2.8, 1.4, 1.3 }
+for n, site in ROUGH_SITES do
+	if not SITE_SCRAP[n] then
+		continue
+	end
+	local bearing, distance, shift, radius = site[1], site[2], site[5], site[6]
+	local ux, uy = math.cos(math.rad(bearing)), math.sin(math.rad(bearing))
+	local side = if n % 2 == 0 then 1 else -1
+	-- The canister tree and the palm stand a little off their rocks' sight lines.
+	local reach = ({ 4.5, 4.6, 8, 10.5, 9.6, 6.6, 4.2, 8.8, 3.8, 3.9 })[n]
+	local along, across = side * (radius + 7 + reach), shift - side * radius * 0.25 + (if n == 2 then 7 elseif n == 5 then -4 else 0)
+	local x = ux * distance + ux * along - uy * across
+	local y = uy * distance + uy * along + ux * across
+	placeModel(`RoughScrap{n}`, SITE_SCRAP[n], x, y, DECK, n * 47, SITE_SCALE[n])
+	-- Heaps have uneven skirts a ring can't follow; their dark base does the job.
+	if SITE_FOOT[n] then
+		slab(`RoughShade{n}`, function()
+			local foot, off, turn = SITE_FOOT[n] * SITE_SCALE[n], SITE_FOOT_OFF[n] * SITE_SCALE[n], math.rad(n * 47)
+			table.insert(groundFeet, { math.cos(turn) * off, math.sin(turn) * off, foot, foot, n * 3 })
+		end, x, y)
+	end
+	-- Some models stand bare; the rest get a stone or two of real size, half
+	-- sunk, with grit bunched on one side.
+	if n % 3 ~= 1 then
+		slab(`RoughFoot{n}`, function()
+			part("Grit", nil, ROCK, function(mesh)
+				-- Clear of the model standing here, whatever its footprint.
+				local reach = ({ 4.5, 4.6, 8, 10.5, 9.6, 6.6, 4.2, 7.9, 3.8, 3.9 })[n]
+				boulder(mesh, math.cos(n * 2.1) * (reach + 1.2), math.sin(n * 2.1) * (reach + 1.2), DECK - 0.5, 0.9 + (n % 3) * 0.3, n * 9)
+				for s = 1, 5 + n % 4 do
+					local a = n * 2.1 + (s - 3) * 0.3
+					local r = reach + 0.8 + (s * 3 % 5) * 1.1
+					boulder(mesh, math.cos(a) * r, math.sin(a) * r, DECK - 0.15, 0.12 + (s * 7 % 4) * 0.13, s * 5 + n * 3)
+				end
+			end, nil, rockColour, nil, nil, true)
+		end, x, y)
+	end
+end
+
+-- Lone bits of wreckage between the sites, so the walk out has something to
+-- pass: a half-buried tyre, a length of pipe or a broken slab, each clear of the
+-- yards, the tracks and the rock sites.
+local LONE_WRECKS = {
+	{ 137.9, 44.8 }, { 65.8, 129.2 }, { -22.7, 143.2 }, { -85.2, 117.3 }, { -137.9, -44.8 },
+	{ -117.3, -85.2 }, { -44.8, -137.9 }, { 65.8, -129.2 }, { 137.9, -44.8 }, { -175, 0 }, { 0, -175 },
+	{ 145, 145 }, { -145, 145 }, { -145, -145 }, { 240, 0 }, { 141.1, 194.2 }, { 0, 240 }, { -37.5, -237 }, { 141.1, -194.2 }, { 237, -37.5 },
+	{ -237, 37.5 }, { 194.2, -141.1 }, { -194.2, 141.1 }, { 37.5, 237 }, { 169.7, 169.7 },
+}
+-- A slab tipped up at one end: its height climbs along x.
+local function tippedUp(mesh, slope: number)
+	return {
+		vertex = function(_self, x: number, y: number, z: number)
+			return mesh:vertex(x, y, z + x * slope)
+		end,
+		face = function(_self, face)
+			return mesh:face(face)
+		end,
+	}
+end
+for n, spot in LONE_WRECKS do
+	-- Every fourth spot is left bare, so they don't read as evenly dealt out.
+	if n % 4 == 3 then
+		continue
+	end
+	slab(`LoneWreck{n}`, function()
+		local kind = n % 3
+		local side = if n % 2 == 0 then 1 else -1
+		if kind == 0 then
+			part("Tyre", nil, { 0.12, 0.12, 0.13 }, function(mesh)
+				-- Heaped against a stone of the size that stopped them rolling.
+				if side > 0 then
+					-- Stacked where they were thrown, the top one askew.
+					table.insert(groundFeet, { 0, 0, 1.5, 1.5, n })
+					ring(mesh, 0, 0, DECK + 0.4, 0.9, 1.8, 0.75, "z", 18)
+					ring(mesh, 0.5, -0.3, DECK + 1.1, 0.75, 1.6, 0.65, "z", 16)
+				else
+					table.insert(groundFeet, { 0, 0, 1.2, 0.75, n })
+					ring(mesh, 0, 0, DECK + 0.7, 0.95, 1.9, 0.75, "y", 18)
+					table.insert(groundFeet, { 2.4, 1.2, 1.25, 1.25, n + 1 })
+					ring(mesh, 2.4, 1.2, DECK + 0.32, 0.8, 1.5, 0.6, "z", 16)
+				end
+				table.insert(groundFeet, { -2.5 * side, -1.4, 1.15, 1.15, n + 2 })
+				ring(mesh, -2.5 * side, -1.4, DECK + 0.3, 0.7, 1.35, 0.55, "z", 16)
+			end, nil, 0.7)
+		elseif kind == 1 then
+			part("PipeStone", nil, ROCK, function(mesh)
+				boulder(mesh, 0, side * 3.6, DECK, 2.4, n * 9, 0.8)
+			end, nil, rockColour, nil, nil, true)
+			part("Pipe", nil, { 0.46, 0.28, 0.17 }, function(mesh)
+				-- Bent where it was dropped, flanged at one end, and a sheared-off length beside it.
+				for _, spot in { { -4.4, -0.4 }, { -2.2, 0 }, { 0.3, side * 1.2 }, { 3.1, side * 2.6 }, { 1.6, -2.2 * side }, { 4.2, -2.9 * side } } do
+					table.insert(groundFeet, { spot[1], spot[2], 0.9, 0.9, n })
+				end
+				tube(mesh, { { -4.4, -0.4, DECK + 0.65 }, { -0.4, side * 0.4, DECK + 1.0 }, { 3.1, side * 2.6, DECK + 0.55 } }, 1.1, 12)
+				ring(mesh, -4.5, -0.4, DECK + 0.65, 0.7, 1.55, 0.22, "x", 14)
+				tube(mesh, { { 1.6, -2.2 * side, DECK + 0.45 }, { 4.2, -2.9 * side, DECK + 0.5 } }, 0.8, 10)
+			end, nil, 0.8)
+		else
+			part("Slab", nil, { 0.56, 0.55, 0.52 }, function(mesh)
+				-- Tipped up on a stone at one end, with a broken corner off it.
+				table.insert(groundFeet, { 0, 0, 3.5, 2.1, n })
+				table.insert(groundFeet, { side * 3.9, 2.4, 1.2, 1.0, n + 1 })
+				box(tippedUp(mesh, side * 0.16), 0, 0, DECK + 0.45, 6.5, 3.8, 0.75)
+				box(mesh, side * 3.9, 2.4, DECK + 0.35, 2.2, 1.8, 0.65)
+			end, nil, 0.3)
+			part("SlabStone", nil, ROCK, function(mesh)
+				boulder(mesh, side * 2.3, -0.4, DECK, 1.5, n * 11)
+			end, nil, rockColour, nil, nil, true)
+		end
+	end, spot[1], spot[2])
+end
+
+-- Packed dirt for a yard's floor, as on the server map's plots.
+local function yardGround(u: number, v: number, seed: number): (number, number, number)
+	-- Trodden in a line in from the gate (at -v) to where the work happens,
+	-- which sits somewhere different in each yard.
+	local workU = math.noise(seed * 0.37, 2.1, 0.5) * 28
+	local workV = 4 + math.noise(seed * 0.37, 7.3, 0.5) * 22
+	local reach = 13 + (seed % 5) * 2.5
+	local toward = math.clamp((v + 56) / math.max(workV + 56, 1), 0, 1)
+	local lineU = workU * toward + fbm(v / 9, seed, seed + 2) * 5
+	local lane = smooth(7, 2, math.abs(u - lineU) + fbm(u / 3, v / 3, seed + 3) * 3) * (if v < workV then 1 else 0)
+	local du, dv = u - workU, v - workV
+	local yardWork = smooth(reach, reach * 0.35, math.sqrt(du * du + dv * dv * 1.4) + fbm(u / 5, v / 5, seed + 4) * 8)
+	local packed = math.max(lane * 0.85, yardWork * (0.6 + (seed % 3) * 0.15))
+	local k = 1 + fbm(u / 3, v / 3, seed) * 0.2 + fbm(u * 2, v * 2, seed + 1) * 0.08
+	local r, g, b = YARD_DIRT[1] * k, YARD_DIRT[2] * k, YARD_DIRT[3] * k
+	return r + (0.54 * k - r) * packed, g + (0.53 * k - g) * packed, b + (0.5 * k - b) * packed
+end
+
+-- A yard's shell on the plot at (x, y), turned so its gate (local -y) faces
+-- the hub: fence panels with their footings, the gate and the plot marker.
 local function yardShell(index: number, x: number, y: number, turn: number)
 	local c, s = math.cos(math.rad(turn)), math.sin(math.rad(turn))
 	local function piece(name: string, build: () -> (), scale: number, px: number, py: number, pz: number?, pturn: number?, stretch: number?, axis: string?)
 		place(`Yard{index}_{name}`, build, x + px * c - py * s, y + px * s + py * c, YARD_TIER + (pz or 0), turn + (pturn or 0), stretch, axis, scale)
-		useTexelDensity(MAP_DENSITY)
+		useTexelDensity(GROUND_DENSITY)
 	end
-	-- Fences: eight panels along the back, nine down each side stretched to
-	-- fill the plot's depth, and three and a half either side of the gate.
 	local FENCE = 1.5
 	local sidePanel = PLOT_DEPTH / 9
 	for n = 1, 8 do
@@ -641,230 +553,246 @@ local function yardShell(index: number, x: number, y: number, turn: number)
 	end
 	piece("Gate", buildYardGate, FENCE, 0, -PLOT_DEPTH / 2)
 	piece("PlotMarker", buildPlotMarker, FENCE, 9, -PLOT_DEPTH / 2 - 2.25)
+	-- The yard's remade props on their starter spots (STARTER_LAYOUT in
+	-- Config/Yard), turned to face into the yard: the fence is too close in
+	-- front of them for a player to stand there.
+	piece("Bay", buildBuildBay, 1, -19, -49, 0, 180)
+	piece("Press", buildRebirthPress, 1, 18, -48, 0, 180)
 end
 
--- The yards stand in two rows either side of the Line, each island turned
--- so its gate (local -y) faces it. A short road runs from the gate to the
--- island's edge, and a level steel bridge carries it across the gap to the
--- top of an approach ramp on the hub. The bridge's deck is 9 studs wide, 8.7
--- between the railings, and the ramp 10.2 between its walls: two players
--- pass on either.
-local BRIDGE_FROM, BRIDGE_TO = -(YARD_ISLAND_FRONT - BRIDGE_SEAT), -(YARD_ROW - HUB_RIM + BRIDGE_SEAT)
 for i = 1, 8 do
-	local degrees = if i <= 4 then 90 else 270
-	local x, y = YARD_COLUMNS[(i - 1) % 4 + 1], if i <= 4 then YARD_ROW else -YARD_ROW
-	placeModel(`Island{i}`, buildYardIsland, x, y, YARD_TIER - YARD_TURF, degrees - 90)
-	local c, s = math.cos(math.rad(degrees - 90)), math.sin(math.rad(degrees - 90))
-	-- The ground stands a hair over the island's turf, which runs on under
-	-- its edges.
+	local degrees = (i - 0.5) * 45
+	local x, y = math.cos(math.rad(degrees)) * YARD_RADIUS, math.sin(math.rad(degrees)) * YARD_RADIUS
+	local turn = degrees - 90
+	local c, s = math.cos(math.rad(turn)), math.sin(math.rad(turn))
 	slab(`Plot{i}`, function()
+		useTexelDensity(YARD_DENSITY)
 		chunkedPart("Ground", nil, YARD_DIRT, function(mesh)
-			pavedBlock(mesh, -PLOT_WIDTH / 2, -PLOT_DEPTH / 2, PLOT_WIDTH / 2, PLOT_DEPTH / 2, YARD_TIER - 0.3, YARD_TIER + 0.03)
+			box(mesh, 0, 0, YARD_TIER - 0.3, PLOT_WIDTH, PLOT_DEPTH, 0.33)
 		end, nil, function(px, py)
 			return yardGround((px - x) * c + (py - y) * s, (py - y) * c - (px - x) * s, 200 + i * 7)
 		end, true)
-	end, x, y, degrees - 90)
-	yardShell(i, x, y, degrees - 90)
-	slab(`Spoke{i}`, function()
-		part("Road", nil, ROAD, function(mesh)
-			local from, to = -(YARD_ISLAND_FRONT - BRIDGE_SEAT), -PLOT_DEPTH / 2
-			box(mesh, 0, (from + to) / 2, YARD_TIER, 6 * BRIDGE_WIDTH, to - from, 0.1)
-		end, nil, function(px, py)
-			local u = (px - x) * c + (py - y) * s
-			local v = (py - y) * c - (px - x) * s
-			return asphalt(u, v, 3, 70 + i)
-		end)
-	end, x, y, degrees - 90)
-	bridge(`Bridge{i}`, x, y, degrees, BRIDGE_FROM, BRIDGE_TO, YARD_TIER, true, YARD_TIER)
-	-- The approach: a concrete ramp from the walkway up to a landing the
-	-- bridge's end rests on, with a low wall down each side. Built in the
-	-- bridge's frame from the Line's middle, +y toward the yard.
-	local landing = HUB_RIM - BRIDGE_SEAT + 0.6
-	local crest = landing - 3.4
-	local foot = crest - APPROACH_RUN
-	slab(`Approach{i}`, function()
-		part("Ramp", nil, CONCRETE, function(mesh)
-			local profile = { { foot, DECK - 0.6 }, { foot, DECK }, { crest, YARD_TIER }, { landing, YARD_TIER }, { landing, DECK - 0.6 } }
-			local left, right = {}, {}
-			for k, point in profile do
-				left[k] = mesh:vertex(-APPROACH_HALF, point[1], point[2])
-				right[k] = mesh:vertex(APPROACH_HALF, point[1], point[2])
+	end, x, y, turn)
+	-- The line where the fence's footing meets the sand, left open at the gate.
+	slab(`YardShade{i}`, function()
+		part("GroundShade", nil, SHADE, function(mesh)
+			local w, d, out, z = PLOT_WIDTH / 2, PLOT_DEPTH / 2, 2, SHADE_Z
+			local function sheet(x0: number, y0: number, x1: number, y1: number)
+				mesh:face({ mesh:vertex(x0, y0, z), mesh:vertex(x1, y0, z), mesh:vertex(x1, y1, z), mesh:vertex(x0, y1, z) })
 			end
-			for k = 1, 4 do
-				mesh:face({ left[k], right[k], right[k + 1], left[k + 1] })
+			sheet(-w - out, -d - out, -w, d + out)
+			sheet(w, -d - out, w + out, d + out)
+			sheet(-w, -d - out, w, -d)
+			sheet(-w, d, w, d + out)
+		end, nil, function(px: number, py: number)
+			local u, v = (px - x) * c + (py - y) * s, (py - y) * c - (px - x) * s
+			if v < 0 and math.abs(u) < 7 then
+				return SHADE[1], SHADE[2], SHADE[3], 0
 			end
-			mesh:face({ left[1], left[2], left[3], left[4], left[5] })
-			mesh:face({ right[5], right[4], right[3], right[2], right[1] })
-		end, nil, function(px, py)
-			return paving(px, py, 130 + i)
-		end, nil, nil, true)
-		part("Walls", nil, CONCRETE, function(mesh)
-			for _, side in { -1, 1 } do
-				local wall = side * (APPROACH_HALF - 0.3)
-				upstand(mesh, wall, foot, wall, crest, 0.6, { DECK - 0.6, DECK + 1.3 }, { DECK - 0.6, YARD_TIER + 1.3 })
-				upstand(mesh, wall, crest, wall, landing - 1, 0.6, { DECK - 0.6, YARD_TIER + 1.3 }, { DECK - 0.6, YARD_TIER + 1.3 })
-			end
-		end, nil, 0.5)
-		part("WallCaps", nil, MARK, function(mesh)
-			for _, side in { -1, 1 } do
-				local wall = side * (APPROACH_HALF - 0.3)
-				upstand(mesh, wall, foot, wall, crest, 0.8, { DECK + 1.3, DECK + 1.45 }, { YARD_TIER + 1.3, YARD_TIER + 1.45 })
-				upstand(mesh, wall, crest, wall, landing - 1, 0.8, { YARD_TIER + 1.3, YARD_TIER + 1.45 }, { YARD_TIER + 1.3, YARD_TIER + 1.45 })
-			end
-		end, nil, 0.3)
-	end, x, y - (if i <= 4 then YARD_ROW else -YARD_ROW), degrees - 90)
+			local past = math.max(math.abs(u) - PLOT_WIDTH / 2, math.abs(v) - PLOT_DEPTH / 2)
+			return SHADE[1], SHADE[2], SHADE[3], shadeTier(past - FOOTING_REACH + 0.06 * fbm(u * 1.3, v * 1.3, i * 11))
+		end, nil, 0, true)
+	end, x, y, turn)
+	useTexelDensity(GROUND_DENSITY)
+	yardShell(i, x, y, turn)
 end
 
--- The capsule belt: a rubber tread 5 studs wide between two low steel rails,
--- looping round the bed as a stadium (the game's Config/Belt gives the same
--- path: straights BELT_HALF_LENGTH either side of the middle at y = +-BELT_TURN,
--- joined by half circles). Its top is 0.6 over the deck, low enough to step
--- over anywhere; the rails stand 0.35 above it to keep the capsules on.
-local BELT_HALF_LENGTH, BELT_TURN = 200, 16
-local BELT_HALF_WIDTH = 2.5
-local BELT_TOP = DECK + 0.6
-local BELT_STEP = 4
-local BELT_RUBBER = { 0.16, 0.16, 0.17 }
+-- The capsule belt and its factory (CapsuleLoop), on the plaza.
+placeModel("CapsuleLoop", buildCapsuleLoop, 0, 0, DECK + 0.05)
 
--- The belt's middle line as points { x, y, headingX, headingY }, BELT_STEP
--- apart at most, running east along the north straight first, as the
--- capsules do.
-local function beltPath(): { { number } }
-	local straight, turn = 2 * BELT_HALF_LENGTH, math.pi * BELT_TURN
-	local length = 2 * straight + 2 * turn
-	local count = math.ceil(length / BELT_STEP)
-	local points = {}
-	for i = 0, count do
-		local along = i / count * length
-		if along < straight then
-			table.insert(points, { -BELT_HALF_LENGTH + along, BELT_TURN, 1, 0 })
-		elseif along < straight + turn then
-			local a = (along - straight) / BELT_TURN
-			table.insert(points, { BELT_HALF_LENGTH + math.sin(a) * BELT_TURN, math.cos(a) * BELT_TURN, math.cos(a), -math.sin(a) })
-		elseif along < 2 * straight + turn then
-			table.insert(points, { BELT_HALF_LENGTH - (along - straight - turn), -BELT_TURN, -1, 0 })
-		else
-			local a = (along - 2 * straight - turn) / BELT_TURN
-			table.insert(points, { -BELT_HALF_LENGTH - math.sin(a) * BELT_TURN, -math.cos(a) * BELT_TURN, -math.cos(a), math.sin(a) })
+-- New players start on a ring painted on the plaza.
+slab("Spawn", function()
+	part("Pad", nil, MARK, function(mesh)
+		ring(mesh, 0, 0, DECK + 0.05, 8, 9, 0.1, "z", 48)
+	end, nil, 0)
+end, 0, 22)
+
+-- The town, inside the belt. Each piece's front (-y) faces the middle.
+local TOWN_Z = DECK + 0.05
+placeModel("Market", buildHubShop, 0, 44, TOWN_Z)
+placeModel("Tinkerer", buildHubTinkerer, -48, 0, TOWN_Z, 90)
+placeModel("Landmark", buildHubBeacon, 0, 0, TOWN_Z)
+placeModel("EventStage", buildHubStage, math.cos(math.rad(-45)) * 46, math.sin(math.rad(-45)) * 46, TOWN_Z, 225)
+
+-- The hub's streets. A promenade just inside the belt meets every bridge,
+-- walks tie it to the landmark and the buildings, and a kerbed track runs from
+-- each gate to the ring road.
+local PROMENADE_INNER, PROMENADE_OUTER = 60.5, 67
+local WALK = { 0.47, 0.46, 0.43 }
+local KERB = { 0.62, 0.6, 0.55 }
+local TRACK = { 0.3, 0.26, 0.21 }
+local TRACK_END = YARD_RADIUS - PLOT_DEPTH / 2
+-- The turf stands proud of DECK, so a track is laid up on top of it.
+local TRACK_TOP = DECK + 0.8
+local WALK_BEARINGS = { 22.5, 157.5, 247.5, 292.5 }
+-- A building's front toward the landmark: bearing and where the walk stops.
+local BUILDING_WALKS = { { 90, 33 }, { 180, 39 }, { -45, 33 } }
+local function polar(degrees: number, r: number): (number, number)
+	return math.cos(math.rad(degrees)) * r, math.sin(math.rad(degrees)) * r
+end
+local function flatRing(mesh, inner: number, outer: number, z: number)
+	local STEPS = 96
+	for a = 0, STEPS - 1 do
+		local t0, t1 = 2 * math.pi * a / STEPS, 2 * math.pi * (a + 1) / STEPS
+		mesh:face({
+			mesh:vertex(math.cos(t0) * outer, math.sin(t0) * outer, z),
+			mesh:vertex(math.cos(t1) * outer, math.sin(t1) * outer, z),
+			mesh:vertex(math.cos(t1) * inner, math.sin(t1) * inner, z),
+			mesh:vertex(math.cos(t0) * inner, math.sin(t0) * inner, z),
+		})
+	end
+end
+slab("Streets", function()
+	local STREET_Z = DECK + 0.1
+	part("Walks", nil, WALK, function(mesh)
+		flatRing(mesh, PROMENADE_INNER, PROMENADE_OUTER, STREET_Z)
+		flatRing(mesh, 9, 12.5, STREET_Z)
+		for _, bearing in WALK_BEARINGS do
+			local x0, y0 = polar(bearing, 12)
+			local x1, y1 = polar(bearing, PROMENADE_INNER)
+			run(mesh, x0, y0, STREET_Z, x1, y1, STREET_Z, 2.5, DECK)
 		end
-	end
-	return points
-end
-
--- A strip along the belt between `from` and `to` studs left of its middle
--- line (negative is right), from `bottom` up to `top`: its top and both
--- sides. It lies on the bed, so it has no underside.
-local function beltStrip(mesh, path: { { number } }, from: number, to: number, bottom: number, top: number)
-	local rows = {}
-	for i, point in path do
-		local leftX, leftY = -point[4], point[3]
-		local function at(offset: number, z: number)
-			return mesh:vertex(point[1] + leftX * offset, point[2] + leftY * offset, z)
+		for _, building in BUILDING_WALKS do
+			local x0, y0 = polar(building[1], 12)
+			local x1, y1 = polar(building[1], building[2])
+			run(mesh, x0, y0, STREET_Z, x1, y1, STREET_Z, 2.5, DECK)
 		end
-		rows[i] = { lowR = at(from, bottom), highR = at(from, top), lowL = at(to, bottom), highL = at(to, top) }
-	end
-	for i = 1, #rows - 1 do
-		local a, b = rows[i], rows[i + 1]
-		mesh:face({ a.highR, b.highR, b.highL, a.highL })
-		mesh:face({ a.lowR, b.lowR, b.highR, a.highR })
-		mesh:face({ b.lowL, a.lowL, a.highL, b.highL })
-	end
-end
-
--- Ribbed rubber: a darker cleat across the tread every 2 studs along it,
--- under scuffs and dust.
-local function beltTread(x: number, y: number): (number, number, number)
-	local along = x
-	if math.abs(x) > BELT_HALF_LENGTH then
-		local side = if x > 0 then 1 else -1
-		along = math.atan2(y, (x - side * BELT_HALF_LENGTH) * side) * BELT_TURN
-	end
-	local k = 1 + fbm(x / 3, y / 3, 61) * 0.25
-	if along % 2 < 0.3 then
-		k -= 0.35
-	end
-	k += math.max(0, warpedFbm(x / 6, y / 6, 62) - 0.2) * 1.2
-	return BELT_RUBBER[1] * k, BELT_RUBBER[2] * k, BELT_RUBBER[3] * k
-end
-
-slab("Belt", function()
-	local path = beltPath()
-	chunkedPart("Tread", nil, BELT_RUBBER, function(mesh)
-		beltStrip(mesh, path, -BELT_HALF_WIDTH, BELT_HALF_WIDTH, DECK, BELT_TOP)
-	end, nil, function(px, py)
-		return beltTread(px, py)
-	end, true)
-	chunkedPart("Rails", nil, STEEL, function(mesh)
-		beltStrip(mesh, path, -BELT_HALF_WIDTH - 0.6, -BELT_HALF_WIDTH, DECK, BELT_TOP + 0.35)
-		beltStrip(mesh, path, BELT_HALF_WIDTH, BELT_HALF_WIDTH + 0.6, DECK, BELT_TOP + 0.35)
-	end, nil, 0.55, true)
+	end, nil, function(x, y)
+		-- Trodden darker down the middle of the promenade.
+		local r = math.sqrt(x * x + y * y)
+		local trodden = 1 - 0.28 * math.exp(-((r - 63.75) / 2.6) ^ 2)
+		local k = (1 + fbm(x / 3, y / 3, 140) * 0.1) * trodden
+		return WALK[1] * k, WALK[2] * k, WALK[3] * k
+	end, nil, nil, true)
+	part("LaneMarks", nil, { 0.86, 0.7, 0.16 }, function(mesh)
+		-- Painted dashes round the promenade and along the walks, for the carts.
+		local PAINT_Z = STREET_Z + 0.02
+		for a = 0, 39 do
+			local t0, t1 = a * 9, a * 9 + 6
+			local x0, y0 = polar(t0, PROMENADE_INNER + 0.7)
+			local x1, y1 = polar(t1, PROMENADE_INNER + 0.7)
+			run(mesh, x0, y0, PAINT_Z, x1, y1, PAINT_Z, 0.32, DECK)
+		end
+		for _, bearing in WALK_BEARINGS do
+			local r = 15
+			while r < PROMENADE_INNER - 2 do
+				local x0, y0 = polar(bearing, r)
+				local x1, y1 = polar(bearing, r + 3)
+				run(mesh, x0, y0, PAINT_Z, x1, y1, PAINT_Z, 0.26, DECK)
+				r += 5
+			end
+		end
+	end, nil, 0.5, nil, nil, true)
+	part("Drains", nil, { 0.16, 0.16, 0.18 }, function(mesh)
+		-- A barred drain every so often round the promenade, flush with the walk.
+		local DRAIN_Z = STREET_Z + 0.02
+		for a = 1, 8 do
+			local cx, cy = polar(a * 45 - 8, PROMENADE_OUTER - 0.9)
+			box(mesh, cx, cy, DECK, 2.6, 2.6, DRAIN_Z - DECK)
+		end
+		-- And one at the foot of each walk into the town.
+		for _, bearing in WALK_BEARINGS do
+			local cx, cy = polar(bearing, 14.6)
+			box(mesh, cx, cy, DECK, 1.2, 1.2, DRAIN_Z - DECK)
+		end
+	end, nil, 0.4, nil, nil, true)
+	part("Tracks", nil, TRACK, function(mesh)
+		for i = 1, 8 do
+			local degrees = (i - 0.5) * 45
+			local x0, y0 = polar(degrees, HUB_ROAD - 0.5)
+			local x1, y1 = polar(degrees, TRACK_END + 1)
+			run(mesh, x0, y0, TRACK_TOP, x1, y1, TRACK_TOP, 4.75, DECK - 0.2)
+		end
+	end, nil, function(x, y)
+		local k = 1 + fbm(x / 2, y / 2, 150) * 0.16
+		return TRACK[1] * k, TRACK[2] * k, TRACK[3] * k
+	end, nil, nil, true)
+	part("Kerbs", nil, KERB, function(mesh)
+		local SEGMENT = 3
+		-- The pale bars over each drain, standing out on its dark pit.
+		for a = 1, 8 do
+			local cx, cy = polar(a * 45 - 8, PROMENADE_OUTER - 0.9)
+			for s = -3, 3 do
+				box(mesh, cx + s * 0.36, cy, STREET_Z + 0.02, 0.2, 2.4, 0.05)
+			end
+		end
+		for i = 1, 8 do
+			local degrees = (i - 0.5) * 45
+			local across = math.rad(degrees + 90)
+			for _, side in { -5, 5 } do
+				local ox, oy = math.cos(across) * side, math.sin(across) * side
+				local r = HUB_ROAD
+				while r + SEGMENT <= TRACK_END do
+					local x0, y0 = polar(degrees, r)
+					local x1, y1 = polar(degrees, r + SEGMENT - 0.15)
+					run(mesh, x0 + ox, y0 + oy, TRACK_TOP + 0.22, x1 + ox, y1 + oy, TRACK_TOP + 0.22, 0.3, DECK - 0.2)
+					r += SEGMENT
+				end
+			end
+		end
+	end, nil, function(x, y)
+		local k = 1 + fbm(x, y, 160) * 0.14
+		return KERB[1] * k, KERB[2] * k, KERB[3] * k
+	end, nil, nil, true)
+	part("Conduits", nil, { 0.24, 0.24, 0.26 }, function(mesh)
+		local CONDUIT_TOP, COVER_TOP = DECK + 0.4, DECK + 0.46
+		-- A run from a to b with clamps, and a riser into the building at b.
+		local function conduit(ax: number, ay: number, bx: number, by: number)
+			run(mesh, ax, ay, CONDUIT_TOP, bx, by, CONDUIT_TOP, 0.2, DECK)
+			local dx, dy = bx - ax, by - ay
+			local length = math.sqrt(dx * dx + dy * dy)
+			local ux, uy = dx / length, dy / length
+			local along = 5
+			while along < length - 2 do
+				local cx, cy = ax + ux * along, ay + uy * along
+				run(mesh, cx - uy * 0.42, cy + ux * 0.42, DECK + 0.5, cx + uy * 0.42, cy - ux * 0.42, DECK + 0.5, 0.14, DECK)
+				along += 5
+			end
+		end
+		-- A plate players walk over where a conduit crosses the landmark's ring.
+		local function cover(ax: number, ay: number, bx: number, by: number)
+			run(mesh, ax, ay, COVER_TOP, bx, by, COVER_TOP, 0.75, DECK)
+		end
+		-- The market's goes round the spawn ring, on the ring's +X side.
+		conduit(7.6, 6, 11, 6)
+		conduit(11, 6, 11, 33)
+		cover(7.6, 6, 11.4, 6)
+		box(mesh, 11, 33, DECK, 1, 1, 1.1)
+		-- The Tinkerer's and the Stage's run straight from the plinth.
+		for _, building in { { 180, 39 }, { -45, 33 } } do
+			local across = math.rad(building[1] + 90)
+			local ox, oy = math.cos(across) * 3.1, math.sin(across) * 3.1
+			local x0, y0 = polar(building[1], 7.5)
+			local x1, y1 = polar(building[1], building[2])
+			conduit(x0 + ox, y0 + oy, x1 + ox, y1 + oy)
+			local cx0, cy0 = polar(building[1], 8.6)
+			local cx1, cy1 = polar(building[1], 12.9)
+			cover(cx0 + ox, cy0 + oy, cx1 + ox, cy1 + oy)
+			box(mesh, x1 + ox, y1 + oy, DECK, 1, 1, 1.1)
+		end
+	end, nil, 0.2)
+	part("LampPosts", nil, { 0.2, 0.21, 0.23 }, function(mesh)
+		for n = 1, 7 do
+			local x, y = polar(n * 45, PROMENADE_OUTER + 0.8)
+			box(mesh, x, y, DECK, 0.9, 0.9, 0.5)
+			box(mesh, x, y, DECK + 0.5, 0.36, 0.36, 7)
+			box(mesh, x, y, DECK + 7.5, 1.5, 1.5, 0.3)
+		end
+	end, nil, 0.2)
+	part("LampGlow", nil, { 1, 0.86, 0.55 }, function(mesh)
+		for n = 1, 7 do
+			local x, y = polar(n * 45, PROMENADE_OUTER + 0.8)
+			box(mesh, x, y, DECK + 6.9, 1.1, 1.1, 0.6)
+		end
+	end, nil, 0, nil, 1.6)
 end, 0, 0)
 
--- The sorter: the shed the belt runs through where its lap ends and
--- begins. Capsules nobody bought go in the west mouth to be crushed, and
--- new ones come out of the east mouth, dropped in through the hopper on
--- the roof by the magnet crane. Its legs stand clear of the belt, which is
--- still curving as it comes in; strip curtains hang over both mouths. A
--- capsule is 3.4 studs tall at most and rides 0.6 up: the roof clears it by
--- 3 studs, and a player (5.5 tall) walks under too.
-local SORTER_X, SORTER_Y = -202, BELT_TURN
-local SORTER_HALF_LENGTH, SORTER_HALF_WIDTH = 7, 8
-local SORTER_ROOF = DECK + 7
-local SORTER_PAINT = { 0.26, 0.4, 0.46 }
-slab("Sorter", function()
-	part("Legs", nil, SORTER_PAINT, function(mesh)
-		for _, x in { -SORTER_HALF_LENGTH, SORTER_HALF_LENGTH } do
-			for _, y in { -SORTER_HALF_WIDTH, SORTER_HALF_WIDTH } do
-				box(mesh, x, y, DECK, 1, 1, SORTER_ROOF - DECK)
-				box(mesh, x, y, DECK, 1.8, 1.8, 0.3)
-			end
-		end
-	end, nil, 0.5)
-	part("Roof", nil, SORTER_PAINT, function(mesh)
-		box(mesh, 0, 0, SORTER_ROOF, 2 * SORTER_HALF_LENGTH + 1.6, 2 * SORTER_HALF_WIDTH + 1.6, 0.8)
-	end, nil, 0.5)
-	part("Fascia", nil, MARK, function(mesh)
-		for _, y in { -SORTER_HALF_WIDTH, SORTER_HALF_WIDTH } do
-			box(mesh, 0, y, SORTER_ROOF - 2.4, 2 * SORTER_HALF_LENGTH - 1, 0.3, 2.4)
-		end
-	end, nil, 0.4)
-	part("FasciaStripes", nil, { 0.1, 0.1, 0.11 }, function(mesh)
-		for _, y in { -SORTER_HALF_WIDTH - 0.17, SORTER_HALF_WIDTH + 0.17 } do
-			for k = -3, 3 do
-				box(mesh, k * 1.8, y, SORTER_ROOF - 2.2, 0.7, 0.05, 2.0)
-			end
-		end
-	end, nil, 0.3)
-	part("Curtains", nil, RUBBER_BLACK, function(mesh)
-		-- Strips over each mouth, from the roof down to just over the rails.
-		for _, x in { -SORTER_HALF_LENGTH, SORTER_HALF_LENGTH } do
-			for k = -6, 6 do
-				box(mesh, x, k * 1.05, BELT_TOP + 0.6, 0.12, 0.85, SORTER_ROOF - BELT_TOP - 0.6)
-			end
-		end
-	end, nil, RUBBER)
-	part("Hopper", nil, DARK_STEEL, function(mesh)
-		box(mesh, 1, 0, SORTER_ROOF + 0.8, 5, 5, 1.2)
-		box(mesh, 1, 0, SORTER_ROOF + 2.0, 6.4, 6.4, 0.5)
-	end, nil, 0.6)
-	part("Crane", nil, MARK, function(mesh)
-		box(mesh, -5, 4, SORTER_ROOF + 0.8, 1, 1, 7)
-		strut(mesh, -5, 4, SORTER_ROOF + 7.4, 3, 0, SORTER_ROOF + 8.6, 0.7)
-		strut(mesh, -5, 4, SORTER_ROOF + 4.5, -1, 2, SORTER_ROOF + 8.0, 0.4)
-	end, nil, 0.5)
-	part("Magnet", nil, DARK_STEEL, function(mesh)
-		tube(mesh, { { 2.6, 0.2, SORTER_ROOF + 8.5 }, { 2.4, 0.1, SORTER_ROOF + 5.6 } }, 0.08, 6)
-		cylinder(mesh, 2.4, 0.1, SORTER_ROOF + 5.3, 1.3, 0.6, "z", 16)
-		cylinder(mesh, 2.4, 0.1, SORTER_ROOF + 5.75, 0.5, 0.4, "z", 10)
-	end, nil, 0.55)
-	part("Beacons", nil, { 1.0, 0.6, 0.15 }, function(mesh)
-		for _, x in { -SORTER_HALF_LENGTH, SORTER_HALF_LENGTH } do
-			for _, y in { -SORTER_HALF_WIDTH, SORTER_HALF_WIDTH } do
-				sphere(mesh, x, y, SORTER_ROOF + 1.1, 0.4, 0.4, 0.4, 6, 10)
-			end
-		end
-	end, true, 0, nil, 1.5)
-end, SORTER_X, SORTER_Y)
+-- Crossings over the belt, whose middle runs at radius 72, one on each
+-- yard's path so the walk to the hub runs straight over.
+for n = 1, 8 do
+	local degrees = (n - 0.5) * 45
+	placeModel(`Crossing{n}`, buildBeltCrossing, math.cos(math.rad(degrees)) * 72, math.sin(math.rad(degrees)) * 72, TOWN_Z, degrees)
+end
 
 -- slab keys skip (the kit below places models only; no slab uses it)
 -- The kit: one of each model the game places itself (yard things, capsules
@@ -875,7 +803,8 @@ end, SORTER_X, SORTER_Y)
 -- across and stand 10), and everything at KIT_DENSITY, finer than the
 -- map's, as players stand right next to them.
 local KIT_DENSITY = 40
-local KIT_Z = -150
+-- Far under the island's root, where no camera looks.
+local KIT_Z = -260
 local KIT_SPACING = 24
 local KIT = {
 	{ "ProofToaster", buildProofToaster, 1 },
@@ -964,5 +893,5 @@ for index, entry in KIT do
 	place(`Kit_{entry[1]}`, entry[2], (index - #KIT / 2) * KIT_SPACING, 0, KIT_Z, 0, nil, nil, entry[3])
 	useTexelDensity(KIT_DENSITY)
 end
-useTexelDensity(MAP_DENSITY)
+useTexelDensity(GROUND_DENSITY)
 -- slab keys resume

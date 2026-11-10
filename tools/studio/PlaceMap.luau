@@ -131,10 +131,18 @@ local function place(model: Model, anchors: { Anchor }, turn: number): (boolean,
 	return true, "placed"
 end
 
--- Anchors every part, turns collision off where NO_COLLIDE says, and
--- mends the glow of glowing parts: the importer leaves their emissive mask
--- pointing at a texture slot in the upload ("rbxassetid://19") instead of
--- an asset, so the part's own colour map stands in for it.
+-- Ground shade sheets (the tight contact shadows painted on see-through
+-- sheets just above the ground) come through as a mesh with a plain
+-- texture. At Transparency 0 Roblox draws the sheet opaque; a touch of
+-- transparency makes it blend the texture's alpha as painted.
+local GROUND_SHADE = "GroundShade"
+local GROUND_SHADE_TRANSPARENCY = 0.02
+
+-- Anchors every part, turns collision off where NO_COLLIDE says, lets the
+-- ground shade sheets blend, and mends the glow of glowing parts:
+-- the importer leaves their emissive mask pointing at a texture slot in
+-- the upload ("rbxassetid://19") instead of an asset, so the part's own
+-- colour map stands in for it.
 local function prepare(model: Model)
 	for _, descendant in model:GetDescendants() do
 		if descendant:IsA("BasePart") then
@@ -144,6 +152,9 @@ local function prepare(model: Model)
 					descendant.CanCollide = false
 					break
 				end
+			end
+			if descendant.Name == GROUND_SHADE or descendant.Parent.Name == GROUND_SHADE then
+				descendant.Transparency = GROUND_SHADE_TRANSPARENCY
 			end
 		elseif descendant:IsA("SurfaceAppearance") then
 			local mask = tonumber(string.match(descendant.EmissiveMaskContent.Uri or "", "%d+$"))
