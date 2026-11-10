@@ -1,0 +1,37 @@
+bounds: 274,184,728,905
+A1: Mufflers 25%
+B1: Mufflers 46%
+C1: Mufflers 15%
+D1: Mufflers 50%
+E1: Mufflers 40%
+F1: -
+A2: Mufflers 13%
+B2: Mufflers 66%, Pipes 6%
+C2: Mufflers 15%, Pipes 5%
+D2: Pipes 37%, Mufflers 28%
+E2: Mufflers 58%, Pipes 17%
+F2: Mufflers 33%
+A3: -
+B3: Pipes 9%
+C3: Pipes 53%
+D3: Pipes 60%
+E3: Pipes 23%, Mufflers 22%
+F3: Mufflers 5%
+A4: -
+B4: -
+C4: Pipes 22%, Lashing 6%
+D4: Pipes 30%, Lashing 8%
+E4: -
+F4: -
+A5: -
+B5: Footing 11%
+C5: Pipes 35%, Footing 16%
+D5: Pipes 43%, Footing 12%, Lashing 3%
+E5: Footing 7%
+F5: -
+A6: -
+B6: Footing 9%
+C6: Footing 35%, Mufflers 4%, Pipes 4%
+D6: Mufflers 45%, Footing 21%, Pipes 4%
+E6: Footing 25%, Mufflers 5%
+F6: -
