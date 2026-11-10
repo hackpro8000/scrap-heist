@@ -4,7 +4,7 @@
 // round-brushed orange, dry-brushed flakes, chipped edges lined in, drips
 // pulled down the walls), then scratches lined in along worn edges.
 
-use crate::bake::{hash, mesh_triangles, to_linear};
+use crate::bake::{hash, to_linear};
 use crate::brush::{Brush, Canvas, Stroke};
 use crate::mesh::{add, cross, dot, normalize, scale, sub, Mesh, Vec3};
 
@@ -22,6 +22,8 @@ const COAT_DENSITY: f64 = 24.0;
 const PATCH_DENSITY: f64 = 5.0;
 // Patch radius at full rust.
 const PATCH_RADIUS: f64 = 0.26;
+// Studs across the stretches seam rust clusters into or skips.
+const RUST_CLUSTER: f64 = 2.5;
 // Surfaces steeper than this (as the normal's z) are walls: coats run
 // sideways round them and drips run down them.
 const WALL: f64 = 0.7;
@@ -31,6 +33,8 @@ pub struct Look {
 	pub rust: f64,
 	// Rubber gathers dust and scuffs instead of rust and scratches.
 	pub rubber: bool,
+	// Rust only on seams and edges, in clusters and run-down streaks.
+	pub rust_edges: bool,
 	// 0-1: how much the coat darkens toward the bottom of the part.
 	pub gradient: f64,
 	// Strokes are this many times larger, and fewer to match, where an eye
@@ -72,10 +76,19 @@ pub enum Hand {
 }
 
 // Where wear gathers, each 0-1: near sharp edges, in creases, low down.
+// Edge and crease read the shade layer the highlights and contact shadows
+// were painted from, at the spot's UV, so that geometry is walked once per
+// texel and never again.
 pub struct Wear<'a> {
-	pub edge: &'a (dyn Fn(Vec3, Vec3) -> f64 + Sync),
-	pub crease: &'a (dyn Fn(Vec3, Vec3) -> f64 + Sync),
+	pub edge: &'a (dyn Fn(usize, [f64; 2]) -> f64 + Sync),
+	pub crease: &'a (dyn Fn(usize, [f64; 2]) -> f64 + Sync),
 	pub low: &'a (dyn Fn(Vec3) -> f64 + Sync),
+	// Strokes scatter over a part's whole mesh (every chunk of it), so each
+	// spot carries its chunk, and spots too far from the chunk being painted
+	// to reach it are skipped.
+	pub near: &'a (dyn Fn(Vec3) -> bool + Sync),
+	pub tri_chunk: &'a [usize],
+	pub face_chunk: &'a [usize],
 }
 
 fn linear(c: [f64; 3]) -> [f64; 3] {
@@ -97,6 +110,10 @@ fn uphill(n: Vec3) -> Vec3 {
 #[derive(Clone, Copy)]
 struct Spot {
 	at: Vec3,
+	// Which chunk of the part the spot lies on, and where in that chunk's
+	// texture, for reading baked layers.
+	chunk: usize,
+	uv: [f64; 2],
 	// Stroke size multiplier, from Look::brush.
 	brush: f64,
 	normal: Vec3,
@@ -105,9 +122,9 @@ struct Spot {
 }
 
 impl Spot {
-	fn new(at: Vec3, normal: Vec3, brush: f64) -> Spot {
+	fn new(at: Vec3, chunk: usize, uv: [f64; 2], normal: Vec3, brush: f64) -> Spot {
 		let up = uphill(normal);
-		Spot { at, brush, normal, up, side: cross(up, normal) }
+		Spot { at, chunk, uv, brush, normal, up, side: cross(up, normal) }
 	}
 
 	// A direction on the surface, turned `angle` from sideways toward up.
@@ -148,9 +165,11 @@ impl Stroke {
 // Calls `place` for points scattered over the mesh, `density` per square
 // stud, at least `least` on every triangle, each with its own seed. Bigger
 // brushes (see Look::brush) cover more each, so fewer are placed.
-fn scatter(mesh: &Mesh, look: &Look, density: f64, least: u32, salt: u32, mut place: impl FnMut(Spot, u32)) {
+fn scatter(mesh: &Mesh, look: &Look, wear: &Wear, density: f64, least: u32, salt: u32, mut place: impl FnMut(Spot, u32)) {
 	let density = density / (look.brush * look.brush);
-	for (index, t) in mesh_triangles(mesh).iter().enumerate() {
+	// The same triangles in the same order as mesh_triangles, with their UVs.
+	for (index, corners) in mesh.triangles().iter().enumerate() {
+		let t = corners.map(|c| c.position);
 		let n = cross(sub(t[1], t[0]), sub(t[2], t[0]));
 		let length = dot(n, n).sqrt();
 		if length < 1e-12 {
@@ -168,7 +187,11 @@ fn scatter(mesh: &Mesh, look: &Look, density: f64, least: u32, salt: u32, mut pl
 				(a, b) = (1.0 - a, 1.0 - b);
 			}
 			let at = add(t[0], add(scale(sub(t[1], t[0]), a), scale(sub(t[2], t[0]), b)));
-			place(Spot::new(at, normal, look.brush), id);
+			if !(wear.near)(at) {
+				continue;
+			}
+			let uv = [0, 1].map(|axis| corners[0].uv[axis] + (corners[1].uv[axis] - corners[0].uv[axis]) * a + (corners[2].uv[axis] - corners[0].uv[axis]) * b);
+			place(Spot::new(at, wear.tri_chunk.get(index).copied().unwrap_or(0), uv, normal, look.brush), id);
 		}
 	}
 }
@@ -193,7 +216,7 @@ pub fn base_at(look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Vec3) -> [f6
 // The base coat: flat strokes sideways round walls and any way across tops.
 pub fn coat(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3]) -> Canvas {
 	let mut canvas = Canvas::new(look.brush);
-	scatter(mesh, look, COAT_DENSITY, 1, 1, |spot, id| {
+	scatter(mesh, look, wear, COAT_DENSITY, 1, 1, |spot, id| {
 		let r = |j: u32| hash(id.wrapping_add(j));
 		let angle = (r(2) - 0.5) * 0.5 + if spot.normal[2].abs() > WALL { r(3) * std::f64::consts::TAU } else { 0.0 };
 		// Each stroke is mixed a little lighter or darker, warmer or cooler.
@@ -216,9 +239,9 @@ pub fn wear(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Ve
 
 	// Grime sponged on low down and into creases; rubber gathers pale dust,
 	// on top surfaces too.
-	scatter(mesh, look, 5.0, 0, 2, |spot, id| {
+	scatter(mesh, look, wear, 5.0, 0, 2, |spot, id| {
 		let r = |j: u32| hash(id.wrapping_add(j));
-		let mut chance = ((wear.low)(spot.at) * 0.8).max((wear.crease)(spot.at, spot.normal));
+		let mut chance = ((wear.low)(spot.at) * 0.8).max((wear.crease)(spot.chunk, spot.uv));
 		if look.rubber {
 			chance = chance.max(spot.normal[2] * 0.5);
 		}
@@ -238,9 +261,9 @@ pub fn wear(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Ve
 
 	if look.rubber {
 		// Pale scuffs where it has rubbed.
-		scatter(mesh, look, 1.5, 0, 3, |spot, id| {
+		scatter(mesh, look, wear, 1.5, 0, 3, |spot, id| {
 			let r = |j: u32| hash(id.wrapping_add(j));
-			if r(2) >= 0.2 + 0.8 * (wear.edge)(spot.at, spot.normal) {
+			if r(2) >= 0.2 + 0.8 * (wear.edge)(spot.chunk, spot.uv) {
 				return;
 			}
 			let color = coat_at(look, wear, base, &spot).map(|c| (c * 1.8).min(1.0));
@@ -251,13 +274,23 @@ pub fn wear(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Ve
 
 	// Rust patches.
 	let amount = look.rust;
-	scatter(mesh, look, PATCH_DENSITY * amount, 0, 4, |spot, id| {
+	scatter(mesh, look, wear, PATCH_DENSITY * amount, 0, 4, |spot, id| {
 		let r = |j: u32| hash(id.wrapping_add(j));
-		let chance = (wear.edge)(spot.at, spot.normal).max((wear.crease)(spot.at, spot.normal)).max((wear.low)(spot.at) * 0.6).max(0.05);
+		let chance = if look.rust_edges {
+			let seam = (wear.edge)(spot.chunk, spot.uv).max((wear.crease)(spot.chunk, spot.uv));
+			let low = (wear.low)(spot.at);
+			// Whole stretches stay clean, so what rust there is clusters.
+			let cell = [spot.at[0] / RUST_CLUSTER, spot.at[1] / RUST_CLUSTER, spot.at[2] / (RUST_CLUSTER * 0.45)].map(|c| c.floor() as i64 as u32);
+			let clean = hash(cell[0].wrapping_mul(73_856_093) ^ cell[1].wrapping_mul(19_349_663) ^ cell[2].wrapping_mul(83_492_791)) < 0.4;
+			(if seam > 0.12 { seam } else { 0.0 }).max(low * low * low * 0.22) * if clean { 0.12 } else { 1.0 }
+		} else {
+			(wear.edge)(spot.chunk, spot.uv).max((wear.crease)(spot.chunk, spot.uv)).max((wear.low)(spot.at) * 0.6).max(0.05)
+		};
 		if r(2) >= chance {
 			return;
 		}
-		let size = PATCH_RADIUS * (0.4 + 0.6 * amount) * (0.5 + r(3));
+		let size = PATCH_RADIUS * (0.4 + 0.6 * amount) * (0.5 + r(3)) * if look.rust_edges { 0.55 + 1.5 * r(9) * r(9) } else { 1.0 };
+		let stretch = if look.rust_edges { 1.0 + 2.2 * r(8) } else { 1.0 };
 		let mut j = 10;
 		let mut next = || {
 			j += 1;
@@ -265,7 +298,7 @@ pub fn wear(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Ve
 		};
 		let mut around = |reach: f64| {
 			let (angle, spread) = (next() * std::f64::consts::TAU, reach * next().sqrt());
-			spot.moved(angle.cos() * spread, angle.sin() * spread)
+			spot.moved(angle.cos() * spread / stretch.sqrt(), angle.sin() * spread * stretch)
 		};
 		let dabs = 3 + (amount * 5.0) as u32;
 		let mut lowest = 0.0f64;
@@ -306,9 +339,9 @@ pub fn wear(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Ve
 	});
 
 	// Scratches lined in clusters, each cluster one way, mostly along worn edges.
-	scatter(mesh, look, 2.0, 0, 5, |spot, id| {
+	scatter(mesh, look, wear, 2.0, 0, 5, |spot, id| {
 		let r = |j: u32| hash(id.wrapping_add(j));
-		if r(2) >= 0.15 + 0.85 * (wear.edge)(spot.at, spot.normal) {
+		if r(2) >= 0.15 + 0.85 * (wear.edge)(spot.chunk, spot.uv) {
 			return;
 		}
 		let along = spot.heading(r(3) * 6.3);

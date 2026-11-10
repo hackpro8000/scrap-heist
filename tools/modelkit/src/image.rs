@@ -11,11 +11,80 @@ pub struct Image {
 	pub coarse: f64,
 	// Opacity per pixel, or None for a solid image.
 	pub alpha: Option<Vec<f32>>,
+	// A tangent-space normal per pixel, each component 0-1 as a normal map
+	// stores it, or None when the part has no normal map.
+	pub normal: Option<Vec<[f32; 3]>>,
+	// Roughness per pixel, 0 (glossy) to 1 (fully rough), or None for the
+	// flat roughness the material exports with.
+	pub roughness: Option<Vec<f32>>,
+	// Metalness per pixel, 0 (dielectric) to 1 (bare metal), or None for none.
+	pub metalness: Option<Vec<f32>>,
 }
 
 impl Image {
 	pub fn new(width: usize, height: usize, color: [f32; 3]) -> Self {
-		Image { width, height, pixels: vec![color; width * height], coarse: 1.0, alpha: None }
+		Image { width, height, pixels: vec![color; width * height], coarse: 1.0, alpha: None, normal: None, roughness: None, metalness: None }
+	}
+
+	// The metalness map as a grey PNG, flipped like encode_png; None without one.
+	pub fn encode_metalness_png(&self) -> Option<Vec<u8>> {
+		let metalness = self.metalness.as_ref()?;
+		let byte = |c: f32| (c.clamp(0.0, 1.0) * 255.0 + 0.5) as u8;
+		let mut data = Vec::with_capacity(self.width * self.height * 3);
+		for y in (0..self.height).rev() {
+			for x in 0..self.width {
+				let m = byte(metalness[y * self.width + x]);
+				data.extend([m, m, m]);
+			}
+		}
+		Some(encode_rgb(self.width, self.height, &data))
+	}
+
+	// The roughness map as a grey PNG, flipped like encode_png; None without one.
+	pub fn encode_roughness_png(&self) -> Option<Vec<u8>> {
+		let roughness = self.roughness.as_ref()?;
+		let byte = |c: f32| (c.clamp(0.0, 1.0) * 255.0 + 0.5) as u8;
+		let mut data = Vec::with_capacity(self.width * self.height * 3);
+		for y in (0..self.height).rev() {
+			for x in 0..self.width {
+				let r = byte(roughness[y * self.width + x]);
+				data.extend([r, r, r]);
+			}
+		}
+		Some(encode_rgb(self.width, self.height, &data))
+	}
+
+	// The roughness and metalness maps laid out as glTF's metallic-roughness
+	// texture: roughness in green, metalness in blue. None without either;
+	// a missing one is flat (fully rough, or no metal).
+	pub fn encode_metal_rough_png(&self) -> Option<Vec<u8>> {
+		if self.roughness.is_none() && self.metalness.is_none() {
+			return None;
+		}
+		let byte = |c: f32| (c.clamp(0.0, 1.0) * 255.0 + 0.5) as u8;
+		let mut data = Vec::with_capacity(self.width * self.height * 3);
+		for y in (0..self.height).rev() {
+			for x in 0..self.width {
+				let at = y * self.width + x;
+				let rough = self.roughness.as_ref().map_or(1.0, |r| r[at]);
+				let metal = self.metalness.as_ref().map_or(0.0, |m| m[at]);
+				data.extend([0, byte(rough), byte(metal)]);
+			}
+		}
+		Some(encode_rgb(self.width, self.height, &data))
+	}
+
+	// The normal map as PNG bytes, flipped like encode_png; None without one.
+	pub fn encode_normal_png(&self) -> Option<Vec<u8>> {
+		let normal = self.normal.as_ref()?;
+		let byte = |c: f32| (c.clamp(0.0, 1.0) * 255.0 + 0.5) as u8;
+		let mut data = Vec::with_capacity(self.width * self.height * 3);
+		for y in (0..self.height).rev() {
+			for x in 0..self.width {
+				data.extend(normal[y * self.width + x].map(byte));
+			}
+		}
+		Some(encode_rgb(self.width, self.height, &data))
 	}
 
 	fn texel(&self, u: f64, v: f64) -> usize {
@@ -62,7 +131,8 @@ impl Image {
 				}
 			}
 		}
-		Image { width, height, pixels, coarse: self.coarse * 2.0, alpha }
+		// A halved image is for far previews, which show no normal map.
+		Image { width, height, pixels, coarse: self.coarse * 2.0, alpha, normal: None, roughness: None, metalness: None }
 	}
 
 	// PNG bytes, flipped so the top row comes first as the format expects;

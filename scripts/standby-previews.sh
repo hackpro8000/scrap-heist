@@ -64,7 +64,9 @@ for name in "${list[@]}"; do
 	# this one's.
 	rendered="art/models/${model}"
 	rm -rf "${rendered}"/preview.png "${rendered}"/eye_*.png "${rendered}"/closeup_*.png "${rendered}"/parts.png "${rendered}"/face_*.png "${rendered}"/cells.txt "${rendered}"/turntable
-	if scripts/build-model.sh "${model}" -- "${quality[@]}" --turntable 4 "${size[@]}" "${share[@]}" "${extra[@]}" > "${dir}/build.log" 2>&1; then
+	# The bake's time per layer goes in the log, so a build's cost can be read
+	# off the machine that paid it.
+	if MODELKIT_PROFILE=1 scripts/build-model.sh "${model}" -- "${quality[@]}" --turntable 4 "${size[@]}" "${share[@]}" "${extra[@]}" > "${dir}/build.log" 2>&1; then
 		cp "${rendered}/preview.png" "${dir}/preview.png" 2> /dev/null || true
 		for turn in 0 1 2 3; do
 			cp "${rendered}/turntable/000${turn}.png" "${dir}/view${turn}.png" 2> /dev/null || true
@@ -72,6 +74,11 @@ for name in "${list[@]}"; do
 		# Review renders too, when the flags ask for them (--parts, --view):
 		# a review sheet, or a checkpoint (FROM=), can be made from them.
 		cp "${rendered}"/eye_*.png "${rendered}"/closeup_*.png "${rendered}"/parts.png "${rendered}"/face_*.png "${rendered}"/cells.txt "${dir}/" 2> /dev/null || true
+		# A normal-mapped build (--normals in the flags) sends its maps and
+		# GLB back too, since only Studio can show a normal map.
+		case " ${flags[*]} " in
+			*" --normals "*) cp ""/*_Normal.png ""/*_Roughness.png "${rendered}/${model}.glb" "${dir}/" 2> /dev/null || true ;;
+		esac
 	else
 		echo "FAILED" >> "${dir}/build.log"
 	fi

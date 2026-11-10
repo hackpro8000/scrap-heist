@@ -75,6 +75,19 @@ Rules that keep rebuilds fast:
   in seconds (ServerMap: about 15s against 100s cold). If it doesn't, find
   what isn't cached before going on.
 
+**Normal maps.** `modelkit ... --normals [STRENGTH]` bakes a tangent-space
+normal map per part (`<Part>_Normal.png`, and the GLB material's normal
+slot, which the bundle exporter carries through). It derives from the same
+edge field the edge highlights are painted from, stored in the shade layer
+by the one geometry walk per texel; the coat and wear layers read that
+stored field too (at each stroke's UV), so nothing walks the geometry
+twice. That is the rule for every map: a field computed for one pass
+(edge, crease, gradient) is stored and reused by the others, never
+recalculated. `--no-cache` (or `MODELKIT_NO_CACHE=1`) builds cold and
+writes nothing, for timing. A preview name ending in `!` in a coordinator
+task (`--preview 'Name!'`) keeps that model's build on one machine, for a
+timing that other machines don't share.
+
 ## Changing the engine
 
 The cloud setup doesn't install Rust. To change `tools/modelkit/src`, install
@@ -351,6 +364,16 @@ When the user points out a defect in a model and the critic's last list doesn't 
 3. Fix the defect the usual way, commit the rule with the model's checkpoint, and tell the user the new rule in one line.
 
 A matter of taste or a change of mind ("make it bluer") isn't a miss and makes no rule.
+
+### Arguing with the critic
+A critic's list is a position, not a ruling, and the talk goes both ways. After a round, the main session can reply to that same critic (`SendMessage` with its agent id) about any finding it thinks is wrong, unclear or impossible to act on, or ask what would satisfy it.
+1. Explain why the finding may be wrong, whatever the cause: how the render shows it, a misreading of what the part is, a rule applied where it doesn't fit, or anything else. Point at what would settle it: a named render, a closer view, a measurement, a check result or a settled rule. "It was fixed" or "it looks fine to me" isn't an argument.
+2. The explanation is a lead, not a verdict. The critic goes looking for objective proof, in the named evidence or by asking for a closer view with `VIEW:` lines, and only then answers each point CONCEDE, HOLD or SHARPEN, saying what it found. Without proof either way it holds.
+3. A conceded finding is dropped, and the report to the user says so and why. A held finding stands: fix it, or take the disagreement to the user with both sides.
+4. An argument never counts as a pass, because a critic can be talked out of things. A model clears only when a fresh critic with a neutral prompt lists no MED or above. If a fresh critic keeps raising a conceded finding, sharpen the rule it comes from or add it to `docs/art/critic-settled.md`, which every critic reads with the rules, with the user's say.
+
+### Fixing finish without side effects
+A finish complaint about one model is fixed in that model's source, by setting the part's numbers before `handFinish`. A number moves into a shared preset (`shared/HandFinish.luau`, `PRESETS`) only when the same fix has recurred on three or more models, and then into its own preset, never one that other materials share. Every review round runs `scripts/finish-probe.py <round> <previous round>` and compares each model's render with the previous round's: a render that moved while its `model.luau` didn't means a shared edit leaked, and a probe that moved on a model nobody touched is a side effect to undo before the critic sees it. Fixing in bulk still means many targeted fixes in one round, not one shared knob turned once.
 
 ### Keeping the direction
 `art/src/items/<Name>.notes.md` (bots: `art/src/bots/<Name>/notes.md`) is

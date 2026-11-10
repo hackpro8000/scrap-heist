@@ -105,6 +105,13 @@ struct Params {
 	painted: f32,
 	// Studs a highlight thins over away from a corner; 0 keeps it even.
 	corner_taper: f32,
+	// Crease pass only: `reach` above is the grid cell (the larger of the two
+	// reaches); the strokes fade over paint_reach and the bevel field over
+	// bevel_reach, counting folds from bevel_fold (cosine in bevel_min_cos).
+	paint_reach: f32,
+	bevel_reach: f32,
+	bevel_min_cos: f32,
+	bevel_fold: f32,
 }
 
 #[repr(C)]
@@ -196,7 +203,7 @@ impl Gpu {
 
 	// Runs `pipeline` over `count` texels, slice by slice, with bindings 1-4
 	// as given and binding 5 the output, `Out` per texel.
-	fn run<Out: Pod>(&self, pipeline: &wgpu::ComputePipeline, inputs: [&wgpu::Buffer; 4], count: usize, mask: u32, value: f32, reach: f32, highlight_width: f32, painted: f32, corner_taper: f32) -> Option<Vec<Out>> {
+	fn run<Out: Pod>(&self, pipeline: &wgpu::ComputePipeline, inputs: [&wgpu::Buffer; 4], count: usize, mask: u32, value: f32, reach: f32, highlight_width: f32, painted: f32, corner_taper: f32, extra: [f32; 4]) -> Option<Vec<Out>> {
 		let size = (count.max(1) * size_of::<Out>()) as u64;
 		if size > self.max_binding {
 			return None;
@@ -208,7 +215,7 @@ impl Gpu {
 		let layout = pipeline.get_bind_group_layout(0);
 		for first in (0..count).step_by(SLICE) {
 			let slice = SLICE.min(count - first);
-			let params = Params { first: first as u32, count: slice as u32, mask, value, reach, highlight_width, painted, corner_taper };
+			let params = Params { first: first as u32, count: slice as u32, mask, value, reach, highlight_width, painted, corner_taper, paint_reach: extra[0], bevel_reach: extra[1], bevel_min_cos: extra[2], bevel_fold: extra[3] };
 			let uniform = self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor { label: Some("params"), contents: bytemuck::bytes_of(&params), usage: wgpu::BufferUsages::UNIFORM });
 			let buffers = [&uniform, inputs[0], inputs[1], inputs[2], inputs[3], &output];
 			let entries: Vec<wgpu::BindGroupEntry> = buffers.iter().enumerate().map(|(binding, buffer)| wgpu::BindGroupEntry { binding: binding as u32, resource: buffer.as_entire_binding() }).collect();
@@ -250,7 +257,10 @@ impl Gpu {
 
 // bake.rs crease_paint at every texel: (interior, exterior) paint.
 // `surfaces` and `grid` are paint_shading's contact surfaces and grid.
-pub fn crease<S: BuildHasher>(texels: &[Texel], surfaces: &[([Vec3; 3], Vec3, bool)], grid: &HashMap<[i64; 3], Vec<usize>, S>, min_cos: f64, reach: f64, highlight_width: f64, painted: bool, corner_taper: f64) -> Option<Vec<(f64, f64)>> {
+// Each texel comes back as (interior paint, exterior paint, bevel tilt): the
+// tilt is the surface direction toward the nearest sharp exterior edge,
+// scaled by how near and sharp it is, for the normal map.
+pub fn crease<S: BuildHasher>(texels: &[Texel], surfaces: &[([Vec3; 3], Vec3, bool)], grid: &HashMap<[i64; 3], Vec<usize>, S>, min_cos: f64, reach: f64, grid_reach: f64, bevel_reach: f64, bevel_fold: f64, highlight_width: f64, painted: bool, corner_taper: f64) -> Option<Vec<(f64, f64, Vec3)>> {
 	let gpu = gpu()?.lock().ok()?;
 	let (slots, items, mask) = hash_table(grid)?;
 	let surfaces: Vec<GpuSurface> = surfaces
@@ -262,8 +272,10 @@ pub fn crease<S: BuildHasher>(texels: &[Texel], surfaces: &[([Vec3; 3], Vec3, bo
 		return None;
 	}
 	let inputs = [&gpu.storage("texels", &points), &gpu.storage("surfaces", &surfaces), &gpu.storage("slots", &slots), &gpu.storage("items", &items)];
-	let paint: Vec<[f32; 2]> = gpu.run(&gpu.crease, inputs, texels.len(), mask, min_cos as f32, reach as f32, highlight_width as f32, f32::from(u8::from(painted)), corner_taper as f32)?;
-	Some(paint.into_iter().map(|[inward, outward]| (f64::from(inward), f64::from(outward))).collect())
+	// Two vec4s per texel: (inward, outward, tilt x, tilt y) and (tilt z, 0, 0, 0).
+	let bevel_min_cos = (bevel_fold * std::f64::consts::PI).cos();
+	let paint: Vec<[f32; 8]> = gpu.run(&gpu.crease, inputs, texels.len(), mask, min_cos as f32, grid_reach as f32, highlight_width as f32, f32::from(u8::from(painted)), corner_taper as f32, [reach as f32, bevel_reach as f32, bevel_min_cos as f32, bevel_fold as f32])?;
+	Some(paint.into_iter().map(|[inward, outward, x, y, z, ..]| (f64::from(inward), f64::from(outward), [f64::from(x), f64::from(y), f64::from(z)])).collect())
 }
 
 // Canvas::paint (`over` false) or Canvas::over (`over` true) at every texel:
@@ -298,7 +310,7 @@ pub fn canvas(canvas: &Canvas, texels: &[Texel], over: bool) -> Option<Vec<([f64
 	}
 	let inputs = [&gpu.storage("texels", &points), &gpu.storage("strokes", &strokes), &gpu.storage("slots", &slots), &gpu.storage("items", &items)];
 	let pipeline = if over { &gpu.over } else { &gpu.paint };
-	let paint: Vec<[f32; 4]> = gpu.run(pipeline, inputs, texels.len(), mask, canvas.cell_size() as f32, 0.0, 1.0, 0.0, 0.0)?;
+	let paint: Vec<[f32; 4]> = gpu.run(pipeline, inputs, texels.len(), mask, canvas.cell_size() as f32, 0.0, 1.0, 0.0, 0.0, [0.0; 4])?;
 	Some(paint.into_iter().map(|[r, g, b, a]| ([r, g, b].map(f64::from), f64::from(a))).collect())
 }
 

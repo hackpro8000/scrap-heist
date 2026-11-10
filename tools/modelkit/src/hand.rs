@@ -360,18 +360,24 @@ fn grain_axis(mesh: &Mesh) -> Vec3 {
 #[derive(Clone, Copy)]
 struct Candidate {
 	at: Vec3,
+	// Which chunk of the part the spot lies on, and where in that chunk's
+	// texture, for reading baked layers.
+	chunk: usize,
+	uv: [f64; 2],
 	normal: Vec3,
 	form: Vec3,
 	id: u32,
 }
 
-fn candidates(mesh: &Mesh, layer: usize, density: f64, grain: Option<Vec3>) -> Vec<Candidate> {
+fn candidates(mesh: &Mesh, wear: &Wear, layer: usize, density: f64, grain: Option<Vec3>) -> Vec<Candidate> {
 	let mut spots = Vec::new();
 	for (face_index, face) in mesh.faces.iter().enumerate() {
 		let normal = mesh.face_normal(face);
 		let form = form_direction(mesh, &face.verts, normal, grain);
 		for tri in 1..face.verts.len().saturating_sub(1) {
 			let (a, b, c) = (mesh.positions[face.verts[0]], mesh.positions[face.verts[tri]], mesh.positions[face.verts[tri + 1]]);
+			let uv_at = |k: usize| face.uvs.as_ref().map_or([0.0, 0.0], |uvs| uvs[k]);
+			let (uv_a, uv_b, uv_c) = (uv_at(0), uv_at(tri), uv_at(tri + 1));
 			let n = cross(sub(b, a), sub(c, a));
 			let expected = dot(n, n).sqrt() / 2.0 * density;
 			let seed = (face_index as u32).wrapping_mul(2_654_435_761) ^ (tri as u32).wrapping_mul(40_503) ^ ((layer as u32 + 1).wrapping_mul(0x9e37_79b9));
@@ -383,7 +389,12 @@ fn candidates(mesh: &Mesh, layer: usize, density: f64, grain: Option<Vec3>) -> V
 				if across_ab + across_ac > 1.0 {
 					(across_ab, across_ac) = (1.0 - across_ab, 1.0 - across_ac);
 				}
-				spots.push(Candidate { at: add(a, add(scale(sub(b, a), across_ab), scale(sub(c, a), across_ac))), normal, form, id });
+				let at = add(a, add(scale(sub(b, a), across_ab), scale(sub(c, a), across_ac)));
+				if !(wear.near)(at) {
+					continue;
+				}
+				let uv = [0, 1].map(|axis| uv_a[axis] + (uv_b[axis] - uv_a[axis]) * across_ab + (uv_c[axis] - uv_a[axis]) * across_ac);
+				spots.push(Candidate { at, chunk: wear.face_chunk.get(face_index).copied().unwrap_or(0), uv, normal, form, id });
 			}
 		}
 	}
@@ -400,11 +411,11 @@ pub fn prepare(mesh: &Mesh, look: &Look, hand: Hand, tuning: &Tuning, wear: &Wea
 	for (layer, &(mark_length, mark_width, cover)) in layers.iter().enumerate() {
 		let area = lerp(mark_length, 0.5) * lerp(mark_width, 0.5);
 		let density = cover / area / (look.brush * look.brush);
-		let spots = candidates(mesh, layer, density, grain);
+		let spots = candidates(mesh, wear, layer, density, grain);
 		// How near an edge each spot sits is the slow part of setting up, so it
 		// runs on every core; the first coat keeps all its strokes and never asks.
-		let edges = if layer == 0 { vec![0.0; spots.len()] } else { parallel(&spots, |spot| (wear.edge)(spot.at, spot.normal)) };
-		for (&Candidate { at, normal, form, id }, edge) in spots.iter().zip(edges) {
+		let edges = if layer == 0 { vec![0.0; spots.len()] } else { parallel(&spots, |spot| (wear.edge)(spot.chunk, spot.uv)) };
+		for (&Candidate { at, normal, form, id, .. }, edge) in spots.iter().zip(edges) {
 			let r = |j: u32| hash(id.wrapping_add(j));
 			// Mark economy: fine strokes gather at edges and the focus.
 			let near_focus = look.focus.map_or(0.0, |(centre, radius)| {

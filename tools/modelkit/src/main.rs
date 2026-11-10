@@ -260,6 +260,18 @@ impl UserData for MeshHandle {
 				blend: get("blend", 0.0)?.clamp(0.0, 1.0),
 				highlight_ramp: get("highlightRamp", 0.0)?.max(0.0),
 				reach: get("reach", bake::CONTACT_REACH)?.clamp(0.02, 4.0),
+				bevel_reach: get("bevelReach", 0.0)?.clamp(0.0, 8.0),
+				bevel_fold: get("bevelFold", bake::CONTACT_MIN_FOLD)?.clamp(0.0, 0.49),
+				bevel_tilt: get("bevelTilt", 1.0)?.clamp(0.0, 8.0),
+				roughness_base: get("roughnessBase", 0.0)?.clamp(0.0, 1.0),
+				roughness_edge: get("roughnessEdge", 0.0)?.clamp(-1.0, 1.0),
+				roughness_crease: get("roughnessCrease", 0.0)?.clamp(-1.0, 1.0),
+				roughness_wear: get("roughnessWear", 0.0)?.clamp(-1.0, 1.0),
+				metalness_on: options.as_ref().map(|o| o.get::<Option<bool>>("metalnessOn")).transpose()?.flatten().unwrap_or(false),
+				metalness_base: get("metalnessBase", 0.0)?.clamp(0.0, 1.0),
+				metalness_edge: get("metalnessEdge", 0.0)?.clamp(-1.0, 1.0),
+				metalness_crease: get("metalnessCrease", 0.0)?.clamp(-1.0, 1.0),
+				metalness_wear: get("metalnessWear", 0.0)?.clamp(-1.0, 1.0),
 				highlight_width: get("highlightWidth", 1.0)?.clamp(0.1, 8.0),
 				highlight_uneven: get("highlightUneven", 0.0)?.clamp(0.0, 1.0),
 				highlight_uneven_step: get("highlightUnevenStep", 0.5)?.clamp(0.01, 16.0),
@@ -344,6 +356,7 @@ impl UserData for MeshHandle {
 			let look = coat::Look {
 				rust: get("rust", 0.0)?.clamp(0.0, 1.0),
 				rubber: options.as_ref().map(|o| o.get::<Option<bool>>("rubber")).transpose()?.flatten().unwrap_or(false),
+				rust_edges: options.as_ref().map(|o| o.get::<Option<bool>>("rustEdges")).transpose()?.flatten().unwrap_or(false),
 				gradient: get("gradient", 0.0)?.clamp(0.0, 1.0),
 				brush,
 				stamps: options.as_ref().map(|o| o.get::<Option<bool>>("stamps")).transpose()?.flatten().unwrap_or(false),
@@ -375,22 +388,35 @@ impl UserData for MeshHandle {
 					group.push(handle.borrow::<MeshHandle>()?.0.clone());
 				}
 			}
+			// groupSizes = {{w, h}, ...}, one per group mesh (the part itself
+			// included): each chunk's texture size, for its shade layer.
+			let group_sizes: Vec<(usize, usize)> = options
+				.as_ref()
+				.map(|o| o.get::<Option<Vec<Vec<f64>>>>("groupSizes"))
+				.transpose()?
+				.flatten()
+				.unwrap_or_default()
+				.iter()
+				.map(|size| (size.first().copied().unwrap_or(0.0) as usize, size.get(1).copied().unwrap_or(0.0) as usize))
+				.collect();
+			// groupIndex: this part's place in the group list (1-based in Lua).
+			let group_index = options.as_ref().map(|o| o.get::<Option<usize>>("groupIndex")).transpose()?.flatten().map_or(0, |n| n.saturating_sub(1));
 			let name = options.as_ref().map(|o| o.get::<Option<String>>("name")).transpose()?.flatten().unwrap_or_default();
 			let source = cache::Source { custom, salt };
 			if cache::sharing() {
 				let chunk = cache::bake_chunk(&name, &mesh);
 				let mesh = (*mesh).clone();
-				work::defer(chunk, Box::new(move || paint_part(&name, &mesh, &group, &occluders, &image, &shading, &look, paint.as_ref(), &source).map_err(|e| e.to_string())));
+				work::defer(chunk, Box::new(move || paint_part(&name, &mesh, &group, &group_sizes, group_index, &occluders, &image, &shading, &look, paint.as_ref(), &source).map_err(|e| e.to_string())));
 				return Ok(());
 			}
-			paint_part(&name, &mesh, &group, &occluders, &image, &shading, &look, paint.as_ref(), &source)
+			paint_part(&name, &mesh, &group, &group_sizes, group_index, &occluders, &image, &shading, &look, paint.as_ref(), &source)
 		});
 	}
 }
 
 // Paints one part's shading onto its image.
 #[allow(clippy::too_many_arguments)]
-fn paint_part(name: &str, mesh: &Mesh, group: &[Rc<RefCell<Mesh>>], occluders: &[Rc<RefCell<Mesh>>], image: &Rc<RefCell<Image>>, shading: &bake::Shading, look: &coat::Look, paint: Option<&mlua::Function>, source: &cache::Source) -> mlua::Result<()> {
+fn paint_part(name: &str, mesh: &Mesh, group: &[Rc<RefCell<Mesh>>], group_sizes: &[(usize, usize)], group_index: usize, occluders: &[Rc<RefCell<Mesh>>], image: &Rc<RefCell<Image>>, shading: &bake::Shading, look: &coat::Look, paint: Option<&mlua::Function>, source: &cache::Source) -> mlua::Result<()> {
 	let borrowed: Vec<_> = occluders.iter().map(|m| m.borrow()).collect();
 	let refs: Vec<&Mesh> = borrowed.iter().map(|m| &**m).collect();
 	let borrowed_group: Vec<_> = group.iter().map(|m| m.borrow()).collect();
@@ -410,7 +436,7 @@ fn paint_part(name: &str, mesh: &Mesh, group: &[Rc<RefCell<Mesh>>], occluders: &
 		}
 	};
 	let started = Instant::now();
-	bake::paint_shading(mesh, &group_refs, &refs, &mut image.borrow_mut(), shading, look, &mut base, source);
+	bake::paint_shading(mesh, &group_refs, group_sizes, group_index, &refs, &mut image.borrow_mut(), shading, look, &mut base, source);
 	let (width, height) = (image.borrow().width, image.borrow().height);
 	progress::say(&format!("shaded {name} {width}×{height} in {:.2}s", started.elapsed().as_secs_f64()));
 	match failed {
@@ -431,6 +457,8 @@ impl UserData for ImageHandle {
 			image.pixels[y * width + x] = [r, g, b];
 			Ok(())
 		});
+		methods.add_method("width", |_, this, ()| Ok(this.0.borrow().width));
+		methods.add_method("height", |_, this, ()| Ok(this.0.borrow().height));
 		methods.add_method("get", |_, this, (x, y): (usize, usize)| {
 			let image = this.0.borrow();
 			let [r, g, b] = image.pixels[y.min(image.height - 1) * image.width + x.min(image.width - 1)];
@@ -580,6 +608,11 @@ fn install_api(lua: &Lua, dir: &Path, parts: Rc<RefCell<Vec<Part>>>, bones: Rc<R
 		lua.create_function(move |lua, (key, build): (String, mlua::Function)| {
 			// A preview build is kept apart from the final one, which it differs from.
 			let key = if texel_scale == 1.0 { key } else { format!("{key} @{texel_scale}{eye_key}") };
+			// A normal map is part of what was built, so it is part of the key.
+			let key = match bake::normal_strength() {
+				Some(strength) => format!("{key} ~n{strength}"),
+				None => key,
+			};
 			let path = cache::path(&folder, &key);
 			used.borrow_mut().push(path.clone());
 			if let Some(list) = built_this_run.borrow().get(&path) {
@@ -733,11 +766,26 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 	for part in parts.iter() {
 		let png = dir.join(format!("{}.png", part.name));
 		std::fs::write(png, part.image.borrow().encode_png()).map_err(|e| e.to_string())?;
+		// The normal map (--normals), beside the colour map.
+		let normal_png = dir.join(format!("{}_Normal.png", part.name));
+		match part.image.borrow().encode_normal_png() {
+			Some(bytes) => std::fs::write(normal_png, bytes).map_err(|e| e.to_string())?,
+			None => {
+				let _ = std::fs::remove_file(normal_png);
+			}
+		}
 		// Flat maps for the SurfaceAppearance: no metal, fully rough, so
 		// Roblox adds no highlights over the painted shading.
-		for (map, value) in [("Metalness", 0.0), ("Roughness", 1.0)] {
+		for (map, value) in [("Metalness", 0.0), ("Roughness", bake::roughness() as f32)] {
 			let flat = Image::new(4, 4, [value; 3]).encode_png();
 			std::fs::write(dir.join(format!("{}_{map}.png", part.name)), flat).map_err(|e| e.to_string())?;
+		}
+		// Baked roughness and metalness maps replace the flat ones.
+		if let Some(bytes) = part.image.borrow().encode_roughness_png() {
+			std::fs::write(dir.join(format!("{}_Roughness.png", part.name)), bytes).map_err(|e| e.to_string())?;
+		}
+		if let Some(bytes) = part.image.borrow().encode_metalness_png() {
+			std::fs::write(dir.join(format!("{}_Metalness.png", part.name)), bytes).map_err(|e| e.to_string())?;
 		}
 		// Glowing parts glow all over: a white EmissiveMaskContent, with the
 		// strength set on the SurfaceAppearance's EmissiveStrength.
@@ -961,6 +1009,24 @@ fn main() {
 		cache::set_sharing();
 	}
 	let work_port = args.iter().position(|a| a == "--work-port").and_then(|at| args.get(at + 1)).and_then(|p| p.parse().ok());
+	// --normals STRENGTH bakes a normal map per part from the edge field the
+	// highlights come from; 1 tilts a sharp edge's rim 45 degrees.
+	if let Some(at) = args.iter().position(|a| a == "--normals") {
+		let strength = args.get(at + 1).and_then(|n| n.parse().ok()).unwrap_or(1.0);
+		bake::set_normal_strength(strength);
+	}
+	// --roughness R exports every part at that roughness instead of fully
+	// rough, to see how the light takes a normal map.
+	if let Some(at) = args.iter().position(|a| a == "--roughness") {
+		if let Some(value) = args.get(at + 1).and_then(|n| n.parse().ok()) {
+			bake::set_roughness(value);
+		}
+	}
+	// --no-cache builds as if nothing were cached and writes nothing, like
+	// MODELKIT_NO_CACHE=1, for timing a cold build.
+	if args.iter().any(|a| a == "--no-cache") {
+		std::env::set_var("MODELKIT_NO_CACHE", "1");
+	}
 	let review = Review { parts: args.iter().any(|a| a == "--parts"), sides, grid, share, work_port };
 	if let Err(error) = run(Path::new(dir), turntable, size, &closeups, &eyes, clip.map(|c| c.as_str()), texel_scale, &detail_eyes, chunks, shard, &review) {
 		eprintln!("error: {error}");

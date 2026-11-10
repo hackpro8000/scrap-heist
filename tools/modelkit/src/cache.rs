@@ -14,7 +14,7 @@ use crate::image::Image;
 use crate::mesh::{Face, Mesh};
 
 // Bump when the file layout or anything baked into it changes.
-const VERSION: u32 = 2;
+const VERSION: u32 = 3;
 
 pub struct CachedPart {
 	pub name: String,
@@ -92,13 +92,44 @@ pub fn save(path: &Path, parts: &[(String, bool, f32, &Mesh, &Image)]) -> std::i
 			pixel.iter().for_each(|&c| out.extend(c.to_le_bytes()));
 		}
 	}
-	// Alpha follows all the parts, and only when some part has it, so files
-	// for solid parts stay as they were and older caches still load.
-	if parts.iter().any(|(_, _, _, _, image)| image.alpha.is_some()) {
+	// Alpha follows all the parts, and only when some part has it (or a
+	// normal map, which comes after it), so files for solid parts stay as
+	// they were and older caches still load.
+	// Each optional map block is written whenever a later one is, so the
+	// reader always finds them in order: alpha, normal, roughness, metalness.
+	let any_metalness = parts.iter().any(|(_, _, _, _, image)| image.metalness.is_some());
+	let any_roughness = any_metalness || parts.iter().any(|(_, _, _, _, image)| image.roughness.is_some());
+	let any_normal = any_roughness || parts.iter().any(|(_, _, _, _, image)| image.normal.is_some());
+	if any_normal || parts.iter().any(|(_, _, _, _, image)| image.alpha.is_some()) {
 		for (_, _, _, _, image) in parts {
 			out.push(image.alpha.is_some() as u8);
 			for &a in image.alpha.iter().flatten() {
 				out.extend(a.to_le_bytes());
+			}
+		}
+	}
+	// Normal maps follow the alpha the same way, then roughness maps.
+	if any_normal {
+		for (_, _, _, _, image) in parts {
+			out.push(image.normal.is_some() as u8);
+			for pixel in image.normal.iter().flatten() {
+				pixel.iter().for_each(|&c| out.extend(c.to_le_bytes()));
+			}
+		}
+	}
+	if any_roughness {
+		for (_, _, _, _, image) in parts {
+			out.push(image.roughness.is_some() as u8);
+			for &r in image.roughness.iter().flatten() {
+				out.extend(r.to_le_bytes());
+			}
+		}
+	}
+	if any_metalness {
+		for (_, _, _, _, image) in parts {
+			out.push(image.metalness.is_some() as u8);
+			for &m in image.metalness.iter().flatten() {
+				out.extend(m.to_le_bytes());
 			}
 		}
 	}
@@ -147,6 +178,33 @@ pub fn load(path: &Path) -> Option<Vec<CachedPart>> {
 				let count = part.image.width * part.image.height;
 				let raw = r.take(count * 4)?;
 				part.image.alpha = Some(raw.chunks_exact(4).map(|b| f32::from_le_bytes(b.try_into().unwrap())).collect());
+			}
+		}
+	}
+	if r.at < bytes.len() {
+		for part in &mut parts {
+			if r.take(1)?[0] != 0 {
+				let count = part.image.width * part.image.height;
+				let raw = r.take(count * 12)?;
+				part.image.normal = Some(raw.chunks_exact(12).map(|b| std::array::from_fn(|k| f32::from_le_bytes(b[k * 4..k * 4 + 4].try_into().unwrap()))).collect());
+			}
+		}
+	}
+	if r.at < bytes.len() {
+		for part in &mut parts {
+			if r.take(1)?[0] != 0 {
+				let count = part.image.width * part.image.height;
+				let raw = r.take(count * 4)?;
+				part.image.roughness = Some(raw.chunks_exact(4).map(|b| f32::from_le_bytes(b.try_into().unwrap())).collect());
+			}
+		}
+	}
+	if r.at < bytes.len() {
+		for part in &mut parts {
+			if r.take(1)?[0] != 0 {
+				let count = part.image.width * part.image.height;
+				let raw = r.take(count * 4)?;
+				part.image.metalness = Some(raw.chunks_exact(4).map(|b| f32::from_le_bytes(b.try_into().unwrap())).collect());
 			}
 		}
 	}

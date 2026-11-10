@@ -17,6 +17,13 @@ struct Params {
 	painted: f32,
 	// Studs a highlight thins over away from a corner; 0 keeps it even.
 	corner_taper: f32,
+	// `reach` above is the grid cell, the larger of these two: the strokes
+	// fade over paint_reach, the bevel field over bevel_reach, counting folds
+	// from bevel_fold (its cosine in bevel_min_cos).
+	paint_reach: f32,
+	bevel_reach: f32,
+	bevel_min_cos: f32,
+	bevel_fold: f32,
 }
 
 struct Texel {
@@ -53,7 +60,8 @@ struct Slot {
 @group(0) @binding(2) var<storage, read> surfaces: array<Surface>;
 @group(0) @binding(3) var<storage, read> slots: array<Slot>;
 @group(0) @binding(4) var<storage, read> items: array<u32>;
-@group(0) @binding(5) var<storage, read_write> paint: array<vec2<f32>>;
+// Two per texel: (inward, outward, tilt.x, tilt.y) then (tilt.z, 0, 0, 0).
+@group(0) @binding(5) var<storage, read_write> paint: array<vec4<f32>>;
 
 const PI: f32 = 3.14159265358979;
 const CONTACT_MIN_FOLD: f32 = 1.0 / 6.0;
@@ -247,6 +255,11 @@ fn main(@builtin(global_invocation_id) id: vec3<u32>) {
 	let home = vec3<i32>(floor(p / params.reach));
 	var inward = 0.0;
 	var outward = 0.0;
+	// The bevel field for the normal map, as in bake.rs: the surface
+	// direction toward the nearest sharp exterior edge, scaled by how near
+	// and sharp it is.
+	var bevel = 0.0;
+	var tilt = vec3<f32>(0.0, 0.0, 0.0);
 	for (var x = -1; x <= 1; x++) {
 		for (var y = -1; y <= 1; y++) {
 			for (var z = -1; z <= 1; z++) {
@@ -258,7 +271,10 @@ fn main(@builtin(global_invocation_id) id: vec3<u32>) {
 				for (var k = slot.start; k < slot.start + slot.count; k++) {
 					let surface = surfaces[items[k]];
 					let facing = surface.facing;
-					if dot(n, facing) >= params.min_cos {
+					let facing_dot = dot(n, facing);
+					let paints = facing_dot < params.min_cos;
+					let bevels = surface.mine != 0u && facing_dot < params.bevel_min_cos;
+					if !paints && !bevels {
 						continue;
 					}
 					let offset = p - closest_on_triangle(p, surface.a, surface.b, surface.c);
@@ -269,7 +285,21 @@ fn main(@builtin(global_invocation_id) id: vec3<u32>) {
 					if distance < 1e-6 || distance >= params.reach || !(front || behind) || dot(n, offset) > 0.3 * distance {
 						continue;
 					}
-					let fold = acos(clamp(dot(n, facing), -1.0, 1.0)) / PI;
+					let fold = acos(clamp(facing_dot, -1.0, 1.0)) / PI;
+					if behind && bevels && distance < params.bevel_reach {
+						let proximity = clamp((fold - params.bevel_fold) / (0.5 - params.bevel_fold), 0.0, 1.0) * (1.0 - distance / params.bevel_reach);
+						if proximity > bevel {
+							let toward = n * dot(n, offset) - offset;
+							let length = sqrt(dot(toward, toward));
+							if length > 1e-9 {
+								bevel = proximity;
+								tilt = toward * (proximity / length);
+							}
+						}
+					}
+					if !paints || distance >= params.paint_reach {
+						continue;
+					}
 					let sharpness = clamp((fold - CONTACT_MIN_FOLD) / (0.5 - CONTACT_MIN_FOLD), 0.0, 1.0);
 					let crease = normalize_or_up(cross(n, facing));
 					let along = dot(p, crease) + 1000.0;
@@ -278,7 +308,7 @@ fn main(@builtin(global_invocation_id) id: vec3<u32>) {
 					if behind && params.corner_taper > 0.0 {
 						taper = corner_taper(p, n, p - offset, surface.a, surface.b, surface.c, params.corner_taper);
 					}
-					let fade = params.reach * taper;
+					let fade = params.paint_reach * taper;
 					if distance >= fade {
 						continue;
 					}
@@ -299,5 +329,6 @@ fn main(@builtin(global_invocation_id) id: vec3<u32>) {
 			}
 		}
 	}
-	paint[index] = vec2<f32>(inward, outward);
+	paint[2u * index] = vec4<f32>(inward, outward, tilt.x, tilt.y);
+	paint[2u * index + 1u] = vec4<f32>(tilt.z, 0.0, 0.0, 0.0);
 }

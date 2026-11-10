@@ -76,7 +76,7 @@ class Layout:
 
 	@staticmethod
 	def textures_of(material):
-		slots = [material.get("pbrMetallicRoughness", {}).get("baseColorTexture"), material.get("emissiveTexture")]
+		slots = [material.get("pbrMetallicRoughness", {}).get("baseColorTexture"), material.get("emissiveTexture"), material.get("normalTexture")]
 		return [slot["index"] for slot in slots if slot]
 
 	def size_of(self, node):
@@ -128,7 +128,7 @@ class Layout:
 			primitive = json.loads(json.dumps(source["meshes"][node["mesh"]]["primitives"][0]))
 			material = json.loads(json.dumps(source["materials"][primitive["material"]]))
 			material["name"] = name
-			for slot in (material.get("pbrMetallicRoughness", {}).get("baseColorTexture"), material.get("emissiveTexture")):
+			for slot in (material.get("pbrMetallicRoughness", {}).get("baseColorTexture"), material.get("emissiveTexture"), material.get("normalTexture")):
 				if slot:
 					slot["index"] = texture(slot["index"])
 			out["materials"].append(material)

@@ -100,14 +100,52 @@ pub fn write(parts: &[Part], bones: &[Bone], clips: &[Clip]) -> Vec<u8> {
 				textures.len() - 1
 			}
 		};
+		// A part with a normal map carries it in the material's normal slot.
+		let normal = match part.image.borrow().encode_normal_png() {
+			None => String::new(),
+			Some(png) => {
+				let texture = match stored.get(&png) {
+					Some(&texture) => texture,
+					None => {
+						let view = push_view(&mut bin, &png, None);
+						images.push(format!("{{\"bufferView\":{view},\"mimeType\":\"image/png\"}}"));
+						textures.push(format!("{{\"source\":{}}}", images.len() - 1));
+						stored.insert(png, textures.len() - 1);
+						textures.len() - 1
+					}
+				};
+				format!(",\"normalTexture\":{{\"index\":{texture}}}")
+			}
+		};
+		// A baked roughness map goes in the metallic-roughness slot (green);
+		// without one the factor below stands.
+		let metal_rough = match part.image.borrow().encode_metal_rough_png() {
+			None => String::new(),
+			Some(png) => {
+				let texture = match stored.get(&png) {
+					Some(&texture) => texture,
+					None => {
+						let view = push_view(&mut bin, &png, None);
+						images.push(format!("{{\"bufferView\":{view},\"mimeType\":\"image/png\"}}"));
+						textures.push(format!("{{\"source\":{}}}", images.len() - 1));
+						stored.insert(png, textures.len() - 1);
+						textures.len() - 1
+					}
+				};
+				format!(",\"metallicRoughnessTexture\":{{\"index\":{texture}}}")
+			}
+		};
 		let glow = if part.emissive > 0.0 {
 			format!(",\"emissiveTexture\":{{\"index\":{texture}}},\"emissiveFactor\":[1,1,1],\"extensions\":{{\"KHR_materials_emissive_strength\":{{\"emissiveStrength\":{}}}}}", part.emissive)
 		} else { String::new() };
 		// A see-through part blends its texture's alpha and shows both sides.
 		let see_through = if part.image.borrow().alpha.is_some() { ",\"alphaMode\":\"BLEND\",\"doubleSided\":true" } else { "" };
 		materials.push(format!(
-			"{{\"name\":\"{}\",\"pbrMetallicRoughness\":{{\"baseColorTexture\":{{\"index\":{texture}}},\"metallicFactor\":0,\"roughnessFactor\":1}}{glow}{see_through}}}",
-			part.name
+			"{{\"name\":\"{}\",\"pbrMetallicRoughness\":{{\"baseColorTexture\":{{\"index\":{texture}}},\"metallicFactor\":{},\"roughnessFactor\":{}{metal_rough}}}{normal}{glow}{see_through}}}",
+			part.name,
+			// The factors multiply the texture, so with one they stand at 1.
+			if part.image.borrow().metalness.is_some() { 1.0 } else { 0.0 },
+			if metal_rough.is_empty() { crate::bake::roughness() } else { 1.0 }
 		));
 		meshes.push(format!(
 			"{{\"name\":\"{}\",\"primitives\":[{{\"attributes\":{{\"POSITION\":{},\"NORMAL\":{},\"TEXCOORD_0\":{}{skinning}}},\"indices\":{},\"material\":{index}}}]}}",
