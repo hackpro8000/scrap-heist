@@ -1,11 +1,14 @@
 # Keeps up to 20 shard machines warm (the account's limit), building each task posted with
 # scripts/send-build.sh as it arrives (scripts/standby.sh). One cold start,
-# then every task skips machine start, checkout and cache restore. Machines
-# stay up while tasks keep coming: each task restarts the idle countdown
-# (`minutes`, at most 60), and standby ends at `max_minutes` regardless (or
-# when the run is cancelled). Each machine saves its cache when it ends. The
-# defaults let machines idle for up to an hour between tasks, for at most
-# 5 hours in all.
+# then every task skips machine start and checkout. Machines stay up while
+# tasks keep coming: each task restarts the idle countdown (`minutes`, at
+# most 60), and standby ends at `max_minutes` regardless (or when the run is
+# cancelled). The defaults let machines idle for up to an hour between tasks,
+# for at most 5 hours in all.
+#
+# A machine starts with no build cache: a cold build has to be fast on its
+# own. The cache a machine fills while it is up only speeds up the tasks
+# that follow in the same run, and goes when the machine does.
 #
 # Given a coordinator address (scripts/standby-start.sh passes the one
 # scripts/coordinator.sh started), each machine keeps a live connection to
@@ -44,10 +47,6 @@ on:
       max_minutes:
         description: Most minutes standby stays up, tasks or not (1-300)
         default: "300"
-      cold:
-        description: Start without the saved build caches, so the first task builds from scratch
-        type: boolean
-        default: false
       coordinator:
         description: Coordinator address (ws:// on the tailnet, wss:// through a tunnel), machine-1 to host it on machine 1, or empty for the build-queue branch
         default: ""
@@ -71,7 +70,7 @@ jobs:
       ROBLOX_CREATOR_ID: ${{ secrets.ROBLOX_CREATOR_ID }}
     steps:
       # Tasks posted since this machine came up count, even ones posted while
-      # it was still checking out and restoring its cache.
+      # it was still checking out.
       - name: Note start time
         run: echo "STANDBY_SINCE=$(date +%s)" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
@@ -84,13 +83,6 @@ jobs:
             /art/models/*/model.luau
             /tools/modelkit/
             /tools/coordinator/
-      - name: Restore this shard's build cache
-        if: ${{ !inputs.cold }}
-        uses: actions/cache/restore@v4
-        with:
-          path: art/models/${{ inputs.layout }}/.cache
-          key: shard-cache-${{ inputs.layout }}-${{ inputs.shards }}-${{ matrix.shard }}-${{ github.run_id }}
-          restore-keys: shard-cache-${{ inputs.layout }}-${{ inputs.shards }}-${{ matrix.shard }}-
       - name: Join the tailnet
         if: ${{ startsWith(inputs.coordinator, 'ws://') || inputs.coordinator == 'machine-1' }}
         uses: tailscale/github-action@v3
@@ -119,9 +111,3 @@ jobs:
           else
             scripts/standby.sh "${{ inputs.layout }}" "${{ matrix.shard }}" "${{ inputs.shards }}" "$minutes" "$max_minutes"
           fi
-      - name: Save this shard's build cache
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: art/models/${{ inputs.layout }}/.cache
-          key: shard-cache-${{ inputs.layout }}-${{ inputs.shards }}-${{ matrix.shard }}-${{ github.run_id }}
