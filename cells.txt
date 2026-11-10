@@ -1,0 +1,37 @@
+bounds: 338,178,673,873
+A1: -
+B1: -
+C1: Elements 15%, Mast 12%
+D1: Elements 15%, Mast 8%
+E1: -
+F1: -
+A2: -
+B2: Elements 3%
+C2: Mast 23%, Elements 19%
+D2: Mast 13%, Elements 9%, Cable 7%
+E2: -
+F2: -
+A3: -
+B3: -
+C3: Mast 23%, Elements 12%
+D3: Mast 12%, Cable 8%, Elements 3%
+E3: -
+F3: -
+A4: -
+B4: Elements 10%
+C4: Mast 27%, Elements 22%
+D4: Mast 26%, Elements 12%, Cable 6%
+E4: Elements 9%
+F4: Elements 2%
+A5: -
+B5: Mast 9%, Tyre 3%
+C5: Mast 19%, Tyre 16%, Elements 5%, Fill 3%
+D5: Mast 26%, Tyre 15%, Elements 8%, Cable 8%, Fill 4%
+E5: Elements 6%, Mast 3%
+F5: -
+A6: Mast 8%
+B6: Tyre 13%, Mast 3%
+C6: Tyre 46%, Fill 8%
+D6: Tyre 45%, Fill 7%
+E6: Mast 14%, Elements 8%, Tyre 6%, Cable 2%
+F6: Elements 4%
