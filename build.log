@@ -1,0 +1,10 @@
+[    0.0s] running ScrapTreeSignpost/model.luau
+[   16.4s] baked every chunk this machine claimed
+[   21.3s] shaded Post 256×256 in 0.01s
+[   21.3s] shaded Clamps 256×256 in 0.01s
+[   21.3s] shaded WarningSigns 256×256 in 0.01s
+[   21.4s] shaded Footing 256×256 in 0.01s
+[   21.4s] shaded StreetSigns 256×256 in 0.01s
+[   21.4s] writing ScrapTreeSignpost.glb and 5 textures
+[   23.0s] rendering eye 1/2
+ScrapTreeSignpost: 5 parts, script 21.38s, total 23.36s
