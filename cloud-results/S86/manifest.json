@@ -1,0 +1,217 @@
+{
+	"assets": [
+		{
+			"id": "ebe755bbe0794b02",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 86/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1216236,
+			"sha": "ca4ef7d5cf799d57",
+			"parts": 16
+		},
+		{
+			"id": "44dff41c5cc64f21",
+			"key": "YardFence-0f1495cb71d18f3d 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceRight5",
+			"turn": 22.5,
+			"bytes": 395300,
+			"sha": "04f965f3f5437e0c",
+			"parts": 3
+		},
+		{
+			"id": "d8bcf0261700cdfe",
+			"key": "JunkrotTelefonoRingaling-4b5109d984d8517e 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotTelefonoRingaling",
+			"turn": 0.0,
+			"bytes": 947048,
+			"sha": "214a094147defb37",
+			"parts": 10
+		}
+	],
+	"placements": [
+		{
+			"asset": "ebe755bbe0794b02",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-2_-5_0_101",
+					"position": [
+						-72.80489299999999,
+						-26.233823,
+						290.14164500000004
+					]
+				},
+				{
+					"name": "Grass_2_3_0_110_111",
+					"position": [
+						183.22883000000002,
+						-16.229445,
+						-247.15629
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard1_FenceRight5",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						212.371375,
+						5.3468148499999995,
+						-36.03332
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard2_FenceRight4",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						119.9279,
+						5.3468148499999995,
+						-164.151825
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard3_FenceRight3",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-26.508753,
+						5.3468148499999995,
+						-189.377035
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard4_FenceRight2",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-141.157495,
+						5.3468148499999995,
+						-110.40333
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard5_FenceRight1",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-166.382705,
+						5.3468148499999995,
+						16.984187
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard5_FenceRight9",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-258.360045,
+						5.3468148499999995,
+						55.08245
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard6_FenceRight8",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-138.977025,
+						5.3468148499999995,
+						210.140505
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceRight7",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						45.557884,
+						5.3468148499999995,
+						235.36572
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard8_FenceRight6",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						187.146165,
+						5.3468148499999995,
+						129.452463
+					]
+				}
+			]
+		},
+		{
+			"asset": "d8bcf0261700cdfe",
+			"label": "Kit_JunkrotTelefonoRingaling",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Cord",
+					"position": [
+						48.943592,
+						-258.51282000000003,
+						-0.33306345
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						48.0085015,
+						-258.8904,
+						0.9152
+					]
+				}
+			]
+		}
+	]
+}
