@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "78f81997c099e49f",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 33/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1068052,
+			"sha": "8eeaaaa6fffced69",
+			"parts": 16
+		},
+		{
+			"id": "560de474a70b6fd5",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck2 65.8 129.2 0",
+			"piece": 1,
+			"label": "LoneWreck2",
+			"turn": 0.0,
+			"bytes": 53728,
+			"sha": "0286dabded0b3d3c",
+			"parts": 3
+		},
+		{
+			"id": "000e0637814e7f0b",
+			"key": "YardFence-0f1495cb71d18f3d 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FenceFront3",
+			"turn": 247.5,
+			"bytes": 393864,
+			"sha": "816036088e701b5b",
+			"parts": 3
+		},
+		{
+			"id": "905abbe537e32454",
+			"key": "JunkrotLaserlevelLineo-88f6e8b900d0d39c 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotLaserlevelLineo",
+			"turn": 0.0,
+			"bytes": 628692,
+			"sha": "b3498afd82718da1",
+			"parts": 9
+		}
+	],
+	"placements": [
+		{
+			"asset": "78f81997c099e49f",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_4_0_010",
+					"position": [
+						17.7997647,
+						-15.094909000000001,
+						-297.29893500000003
+					]
+				},
+				{
+					"name": "Grass_-3_-5_0_111",
+					"position": [
+						-144.69443,
+						-26.670801500000003,
+						276.484175
+					]
+				}
+			]
+		},
+		{
+			"asset": "560de474a70b6fd5",
+			"label": "LoneWreck2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						66.6,
+						2.03,
+						-129.85000000000002
+					]
+				},
+				{
+					"name": "SlabStone",
+					"position": [
+						68.01265000000001,
+						2.11059555,
+						-128.705905
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard8_FenceFront3",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						156.07352500000002,
+						5.3468148499999995,
+						25.676836
+					]
+				}
+			]
+		},
+		{
+			"asset": "905abbe537e32454",
+			"label": "Kit_JunkrotLaserlevelLineo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Beam",
+					"position": [
+						649.5799999999999,
+						-257.65000999999995,
+						0.0
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						648.008,
+						-257.55921,
+						0.5196000000000001
+					]
+				}
+			]
+		}
+	]
+}
