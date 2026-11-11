@@ -1,0 +1,217 @@
+{
+	"assets": [
+		{
+			"id": "7e1e49f676ec7397",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 69/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 909948,
+			"sha": "c29c60fdf89bde65",
+			"parts": 16
+		},
+		{
+			"id": "44dff41c5cc64f21",
+			"key": "YardFence-0f1495cb71d18f3d 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceLeft1",
+			"turn": 202.5,
+			"bytes": 395308,
+			"sha": "d1658f08360c0fe1",
+			"parts": 3
+		},
+		{
+			"id": "3e831889ce3b361b",
+			"key": "JunkrotCabloTanglino-04c0f0fc7777a73a 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotCabloTanglino",
+			"turn": 0.0,
+			"bytes": 877112,
+			"sha": "2d62cea8d5e784cf",
+			"parts": 8
+		}
+	],
+	"placements": [
+		{
+			"asset": "7e1e49f676ec7397",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_-2_0_010",
+					"position": [
+						-296.60652,
+						-15.958352999999999,
+						80.604603
+					]
+				},
+				{
+					"name": "Grass_4_-2_0_110_001",
+					"position": [
+						296.30249000000003,
+						-10.70971,
+						88.08776499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard1_FenceLeft1",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						129.66935999999998,
+						5.3468148499999995,
+						-105.6445925
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard1_FenceLeft9",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						221.646695,
+						5.3468148499999995,
+						-143.74286
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard2_FenceLeft8",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						50.323708499999995,
+						5.3468148499999995,
+						-246.87191
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard3_FenceLeft7",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-134.218295,
+						5.3468148499999995,
+						-198.652355
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard4_FenceLeft6",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-223.87758000000002,
+						5.3468148499999995,
+						-40.799143
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard5_FenceLeft5",
+			"turn": 382.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-175.658025,
+						5.3468148499999995,
+						124.69372000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard6_FenceLeft4",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-31.2745785,
+						5.3468148499999995,
+						200.88324
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceLeft3",
+			"turn": 472.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						115.169158,
+						5.3468148499999995,
+						152.66369
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard8_FenceLeft2",
+			"turn": 517.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						177.88889999999998,
+						5.3468148499999995,
+						21.750012499999997
+					]
+				}
+			]
+		},
+		{
+			"asset": "3e831889ce3b361b",
+			"label": "Kit_JunkrotCabloTanglino",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Prongs",
+					"position": [
+						-358.62343999999996,
+						-257.78485,
+						0.008849655000000001
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						-359.96813499999996,
+						-258.39948000000004,
+						0.9917500000000001
+					]
+				}
+			]
+		}
+	]
+}
