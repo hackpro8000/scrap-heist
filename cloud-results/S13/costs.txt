@@ -1,0 +1,21 @@
+MainIsland 1 x	3452.880
+MainIsland 1 x #split	1
+slab RoughShade1	0.011
+slab LoneWreck9	0.081
+slab LoneWreck9 #split	1
+YardFence 1 x x1.5	0.394
+YardFence 1 x x1.5 #split	1
+YardFooting 0.5 x x1.5	0.114
+YardFooting 0.5 x x1.5 #split	1
+YardGate 1 x x1.5	1.066
+YardGate 1 x x1.5 #split	1
+BeltCrossing 1 x	2.817
+BeltCrossing 1 x #split	1
+JunkrotCanettoRustini 1 x	1.529
+JunkrotCanettoRustini 1 x #split	1
+JunkrotClockoTictacco 1 x	2.944
+JunkrotClockoTictacco 1 x #split	1
+JunkrotPressurwashoSprizzo 1 x	2.951
+JunkrotPressurwashoSprizzo 1 x #split	1
+JunkrotDronettoBuzzatti 1 x	1.693
+JunkrotDronettoBuzzatti 1 x #split	1
