@@ -1,0 +1,22 @@
+MainIsland 1 x	2974.721
+MainIsland 1 x #split	1
+slab Rough6	2.667
+slab Rough6 #split	1
+slab LoneWreck1	0.347
+slab LoneWreck1 #split	1
+YardFence 1 x x1.5	0.415
+YardFence 1 x x1.5 #split	1
+YardFooting 1 x x1.5	0.121
+YardFooting 1 x x1.5 #split	1
+slab YardShade4	0.321
+CapsuleLoop 1 x	15.494
+CapsuleLoop 1 x #split	1
+CapsuleScrap 1 x	0.214
+CapsuleScrap 1 x #split	1
+JunkrotPannettoPatchato 1 x	1.590
+JunkrotPannettoPatchato 1 x #split	1
+JunkrotDrippiDroppi 1 x	17.425
+JunkrotDrippiDroppi 1 x #split	1
+JunkrotSockettoSeiSette 1 x	24.767
+JunkrotSockettoSeiSette 1 x #split	1
+JunkrotTheMonolito 1 x	0.128
