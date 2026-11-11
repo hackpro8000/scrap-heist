@@ -1,0 +1,114 @@
+{
+	"assets": [
+		{
+			"id": "67f4d79838ed0201",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 40/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1053892,
+			"sha": "48b78cd23fdec23e",
+			"parts": 17
+		},
+		{
+			"id": "5110873d0b318600",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck12 145 145 0",
+			"piece": 1,
+			"label": "LoneWreck12",
+			"turn": 0.0,
+			"bytes": 43964,
+			"sha": "78da05309bfb9f1a",
+			"parts": 2
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FootingFront5",
+			"turn": 247.5,
+			"bytes": 97780,
+			"sha": "703f7b9f8605c858",
+			"parts": 1
+		},
+		{
+			"id": "bb1d6a60c0aa4dd8",
+			"key": "JunkrotSpoonzoBentolo-eeca69727971cbb8 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotSpoonzoBentolo",
+			"turn": 0.0,
+			"bytes": 497096,
+			"sha": "067dd242868d7c76",
+			"parts": 5
+		}
+	],
+	"placements": [
+		{
+			"asset": "67f4d79838ed0201",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_1_3_-1_111_111",
+					"position": [
+						110.826905,
+						-47.835578999999996,
+						-246.312075
+					]
+				},
+				{
+					"name": "Grass_-1_-5_0_000_000",
+					"position": [
+						-57.048839,
+						-12.867808449999998,
+						305.25132
+					]
+				}
+			]
+		},
+		{
+			"asset": "5110873d0b318600",
+			"label": "LoneWreck12",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						143.925,
+						2.03,
+						-144.475
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingFront5",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						133.08517999999998,
+						2.266335,
+						81.1004125
+					]
+				}
+			]
+		},
+		{
+			"asset": "bb1d6a60c0aa4dd8",
+			"label": "Kit_JunkrotSpoonzoBentolo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Eyes",
+					"position": [
+						-503.99528,
+						-257.60527,
+						0.09548828649999999
+					]
+				}
+			]
+		}
+	]
+}
