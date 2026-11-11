@@ -1,0 +1,217 @@
+{
+	"assets": [
+		{
+			"id": "0df14429bcec1e5e",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 89/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 945564,
+			"sha": "3ed611a2ed7b96b6",
+			"parts": 16
+		},
+		{
+			"id": "44dff41c5cc64f21",
+			"key": "YardFence-0f1495cb71d18f3d 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceLeft6",
+			"turn": 202.5,
+			"bytes": 395304,
+			"sha": "d6337a42b9bfc51f",
+			"parts": 3
+		},
+		{
+			"id": "dfa401b75cc2b9e2",
+			"key": "JunkrotDrippiDroppi-c8b55e589d02ac9a 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotDrippiDroppi",
+			"turn": 0.0,
+			"bytes": 4648760,
+			"sha": "e7b3d4ecfbcd2ae0",
+			"parts": 29
+		}
+	],
+	"placements": [
+		{
+			"asset": "0df14429bcec1e5e",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Columns_3_-3_-1_110",
+					"position": [
+						250.23949499999998,
+						-71.96738450000001,
+						132.88076
+					]
+				},
+				{
+					"name": "Dirt_-4_3_0_001",
+					"position": [
+						-231.89224000000002,
+						-35.24402,
+						-197.047645
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard1_FenceLeft6",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						187.15519,
+						5.3468148499999995,
+						-129.456008
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard2_FenceLeft5",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						36.036861,
+						5.3468148499999995,
+						-212.380405
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard3_FenceLeft4",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-119.93144000000001,
+						5.3468148499999995,
+						-164.160855
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard4_FenceLeft3",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-189.38608,
+						5.3468148499999995,
+						-26.512296
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard5_FenceLeft2",
+			"turn": 382.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-141.166525,
+						5.3468148499999995,
+						110.406875
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard6_FenceLeft1",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-16.9877295,
+						5.3468148499999995,
+						166.39174000000003
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard6_FenceLeft9",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-55.085991,
+						5.3468148499999995,
+						258.369085
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceLeft8",
+			"turn": 472.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						138.980575,
+						5.3468148499999995,
+						210.14952499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard8_FenceLeft7",
+			"turn": 517.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						235.37473999999997,
+						5.3468148499999995,
+						45.561426
+					]
+				}
+			]
+		},
+		{
+			"asset": "dfa401b75cc2b9e2",
+			"label": "Kit_JunkrotDrippiDroppi",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "TailFan",
+					"position": [
+						117.890405,
+						-259.56890999999996,
+						0.005923669999999992
+					]
+				},
+				{
+					"name": "Whiskers",
+					"position": [
+						122.237023,
+						-258.35596,
+						-0.009650419999999993
+					]
+				}
+			]
+		}
+	]
+}
