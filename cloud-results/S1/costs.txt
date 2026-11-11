@@ -1,0 +1,11 @@
+MainIsland 1 x	3046.037
+MainIsland 1 x #split	1
+slab Plaza	8.262
+slab Plaza #split	1
+RockBoulderPile 1 x x2.2	0.537
+RockBoulderPile 1 x x2.2 #split	1
+slab LoneWreck13	0.440
+slab LoneWreck13 #split	1
+slab YardShade2	0.290
+slab Plot8	14.720
+slab Plot8 #split	1

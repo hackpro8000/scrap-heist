@@ -1,0 +1,196 @@
+{
+	"assets": [
+		{
+			"id": "70b7aa0c73508980",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 1/20",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 4728740,
+			"sha": "9afd81e84fdf10c2",
+			"parts": 82
+		},
+		{
+			"id": "fd9182ae81804ef6",
+			"key": "9edb366bcc5dfdf7-1140b5bda9dd140d Plaza 0 0 0",
+			"piece": 1,
+			"label": "Plaza",
+			"turn": 0.0,
+			"bytes": 4688960,
+			"sha": "3925dd1f5ff11015",
+			"parts": 4
+		},
+		{
+			"id": "ccd1d63e65cf9363",
+			"key": "RockBoulderPile-1d0940bd84bd2f34 1 x x2.2",
+			"piece": 1,
+			"label": "RoughScrap6",
+			"turn": 282.0,
+			"bytes": 467028,
+			"sha": "e43deb983f0390ab",
+			"parts": 4
+		},
+		{
+			"id": "ee624f034de204af",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck13 -145 145 0",
+			"piece": 1,
+			"label": "LoneWreck13",
+			"turn": 0.0,
+			"bytes": 67540,
+			"sha": "a55c7f20b441220e",
+			"parts": 3
+		},
+		{
+			"id": "d3c125222d1899ba",
+			"key": "9edb366bcc5dfdf7-4bed7244ea680ec2 YardShade2 80.36352079666887 194.0147018273702 -22.5",
+			"piece": 1,
+			"label": "YardShade2",
+			"turn": 0.0,
+			"bytes": 98160,
+			"sha": "4036d6ddf7b88811",
+			"parts": 1
+		},
+		{
+			"id": "7e16df8f83dc2808",
+			"key": "9edb366bcc5dfdf7-09a6759228b03a28 Plot8 194.01470182737023 -80.36352079666881 247.5",
+			"piece": 1,
+			"label": "Plot8",
+			"turn": 0.0,
+			"bytes": 12053548,
+			"sha": "82c432f822d00c64",
+			"parts": 40
+		}
+	],
+	"placements": [
+		{
+			"asset": "70b7aa0c73508980",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-4_-4_0_000",
+					"position": [
+						-223.754235,
+						-13.97281375,
+						226.69437
+					]
+				},
+				{
+					"name": "Grass_4_2_0_010",
+					"position": [
+						263.417155,
+						-11.435095,
+						-170.993085
+					]
+				}
+			]
+		},
+		{
+			"asset": "fd9182ae81804ef6",
+			"label": "Plaza",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Paving_-1_-1_0",
+					"position": [
+						-50.5,
+						2.05,
+						50.49999999999999
+					]
+				},
+				{
+					"name": "Paving_0_0_0",
+					"position": [
+						50.5,
+						2.05,
+						-50.5
+					]
+				}
+			]
+		},
+		{
+			"asset": "ccd1d63e65cf9363",
+			"label": "RoughScrap6",
+			"turn": 282.0,
+			"anchors": [
+				{
+					"name": "Drums",
+					"position": [
+						-232.36111499999998,
+						4.15931055,
+						-2.6653810499999997
+					]
+				},
+				{
+					"name": "Mound",
+					"position": [
+						-232.498185,
+						2.923164,
+						-2.10629815
+					]
+				}
+			]
+		},
+		{
+			"asset": "ee624f034de204af",
+			"label": "LoneWreck13",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pipe",
+					"position": [
+						-145.09815500000002,
+						2.643356,
+						-145.62531
+					]
+				},
+				{
+					"name": "PipeStone",
+					"position": [
+						-145.178725,
+						2.1470661,
+						-141.35505
+					]
+				}
+			]
+		},
+		{
+			"asset": "d3c125222d1899ba",
+			"label": "YardShade2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						80.363523,
+						2.03,
+						-194.01471
+					]
+				}
+			]
+		},
+		{
+			"asset": "7e16df8f83dc2808",
+			"label": "Plot8",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_-1_0_000",
+					"position": [
+						171.284465,
+						1.8649999999999998,
+						25.4878755
+					]
+				},
+				{
+					"name": "Ground_0_0_0_110",
+					"position": [
+						216.744945,
+						1.8649999999999998,
+						135.23916499999999
+					]
+				}
+			]
+		}
+	]
+}
