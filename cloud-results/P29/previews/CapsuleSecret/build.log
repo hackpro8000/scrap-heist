@@ -1,0 +1,15 @@
+engine: taken from the build-engine branch
+[    0.0s] running CapsuleSecret/model.luau
+[    0.1s] baking on CPU (no GPU)
+[    0.1s] shaded Slab 256×256 in 0.06s
+[    0.1s] writing CapsuleSecret.glb and 2 textures
+[    0.1s] rendering preview of 2 parts
+CapsuleSecret: 2 parts, script 145.34ms, total 2.15s
+  shade (creases, contact): 0.02s
+  coat: 0.02s
+  wear: 0.01s
+  combine: 0.00s
+  shade, surfaces, grid and texels: 0.01s
+  shade, neighbourhoods: 0.00s
+  shade, spreading over seams: 0.00s
+  coat, painting texels: 0.01s
