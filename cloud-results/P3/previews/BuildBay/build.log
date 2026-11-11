@@ -1,0 +1,63 @@
+engine: taken from the build-engine branch
+[    0.0s] running BuildBay/model.luau
+[    3.3s] baking on CPU (no GPU)
+[    3.7s] shaded Deck 1024×1024 in 1.94s
+[    5.1s] shaded Cradle 1024×1024 in 1.28s
+[    6.8s] shaded Clamp1 1024×1024 in 1.57s
+[    7.9s] shaded Pad1 1024×1024 in 1.06s
+[    9.2s] shaded Clamp2 1024×1024 in 1.21s
+[   10.2s] shaded Pad2 1024×1024 in 0.90s
+[   11.6s] shaded Clamp3 1024×1024 in 1.24s
+[   12.8s] shaded Pad3 1024×1024 in 1.08s
+[   13.8s] shaded Frame 1024×1024 in 1.02s
+[   16.0s] shaded Bands 1024×1024 in 1.97s
+[   16.9s] shaded Board 1024×1024 in 0.83s
+[   19.4s] shaded Tools 1024×1024 in 2.43s
+[   21.0s] shaded Panel 1024×1024 in 1.44s
+[   22.6s] shaded Arm 1024×1024 in 1.58s
+[   23.8s] shaded Posts 1024×1024 in 1.08s
+[   30.4s] shaded Crate 1024×1024 in 6.52s
+[   35.2s] shaded CrateHeap 1024×1024 in 4.69s
+[   41.2s] shaded CrateGear 1024×1024 in 5.82s
+[   44.7s] shaded CrateScrap 1024×1024 in 3.45s
+[   46.3s] shaded Drum 1024×1024 in 1.51s
+[   46.3s] writing BuildBay.glb and 22 textures
+[   47.0s] rendering preview of 22 parts
+[   54.8s] rendering eye 1/7
+[   55.6s] rendering eye 2/7
+[   56.3s] rendering eye 3/7
+[   57.1s] rendering eye 4/7
+[   57.9s] rendering eye 5/7
+[   59.5s] rendering eye 6/7
+[   61.6s] rendering eye 7/7
+BuildBay: 22 parts, script 46.33s, total 62.71s
+  shade (creases, contact): 19.45s
+  coat: 8.81s
+  wear: 2.10s
+  combine: 0.36s
+  shade, surfaces, grid and texels: 1.06s
+  shade, neighbourhoods: 0.46s
+  shade, spreading over seams: 0.35s
+  coat, painting texels: 0.83s
+#f23d3d Deck
+#85a5f2 Cradle
+#7bb32d Clamp1
+#b362a8 Pad1
+#3df2d4 Clamp2
+#f2c085 Pad2
+#4e2db3 Clamp3
+#66b362 Pad3
+#f23d79 Frame
+#85c9f2 Bands
+#a8b32d Board
+#a262b3 Tools
+#3df297 Panel
+#f29c85 Arm
+#2d38b3 Posts
+#80b362 PostLamps
+#f23db6 BackLamps
+#85eef2 Crate
+#b3912d CrateHeap
+#8762b3 CrateGear
+#3df25a CrateScrap
+#f28593 Drum
