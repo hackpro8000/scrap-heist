@@ -1,0 +1,105 @@
+{
+	"assets": [
+		{
+			"id": "a69f536600c5e09f",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 50/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 925488,
+			"sha": "c8b040262c98fd48",
+			"parts": 16
+		},
+		{
+			"id": "2931af611fc0a420",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck25 169.7 169.7 0",
+			"piece": 1,
+			"label": "LoneWreck25",
+			"turn": 0.0,
+			"bytes": 63732,
+			"sha": "7de686f0e9dba23d",
+			"parts": 3
+		},
+		{
+			"id": "7063474c8323e20a",
+			"key": "HubTinkerer-83364d2210b929bc 1 x",
+			"piece": 1,
+			"label": "Tinkerer",
+			"turn": 90.0,
+			"bytes": 8075168,
+			"sha": "fe69136b06b0f23e",
+			"parts": 22
+		}
+	],
+	"placements": [
+		{
+			"asset": "a69f536600c5e09f",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_2_0_111",
+					"position": [
+						-260.87998,
+						-26.2419115,
+						-166.49315
+					]
+				},
+				{
+					"name": "Grass_3_-3_0_100_101",
+					"position": [
+						243.01747,
+						-21.319302999999998,
+						179.415885
+					]
+				}
+			]
+		},
+		{
+			"asset": "2931af611fc0a420",
+			"label": "LoneWreck25",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pipe",
+					"position": [
+						169.601845,
+						2.643356,
+						-170.32531
+					]
+				},
+				{
+					"name": "PipeStone",
+					"position": [
+						169.79406,
+						2.1419335999999998,
+						-166.10361999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "7063474c8323e20a",
+			"label": "Tinkerer",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "PartsBins",
+					"position": [
+						-54.564774,
+						6.46167875,
+						-5.4049419
+					]
+				},
+				{
+					"name": "SignEmblem",
+					"position": [
+						-41.8,
+						9.522493,
+						0.0050000000000000044
+					]
+				}
+			]
+		}
+	]
+}
