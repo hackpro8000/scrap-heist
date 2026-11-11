@@ -1,0 +1,49 @@
+engine: taken from the build-engine branch
+[    0.0s] running HubBeacon/model.luau
+[    3.1s] baking on CPU (no GPU)
+[    3.5s] shaded Plinth 1024×1024 in 1.27s
+[    6.2s] shaded CrushedBlocks 1024×1024 in 2.51s
+[    6.7s] shaded SheetLayers 1024×1024 in 0.48s
+[    7.7s] shaded BaleStraps 1024×1024 in 0.96s
+[    8.6s] shaded PressedJunk 1024×1024 in 0.83s
+[    9.6s] shaded Mast 1024×1024 in 0.90s
+[   10.6s] shaded BigCog 1024×1024 in 0.89s
+[   12.1s] shaded CogBoss 1024×1024 in 1.35s
+[   12.7s] shaded Pipes 1024×1024 in 0.57s
+[   13.1s] shaded Cable 1024×1024 in 0.38s
+[   14.0s] shaded Fittings 1024×1024 in 0.90s
+[   15.6s] shaded Supplies 1024×1024 in 1.44s
+[   15.9s] shaded Cables 1024×1024 in 0.29s
+[   15.9s] writing HubBeacon.glb and 16 textures
+[   16.3s] rendering preview of 16 parts
+[   25.0s] rendering eye 1/6
+[   25.9s] rendering eye 2/6
+[   26.9s] rendering eye 3/6
+[   28.0s] rendering eye 4/6
+[   29.9s] rendering eye 5/6
+[   31.0s] rendering eye 6/6
+HubBeacon: 16 parts, script 15.87s, total 33.09s
+  shade (creases, contact): 4.33s
+  coat: 2.74s
+  wear: 1.34s
+  combine: 0.16s
+  shade, surfaces, grid and texels: 0.85s
+  shade, neighbourhoods: 0.74s
+  shade, spreading over seams: 0.19s
+  coat, painting texels: 0.27s
+#f23d3d Plinth
+#85a5f2 CrushedBlocks
+#7bb32d SheetLayers
+#b362a8 BaleStraps
+#3df2d4 PressedJunk
+#f2c085 Mast
+#4e2db3 BigCog
+#66b362 CogBoss
+#f23d79 BeaconLamp
+#85c9f2 Pipes
+#a8b32d Cable
+#a262b3 Fittings
+#3df297 Supplies
+#f29c85 Cables
+#2d38b3 Bulbs
+#80b362 Spotlights
