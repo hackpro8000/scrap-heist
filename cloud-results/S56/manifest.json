@@ -1,0 +1,162 @@
+{
+	"assets": [
+		{
+			"id": "ee60a0b6fb6c8a7b",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 56/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1056964,
+			"sha": "ff66771a30d228c4",
+			"parts": 17
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingBack2",
+			"turn": -67.5,
+			"bytes": 97780,
+			"sha": "dacc8182d086bb90",
+			"parts": 1
+		},
+		{
+			"id": "c17402070a8a7f35",
+			"key": "YardFooting-748247116a86686c 0.5 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingFrontHalf2",
+			"turn": -67.5,
+			"bytes": 108260,
+			"sha": "9e7f24623541d407",
+			"parts": 1
+		},
+		{
+			"id": "d3c125222d1899ba",
+			"key": "9edb366bcc5dfdf7-4bed7244ea680ec2 YardShade2 80.36352079666887 194.0147018273702 -22.5",
+			"piece": 1,
+			"label": "YardShade2",
+			"turn": 0.0,
+			"bytes": 98160,
+			"sha": "4036d6ddf7b88811",
+			"parts": 1
+		},
+		{
+			"id": "1dd22391a41a18f8",
+			"key": "JunkrotChimneyziniSpannerini-e593bb10d1d3d24f 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotChimneyziniSpannerini",
+			"turn": 0.0,
+			"bytes": 6127948,
+			"sha": "23eaec81bbe88cea",
+			"parts": 24
+		}
+	],
+	"placements": [
+		{
+			"asset": "ee60a0b6fb6c8a7b",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_-3_0_110_010",
+					"position": [
+						-283.41983500000003,
+						-11.5827573,
+						135.27348999999998
+					]
+				},
+				{
+					"name": "Grass_4_2_0_000_001",
+					"position": [
+						264.0,
+						2.0,
+						-136.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard1_FootingBack2",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						234.36572999999999,
+						2.266335,
+						-129.50949500000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard1_FootingFront2",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						133.18732,
+						2.266335,
+						-81.10567499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "c17402070a8a7f35",
+			"label": "Yard1_FootingFrontHalf2",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						159.56735,
+						2.266335,
+						-17.35650175
+					]
+				}
+			]
+		},
+		{
+			"asset": "d3c125222d1899ba",
+			"label": "YardShade2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						80.363523,
+						2.03,
+						-194.01471
+					]
+				}
+			]
+		},
+		{
+			"asset": "1dd22391a41a18f8",
+			"label": "Kit_JunkrotChimneyziniSpannerini",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Lips",
+					"position": [
+						432.88867500000003,
+						-257.05215499999997,
+						-0.002681799999999998
+					]
+				},
+				{
+					"name": "PeelOchre",
+					"position": [
+						431.83693,
+						-258.23049000000003,
+						-0.21715659999999998
+					]
+				}
+			]
+		}
+	]
+}
