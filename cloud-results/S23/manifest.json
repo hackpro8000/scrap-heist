@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "d31c7ad90c6b1cd6",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 23/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 877940,
+			"sha": "7de4175cb0635b5f",
+			"parts": 17
+		},
+		{
+			"id": "a51745ff4f10936e",
+			"key": "ScrapTreeSignpost-1c7a92632b33e8d4 1 x x1.4",
+			"piece": 1,
+			"label": "RoughScrap7",
+			"turn": 329.0,
+			"bytes": 497372,
+			"sha": "ee1515a1e5b259c7",
+			"parts": 5
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FootingBack3",
+			"turn": 247.5,
+			"bytes": 97776,
+			"sha": "47a45e184d68d933",
+			"parts": 1
+		},
+		{
+			"id": "c5e899de72fc18a2",
+			"key": "ScrapCrate-7ef72494de9eaaad 1 x",
+			"piece": 1,
+			"label": "Kit_Crate",
+			"turn": 0.0,
+			"bytes": 736088,
+			"sha": "a1cd62c244bd6ff5",
+			"parts": 5
+		}
+	],
+	"placements": [
+		{
+			"asset": "d31c7ad90c6b1cd6",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_-1_0_010_111",
+					"position": [
+						-295.977935,
+						-15.150791000000002,
+						7.5252152
+					]
+				},
+				{
+					"name": "Grass_4_0_0_100_110",
+					"position": [
+						317.11641,
+						-11.7427313,
+						-23.639155000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "a51745ff4f10936e",
+			"label": "RoughScrap7",
+			"turn": 329.0,
+			"anchors": [
+				{
+					"name": "StreetSigns",
+					"position": [
+						-103.025505,
+						11.262756249999999,
+						107.32422249999999
+					]
+				},
+				{
+					"name": "WarningSigns",
+					"position": [
+						-103.60475500000001,
+						11.00821925,
+						109.18877499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingBack3",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						252.63239,
+						2.266335,
+						85.158015
+					]
+				}
+			]
+		},
+		{
+			"asset": "c5e899de72fc18a2",
+			"label": "Kit_Crate",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Bands",
+					"position": [
+						-768.00623,
+						-257.8929,
+						-0.0017450000000001076
+					]
+				}
+			]
+		}
+	]
+}
