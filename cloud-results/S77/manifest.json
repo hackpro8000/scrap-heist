@@ -1,0 +1,217 @@
+{
+	"assets": [
+		{
+			"id": "af813c008c328c5b",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 77/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 971224,
+			"sha": "cbfbafc2598fd514",
+			"parts": 17
+		},
+		{
+			"id": "44dff41c5cc64f21",
+			"key": "YardFence-0f1495cb71d18f3d 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceLeft3",
+			"turn": 202.5,
+			"bytes": 395304,
+			"sha": "23af2f4652eee2c6",
+			"parts": 3
+		},
+		{
+			"id": "c7935805dc0f0cdf",
+			"key": "JunkrotRadioloFruscio-5a304189562f4bd0 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotRadioloFruscio",
+			"turn": 0.0,
+			"bytes": 852732,
+			"sha": "434cfe5404f55362",
+			"parts": 9
+		}
+	],
+	"placements": [
+		{
+			"asset": "af813c008c328c5b",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_-1_0_000_010",
+					"position": [
+						-305.116235,
+						-12.139365300000001,
+						40.463229999999996
+					]
+				},
+				{
+					"name": "Grass_4_1_0_100_111",
+					"position": [
+						306.33088499999997,
+						-13.482653800000001,
+						-88.633205
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard1_FenceLeft3",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						152.66369,
+						5.3468148499999995,
+						-115.169158
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard2_FenceLeft2",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						21.750012499999997,
+						5.3468148499999995,
+						-177.88889999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard3_FenceLeft1",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-105.6445925,
+						5.3468148499999995,
+						-129.66935999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard3_FenceLeft9",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-143.74286,
+						5.3468148499999995,
+						-221.646695
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard4_FenceLeft8",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-246.87191,
+						5.3468148499999995,
+						-50.323708499999995
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard5_FenceLeft7",
+			"turn": 382.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-198.652355,
+						5.3468148499999995,
+						134.218295
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard6_FenceLeft6",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-40.799143,
+						5.3468148499999995,
+						223.87758000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceLeft5",
+			"turn": 472.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						124.69372000000001,
+						5.3468148499999995,
+						175.658025
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard8_FenceLeft4",
+			"turn": 517.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						200.88324,
+						5.3468148499999995,
+						31.2745785
+					]
+				}
+			]
+		},
+		{
+			"asset": "c7935805dc0f0cdf",
+			"label": "Kit_JunkrotRadioloFruscio",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Aerial",
+					"position": [
+						-167.081605,
+						-257.53033500000004,
+						-0.043398651499999996
+					]
+				},
+				{
+					"name": "Keys",
+					"position": [
+						-168.40409,
+						-258.069625,
+						0.24231149000000002
+					]
+				}
+			]
+		}
+	]
+}

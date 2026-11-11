@@ -1,0 +1,6 @@
+MainIsland 1 x	2892.476
+MainIsland 1 x #split	1
+YardFence 1.037037037037037 x x1.5	0.335
+YardFence 1.037037037037037 x x1.5 #split	1
+JunkrotRadioloFruscio 1 x	3.579
+JunkrotRadioloFruscio 1 x #split	1
