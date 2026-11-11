@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "4d455dd7cff76e12",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 27/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1094100,
+			"sha": "27236d6d3caf5a15",
+			"parts": 16
+		},
+		{
+			"id": "8917d201056a02ab",
+			"key": "ScrapTreeAntenna-d1d8739b19b2b688 1 x x1.4",
+			"piece": 1,
+			"label": "RoughScrap9",
+			"turn": 423.0,
+			"bytes": 420392,
+			"sha": "4be104d4dbb7c88d",
+			"parts": 5
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FootingBack7",
+			"turn": 247.5,
+			"bytes": 97780,
+			"sha": "adff1cd9538422a0",
+			"parts": 1
+		},
+		{
+			"id": "95c78df2b4e9d77a",
+			"key": "CapsuleRefurbished-e292e1124d60e9c7 1 x",
+			"piece": 1,
+			"label": "Kit_CapsuleRefurbished",
+			"turn": 0.0,
+			"bytes": 456604,
+			"sha": "0f772468781a80d4",
+			"parts": 5
+		}
+	],
+	"placements": [
+		{
+			"asset": "4d455dd7cff76e12",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_1_4_0_010",
+					"position": [
+						78.61431350000001,
+						-16.5067265,
+						-293.17344
+					]
+				},
+				{
+					"name": "Grass_-2_-5_0_100_011",
+					"position": [
+						-88.125542,
+						-14.407772,
+						294.71628
+					]
+				}
+			]
+		},
+		{
+			"asset": "8917d201056a02ab",
+			"label": "RoughScrap9",
+			"turn": 423.0,
+			"anchors": [
+				{
+					"name": "Cable",
+					"position": [
+						2.0046959500000003,
+						9.3653867,
+						195.04953
+					]
+				},
+				{
+					"name": "Mast",
+					"position": [
+						1.4454090499999999,
+						9.67892765,
+						196.14058
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingBack7",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						234.26359000000002,
+						2.266335,
+						129.50423
+					]
+				}
+			]
+		},
+		{
+			"asset": "95c78df2b4e9d77a",
+			"label": "Kit_CapsuleRefurbished",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Box",
+					"position": [
+						-648.0017,
+						-259.401065,
+						-0.004411985000000007
+					]
+				}
+			]
+		}
+	]
+}
