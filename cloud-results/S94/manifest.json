@@ -1,0 +1,217 @@
+{
+	"assets": [
+		{
+			"id": "ae576e67db8e71cf",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 94/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1039112,
+			"sha": "5b0e4f43787316c7",
+			"parts": 17
+		},
+		{
+			"id": "44dff41c5cc64f21",
+			"key": "YardFence-0f1495cb71d18f3d 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceRight7",
+			"turn": 22.5,
+			"bytes": 395296,
+			"sha": "3e13e98aacf9419f",
+			"parts": 3
+		},
+		{
+			"id": "681f9e9df22425d0",
+			"key": "JunkrotLawnmowoRuggito-f25556e3f13e2d8a 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotLawnmowoRuggito",
+			"turn": 0.0,
+			"bytes": 900008,
+			"sha": "d2fb41d5eddde1d1",
+			"parts": 10
+		}
+	],
+	"placements": [
+		{
+			"asset": "ae576e67db8e71cf",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-5_0_-1_101_010",
+					"position": [
+						-285.93589999999995,
+						-41.64747800000001,
+						-27.297693000000002
+					]
+				},
+				{
+					"name": "Grass_4_-1_0_100_111",
+					"position": [
+						310.447115,
+						-11.112734,
+						40.7228315
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard1_FenceRight7",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						235.36572,
+						5.3468148499999995,
+						-45.557884
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard2_FenceRight6",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						129.452463,
+						5.3468148499999995,
+						-187.146165
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard3_FenceRight5",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-36.03332,
+						5.3468148499999995,
+						-212.371375
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard4_FenceRight4",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-164.151825,
+						5.3468148499999995,
+						-119.9279
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard5_FenceRight3",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-189.377035,
+						5.3468148499999995,
+						26.508753
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard6_FenceRight2",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-110.40333,
+						5.3468148499999995,
+						141.157495
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceRight1",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						16.984187,
+						5.3468148499999995,
+						166.382705
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceRight9",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						55.08245,
+						5.3468148499999995,
+						258.360045
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard8_FenceRight8",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						210.140505,
+						5.3468148499999995,
+						138.977025
+					]
+				}
+			]
+		},
+		{
+			"asset": "681f9e9df22425d0",
+			"label": "Kit_JunkrotLawnmowoRuggito",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Bag",
+					"position": [
+						240.023705,
+						-258.878815,
+						-1.24606917
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						240.009505,
+						-259.152805,
+						1.0564
+					]
+				}
+			]
+		}
+	]
+}
