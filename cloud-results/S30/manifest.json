@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "c45ef82e307e62f3",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 30/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 947672,
+			"sha": "15441d520c73427f",
+			"parts": 17
+		},
+		{
+			"id": "038441d38faee8a1",
+			"key": "ScrapTreeLamppost-06793a6d247e3d3e 1 x x1.3",
+			"piece": 1,
+			"label": "RoughScrap10",
+			"turn": 470.0,
+			"bytes": 546968,
+			"sha": "c1bc94b1a59d9331",
+			"parts": 4
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FootingFront1",
+			"turn": 247.5,
+			"bytes": 97832,
+			"sha": "f5ea05165a35dfdb",
+			"parts": 1
+		},
+		{
+			"id": "739d1ec162806198",
+			"key": "CapsulePrecision-a3651d8dc8702d33 1 x",
+			"piece": 1,
+			"label": "Kit_CapsulePrecision",
+			"turn": 0.0,
+			"bytes": 544728,
+			"sha": "a60383eb06ee60fb",
+			"parts": 4
+		}
+	],
+	"placements": [
+		{
+			"asset": "c45ef82e307e62f3",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-2_-5_0_011",
+					"position": [
+						-118.66457500000001,
+						-20.144564,
+						285.47882
+					]
+				},
+				{
+					"name": "Grass_2_3_0_100",
+					"position": [
+						176.0,
+						2.0,
+						-208.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "038441d38faee8a1",
+			"label": "RoughScrap10",
+			"turn": 470.0,
+			"anchors": [
+				{
+					"name": "Lamp",
+					"position": [
+						145.264315,
+						15.338000000000001,
+						147.861825
+					]
+				},
+				{
+					"name": "Rubble",
+					"position": [
+						146.175945,
+						2.6603606,
+						149.94191999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingFront1",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						146.861785,
+						2.266335,
+						47.840745999999996
+					]
+				}
+			]
+		},
+		{
+			"asset": "739d1ec162806198",
+			"label": "Kit_CapsulePrecision",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Clasps",
+					"position": [
+						-600.00515,
+						-258.54466,
+						1.03341805
+					]
+				},
+				{
+					"name": "Corners",
+					"position": [
+						-600.0038999999999,
+						-258.899565,
+						-0.007264300000000001
+					]
+				}
+			]
+		}
+	]
+}
