@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "cc0cb17165e93ff1",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 46/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1003348,
+			"sha": "17a61e7dabdfa9aa",
+			"parts": 17
+		},
+		{
+			"id": "8cddd09f5d6a0616",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck20 237 -37.5 0",
+			"piece": 1,
+			"label": "LoneWreck20",
+			"turn": 0.0,
+			"bytes": 53164,
+			"sha": "fd5b72b9868a2a30",
+			"parts": 3
+		},
+		{
+			"id": "11cf471fde41c435",
+			"key": "PlotMarker-d53896012ff9aa6c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_PlotMarker",
+			"turn": 247.5,
+			"bytes": 394084,
+			"sha": "976772f9ece4a26d",
+			"parts": 4
+		},
+		{
+			"id": "20a9d43954cc54c8",
+			"key": "JunkrotHolofonoShimmerra-c8acfed17ef29ada 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotHolofonoShimmerra",
+			"turn": 0.0,
+			"bytes": 672748,
+			"sha": "4049ae514f54d69a",
+			"parts": 8
+		}
+	],
+	"placements": [
+		{
+			"asset": "cc0cb17165e93ff1",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-4_3_0_110",
+					"position": [
+						-201.841375,
+						-8.322825,
+						-228.97078
+					]
+				},
+				{
+					"name": "Dirt_2_-4_-1_001",
+					"position": [
+						154.309105,
+						-47.155542499999996,
+						236.87424
+					]
+				}
+			]
+		},
+		{
+			"asset": "8cddd09f5d6a0616",
+			"label": "LoneWreck20",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						237.8,
+						2.03,
+						36.849999999999994
+					]
+				},
+				{
+					"name": "SlabStone",
+					"position": [
+						239.31179500000002,
+						2.1548982,
+						37.942675
+					]
+				}
+			]
+		},
+		{
+			"asset": "11cf471fde41c435",
+			"label": "Yard8_PlotMarker",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						136.664805,
+						3.717558,
+						66.2709975
+					]
+				}
+			]
+		},
+		{
+			"asset": "20a9d43954cc54c8",
+			"label": "Kit_JunkrotHolofonoShimmerra",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Cone",
+					"position": [
+						888.0,
+						-256.59000000000003,
+						0.0
+					]
+				}
+			]
+		}
+	]
+}
