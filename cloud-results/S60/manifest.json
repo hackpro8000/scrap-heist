@@ -1,0 +1,432 @@
+{
+	"assets": [
+		{
+			"id": "2bb142d2152cf6ee",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 60/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 939204,
+			"sha": "7c232683ba9358f0",
+			"parts": 17
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingBack4",
+			"turn": -67.5,
+			"bytes": 97780,
+			"sha": "cb74a7a72f8e0ba0",
+			"parts": 1
+		},
+		{
+			"id": "7b7a6cc4ddb0b567",
+			"key": "YardFenceHalf-66e102f35bc13698 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceFrontHalf1",
+			"turn": -67.5,
+			"bytes": 353516,
+			"sha": "f097b2fcdaf77657",
+			"parts": 3
+		},
+		{
+			"id": "3224365d7471ee9f",
+			"key": "9edb366bcc5dfdf7-4bed7244ea680ec2 YardShade6 -80.3635207966688 -194.01470182737023 157.5",
+			"piece": 1,
+			"label": "YardShade6",
+			"turn": 0.0,
+			"bytes": 98068,
+			"sha": "a653437456631bac",
+			"parts": 1
+		},
+		{
+			"id": "77cc97d2a826e54e",
+			"key": "JunkrotLaVacuumaSaturnita-f6a178ed91371ab2 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotLaVacuumaSaturnita",
+			"turn": 0.0,
+			"bytes": 6438732,
+			"sha": "0706f2d9f92d717a",
+			"parts": 36
+		}
+	],
+	"placements": [
+		{
+			"asset": "2bb142d2152cf6ee",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-3_2_-1_001",
+					"position": [
+						-193.63451500000002,
+						-47.777454,
+						-151.20327
+					]
+				},
+				{
+					"name": "Grass_4_-3_0_000",
+					"position": [
+						257.050975,
+						-13.35645675,
+						161.8199
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard1_FootingBack4",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						243.55013000000002,
+						2.266335,
+						-107.336385
+					]
+				}
+			]
+		},
+		{
+			"asset": "7b7a6cc4ddb0b567",
+			"label": "Yard1_FenceFrontHalf1",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						125.04888249999999,
+						5.33874635,
+						-100.496955
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingBack1",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						62.984905,
+						2.266335,
+						-261.81678999999997
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingBack3",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						85.158015,
+						2.266335,
+						-252.63239
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingBack8",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						140.59079,
+						2.266335,
+						-229.67139
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingFront4",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						70.013855,
+						2.266335,
+						-137.67738
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingBack2",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-129.50949500000002,
+						2.266335,
+						-234.36572999999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingBack7",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-74.07672500000001,
+						2.266335,
+						-257.326735
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingFront3",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-92.19222500000001,
+						2.266335,
+						-128.595125
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingFront6",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-25.672902999999998,
+						2.266335,
+						-156.14833
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard4_FootingBack2",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-257.224595,
+						2.266335,
+						-74.071455
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard4_FootingBack5",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-243.44799,
+						2.266335,
+						-107.331125
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard4_FootingBack8",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-229.67139,
+						2.266335,
+						-140.59079
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard4_FootingFront3",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-156.04619,
+						2.266335,
+						-25.667638
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard4_FootingFront6",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-128.49298,
+						2.266335,
+						-92.186965
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard5_FootingBack1",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-229.77353,
+						2.266335,
+						140.59605499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard5_FootingBack4",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-243.55013000000002,
+						2.266335,
+						107.336385
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard5_FootingBack7",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-257.326735,
+						2.266335,
+						74.07672500000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard5_FootingFront2",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-133.18732,
+						2.266335,
+						81.10567499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard5_FootingFront4",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-146.96393,
+						2.266335,
+						47.8460125
+					]
+				}
+			]
+		},
+		{
+			"asset": "7b7a6cc4ddb0b567",
+			"label": "Yard5_FenceFrontHalf2",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-159.490385,
+						5.33874635,
+						17.347797
+					]
+				}
+			]
+		},
+		{
+			"asset": "3224365d7471ee9f",
+			"label": "YardShade6",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-80.363523,
+						2.03,
+						194.01471
+					]
+				}
+			]
+		},
+		{
+			"asset": "77cc97d2a826e54e",
+			"label": "Kit_JunkrotLaVacuumaSaturnita",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Nostrils",
+					"position": [
+						913.844,
+						-257.757245,
+						0.0
+					]
+				},
+				{
+					"name": "RingBRASS",
+					"position": [
+						911.97605,
+						-257.44519,
+						0.006439100000000142
+					]
+				}
+			]
+		}
+	]
+}
