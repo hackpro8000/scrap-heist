@@ -1,0 +1,21 @@
+MainIsland 1 x	2131.254
+MainIsland 1 x #split	1
+slab Rough9	1.981
+slab Rough9 #split	1
+slab LoneWreck5	0.075
+slab LoneWreck5 #split	1
+YardFooting 1 x x1.5	0.070
+YardFooting 1 x x1.5 #split	1
+YardFenceHalf 1 x x1.5	0.212
+YardFenceHalf 1 x x1.5 #split	1
+slab YardShade6	0.157
+ProofToaster 1 x	0.147
+ProofToaster 1 x #split	1
+JunkrotSpoonzoBentolo 1 x	1.241
+JunkrotSpoonzoBentolo 1 x #split	1
+JunkrotFrostboxGelatone 1 x	1.831
+JunkrotFrostboxGelatone 1 x #split	1
+JunkrotConsoloJoypaddino 1 x	2.672
+JunkrotConsoloJoypaddino 1 x #split	1
+JunkrotTickworthPocketti 1 x	2.066
+JunkrotTickworthPocketti 1 x #split	1
