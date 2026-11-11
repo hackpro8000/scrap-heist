@@ -1,0 +1,22 @@
+MainIsland 1 x	2738.599
+MainIsland 1 x #split	1
+ScrapPalm 1 x x1.6	0.695
+ScrapPalm 1 x x1.6 #split	1
+slab LoneWreck16	0.294
+slab LoneWreck16 #split	1
+YardFooting 1 x x1.5	0.108
+YardFooting 1 x x1.5 #split	1
+RebirthPress 1 x	7.817
+RebirthPress 1 x #split	1
+YardFenceHalf 1 x x1.5	0.283
+YardFenceHalf 1 x x1.5 #split	1
+BeltCrossing 1 x	2.635
+BeltCrossing 1 x #split	1
+JunkrotKettlinaDentata 1 x	1.799
+JunkrotKettlinaDentata 1 x #split	1
+JunkrotMicrondoBippetto 1 x	6.838
+JunkrotMicrondoBippetto 1 x #split	1
+JunkrotSpeakeroneBoomba 1 x	1.910
+JunkrotSpeakeroneBoomba 1 x #split	1
+JunkrotHeadphonoBassimo 1 x	1.911
+JunkrotHeadphonoBassimo 1 x #split	1
