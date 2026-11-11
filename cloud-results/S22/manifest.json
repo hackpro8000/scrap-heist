@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "efde5ca5e3bc03d9",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 22/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 969204,
+			"sha": "33fa49b81d9a5abb",
+			"parts": 17
+		},
+		{
+			"id": "de7cb3b3708c7b3d",
+			"key": "9edb366bcc5dfdf7-dbd59378b4f53cfc RoughFoot6 -232.0545556037427 2.608778171764234 0",
+			"piece": 1,
+			"label": "RoughFoot6",
+			"turn": 0.0,
+			"bytes": 42484,
+			"sha": "dc82adecc20f12bf",
+			"parts": 1
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FootingBack2",
+			"turn": 247.5,
+			"bytes": 97776,
+			"sha": "de8cb287af13f4fa",
+			"parts": 1
+		},
+		{
+			"id": "8d57177dcfb3b67c",
+			"key": "PadGadget-1214f913043828d4 1 x x1.6666666666666667",
+			"piece": 1,
+			"label": "Kit_PadGadget",
+			"turn": 0.0,
+			"bytes": 360816,
+			"sha": "92a81901b69052fc",
+			"parts": 3
+		}
+	],
+	"placements": [
+		{
+			"asset": "efde5ca5e3bc03d9",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_3_-3_-1_111",
+					"position": [
+						250.553895,
+						-52.7736015,
+						148.83458000000002
+					]
+				},
+				{
+					"name": "Pebbles_-5_1_-1",
+					"position": [
+						-280.591875,
+						-40.849641500000004,
+						-101.8127475
+					]
+				}
+			]
+		},
+		{
+			"asset": "de7cb3b3708c7b3d",
+			"label": "RoughFoot6",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grit",
+					"position": [
+						-224.7828,
+						1.6019195,
+						-4.0275519
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingBack2",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						257.224595,
+						2.266335,
+						74.071455
+					]
+				}
+			]
+		},
+		{
+			"asset": "8d57177dcfb3b67c",
+			"label": "Kit_PadGadget",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Hardware",
+					"position": [
+						-816.0089250000001,
+						-259.074625,
+						-1.15015185
+					]
+				},
+				{
+					"name": "Plate",
+					"position": [
+						-816.011675,
+						-259.69101,
+						0.006314500000000223
+					]
+				}
+			]
+		}
+	]
+}
