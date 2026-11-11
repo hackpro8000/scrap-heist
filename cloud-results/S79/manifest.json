@@ -1,0 +1,217 @@
+{
+	"assets": [
+		{
+			"id": "088ee71a2cee91ce",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 79/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 992360,
+			"sha": "27ca55caaf02c067",
+			"parts": 16
+		},
+		{
+			"id": "551fd0b5691ee789",
+			"key": "YardFooting-748247116a86686c 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingLeft3",
+			"turn": 22.5,
+			"bytes": 95648,
+			"sha": "8c11526ba9aa7cf1",
+			"parts": 1
+		},
+		{
+			"id": "91b89dedb81d687e",
+			"key": "JunkrotClockoTictacco-8065f65a4b9f86a9 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotClockoTictacco",
+			"turn": 0.0,
+			"bytes": 781036,
+			"sha": "67ebb413c1e6d17d",
+			"parts": 8
+		}
+	],
+	"placements": [
+		{
+			"asset": "088ee71a2cee91ce",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_-2_0_001",
+					"position": [
+						-293.481565,
+						-20.904718499999998,
+						108.3599375
+					]
+				},
+				{
+					"name": "Pebbles_4_-1_-1",
+					"position": [
+						283.37156500000003,
+						-49.566252000000006,
+						59.7965485
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard1_FootingLeft3",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						152.65213,
+						2.266335,
+						-115.27741
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard2_FootingLeft2",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						21.7382425,
+						2.266335,
+						-177.88598000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard3_FootingLeft1",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-105.75284199999999,
+						2.266335,
+						-129.657795
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard3_FootingLeft9",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-143.85110500000002,
+						2.266335,
+						-221.63513999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard4_FootingLeft8",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-246.86899,
+						2.266335,
+						-50.3119385
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard5_FootingLeft7",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-198.640805,
+						2.266335,
+						134.32654000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard6_FootingLeft6",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-40.787377,
+						2.266335,
+						223.87464999999997
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard7_FootingLeft5",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						124.80197,
+						2.266335,
+						175.64647000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard8_FootingLeft4",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						200.88031999999998,
+						2.266335,
+						31.262809500000003
+					]
+				}
+			]
+		},
+		{
+			"asset": "91b89dedb81d687e",
+			"label": "Kit_JunkrotClockoTictacco",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Bells",
+					"position": [
+						-120.003815,
+						-258.210915,
+						-0.06624644999999998
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						-119.98671,
+						-258.06255999999996,
+						0.51515
+					]
+				}
+			]
+		}
+	]
+}
