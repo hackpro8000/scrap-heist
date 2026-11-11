@@ -1,0 +1,18 @@
+engine: taken from the build-engine branch
+[    0.0s] running RockBoulderPile/model.luau
+[    0.1s] baking on CPU (no GPU)
+[    0.2s] shaded Mound 256×256 in 0.11s
+[    0.3s] shaded Drums 256×256 in 0.13s
+[    0.5s] shaded Discs 256×256 in 0.22s
+[    0.7s] shaded Hubs 256×256 in 0.19s
+[    0.7s] writing RockBoulderPile.glb and 4 textures
+[    0.7s] rendering preview of 4 parts
+RockBoulderPile: 4 parts, script 711.76ms, total 1.55s
+  shade (creases, contact): 0.38s
+  coat: 0.10s
+  wear: 0.03s
+  combine: 0.00s
+  shade, surfaces, grid and texels: 0.01s
+  shade, neighbourhoods: 0.01s
+  shade, spreading over seams: 0.00s
+  coat, painting texels: 0.00s
