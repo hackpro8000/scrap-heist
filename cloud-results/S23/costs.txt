@@ -1,0 +1,18 @@
+MainIsland 1 x	2231.515
+MainIsland 1 x #split	1
+ScrapTreeSignpost 1 x x1.4	0.333
+ScrapTreeSignpost 1 x x1.4 #split	1
+slab LoneWreck22	0.233
+slab LoneWreck22 #split	1
+YardFence 1.037037037037037 x x1.5	0.264
+YardFence 1.037037037037037 x x1.5 #split	1
+slab Streets	4.256
+slab Streets #split	1
+CapsulePrototype 1 x	0.195
+CapsulePrototype 1 x #split	1
+JunkrotRadioloFruscio 1 x	3.307
+JunkrotRadioloFruscio 1 x #split	1
+JunkrotLawnmowoRuggito 1 x	1.633
+JunkrotLawnmowoRuggito 1 x #split	1
+JunkrotLaserlevelLineo 1 x	1.155
+JunkrotLaserlevelLineo 1 x #split	1
