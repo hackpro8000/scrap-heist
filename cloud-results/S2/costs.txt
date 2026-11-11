@@ -1,0 +1,11 @@
+MainIsland 1 x	2657.878
+MainIsland 1 x #split	1
+slab Rough1	4.991
+slab Rough1 #split	1
+ScrapTreeAntenna 1 x x1.4	0.308
+ScrapTreeAntenna 1 x x1.4 #split	1
+slab YardShade1	0.274
+YardFooting 1 x x1.5	0.160
+YardFooting 1 x x1.5 #split	1
+slab Plot8	14.781
+slab Plot8 #split	1
