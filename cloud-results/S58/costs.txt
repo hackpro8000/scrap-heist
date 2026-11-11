@@ -1,0 +1,8 @@
+MainIsland 1 x	3319.993
+MainIsland 1 x #split	1
+YardFooting 1 x x1.5	0.110
+YardFooting 1 x x1.5 #split	1
+YardGate 1 x x1.5	1.049
+YardGate 1 x x1.5 #split	1
+slab YardShade7	0.288
+JunkrotTheMonolito 1 x	0.130
