@@ -111,231 +111,83 @@ assemble ServerMap: slab at ServerMap.luau:569-576 (key 09a6759228b03a28)
 assemble ServerMap: slab at ServerMap.luau:578-596 (key 4bed7244ea680ec2)
 assemble ServerMap: slab at ServerMap.luau:606-610 (key 387e6895a6242efb)
 assemble ServerMap: slab at ServerMap.luau:647-796 (key 96d3b9c80baa686a)
-assemble ServerMap: wrote art/models/ServerMap/model.luau, 308706 lines, in 2s
-engine: taken from the build-engine branch
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 308706 lines, in 0s
 [    0.0s] running ServerMap/model.luau
-[    2.7s] building MainIsland 1 x part 13/25
-[    5.4s] baking on CPU (no GPU)
-MEM 823/16086 avail 15262 top 359MB modelkit-linux- cpu 16% of 4
-[    6.9s]   shaded Columns_0_2_-2_101 660×660 in 1.54s
-[    7.3s]   shaded Columns_-4_-4_-1_111 320×320 in 0.35s
-[   10.5s]   shaded Columns_-4_-4_0 708×708 in 3.13s
-[   14.5s]   shaded Columns_0_0_-2_111_000 660×660 in 4.00s
-[   15.6s]   shaded Columns_0_0_-2_111_101 464×464 in 0.99s
-MEM 1616/16086 avail 14469 top 1061MB modelkit-linux- cpu 58% of 4
-[   24.0s]   shaded Columns_-1_-3_-1_101 932×932 in 8.39s
-[   25.0s]   shaded Columns_-1_-3_-1_001_110 496×496 in 0.96s
-[   25.1s]   shaded Columns_-2_-1_-2_000_101 20×20 in 0.05s
-MEM 2152/16086 avail 13933 top 1603MB modelkit-linux- cpu 54% of 4
-[   27.1s]   shaded Columns_-3_-1_-2_011 732×732 in 1.97s
-[   28.1s]   shaded Columns_-1_1_-2_110_011 724×724 in 1.01s
-[   34.5s]   shaded Columns_-1_0_-2_010 920×920 in 6.24s
-[   34.9s]   shaded Columns_-1_0_-2_001_111 364×364 in 0.39s
-MEM 2896/16086 avail 13189 top 2245MB modelkit-linux- cpu 54% of 4
-[   38.0s]   shaded Columns_-2_-4_-1_010_100_100 1024×1024 in 3.08s
-[   40.3s]   shaded Columns_-1_2_-1_110 844×844 in 2.20s
-[   41.2s]   shaded Columns_-1_-2_-2_010_001 560×560 in 0.90s
-MEM 3476/16086 avail 12609 top 2848MB modelkit-linux- cpu 53% of 4
-[   53.2s]   shaded Columns_-2_0_-1 944×944 in 11.80s
-[   53.9s]   shaded Columns_1_0_-1_111 528×528 in 0.73s
-[   56.0s]   shaded Columns_-1_-1_-2_001 632×632 in 2.01s
-MEM 3694/16086 avail 12391 top 3050MB modelkit-linux- cpu 47% of 4
-[   58.5s]   shaded Columns_-1_-1_-2_000 764×764 in 2.46s
-[   63.2s]   shaded Columns_-2_-2_-1_101 796×796 in 4.61s
-MEM 3904/16086 avail 12181 top 3273MB modelkit-linux- cpu 51% of 4
-[   66.6s]   shaded Columns_0_3_-1_000 772×772 in 3.33s
-[   70.1s]   shaded Dirt_3_1_-1_110 860×860 in 3.39s
-[   71.1s]   shaded Dirt_2_0_0 608×608 in 0.89s
-[   72.6s]   shaded Dirt_0_-5_0_101 592×592 in 1.42s
-[   72.7s]   shaded Dirt_1_-4_0 196×196 in 0.13s
-[   73.1s]   shaded Dirt_3_-3_-1_111 320×320 in 0.38s
-[   74.8s]   shaded Dirt_-1_4_0_110 604×604 in 1.64s
-[   76.1s]   shaded Dirt_-2_4_0_100 568×568 in 1.26s
-MEM 4252/16086 avail 11833 top 3615MB modelkit-linux- cpu 54% of 4
-[   76.6s]   shaded Dirt_-3_3_-1_010 296×296 in 0.41s
-[   86.3s]   shaded Dirt_-2_3_-1_011_111 1024×1024 in 9.56s
-MEM 5024/16086 avail 11061 top 4340MB modelkit-linux- cpu 51% of 4
-[   87.7s]   shaded Dirt_-2_-5_0_010 704×704 in 1.38s
-[   88.6s]   shaded Dirt_0_-4_-1_001 576×576 in 0.87s
-[   89.5s]   shaded Dirt_-2_-4_-1_101_110 584×584 in 0.82s
-[   91.8s]   shaded Dirt_1_2_-1_101_001 804×804 in 2.32s
-[   92.7s]   shaded Dirt_1_-1_-1_101 464×464 in 0.87s
-[   96.2s]   shaded Dirt_-3_-3_-1_001_000 868×868 in 3.47s
-MEM 5598/16086 avail 10487 top 4879MB modelkit-linux- cpu 56% of 4
-[   97.0s]   shaded Dirt_4_2_0_010 400×400 in 0.72s
-[   97.8s]   shaded Dirt_-4_2_0_010 416×416 in 0.79s
-[   97.9s]   shaded Dirt_0_-4_0 188×188 in 0.11s
-[  102.6s]   shaded Dirt_-1_-3_-1_010_110_000 836×836 in 4.59s
-[  104.4s]   shaded Dirt_1_-2_-1_010_011 680×680 in 1.87s
-[  104.7s]   shaded Dirt_-2_-2_-1_100_100 232×232 in 0.19s
-MEM 6176/16086 avail 9909 top 5491MB modelkit-linux- cpu 60% of 4
-[  112.4s]   shaded Dirt_1_-3_-1_010 1000×1000 in 7.62s
-MEM 6893/16086 avail 9192 top 6206MB modelkit-linux- cpu 55% of 4
-[  119.4s]   shaded Dirt_-4_1_-1_110 1024×1024 in 6.83s
-[  121.2s]   shaded Dirt_-2_1_-1_001_010 892×892 in 1.76s
-[  123.7s]   shaded Dirt_-2_1_-1_001_000 1004×1004 in 2.50s
-[  123.8s]   shaded Dirt_-2_1_-2_001 104×104 in 0.11s
-MEM 7507/16086 avail 8578 top 6690MB modelkit-linux- cpu 58% of 4
-[  129.0s]   shaded Dirt_3_-4_0_011 960×960 in 5.15s
-[  130.5s]   shaded Dirt_-4_3_-1_101 496×496 in 1.48s
-[  130.7s]   shaded Pebbles_3_-3_-1 272×272 in 0.19s
-[  130.8s]   shaded Pebbles_-4_2_-1 100×100 in 0.13s
-[  131.7s]   shaded Grass_4_-1_0_100_111 520×520 in 0.86s
-[  132.0s]   shaded Grass_1_-5_0_100 388×388 in 0.22s
-[  132.2s]   shaded Grass_-4_-4_0_010_001 360×360 in 0.23s
-[  133.6s]   shaded Grass_-4_-4_0_010_011 632×632 in 1.33s
-[  134.1s]   shaded Grass_-5_0_0_010_100 436×436 in 0.55s
-[  135.0s]   shaded Grass_-3_3_0_000 540×540 in 0.75s
-[  135.4s]   shaded Grass_-1_4_0_110_111 336×336 in 0.37s
-[  135.5s]   shaded Grass_2_4_0_000_111 164×164 in 0.10s
-[  136.1s]   shaded Grass_2_3_0_000 556×556 in 0.57s
-MEM 8144/16086 avail 7941 top 6944MB modelkit-linux- cpu 52% of 4
-[  136.8s]   shaded Grass_4_1_0_100_111 424×424 in 0.67s
-[  137.5s]   shaded Grass_4_0_0_110_110 516×516 in 0.68s
-[  137.7s]   shaded Grass_4_0_0_110_011 272×272 in 0.15s
-[  138.3s]   shaded Grass_-2_-2_0_000 540×540 in 0.46s
-[  140.2s]   shaded Grass_1_-1_0 976×976 in 1.69s
-[  140.8s]   shaded Grass_2_2_0_100 540×540 in 0.47s
-[  140.8s] built MainIsland 1 x part 13/25: 66 parts in 138.1s
-[  141.3s] building RoughShade1 153.51991531171436 2.1090525560218367 0
-[  141.3s] built RoughShade1 153.51991531171436 2.1090525560218367 0: 1 parts in 0.0s
-[  141.3s] building LoneWreck9 137.9 -44.8 0
-[  141.3s]   shaded Tyre 92×92 in 0.04s
-[  141.3s] built LoneWreck9 137.9 -44.8 0: 2 parts in 0.1s
-[  141.3s] building YardFence 1 x x1.5
-[  141.5s]   shaded Posts 256×256 in 0.08s
-[  141.6s]   shaded Sheets 256×256 in 0.14s
-[  141.7s]   shaded Fittings 256×256 in 0.13s
-[  141.7s] built YardFence 1 x x1.5: 3 parts in 0.4s
-[  141.7s] cached YardFence 1 x x1.5
-[  141.7s] cached YardFence 1 x x1.5
-[  141.8s] cached YardFence 1 x x1.5
-[  141.8s] building YardFooting 0.5 x x1.5
-[  141.9s]   shaded Footing 256×256 in 0.10s
-[  141.9s] built YardFooting 0.5 x x1.5: 1 parts in 0.1s
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFooting 0.5 x x1.5
-[  141.9s] cached YardFooting 0.5 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFooting 0.5 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFooting 0.5 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFooting 0.5 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFooting 0.5 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFooting 0.5 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFooting 0.5 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFooting 0.5 x x1.5
-[  141.9s] cached YardFence 1 x x1.5
-[  141.9s] cached YardFooting 0.5 x x1.5
-[  141.9s] building YardGate 1 x x1.5
-[  142.0s]   shaded Frame 256×256 in 0.08s
-[  142.6s]   shaded Doors 1024×1024 in 0.57s
-[  142.9s]   shaded Padlock 256×256 in 0.23s
-[  143.0s]   shaded Hardware 256×256 in 0.10s
-[  143.0s] built YardGate 1 x x1.5: 4 parts in 1.1s
-[  143.0s] cached YardGate 1 x x1.5
-[  143.0s] building BeltCrossing 1 x
-[  143.8s]   shaded Span 636×636 in 0.69s
-[  144.7s]   shaded Stairs 1024×1024 in 0.81s
-[  145.2s]   shaded Railings 1024×1024 in 0.48s
-[  145.5s]   shaded Legs 664×664 in 0.33s
-[  145.8s]   shaded Fittings 544×544 in 0.28s
-[  145.8s]   shaded WarningSign 112×112 in 0.02s
-[  145.8s] built BeltCrossing 1 x: 7 parts in 2.8s
-[  145.9s] building JunkrotCanettoRustini 1 x
-[  146.1s]   shaded Can 256×256 in 0.17s
-[  146.2s]   shaded Label 256×256 in 0.13s
-[  146.3s]   shaded Lid 256×256 in 0.05s
-MEM 8456/16086 avail 7629 top 7168MB modelkit-linux- cpu 50% of 4
-[  146.7s]   shaded Eyes 256×256 in 0.46s
-[  147.2s]   shaded Pupils 256×256 in 0.50s
-[  147.4s]   shaded Legs 256×256 in 0.15s
-[  147.4s] built JunkrotCanettoRustini 1 x: 6 parts in 1.5s
-[  147.4s] building JunkrotClockoTictacco 1 x
-[  147.6s]   shaded Case 256×256 in 0.17s
-[  147.9s]   shaded Dial 256×256 in 0.21s
-[  147.9s]   shaded Hands 256×256 in 0.08s
-[  148.0s]   shaded Bells 256×256 in 0.08s
-[  149.1s]   shaded Marks 256×256 in 1.06s
-[  149.7s]   shaded Eyes 256×256 in 0.60s
-[  150.2s]   shaded Pupils 256×256 in 0.48s
-[  150.3s]   shaded Legs 256×256 in 0.16s
-[  150.3s] built JunkrotClockoTictacco 1 x: 8 parts in 2.9s
-[  150.4s] building JunkrotPressurwashoSprizzo 1 x
-[  150.6s]   shaded Body 256×256 in 0.15s
-[  150.7s]   shaded Wheels 256×256 in 0.09s
-[  151.1s]   shaded Hose 256×256 in 0.39s
-[  151.1s]   shaded Lance 256×256 in 0.07s
-[  151.5s]   shaded Badge 256×256 in 0.36s
-[  151.9s]   shaded Gauge 256×256 in 0.42s
-[  152.2s]   shaded GaugeRim 256×256 in 0.33s
-[  152.7s]   shaded Eyes 256×256 in 0.46s
-[  153.1s]   shaded Pupils 256×256 in 0.43s
-[  153.3s]   shaded Legs 256×256 in 0.16s
-[  153.3s] built JunkrotPressurwashoSprizzo 1 x: 10 parts in 3.0s
-[  153.3s] building JunkrotDronettoBuzzatti 1 x
-[  153.5s]   shaded Body 256×256 in 0.09s
-[  153.7s]   shaded Rotors 256×256 in 0.19s
-[  153.9s]   shaded Camera 256×256 in 0.13s
-[  153.9s]   shaded Guards 256×256 in 0.05s
-[  154.4s]   shaded Eyes 256×256 in 0.47s
-[  154.9s]   shaded Pupils 256×256 in 0.47s
-[  155.0s]   shaded Legs 256×256 in 0.15s
-[  155.0s] built JunkrotDronettoBuzzatti 1 x: 9 parts in 1.7s
-[  155.0s] writing ServerMap.glb and 233 textures
-ServerMap: 233 parts, script 155.02s, total 155.99s
-  shade (creases, contact): 82.95s
-  coat: 59.12s
-  wear: 11.03s
-  combine: 0.42s
-  shade, surfaces, grid and texels: 20.91s
-  shade, neighbourhoods: 6.20s
-  shade, spreading over seams: 11.07s
-  coat, painting texels: 1.64s
+[    2.8s] cached MainIsland 1 x part 13/25
+[    2.8s] cached RoughShade1 153.51991531171436 2.1090525560218367 0
+[    2.8s] cached LoneWreck9 137.9 -44.8 0
+[    2.8s] cached YardFence 1 x x1.5
+[    2.8s] cached YardFence 1 x x1.5
+[    2.8s] cached YardFence 1 x x1.5
+[    2.8s] cached YardFence 1 x x1.5
+[    2.8s] cached YardFooting 0.5 x x1.5
+[    2.8s] cached YardFence 1 x x1.5
+[    2.8s] cached YardFooting 0.5 x x1.5
+[    2.8s] cached YardFooting 0.5 x x1.5
+[    2.8s] cached YardFence 1 x x1.5
+[    2.8s] cached YardFence 1 x x1.5
+[    2.8s] cached YardFence 1 x x1.5
+[    2.8s] cached YardFooting 0.5 x x1.5
+[    2.8s] cached YardFence 1 x x1.5
+[    2.8s] cached YardFooting 0.5 x x1.5
+[    2.8s] cached YardFence 1 x x1.5
+[    2.8s] cached YardFence 1 x x1.5
+[    2.8s] cached YardFence 1 x x1.5
+[    2.8s] cached YardFence 1 x x1.5
+[    2.8s] cached YardFence 1 x x1.5
+[    2.8s] cached YardFooting 0.5 x x1.5
+[    2.8s] cached YardFence 1 x x1.5
+[    2.8s] cached YardFooting 0.5 x x1.5
+[    2.8s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFooting 0.5 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFooting 0.5 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFooting 0.5 x x1.5
+[    2.9s] cached YardFence 1 x x1.5
+[    2.9s] cached YardFooting 0.5 x x1.5
+[    2.9s] cached YardGate 1 x x1.5
+[    2.9s] cached YardGate 1 x x1.5
+[    3.0s] cached BeltCrossing 1 x
+[    3.0s] cached JunkrotCanettoRustini 1 x
+[    3.0s] cached JunkrotClockoTictacco 1 x
+[    3.0s] cached JunkrotPressurwashoSprizzo 1 x
+[    3.0s] cached JunkrotDronettoBuzzatti 1 x
+MEM 1125/16086 avail 14960 top 541MB modelkit-linux- cpu 47% of 4
+[   10.5s] writing ServerMap.glb and 233 textures
+ServerMap: 233 parts, script 10.48s, total 11.51s
+  shade (creases, contact): 0.00s
+  coat: 0.00s
+  wear: 0.00s
+  combine: 0.00s
+  shade, surfaces, grid and texels: 0.00s
+  shade, neighbourhoods: 0.00s
+  shade, spreading over seams: 0.00s
+  coat, painting texels: 0.00s
 PLACED	Island	0	MainIsland-660b6fd7604d9003 1 x part 13/25
-SHARD_COST	MainIsland 1 x	3452.880
-SHARD_COST	MainIsland 1 x #split	1
 PLACED	RoughShade1	0	9edb366bcc5dfdf7-1439853d85f21bad RoughShade1 153.51991531171436 2.1090525560218367 0
-SHARD_COST	slab RoughShade1	0.011
 PLACED	LoneWreck9	0	9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck9 137.9 -44.8 0
-SHARD_COST	slab LoneWreck9	0.081
-SHARD_COST	slab LoneWreck9 #split	1
 PLACED	Yard1_FenceBack6	112.5	YardFence-0f1495cb71d18f3d 1 x x1.5
-SHARD_COST	YardFence 1 x x1.5	0.394
-SHARD_COST	YardFence 1 x x1.5 #split	1
 PLACED	Yard1_FenceFront6	-67.5	YardFence-0f1495cb71d18f3d 1 x x1.5
 PLACED	Yard2_FenceBack6	157.5	YardFence-0f1495cb71d18f3d 1 x x1.5
 PLACED	Yard2_FenceFront3	-22.5	YardFence-0f1495cb71d18f3d 1 x x1.5
 PLACED	Yard2_FootingFrontHalf2	-22.5	YardFooting-748247116a86686c 0.5 x x1.5
-SHARD_COST	YardFooting 0.5 x x1.5	0.114
-SHARD_COST	YardFooting 0.5 x x1.5 #split	1
 PLACED	Yard3_FenceBack8	202.5	YardFence-0f1495cb71d18f3d 1 x x1.5
 PLACED	Yard3_FootingFrontHalf1	22.5	YardFooting-748247116a86686c 0.5 x x1.5
 PLACED	Yard3_FootingFrontHalf2	22.5	YardFooting-748247116a86686c 0.5 x x1.5
@@ -378,22 +230,10 @@ PLACED	Yard7_FootingFrontHalf1	202.5	YardFooting-748247116a86686c 0.5 x x1.5
 PLACED	Yard7_FenceFront5	202.5	YardFence-0f1495cb71d18f3d 1 x x1.5
 PLACED	Yard7_FootingFrontHalf2	202.5	YardFooting-748247116a86686c 0.5 x x1.5
 PLACED	Yard7_Gate	202.5	YardGate-06ec41d82d9efa42 1 x x1.5
-SHARD_COST	YardGate 1 x x1.5	1.066
-SHARD_COST	YardGate 1 x x1.5 #split	1
 PLACED	Yard8_Gate	247.5	YardGate-06ec41d82d9efa42 1 x x1.5
 PLACED	Crossing7	292.5	BeltCrossing-416bf52bbd2f57b6 1 x
-SHARD_COST	BeltCrossing 1 x	2.817
-SHARD_COST	BeltCrossing 1 x #split	1
 PLACED	Kit_JunkrotCanettoRustini	0	JunkrotCanettoRustini-897a691198a3ca1e 1 x
-SHARD_COST	JunkrotCanettoRustini 1 x	1.529
-SHARD_COST	JunkrotCanettoRustini 1 x #split	1
 PLACED	Kit_JunkrotClockoTictacco	0	JunkrotClockoTictacco-8065f65a4b9f86a9 1 x
-SHARD_COST	JunkrotClockoTictacco 1 x	2.944
-SHARD_COST	JunkrotClockoTictacco 1 x #split	1
 PLACED	Kit_JunkrotPressurwashoSprizzo	0	JunkrotPressurwashoSprizzo-a767ef79c103bbc6 1 x
-SHARD_COST	JunkrotPressurwashoSprizzo 1 x	2.951
-SHARD_COST	JunkrotPressurwashoSprizzo 1 x #split	1
 PLACED	Kit_JunkrotDronettoBuzzatti	0	JunkrotDronettoBuzzatti-4f3c4ffa1b256eee 1 x
-SHARD_COST	JunkrotDronettoBuzzatti 1 x	1.693
-SHARD_COST	JunkrotDronettoBuzzatti 1 x #split	1
 export ServerMap: 11 objects (11.6 MB) for 56 placements
