@@ -19,8 +19,12 @@
 # With coordinator=machine-1 (scripts/standby-start.sh --on-machine, for a
 # session that can't connect out), machine 1 runs the coordinator and does
 # the uploads itself, reached by the others over the tailnet, and takes
-# tasks from the build-queue branch. Without one, machines wait on the
-# build-queue branch (scripts/standby.sh).
+# tasks from the build-queue branch. Without TS_AUTHKEY, machine 1 opens a
+# Cloudflare quick tunnel to each of its ports instead, publishes both as
+# address.json on build-results/coordinator-address, and its control port
+# admits only the session that signs with the `control_key` input's key.
+# Without a coordinator, machines wait on the build-queue branch
+# (scripts/standby.sh).
 #
 #   scripts/standby-start.sh 20
 #   gh workflow run build-standby.yml -f ref=wip/coordinator -f shards=20
@@ -50,8 +54,12 @@ on:
       coordinator:
         description: Coordinator address (ws:// on the tailnet, wss:// through a tunnel), machine-1 to host it on machine 1, or empty for the build-queue branch
         default: ""
+      control_key:
+        description: With machine-1 and no TS_AUTHKEY, the public key the control port admits (scripts/coordinator.sh key); public, not a secret
+        default: ""
 
 permissions:
+  # Pushes results and build-results/coordinator-address.
   contents: write
   # The identity token a machine shows the coordinator.
   id-token: write
@@ -68,6 +76,8 @@ jobs:
       MODELKIT_PRUNE: "1"
       ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
       ROBLOX_CREATOR_ID: ${{ secrets.ROBLOX_CREATOR_ID }}
+      # Secrets can't be read in `if`; this says whether the tailnet is there.
+      HAS_TAILNET: ${{ secrets.TS_AUTHKEY != '' && 'yes' || 'no' }}
     steps:
       # Tasks posted since this machine came up count, even ones posted while
       # it was still checking out.
@@ -84,7 +94,7 @@ jobs:
             /tools/modelkit/
             /tools/coordinator/
       - name: Join the tailnet
-        if: ${{ startsWith(inputs.coordinator, 'ws://') || inputs.coordinator == 'machine-1' }}
+        if: ${{ env.HAS_TAILNET == 'yes' && (startsWith(inputs.coordinator, 'ws://') || inputs.coordinator == 'machine-1') }}
         uses: tailscale/github-action@v3
         with:
           authkey: ${{ secrets.TS_AUTHKEY }}
@@ -95,19 +105,65 @@ jobs:
       - name: Wait for tasks
         env:
           COORDINATOR: ${{ inputs.coordinator }}
+          CONTROL_KEY: ${{ inputs.control_key }}
+          RUN_ID: ${{ github.run_id }}
+          SHARD: ${{ matrix.shard }}
         run: |
           minutes=$(( ${{ inputs.minutes }} > 60 ? 60 : ${{ inputs.minutes }} ))
           max_minutes=$(( ${{ inputs.max_minutes }} > 300 ? 300 : ${{ inputs.max_minutes }} ))
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ "$COORDINATOR" = "machine-1" ]; then
-            if [ "${{ matrix.shard }}" = "1" ]; then
-              nohup python3 tools/coordinator/coordinator.py serve --git-link --agent-host "$(tailscale ip -4 | head -n 1)" > coordinator.log 2>&1 &
+          if [ "$COORDINATOR" = "machine-1" ] && [ "$HAS_TAILNET" = "yes" ]; then
+            if [ "$SHARD" = "1" ]; then
+              nohup python3 tools/coordinator/coordinator.py serve --git-link --agent-host "$(tailscale ip -4 | head -n 1)" --control-host "$(tailscale ip -4 | head -n 1)" > coordinator.log 2>&1 &
             fi
-            COORDINATOR="ws://scrap-coordinator-${{ github.run_id }}:8765"
+            COORDINATOR="ws://scrap-coordinator-${RUN_ID}:8765"
+          elif [ "$COORDINATOR" = "machine-1" ]; then
+            # No tailnet: Cloudflare quick tunnels, control admitted by key.
+            [ -n "$CONTROL_KEY" ] || { echo "::error::machine-1 without TS_AUTHKEY needs the control_key input"; exit 1; }
+            address="build-results/coordinator-address"
+            if [ "$SHARD" = "1" ]; then
+              curl -fsSL -o cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+              chmod +x cloudflared
+              # Restarted on the same ports if it exits, so the tunnels and the
+              # published address stay good; stops once this step ends.
+              : > coordinator.log
+              nohup bash -c 'until [ -e coordinator.stop ]; do python3 tools/coordinator/coordinator.py serve --relay-results --control-key "$CONTROL_KEY" >> coordinator.log 2>&1; [ -e coordinator.stop ] || { echo "coordinator: exited; restarting" >> coordinator.log; sleep 1; }; done' > /dev/null 2>&1 &
+              for _ in $(seq 1 50); do grep -q "machines on" coordinator.log && break; sleep 0.2; done
+              grep -q "machines on" coordinator.log || { echo "::error::the coordinator did not come up"; tail -n 30 coordinator.log; exit 1; }
+              tunnel() {
+                nohup ./cloudflared tunnel --no-autoupdate --url "http://127.0.0.1:$1" > "tunnel-$1.log" 2>&1 &
+                for _ in $(seq 1 100); do
+                  url="$(grep -o 'https://[a-z0-9-]*\.trycloudflare\.com' "tunnel-$1.log" | head -n 1 || true)"
+                  [ -n "$url" ] && { echo "wss://${url#https://}"; return 0; }
+                  sleep 0.3
+                done
+                echo "::error::the tunnel to port $1 did not come up" >&2; cat "tunnel-$1.log" >&2; return 1
+              }
+              agent="$(tunnel 8765)"
+              control="$(tunnel 8766)"
+              jq -n --arg run "$RUN_ID" --arg agent "$agent" --arg control "$control" '{run: $run, agent: $agent, control: $control}' > address.json
+              blob="$(git hash-object -w address.json)"
+              tree="$(printf '100644 blob %s\taddress.json\n' "$blob" | git mktree)"
+              commit="$(git commit-tree "$tree" -m "coordinator address of run $RUN_ID")"
+              git push -q -f origin "$commit:refs/heads/$address"
+              echo "published $agent and $control"
+            fi
+            COORDINATOR=""
+            for _ in $(seq 1 60); do
+              if git fetch -q --depth=1 origin "$address" 2> /dev/null; then
+                COORDINATOR="$(git show FETCH_HEAD:address.json | jq -r --arg run "$RUN_ID" 'select(.run == $run) | .agent')"
+                [ -n "$COORDINATOR" ] && break
+              fi
+              sleep 3
+            done
+            [ -n "$COORDINATOR" ] || { echo "::error::machine 1 published no address for run $RUN_ID in 3 minutes"; exit 1; }
           fi
           if [ -n "$COORDINATOR" ]; then
-            scripts/standby-agent.py "$COORDINATOR" "${{ inputs.layout }}" "${{ matrix.shard }}" "${{ inputs.shards }}" "$minutes" "$max_minutes"
+            # touch: machine 1 stops restarting its coordinator once the agent is over.
+            scripts/standby-agent.py "$COORDINATOR" "${{ inputs.layout }}" "$SHARD" "${{ inputs.shards }}" "$minutes" "$max_minutes" || status=$?
+            touch coordinator.stop
+            exit "${status:-0}"
           else
-            scripts/standby.sh "${{ inputs.layout }}" "${{ matrix.shard }}" "${{ inputs.shards }}" "$minutes" "$max_minutes"
+            scripts/standby.sh "${{ inputs.layout }}" "$SHARD" "${{ inputs.shards }}" "$minutes" "$max_minutes"
           fi

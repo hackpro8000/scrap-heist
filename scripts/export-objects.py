@@ -214,7 +214,7 @@ def main():
 				identity = hashlib.sha1(seed).hexdigest()[:16]
 				with open(os.path.join(out, f"{identity}.glb"), "wb") as file:
 					file.write(glb)
-				assets.append({"id": identity, "key": key, "piece": number, "label": label, "turn": placement["turn"], "bytes": len(glb), "parts": len(piece)})
+				assets.append({"id": identity, "key": key, "piece": number, "label": label, "turn": placement["turn"], "bytes": len(glb), "sha": hashlib.sha256(glb).hexdigest()[:16], "parts": len(piece)})
 				entries.append((identity, [suffix for suffix, _ in piece], anchors_of(layout, piece)))
 			if key != "-":
 				first[key] = entries
