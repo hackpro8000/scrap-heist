@@ -1,0 +1,97 @@
+{
+	"assets": [
+		{
+			"id": "d9238914e8ab1633",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 47/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1057880,
+			"sha": "716a948874185e50",
+			"parts": 16
+		},
+		{
+			"id": "8564a0dfc509aadd",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck21 -237 37.5 0",
+			"piece": 1,
+			"label": "LoneWreck21",
+			"turn": 0.0,
+			"bytes": 44104,
+			"sha": "e9978713c9c43564",
+			"parts": 2
+		},
+		{
+			"id": "b5b9fa27b1cccdb1",
+			"key": "CapsuleLoop-bec128dfbc5e2284 1 x",
+			"piece": 1,
+			"label": "CapsuleLoop",
+			"turn": 0.0,
+			"bytes": 5692020,
+			"sha": "25458e1c744f50b4",
+			"parts": 62
+		}
+	],
+	"placements": [
+		{
+			"asset": "d9238914e8ab1633",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-4_-4_0_100_101",
+					"position": [
+						-200.205125,
+						-11.118369,
+						245.03241
+					]
+				},
+				{
+					"name": "Grass_2_4_0_000_111",
+					"position": [
+						148.14019000000002,
+						-20.4782455,
+						-273.18246
+					]
+				}
+			]
+		},
+		{
+			"asset": "8564a0dfc509aadd",
+			"label": "LoneWreck21",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-235.775,
+						2.03,
+						-37.45
+					]
+				}
+			]
+		},
+		{
+			"asset": "b5b9fa27b1cccdb1",
+			"label": "CapsuleLoop",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "BeltRails_-2_0_0",
+					"position": [
+						-69.06479250000001,
+						2.525,
+						-19.858725000000003
+					]
+				},
+				{
+					"name": "DriveGears",
+					"position": [
+						78.97,
+						5.85,
+						0.575
+					]
+				}
+			]
+		}
+	]
+}
