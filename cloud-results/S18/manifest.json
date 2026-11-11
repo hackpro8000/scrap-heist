@@ -1,0 +1,718 @@
+{
+	"assets": [
+		{
+			"id": "f9bf989cfd5b4437",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 18/25",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 3499424,
+			"sha": "12a6bf8d86091660",
+			"parts": 66
+		},
+		{
+			"id": "0e50cade945a727f",
+			"key": "ScrapPalm-d5c69ef46be4a8a1 1 x x1.6",
+			"piece": 1,
+			"label": "RoughScrap5",
+			"turn": 235.0,
+			"bytes": 934708,
+			"sha": "2589e82072cc422f",
+			"parts": 6
+		},
+		{
+			"id": "f77413c3d258deb6",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck16 141.1 194.2 0",
+			"piece": 1,
+			"label": "LoneWreck16",
+			"turn": 0.0,
+			"bytes": 68044,
+			"sha": "94a40cb4cf1e58e4",
+			"parts": 3
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingBack8",
+			"turn": -67.5,
+			"bytes": 97832,
+			"sha": "e7bf7d9afb71b8b5",
+			"parts": 1
+		},
+		{
+			"id": "12739fe8b535f857",
+			"key": "RebirthPress-e23cf11cc612d4c2 1 x",
+			"piece": 1,
+			"label": "Yard1_Press",
+			"turn": 112.5,
+			"bytes": 6674032,
+			"sha": "a4e63a47e7dc8764",
+			"parts": 19
+		},
+		{
+			"id": "7b7a6cc4ddb0b567",
+			"key": "YardFenceHalf-66e102f35bc13698 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FenceFrontHalf1",
+			"turn": 247.5,
+			"bytes": 353564,
+			"sha": "76ed4788e69cd198",
+			"parts": 3
+		},
+		{
+			"id": "6266a83ca21869e7",
+			"key": "BeltCrossing-416bf52bbd2f57b6 1 x",
+			"piece": 1,
+			"label": "Crossing3",
+			"turn": 112.5,
+			"bytes": 3057964,
+			"sha": "afeb1803efc2316e",
+			"parts": 7
+		},
+		{
+			"id": "d965246a5a97b929",
+			"key": "JunkrotKettlinaDentata-db41736d2fba5a60 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotKettlinaDentata",
+			"turn": 0.0,
+			"bytes": 762344,
+			"sha": "73c0124186a41db4",
+			"parts": 8
+		},
+		{
+			"id": "a7cc7ffb4732366d",
+			"key": "JunkrotMicrondoBippetto-be6081410b508f75 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotMicrondoBippetto",
+			"turn": 0.0,
+			"bytes": 1024552,
+			"sha": "90044b6d8f156d8d",
+			"parts": 10
+		},
+		{
+			"id": "e02cd30c39c33381",
+			"key": "JunkrotSpeakeroneBoomba-b0f99895aed1d336 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotSpeakeroneBoomba",
+			"turn": 0.0,
+			"bytes": 723564,
+			"sha": "4030dbb4ab226c7e",
+			"parts": 9
+		},
+		{
+			"id": "907cd10fc6767c0a",
+			"key": "JunkrotHeadphonoBassimo-18abf4f82a84b7b1 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotHeadphonoBassimo",
+			"turn": 0.0,
+			"bytes": 887824,
+			"sha": "8f2656232e07ea42",
+			"parts": 10
+		}
+	],
+	"placements": [
+		{
+			"asset": "f9bf989cfd5b4437",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_3_3_0_001",
+					"position": [
+						214.83898,
+						-30.590141499999998,
+						-213.74095
+					]
+				},
+				{
+					"name": "Grass_-4_-4_0_000",
+					"position": [
+						-223.754235,
+						-13.97281375,
+						226.69437
+					]
+				}
+			]
+		},
+		{
+			"asset": "0e50cade945a727f",
+			"label": "RoughScrap5",
+			"turn": 235.0,
+			"anchors": [
+				{
+					"name": "Fronds",
+					"position": [
+						-95.969465,
+						15.231188500000002,
+						-93.377655
+					]
+				},
+				{
+					"name": "TyreCollar",
+					"position": [
+						-94.60439,
+						2.4837686000000003,
+						-97.27840499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "f77413c3d258deb6",
+			"label": "LoneWreck16",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pipe",
+					"position": [
+						141.00394,
+						2.643356,
+						-193.55906
+					]
+				},
+				{
+					"name": "PipeStone",
+					"position": [
+						141.024085,
+						2.2065055,
+						-197.77388000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard1_FootingBack8",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						261.91893,
+						2.266335,
+						-62.990168499999996
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard1_FootingFront6",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						156.14833,
+						2.266335,
+						-25.672902999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard1_Press",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						155.05867,
+						7.33,
+						-51.6599025
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						156.31564,
+						4.1813891000000005,
+						-37.8461315
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard2_Press",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						73.05663,
+						7.33,
+						-146.314355
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						83.75852499999999,
+						4.1813891000000005,
+						-137.291625
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard3_Press",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						-51.6599025,
+						7.33,
+						-155.05867
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						-37.8461315,
+						4.1813891000000005,
+						-156.31564
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard4_Press",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						-146.314355,
+						7.33,
+						-73.05663
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						-137.291625,
+						4.1813891000000005,
+						-83.75852499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard5_Press",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						-155.05867,
+						7.33,
+						51.6599025
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						-156.31564,
+						4.1813891000000005,
+						37.8461315
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard6_Press",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						-73.05663,
+						7.33,
+						146.314355
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						-83.75852499999999,
+						4.1813891000000005,
+						137.291625
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard7_FootingFront2",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						81.10567499999999,
+						2.266335,
+						133.18732
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard7_FootingFront5",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						36.759457,
+						2.266335,
+						151.55613
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard7_Press",
+			"turn": 382.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						51.6599025,
+						7.33,
+						155.05867
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						37.8461315,
+						4.1813891000000005,
+						156.31564
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingBack2",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						257.224595,
+						2.266335,
+						74.071455
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingBack4",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						248.04019,
+						2.266335,
+						96.244565
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingBack6",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						238.85579,
+						2.266335,
+						118.4176775
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingBack8",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						229.67139,
+						2.266335,
+						140.59079
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingFront2",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						151.45398999999998,
+						2.266335,
+						36.754191
+					]
+				}
+			]
+		},
+		{
+			"asset": "7b7a6cc4ddb0b567",
+			"label": "Yard8_FenceFrontHalf1",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						159.48526,
+						5.33874635,
+						17.3600475
+					]
+				}
+			]
+		},
+		{
+			"asset": "7b7a6cc4ddb0b567",
+			"label": "Yard8_FenceFrontHalf2",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						125.04375,
+						5.33874635,
+						100.50920500000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard8_Press",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						146.314355,
+						7.33,
+						73.05663
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						137.291625,
+						4.1813891000000005,
+						83.75852499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "6266a83ca21869e7",
+			"label": "Crossing3",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Railings",
+					"position": [
+						-27.555414,
+						6.3091093,
+						-66.513578
+					]
+				},
+				{
+					"name": "WarningSign",
+					"position": [
+						-23.9486655,
+						9.1545215,
+						-68.01933199999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "6266a83ca21869e7",
+			"label": "Crossing5",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Railings",
+					"position": [
+						-66.513578,
+						6.3091093,
+						27.555414
+					]
+				},
+				{
+					"name": "WarningSign",
+					"position": [
+						-68.01933199999999,
+						9.1545215,
+						23.9486655
+					]
+				}
+			]
+		},
+		{
+			"asset": "6266a83ca21869e7",
+			"label": "Crossing8",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Railings",
+					"position": [
+						66.513225,
+						6.3091093,
+						27.5549945
+					]
+				},
+				{
+					"name": "WarningSign",
+					"position": [
+						65.03275500000001,
+						9.1545215,
+						31.168398
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Kit_Press",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						-737.565,
+						-254.67,
+						1.09538379
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						-750.852335,
+						-257.81859999999995,
+						-3.0608891500000004
+					]
+				}
+			]
+		},
+		{
+			"asset": "d965246a5a97b929",
+			"label": "Kit_JunkrotKettlinaDentata",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pupils",
+					"position": [
+						-479.98471,
+						-258.66235,
+						1.11685
+					]
+				},
+				{
+					"name": "Whistle",
+					"position": [
+						-478.544525,
+						-258.291105,
+						-0.009160265
+					]
+				}
+			]
+		},
+		{
+			"asset": "a7cc7ffb4732366d",
+			"label": "Kit_JunkrotMicrondoBippetto",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Keypad",
+					"position": [
+						-71.169225,
+						-258.7435,
+						0.16949585000000003
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						-72.458,
+						-258.668805,
+						0.9844
+					]
+				}
+			]
+		},
+		{
+			"asset": "e02cd30c39c33381",
+			"label": "Kit_JunkrotSpeakeroneBoomba",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Panel",
+					"position": [
+						336.0,
+						-256.52,
+						-0.25
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						336.00901,
+						-257.011595,
+						0.7707999999999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "907cd10fc6767c0a",
+			"label": "Kit_JunkrotHeadphonoBassimo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Cable",
+					"position": [
+						743.0199700000001,
+						-259.567595,
+						0.26731405999999996
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						744.011,
+						-258.4164,
+						0.9232
+					]
+				}
+			]
+		}
+	]
+}
