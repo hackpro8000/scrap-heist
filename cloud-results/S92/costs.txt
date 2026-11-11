@@ -1,0 +1,6 @@
+MainIsland 1 x	2520.111
+MainIsland 1 x #split	1
+YardFooting 1.037037037037037 x x1.5	0.086
+YardFooting 1.037037037037037 x x1.5 #split	1
+JunkrotAirfryoCroccante 1 x	1.381
+JunkrotAirfryoCroccante 1 x #split	1

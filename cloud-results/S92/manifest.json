@@ -1,0 +1,217 @@
+{
+	"assets": [
+		{
+			"id": "5c549da7f3c46529",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 92/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1028992,
+			"sha": "5c10a7eae256d286",
+			"parts": 16
+		},
+		{
+			"id": "551fd0b5691ee789",
+			"key": "YardFooting-748247116a86686c 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingRight6",
+			"turn": 22.5,
+			"bytes": 95700,
+			"sha": "a0ad64276067c94d",
+			"parts": 1
+		},
+		{
+			"id": "01d1f144e3121fa5",
+			"key": "JunkrotAirfryoCroccante-ca1401f086de1570 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotAirfryoCroccante",
+			"turn": 0.0,
+			"bytes": 741512,
+			"sha": "ed6f9d7626c414e5",
+			"parts": 11
+		}
+	],
+	"placements": [
+		{
+			"asset": "5c549da7f3c46529",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-4_-4_0_010_111",
+					"position": [
+						-232.99541499999998,
+						-15.247824999999999,
+						200.0
+					]
+				},
+				{
+					"name": "Grass_3_2_0_100",
+					"position": [
+						240.0,
+						2.0,
+						-144.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard1_FootingRight6",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						223.881245,
+						2.266335,
+						-40.87182
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard2_FootingRight5",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						124.717525,
+						2.266335,
+						-175.639875
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard3_FootingRight4",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-31.347254999999997,
+						2.266335,
+						-200.88691
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard4_FootingRight3",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-152.64553999999998,
+						2.266335,
+						-115.19296
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard5_FootingRight2",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-177.892575,
+						2.266335,
+						21.82269
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard6_FootingRight1",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-105.6684,
+						2.266335,
+						129.651205
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard6_FootingRight9",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-143.76665500000001,
+						2.266335,
+						221.62855000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard7_FootingRight8",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						50.396387000000004,
+						2.266335,
+						246.87558
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard8_FootingRight7",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						198.63421,
+						2.266335,
+						134.2421
+					]
+				}
+			]
+		},
+		{
+			"asset": "01d1f144e3121fa5",
+			"label": "Kit_JunkrotAirfryoCroccante",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Cord",
+					"position": [
+						192.27370000000002,
+						-259.556785,
+						-1.305799865
+					]
+				},
+				{
+					"name": "Handle",
+					"position": [
+						191.997055,
+						-258.538115,
+						1.2890405999999999
+					]
+				}
+			]
+		}
+	]
+}
