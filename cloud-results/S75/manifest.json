@@ -1,0 +1,217 @@
+{
+	"assets": [
+		{
+			"id": "d2a652ef16587678",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 75/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 887224,
+			"sha": "f3619aa8566fd169",
+			"parts": 16
+		},
+		{
+			"id": "551fd0b5691ee789",
+			"key": "YardFooting-748247116a86686c 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingLeft2",
+			"turn": 22.5,
+			"bytes": 95648,
+			"sha": "06bd5164f7a6f59e",
+			"parts": 1
+		},
+		{
+			"id": "0f906a3b2dfed224",
+			"key": "JunkrotOilcannaGluglu-9e5cf90a23447e16 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotOilcannaGluglu",
+			"turn": 0.0,
+			"bytes": 721448,
+			"sha": "68ce1e953a515850",
+			"parts": 8
+		}
+	],
+	"placements": [
+		{
+			"asset": "d2a652ef16587678",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-4_-4_0_111",
+					"position": [
+						-213.22832499999998,
+						-29.61931,
+						220.19434
+					]
+				},
+				{
+					"name": "Grass_2_4_0_100",
+					"position": [
+						168.46179999999998,
+						-14.48759,
+						-261.603925
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard1_FootingLeft2",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						141.154965,
+						2.266335,
+						-110.515125
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard2_FootingLeft1",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						16.975961,
+						2.266335,
+						-166.38882
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard2_FootingLeft9",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						55.0742225,
+						2.266335,
+						-258.36617
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard3_FootingLeft8",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-139.08882,
+						2.266335,
+						-210.13797
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard4_FootingLeft7",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-235.37182,
+						2.266335,
+						-45.549656999999996
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard5_FootingLeft6",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-187.14364,
+						2.266335,
+						129.564255
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard6_FootingLeft5",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-36.0250925,
+						2.266335,
+						212.37749000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard7_FootingLeft4",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						120.039692,
+						2.266335,
+						164.14929999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard8_FootingLeft3",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						189.38315,
+						2.266335,
+						26.5005265
+					]
+				}
+			]
+		},
+		{
+			"asset": "0f906a3b2dfed224",
+			"label": "Kit_JunkrotOilcannaGluglu",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pump",
+					"position": [
+						-216.02919500000002,
+						-257.882965,
+						-0.37025071
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						-215.985715,
+						-258.68995,
+						1.0063499999999999
+					]
+				}
+			]
+		}
+	]
+}
