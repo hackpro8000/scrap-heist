@@ -1,0 +1,17 @@
+engine: taken from the build-engine branch
+[    0.0s] running YardFenceHalf/model.luau
+[    0.1s] baking on CPU (no GPU)
+[    0.1s] shaded Posts 256×256 in 0.09s
+[    0.3s] shaded Sheets 256×256 in 0.12s
+[    0.5s] shaded Fittings 256×256 in 0.18s
+[    0.5s] writing YardFenceHalf.glb and 3 textures
+[    0.5s] rendering preview of 3 parts
+YardFenceHalf: 3 parts, script 508.03ms, total 1.52s
+  shade (creases, contact): 0.19s
+  coat: 0.07s
+  wear: 0.03s
+  combine: 0.00s
+  shade, surfaces, grid and texels: 0.01s
+  shade, neighbourhoods: 0.01s
+  shade, spreading over seams: 0.00s
+  coat, painting texels: 0.00s
