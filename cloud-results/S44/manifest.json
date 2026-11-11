@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "a5779d23646f5287",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 44/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 854560,
+			"sha": "c5287514975c5cd2",
+			"parts": 16
+		},
+		{
+			"id": "679eafd181077b7f",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck17 0 240 0",
+			"piece": 1,
+			"label": "LoneWreck17",
+			"turn": 0.0,
+			"bytes": 53344,
+			"sha": "ab0274ed10438e1c",
+			"parts": 3
+		},
+		{
+			"id": "c17402070a8a7f35",
+			"key": "YardFooting-748247116a86686c 0.5 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FootingFrontHalf2",
+			"turn": 247.5,
+			"bytes": 108256,
+			"sha": "80dfcc0f99f084f7",
+			"parts": 1
+		},
+		{
+			"id": "3041930f290573bd",
+			"key": "JunkrotRemotinoMuto-17a1c0bc82011f79 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotRemotinoMuto",
+			"turn": 0.0,
+			"bytes": 931180,
+			"sha": "89ee71ec83c536b1",
+			"parts": 9
+		}
+	],
+	"placements": [
+		{
+			"asset": "a5779d23646f5287",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_0_0_000_001",
+					"position": [
+						-305.845525,
+						-13.0439153,
+						-7.670573500000001
+					]
+				},
+				{
+					"name": "Grass_4_1_0_100_100",
+					"position": [
+						309.820515,
+						-15.0202858,
+						-72.7463585
+					]
+				}
+			]
+		},
+		{
+			"asset": "679eafd181077b7f",
+			"label": "LoneWreck17",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-0.7999999999999998,
+						2.03,
+						-240.64999999999998
+					]
+				},
+				{
+					"name": "SlabStone",
+					"position": [
+						-2.330909,
+						2.1309369,
+						-239.52901500000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "c17402070a8a7f35",
+			"label": "Yard8_FootingFrontHalf2",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						125.047825,
+						2.266335,
+						100.50309999999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "3041930f290573bd",
+			"label": "Kit_JunkrotRemotinoMuto",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Battery",
+					"position": [
+						-384.00093,
+						-258.7768,
+						-0.094500884
+					]
+				}
+			]
+		}
+	]
+}
