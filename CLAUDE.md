@@ -40,3 +40,9 @@ Supplementary rules for agents working on Scrap Heist.
 - Vague feedback ("something's off"): don't guess. Look up a pointed-at cell in `cells.txt`, or offer plain-words choices and then A/B/C variants to pick from (`docs/art/pipeline.md`, "When the feedback is vague").
 - If a model task can't be done, stop and report why to the user. Don't fall back to doing it a different way.
 - Before a layout build (ServerMap), run `scripts/coordinator.sh status` and `scripts/standby-status.sh`. Builds go to the build machines with `scripts/send-build.sh <commit>` (unfinished work: `scripts/push-wip.sh` first). To warm machines, start the coordinator (`scripts/coordinator.sh start`) and then `scripts/standby-start.sh 20`, so tasks and results stream live; see the Layouts section of `docs/art/pipeline.md`. Standby is started with the build-standby workflow (`.github/workflows/build-standby.yml`); keep its defaults, which let machines idle for up to an hour (the countdown restarts with each build; 5 hours at most).
+
+## Team
+- Work that is more than a step or two runs through the agent team: `docs/team/core.md` (fixed, only the user changes it) and `docs/team/playbook.md` (the team's own, rewritten as it learns). The main session is the Lead.
+- Team roles are the agent types `worker`, `worker-hard`, `specialist`, `checker`, `observer` and `scout` in `.claude/agents/`. Never use `general-purpose` for team work.
+- While agents run, `scripts/agent-watch.sh --until-flag` runs beside them. After a task, `scripts/agent-stats.sh` gives the numbers and one line goes in `docs/team/log.md`.
+- Objective calls are made automatically; subjective ones (look, feel, style, design, naming, tone) go to the user. If the user is away, decide reversibly and list it under "Decided while you were away" in `docs/team/log.md`.
