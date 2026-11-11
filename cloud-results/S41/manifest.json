@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "865f97e376c77921",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 41/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 807128,
+			"sha": "809da62cbc85f26f",
+			"parts": 17
+		},
+		{
+			"id": "ee624f034de204af",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck13 -145 145 0",
+			"piece": 1,
+			"label": "LoneWreck13",
+			"turn": 0.0,
+			"bytes": 67540,
+			"sha": "ec499ac92274d6f1",
+			"parts": 3
+		},
+		{
+			"id": "000e0637814e7f0b",
+			"key": "YardFence-0f1495cb71d18f3d 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FenceFront6",
+			"turn": 247.5,
+			"bytes": 393808,
+			"sha": "37a3b27dd7b72175",
+			"parts": 3
+		},
+		{
+			"id": "ed5ea94120629685",
+			"key": "JunkrotTickworthPocketti-c4a1c4bdf367c0f4 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotTickworthPocketti",
+			"turn": 0.0,
+			"bytes": 922660,
+			"sha": "7324e5dc364ff3e5",
+			"parts": 9
+		}
+	],
+	"placements": [
+		{
+			"asset": "865f97e376c77921",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_-1_0_000_111",
+					"position": [
+						-296.801115,
+						-13.904047,
+						40.0
+					]
+				},
+				{
+					"name": "Grass_4_-2_0_110_110",
+					"position": [
+						306.23205,
+						-8.8805543,
+						69.671135
+					]
+				}
+			]
+		},
+		{
+			"asset": "ee624f034de204af",
+			"label": "LoneWreck13",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pipe",
+					"position": [
+						-145.09815500000002,
+						2.643356,
+						-145.62531
+					]
+				},
+				{
+					"name": "PipeStone",
+					"position": [
+						-145.178725,
+						2.1470661,
+						-141.35505
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard8_FenceFront6",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						128.52031499999998,
+						5.3468148499999995,
+						92.196162
+					]
+				}
+			]
+		},
+		{
+			"asset": "ed5ea94120629685",
+			"label": "Kit_JunkrotTickworthPocketti",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Case",
+					"position": [
+						719.992465,
+						-258.06258,
+						0.01719089
+					]
+				},
+				{
+					"name": "Lid",
+					"position": [
+						721.31143,
+						-258.38984000000005,
+						1.02860554
+					]
+				}
+			]
+		}
+	]
+}
