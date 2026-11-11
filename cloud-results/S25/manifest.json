@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "144074b93ce4d930",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 25/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 876644,
+			"sha": "beb841d590a93fdc",
+			"parts": 16
+		},
+		{
+			"id": "4fd70abcb36a1487",
+			"key": "RockBoulderPile-1d0940bd84bd2f34 1 x x2.8",
+			"piece": 1,
+			"label": "RoughScrap8",
+			"turn": 376.0,
+			"bytes": 465944,
+			"sha": "ceb05596e8d414ad",
+			"parts": 4
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FootingBack5",
+			"turn": 247.5,
+			"bytes": 97780,
+			"sha": "05ee3ad55aa38178",
+			"parts": 1
+		},
+		{
+			"id": "33946110c6fa358a",
+			"key": "CapsuleScrap-965c252abcd91c2d 1 x",
+			"piece": 1,
+			"label": "Kit_CapsuleScrap",
+			"turn": 0.0,
+			"bytes": 399904,
+			"sha": "02e0d910270b81cf",
+			"parts": 4
+		}
+	],
+	"placements": [
+		{
+			"asset": "144074b93ce4d930",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_4_0_0_101",
+					"position": [
+						307.93419,
+						-22.9185735,
+						-10.241495
+					]
+				},
+				{
+					"name": "Grass_-5_2_0_100_011",
+					"position": [
+						-272.90434000000005,
+						-16.57489275,
+						-149.99357
+					]
+				}
+			]
+		},
+		{
+			"asset": "4fd70abcb36a1487",
+			"label": "RoughScrap8",
+			"turn": 376.0,
+			"anchors": [
+				{
+					"name": "Hubs",
+					"position": [
+						-198.24045999999998,
+						5.24274535,
+						194.00146999999998
+					]
+				},
+				{
+					"name": "Mound",
+					"position": [
+						-197.51378,
+						3.17493615,
+						194.42421000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingBack5",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						243.44799,
+						2.266335,
+						107.331125
+					]
+				}
+			]
+		},
+		{
+			"asset": "33946110c6fa358a",
+			"label": "Kit_CapsuleScrap",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Can",
+					"position": [
+						-696.0072849999999,
+						-258.77121,
+						0.010462399999999983
+					]
+				}
+			]
+		}
+	]
+}
