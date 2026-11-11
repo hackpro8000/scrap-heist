@@ -1,0 +1,34 @@
+engine: taken from the build-engine branch
+[    0.0s] running BeltCrossing/model.luau
+[    2.6s] baking on CPU (no GPU)
+[    3.1s] shaded Span 1024×1024 in 1.94s
+[    4.0s] shaded Stairs 1024×1024 in 0.86s
+[    4.4s] shaded Railings 1024×1024 in 0.40s
+[    5.4s] shaded Legs 1024×1024 in 0.91s
+[    6.5s] shaded Fittings 1024×1024 in 0.96s
+[    7.5s] shaded WarningSign 1024×1024 in 0.95s
+[    7.6s] writing BeltCrossing.glb and 7 textures
+[    7.7s] rendering preview of 7 parts
+[   14.9s] rendering eye 1/7
+[   15.8s] rendering eye 2/7
+[   16.7s] rendering eye 3/7
+[   17.6s] rendering eye 4/7
+[   18.5s] rendering eye 5/7
+[   20.0s] rendering eye 6/7
+[   21.4s] rendering eye 7/7
+BeltCrossing: 7 parts, script 7.55s, total 22.63s
+  shade (creases, contact): 1.76s
+  coat: 1.61s
+  wear: 0.72s
+  combine: 0.10s
+  shade, surfaces, grid and texels: 0.28s
+  shade, neighbourhoods: 0.16s
+  shade, spreading over seams: 0.11s
+  coat, painting texels: 0.00s
+#f23d3d Span
+#85a5f2 Stairs
+#7bb32d Railings
+#b362a8 Legs
+#3df2d4 Fittings
+#f2c085 WarningSign
+#4e2db3 Bulbs
