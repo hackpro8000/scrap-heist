@@ -1,0 +1,6 @@
+MainIsland 1 x	3768.370
+MainIsland 1 x #split	1
+YardFooting 1.037037037037037 x x1.5	0.114
+YardFooting 1.037037037037037 x x1.5 #split	1
+JunkrotRobovaccoGirotondo 1 x	1.620
+JunkrotRobovaccoGirotondo 1 x #split	1
