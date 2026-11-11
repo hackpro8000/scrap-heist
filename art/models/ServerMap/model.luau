@@ -16,13 +16,53 @@ local paintsPart: (name: string, image: any) -> boolean
 -- its parts can be dealt by texels before any is painted (see ownsPart).
 local RealImage = Image
 local splitImages: { any }? = nil
-Image = setmetatable({
-	new = function(...)
-		local image = RealImage.new(...)
-		if splitImages then
-			table.insert(splitImages, image)
+
+-- While a split model builds, an image is a promise of one: its size is known
+-- at once, for the deal, and its pixels are made when something first paints
+-- or reads them. A shard keeps only its share of a split model's parts, so it
+-- never makes the pixels of the rest.
+local function promisedImage(width: number, height: number, ...)
+	local made = nil
+	local colour = table.pack(...)
+	local function real()
+		if not made then
+			made = RealImage.new(width, height, table.unpack(colour, 1, colour.n))
 		end
-		return image
+		return made
+	end
+	return setmetatable({
+		_real = real,
+		width = function()
+			return width
+		end,
+		height = function()
+			return height
+		end,
+		size = function()
+			return width, height
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				local image = real()
+				return image[key](image, ...)
+			end
+		end,
+	})
+end
+
+local function unwrapImage(image)
+	return if type(image) == "table" and image._real then image._real() else image
+end
+
+Image = setmetatable({
+	new = function(width, height, ...)
+		if splitImages then
+			local image = promisedImage(width, height, ...)
+			table.insert(splitImages, image)
+			return image
+		end
+		return RealImage.new(width, height, ...)
 	end,
 }, { __index = RealImage })
 
@@ -58,7 +98,10 @@ Mesh = {
 						options[list] = real
 					end
 				end
-				return real:paintShading(image, options)
+				return real:paintShading(unwrapImage(image), options)
+			end,
+			paint = function(_, image, ...)
+				return real:paint(unwrapImage(image), ...)
 			end,
 		}, {
 			__index = function(_, key)
@@ -314,10 +357,10 @@ model.part = function(name, mesh, image, options)
 		if skipPart(name) or not ownsPart(name, image) then
 			return
 		end
-		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview, emissive = options and options.emissive })
+		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = unwrapImage(image), preview = preview, emissive = options and options.emissive })
 		return
 	end
-	addPart(name, unwrapMesh(mesh), image, preview, options and options.emissive)
+	addPart(name, unwrapMesh(mesh), unwrapImage(image), preview, options and options.emissive)
 end
 
 -- Says which object a placement is, for the upload (scripts/export-objects.py
@@ -1300,8 +1343,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -1317,10 +1362,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -1332,6 +1386,8 @@ local function finishParts()
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
@@ -1345,6 +1401,18 @@ local function finishParts()
 			rubber = entry.rubber,
 			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
 			highlightUnevenStep = entry.litUnevenStep,
@@ -1394,12 +1462,17 @@ local SMALL_MARKS = {
 -- pieces each lit from above) and `stain` (how far a short part's steps wander
 -- as blotches instead of bands; high values fleck a dark surface).
 local PRESETS = {
-	-- Steel standing alone on open ground.
-	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Steel standing alone on open ground. Its coat is paint over metal: the
+	-- roughness map polishes the worn rims and roughens creases and rust, and
+	-- the metalness map shows bare metal where the edge wear cuts through,
+	-- never under the rust.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 }, roughness = { base = 0.7, edge = -0.6, crease = 0.15, wear = 0.25 }, metalness = { base = 0.05, edge = 0.85, crease = 0, wear = -0.3 } },
 	-- Concrete footings and plinths.
 	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
 	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
-	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Stone's edges tilt hard in the normal map, along the highlight strokes,
+	-- and its roughness map polishes those worn rims while the creases stay matte.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 }, bevel = { tilt = 8 }, roughness = { base = 0.85, edge = -0.7, crease = 0.1, wear = 0 } },
 	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
 	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
 	-- The earth body of a heap: it darkens well under everything resting on it.
@@ -1474,15 +1547,38 @@ local function applyPreset(entry, preset)
 	if preset.softLit then
 		entry.softLit = preset.softLit
 	end
+	-- The normal map's bevel field, where the material shapes it.
+	if preset.bevel then
+		entry.bevelReach = entry.bevelReach or preset.bevel.reach
+		entry.bevelFold = entry.bevelFold or preset.bevel.fold
+		entry.bevelTilt = entry.bevelTilt or preset.bevel.tilt
+	end
+	-- The roughness map, from the material's base and the layers already baked.
+	if preset.roughness then
+		entry.roughnessBase = entry.roughnessBase or preset.roughness.base
+		entry.roughnessEdge = entry.roughnessEdge or preset.roughness.edge
+		entry.roughnessCrease = entry.roughnessCrease or preset.roughness.crease
+		entry.roughnessWear = entry.roughnessWear or preset.roughness.wear
+	end
+	if preset.metalness then
+		entry.metalnessBase = entry.metalnessBase or preset.metalness.base
+		entry.metalnessEdge = entry.metalnessEdge or preset.metalness.edge
+		entry.metalnessCrease = entry.metalnessCrease or preset.metalness.crease
+		entry.metalnessWear = entry.metalnessWear or preset.metalness.wear
+	end
 	entry.handTune = SMALL_MARKS
 	paintStepBands(entry, preset.bands)
 end
 
 local function handFinish(coats, plain, finish)
+	-- Every chunk of one part must come out with the same finish; a chunk
+	-- that doesn't is a seam in the paint, so it stops the build.
+	local finishes: { [string]: string } = {}
 	for _, entry in parts do
-		-- A chunked part takes the coat of the name it was built under.
-		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
-		if plain[name] then
+		-- A chunked part takes the coat of the part it was built under
+		-- (chunkedPart tags each chunk with it), not whatever its own name parses to.
+		local name = entry.chunkOf or entry.name
+		if plain[name] or plain[entry.name] then
 			continue
 		end
 		entry.hand = coats[name]
@@ -1500,6 +1596,11 @@ local function handFinish(coats, plain, finish)
 		if presetName then
 			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
 		end
+		local signature = `{entry.hand or "-"}/{presetName or "-"}`
+		if finishes[name] and finishes[name] ~= signature then
+			error(`chunks of {name} would wear different finishes ({finishes[name]} and {signature}); the paint would seam`)
+		end
+		finishes[name] = signature
 	end
 end
 function buildMainIsland()
@@ -4233,7 +4334,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildMainIsland] = "MainIsland-f8b29761b5cbce6e"
+buildKeys[buildMainIsland] = "MainIsland-660b6fd7604d9003"
 function buildCapsuleLoop()
 local CACHE_KEY = "CapsuleLoop-2eff1653a67db3ac"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -8442,7 +8543,7 @@ for _, entry in parts do
 end
 finishParts()
 end
-buildKeys[buildCapsuleLoop] = "CapsuleLoop-d5670c2ac9aba453"
+buildKeys[buildCapsuleLoop] = "CapsuleLoop-bec128dfbc5e2284"
 function buildRebirthPress()
 local CACHE_KEY = "RebirthPress-d4815f7b07795958"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -10145,7 +10246,7 @@ handFinish({
 }, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildRebirthPress] = "RebirthPress-68bffec05b017d66"
+buildKeys[buildRebirthPress] = "RebirthPress-e23cf11cc612d4c2"
 function buildBuildBay()
 local CACHE_KEY = "BuildBay-53489079ec725d33"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -11854,7 +11955,7 @@ end
 
 finishParts()
 end
-buildKeys[buildBuildBay] = "BuildBay-e350ca07c20253cf"
+buildKeys[buildBuildBay] = "BuildBay-1a2d08b1420d8cd7"
 function buildYardFence()
 local CACHE_KEY = "YardFence-ed9cc0a50c9a990b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -12977,7 +13078,7 @@ for _, entry in parts do
 end
 finishParts()
 end
-buildKeys[buildYardFence] = "YardFence-886ab0c6a9ab76d5"
+buildKeys[buildYardFence] = "YardFence-0f1495cb71d18f3d"
 function buildYardFenceHalf()
 local CACHE_KEY = "YardFenceHalf-44c06fd6c7d585e3"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -14099,7 +14200,7 @@ for _, entry in parts do
 end
 finishParts()
 end
-buildKeys[buildYardFenceHalf] = "YardFenceHalf-be79ee5d70226771"
+buildKeys[buildYardFenceHalf] = "YardFenceHalf-66e102f35bc13698"
 function buildYardFooting()
 local CACHE_KEY = "YardFooting-e42c4d0ae1d767cd"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -15185,7 +15286,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildYardFooting] = "YardFooting-f4adf27d60b77d68"
+buildKeys[buildYardFooting] = "YardFooting-748247116a86686c"
 function buildYardGate()
 local CACHE_KEY = "YardGate-3d1b6f3f9e976258"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -16323,7 +16424,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildYardGate] = "YardGate-77592f166aa97f3a"
+buildKeys[buildYardGate] = "YardGate-06ec41d82d9efa42"
 function buildPlotMarker()
 local CACHE_KEY = "PlotMarker-3541a7472aa1d9be"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -17444,7 +17545,7 @@ handFinish({
 }, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildPlotMarker] = "PlotMarker-1c3c3808c9f14059"
+buildKeys[buildPlotMarker] = "PlotMarker-d53896012ff9aa6c"
 function buildHubShop()
 local CACHE_KEY = "HubShop-d28bf4508d6bb561"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -19166,7 +19267,7 @@ end
 
 finishParts()
 end
-buildKeys[buildHubShop] = "HubShop-350bbc2c45edc62c"
+buildKeys[buildHubShop] = "HubShop-509dc24f3a226285"
 function buildHubTinkerer()
 local CACHE_KEY = "HubTinkerer-0c574345159805fc"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -20695,7 +20796,7 @@ handFinish({
 
 finishParts()
 end
-buildKeys[buildHubTinkerer] = "HubTinkerer-a3812e490488c94c"
+buildKeys[buildHubTinkerer] = "HubTinkerer-83364d2210b929bc"
 function buildHubBeacon()
 local CACHE_KEY = "HubBeacon-5c136ecd6fc092b2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -22263,7 +22364,7 @@ end
 
 finishParts()
 end
-buildKeys[buildHubBeacon] = "HubBeacon-c23008aba590234c"
+buildKeys[buildHubBeacon] = "HubBeacon-daeb9bb3cf737fff"
 function buildHubStage()
 local CACHE_KEY = "HubStage-2716653c17d04ee2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -23803,7 +23904,7 @@ handFinish({
 
 finishParts()
 end
-buildKeys[buildHubStage] = "HubStage-7ba8cdd6fa86707b"
+buildKeys[buildHubStage] = "HubStage-88981208e356368e"
 function buildBeltCrossing()
 local CACHE_KEY = "BeltCrossing-5cb6aefa8e95af10"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -25201,7 +25302,7 @@ handFinish({ Fittings = "metal", Span = "metal", Railings = "metal", Legs = "met
 
 finishParts()
 end
-buildKeys[buildBeltCrossing] = "BeltCrossing-7662f957ab2603b0"
+buildKeys[buildBeltCrossing] = "BeltCrossing-416bf52bbd2f57b6"
 function buildJunkMound()
 local CACHE_KEY = "JunkMound-0c304b50c56a837c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -26482,7 +26583,7 @@ handFinish({
 }, {}, { Heap = "heapBody", metal = "heapPiece", rock = "heapPiece" })
 finishParts()
 end
-buildKeys[buildJunkMound] = "JunkMound-7bbdef0fd1775b2f"
+buildKeys[buildJunkMound] = "JunkMound-e2d48bd7d6f65eb3"
 function buildScrapPalm()
 local CACHE_KEY = "ScrapPalm-f0897f0739e1b1dc"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -27716,7 +27817,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapPalm] = "ScrapPalm-4bb6bd416566bb39"
+buildKeys[buildScrapPalm] = "ScrapPalm-d5c69ef46be4a8a1"
 function buildScrapTreeAntenna()
 local CACHE_KEY = "ScrapTreeAntenna-0cf69011a11142c9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -28849,9 +28950,9 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapTreeAntenna] = "ScrapTreeAntenna-4da8b04636649bdf"
+buildKeys[buildScrapTreeAntenna] = "ScrapTreeAntenna-d1d8739b19b2b688"
 function buildScrapTreeExhaust()
-local CACHE_KEY = "ScrapTreeExhaust-83cdaeb809967dab"
+local CACHE_KEY = "ScrapTreeExhaust-0721066c009011f1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -29710,8 +29811,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -29755,6 +29858,18 @@ local function finishParts()
 			rubber = entry.rubber,
 			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
 			highlightUnevenStep = entry.litUnevenStep,
@@ -29807,12 +29922,17 @@ local SMALL_MARKS = {
 -- pieces each lit from above) and `stain` (how far a short part's steps wander
 -- as blotches instead of bands; high values fleck a dark surface).
 local PRESETS = {
-	-- Steel standing alone on open ground.
-	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Steel standing alone on open ground. Its coat is paint over metal: the
+	-- roughness map polishes the worn rims and roughens creases and rust, and
+	-- the metalness map shows bare metal where the edge wear cuts through,
+	-- never under the rust.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 }, roughness = { base = 0.7, edge = -0.4, crease = 0.15, wear = 0.25 }, metalness = { base = 0.05, edge = 0.85, crease = 0, wear = -0.3 } },
 	-- Concrete footings and plinths.
 	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
 	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
-	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Stone's edges tilt hard in the normal map, along the highlight strokes,
+	-- and its roughness map polishes those worn rims while the creases stay matte.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 }, bevel = { tilt = 1.5 }, roughness = { base = 0.85, edge = -0.45, crease = 0.1, wear = 0 } },
 	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
 	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
 	-- The earth body of a heap: it darkens well under everything resting on it.
@@ -29887,15 +30007,38 @@ local function applyPreset(entry, preset)
 	if preset.softLit then
 		entry.softLit = preset.softLit
 	end
+	-- The normal map's bevel field, where the material shapes it.
+	if preset.bevel then
+		entry.bevelReach = entry.bevelReach or preset.bevel.reach
+		entry.bevelFold = entry.bevelFold or preset.bevel.fold
+		entry.bevelTilt = entry.bevelTilt or preset.bevel.tilt
+	end
+	-- The roughness map, from the material's base and the layers already baked.
+	if preset.roughness then
+		entry.roughnessBase = entry.roughnessBase or preset.roughness.base
+		entry.roughnessEdge = entry.roughnessEdge or preset.roughness.edge
+		entry.roughnessCrease = entry.roughnessCrease or preset.roughness.crease
+		entry.roughnessWear = entry.roughnessWear or preset.roughness.wear
+	end
+	if preset.metalness then
+		entry.metalnessBase = entry.metalnessBase or preset.metalness.base
+		entry.metalnessEdge = entry.metalnessEdge or preset.metalness.edge
+		entry.metalnessCrease = entry.metalnessCrease or preset.metalness.crease
+		entry.metalnessWear = entry.metalnessWear or preset.metalness.wear
+	end
 	entry.handTune = SMALL_MARKS
 	paintStepBands(entry, preset.bands)
 end
 
 local function handFinish(coats, plain, finish)
+	-- Every chunk of one part must come out with the same finish; a chunk
+	-- that doesn't is a seam in the paint, so it stops the build.
+	local finishes: { [string]: string } = {}
 	for _, entry in parts do
-		-- A chunked part takes the coat of the name it was built under.
-		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
-		if plain[name] then
+		-- A chunked part takes the coat of the part it was built under
+		-- (chunkedPart tags each chunk with it), not whatever its own name parses to.
+		local name = entry.chunkOf or entry.name
+		if plain[name] or plain[entry.name] then
 			continue
 		end
 		entry.hand = coats[name]
@@ -29913,6 +30056,11 @@ local function handFinish(coats, plain, finish)
 		if presetName then
 			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
 		end
+		local signature = `{entry.hand or "-"}/{presetName or "-"}`
+		if finishes[name] and finishes[name] ~= signature then
+			error(`chunks of {name} would wear different finishes ({finishes[name]} and {signature}); the paint would seam`)
+		end
+		finishes[name] = signature
 	end
 end
 local CONCRETE = { 0.5, 0.48, 0.44 }
@@ -30047,7 +30195,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapTreeExhaust] = "ScrapTreeExhaust-79ef1f0acda2af91"
+buildKeys[buildScrapTreeExhaust] = "ScrapTreeExhaust-c27e7c1cf460c675"
 function buildScrapTreeLamppost()
 local CACHE_KEY = "ScrapTreeLamppost-a4f045cef97604b9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -31250,7 +31398,7 @@ handFinish({
 }, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapTreeLamppost] = "ScrapTreeLamppost-ce32cfd63f66a229"
+buildKeys[buildScrapTreeLamppost] = "ScrapTreeLamppost-06793a6d247e3d3e"
 function buildScrapTreeRebar()
 local CACHE_KEY = "ScrapTreeRebar-402cb4318f5198e6"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -32388,7 +32536,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapTreeRebar] = "ScrapTreeRebar-faecca9350d53dad"
+buildKeys[buildScrapTreeRebar] = "ScrapTreeRebar-06c988ae19846bea"
 function buildScrapTreeSignpost()
 local CACHE_KEY = "ScrapTreeSignpost-de643e4e0ef172b9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -33556,7 +33704,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapTreeSignpost] = "ScrapTreeSignpost-33802aec7df5560d"
+buildKeys[buildScrapTreeSignpost] = "ScrapTreeSignpost-1c7a92632b33e8d4"
 function buildRockBoulderPile()
 local CACHE_KEY = "RockBoulderPile-255727f46d4ef30e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -34763,7 +34911,7 @@ handFinish({
 }, {}, { Mound = "heapBody", metal = "heapPiece" })
 finishParts()
 end
-buildKeys[buildRockBoulderPile] = "RockBoulderPile-eff3d5b047e416d1"
+buildKeys[buildRockBoulderPile] = "RockBoulderPile-1d0940bd84bd2f34"
 function buildHubSectionA()
 local CACHE_KEY = "HubSectionA-9e178aacbb8e0c13"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -37339,7 +37487,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildHubSectionA] = "HubSectionA-b14008da39185e3a"
+buildKeys[buildHubSectionA] = "HubSectionA-30fd970123b3f964"
 function buildHubSectionB()
 local CACHE_KEY = "HubSectionB-dd31c3a9342d2ebb"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -39915,7 +40063,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildHubSectionB] = "HubSectionB-a37adca50998542c"
+buildKeys[buildHubSectionB] = "HubSectionB-9d575456ca9aeb29"
 function buildHubSectionEnd()
 local CACHE_KEY = "HubSectionEnd-136fa7952b3f42be"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -42494,7 +42642,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildHubSectionEnd] = "HubSectionEnd-35998d3955bcd931"
+buildKeys[buildHubSectionEnd] = "HubSectionEnd-13f23b9fba9b0c5c"
 function buildYardIsland()
 local CACHE_KEY = "YardIsland-a20f5454b9eeafc4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -45081,7 +45229,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildYardIsland] = "YardIsland-c11a4756436b4dec"
+buildKeys[buildYardIsland] = "YardIsland-62a0378ce9b20972"
 function buildPadKitchen()
 local CACHE_KEY = "PadKitchen-c76f1c6cf26e3512"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -45932,7 +46080,7 @@ part("Hardware", nil, STEEL, function(mesh)
 end, nil, 0.45)
 finishParts()
 end
-buildKeys[buildPadKitchen] = "PadKitchen-412262d2e40ad03b"
+buildKeys[buildPadKitchen] = "PadKitchen-099d1fc77a51b0a3"
 function buildPadGarage()
 local CACHE_KEY = "PadGarage-d5708ad48748d33b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -46783,7 +46931,7 @@ part("Hardware", nil, STEEL, function(mesh)
 end, nil, 0.45)
 finishParts()
 end
-buildKeys[buildPadGarage] = "PadGarage-48d03c341d05ec90"
+buildKeys[buildPadGarage] = "PadGarage-1c48f06bd044332e"
 function buildPadGadget()
 local CACHE_KEY = "PadGadget-48988de9245004f8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -47634,7 +47782,7 @@ part("Hardware", nil, STEEL, function(mesh)
 end, nil, 0.45)
 finishParts()
 end
-buildKeys[buildPadGadget] = "PadGadget-7932e6fcfd1feec3"
+buildKeys[buildPadGadget] = "PadGadget-1214f913043828d4"
 function buildScrapCrate()
 local CACHE_KEY = "ScrapCrate-29302168875da9ff"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -48491,7 +48639,7 @@ part("Bits", nil, STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildScrapCrate] = "ScrapCrate-ee16f513aa3ccaf5"
+buildKeys[buildScrapCrate] = "ScrapCrate-7ef72494de9eaaad"
 function buildCapsuleScrap()
 local CACHE_KEY = "CapsuleScrap-4fd4e85152e70de0"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -49326,7 +49474,7 @@ part("Handle", nil, DARK_STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildCapsuleScrap] = "CapsuleScrap-f5865626bbc861a8"
+buildKeys[buildCapsuleScrap] = "CapsuleScrap-965c252abcd91c2d"
 function buildCapsuleSalvaged()
 local CACHE_KEY = "CapsuleSalvaged-a22b31bf9e05c3ba"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -50164,7 +50312,7 @@ part("Handle", nil, DARK_STEEL, function(mesh)
 end, nil, 0.5)
 finishParts()
 end
-buildKeys[buildCapsuleSalvaged] = "CapsuleSalvaged-97a264f4df2d8ad6"
+buildKeys[buildCapsuleSalvaged] = "CapsuleSalvaged-e9b7b70d4853878f"
 function buildCapsuleRefurbished()
 local CACHE_KEY = "CapsuleRefurbished-87de8628bbe15cb0"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -51000,7 +51148,7 @@ part("Handle", nil, BARE_METAL, function(mesh)
 end, nil, 0.1)
 finishParts()
 end
-buildKeys[buildCapsuleRefurbished] = "CapsuleRefurbished-700a44d02273b3b1"
+buildKeys[buildCapsuleRefurbished] = "CapsuleRefurbished-e292e1124d60e9c7"
 function buildCapsuleFactory()
 local CACHE_KEY = "CapsuleFactory-77a50855066ef57d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -51840,7 +51988,7 @@ part("Label", nil, LABEL_WHITE, function(mesh)
 end, nil, 0)
 finishParts()
 end
-buildKeys[buildCapsuleFactory] = "CapsuleFactory-b6168f42c74b04de"
+buildKeys[buildCapsuleFactory] = "CapsuleFactory-37da6d8e21d18d23"
 function buildCapsulePrecision()
 local CACHE_KEY = "CapsulePrecision-f0fd7da3c3e1c134"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -52691,7 +52839,7 @@ part("Clasps", nil, BARE_METAL, function(mesh)
 end, nil, 0.05)
 finishParts()
 end
-buildKeys[buildCapsulePrecision] = "CapsulePrecision-92c9158398b1b297"
+buildKeys[buildCapsulePrecision] = "CapsulePrecision-a3651d8dc8702d33"
 function buildCapsulePrototype()
 local CACHE_KEY = "CapsulePrototype-83a52d1637ac492b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -53528,7 +53676,7 @@ part("Tag", nil, TAG_ORANGE, function(mesh)
 end, nil, 0)
 finishParts()
 end
-buildKeys[buildCapsulePrototype] = "CapsulePrototype-84371941735a84a9"
+buildKeys[buildCapsulePrototype] = "CapsulePrototype-95d5f97f3b8c808c"
 function buildCapsuleSecret()
 local CACHE_KEY = "CapsuleSecret-a36bc0a8b8574b40"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -54349,7 +54497,7 @@ part("Seam", nil, SEAM_GLOW, function(mesh)
 end, nil, 0, nil, 2.2, true)
 finishParts()
 end
-buildKeys[buildCapsuleSecret] = "CapsuleSecret-20676f6bd6f64f1d"
+buildKeys[buildCapsuleSecret] = "CapsuleSecret-a6340baf703626b4"
 function buildJunkrotCanettoRustini()
 local CACHE_KEY = "JunkrotCanettoRustini-4edbec9d7b5f5796"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -58023,7 +58171,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotCanettoRustini] = "JunkrotCanettoRustini-1c295432923a7d59"
+buildKeys[buildJunkrotCanettoRustini] = "JunkrotCanettoRustini-897a691198a3ca1e"
 function buildJunkrotSpoonzoBentolo()
 local CACHE_KEY = "JunkrotSpoonzoBentolo-5e7d43f4fc4d5850"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -61674,7 +61822,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotSpoonzoBentolo] = "JunkrotSpoonzoBentolo-e35dc1b94e3d24ff"
+buildKeys[buildJunkrotSpoonzoBentolo] = "JunkrotSpoonzoBentolo-eeca69727971cbb8"
 function buildJunkrotKettlinaDentata()
 local CACHE_KEY = "JunkrotKettlinaDentata-181b8ccb5e0016ab"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -65343,7 +65491,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotKettlinaDentata] = "JunkrotKettlinaDentata-1286d0d40acb7bb5"
+buildKeys[buildJunkrotKettlinaDentata] = "JunkrotKettlinaDentata-db41736d2fba5a60"
 function buildJunkrotTyroFlattino()
 local CACHE_KEY = "JunkrotTyroFlattino-da48c6d69ddf15cd"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -69017,7 +69165,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTyroFlattino] = "JunkrotTyroFlattino-5d99368a4b2b7f7a"
+buildKeys[buildJunkrotTyroFlattino] = "JunkrotTyroFlattino-306ec7d17be20c24"
 function buildJunkrotBoltoloLonelo()
 local CACHE_KEY = "JunkrotBoltoloLonelo-1f23ec979bf31130"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -72664,7 +72812,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotBoltoloLonelo] = "JunkrotBoltoloLonelo-bd4e9fad7228b9d6"
+buildKeys[buildJunkrotBoltoloLonelo] = "JunkrotBoltoloLonelo-23ac6cb8a82b2c83"
 function buildJunkrotHubcappaWobbla()
 local CACHE_KEY = "JunkrotHubcappaWobbla-d659c65767a877be"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -76333,7 +76481,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotHubcappaWobbla] = "JunkrotHubcappaWobbla-3e8b3e72ad157e87"
+buildKeys[buildJunkrotHubcappaWobbla] = "JunkrotHubcappaWobbla-3f7ab62405a50f8a"
 function buildJunkrotRemotinoMuto()
 local CACHE_KEY = "JunkrotRemotinoMuto-7038399fce0302a6"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -80002,7 +80150,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotRemotinoMuto] = "JunkrotRemotinoMuto-a1d86fa20d9cab82"
+buildKeys[buildJunkrotRemotinoMuto] = "JunkrotRemotinoMuto-17a1c0bc82011f79"
 function buildJunkrotCabloTanglino()
 local CACHE_KEY = "JunkrotCabloTanglino-04fdc5e8600917fd"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -83666,7 +83814,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotCabloTanglino] = "JunkrotCabloTanglino-4f969efcb69aa52e"
+buildKeys[buildJunkrotCabloTanglino] = "JunkrotCabloTanglino-04c0f0fc7777a73a"
 function buildJunkrotBulboFulminato()
 local CACHE_KEY = "JunkrotBulboFulminato-6c23c6cc3eb9e59a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -87332,7 +87480,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotBulboFulminato] = "JunkrotBulboFulminato-4b2c162db58f942d"
+buildKeys[buildJunkrotBulboFulminato] = "JunkrotBulboFulminato-69d24af98337c2e7"
 function buildJunkrotCrumboPoppalot()
 local CACHE_KEY = "JunkrotCrumboPoppalot-67aaced0972168d7"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -90997,7 +91145,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotCrumboPoppalot] = "JunkrotCrumboPoppalot-fa4f00ea5b5d0a8e"
+buildKeys[buildJunkrotCrumboPoppalot] = "JunkrotCrumboPoppalot-f9eb904dd489effa"
 function buildJunkrotPannettoPatchato()
 local CACHE_KEY = "JunkrotPannettoPatchato-28485e328fd1b2b8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -94643,7 +94791,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotPannettoPatchato] = "JunkrotPannettoPatchato-22d3020db187cfd7"
+buildKeys[buildJunkrotPannettoPatchato] = "JunkrotPannettoPatchato-b0d8eb9eb7dc17e5"
 function buildJunkrotBlendroCigolante()
 local CACHE_KEY = "JunkrotBlendroCigolante-95038ccc37324389"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -98306,7 +98454,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotBlendroCigolante] = "JunkrotBlendroCigolante-ffe2ae01b2420b35"
+buildKeys[buildJunkrotBlendroCigolante] = "JunkrotBlendroCigolante-fa92150c310f4fa1"
 function buildJunkrotJackoloCrickato()
 local CACHE_KEY = "JunkrotJackoloCrickato-8f5f3a774a24bb30"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -101976,7 +102124,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotJackoloCrickato] = "JunkrotJackoloCrickato-4e976f8e59d42954"
+buildKeys[buildJunkrotJackoloCrickato] = "JunkrotJackoloCrickato-da150c99dff5c753"
 function buildJunkrotOilcannaGluglu()
 local CACHE_KEY = "JunkrotOilcannaGluglu-703a93dfb5452f36"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -105633,7 +105781,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotOilcannaGluglu] = "JunkrotOilcannaGluglu-93d13fcf92ce181f"
+buildKeys[buildJunkrotOilcannaGluglu] = "JunkrotOilcannaGluglu-9e5cf90a23447e16"
 function buildJunkrotMuffleroTossetto()
 local CACHE_KEY = "JunkrotMuffleroTossetto-f7e9f4ca754d1011"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -109296,7 +109444,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotMuffleroTossetto] = "JunkrotMuffleroTossetto-95f4a003036f36ec"
+buildKeys[buildJunkrotMuffleroTossetto] = "JunkrotMuffleroTossetto-5025e9254f422b24"
 function buildJunkrotRadioloFruscio()
 local CACHE_KEY = "JunkrotRadioloFruscio-4bc37f2678f66aaf"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -112968,7 +113116,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotRadioloFruscio] = "JunkrotRadioloFruscio-201fe73e312b50f6"
+buildKeys[buildJunkrotRadioloFruscio] = "JunkrotRadioloFruscio-5a304189562f4bd0"
 function buildJunkrotFanettoWobblino()
 local CACHE_KEY = "JunkrotFanettoWobblino-bd7c7d848d1d4a66"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -116669,7 +116817,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotFanettoWobblino] = "JunkrotFanettoWobblino-e69e0c5d42a73b5b"
+buildKeys[buildJunkrotFanettoWobblino] = "JunkrotFanettoWobblino-8551f4d73d48a2a8"
 function buildJunkrotClockoTictacco()
 local CACHE_KEY = "JunkrotClockoTictacco-3cef37e91f5e22d5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -120352,7 +120500,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotClockoTictacco] = "JunkrotClockoTictacco-cf92bc712ddf24dc"
+buildKeys[buildJunkrotClockoTictacco] = "JunkrotClockoTictacco-8065f65a4b9f86a9"
 function buildJunkrotFrostboxGelatone()
 local CACHE_KEY = "JunkrotFrostboxGelatone-89f12efffdffc5e4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -124027,7 +124175,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotFrostboxGelatone] = "JunkrotFrostboxGelatone-cfd36b2d51002789"
+buildKeys[buildJunkrotFrostboxGelatone] = "JunkrotFrostboxGelatone-0a9f1a91ffd3d8ae"
 function buildJunkrotMicrondoBippetto()
 local CACHE_KEY = "JunkrotMicrondoBippetto-dcb2810cded30ac2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -127704,7 +127852,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotMicrondoBippetto] = "JunkrotMicrondoBippetto-a34e2153fc20e939"
+buildKeys[buildJunkrotMicrondoBippetto] = "JunkrotMicrondoBippetto-be6081410b508f75"
 function buildJunkrotMixerellaVroom()
 local CACHE_KEY = "JunkrotMixerellaVroom-4012ed5cb152af20"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -131373,7 +131521,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotMixerellaVroom] = "JunkrotMixerellaVroom-6f5836bb51f332b2"
+buildKeys[buildJunkrotMixerellaVroom] = "JunkrotMixerellaVroom-b4c9735fa5d8e15d"
 function buildJunkrotMopaMopetta()
 local CACHE_KEY = "JunkrotMopaMopetta-720bf564f79c63d4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -135061,7 +135209,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotMopaMopetta] = "JunkrotMopaMopetta-aef5a031b3c547e3"
+buildKeys[buildJunkrotMopaMopetta] = "JunkrotMopaMopetta-fd8032b1e71eb11c"
 function buildJunkrotDrilloTrapanino()
 local CACHE_KEY = "JunkrotDrilloTrapanino-4c3d7682e71cad6d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -138729,7 +138877,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotDrilloTrapanino] = "JunkrotDrilloTrapanino-2415ae85aac8af71"
+buildKeys[buildJunkrotDrilloTrapanino] = "JunkrotDrilloTrapanino-b69c588fcd38b615"
 function buildJunkrotGrindellaScintilla()
 local CACHE_KEY = "JunkrotGrindellaScintilla-9cce7c1fe9e7b540"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -142409,7 +142557,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotGrindellaScintilla] = "JunkrotGrindellaScintilla-1b2f70e8ddabf760"
+buildKeys[buildJunkrotGrindellaScintilla] = "JunkrotGrindellaScintilla-d3cef93e6963eed8"
 function buildJunkrotTelefonoRingaling()
 local CACHE_KEY = "JunkrotTelefonoRingaling-370d5aefe711bb96"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -146091,7 +146239,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTelefonoRingaling] = "JunkrotTelefonoRingaling-a3b4ae45b8e6a063"
+buildKeys[buildJunkrotTelefonoRingaling] = "JunkrotTelefonoRingaling-4b5109d984d8517e"
 function buildJunkrotTypewrittoClackini()
 local CACHE_KEY = "JunkrotTypewrittoClackini-3ec2a62af96c898e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -149769,7 +149917,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTypewrittoClackini] = "JunkrotTypewrittoClackini-440f8a7b6bf85d4d"
+buildKeys[buildJunkrotTypewrittoClackini] = "JunkrotTypewrittoClackini-65902791a8dda508"
 function buildJunkrotCamerinoFlashetto()
 local CACHE_KEY = "JunkrotCamerinoFlashetto-b0f5626bf68eadb4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -153448,7 +153596,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotCamerinoFlashetto] = "JunkrotCamerinoFlashetto-33dfeb99c33388a3"
+buildKeys[buildJunkrotCamerinoFlashetto] = "JunkrotCamerinoFlashetto-8e9b5b50896db9fc"
 function buildJunkrotDrippiDroppi()
 local CACHE_KEY = "JunkrotDrippiDroppi-b250a319254a1dad"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -157986,7 +158134,7 @@ local panels = Scrap.panels(L, {
 Scrap.panelParts(L, panels, { rivetsUpTo = 1.9 })
 finishParts()
 end
-buildKeys[buildJunkrotDrippiDroppi] = "JunkrotDrippiDroppi-e271cb5ccc5a5d5c"
+buildKeys[buildJunkrotDrippiDroppi] = "JunkrotDrippiDroppi-c8b55e589d02ac9a"
 function buildJunkrotDingDingDingDongo()
 local CACHE_KEY = "JunkrotDingDingDingDongo-ffbcb0d39817badb"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -162526,7 +162674,7 @@ local panels = Scrap.panels(L, {
 Scrap.panelParts(L, panels, { rivetsUpTo = 1.3 })
 finishParts()
 end
-buildKeys[buildJunkrotDingDingDingDongo] = "JunkrotDingDingDingDongo-c2b9da511f1b1bbc"
+buildKeys[buildJunkrotDingDingDingDongo] = "JunkrotDingDingDingDongo-d42998b67ad1673b"
 function buildJunkrotGrindoBeanbasher()
 local CACHE_KEY = "JunkrotGrindoBeanbasher-afd5ad08e212d882"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -166203,7 +166351,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotGrindoBeanbasher] = "JunkrotGrindoBeanbasher-2779b556e1fe0000"
+buildKeys[buildJunkrotGrindoBeanbasher] = "JunkrotGrindoBeanbasher-48126bbc3cf190c7"
 function buildJunkrotAirfryoCroccante()
 local CACHE_KEY = "JunkrotAirfryoCroccante-93286196d7e6b700"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -169882,7 +170030,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotAirfryoCroccante] = "JunkrotAirfryoCroccante-5959890986891dd4"
+buildKeys[buildJunkrotAirfryoCroccante] = "JunkrotAirfryoCroccante-ca1401f086de1570"
 function buildJunkrotDishwashinoSplashetto()
 local CACHE_KEY = "JunkrotDishwashinoSplashetto-7cba577a599f5b23"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -173568,7 +173716,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotDishwashinoSplashetto] = "JunkrotDishwashinoSplashetto-c4a2bd3c4f2e0ae6"
+buildKeys[buildJunkrotDishwashinoSplashetto] = "JunkrotDishwashinoSplashetto-6fa1993520dc4811"
 function buildJunkrotLawnmowoRuggito()
 local CACHE_KEY = "JunkrotLawnmowoRuggito-85b1914e73ec5d7c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -177248,7 +177396,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotLawnmowoRuggito] = "JunkrotLawnmowoRuggito-a1fdd43f2da5ce87"
+buildKeys[buildJunkrotLawnmowoRuggito] = "JunkrotLawnmowoRuggito-f25556e3f13e2d8a"
 function buildJunkrotLeafblowaWhooshini()
 local CACHE_KEY = "JunkrotLeafblowaWhooshini-1bde1d1c54b1296b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -180912,7 +181060,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotLeafblowaWhooshini] = "JunkrotLeafblowaWhooshini-ba1cbafd438fb448"
+buildKeys[buildJunkrotLeafblowaWhooshini] = "JunkrotLeafblowaWhooshini-498e7e7e827d9ac8"
 function buildJunkrotPressurwashoSprizzo()
 local CACHE_KEY = "JunkrotPressurwashoSprizzo-60fef4c3777aab33"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -184593,7 +184741,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotPressurwashoSprizzo] = "JunkrotPressurwashoSprizzo-5569dc707a12f171"
+buildKeys[buildJunkrotPressurwashoSprizzo] = "JunkrotPressurwashoSprizzo-a767ef79c103bbc6"
 function buildJunkrotConsoloJoypaddino()
 local CACHE_KEY = "JunkrotConsoloJoypaddino-aca465be178d6742"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -188291,7 +188439,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotConsoloJoypaddino] = "JunkrotConsoloJoypaddino-26ac9840879c3e12"
+buildKeys[buildJunkrotConsoloJoypaddino] = "JunkrotConsoloJoypaddino-3f640a5d9bdb569c"
 function buildJunkrotSpeakeroneBoomba()
 local CACHE_KEY = "JunkrotSpeakeroneBoomba-fbfbe03d79eb9318"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -191964,7 +192112,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotSpeakeroneBoomba] = "JunkrotSpeakeroneBoomba-227da99600e1928e"
+buildKeys[buildJunkrotSpeakeroneBoomba] = "JunkrotSpeakeroneBoomba-b0f99895aed1d336"
 function buildJunkrotRobovaccoGirotondo()
 local CACHE_KEY = "JunkrotRobovaccoGirotondo-e710f00f87ba5038"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -195637,7 +195785,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotRobovaccoGirotondo] = "JunkrotRobovaccoGirotondo-ad65190945dfdc40"
+buildKeys[buildJunkrotRobovaccoGirotondo] = "JunkrotRobovaccoGirotondo-c0cc3e4844047d59"
 function buildJunkrotClankClankClankScrapur()
 local CACHE_KEY = "JunkrotClankClankClankScrapur-18da0e49ac17fa63"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -200134,7 +200282,7 @@ local panels = Scrap.panels(W, {
 Scrap.panelParts(W, panels, { rivetsUpTo = TOP })
 finishParts()
 end
-buildKeys[buildJunkrotClankClankClankScrapur] = "JunkrotClankClankClankScrapur-261fdf11214253f0"
+buildKeys[buildJunkrotClankClankClankScrapur] = "JunkrotClankClankClankScrapur-5863edbae1d27f7a"
 function buildJunkrotVrrVrrPatatrim()
 local CACHE_KEY = "JunkrotVrrVrrPatatrim-06473d3a2caeca87"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -204831,7 +204979,7 @@ end
 Scrap.panelParts(BODY, PANELS, {})
 finishParts()
 end
-buildKeys[buildJunkrotVrrVrrPatatrim] = "JunkrotVrrVrrPatatrim-267117977aed97a5"
+buildKeys[buildJunkrotVrrVrrPatatrim] = "JunkrotVrrVrrPatatrim-ea7bbafb913e16f6"
 function buildJunkrotChimneyziniSpannerini()
 local CACHE_KEY = "JunkrotChimneyziniSpannerini-8b4adf173ba25ee4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -209372,7 +209520,7 @@ end
 Scrap.panelParts(T, panels)
 finishParts()
 end
-buildKeys[buildJunkrotChimneyziniSpannerini] = "JunkrotChimneyziniSpannerini-8ae76d025fb0f55a"
+buildKeys[buildJunkrotChimneyziniSpannerini] = "JunkrotChimneyziniSpannerini-e593bb10d1d3d24f"
 function buildJunkrotRusteliRustela()
 local CACHE_KEY = "JunkrotRusteliRustela-759974148fb14aa2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -213921,7 +214069,7 @@ local panels = Scrap.panels(W, {
 Scrap.panelParts(W, panels, { rust = { CACTUS = 0.2, DEEPGREEN = 0.2, SAGE = 0.2, MOSSY = 0.3, HIDE = 0.2, SLATE = 0.2, ASH = 0.2 } })
 finishParts()
 end
-buildKeys[buildJunkrotRusteliRustela] = "JunkrotRusteliRustela-3cdde7fb7f1d76e4"
+buildKeys[buildJunkrotRusteliRustela] = "JunkrotRusteliRustela-bb202a6d564909f7"
 function buildJunkrotBallerinaTincuppina()
 local CACHE_KEY = "JunkrotBallerinaTincuppina-1b59351ad06f9988"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -218465,7 +218613,7 @@ local panels = Scrap.panels(Cup, {
 Scrap.panelParts(Cup, panels, { rust = { CHINA = 0, ENAMEL = 0.1, TIN = 0.15, ALUMINIUM = 0.1, GALVANISED = 0.15 } })
 finishParts()
 end
-buildKeys[buildJunkrotBallerinaTincuppina] = "JunkrotBallerinaTincuppina-5b190ed64e411d2c"
+buildKeys[buildJunkrotBallerinaTincuppina] = "JunkrotBallerinaTincuppina-b309f4ce3437fbe5"
 function buildJunkrotTrashaleroTrashala()
 local CACHE_KEY = "JunkrotTrashaleroTrashala-f146a1bb6da69909"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -223039,7 +223187,7 @@ local panels = Scrap.panels(L, {
 Scrap.panelParts(L, panels, { rivetsUpTo = 1.95 })
 finishParts()
 end
-buildKeys[buildJunkrotTrashaleroTrashala] = "JunkrotTrashaleroTrashala-e3f91ab3e49a913b"
+buildKeys[buildJunkrotTrashaleroTrashala] = "JunkrotTrashaleroTrashala-83aa428f1188e759"
 function buildJunkrotSockettoSeiSette()
 local CACHE_KEY = "JunkrotSockettoSeiSette-d0a2f449b8a5fac5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -227614,7 +227762,7 @@ local panels = Scrap.panels(L, {
 Scrap.panelParts(L, panels, { rivetsUpTo = 3.0 })
 finishParts()
 end
-buildKeys[buildJunkrotSockettoSeiSette] = "JunkrotSockettoSeiSette-38c07af04317a356"
+buildKeys[buildJunkrotSockettoSeiSette] = "JunkrotSockettoSeiSette-45380ca69b67ced2"
 function buildJunkrotChefbotPrecisio()
 local CACHE_KEY = "JunkrotChefbotPrecisio-ff3ce59adcaaeada"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -231286,7 +231434,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotChefbotPrecisio] = "JunkrotChefbotPrecisio-90469ede79277582"
+buildKeys[buildJunkrotChefbotPrecisio] = "JunkrotChefbotPrecisio-f529c544cdf6e04b"
 function buildJunkrotSousvideSilvano()
 local CACHE_KEY = "JunkrotSousvideSilvano-d7f52cb16f32455a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -234949,7 +235097,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotSousvideSilvano] = "JunkrotSousvideSilvano-48fce292d0c5e0d2"
+buildKeys[buildJunkrotSousvideSilvano] = "JunkrotSousvideSilvano-66da9611e621dcdf"
 function buildJunkrotKnifeblockSlicetta()
 local CACHE_KEY = "JunkrotKnifeblockSlicetta-0b3ee48dbdd88557"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -238622,7 +238770,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotKnifeblockSlicetta] = "JunkrotKnifeblockSlicetta-e46a27324c52de28"
+buildKeys[buildJunkrotKnifeblockSlicetta] = "JunkrotKnifeblockSlicetta-5fdb96eaf16bb167"
 function buildJunkrotTorquoWrenchelli()
 local CACHE_KEY = "JunkrotTorquoWrenchelli-04385b601683f3d5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -242295,7 +242443,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTorquoWrenchelli] = "JunkrotTorquoWrenchelli-a9aec298bff600f8"
+buildKeys[buildJunkrotTorquoWrenchelli] = "JunkrotTorquoWrenchelli-1404d691f409f2e9"
 function buildJunkrotLaserlevelLineo()
 local CACHE_KEY = "JunkrotLaserlevelLineo-56b00ea33a8c0f18"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -245952,7 +246100,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotLaserlevelLineo] = "JunkrotLaserlevelLineo-2e8afdbaedad74df"
+buildKeys[buildJunkrotLaserlevelLineo] = "JunkrotLaserlevelLineo-88f6e8b900d0d39c"
 function buildJunkrotWeldettaSparkalot()
 local CACHE_KEY = "JunkrotWeldettaSparkalot-f3a64b6d965fabb1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -249653,7 +249801,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotWeldettaSparkalot] = "JunkrotWeldettaSparkalot-a2b7d4a67f976877"
+buildKeys[buildJunkrotWeldettaSparkalot] = "JunkrotWeldettaSparkalot-f27a5f7573458f60"
 function buildJunkrotDronettoBuzzatti()
 local CACHE_KEY = "JunkrotDronettoBuzzatti-f9811f3f0cd92e0a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -253333,7 +253481,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotDronettoBuzzatti] = "JunkrotDronettoBuzzatti-de05a6e94b6fc1d8"
+buildKeys[buildJunkrotDronettoBuzzatti] = "JunkrotDronettoBuzzatti-4f3c4ffa1b256eee"
 function buildJunkrotTickworthPocketti()
 local CACHE_KEY = "JunkrotTickworthPocketti-12d90e6dd1df7575"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -257018,7 +257166,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTickworthPocketti] = "JunkrotTickworthPocketti-a23ba480046d97df"
+buildKeys[buildJunkrotTickworthPocketti] = "JunkrotTickworthPocketti-c4a1c4bdf367c0f4"
 function buildJunkrotHeadphonoBassimo()
 local CACHE_KEY = "JunkrotHeadphonoBassimo-4a3186e3553e8b5c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -260687,7 +260835,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotHeadphonoBassimo] = "JunkrotHeadphonoBassimo-12f9bdeb52a00421"
+buildKeys[buildJunkrotHeadphonoBassimo] = "JunkrotHeadphonoBassimo-18abf4f82a84b7b1"
 function buildJunkrotGascaniniHonkini()
 local CACHE_KEY = "JunkrotGascaniniHonkini-de0d9323510cd64e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -265300,7 +265448,7 @@ local panels = Scrap.panels(L, {
 Scrap.panelParts(L, panels, {})
 finishParts()
 end
-buildKeys[buildJunkrotGascaniniHonkini] = "JunkrotGascaniniHonkini-9757c84f3a1c3f3e"
+buildKeys[buildJunkrotGascaniniHonkini] = "JunkrotGascaniniHonkini-993176abbf5261f7"
 function buildJunkrotPercolattoNinjatto()
 local CACHE_KEY = "JunkrotPercolattoNinjatto-98df2a7b223242f3"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -269860,7 +270008,7 @@ part("Hilts", nil, { 0.25, 0.08, 0.08 }, function(mesh)
 end, 50, 0.2)
 finishParts()
 end
-buildKeys[buildJunkrotPercolattoNinjatto] = "JunkrotPercolattoNinjatto-69ad4c86bf07ed82"
+buildKeys[buildJunkrotPercolattoNinjatto] = "JunkrotPercolattoNinjatto-0fba647cb678881b"
 function buildJunkrotBoilerdiroCrockpotilo()
 local CACHE_KEY = "JunkrotBoilerdiroCrockpotilo-af1fde3030d2257e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -274457,7 +274605,7 @@ local panels = Scrap.panels(L, {
 Scrap.panelParts(L, panels, { rivetsUpTo = 3.1 })
 finishParts()
 end
-buildKeys[buildJunkrotBoilerdiroCrockpotilo] = "JunkrotBoilerdiroCrockpotilo-510963c602a9035f"
+buildKeys[buildJunkrotBoilerdiroCrockpotilo] = "JunkrotBoilerdiroCrockpotilo-79d87e11c65a1923"
 function buildJunkrotSnackomaticPrototipo()
 local CACHE_KEY = "JunkrotSnackomaticPrototipo-c85bf7afa38e52c1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -278131,7 +278279,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotSnackomaticPrototipo] = "JunkrotSnackomaticPrototipo-215f2899be7914f5"
+buildKeys[buildJunkrotSnackomaticPrototipo] = "JunkrotSnackomaticPrototipo-2987de96ef6fd5e1"
 function buildJunkrotHoverbikkoZoomzoom()
 local CACHE_KEY = "JunkrotHoverbikkoZoomzoom-87108aebe6d3ebad"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -281816,7 +281964,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotHoverbikkoZoomzoom] = "JunkrotHoverbikkoZoomzoom-53f62bf01f1212b3"
+buildKeys[buildJunkrotHoverbikkoZoomzoom] = "JunkrotHoverbikkoZoomzoom-127ba8354d15bdf7"
 function buildJunkrotHolofonoShimmerra()
 local CACHE_KEY = "JunkrotHolofonoShimmerra-5e11d99f081a2b88"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -285487,7 +285635,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotHolofonoShimmerra] = "JunkrotHolofonoShimmerra-9d9121ce649c2898"
+buildKeys[buildJunkrotHolofonoShimmerra] = "JunkrotHolofonoShimmerra-c8acfed17ef29ada"
 function buildJunkrotLaVacuumaSaturnita()
 local CACHE_KEY = "JunkrotLaVacuumaSaturnita-3b4fe6eaafb7857d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -290118,7 +290266,7 @@ part("Nostrils", nil, { 0.35, 0.15, 0.17 }, function(mesh)
 end, true, 0)
 finishParts()
 end
-buildKeys[buildJunkrotLaVacuumaSaturnita] = "JunkrotLaVacuumaSaturnita-c66936a36963a736"
+buildKeys[buildJunkrotLaVacuumaSaturnita] = "JunkrotLaVacuumaSaturnita-f6a178ed91371ab2"
 function buildJunkrotTheMonolito()
 local CACHE_KEY = "JunkrotTheMonolito-2c6695c03bdf3196"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -293683,7 +293831,7 @@ part("Hum", nil, { 0.5, 0.3, 0.9 }, function(mesh)
 end, true, 0, nil, 1.5, true)
 finishParts()
 end
-buildKeys[buildJunkrotTheMonolito] = "JunkrotTheMonolito-3f7e70d4ae0623c1"
+buildKeys[buildJunkrotTheMonolito] = "JunkrotTheMonolito-3ef696a9f233f6e8"
 function buildJunkrotUnitZero()
 local CACHE_KEY = "JunkrotUnitZero-35a097ddc3bbb021"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -297259,7 +297407,7 @@ part("Shadow", nil, { 0.5, 0.8, 1.0 }, function(mesh)
 end, true, 0, nil, 1.2, true)
 finishParts()
 end
-buildKeys[buildJunkrotUnitZero] = "JunkrotUnitZero-9c855b563ebd143f"
+buildKeys[buildJunkrotUnitZero] = "JunkrotUnitZero-4abf38087588a870"
 function buildProofToaster()
 local CACHE_KEY = "ProofToaster-a9618b4a08e31118"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -300712,7 +300860,7 @@ part("Toast", nil, BREAD, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildProofToaster] = "ProofToaster-39187b35ced582a5"
+buildKeys[buildProofToaster] = "ProofToaster-2a79cc80cb602d80"
 function buildProofKettle()
 local CACHE_KEY = "ProofKettle-515ddb4e8083616e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -304179,7 +304327,7 @@ part("Body", nil, ENAMEL, function(mesh)
 end, nil, 0.25)
 finishParts()
 end
-buildKeys[buildProofKettle] = "ProofKettle-1eb6d2c104c0d0cd"
+buildKeys[buildProofKettle] = "ProofKettle-8b727d57bdd08532"
 function buildProofShark()
 local CACHE_KEY = "ProofShark-ebde7dbef1c77450"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -307641,16 +307789,16 @@ part("Body", nil, SHARK, function(mesh)
 end, nil, 0.2)
 finishParts()
 end
-buildKeys[buildProofShark] = "ProofShark-7e3b2d6b25523b9f"
-slabKeys[307820] = "1dcc2253c5c302f0-7ec5bfa1fe5329ef"
-slabKeys[307984] = "1dcc2253c5c302f0-6ad7b70c6ecee2a9"
-slabKeys[308063] = "1dcc2253c5c302f0-1439853d85f21bad"
-slabKeys[308071] = "1dcc2253c5c302f0-dbd59378b4f53cfc"
-slabKeys[308111] = "1dcc2253c5c302f0-68e8156566c13d8e"
-slabKeys[308221] = "1dcc2253c5c302f0-09a6759228b03a28"
-slabKeys[308230] = "1dcc2253c5c302f0-4bed7244ea680ec2"
-slabKeys[308257] = "1dcc2253c5c302f0-2f5b4070ee3aa512"
-slabKeys[308298] = "1dcc2253c5c302f0-61d86411205cd0df"
+buildKeys[buildProofShark] = "ProofShark-ba752d85a38f6d1d"
+slabKeys[307970] = "9edb366bcc5dfdf7-1140b5bda9dd140d"
+slabKeys[308131] = "9edb366bcc5dfdf7-6ad7b70c6ecee2a9"
+slabKeys[308210] = "9edb366bcc5dfdf7-1439853d85f21bad"
+slabKeys[308218] = "9edb366bcc5dfdf7-dbd59378b4f53cfc"
+slabKeys[308258] = "9edb366bcc5dfdf7-e6328242ecab9497"
+slabKeys[308370] = "9edb366bcc5dfdf7-09a6759228b03a28"
+slabKeys[308379] = "9edb366bcc5dfdf7-4bed7244ea680ec2"
+slabKeys[308407] = "9edb366bcc5dfdf7-387e6895a6242efb"
+slabKeys[308448] = "9edb366bcc5dfdf7-96d3b9c80baa686a"
 -- uses: MainIsland CapsuleLoop RebirthPress BuildBay YardFence YardFenceHalf YardFooting YardGate PlotMarker HubShop HubTinkerer HubBeacon HubStage BeltCrossing JunkMound ScrapPalm ScrapTreeAntenna ScrapTreeExhaust ScrapTreeLamppost ScrapTreeRebar ScrapTreeSignpost RockBoulderPile HubSectionA HubSectionB HubSectionEnd YardIsland PadKitchen PadGarage PadGadget ScrapCrate CapsuleScrap CapsuleSalvaged CapsuleRefurbished CapsuleFactory CapsulePrecision CapsulePrototype CapsuleSecret JunkrotCanettoRustini JunkrotSpoonzoBentolo JunkrotKettlinaDentata JunkrotTyroFlattino JunkrotBoltoloLonelo JunkrotHubcappaWobbla JunkrotRemotinoMuto JunkrotCabloTanglino JunkrotBulboFulminato JunkrotCrumboPoppalot JunkrotPannettoPatchato JunkrotBlendroCigolante JunkrotJackoloCrickato JunkrotOilcannaGluglu JunkrotMuffleroTossetto JunkrotRadioloFruscio JunkrotFanettoWobblino JunkrotClockoTictacco JunkrotFrostboxGelatone JunkrotMicrondoBippetto JunkrotMixerellaVroom JunkrotMopaMopetta JunkrotDrilloTrapanino JunkrotGrindellaScintilla JunkrotTelefonoRingaling JunkrotTypewrittoClackini JunkrotCamerinoFlashetto JunkrotDrippiDroppi JunkrotDingDingDingDongo JunkrotGrindoBeanbasher JunkrotAirfryoCroccante JunkrotDishwashinoSplashetto JunkrotLawnmowoRuggito JunkrotLeafblowaWhooshini JunkrotPressurwashoSprizzo JunkrotConsoloJoypaddino JunkrotSpeakeroneBoomba JunkrotRobovaccoGirotondo JunkrotClankClankClankScrapur JunkrotVrrVrrPatatrim JunkrotChimneyziniSpannerini JunkrotRusteliRustela JunkrotBallerinaTincuppina JunkrotTrashaleroTrashala JunkrotSockettoSeiSette JunkrotChefbotPrecisio JunkrotSousvideSilvano JunkrotKnifeblockSlicetta JunkrotTorquoWrenchelli JunkrotLaserlevelLineo JunkrotWeldettaSparkalot JunkrotDronettoBuzzatti JunkrotTickworthPocketti JunkrotHeadphonoBassimo JunkrotGascaniniHonkini JunkrotPercolattoNinjatto JunkrotBoilerdiroCrockpotilo JunkrotSnackomaticPrototipo JunkrotHoverbikkoZoomzoom JunkrotHolofonoShimmerra JunkrotLaVacuumaSaturnita JunkrotTheMonolito JunkrotUnitZero ProofToaster ProofKettle ProofShark
 -- include: HandFinish
 -- Server Map: the floating-island server map from
@@ -307718,8 +307866,10 @@ local FOOTING_REACH = 0.75
 -- What stands on the sand in the slab being built: { x, y, radius x, radius y, seed }.
 local groundFeet = {}
 local SHADE = { 0.13, 0.09, 0.07 }
--- The turf stands proud of DECK; the shadow sheets lie just above it.
-local SHADE_Z = DECK + 0.85
+-- The island's top is flat at DECK (measured in Studio: sand 2.00, yard dirt
+-- 2.03); the shadow sheets lie as close above it as they can without
+-- fighting it, never more than 0.03 studs off the ground.
+local SHADE_Z = DECK + 0.03
 -- A contact shadow is ambient occlusion, not a cast shadow (the game lights the
 -- world itself): a thin stepped line hugging the foot, whatever the object's
 -- size. `past` is studs outside the foot's edge.
@@ -307852,9 +308002,6 @@ slab("Plaza", function()
 			return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * k
 		end
 		local k = 1 + fbm(x / 2, y / 2, 50) * 0.15
-		if r > HUB_ROAD - 1 or (r > HUB_PAVED and r < HUB_PAVED + 1) then
-			return MARK[1], MARK[2], MARK[3]
-		end
 		return ROAD[1] * k, ROAD[2] * k, ROAD[3] * k
 	end, true)
 end, 0, 0)
@@ -308133,13 +308280,14 @@ for n, spot in LONE_WRECKS do
 				boulder(mesh, 0, side * 3.6, DECK, 2.4, n * 9, 0.8)
 			end, nil, rockColour, nil, nil, true)
 			part("Pipe", nil, { 0.46, 0.28, 0.17 }, function(mesh)
-				-- Bent where it was dropped, flanged at one end, and a sheared-off length beside it.
-				for _, spot in { { -4.4, -0.4 }, { -2.2, 0 }, { 0.3, side * 1.2 }, { 3.1, side * 2.6 }, { 1.6, -2.2 * side }, { 4.2, -2.9 * side } } do
+				-- A straight run into a right-angle elbow, flanged at one end, and a
+				-- sheared-off length beside it.
+				for _, spot in { { -4.4, -0.4 }, { -2, -0.4 }, { 0.5, -0.4 }, { 2.6, -0.1 * side }, { 3, side * 1.4 }, { 3, side * 2.8 }, { 1.6, -2.6 * side }, { 4.2, -3.3 * side } } do
 					table.insert(groundFeet, { spot[1], spot[2], 0.9, 0.9, n })
 				end
-				tube(mesh, { { -4.4, -0.4, DECK + 0.65 }, { -0.4, side * 0.4, DECK + 1.0 }, { 3.1, side * 2.6, DECK + 0.55 } }, 1.1, 12)
+				tube(mesh, roundedPath({ { -4.4, -0.4, DECK + 0.65 }, { 3, -0.4, DECK + 0.65 }, { 3, side * 2.8, DECK + 0.65 } }, 1.7, 6), 1.1, 12)
 				ring(mesh, -4.5, -0.4, DECK + 0.65, 0.7, 1.55, 0.22, "x", 14)
-				tube(mesh, { { 1.6, -2.2 * side, DECK + 0.45 }, { 4.2, -2.9 * side, DECK + 0.5 } }, 0.8, 10)
+				tube(mesh, { { 1.6, -2.6 * side, DECK + 0.45 }, { 4.2, -3.3 * side, DECK + 0.5 } }, 0.8, 10)
 			end, nil, 0.8)
 		else
 			part("Slab", nil, { 0.56, 0.55, 0.52 }, function(mesh)
@@ -308170,8 +308318,9 @@ local function yardGround(u: number, v: number, seed: number): (number, number, 
 	local yardWork = smooth(reach, reach * 0.35, math.sqrt(du * du + dv * dv * 1.4) + fbm(u / 5, v / 5, seed + 4) * 8)
 	local packed = math.max(lane * 0.85, yardWork * (0.6 + (seed % 3) * 0.15))
 	local k = 1 + fbm(u / 3, v / 3, seed) * 0.2 + fbm(u * 2, v * 2, seed + 1) * 0.08
-	local r, g, b = YARD_DIRT[1] * k, YARD_DIRT[2] * k, YARD_DIRT[3] * k
-	return r + (0.54 * k - r) * packed, g + (0.53 * k - g) * packed, b + (0.5 * k - b) * packed
+	-- Trodden dirt packs a shade darker; it never bleaches.
+	local firm = k * (1 - 0.14 * packed)
+	return YARD_DIRT[1] * firm, YARD_DIRT[2] * firm, YARD_DIRT[3] * firm
 end
 
 -- A yard's shell on the plot at (x, y), turned so its gate (local -y) faces
@@ -308253,10 +308402,11 @@ end
 -- The capsule belt and its factory (CapsuleLoop), on the plaza.
 placeModel("CapsuleLoop", buildCapsuleLoop, 0, 0, DECK + 0.05)
 
--- New players start on a ring painted on the plaza.
+-- New players start on a ring painted on the plaza, over the walk it crosses
+-- (the walk's top is at DECK + 0.1).
 slab("Spawn", function()
 	part("Pad", nil, MARK, function(mesh)
-		ring(mesh, 0, 0, DECK + 0.05, 8, 9, 0.1, "z", 48)
+		ring(mesh, 0, 0, DECK + 0.1, 8, 9, 0.1, "z", 48)
 	end, nil, 0)
 end, 0, 22)
 
@@ -308317,6 +308467,12 @@ slab("Streets", function()
 		local k = (1 + fbm(x / 3, y / 3, 140) * 0.1) * trodden
 		return WALK[1] * k, WALK[2] * k, WALK[3] * k
 	end, nil, nil, true)
+	chunkedPart("RoadMarks", nil, MARK, function(mesh)
+		-- The ring road's edge lines, laid on the paving as their own sheets so
+		-- their edges print crisp.
+		flatRing(mesh, HUB_PAVED, HUB_PAVED + 1, DECK + 0.07)
+		flatRing(mesh, HUB_ROAD - 1, HUB_ROAD, DECK + 0.07)
+	end, nil, 0.5, true)
 	part("LaneMarks", nil, { 0.86, 0.7, 0.16 }, function(mesh)
 		-- Painted dashes round the promenade and along the walks, for the carts.
 		local PAINT_Z = STREET_Z + 0.02
