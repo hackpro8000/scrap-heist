@@ -1,0 +1,17 @@
+engine: taken from the build-engine branch
+[    0.0s] running CapsulePrototype/model.luau
+[    0.1s] baking on CPU (no GPU)
+[    0.1s] shaded Pod 256×256 in 0.08s
+[    0.2s] shaded Rings 256×256 in 0.04s
+[    0.3s] shaded Tag 256×256 in 0.07s
+[    0.3s] writing CapsulePrototype.glb and 4 textures
+[    0.3s] rendering preview of 4 parts
+CapsulePrototype: 4 parts, script 260.60ms, total 2.56s
+  shade (creases, contact): 0.11s
+  coat: 0.03s
+  wear: 0.01s
+  combine: 0.01s
+  shade, surfaces, grid and texels: 0.01s
+  shade, neighbourhoods: 0.01s
+  shade, spreading over seams: 0.00s
+  coat, painting texels: 0.02s
