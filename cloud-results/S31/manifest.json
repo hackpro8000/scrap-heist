@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "45f7ab22550a6350",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 31/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 939068,
+			"sha": "dee0a051854b9313",
+			"parts": 17
+		},
+		{
+			"id": "6c88ad73476e116e",
+			"key": "9edb366bcc5dfdf7-1439853d85f21bad RoughShade10 146.04240820479336 -149.99962501867964 0",
+			"piece": 1,
+			"label": "RoughShade10",
+			"turn": 0.0,
+			"bytes": 3320,
+			"sha": "176b2b7ae2084624",
+			"parts": 1
+		},
+		{
+			"id": "000e0637814e7f0b",
+			"key": "YardFence-0f1495cb71d18f3d 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FenceFront2",
+			"turn": 247.5,
+			"bytes": 393808,
+			"sha": "258fa28d0c6c625e",
+			"parts": 3
+		},
+		{
+			"id": "31aa08497a82291d",
+			"key": "JunkrotTorquoWrenchelli-1404d691f409f2e9 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotTorquoWrenchelli",
+			"turn": 0.0,
+			"bytes": 716748,
+			"sha": "eb544649adf5c12e",
+			"parts": 8
+		}
+	],
+	"placements": [
+		{
+			"asset": "45f7ab22550a6350",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-1_4_0_110_000",
+					"position": [
+						-23.799639499999998,
+						-10.898278300000001,
+						-300.985505
+					]
+				},
+				{
+					"name": "Grass_2_-4_0_100_101",
+					"position": [
+						177.65676,
+						-18.98855825,
+						242.97625499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "6c88ad73476e116e",
+			"label": "RoughShade10",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						146.04241000000002,
+						2.03,
+						149.99962499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard8_FenceFront2",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						151.481315,
+						5.3468148499999995,
+						36.76339
+					]
+				}
+			]
+		},
+		{
+			"asset": "31aa08497a82291d",
+			"label": "Kit_JunkrotTorquoWrenchelli",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pupils",
+					"position": [
+						624.0074999999999,
+						-256.328,
+						0.364
+					]
+				},
+				{
+					"name": "Socket",
+					"position": [
+						623.974825,
+						-257.39855,
+						-0.20860605
+					]
+				}
+			]
+		}
+	]
+}
