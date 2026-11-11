@@ -1,0 +1,17 @@
+MainIsland 1 x	3088.717
+MainIsland 1 x #split	1
+slab RoughShade5	0.022
+slab LoneWreck17	0.127
+slab LoneWreck17 #split	1
+YardFence 1.037037037037037 x x1.5	0.378
+YardFence 1.037037037037037 x x1.5 #split	1
+HubBeacon 1 x	8.091
+HubBeacon 1 x #split	1
+CapsuleFactory 1 x	0.293
+CapsuleFactory 1 x #split	1
+JunkrotOilcannaGluglu 1 x	1.542
+JunkrotOilcannaGluglu 1 x #split	1
+JunkrotAirfryoCroccante 1 x	1.728
+JunkrotAirfryoCroccante 1 x #split	1
+JunkrotKnifeblockSlicetta 1 x	3.468
+JunkrotKnifeblockSlicetta 1 x #split	1
