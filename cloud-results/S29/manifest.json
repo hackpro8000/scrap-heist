@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "d6261478e7c3665b",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 29/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 946008,
+			"sha": "f7db6d00ae01b759",
+			"parts": 16
+		},
+		{
+			"id": "a312031569bb9cef",
+			"key": "9edb366bcc5dfdf7-dbd59378b4f53cfc RoughFoot9 2.100174824690046 -196.24625287048346 0",
+			"piece": 1,
+			"label": "RoughFoot9",
+			"turn": 0.0,
+			"bytes": 37812,
+			"sha": "6d451f8b2d7606c8",
+			"parts": 1
+		},
+		{
+			"id": "000e0637814e7f0b",
+			"key": "YardFence-0f1495cb71d18f3d 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FenceFront1",
+			"turn": 247.5,
+			"bytes": 393812,
+			"sha": "c8b564d02036f6cb",
+			"parts": 3
+		},
+		{
+			"id": "2f20e3f1909b4a62",
+			"key": "JunkrotKnifeblockSlicetta-5fdb96eaf16bb167 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotKnifeblockSlicetta",
+			"turn": 0.0,
+			"bytes": 887100,
+			"sha": "3385594b1defc0e8",
+			"parts": 7
+		}
+	],
+	"placements": [
+		{
+			"asset": "d6261478e7c3665b",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-2_4_0_000_011",
+					"position": [
+						-119.29129499999999,
+						-14.4059065,
+						-277.45849999999996
+					]
+				},
+				{
+					"name": "Grass_0_-5_0_100_100",
+					"position": [
+						49.504607,
+						-14.77621325,
+						303.95914000000005
+					]
+				}
+			]
+		},
+		{
+			"asset": "a312031569bb9cef",
+			"label": "RoughFoot9",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grit",
+					"position": [
+						8.29133165,
+						1.5991278999999998,
+						195.125745
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard8_FenceFront1",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						146.88912499999998,
+						5.3468148499999995,
+						47.849945000000005
+					]
+				}
+			]
+		},
+		{
+			"asset": "2f20e3f1909b4a62",
+			"label": "Kit_JunkrotKnifeblockSlicetta",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Honing",
+					"position": [
+						599.562175,
+						-256.60578,
+						-1.3641855
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						600.01001,
+						-258.26399000000004,
+						0.17220000000000002
+					]
+				}
+			]
+		}
+	]
+}
