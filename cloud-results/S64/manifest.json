@@ -1,0 +1,257 @@
+{
+	"assets": [
+		{
+			"id": "75aa5c7bff6e4e53",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 64/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 916972,
+			"sha": "ffc94c5f1afcefe5",
+			"parts": 16
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingBack6",
+			"turn": -67.5,
+			"bytes": 97780,
+			"sha": "96bad14d1d58b19c",
+			"parts": 1
+		},
+		{
+			"id": "11cf471fde41c435",
+			"key": "PlotMarker-d53896012ff9aa6c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_PlotMarker",
+			"turn": -67.5,
+			"bytes": 394044,
+			"sha": "59b387c6746a57a7",
+			"parts": 4
+		},
+		{
+			"id": "e0d47aa95bd6a8a0",
+			"key": "9edb366bcc5dfdf7-09a6759228b03a28 Plot7 80.3635207966689 -194.0147018273702 202.5",
+			"piece": 1,
+			"label": "Plot7",
+			"turn": 0.0,
+			"bytes": 12050716,
+			"sha": "bc6e4d2bc1b99278",
+			"parts": 40
+		}
+	],
+	"placements": [
+		{
+			"asset": "75aa5c7bff6e4e53",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_3_-3_0_101_001",
+					"position": [
+						225.049175,
+						-32.459181,
+						185.86345
+					]
+				},
+				{
+					"name": "Grass_-5_1_0_010",
+					"position": [
+						-290.91035,
+						-10.355096300000001,
+						-104.9345675
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard1_FootingBack6",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						252.734535,
+						2.266335,
+						-85.16327999999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard1_FootingFront4",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						146.96393,
+						2.266335,
+						-47.8460125
+					]
+				}
+			]
+		},
+		{
+			"asset": "11cf471fde41c435",
+			"label": "Yard1_PlotMarker",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						143.55101,
+						3.717558,
+						-49.658875
+					]
+				}
+			]
+		},
+		{
+			"asset": "11cf471fde41c435",
+			"label": "Yard2_PlotMarker",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						66.2709975,
+						3.717558,
+						-136.664805
+					]
+				}
+			]
+		},
+		{
+			"asset": "11cf471fde41c435",
+			"label": "Yard3_PlotMarker",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-49.658875,
+						3.717558,
+						-143.55101
+					]
+				}
+			]
+		},
+		{
+			"asset": "11cf471fde41c435",
+			"label": "Yard4_PlotMarker",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-136.664805,
+						3.717558,
+						-66.2709975
+					]
+				}
+			]
+		},
+		{
+			"asset": "11cf471fde41c435",
+			"label": "Yard5_PlotMarker",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-143.55101,
+						3.717558,
+						49.658875
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard6_FootingFront1",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-47.840745999999996,
+						2.266335,
+						146.861785
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard6_FootingFront3",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-25.667638,
+						2.266335,
+						156.04619
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard6_FootingFront5",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-81.1004125,
+						2.266335,
+						133.08517999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "11cf471fde41c435",
+			"label": "Yard6_PlotMarker",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-66.2709975,
+						3.717558,
+						136.664805
+					]
+				}
+			]
+		},
+		{
+			"asset": "e0d47aa95bd6a8a0",
+			"label": "Plot7",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_0_0_010",
+					"position": [
+						135.23916499999999,
+						1.8649999999999998,
+						216.744945
+					]
+				},
+				{
+					"name": "Ground_0_-1_0_100",
+					"position": [
+						25.4878755,
+						1.8649999999999998,
+						171.284465
+					]
+				}
+			]
+		}
+	]
+}
