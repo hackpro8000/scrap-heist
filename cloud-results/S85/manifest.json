@@ -1,0 +1,217 @@
+{
+	"assets": [
+		{
+			"id": "646117a38ec7dcfe",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 85/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 886488,
+			"sha": "0f316dd80dd70727",
+			"parts": 17
+		},
+		{
+			"id": "44dff41c5cc64f21",
+			"key": "YardFence-0f1495cb71d18f3d 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceLeft5",
+			"turn": 202.5,
+			"bytes": 395356,
+			"sha": "f08122b30d2c835a",
+			"parts": 3
+		},
+		{
+			"id": "f241ab2da8406d51",
+			"key": "JunkrotGrindellaScintilla-d3cef93e6963eed8 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotGrindellaScintilla",
+			"turn": 0.0,
+			"bytes": 814784,
+			"sha": "f463e9be7096af3a",
+			"parts": 10
+		}
+	],
+	"placements": [
+		{
+			"asset": "646117a38ec7dcfe",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_2_-3_-1_110",
+					"position": [
+						176.228555,
+						-66.03942749999999,
+						147.14573000000001
+					]
+				},
+				{
+					"name": "Grass_-5_0_0_001",
+					"position": [
+						-305.17382499999997,
+						-19.5345975,
+						-15.246383950000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard1_FenceLeft5",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						175.658025,
+						5.3468148499999995,
+						-124.69372000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard2_FenceLeft4",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						31.2745785,
+						5.3468148499999995,
+						-200.88324
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard3_FenceLeft3",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-115.169158,
+						5.3468148499999995,
+						-152.66369
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard4_FenceLeft2",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-177.88889999999998,
+						5.3468148499999995,
+						-21.750012499999997
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard5_FenceLeft1",
+			"turn": 382.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-129.66935999999998,
+						5.3468148499999995,
+						105.6445925
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard5_FenceLeft9",
+			"turn": 382.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-221.646695,
+						5.3468148499999995,
+						143.74286
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard6_FenceLeft8",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-50.323708499999995,
+						5.3468148499999995,
+						246.87191
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceLeft7",
+			"turn": 472.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						134.218295,
+						5.3468148499999995,
+						198.652355
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard8_FenceLeft6",
+			"turn": 517.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						223.87758000000002,
+						5.3468148499999995,
+						40.799143
+					]
+				}
+			]
+		},
+		{
+			"asset": "f241ab2da8406d51",
+			"label": "Kit_JunkrotGrindellaScintilla",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Cord",
+					"position": [
+						22.795459,
+						-259.19434,
+						-0.00048366499999999424
+					]
+				},
+				{
+					"name": "Guard",
+					"position": [
+						25.092915,
+						-259.01071,
+						-0.3385913235
+					]
+				}
+			]
+		}
+	]
+}
