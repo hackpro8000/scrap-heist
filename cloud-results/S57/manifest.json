@@ -1,0 +1,237 @@
+{
+	"assets": [
+		{
+			"id": "f573c3663253501b",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 57/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 855232,
+			"sha": "475947dfd9727246",
+			"parts": 17
+		},
+		{
+			"id": "000e0637814e7f0b",
+			"key": "YardFence-0f1495cb71d18f3d 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceBack3",
+			"turn": 112.5,
+			"bytes": 393816,
+			"sha": "5bb01cf8cb963f5b",
+			"parts": 3
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard2_FootingBack4",
+			"turn": -22.5,
+			"bytes": 97780,
+			"sha": "0fac850b069d0f0a",
+			"parts": 1
+		},
+		{
+			"id": "c7d6aad2c87bdf7b",
+			"key": "9edb366bcc5dfdf7-4bed7244ea680ec2 YardShade4 -194.0147018273702 80.36352079666888 67.5",
+			"piece": 1,
+			"label": "YardShade4",
+			"turn": 0.0,
+			"bytes": 94872,
+			"sha": "b41a80887144f921",
+			"parts": 1
+		},
+		{
+			"id": "9fba4e161aa5911f",
+			"key": "JunkrotBoilerdiroCrockpotilo-79d87e11c65a1923 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotBoilerdiroCrockpotilo",
+			"turn": 0.0,
+			"bytes": 5578172,
+			"sha": "e5db161550537aa1",
+			"parts": 32
+		}
+	],
+	"placements": [
+		{
+			"asset": "f573c3663253501b",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-5_-3_0",
+					"position": [
+						-264.18724,
+						-26.435892499999998,
+						146.035675
+					]
+				},
+				{
+					"name": "Grass_4_2_0_101",
+					"position": [
+						289.524515,
+						-26.410245,
+						-129.430445
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceBack3",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						238.847575,
+						5.3468148499999995,
+						-118.411675
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceFront3",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						128.51692,
+						5.3468148499999995,
+						-92.20486
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingBack4",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						96.244565,
+						2.266335,
+						-248.04019
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingFront1",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						47.840745999999996,
+						2.266335,
+						-146.861785
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingFront5",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						81.1004125,
+						2.266335,
+						-133.08517999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingBack3",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-118.42294000000001,
+						2.266335,
+						-238.95793
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingBack8",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-62.990168499999996,
+						2.266335,
+						-261.91893
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingFront4",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-47.8460125,
+						2.266335,
+						-146.96393
+					]
+				}
+			]
+		},
+		{
+			"asset": "c7d6aad2c87bdf7b",
+			"label": "YardShade4",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-194.01471,
+						2.03,
+						-80.363523
+					]
+				}
+			]
+		},
+		{
+			"asset": "9fba4e161aa5911f",
+			"label": "Kit_JunkrotBoilerdiroCrockpotilo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Tail",
+					"position": [
+						813.571625,
+						-257.969435,
+						-0.0006496499999999461
+					]
+				},
+				{
+					"name": "Teeth",
+					"position": [
+						818.325,
+						-259.48476000000005,
+						0.0007763949999999853
+					]
+				}
+			]
+		}
+	]
+}
