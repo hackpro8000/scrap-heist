@@ -1,0 +1,312 @@
+{
+	"assets": [
+		{
+			"id": "b50807085d52d5d0",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 65/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 999580,
+			"sha": "4d6dca029ea908f9",
+			"parts": 16
+		},
+		{
+			"id": "000e0637814e7f0b",
+			"key": "YardFence-0f1495cb71d18f3d 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceBack7",
+			"turn": 112.5,
+			"bytes": 393868,
+			"sha": "4af7af5ae0928631",
+			"parts": 3
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard2_FootingBack6",
+			"turn": -22.5,
+			"bytes": 97836,
+			"sha": "299c1cb355e8a05f",
+			"parts": 1
+		},
+		{
+			"id": "19e9dfbdd385f82f",
+			"key": "9edb366bcc5dfdf7-4bed7244ea680ec2 YardShade5 -194.01470182737023 -80.36352079666884 112.5",
+			"piece": 1,
+			"label": "YardShade5",
+			"turn": 0.0,
+			"bytes": 94788,
+			"sha": "73eef191aebca34e",
+			"parts": 1
+		},
+		{
+			"id": "7232e2a5527d2474",
+			"key": "JunkrotSnackomaticPrototipo-2987de96ef6fd5e1 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotSnackomaticPrototipo",
+			"turn": 0.0,
+			"bytes": 705156,
+			"sha": "499a620861b72b93",
+			"parts": 9
+		}
+	],
+	"placements": [
+		{
+			"asset": "b50807085d52d5d0",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_-3_0_110_001",
+					"position": [
+						-276.759315,
+						-13.151047,
+						150.279855
+					]
+				},
+				{
+					"name": "Grass_4_2_0_001",
+					"position": [
+						284.58455000000004,
+						-25.934062,
+						-132.90605499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceBack7",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						257.21637499999997,
+						5.3468148499999995,
+						-74.06546
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard2_FenceBack1",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						62.987604,
+						5.3468148499999995,
+						-261.8052
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingBack6",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						118.4176775,
+						2.266335,
+						-238.85579
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingFront3",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						25.667638,
+						2.266335,
+						-156.04619
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingBack1",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-140.59605499999998,
+						2.266335,
+						-229.77353
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingBack5",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-96.24983499999999,
+						2.266335,
+						-248.142335
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard3_FenceFront2",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-81.11830900000001,
+						5.3468148499999995,
+						-133.109125
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingFront5",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-36.759457,
+						2.266335,
+						-151.55613
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard4_FootingBack1",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-261.81678999999997,
+						2.266335,
+						-62.984905
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard4_FenceBack4",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-248.02858500000002,
+						5.3468148499999995,
+						-96.247265
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard4_FenceBack7",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-234.251985,
+						5.3468148499999995,
+						-129.50693
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard4_FenceFront2",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-151.481315,
+						5.3468148499999995,
+						-36.76339
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard4_FootingFront4",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-137.67738,
+						2.266335,
+						-70.013855
+					]
+				}
+			]
+		},
+		{
+			"asset": "19e9dfbdd385f82f",
+			"label": "YardShade5",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-194.01471,
+						2.03,
+						80.363523
+					]
+				}
+			]
+		},
+		{
+			"asset": "7232e2a5527d2474",
+			"label": "Kit_JunkrotSnackomaticPrototipo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pupils",
+					"position": [
+						840.0100199999999,
+						-256.884005,
+						0.882
+					]
+				},
+				{
+					"name": "Tag",
+					"position": [
+						840.84,
+						-257.73,
+						0.26
+					]
+				}
+			]
+		}
+	]
+}
