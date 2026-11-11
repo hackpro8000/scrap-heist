@@ -1,0 +1,64 @@
+engine: taken from the build-engine branch
+[    0.0s] running HubShop/model.luau
+[    1.8s] baking on CPU (no GPU)
+[    2.2s] shaded Slab 1024×1024 in 1.15s
+[    4.0s] shaded LowerContainers 1024×1024 in 1.61s
+[    4.8s] shaded Shelves 1024×1024 in 0.72s
+[    6.2s] shaded ShelfStock 1024×1024 in 1.26s
+[    7.5s] shaded UpperContainer 1024×1024 in 1.27s
+[    9.1s] shaded Counter 1024×1024 in 1.46s
+[   10.4s] shaded CounterDrums 1024×1024 in 1.11s
+[   11.4s] shaded Awning 1024×1024 in 0.97s
+[   12.8s] shaded AwningPatches 1024×1024 in 1.32s
+[   13.4s] shaded AwningPosts 1024×1024 in 0.57s
+[   14.5s] shaded Sign 1024×1024 in 0.94s
+[   14.9s] shaded SignBraces 1024×1024 in 0.44s
+[   15.5s] shaded Crane 1024×1024 in 0.48s
+[   16.7s] shaded CraneWeight 1024×1024 in 1.07s
+[   17.0s] shaded CraneHook 1024×1024 in 0.31s
+[   18.5s] shaded StockPiles 1024×1024 in 1.32s
+[   19.5s] shaded Fittings 1024×1024 in 0.95s
+[   20.4s] shaded Stencil 1024×1024 in 0.83s
+[   21.3s] shaded PriceBoards 1024×1024 in 0.75s
+[   22.7s] shaded Supplies 1024×1024 in 1.24s
+[   22.9s] shaded Cables 1024×1024 in 0.26s
+[   22.9s] writing HubShop.glb and 22 textures
+[   23.5s] rendering preview of 22 parts
+[   33.4s] rendering eye 1/7
+[   34.7s] rendering eye 2/7
+[   35.8s] rendering eye 3/7
+[   37.0s] rendering eye 4/7
+[   39.3s] rendering eye 5/7
+[   40.3s] rendering eye 6/7
+[   41.6s] rendering eye 7/7
+HubShop: 22 parts, script 22.99s, total 42.61s
+  shade (creases, contact): 5.90s
+  coat: 5.39s
+  wear: 2.23s
+  combine: 0.31s
+  shade, surfaces, grid and texels: 0.98s
+  shade, neighbourhoods: 0.78s
+  shade, spreading over seams: 0.29s
+  coat, painting texels: 0.13s
+#f23d3d Slab
+#85a5f2 LowerContainers
+#7bb32d Shelves
+#b362a8 ShelfStock
+#3df2d4 UpperContainer
+#f2c085 Counter
+#4e2db3 CounterDrums
+#66b362 Awning
+#f23d79 AwningPatches
+#85c9f2 AwningPosts
+#a8b32d Sign
+#a262b3 SignBraces
+#3df297 Crane
+#f29c85 CraneWeight
+#2d38b3 CraneHook
+#80b362 StockPiles
+#f23db6 Fittings
+#85eef2 Stencil
+#b3912d PriceBoards
+#8762b3 Supplies
+#3df25a Cables
+#f28593 Bulbs
