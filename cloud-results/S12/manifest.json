@@ -1,0 +1,188 @@
+{
+	"assets": [
+		{
+			"id": "f6d0ac6854e87e27",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 12/25",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 3817724,
+			"sha": "ea8636e234704352",
+			"parts": 66
+		},
+		{
+			"id": "3eb9ccf5bcfd0537",
+			"key": "ScrapTreeRebar-06c988ae19846bea 1 x x1.8",
+			"piece": 1,
+			"label": "RoughScrap1",
+			"turn": 47.0,
+			"bytes": 425432,
+			"sha": "83e9976cc9cf634b",
+			"parts": 3
+		},
+		{
+			"id": "05ae7c6e2af0c4bb",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck8 65.8 -129.2 0",
+			"piece": 1,
+			"label": "LoneWreck8",
+			"turn": 0.0,
+			"bytes": 55060,
+			"sha": "0f0b965f5798bc54",
+			"parts": 3
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingBack5",
+			"turn": -67.5,
+			"bytes": 97780,
+			"sha": "cc97e70134477791",
+			"parts": 1
+		},
+		{
+			"id": "c17402070a8a7f35",
+			"key": "YardFooting-748247116a86686c 0.5 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingFrontHalf1",
+			"turn": -67.5,
+			"bytes": 108260,
+			"sha": "da939e5e7055568f",
+			"parts": 1
+		},
+		{
+			"id": "cdde9a2170642465",
+			"key": "9edb366bcc5dfdf7-09a6759228b03a28 Plot2 80.36352079666887 194.0147018273702 -22.5",
+			"piece": 1,
+			"label": "Plot2",
+			"turn": 0.0,
+			"bytes": 12032260,
+			"sha": "4112f82c957f1458",
+			"parts": 40
+		}
+	],
+	"placements": [
+		{
+			"asset": "f6d0ac6854e87e27",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_3_2_-1_111",
+					"position": [
+						237.753175,
+						-53.3306635,
+						-186.55309
+					]
+				},
+				{
+					"name": "Grass_-4_-4_0_100_000",
+					"position": [
+						-208.09427,
+						-13.99475075,
+						240.79558
+					]
+				}
+			]
+		},
+		{
+			"asset": "3eb9ccf5bcfd0537",
+			"label": "RoughScrap1",
+			"turn": 47.0,
+			"anchors": [
+				{
+					"name": "Rebar",
+					"position": [
+						153.57232,
+						11.08729435,
+						-2.5707272
+					]
+				},
+				{
+					"name": "Ties",
+					"position": [
+						153.52967999999998,
+						5.6577316,
+						-2.07222665
+					]
+				}
+			]
+		},
+		{
+			"asset": "05ae7c6e2af0c4bb",
+			"label": "LoneWreck8",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						66.6,
+						2.03,
+						128.57379500000002
+					]
+				},
+				{
+					"name": "SlabStone",
+					"position": [
+						68.1621225,
+						2.137969,
+						129.60459
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard1_FootingBack5",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						248.142335,
+						2.266335,
+						-96.24983499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "c17402070a8a7f35",
+			"label": "Yard1_FootingFrontHalf1",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						125.1258475,
+						2.266335,
+						-100.5056625
+					]
+				}
+			]
+		},
+		{
+			"asset": "cdde9a2170642465",
+			"label": "Plot2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_-1_0_000",
+					"position": [
+						25.4878755,
+						1.8649999999999998,
+						-171.284465
+					]
+				},
+				{
+					"name": "Ground_0_0_0_110",
+					"position": [
+						135.23916499999999,
+						1.8649999999999998,
+						-216.744945
+					]
+				}
+			]
+		}
+	]
+}
