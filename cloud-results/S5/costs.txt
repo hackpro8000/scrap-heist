@@ -1,0 +1,21 @@
+MainIsland 1 x	2751.123
+MainIsland 1 x #split	1
+slab Rough4	2.291
+slab Rough4 #split	1
+ScrapTreeLamppost 1 x x1.3	0.480
+ScrapTreeLamppost 1 x x1.3 #split	1
+YardFence 1 x x1.5	0.359
+YardFence 1 x x1.5 #split	1
+slab YardShade3	0.193
+slab Spawn	0.031
+slab Spawn #split	1
+ProofKettle 1 x	0.082
+ProofKettle 1 x #split	1
+JunkrotTyroFlattino 1 x	1.606
+JunkrotTyroFlattino 1 x #split	1
+JunkrotMixerellaVroom 1 x	1.503
+JunkrotMixerellaVroom 1 x #split	1
+JunkrotRobovaccoGirotondo 1 x	1.335
+JunkrotRobovaccoGirotondo 1 x #split	1
+JunkrotGascaniniHonkini 1 x	20.838
+JunkrotGascaniniHonkini 1 x #split	1
