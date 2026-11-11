@@ -1,0 +1,8 @@
+MainIsland 1 x	2448.441
+MainIsland 1 x #split	1
+YardFence 1 x x1.5	0.267
+YardFence 1 x x1.5 #split	1
+YardFooting 0.5 x x1.5	0.080
+YardFooting 0.5 x x1.5 #split	1
+JunkrotChefbotPrecisio 1 x	1.218
+JunkrotChefbotPrecisio 1 x #split	1
