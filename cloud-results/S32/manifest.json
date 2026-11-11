@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "46f629be40530eff",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 32/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 939616,
+			"sha": "0f0eacee7512de84",
+			"parts": 17
+		},
+		{
+			"id": "82ffbcd5b889d515",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck1 137.9 44.8 0",
+			"piece": 1,
+			"label": "LoneWreck1",
+			"turn": 0.0,
+			"bytes": 66464,
+			"sha": "e5251a5009b6639d",
+			"parts": 3
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FootingFront2",
+			"turn": 247.5,
+			"bytes": 97832,
+			"sha": "5de3584b8f203658",
+			"parts": 1
+		},
+		{
+			"id": "c9127ac79bbde8df",
+			"key": "CapsulePrototype-95d5f97f3b8c808c 1 x",
+			"piece": 1,
+			"label": "Kit_CapsulePrototype",
+			"turn": 0.0,
+			"bytes": 340168,
+			"sha": "b47af2ffba519f41",
+			"parts": 4
+		}
+	],
+	"placements": [
+		{
+			"asset": "46f629be40530eff",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_2_3_-1_011_111",
+					"position": [
+						141.490412,
+						-50.87175,
+						-250.06593999999998
+					]
+				},
+				{
+					"name": "Grass_-4_-4_0_010_101",
+					"position": [
+						-231.315565,
+						-14.681484,
+						215.6929
+					]
+				}
+			]
+		},
+		{
+			"asset": "82ffbcd5b889d515",
+			"label": "LoneWreck1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pipe",
+					"position": [
+						137.80185,
+						2.643356,
+						-45.425312000000005
+					]
+				},
+				{
+					"name": "PipeStone",
+					"position": [
+						137.82809,
+						2.16111595,
+						-41.231201
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingFront2",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						151.45398999999998,
+						2.266335,
+						36.754191
+					]
+				}
+			]
+		},
+		{
+			"asset": "c9127ac79bbde8df",
+			"label": "Kit_CapsulePrototype",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Rings",
+					"position": [
+						-576.009775,
+						-258.49512000000004,
+						-0.0030170500000000766
+					]
+				},
+				{
+					"name": "Tag",
+					"position": [
+						-575.45,
+						-257.42999999999995,
+						0.9
+					]
+				}
+			]
+		}
+	]
+}
