@@ -1,0 +1,820 @@
+{
+	"assets": [
+		{
+			"id": "67de11644791fdef",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 23/25",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 4244748,
+			"sha": "38ed99209feeea9d",
+			"parts": 66
+		},
+		{
+			"id": "a51745ff4f10936e",
+			"key": "ScrapTreeSignpost-1c7a92632b33e8d4 1 x x1.4",
+			"piece": 1,
+			"label": "RoughScrap7",
+			"turn": 329.0,
+			"bytes": 497424,
+			"sha": "95290b6db1c5b476",
+			"parts": 5
+		},
+		{
+			"id": "d1157eaf1bbc7c30",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck22 194.2 -141.1 0",
+			"piece": 1,
+			"label": "LoneWreck22",
+			"turn": 0.0,
+			"bytes": 68624,
+			"sha": "7c32b1a9dcfa3df3",
+			"parts": 3
+		},
+		{
+			"id": "44dff41c5cc64f21",
+			"key": "YardFence-0f1495cb71d18f3d 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceLeft2",
+			"turn": 202.5,
+			"bytes": 395356,
+			"sha": "140bfca5aaab5e68",
+			"parts": 3
+		},
+		{
+			"id": "cbae2df63e42b3f0",
+			"key": "9edb366bcc5dfdf7-96d3b9c80baa686a Streets 0 0 0",
+			"piece": 1,
+			"label": "Streets",
+			"turn": 0.0,
+			"bytes": 3840344,
+			"sha": "fa6ac11426284442",
+			"parts": 12
+		},
+		{
+			"id": "c9127ac79bbde8df",
+			"key": "CapsulePrototype-95d5f97f3b8c808c 1 x",
+			"piece": 1,
+			"label": "Kit_CapsulePrototype",
+			"turn": 0.0,
+			"bytes": 340168,
+			"sha": "b47af2ffba519f41",
+			"parts": 4
+		},
+		{
+			"id": "c7935805dc0f0cdf",
+			"key": "JunkrotRadioloFruscio-5a304189562f4bd0 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotRadioloFruscio",
+			"turn": 0.0,
+			"bytes": 852784,
+			"sha": "92d066e7ce2d6f18",
+			"parts": 9
+		},
+		{
+			"id": "681f9e9df22425d0",
+			"key": "JunkrotLawnmowoRuggito-f25556e3f13e2d8a 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotLawnmowoRuggito",
+			"turn": 0.0,
+			"bytes": 900064,
+			"sha": "6e5c444f2b81f034",
+			"parts": 10
+		},
+		{
+			"id": "905abbe537e32454",
+			"key": "JunkrotLaserlevelLineo-88f6e8b900d0d39c 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotLaserlevelLineo",
+			"turn": 0.0,
+			"bytes": 628692,
+			"sha": "b3498afd82718da1",
+			"parts": 9
+		}
+	],
+	"placements": [
+		{
+			"asset": "67de11644791fdef",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_-1_0_010_011",
+					"position": [
+						-306.02258500000005,
+						-13.3861073,
+						7.47612415
+					]
+				},
+				{
+					"name": "Grass_4_0_0_100_100",
+					"position": [
+						317.623535,
+						-14.8831448,
+						-7.759821315
+					]
+				}
+			]
+		},
+		{
+			"asset": "a51745ff4f10936e",
+			"label": "RoughScrap7",
+			"turn": 329.0,
+			"anchors": [
+				{
+					"name": "StreetSigns",
+					"position": [
+						-103.025505,
+						11.262756249999999,
+						107.32422249999999
+					]
+				},
+				{
+					"name": "WarningSigns",
+					"position": [
+						-103.60475500000001,
+						11.00821925,
+						109.18877499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "d1157eaf1bbc7c30",
+			"label": "LoneWreck22",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pipe",
+					"position": [
+						194.10393499999998,
+						2.643356,
+						141.74094
+					]
+				},
+				{
+					"name": "PipeStone",
+					"position": [
+						194.23831,
+						2.1936735,
+						137.38595500000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard1_FenceLeft2",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						141.166525,
+						5.3468148499999995,
+						-110.406875
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard1_FenceLeft4",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						164.160855,
+						5.3468148499999995,
+						-119.93144000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard1_FenceLeft6",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						187.15519,
+						5.3468148499999995,
+						-129.456008
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard1_FenceLeft8",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						210.14952499999998,
+						5.3468148499999995,
+						-138.980575
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard2_FenceLeft1",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						16.9877295,
+						5.3468148499999995,
+						-166.39174000000003
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard2_FenceLeft3",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						26.512296,
+						5.3468148499999995,
+						-189.38608
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard2_FenceLeft5",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						36.036861,
+						5.3468148499999995,
+						-212.380405
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard2_FenceLeft7",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						45.561426,
+						5.3468148499999995,
+						-235.37473999999997
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard2_FenceLeft9",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						55.085991,
+						5.3468148499999995,
+						-258.369085
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard3_FenceLeft2",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-110.406875,
+						5.3468148499999995,
+						-141.166525
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard3_FenceLeft4",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-119.93144000000001,
+						5.3468148499999995,
+						-164.160855
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard3_FenceLeft6",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-129.456008,
+						5.3468148499999995,
+						-187.15519
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard3_FenceLeft8",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-138.980575,
+						5.3468148499999995,
+						-210.14952499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard4_FenceLeft1",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-166.39174000000003,
+						5.3468148499999995,
+						-16.9877295
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard4_FenceLeft3",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-189.38608,
+						5.3468148499999995,
+						-26.512296
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard4_FenceLeft5",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-212.380405,
+						5.3468148499999995,
+						-36.036861
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard4_FenceLeft7",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-235.37473999999997,
+						5.3468148499999995,
+						-45.561426
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard4_FenceLeft9",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-258.369085,
+						5.3468148499999995,
+						-55.085991
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard5_FenceLeft2",
+			"turn": 382.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-141.166525,
+						5.3468148499999995,
+						110.406875
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard5_FenceLeft4",
+			"turn": 382.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-164.160855,
+						5.3468148499999995,
+						119.93144000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard5_FenceLeft6",
+			"turn": 382.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-187.15519,
+						5.3468148499999995,
+						129.456008
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard5_FenceLeft8",
+			"turn": 382.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-210.14952499999998,
+						5.3468148499999995,
+						138.980575
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard6_FenceLeft1",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-16.9877295,
+						5.3468148499999995,
+						166.39174000000003
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard6_FenceLeft3",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-26.512296,
+						5.3468148499999995,
+						189.38608
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard6_FenceLeft5",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-36.036861,
+						5.3468148499999995,
+						212.380405
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard6_FenceLeft7",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-45.561426,
+						5.3468148499999995,
+						235.37473999999997
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard6_FenceLeft9",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-55.085991,
+						5.3468148499999995,
+						258.369085
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceLeft2",
+			"turn": 472.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						110.406875,
+						5.3468148499999995,
+						141.166525
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceLeft4",
+			"turn": 472.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						119.93144000000001,
+						5.3468148499999995,
+						164.160855
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceLeft6",
+			"turn": 472.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						129.456008,
+						5.3468148499999995,
+						187.15519
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceLeft8",
+			"turn": 472.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						138.980575,
+						5.3468148499999995,
+						210.14952499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard8_FenceLeft1",
+			"turn": 517.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						166.39174000000003,
+						5.3468148499999995,
+						16.9877295
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard8_FenceLeft3",
+			"turn": 517.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						189.38608,
+						5.3468148499999995,
+						26.512296
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard8_FenceLeft5",
+			"turn": 517.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						212.380405,
+						5.3468148499999995,
+						36.036861
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard8_FenceLeft7",
+			"turn": 517.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						235.37473999999997,
+						5.3468148499999995,
+						45.561426
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard8_FenceLeft9",
+			"turn": 517.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						258.369085,
+						5.3468148499999995,
+						55.085991
+					]
+				}
+			]
+		},
+		{
+			"asset": "cbae2df63e42b3f0",
+			"label": "Streets",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "RoadMarks_-1_0_0",
+					"position": [
+						-50.5,
+						2.07,
+						-50.50000000000001
+					]
+				},
+				{
+					"name": "RoadMarks_0_-1_0",
+					"position": [
+						50.49999999999999,
+						2.07,
+						50.50000000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "c9127ac79bbde8df",
+			"label": "Kit_CapsulePrototype",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Rings",
+					"position": [
+						-576.009775,
+						-258.49512000000004,
+						-0.0030170500000000766
+					]
+				},
+				{
+					"name": "Tag",
+					"position": [
+						-575.45,
+						-257.42999999999995,
+						0.9
+					]
+				}
+			]
+		},
+		{
+			"asset": "c7935805dc0f0cdf",
+			"label": "Kit_JunkrotRadioloFruscio",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Aerial",
+					"position": [
+						-167.081605,
+						-257.53033500000004,
+						-0.043398651499999996
+					]
+				},
+				{
+					"name": "Keys",
+					"position": [
+						-168.40409,
+						-258.069625,
+						0.24231149000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "681f9e9df22425d0",
+			"label": "Kit_JunkrotLawnmowoRuggito",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Bag",
+					"position": [
+						240.023705,
+						-258.878815,
+						-1.24606917
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						240.009505,
+						-259.152805,
+						1.0564
+					]
+				}
+			]
+		},
+		{
+			"asset": "905abbe537e32454",
+			"label": "Kit_JunkrotLaserlevelLineo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Beam",
+					"position": [
+						649.5799999999999,
+						-257.65000999999995,
+						0.0
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						648.008,
+						-257.55921,
+						0.5196000000000001
+					]
+				}
+			]
+		}
+	]
+}

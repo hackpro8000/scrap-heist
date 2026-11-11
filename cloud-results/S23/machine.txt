@@ -1,0 +1,3 @@
+machine=4 cores, 16086 MB
+seconds=124
+exit=0
