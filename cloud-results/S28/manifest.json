@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "aaeefcaded95a4d4",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 28/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 827944,
+			"sha": "1ad40951fdac30c7",
+			"parts": 17
+		},
+		{
+			"id": "32d8b0f951b34eec",
+			"key": "9edb366bcc5dfdf7-1439853d85f21bad RoughShade9 2.100174824690046 -196.24625287048346 0",
+			"piece": 1,
+			"label": "RoughShade9",
+			"turn": 0.0,
+			"bytes": 2780,
+			"sha": "5496e66319687460",
+			"parts": 1
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FootingBack8",
+			"turn": 247.5,
+			"bytes": 97780,
+			"sha": "7c7f6a40c2aabb25",
+			"parts": 1
+		},
+		{
+			"id": "1965343ef0c6d658",
+			"key": "CapsuleFactory-37da6d8e21d18d23 1 x",
+			"piece": 1,
+			"label": "Kit_CapsuleFactory",
+			"turn": 0.0,
+			"bytes": 419092,
+			"sha": "9003f55ae3a62052",
+			"parts": 4
+		}
+	],
+	"placements": [
+		{
+			"asset": "aaeefcaded95a4d4",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Columns_-4_-4_-1_101_011_100",
+					"position": [
+						-210.33895,
+						-52.518778,
+						232.0694
+					]
+				},
+				{
+					"name": "Grass_2_3_0_110_110",
+					"position": [
+						184.707765,
+						-14.4647628,
+						-249.43709
+					]
+				}
+			]
+		},
+		{
+			"asset": "32d8b0f951b34eec",
+			"label": "RoughShade9",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						2.10017491,
+						2.03,
+						196.24625500000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingBack8",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						229.67139,
+						2.266335,
+						140.59079
+					]
+				}
+			]
+		},
+		{
+			"asset": "1965343ef0c6d658",
+			"label": "Kit_CapsuleFactory",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Label",
+					"position": [
+						-624.6,
+						-259.25,
+						1.31
+					]
+				},
+				{
+					"name": "Tape",
+					"position": [
+						-624.0,
+						-258.015,
+						0.0
+					]
+				}
+			]
+		}
+	]
+}
