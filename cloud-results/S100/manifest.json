@@ -1,0 +1,217 @@
+{
+	"assets": [
+		{
+			"id": "572a22405248b5fe",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 100/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1062568,
+			"sha": "41f17e81bc310a95",
+			"parts": 17
+		},
+		{
+			"id": "551fd0b5691ee789",
+			"key": "YardFooting-748247116a86686c 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingRight8",
+			"turn": 22.5,
+			"bytes": 95648,
+			"sha": "91848ccfa6ab2bd6",
+			"parts": 1
+		},
+		{
+			"id": "a71085ae51ecd32d",
+			"key": "JunkrotClankClankClankScrapur-5863edbae1d27f7a 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotClankClankClankScrapur",
+			"turn": 0.0,
+			"bytes": 3437600,
+			"sha": "4c8debf515b65b6c",
+			"parts": 19
+		}
+	],
+	"placements": [
+		{
+			"asset": "572a22405248b5fe",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_4_-2_0_001_111",
+					"position": [
+						283.787585,
+						-25.21417,
+						105.98720499999999
+					]
+				},
+				{
+					"name": "Grass_-3_3_0_010_011",
+					"position": [
+						-184.025845,
+						-11.5686065,
+						-246.1627
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard1_FootingRight8",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						246.87558,
+						2.266335,
+						-50.396387000000004
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard2_FootingRight7",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						134.2421,
+						2.266335,
+						-198.63421
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard3_FootingRight6",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-40.87182,
+						2.266335,
+						-223.881245
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard4_FootingRight5",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-175.639875,
+						2.266335,
+						-124.717525
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard5_FootingRight4",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-200.88691,
+						2.266335,
+						31.347254999999997
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard6_FootingRight3",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-115.19296,
+						2.266335,
+						152.64553999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard7_FootingRight2",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						21.82269,
+						2.266335,
+						177.892575
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard8_FootingRight1",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						129.651205,
+						2.266335,
+						105.6684
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard8_FootingRight9",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						221.62855000000002,
+						2.266335,
+						143.76665500000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "a71085ae51ecd32d",
+			"label": "Kit_JunkrotClankClankClankScrapur",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Bat",
+					"position": [
+						384.80269,
+						-259.047395,
+						0.612757965
+					]
+				},
+				{
+					"name": "Welds",
+					"position": [
+						383.99523999999997,
+						-257.40286000000003,
+						-0.12464343
+					]
+				}
+			]
+		}
+	]
+}
