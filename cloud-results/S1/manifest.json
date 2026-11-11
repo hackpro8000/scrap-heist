@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "3516596d3ba131c4",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 1/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 827332,
+			"sha": "a5bfc8a008789d82",
+			"parts": 16
+		},
+		{
+			"id": "fd9182ae81804ef6",
+			"key": "9edb366bcc5dfdf7-1140b5bda9dd140d Plaza 0 0 0",
+			"piece": 1,
+			"label": "Plaza",
+			"turn": 0.0,
+			"bytes": 4689012,
+			"sha": "112e256446f53f21",
+			"parts": 4
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard7_FootingBack1",
+			"turn": 202.5,
+			"bytes": 97832,
+			"sha": "51eb850cccf5fd6c",
+			"parts": 1
+		},
+		{
+			"id": "43d080632558bf52",
+			"key": "HubStage-88981208e356368e 1 x",
+			"piece": 1,
+			"label": "EventStage",
+			"turn": 225.0,
+			"bytes": 7770408,
+			"sha": "d91bf28ae0fd5366",
+			"parts": 16
+		}
+	],
+	"placements": [
+		{
+			"asset": "3516596d3ba131c4",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Columns_-4_-4_-1_101_011_111",
+					"position": [
+						-203.06877,
+						-53.475753499999996,
+						226.44242
+					]
+				},
+				{
+					"name": "Grass_1_4_0_011",
+					"position": [
+						78.7904185,
+						-26.092637,
+						-296.258395
+					]
+				}
+			]
+		},
+		{
+			"asset": "fd9182ae81804ef6",
+			"label": "Plaza",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Paving_-1_-1_0",
+					"position": [
+						-50.5,
+						2.05,
+						50.49999999999999
+					]
+				},
+				{
+					"name": "Paving_0_0_0",
+					"position": [
+						50.5,
+						2.05,
+						-50.5
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard7_FootingBack1",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						140.59605499999998,
+						2.266335,
+						229.77353
+					]
+				}
+			]
+		},
+		{
+			"asset": "43d080632558bf52",
+			"label": "EventStage",
+			"turn": 225.0,
+			"anchors": [
+				{
+					"name": "Backdrop",
+					"position": [
+						39.0038055,
+						9.17888975,
+						38.9513695
+					]
+				},
+				{
+					"name": "Steps",
+					"position": [
+						24.8044035,
+						2.94635355,
+						24.817673
+					]
+				}
+			]
+		}
+	]
+}

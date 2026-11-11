@@ -1,0 +1,8 @@
+MainIsland 1 x	2092.403
+MainIsland 1 x #split	1
+slab Plaza	6.004
+slab Plaza #split	1
+YardFooting 1 x x1.5	0.079
+YardFooting 1 x x1.5 #split	1
+HubStage 1 x	4.221
+HubStage 1 x #split	1
