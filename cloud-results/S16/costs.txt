@@ -1,0 +1,23 @@
+MainIsland 1 x	2207.962
+MainIsland 1 x #split	1
+slab RoughFoot2	0.038
+slab RoughFoot2 #split	1
+slab LoneWreck13	0.234
+slab LoneWreck13 #split	1
+YardFooting 1 x x1.5	0.086
+YardFooting 1 x x1.5 #split	1
+BuildBay 1 x	3.498
+BuildBay 1 x #split	1
+YardFooting 0.5 x x1.5	0.091
+YardFooting 0.5 x x1.5 #split	1
+HubShop 1 x	11.573
+HubShop 1 x #split	1
+CapsuleSalvaged 1 x	0.223
+CapsuleSalvaged 1 x #split	1
+JunkrotBlendroCigolante 1 x	1.119
+JunkrotBlendroCigolante 1 x #split	1
+JunkrotDingDingDingDongo 1 x	13.842
+JunkrotDingDingDingDongo 1 x #split	1
+JunkrotChefbotPrecisio 1 x	1.192
+JunkrotChefbotPrecisio 1 x #split	1
+JunkrotUnitZero 1 x	0.090
