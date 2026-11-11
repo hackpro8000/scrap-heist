@@ -1,0 +1,18 @@
+MainIsland 1 x	2730.428
+MainIsland 1 x #split	1
+slab RoughFoot6	0.034
+slab RoughFoot6 #split	1
+slab LoneWreck21	0.063
+slab LoneWreck21 #split	1
+YardFooting 1.037037037037037 x x1.5	0.095
+YardFooting 1.037037037037037 x x1.5 #split	1
+PadKitchen 1 x x1.6666666666666667	0.170
+PadKitchen 1 x x1.6666666666666667 #split	1
+JunkrotHubcappaWobbla 1 x	1.825
+JunkrotHubcappaWobbla 1 x #split	1
+JunkrotDrilloTrapanino 1 x	2.809
+JunkrotDrilloTrapanino 1 x #split	1
+JunkrotVrrVrrPatatrim 1 x	21.784
+JunkrotVrrVrrPatatrim 1 x #split	1
+JunkrotBoilerdiroCrockpotilo 1 x	12.819
+JunkrotBoilerdiroCrockpotilo 1 x #split	1
