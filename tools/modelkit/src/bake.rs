@@ -12,8 +12,13 @@ use std::time::Instant;
 
 // Time spent in each shading layer this run (MODELKIT_PROFILE=1 prints them),
 // to see where a model's bake goes. Cached layers count only their load.
-pub static PROFILE: [AtomicU64; 4] = [AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0)];
-pub const PROFILE_LAYERS: [&str; 4] = ["shade (creases, contact)", "coat", "wear", "combine"];
+pub static PROFILE: [AtomicU64; 8] = [AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0)];
+// The last four are stages inside the first two: the shade pass's work
+// before and after its per-texel paint, and the coat's per-texel paint.
+pub const PROFILE_LAYERS: [&str; 8] = ["shade (creases, contact)", "coat", "wear", "combine", "shade, surfaces, grid and texels", "shade, neighbourhoods", "shade, spreading over seams", "coat, painting texels"];
+fn timed(stage: usize, since: Instant) {
+	PROFILE[stage].fetch_add(since.elapsed().as_micros() as u64, Ordering::Relaxed);
+}
 fn profiled<T>(layer: usize, work: impl FnOnce() -> T) -> T {
 	let started = Instant::now();
 	let result = work();
@@ -208,6 +213,8 @@ pub fn texels(mesh: &Mesh, width: usize, height: usize) -> Vec<Texel> {
 // Like texels, but tests a grid × grid pattern of points inside each pixel, so
 // a pixel can come back several times, once per covered sample.
 pub fn samples(mesh: &Mesh, width: usize, height: usize, grid: usize) -> Vec<Texel> {
+	// One thread finds the texels: handing triangles to the other threads,
+	// singly or in batches, was measured slower on the map (2026-11-11).
 	let mut found = Vec::new();
 	for corners in mesh.triangles() {
 		let face_normal = normalize(cross(sub(corners[1].position, corners[0].position), sub(corners[2].position, corners[0].position)));
@@ -746,9 +753,6 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], group_sizes: &[(usize, usize)
 	// Only occluders close enough to reach this mesh can cast or catch anything.
 	// The part's other chunks count as its own surfaces, so a chunk seam shades like
 	// any other edge.
-	let pass = shade_pass(mesh, width, height, group, occluders, shading, source, reach, width_scale, bevel_reach, bevel_fold, grid_reach, bevel_min_cos);
-	let ShadePass { full, layers: shade_layer, edge_field: own_field, .. } = pass;
-
 	let mut low = [f64::MAX; 3];
 	let mut high = [f64::MIN; 3];
 	for p in &mesh.positions {
@@ -785,23 +789,73 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], group_sizes: &[(usize, usize)
 	// Which chunk this is comes from the script, not a pointer: a shared bake
 	// paints a copy of the mesh.
 	let own_index = group_index.min(chunks.len() - 1);
-	let mut fields: Vec<Arc<ChunkField>> = Vec::new();
+	let own_box = bounds(mesh);
+	let (near_low, near_high) = (own_box.0.map(|c| c - STROKE_REACH), own_box.1.map(|c| c + STROKE_REACH));
+	let near = |p: Vec3| (0..3).all(|k| p[k] >= near_low[k] && p[k] <= near_high[k]);
+	let (whole, tri_chunk, face_chunk) = merged_part(&chunks);
+	let low_wear = |p: Vec3| 1.0 - generated(p)[2];
+	// Only the new coats add to the key, so every other part keeps its cached coat.
+	let style_numbers: Vec<f64> = if look.stamps || look.hand.is_some() {
+		vec![f64::from(u8::from(look.stamps)), look.hand.map_or(0.0, |hand| 1.0 + hand as u8 as f64), crate::hand::VERSION, look.focus.map_or(0.0, |f| f.1), look.focus.map_or(0.0, |f| f.0[0]), look.focus.map_or(0.0, |f| f.0[1]), look.focus.map_or(0.0, |f| f.0[2])].into_iter().chain(look.tuning.iter().flat_map(|t| t.numbers())).collect()
+	} else {
+		Vec::new()
+	};
+	let coat_marks: Vec<f64> = look.brushes.coat.iter().flat_map(|marks| marks.numbers()).collect();
+	// The coat and wear read the shade layer, so its key is part of theirs.
+	let coat_numbers = [&[look.gradient, look.brush, f64::from(u8::from(shading.crisp))][..], &style_numbers, &coat_marks, &range_key, &drawn_key, &shade_size, &[STROKE_LAYOUT_VERSION]].concat();
+	let coat_path = cache::layer_path("coat", mesh, &neighbours, false, &coat_numbers, Some(&*image), source);
+	let shade_path = shade_layer_path(mesh, width, height, group, occluders, shading, source, reach, width_scale, bevel_reach, bevel_fold);
+	// A stroke reads the field of the chunk its spot lies on, and only near
+	// spots are drawn, so a sibling wholly outside the near box is never
+	// read: it keeps an empty field and is not shaded here. A near sibling
+	// shaded earlier in this run hands its field over; the rest are shaded
+	// now, after this chunk's own pass.
+	let mut fields: Vec<Arc<ChunkField>> = chunks.iter().map(|_| Arc::new(ChunkField { pixels: Vec::new(), width: 1, height: 1 })).collect();
+	let mut to_shade: Vec<(usize, &Mesh, usize, usize, Option<PathBuf>)> = Vec::new();
 	for (k, chunk) in chunks.iter().enumerate() {
 		if k == own_index {
-			fields.push(Arc::new(ChunkField { pixels: own_field.clone(), width, height }));
+			continue;
+		}
+		let (chunk_low, chunk_high) = bounds(chunk);
+		if (0..3).any(|axis| chunk_high[axis] < near_low[axis] - coat::NEAR_SLACK || chunk_low[axis] > near_high[axis] + coat::NEAR_SLACK) {
 			continue;
 		}
 		let (w, h) = group_sizes.get(k).copied().unwrap_or((width, height));
-		fields.push(sibling_field(chunk, w, h, group, occluders, shading, source, reach, width_scale, bevel_reach, bevel_fold, grid_reach, bevel_min_cos));
+		match sibling_ready(chunk, w, h) {
+			Some(field) => fields[k] = field,
+			// The paint cache is per thread, so the path is found here.
+			None => to_shade.push((k, *chunk, w, h, shade_layer_path(chunk, w, h, group, occluders, shading, source, reach, width_scale, bevel_reach, bevel_fold))),
+		}
 	}
-	let (whole, tri_chunk, face_chunk) = merged_part(&chunks);
-	let (near_low, near_high) = {
-		let (l, h) = bounds(mesh);
-		(l.map(|c| c - STROKE_REACH), h.map(|c| c + STROKE_REACH))
+	let shade_all = move || {
+		let pass = shade_pass(mesh, width, height, group, occluders, shading, source, reach, width_scale, bevel_reach, bevel_fold, grid_reach, bevel_min_cos, shade_path);
+		let siblings: Vec<(usize, Arc<ChunkField>)> = to_shade.into_iter().map(|(k, chunk, w, h, path)| (k, sibling_field(chunk, w, h, group, occluders, shading, source, reach, width_scale, bevel_reach, bevel_fold, grid_reach, bevel_min_cos, path))).collect();
+		(pass, siblings)
 	};
-	let near = |p: Vec3| (0..3).all(|k| p[k] >= near_low[k] && p[k] <= near_high[k]);
+	// With a brushed coat to lay and none cached, the shading and the coat run
+	// side by side: the shade passes fill the other threads while this one
+	// lays the coat's strokes, whose colours come from the script and so can
+	// only be asked here. Those strokes read nothing the shade passes make.
+	let coat_early = look.hand.is_none() && !shading.crisp && coat_path.as_ref().map_or(true, |path| !path.exists());
+	let ((pass, siblings), mut early_canvas) = if coat_early {
+		let unread = |_: usize, _: [f64; 2]| -> f64 { unreachable!("the coat's strokes read no edge field") };
+		let early_wear = coat::Wear { edge: &unread, crease: &unread, low: &low_wear, near: &near, near_box: Some((near_low, near_high)), own_box: Some(own_box), tri_chunk: &tri_chunk, face_chunk: &face_chunk };
+		std::thread::scope(|scope| {
+			let shade = scope.spawn(shade_all);
+			let canvas = profiled(1, || coat::coat(&whole, look, &early_wear, base));
+			(shade.join().expect("shade pass"), Some(canvas))
+		})
+	} else {
+		(shade_all(), None)
+	};
+	let ShadePass { full, layers: shade_layer, edge_field: own_field, .. } = pass;
+	fields[own_index] = Arc::new(ChunkField { pixels: own_field.clone(), width, height });
+	for (k, field) in siblings {
+		fields[k] = field;
+	}
 	let field_at = |chunk: usize, uv: [f64; 2], channel: usize| -> f64 {
 		let field = &fields[chunk.min(fields.len() - 1)];
+		assert!(!field.pixels.is_empty(), "a stroke read the edge field of a chunk out of its reach");
 		let x = ((uv[0] * field.width as f64 - 0.5).round().max(0.0) as usize).min(field.width - 1);
 		let y = ((uv[1] * field.height as f64 - 0.5).round().max(0.0) as usize).min(field.height - 1);
 		f64::from(field.pixels[y * field.width + x][channel])
@@ -810,19 +864,9 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], group_sizes: &[(usize, usize)
 	// sharp edges, in creases and low down.
 	let edge_wear = |chunk: usize, uv: [f64; 2]| (field_at(chunk, uv, 1) * 2.5).min(1.0);
 	let crease_wear = |chunk: usize, uv: [f64; 2]| (field_at(chunk, uv, 0) * 2.5).min(1.0);
-	let low_wear = |p: Vec3| 1.0 - generated(p)[2];
-	let wear = coat::Wear { edge: &edge_wear, crease: &crease_wear, low: &low_wear, near: &near, tri_chunk: &tri_chunk, face_chunk: &face_chunk };
+	let wear = coat::Wear { edge: &edge_wear, crease: &crease_wear, low: &low_wear, near: &near, near_box: Some((near_low, near_high)), own_box: Some(own_box), tri_chunk: &tri_chunk, face_chunk: &face_chunk };
 	let (coat_layer, wear_layer) = {
-		// Only the new coats add to the key, so every other part keeps its cached coat.
-		let style_numbers: Vec<f64> = if look.stamps || look.hand.is_some() {
-			vec![f64::from(u8::from(look.stamps)), look.hand.map_or(0.0, |hand| 1.0 + hand as u8 as f64), crate::hand::VERSION, look.focus.map_or(0.0, |f| f.1), look.focus.map_or(0.0, |f| f.0[0]), look.focus.map_or(0.0, |f| f.0[1]), look.focus.map_or(0.0, |f| f.0[2])].into_iter().chain(look.tuning.iter().flat_map(|t| t.numbers())).collect()
-		} else {
-			Vec::new()
-		};
-		let coat_marks: Vec<f64> = look.brushes.coat.iter().flat_map(|marks| marks.numbers()).collect();
-		// The coat and wear read the shade layer, so its key is part of theirs.
-		let coat_numbers = [&[look.gradient, look.brush, f64::from(u8::from(shading.crisp))][..], &style_numbers, &coat_marks, &range_key, &drawn_key, &shade_size, &[STROKE_LAYOUT_VERSION]].concat();
-		let coat_layer = profiled(1, || cached_layer(cache::layer_path("coat", mesh, &neighbours, false, &coat_numbers, Some(&*image), source), || {
+		let coat_layer = profiled(1, || cached_layer(coat_path, || {
 			if let Some(hand) = look.hand {
 				let tuning = look.tuning.as_ref().expect("hand coat has tuning");
 				if shading.crisp {
@@ -849,14 +893,24 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], group_sizes: &[(usize, usize)
 				let colours: Vec<[f32; 3]> = full.iter().map(|t| to_f32(coat::base_at(look, &wear, base, t.position, t.face_normal))).collect();
 				return vec![layer_image(width, height, &full, &colours)];
 			}
-			let mut canvas = coat::coat(&whole, look, &wear, base);
+			let mut canvas = match early_canvas.take() {
+				Some(canvas) => canvas,
+				None => coat::coat(&whole, look, &wear, base),
+			};
+			// A part's own strokes may be listed for the whole of a chunked
+			// part; only those that can touch this chunk are laid.
 			for stroke in &shading.strokes {
+				if wear.out_of_touch(stroke.centre(), stroke.reach() + canvas.cell_size()) {
+					continue;
+				}
 				canvas.add(stroke.clone());
 			}
+			let stage = Instant::now();
 			let colours = match gpu::canvas(&canvas, &full, false) {
 				Some(painted) => painted.into_iter().map(|(c, _)| to_f32(c)).collect(),
 				None => parallel(&full, |t| to_f32(canvas.paint(t.position, t.face_normal))),
 			};
+			timed(7, stage);
 			vec![layer_image(width, height, &full, &colours)]
 		}));
 		let wear_numbers = [&[look.rust, f64::from(u8::from(look.rubber)), f64::from(u8::from(look.rust_edges)), look.gradient, look.brush][..], &range_key, &look.brushes.wear_numbers(), &shade_size, &[STROKE_LAYOUT_VERSION]].concat();
@@ -1098,7 +1152,18 @@ pub struct ShadePass {
 }
 
 #[allow(clippy::too_many_arguments)]
-fn shade_pass(target: &Mesh, width: usize, height: usize, group: &[&Mesh], occluders: &[&Mesh], shading: &Shading, source: &cache::Source, reach: f64, width_scale: f64, bevel_reach: f64, bevel_fold: f64, grid_reach: f64, bevel_min_cos: f64) -> ShadePass {
+// Where a mesh's shade layer is cached. The paint cache is per thread, so
+// this is asked on the thread that runs the script, before the pass itself
+// may go to another.
+#[allow(clippy::too_many_arguments)]
+fn shade_layer_path(target: &Mesh, width: usize, height: usize, group: &[&Mesh], occluders: &[&Mesh], shading: &Shading, source: &cache::Source, reach: f64, width_scale: f64, bevel_reach: f64, bevel_fold: f64) -> Option<PathBuf> {
+	let neighbours: Vec<&Mesh> = group.iter().chain(occluders).copied().collect();
+	let shade_size = shade_key(width, height, shading, reach, width_scale, bevel_reach, bevel_fold);
+	cache::layer_path("shade", target, &neighbours, true, &shade_size, None, source)
+}
+
+fn shade_pass(target: &Mesh, width: usize, height: usize, group: &[&Mesh], occluders: &[&Mesh], shading: &Shading, source: &cache::Source, reach: f64, width_scale: f64, bevel_reach: f64, bevel_fold: f64, grid_reach: f64, bevel_min_cos: f64, shade_path: Option<PathBuf>) -> ShadePass {
+	let stage = Instant::now();
 	let mut triangles = mesh_triangles(target);
 	for other in group {
 		if std::ptr::eq(*other, target) {
@@ -1127,6 +1192,17 @@ fn shade_pass(target: &Mesh, width: usize, height: usize, group: &[&Mesh], occlu
 			let n = cross(sub(t[1], t[0]), sub(t[2], t[0]));
 			let length = dot(n, n).sqrt();
 			(length > 1e-12).then(|| (t, scale(n, 1.0 / length), index < own))
+		})
+		.collect();
+	// The box round each surface, grown by the reach and a hair: a texel
+	// outside it is further from the surface than the reach, and is turned
+	// away before the nearest point on the triangle is worked out.
+	let boxes: Vec<(Vec3, Vec3)> = surfaces
+		.iter()
+		.map(|(t, _, _)| {
+			let low: Vec3 = std::array::from_fn(|k| t[0][k].min(t[1][k]).min(t[2][k]) - grid_reach - 1e-9);
+			let high: Vec3 = std::array::from_fn(|k| t[0][k].max(t[1][k]).max(t[2][k]) + grid_reach + 1e-9);
+			(low, high)
 		})
 		.collect();
 	let contact_key = |p: Vec3| p.map(|c| (c / grid_reach).floor() as i64);
@@ -1173,11 +1249,14 @@ fn shade_pass(target: &Mesh, width: usize, height: usize, group: &[&Mesh], occlu
 		near
 	};
 	let full = texels(target, width, height);
+	timed(4, stage);
+	let stage = Instant::now();
 	let mut neighbourhoods: CellMap<Vec<usize>> = CellMap::default();
 	for texel in &full {
 		let home = contact_key(texel.position);
 		neighbourhoods.entry(home).or_insert_with(|| neighbourhood(home));
 	}
+	timed(5, stage);
 	let highlight_runs = if shading.highlight_to_zero || shading.edge_marks.is_some() || shading.shade_marks.is_some() {
 		crease_runs(&surfaces.iter().filter(|s| s.2).map(|s| (s.0, s.1)).collect::<Vec<_>>(), min_cos)
 	} else {
@@ -1215,6 +1294,10 @@ fn shade_pass(target: &Mesh, width: usize, height: usize, group: &[&Mesh], occlu
 			// Nor does a surface whose plane is out of reach: the triangle is
 			// never nearer than its plane.
 			if dot(facing, sub(p, triangle[0])).abs() >= grid_reach {
+				continue;
+			}
+			let (box_low, box_high) = boxes[index];
+			if (0..3).any(|k| p[k] < box_low[k] || p[k] > box_high[k]) {
 				continue;
 			}
 			let offset = sub(p, closest_on_triangle(p, triangle));
@@ -1306,9 +1389,6 @@ fn shade_pass(target: &Mesh, width: usize, height: usize, group: &[&Mesh], occlu
 		}
 		(inward, outward, tilt)
 	};
-	let neighbours: Vec<&Mesh> = group.iter().chain(occluders).copied().collect();
-	let shade_size = shade_key(width, height, shading, reach, width_scale, bevel_reach, bevel_fold);
-	let shade_path = cache::layer_path("shade", target, &neighbours, true, &shade_size, None, source);
 	let bake_shade = || profiled(0, || cached_layer(shade_path, || {
 		// Uneven, to-nothing and hand-moved highlights are CPU only.
 		let on_gpu = if shading.highlight_uneven > 0.0 || shading.highlight_to_zero || shading.edge_marks.is_some() || shading.shade_marks.is_some() { None } else { gpu::crease(&full, &surfaces, &contact_grid, min_cos, reach, grid_reach, bevel_reach, bevel_fold, width_scale, shading.painted_highlights, shading.corner_taper) };
@@ -1323,7 +1403,9 @@ fn shade_pass(target: &Mesh, width: usize, height: usize, group: &[&Mesh], occlu
 	for texel in &full {
 		covered[texel.pixel] = true;
 	}
+	let stage = Instant::now();
 	dilate(&mut edge_field, &mut covered, width, height, 2);
+	timed(6, stage);
 	ShadePass { full, layers, edge_field, width, height }
 }
 
@@ -1351,13 +1433,16 @@ pub struct ChunkField {
 
 static SIBLING_FIELDS: std::sync::Mutex<Option<HashMap<(usize, usize, usize), Arc<ChunkField>>>> = std::sync::Mutex::new(None);
 
-#[allow(clippy::too_many_arguments)]
-fn sibling_field(chunk: &Mesh, width: usize, height: usize, group: &[&Mesh], occluders: &[&Mesh], shading: &Shading, source: &cache::Source, reach: f64, width_scale: f64, bevel_reach: f64, bevel_fold: f64, grid_reach: f64, bevel_min_cos: f64) -> Arc<ChunkField> {
+// A sibling's field, if an earlier chunk of this run already had it shaded.
+fn sibling_ready(chunk: &Mesh, width: usize, height: usize) -> Option<Arc<ChunkField>> {
 	let key = (chunk as *const Mesh as usize, width, height);
-	if let Some(found) = SIBLING_FIELDS.lock().expect("sibling fields").get_or_insert_with(HashMap::new).get(&key) {
-		return found.clone();
-	}
-	let pass = shade_pass(chunk, width, height, group, occluders, shading, source, reach, width_scale, bevel_reach, bevel_fold, grid_reach, bevel_min_cos);
+	SIBLING_FIELDS.lock().expect("sibling fields").get_or_insert_with(HashMap::new).get(&key).cloned()
+}
+
+#[allow(clippy::too_many_arguments)]
+fn sibling_field(chunk: &Mesh, width: usize, height: usize, group: &[&Mesh], occluders: &[&Mesh], shading: &Shading, source: &cache::Source, reach: f64, width_scale: f64, bevel_reach: f64, bevel_fold: f64, grid_reach: f64, bevel_min_cos: f64, shade_path: Option<PathBuf>) -> Arc<ChunkField> {
+	let key = (chunk as *const Mesh as usize, width, height);
+	let pass = shade_pass(chunk, width, height, group, occluders, shading, source, reach, width_scale, bevel_reach, bevel_fold, grid_reach, bevel_min_cos, shade_path);
 	let field = Arc::new(ChunkField { pixels: pass.edge_field, width, height });
 	SIBLING_FIELDS.lock().expect("sibling fields").get_or_insert_with(HashMap::new).insert(key, field.clone());
 	field

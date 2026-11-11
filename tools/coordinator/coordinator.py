@@ -6,6 +6,7 @@ so nothing polls.
 
   tools/coordinator/coordinator.py serve [--dry-upload] [--agent-host H]
                                          [--agent-port P] [--control-port C]
+                                         [--control-host H] [--control-key K]
 
 Machines (scripts/standby-agent.py) connect to the agent port, proving with
 GitHub's identity token that they are this repo's standby machines (oidc.py),
@@ -25,7 +26,17 @@ machine is done and every object uploaded, the task's uploaded.tsv is
 written and the session told.
 
 If a machine reconnects mid-task, it is sent the task again; it resends
-what it already built instead of building twice.
+what it already built instead of building twice. Posted tasks are kept in
+tasks.json beside the state file until they complete, so a restarted
+coordinator takes them back; a session that lost its connection asks for
+its task again with {"type": "watch-task", "task": id}.
+
+A machine that is not a GitHub one (scripts/cloud-worker.sh) is admitted
+by a one-time token: {"type": "mint-workers", "count": n} (signed session
+only) makes a new pool of n tokens, kept in memory only; a hello with
+"worker:<token>" takes its run, shard and count from that token, one live
+connection per token. A pool counts as the newest run from its first
+connection.
 
 With --uploads-on-machine (what scripts/coordinator.sh chooses when this
 session has no Roblox key), objects are uploaded by build machine 1 with the
@@ -37,13 +48,23 @@ that can't connect out (scripts/standby-start.sh --on-machine): it takes
 build tasks from the build-queue branch (scripts/send-build.sh posts them
 there; the one link that still polls) and pushes each finished task's
 results, objects left out, as one commit to build-results/coordinator.
+
+With --relay-results (machine 1 with a control key), every result file but
+the objects, every preview image stored, and the task's uploaded.tsv and
+summary.txt also go to the task's session as one binary message each
+({"type": "result-file", "task", "root", "path"}), before "finished". The
+session merges; the coordinator doesn't.
 """
 import argparse
 import asyncio
 import glob
 import hashlib
+import hmac
+import ipaddress
 import json
 import os
+import re
+import secrets
 import shutil
 import subprocess
 import sys
@@ -63,9 +84,30 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 REPOSITORY = "hackpro8000/scrap-heist"
 WORKFLOW = ".github/workflows/build-standby.yml"
 MAX_MESSAGE = 64 * 1024 * 1024
+# Control only ever receives small requests; the public port refuses big ones before admission.
+MAX_CONTROL_MESSAGE = 64 * 1024
+MAX_SIGNATURE = 4096
 STATE = os.path.expanduser("~/.cache/scrap-heist/coordinator.json")
+# Posted tasks not yet completed, reloaded when a coordinator restarts.
+TASKS = os.path.join(os.path.dirname(STATE), "tasks.json")
+# Finished tasks a reconnecting session can still ask for (watch-task).
+KEEP_FINISHED = 20
+WORKER_PREFIX = "worker:"
+MAX_WORKERS = 100
 LINK_RESULTS = "build-results/coordinator"
 LINK_INTERVAL = 3
+# --control-key: a control connection counts only once the session has
+# signed a fresh nonce with its key (scripts/coordinator.sh key).
+CONTROL_NAMESPACE = "scrap-heist-control"
+CHALLENGE_SECONDS = 30
+TAILNET = ipaddress.ip_network("100.64.0.0/10")
+# What a machine may name: a model folder, and a task folder.
+MODEL_NAME = re.compile(r"[A-Za-z0-9_]+")
+TASK_NAME = re.compile(r"[A-Za-z0-9-]+")
+COMMIT = re.compile(r"[0-9a-f]{7,64}")
+# Most one shard may send for one task; further files are refused.
+MAX_SHARD_FILES = 20_000
+MAX_SHARD_BYTES = 8 * 1024 ** 3
 
 
 def say(message):
@@ -84,6 +126,7 @@ class Task:
 		# shares_in counts the shares of each model that have come back.
 		# A name ending in "!" is one machine's job whole, for timing a model's
 		# build on its own; the "!" is dropped from the name.
+		self.asked = list(previews)  # as posted, for the tasks file
 		whole = {name[:-1] for name in previews if name.endswith("!")}
 		self.previews = [name.rstrip("!") for name in previews]
 		self.units = self.previews
@@ -104,6 +147,8 @@ class Task:
 		self.sent = set()  # objects this task uploaded (the rest had assets)
 		self.by_branch = False
 		self.answered = 0
+		self.received = {}  # shard -> [files, bytes] it sent, against MAX_SHARD_*
+		self.watchers = set()  # control sockets of the session that posted it, for relayed files
 		self.out = os.path.join(ROOT, ".standby-results", identity)
 		os.makedirs(self.out, exist_ok=True)
 
@@ -219,10 +264,11 @@ class RemoteUploader:
 
 
 class Coordinator:
-	def __init__(self, layout, dry, test_without_identity=False, git_link=False, uploads_on_machine=False):
+	def __init__(self, layout, dry, test_without_identity=False, git_link=False, uploads_on_machine=False, relay_results=False):
 		self.layout = layout
 		self.dry = dry
 		self.git_link = git_link
+		self.relay_results = relay_results
 		self.test_without_identity = test_without_identity
 		self.uploads_on_machine = uploads_on_machine
 		if uploads_on_machine:
@@ -237,6 +283,83 @@ class Coordinator:
 		self.tasks = {}
 		self.watchers = set()  # control websockets waiting on events
 		self.progress = {}  # shard -> its latest heartbeat, with the time it came
+		self.control_signers = None  # allowed-signers file, with --control-key
+		self.finished = {}  # task id -> (task, its finished event), the last KEEP_FINISHED
+		# Minted worker tokens, in memory only: token -> {"run": pool id,
+		# "shard", "count", "socket": its live connection or None}.
+		self.workers = {}
+		self.pools = 0
+		# run -> how new it is: a GitHub run by its id, a pool above
+		# everything seen when it is minted.
+		self.ranks = {}
+
+	def rank(self, run):
+		if run not in self.ranks:
+			self.ranks[run] = int(run) if run.isdigit() else max(self.ranks.values(), default=0) + 1
+		return self.ranks[run]
+
+	def worker(self, token):
+		"""The minted record of a worker token, or None. Every token is
+		compared, in constant time, so timing tells nothing."""
+		found = None
+		for minted, record in self.workers.items():
+			if hmac.compare_digest(minted.encode(), token.encode()):
+				found = record
+		return found
+
+	def mint(self, count):
+		"""count tokens for a new pool, shards 1..count."""
+		self.pools += 1
+		pool = f"pool-{self.pools}"
+		# Ranked now, so a later GitHub run outranks it however late it connects.
+		self.ranks[pool] = max(self.ranks.values(), default=0) + 1
+		minted = []
+		for shard in range(1, count + 1):
+			token = secrets.token_hex(32)
+			self.workers[token] = {"run": pool, "shard": shard, "count": count, "socket": None}
+			minted.append({"shard": shard, "count": count, "token": token})
+		say(f"minted {pool} (rank {self.ranks[pool]}): {count} workers ({', '.join(entry['token'][:6] for entry in minted)}...)")
+		return pool, minted
+
+	def save_tasks(self):
+		"""Writes the tasks not yet completed to the tasks file."""
+		open_tasks = {task.id: {"ref": task.ref, "upload": task.upload, "previews": task.asked, "build": task.build,
+			"count": task.count} for task in self.tasks.values() if not getattr(task, "completed", False)}
+		os.makedirs(os.path.dirname(TASKS), exist_ok=True)
+		with open(TASKS + ".new", "w") as file:
+			json.dump(open_tasks, file)
+		os.replace(TASKS + ".new", TASKS)
+
+	def load_tasks(self):
+		"""Takes back the tasks a previous coordinator left open; machines that
+		reconnect are sent them again and resend what they built. Never raises:
+		a bad file or entry is logged and skipped."""
+		try:
+			if not os.path.isfile(TASKS):
+				return
+			open_tasks = json.load(open(TASKS))
+			if not isinstance(open_tasks, dict):
+				say(f"ignoring a tasks file that is not an object: {type(open_tasks).__name__}")
+				return
+			for identity, fields in open_tasks.items():
+				if not self.task_entry_fits(identity, fields):
+					say(f"skipping a bad tasks file entry: {str(identity)[:40]!r}")
+					continue
+				task = Task(identity, fields["ref"], fields["upload"], fields["count"], fields.get("previews", []), fields.get("build", True))
+				task.by_branch = self.uploads_on_machine
+				self.tasks[identity] = task
+				say(f"task {identity} taken back from the tasks file")
+		except Exception as error:
+			say(f"ignoring an unreadable tasks file: {error}")
+
+	@staticmethod
+	def task_entry_fits(identity, fields):
+		"""Whether a tasks file entry has the shape save_tasks writes."""
+		return (TASK_NAME.fullmatch(identity) is not None and isinstance(fields, dict)
+			and isinstance(fields.get("ref"), str) and isinstance(fields.get("upload"), bool)
+			and isinstance(fields.get("count"), int) and not isinstance(fields.get("count"), bool) and fields["count"] >= 1
+			and isinstance(fields.get("previews", []), list) and all(isinstance(name, str) for name in fields.get("previews", []))
+			and isinstance(fields.get("build", True), bool))
 
 	async def hand_to_machine_one(self, task, shard, commit):
 		"""A builder pushed its objects to its branch: queue them and tell
@@ -278,31 +401,64 @@ class Coordinator:
 			except Exception:
 				self.watchers.discard(watcher)
 
+	async def relay(self, task, root, path, data=None, to=None):
+		"""With --relay-results, sends one stored file to the task's session
+		(or only to the socket `to`). root is "results" (path under task.out)
+		or "repo" (path under ROOT)."""
+		if not self.relay_results or path.endswith(".glb"):
+			return
+		if data is None:
+			with open(os.path.join(task.out if root == "results" else ROOT, path), "rb") as file:
+				data = file.read()
+		message = wire.pack({"type": "result-file", "task": task.id, "root": root, "path": path}, data)
+		for watcher in [to] if to else list(task.watchers):
+			try:
+				await watcher.send(message)
+			except Exception:
+				task.watchers.discard(watcher)
+
 	# --- machines ---
 
 	async def agent(self, socket, path=None):
+		record = None
 		try:
 			hello = json.loads(await asyncio.wait_for(socket.recv(), 30))
-			if self.test_without_identity and hello.get("token") == "test":
-				claims = {"run_id": "1", "workflow_ref": WORKFLOW}
+			token = hello.get("token", "")
+			if isinstance(token, str) and token.startswith(WORKER_PREFIX):
+				# A minted worker: who it is comes from the token, never the hello.
+				record = self.worker(token[len(WORKER_PREFIX):]) if len(token) > len(WORKER_PREFIX) else None
+				if not record:
+					raise ValueError("unknown worker token")
+				if record["socket"] is not None and not record["socket"].closed:
+					record = None
+					raise ValueError("that worker token is already connected")
+				record["socket"] = socket
+				run, shard, count = record["run"], record["shard"], record["count"]
 			else:
-				claims = await asyncio.to_thread(oidc.verify, hello.get("token", ""), REPOSITORY)
-			if WORKFLOW not in claims.get("workflow_ref", ""):
-				raise ValueError("not a standby machine")
+				if self.test_without_identity and token == "test":
+					claims = {"run_id": "1", "workflow_ref": WORKFLOW}
+				else:
+					claims = await asyncio.to_thread(oidc.verify, token, REPOSITORY)
+				if WORKFLOW not in claims.get("workflow_ref", ""):
+					raise ValueError("not a standby machine")
+				run, shard, count = str(claims["run_id"]), int(hello["shard"]), int(hello["count"])
 		except Exception as error:
 			say(f"refused a connection: {error}")
 			await socket.close(code=4001, reason="not allowed")
 			return
-		run, shard, count = str(claims["run_id"]), int(hello["shard"]), int(hello["count"])
-		if self.run_id is not None and run != self.run_id and int(run) < int(self.run_id):
+		if self.run_id is not None and run != self.run_id and self.rank(run) < self.rank(self.run_id):
+			if record:
+				record["socket"] = None
 			await socket.close(code=4002, reason="an older run")
 			return
+		self.rank(run)
 		if run != self.run_id:
 			self.run_id, self.count, self.agents, self.progress = run, count, {}, {}
 			say(f"standby run {run} with {count} machines")
 		self.agents[shard] = socket
 		await self.emit({"type": "machine", "shard": shard, "up": len(self.agents), "count": count})
-		if self.uploads_on_machine and shard == 1:
+		# A worker has no Roblox key; only a GitHub machine 1 uploads.
+		if self.uploads_on_machine and shard == 1 and not record:
 			width = known = None
 			if os.path.isfile(self.uploader.width_path):
 				try:
@@ -354,19 +510,38 @@ class Coordinator:
 				if self.uploader.pending:
 					await self.emit({"type": "warning", "text": f"machine 1 dropped with {len(self.uploader.pending)} uploads unanswered; they go again when it reconnects"})
 			say(f"S{shard} disconnected")
+			# Its token may connect again.
+			if record and record["socket"] is socket:
+				record["socket"] = None
 			if self.agents.get(shard) is socket:
 				del self.agents[shard]
 				await self.emit({"type": "machine", "shard": shard, "up": len(self.agents), "count": self.count, "gone": True})
 
 	async def file(self, shard, header, data):
-		task = self.tasks.get(header["task"])
-		name = os.path.normpath(header["path"])
-		if not task or name.startswith("..") or os.path.isabs(name):
+		task = self.tasks.get(header.get("task")) if isinstance(header.get("task"), str) else None
+		if not task:
 			return
-		path = os.path.join(task.out, f"S{shard}", name)
+		raw = header.get("path")
+		folder = os.path.realpath(os.path.join(task.out, f"S{shard}"))
+		name = os.path.normpath(raw) if isinstance(raw, str) and raw else ""
+		path = os.path.join(folder, name)
+		# Whatever the machine names must land inside its own shard folder.
+		if (not name or os.path.isabs(name) or ".." in raw.replace("\\", "/").split("/")
+				or not os.path.realpath(path).startswith(folder + os.sep)):
+			say(f"task {task.id}: S{shard} sent a file outside its folder, dropped: {str(raw)[:80]!r}")
+			return
+		received = task.received.setdefault(shard, [0, 0])
+		if received[0] + 1 > MAX_SHARD_FILES or received[1] + len(data) > MAX_SHARD_BYTES:
+			if received[0] <= MAX_SHARD_FILES:
+				say(f"task {task.id}: S{shard} went over {MAX_SHARD_FILES} files or {MAX_SHARD_BYTES} bytes; refusing its further files")
+			received[0] = MAX_SHARD_FILES + 1
+			return
+		received[0] += 1
+		received[1] += len(data)
 		os.makedirs(os.path.dirname(path), exist_ok=True)
 		with open(path, "wb") as file:
 			file.write(data)
+		await self.relay(task, "results", os.path.join(f"S{shard}", name), data)
 		if name == os.path.join("handed", "names.tsv"):
 			for line in data.decode().splitlines():
 				if "\t" in line:
@@ -391,9 +566,9 @@ class Coordinator:
 		the four turns as views.png, and the model script's hash in
 		previewed.txt, so send-build knows it has a preview) and say so."""
 		task = self.tasks.get(event["task"])
-		if not task:
+		if not task or not self.preview_model(task, shard, event.get("name")):
 			return
-		name = os.path.basename(event["name"])
+		name = event["name"]
 		source = os.path.join(task.out, f"S{shard}", "previews", name)
 		if "@" in name:
 			# One share of a model's renders: merge it into the model's
@@ -427,8 +602,23 @@ class Coordinator:
 		if os.path.isfile(script):
 			with open(os.path.join(model, "previewed.txt"), "w") as file:
 				file.write(hashlib.sha1(open(script, "rb").read()).hexdigest()[:16] + "\n")
+		for stored in ("preview.png", "views.png", "previewed.txt"):
+			if os.path.isfile(os.path.join(model, stored)):
+				await self.relay(task, "repo", os.path.relpath(os.path.join(model, stored), ROOT))
 		shown = sheet if os.path.isfile(sheet) else os.path.join(model, "preview.png")
 		await self.emit({"type": "preview", "task": task.id, "name": name, "path": os.path.relpath(shown, ROOT)})
+
+	@staticmethod
+	def preview_model(task, shard, unit):
+		"""The model a machine's preview names, or None (logged) unless it is
+		one of the task's preview units (Name or Name@i@n) for a model that
+		exists here."""
+		name = unit.split("@")[0] if isinstance(unit, str) else ""
+		if (unit in task.units and MODEL_NAME.fullmatch(name)
+				and os.path.isfile(os.path.join(ROOT, "art", "models", name, "model.luau"))):
+			return name
+		say(f"task {task.id}: S{shard} named a preview the task did not ask for, ignored: {str(unit)[:80]!r}")
+		return None
 
 	def next_job(self, shard, event):
 		"""Hands out a model's jobs in order to whichever machine asks next, so
@@ -467,9 +657,12 @@ class Coordinator:
 		"""A machine pushed a finished preview to GitHub: take its files from
 		there, then treat it as arrived."""
 		task = self.tasks.get(event["task"])
-		if not task:
+		if not task or not self.preview_model(task, shard, event.get("name")):
 			return
-		into = os.path.join(task.out, f"S{shard}", "previews", os.path.basename(event["name"]))
+		if not isinstance(event.get("commit"), str) or not COMMIT.fullmatch(event["commit"]):
+			say(f"task {task.id}: S{shard} pushed preview {event['name']} with a bad commit, ignored")
+			return
+		into = os.path.join(task.out, f"S{shard}", "previews", event["name"])
 		os.makedirs(into, exist_ok=True)
 		try:
 			await asyncio.to_thread(commits.fetch_into, ROOT, os.path.join(task.out, ".commit-stores"), event["commit"], into)
@@ -516,15 +709,25 @@ class Coordinator:
 				f"uploaded={len(task.sent & set(self.uploader.record))}\nfailed={len(failed)}\n")
 		if self.git_link:
 			await asyncio.to_thread(self.push_results, task)
+		await self.relay(task, "results", "uploaded.tsv")
+		await self.relay(task, "results", "summary.txt")
 		merged = None
 		# Fake uploads must never reach the game's tables.
-		if task.upload and not failed and not self.git_link and not self.dry and not self.test_without_identity:
+		mergeable = task.upload and not failed and not self.dry and not self.test_without_identity
+		if mergeable and not self.git_link and not self.relay_results:
 			merged = await asyncio.to_thread(self.merge, task)
-		await self.emit({"type": "finished", "task": task.id, "out": task.out, "built": round(built),
+		# Relayed: the session has the files and merges them itself (merge_here).
+		event = {"type": "finished", "task": task.id, "out": task.out, "built": round(built),
 			"total": round(time.time() - task.started), "objects": len(task.handed), "uploaded": len(task.sent & set(self.uploader.record)), "failed": failed,
-			"width": round(self.uploader.throttle.limit, 1), "merged": merged, "previews_waiting": len(task.previews_waiting)})
+			"width": round(self.uploader.throttle.limit, 1), "merged": merged, "previews_waiting": len(task.previews_waiting),
+			"relayed": self.relay_results, "merge_here": bool(mergeable and self.relay_results), "layout": self.layout}
+		self.finished[task.id] = (task, event)
+		for old in list(self.finished)[:-KEEP_FINISHED]:
+			del self.finished[old]
+		await self.emit(event)
 		# Kept while previews are still to come; previews_done lets it go.
 		task.completed = True
+		self.save_tasks()
 		if not task.previews_waiting:
 			del self.tasks[task.id]
 
@@ -545,6 +748,7 @@ class Coordinator:
 		task = Task(identity, ref, upload, self.count, previews, build)
 		task.by_branch = self.uploads_on_machine
 		self.tasks[identity] = task
+		self.save_tasks()
 		for agent in list(self.agents.values()):
 			await agent.send(json.dumps({"type": "task", "id": identity, "task": task.text()}))
 		return task
@@ -602,10 +806,45 @@ class Coordinator:
 
 	# --- the session ---
 
+	async def admit(self, socket):
+		"""Challenges a control connection; returns its request once the
+		answer verifies, else None. The answer and the request may come in
+		either order, and nothing is acted on before both are in."""
+		nonce = os.urandom(32).hex()
+		await socket.send(json.dumps({"type": "challenge", "nonce": nonce}))
+		try:
+			messages = await asyncio.wait_for(self.two_messages(socket), CHALLENGE_SECONDS)
+		except (asyncio.TimeoutError, ValueError):
+			return None
+		answers = [message for message in messages if isinstance(message, dict) and message.get("type") == "answer"]
+		requests = [message for message in messages if isinstance(message, dict) and message.get("type") != "answer"]
+		if len(answers) != 1 or len(requests) != 1 or not await self.signed(nonce, answers[0].get("signature")):
+			say("control connection refused: no valid signature")
+			return None
+		return requests[0]
+
+	async def two_messages(self, socket):
+		return [json.loads(await socket.recv()) for _ in range(2)]
+
+	async def signed(self, nonce, signature):
+		if not isinstance(signature, str) or len(signature) >= MAX_SIGNATURE or not signature.isascii():
+			return False
+		with tempfile.NamedTemporaryFile("w", suffix=".sig") as file:
+			file.write(signature)
+			file.flush()
+			check = await asyncio.create_subprocess_exec("ssh-keygen", "-Y", "verify", "-f", self.control_signers,
+				"-I", CONTROL_NAMESPACE, "-n", CONTROL_NAMESPACE, "-s", file.name,
+				stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+			await check.communicate(nonce.encode())
+		return check.returncode == 0
+
 	async def control(self, socket, path=None):
 		try:
-			request = json.loads(await socket.recv())
+			request = await self.admit(socket) if self.control_signers else json.loads(await socket.recv())
 		except websockets.ConnectionClosed:
+			return
+		if request is None:
+			await socket.close()
 			return
 		kind = request.get("type")
 		if kind == "status":
@@ -624,6 +863,46 @@ class Coordinator:
 			finally:
 				self.watchers.discard(socket)
 			return
+		if kind == "watch-task":
+			# A session whose connection dropped mid-task picks it up again.
+			identity = request.get("task")
+			task, ended = self.tasks.get(identity), self.finished.get(identity)
+			if not task and not ended:
+				await socket.send(json.dumps({"type": "error", "text": f"the coordinator does not know task {identity}"}))
+				return
+			task = task or ended[0]
+			self.watchers.add(socket)
+			task.watchers.add(socket)
+			await socket.send(json.dumps({"type": "watching", "task": task.id, "count": task.count, "up": len(self.agents)}))
+			# Relayed files sent while it was gone: everything stored so far.
+			if self.relay_results:
+				for directory, folders, names in os.walk(task.out):
+					folders[:] = [folder for folder in folders if not folder.startswith(".")]
+					for name in sorted(names):
+						await self.relay(task, "results", os.path.relpath(os.path.join(directory, name), task.out), to=socket)
+			if ended and ended[0] is task:
+				await socket.send(json.dumps(ended[1]))
+			try:
+				async for _ in socket:
+					pass
+			except websockets.ConnectionClosed:
+				pass
+			finally:
+				self.watchers.discard(socket)
+				task.watchers.discard(socket)
+			return
+		if kind == "mint-workers":
+			# Tokens admit machines, so only a signed session may ask for them.
+			if not self.control_signers and not self.test_without_identity:
+				await socket.send(json.dumps({"type": "error", "text": "mint-workers needs a coordinator started with --control-key"}))
+				return
+			count = request.get("count")
+			if not isinstance(count, int) or not 1 <= count <= MAX_WORKERS:
+				await socket.send(json.dumps({"type": "error", "text": f"mint-workers wants a count from 1 to {MAX_WORKERS}"}))
+				return
+			pool, minted = self.mint(count)
+			await socket.send(json.dumps({"type": "workers", "pool": pool, "workers": minted}))
+			return
 		if kind == "stop-machines":
 			for agent in list(self.agents.values()):
 				await agent.send(json.dumps({"type": "stop"}))
@@ -639,6 +918,7 @@ class Coordinator:
 		self.watchers.add(socket)
 		task = await self.post(identity, request["ref"], request.get("upload", True), request.get("previews", []),
 			request.get("build", True))
+		task.watchers.add(socket)
 		await socket.send(json.dumps({"type": "posted", "task": identity, "count": task.count, "up": len(self.agents)}))
 		try:
 			async for _ in socket:
@@ -647,21 +927,49 @@ class Coordinator:
 			pass
 		finally:
 			self.watchers.discard(socket)
+			task.watchers.discard(socket)
+
+
+def local_or_tailnet(host):
+	try:
+		address = ipaddress.ip_address(host)
+	except ValueError:
+		return False
+	return address.is_loopback or (address.version == 4 and address in TAILNET)
+
+
+def control_signers(public_key):
+	"""An allowed-signers file holding only the session's public key."""
+	fields = public_key.split()
+	if len(fields) < 2 or not fields[0].startswith("ssh-"):
+		sys.exit("--control-key wants a public key such as scripts/coordinator.sh key prints")
+	path = os.path.join(tempfile.mkdtemp(prefix="control-key-"), "allowed_signers")
+	with open(path, "w") as file:
+		file.write(f"{CONTROL_NAMESPACE} {fields[0]} {fields[1]}\n")
+	return path
 
 
 async def serve(arguments):
 	if arguments.test_without_identity and (arguments.agent_host != "127.0.0.1" or not (arguments.dry_upload or arguments.uploads_on_machine)):
 		sys.exit("--test-without-identity is only for a local dry run (agent host 127.0.0.1, --dry-upload)")
+	if arguments.relay_results and arguments.git_link:
+		sys.exit("--relay-results replaces --git-link; pick one")
 	coordinator = Coordinator(arguments.layout, arguments.dry_upload, arguments.test_without_identity, arguments.git_link,
-		arguments.uploads_on_machine)
+		arguments.uploads_on_machine, arguments.relay_results)
 	coordinator.loop = asyncio.get_running_loop()
+	coordinator.load_tasks()
+	if arguments.control_key:
+		coordinator.control_signers = control_signers(arguments.control_key)
+	elif not local_or_tailnet(arguments.control_host):
+		sys.exit("--control-host off this machine and the tailnet needs --control-key")
 	# A ping waits behind whatever a machine is sending, and the tunnel is
 	# slow, so a big result could outlast websockets' 20 s and drop the machine.
 	agents = await websockets.serve(coordinator.agent, arguments.agent_host, arguments.agent_port, max_size=MAX_MESSAGE,
 		ping_interval=20, ping_timeout=120)
-	control = await websockets.serve(coordinator.control, "127.0.0.1", arguments.control_port, max_size=MAX_MESSAGE)
+	control = await websockets.serve(coordinator.control, arguments.control_host, arguments.control_port, max_size=MAX_CONTROL_MESSAGE)
 	os.makedirs(os.path.dirname(STATE), exist_ok=True)
-	state = {"pid": os.getpid(), "control": f"ws://127.0.0.1:{arguments.control_port}",
+	control_host = f"[{arguments.control_host}]" if ":" in arguments.control_host else arguments.control_host
+	state = {"pid": os.getpid(), "control": f"ws://{control_host}:{arguments.control_port}",
 		"agent_port": arguments.agent_port, "agent_host": arguments.agent_host, "dry_upload": arguments.dry_upload}
 	if os.path.isfile(STATE):
 		try:
@@ -672,9 +980,11 @@ async def serve(arguments):
 			pass
 	with open(STATE, "w") as file:
 		json.dump(state, file)
-	say(f"machines on {arguments.agent_host}:{arguments.agent_port}, control on 127.0.0.1:{arguments.control_port}"
+	say(f"machines on {arguments.agent_host}:{arguments.agent_port}, control on {arguments.control_host}:{arguments.control_port}"
 		+ (" (dry upload)" if arguments.dry_upload else "")
-		+ (" (machine 1 uploads)" if arguments.uploads_on_machine else ""))
+		+ (" (machine 1 uploads)" if arguments.uploads_on_machine else "")
+		+ (" (results relayed)" if arguments.relay_results else "")
+		+ (" (control needs the key)" if arguments.control_key else ""))
 	waits = [agents.wait_closed(), control.wait_closed()]
 	if arguments.git_link:
 		waits.append(coordinator.link())
@@ -687,13 +997,20 @@ def main():
 	parser.add_argument("--layout", default="ServerMap")
 	parser.add_argument("--agent-host", default="127.0.0.1")
 	parser.add_argument("--agent-port", type=int, default=8765)
+	# Machine 1 puts control on its tailnet address so a session can attach.
+	parser.add_argument("--control-host", default="127.0.0.1")
 	parser.add_argument("--control-port", type=int, default=8766)
+	# Required off this machine and the tailnet (a tunnel): the one public
+	# key whose signature admits a control connection.
+	parser.add_argument("--control-key", default="")
 	parser.add_argument("--dry-upload", action="store_true")
 	# Local tests only: agents may connect with the token "test". Never with
 	# a tunnel, which makes every outside connection look local.
 	parser.add_argument("--test-without-identity", action="store_true")
 	parser.add_argument("--git-link", action="store_true")
 	parser.add_argument("--uploads-on-machine", action="store_true")
+	# Results go back over the control link to the session that posted the task.
+	parser.add_argument("--relay-results", action="store_true")
 	asyncio.run(serve(parser.parse_args()))
 
 

@@ -21,7 +21,7 @@ Parts should join through something: a weld, flange, collar, bracket or seam. Fl
 Being recognisable isn't enough, because a crude version still reads through context. For each object a player knows from real life, name it, state the real thing's key ratios from what you know (overall length to width, head to handle, thickest to thinnest), and measure the same ratios on the model in the flat views. Give the numbers for each object in your RULES line. A ratio off by more than a third, or an outline the real thing doesn't have, is MED.
 
 ## Swept shapes keep their section
-Anything swept along a path, such as a wire, pipe, hose, cable or rail, must keep a steady thickness through every bend. Flag pinches, kinks, twists and sudden sharp elbows, and bends that should be curves. Ask for a close view of each bend. A visible pinch or twist is MED.
+Anything swept along a path, such as a wire, pipe, hose, cable or rail, must keep a steady thickness through every bend. Flag pinches, kinks, twists and sudden sharp elbows, and bends that should be curves. Rigid pipes run straight and turn only through right-angle elbows. Flag every pipe bend that is not 90 degrees: a 45 degree elbow, a shallow dog-leg, a mitred diagonal turn. Only flexible runs such as hoses and cables may curve or sag, and the branches of a scrap-built tree may fork at any angle. Ask for a close view of each bend. A visible pinch or twist is MED, and so is a pipe bend at any angle other than a right angle.
 
 ## Forms aren't just primitives
 Flag objects that read as stacks of boxes, cylinders and spheres. Flag heaps and rocks that read as lumpy blobs or crystals, organic forms ended by a straight cut, and unrelated parts that all share one proportion.

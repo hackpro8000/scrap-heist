@@ -4,7 +4,9 @@
 # installed and the engine source has changed since the committed binary was
 # built, it rebuilds the engine and refreshes that binary, which then needs
 # committing along with the engine change. The source hash is kept in
-# modelkit-linux-x64.source-sha, so an unchanged engine never rebuilds.
+# modelkit-linux-x64.source-sha, so an unchanged engine never rebuilds. An
+# engine a build machine has already compiled from the same source is taken
+# from the build-engine branch instead of being compiled again.
 #
 #   scripts/build-model.sh StarterWeapon
 #   scripts/build-model.sh            # all models
@@ -16,14 +18,35 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
 modelkit="${root}/tools/modelkit/bin/modelkit-linux-x64"
 stamp="${modelkit}.source-sha"
-if command -v cargo >/dev/null 2>&1; then
-	# Hash the engine's sources and manifests by content, so only a real source change counts.
-	source_sha="$(cd "${root}/tools/modelkit" && find src Cargo.toml Cargo.lock -type f | LC_ALL=C sort | xargs sha256sum | sha256sum | cut -c1-64)"
-	if [ "$(cat "${stamp}" 2>/dev/null || true)" != "${source_sha}" ]; then
+# Hash the engine's sources and manifests by content, so only a real source change counts.
+source_sha="$(cd "${root}/tools/modelkit" && find src Cargo.toml Cargo.lock -type f | LC_ALL=C sort | xargs sha256sum | sha256sum | cut -c1-64)"
+if [ "$(cat "${stamp}" 2>/dev/null || true)" != "${source_sha}" ]; then
+	# The first build machine to compile an engine leaves it on the
+	# build-engine branch with its source hash (MODELKIT_SHARE_ENGINE=1), so
+	# every machine after it takes that one instead of compiling for minutes.
+	fetched="$(mktemp)"
+	if git -C "${root}" fetch -q --depth=1 origin refs/heads/build-engine 2> /dev/null &&
+		[ "$(git -C "${root}" show FETCH_HEAD:source-sha 2> /dev/null)" = "${source_sha}" ] &&
+		git -C "${root}" show FETCH_HEAD:modelkit-linux-x64 > "${fetched}" 2> /dev/null; then
+		install -m 755 "${fetched}" "${modelkit}"
+		echo "engine: taken from the build-engine branch" >&2
+	elif command -v cargo >/dev/null 2>&1; then
 		cargo build -q --release --manifest-path "${root}/tools/modelkit/Cargo.toml"
 		cp "${root}/tools/modelkit/target/release/modelkit" "${modelkit}"
-		echo "${source_sha}" > "${stamp}"
+		if [ "${MODELKIT_SHARE_ENGINE:-}" = "1" ]; then
+			shared="$(mktemp -d)"
+			cp "${modelkit}" "${shared}/modelkit-linux-x64"
+			echo "${source_sha}" > "${shared}/source-sha"
+			(cd "${root}" && scripts/push-folder.sh "${shared}" build-engine "engine ${source_sha:0:12}" > /dev/null) || echo "engine: could not share it on the build-engine branch" >&2
+			rm -rf "${shared}"
+		fi
+	else
+		rm -f "${fetched}"
+		echo "the engine in tools/modelkit/bin is older than its source, and there is no cargo to rebuild it" >&2
+		exit 1
 	fi
+	rm -f "${fetched}"
+	echo "${source_sha}" > "${stamp}"
 fi
 
 if [ "${1:-}" = "--engine" ]; then
