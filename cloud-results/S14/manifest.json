@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "3dc34855bab41cc0",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 14/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 978544,
+			"sha": "b9812082731cd274",
+			"parts": 16
+		},
+		{
+			"id": "e1e5a521192bb263",
+			"key": "ScrapTreeExhaust-c27e7c1cf460c675 1 x x1.4",
+			"piece": 1,
+			"label": "RoughScrap2",
+			"turn": 94.0,
+			"bytes": 541724,
+			"sha": "611da3635675f7a4",
+			"parts": 4
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard7_FootingFront5",
+			"turn": 202.5,
+			"bytes": 97780,
+			"sha": "0c91aff2b3ef2ae5",
+			"parts": 1
+		},
+		{
+			"id": "a9738665e883b282",
+			"key": "ProofShark-ba752d85a38f6d1d 1 x",
+			"piece": 1,
+			"label": "Kit_ProofShark",
+			"turn": 0.0,
+			"bytes": 203628,
+			"sha": "28c6e32508beac0f",
+			"parts": 1
+		}
+	],
+	"placements": [
+		{
+			"asset": "3dc34855bab41cc0",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-5_1_0_101",
+					"position": [
+						-285.894435,
+						-33.433899000000004,
+						-87.07947
+					]
+				},
+				{
+					"name": "Grass_4_-1_0_111",
+					"position": [
+						316.93545500000005,
+						-20.7990475,
+						10.607385922499999
+					]
+				}
+			]
+		},
+		{
+			"asset": "e1e5a521192bb263",
+			"label": "RoughScrap2",
+			"turn": 94.0,
+			"anchors": [
+				{
+					"name": "Lashing",
+					"position": [
+						122.235958,
+						6.228250000000001,
+						-127.52857
+					]
+				},
+				{
+					"name": "Mufflers",
+					"position": [
+						121.40826999999999,
+						8.9272558,
+						-127.334825
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard7_FootingFront5",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						36.759457,
+						2.266335,
+						151.55613
+					]
+				}
+			]
+		},
+		{
+			"asset": "a9738665e883b282",
+			"label": "Kit_ProofShark",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Body",
+					"position": [
+						-888.1800499999999,
+						-258.179535,
+						0.013317849999999964
+					]
+				}
+			]
+		}
+	]
+}
