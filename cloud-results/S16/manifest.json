@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "63dae9e1c0dde251",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 16/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 931372,
+			"sha": "d5e0bb4c11a366f0",
+			"parts": 17
+		},
+		{
+			"id": "f80e32d57f4a67e3",
+			"key": "9edb366bcc5dfdf7-dbd59378b4f53cfc RoughFoot2 122.22340712809475 127.52670798699384 0",
+			"piece": 1,
+			"label": "RoughFoot2",
+			"turn": 0.0,
+			"bytes": 46648,
+			"sha": "7576060cb397228f",
+			"parts": 2
+		},
+		{
+			"id": "c17402070a8a7f35",
+			"key": "YardFooting-748247116a86686c 0.5 x x1.5",
+			"piece": 1,
+			"label": "Yard7_FootingFrontHalf2",
+			"turn": 202.5,
+			"bytes": 108260,
+			"sha": "4b77fd732340d7d7",
+			"parts": 1
+		},
+		{
+			"id": "1137004c0bdebe44",
+			"key": "JunkrotBoltoloLonelo-23ac6cb8a82b2c83 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotBoltoloLonelo",
+			"turn": 0.0,
+			"bytes": 662488,
+			"sha": "758bcd7bb5281387",
+			"parts": 7
+		}
+	],
+	"placements": [
+		{
+			"asset": "63dae9e1c0dde251",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_4_2_0_000",
+					"position": [
+						266.15039,
+						-18.05479,
+						-158.02533
+					]
+				},
+				{
+					"name": "Grass_-5_-3_0_110_111",
+					"position": [
+						-264.0,
+						2.0,
+						136.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "f80e32d57f4a67e3",
+			"label": "RoughFoot2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grit",
+					"position": [
+						120.26491999999999,
+						1.6564074500000001,
+						-121.45975200000001
+					]
+				},
+				{
+					"name": "GroundShade",
+					"position": [
+						119.379895,
+						2.03,
+						-122.47156799999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "c17402070a8a7f35",
+			"label": "Yard7_FootingFrontHalf2",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						17.35650175,
+						2.266335,
+						159.56735
+					]
+				}
+			]
+		},
+		{
+			"asset": "1137004c0bdebe44",
+			"label": "Kit_JunkrotBoltoloLonelo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Head",
+					"position": [
+						-431.99371499999995,
+						-257.648565,
+						-0.006457599999999952
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						-431.987705,
+						-257.680165,
+						0.84395
+					]
+				}
+			]
+		}
+	]
+}
