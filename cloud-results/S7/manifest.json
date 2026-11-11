@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "17110f11160c7aee",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 7/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 994548,
+			"sha": "8483f4102cc7d8fa",
+			"parts": 16
+		},
+		{
+			"id": "eed8d4e6a81b016d",
+			"key": "9edb366bcc5dfdf7-6ad7b70c6ecee2a9 Rough6 -204.71905462468763 -10.72887102980343 0",
+			"piece": 1,
+			"label": "Rough6",
+			"turn": 0.0,
+			"bytes": 271016,
+			"sha": "41fbbf43f2924667",
+			"parts": 2
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard7_FootingBack7",
+			"turn": 202.5,
+			"bytes": 97832,
+			"sha": "77679490bf850f18",
+			"parts": 1
+		},
+		{
+			"id": "6266a83ca21869e7",
+			"key": "BeltCrossing-416bf52bbd2f57b6 1 x",
+			"piece": 1,
+			"label": "Crossing5",
+			"turn": 202.5,
+			"bytes": 3057952,
+			"sha": "27294809f2833aa6",
+			"parts": 7
+		}
+	],
+	"placements": [
+		{
+			"asset": "17110f11160c7aee",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_4_1_0_011",
+					"position": [
+						284.47762,
+						-31.255397000000002,
+						-117.522528
+					]
+				},
+				{
+					"name": "Grass_-5_-1_0_010_001",
+					"position": [
+						-305.86229000000003,
+						-13.3861073,
+						25.212807499999997
+					]
+				}
+			]
+		},
+		{
+			"asset": "eed8d4e6a81b016d",
+			"label": "Rough6",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-208.15717999999998,
+						2.03,
+						-0.2506680000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard7_FootingBack7",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						74.07672500000001,
+						2.266335,
+						257.326735
+					]
+				}
+			]
+		},
+		{
+			"asset": "6266a83ca21869e7",
+			"label": "Crossing5",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Railings",
+					"position": [
+						-66.513578,
+						6.3091093,
+						27.555414
+					]
+				},
+				{
+					"name": "WarningSign",
+					"position": [
+						-68.01933199999999,
+						9.1545215,
+						23.9486655
+					]
+				}
+			]
+		}
+	]
+}
