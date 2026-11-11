@@ -1,0 +1,265 @@
+{
+	"assets": [
+		{
+			"id": "a9470bac9af91766",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 19/20",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 4823996,
+			"sha": "1660c6fed7a1ff94",
+			"parts": 83
+		},
+		{
+			"id": "f3a10b4017a3fe35",
+			"key": "9edb366bcc5dfdf7-1439853d85f21bad RoughShade5 -94.59963391240943 97.28858753028595 0",
+			"piece": 1,
+			"label": "RoughShade5",
+			"turn": 0.0,
+			"bytes": 4416,
+			"sha": "a41fdf49b451bf57",
+			"parts": 1
+		},
+		{
+			"id": "b74a6c26036dd9d3",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck10 -175 0 0",
+			"piece": 1,
+			"label": "LoneWreck10",
+			"turn": 0.0,
+			"bytes": 67424,
+			"sha": "be14165b3142befb",
+			"parts": 3
+		},
+		{
+			"id": "000e0637814e7f0b",
+			"key": "YardFence-0f1495cb71d18f3d 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceBack4",
+			"turn": 112.5,
+			"bytes": 393820,
+			"sha": "fe22bae448442065",
+			"parts": 3
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingFront2",
+			"turn": -67.5,
+			"bytes": 97780,
+			"sha": "73f7386d96a30a69",
+			"parts": 1
+		},
+		{
+			"id": "130724f17f1a6aa4",
+			"key": "YardGate-06ec41d82d9efa42 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_Gate",
+			"turn": -67.5,
+			"bytes": 1142188,
+			"sha": "0b88651c6523b9e2",
+			"parts": 4
+		},
+		{
+			"id": "cdde9a2170642465",
+			"key": "9edb366bcc5dfdf7-09a6759228b03a28 Plot2 80.36352079666887 194.0147018273702 -22.5",
+			"piece": 1,
+			"label": "Plot2",
+			"turn": 0.0,
+			"bytes": 12032260,
+			"sha": "4112f82c957f1458",
+			"parts": 40
+		}
+	],
+	"placements": [
+		{
+			"asset": "a9470bac9af91766",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-4_-4_0_100_101",
+					"position": [
+						-200.205125,
+						-11.118369,
+						245.03241
+					]
+				},
+				{
+					"name": "Grass_2_4_0_000_010",
+					"position": [
+						134.630165,
+						-11.3208918,
+						-278.278825
+					]
+				}
+			]
+		},
+		{
+			"asset": "f3a10b4017a3fe35",
+			"label": "RoughShade5",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-95.517357,
+						2.03,
+						-95.97794300000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "b74a6c26036dd9d3",
+			"label": "LoneWreck10",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pipe",
+					"position": [
+						-175.096065,
+						2.643356,
+						0.6409348500000003
+					]
+				},
+				{
+					"name": "PipeStone",
+					"position": [
+						-175.2957,
+						2.15448053,
+						-3.7661845
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceBack4",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						243.43977999999998,
+						5.3468148499999995,
+						-107.325119
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceBack8",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						261.80858,
+						5.3468148499999995,
+						-62.978905000000005
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard1_FootingFront2",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						133.18732,
+						2.266335,
+						-81.10567499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceFront4",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						146.88572499999998,
+						5.3468148499999995,
+						-47.8586425
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceFront5",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						151.47792500000003,
+						5.3468148499999995,
+						-36.772088
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceFront6",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						156.07013,
+						5.3468148499999995,
+						-25.685535
+					]
+				}
+			]
+		},
+		{
+			"asset": "130724f17f1a6aa4",
+			"label": "Yard1_Gate",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Doors",
+					"position": [
+						142.258055,
+						6.9146911499999995,
+						-58.940757
+					]
+				}
+			]
+		},
+		{
+			"asset": "cdde9a2170642465",
+			"label": "Plot2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_-1_0_000",
+					"position": [
+						25.4878755,
+						1.8649999999999998,
+						-171.284465
+					]
+				},
+				{
+					"name": "Ground_0_0_0_110",
+					"position": [
+						135.23916499999999,
+						1.8649999999999998,
+						-216.744945
+					]
+				}
+			]
+		}
+	]
+}
