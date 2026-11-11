@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "f27dd06398ecb175",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 34/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 902912,
+			"sha": "fdebb92872662797",
+			"parts": 17
+		},
+		{
+			"id": "84091a723c5bb802",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck4 -85.2 117.3 0",
+			"piece": 1,
+			"label": "LoneWreck4",
+			"turn": 0.0,
+			"bytes": 71036,
+			"sha": "818ddd83790fbb8e",
+			"parts": 3
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FootingFront3",
+			"turn": 247.5,
+			"bytes": 97832,
+			"sha": "0e1582baf759ef8e",
+			"parts": 1
+		},
+		{
+			"id": "cbea379786f9ae51",
+			"key": "CapsuleSecret-a6340baf703626b4 1 x",
+			"piece": 1,
+			"label": "Kit_CapsuleSecret",
+			"turn": 0.0,
+			"bytes": 108624,
+			"sha": "2702b66c09b077d4",
+			"parts": 2
+		}
+	],
+	"placements": [
+		{
+			"asset": "f27dd06398ecb175",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-3_-5_0_011",
+					"position": [
+						-160.427885,
+						-27.710102,
+						260.567235
+					]
+				},
+				{
+					"name": "Grass_3_3_0_001",
+					"position": [
+						219.371835,
+						-27.5628935,
+						-219.34873
+					]
+				}
+			]
+		},
+		{
+			"asset": "84091a723c5bb802",
+			"label": "LoneWreck4",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pipe",
+					"position": [
+						-85.2960625,
+						2.643356,
+						-116.659065
+					]
+				},
+				{
+					"name": "PipeStone",
+					"position": [
+						-85.207048,
+						2.16861952,
+						-120.81221
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingFront3",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						156.04619,
+						2.266335,
+						25.667638
+					]
+				}
+			]
+		},
+		{
+			"asset": "cbea379786f9ae51",
+			"label": "Kit_CapsuleSecret",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Seam",
+					"position": [
+						-552.0,
+						-258.29999999999995,
+						0.0
+					]
+				}
+			]
+		}
+	]
+}
