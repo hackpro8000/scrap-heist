@@ -1,0 +1,21 @@
+MainIsland 1 x	2862.810
+MainIsland 1 x #split	1
+slab Rough7	3.969
+slab Rough7 #split	1
+slab LoneWreck2	0.133
+slab LoneWreck2 #split	1
+YardFooting 1 x x1.5	0.107
+YardFooting 1 x x1.5 #split	1
+YardGate 1 x x1.5	1.106
+YardGate 1 x x1.5 #split	1
+slab YardShade7	0.240
+ScrapCrate 1 x	0.407
+ScrapCrate 1 x #split	1
+JunkrotBulboFulminato 1 x	1.571
+JunkrotBulboFulminato 1 x #split	1
+JunkrotTypewrittoClackini 1 x	2.237
+JunkrotTypewrittoClackini 1 x #split	1
+JunkrotBallerinaTincuppina 1 x	11.936
+JunkrotBallerinaTincuppina 1 x #split	1
+JunkrotHolofonoShimmerra 1 x	2.068
+JunkrotHolofonoShimmerra 1 x #split	1
