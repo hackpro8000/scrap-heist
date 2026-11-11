@@ -1,0 +1,97 @@
+{
+	"assets": [
+		{
+			"id": "d12ad7d02cb9595f",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 19/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 950932,
+			"sha": "2523e2fa84c2cdca",
+			"parts": 16
+		},
+		{
+			"id": "f3a10b4017a3fe35",
+			"key": "9edb366bcc5dfdf7-1439853d85f21bad RoughShade5 -94.59963391240943 97.28858753028595 0",
+			"piece": 1,
+			"label": "RoughShade5",
+			"turn": 0.0,
+			"bytes": 4416,
+			"sha": "a41fdf49b451bf57",
+			"parts": 1
+		},
+		{
+			"id": "7e16df8f83dc2808",
+			"key": "9edb366bcc5dfdf7-09a6759228b03a28 Plot8 194.01470182737023 -80.36352079666881 247.5",
+			"piece": 1,
+			"label": "Plot8",
+			"turn": 0.0,
+			"bytes": 12053548,
+			"sha": "82c432f822d00c64",
+			"parts": 40
+		}
+	],
+	"placements": [
+		{
+			"asset": "d12ad7d02cb9595f",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_2_-4_-1_101",
+					"position": [
+						177.198395,
+						-43.4958225,
+						225.75975
+					]
+				},
+				{
+					"name": "Grass_-1_4_0_110_100",
+					"position": [
+						-8.777501749999999,
+						-11.1258663,
+						-302.35167
+					]
+				}
+			]
+		},
+		{
+			"asset": "f3a10b4017a3fe35",
+			"label": "RoughShade5",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-95.517357,
+						2.03,
+						-95.97794300000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "7e16df8f83dc2808",
+			"label": "Plot8",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_-1_0_000",
+					"position": [
+						171.284465,
+						1.8649999999999998,
+						25.4878755
+					]
+				},
+				{
+					"name": "Ground_0_0_0_110",
+					"position": [
+						216.744945,
+						1.8649999999999998,
+						135.23916499999999
+					]
+				}
+			]
+		}
+	]
+}
