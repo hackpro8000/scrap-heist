@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "8fbf466cbbda6ebb",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 9/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 761224,
+			"sha": "b838c11036319c51",
+			"parts": 17
+		},
+		{
+			"id": "f7c84c1a9fe9a7d4",
+			"key": "9edb366bcc5dfdf7-6ad7b70c6ecee2a9 Rough8 -169.13559329549966 -181.37571800155428 0",
+			"piece": 1,
+			"label": "Rough8",
+			"turn": 0.0,
+			"bytes": 258488,
+			"sha": "b5665ed39d6ec51a",
+			"parts": 2
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard7_FootingFront1",
+			"turn": 202.5,
+			"bytes": 97832,
+			"sha": "8e0b0ced6a659774",
+			"parts": 1
+		},
+		{
+			"id": "6266a83ca21869e7",
+			"key": "BeltCrossing-416bf52bbd2f57b6 1 x",
+			"piece": 1,
+			"label": "Crossing7",
+			"turn": 292.5,
+			"bytes": 3057936,
+			"sha": "356e9dd617df68fb",
+			"parts": 7
+		}
+	],
+	"placements": [
+		{
+			"asset": "8fbf466cbbda6ebb",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-4_-4_0_011",
+					"position": [
+						-224.484895,
+						-27.20293,
+						210.00685
+					]
+				},
+				{
+					"name": "Grass_4_2_0_100",
+					"position": [
+						288.84133499999996,
+						-13.28549495,
+						-131.749297
+					]
+				}
+			]
+		},
+		{
+			"asset": "f7c84c1a9fe9a7d4",
+			"label": "Rough8",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-173.68966,
+						2.03,
+						171.72339
+					]
+				},
+				{
+					"name": "Stones",
+					"position": [
+						-174.01085999999998,
+						2.6351590000000003,
+						172.249005
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard7_FootingFront1",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						70.01912300000001,
+						2.266335,
+						137.779525
+					]
+				}
+			]
+		},
+		{
+			"asset": "6266a83ca21869e7",
+			"label": "Crossing7",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Railings",
+					"position": [
+						27.555414,
+						6.3091093,
+						66.513578
+					]
+				},
+				{
+					"name": "WarningSign",
+					"position": [
+						23.9486655,
+						9.1545215,
+						68.01933199999999
+					]
+				}
+			]
+		}
+	]
+}
