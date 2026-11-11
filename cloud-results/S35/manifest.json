@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "f832230e01d01db8",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 35/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 779076,
+			"sha": "a65d0ff79a37fc0b",
+			"parts": 17
+		},
+		{
+			"id": "f1c7de2b51db1bf5",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck5 -137.9 -44.8 0",
+			"piece": 1,
+			"label": "LoneWreck5",
+			"turn": 0.0,
+			"bytes": 53776,
+			"sha": "8fec0af64317a7b0",
+			"parts": 3
+		},
+		{
+			"id": "7b7a6cc4ddb0b567",
+			"key": "YardFenceHalf-66e102f35bc13698 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FenceFrontHalf1",
+			"turn": 247.5,
+			"bytes": 353508,
+			"sha": "5be4a87aec1a6cfc",
+			"parts": 3
+		},
+		{
+			"id": "169147aea7f243e9",
+			"key": "JunkrotTrashaleroTrashala-83aa428f1188e759 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotTrashaleroTrashala",
+			"turn": 0.0,
+			"bytes": 5531536,
+			"sha": "83aac1241894ffee",
+			"parts": 32
+		}
+	],
+	"placements": [
+		{
+			"asset": "f832230e01d01db8",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_-5_0_000",
+					"position": [
+						6.20100525,
+						-19.665018,
+						301.00555499999996
+					]
+				},
+				{
+					"name": "Grass_-3_4_0_001",
+					"position": [
+						-164.395135,
+						-20.8849585,
+						-259.4348
+					]
+				}
+			]
+		},
+		{
+			"asset": "f1c7de2b51db1bf5",
+			"label": "LoneWreck5",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-138.7,
+						2.03,
+						44.150000000000006
+					]
+				},
+				{
+					"name": "SlabStone",
+					"position": [
+						-140.22339,
+						2.10907015,
+						45.342636
+					]
+				}
+			]
+		},
+		{
+			"asset": "7b7a6cc4ddb0b567",
+			"label": "Yard8_FenceFrontHalf1",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						159.48526,
+						5.33874635,
+						17.3600475
+					]
+				}
+			]
+		},
+		{
+			"asset": "169147aea7f243e9",
+			"label": "Kit_JunkrotTrashaleroTrashala",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Fins",
+					"position": [
+						503.29161999999997,
+						-258.25816499999996,
+						-0.017872625000000003
+					]
+				},
+				{
+					"name": "NostrilPits",
+					"position": [
+						506.11539000000005,
+						-258.938675,
+						0.00011326249999999566
+					]
+				}
+			]
+		}
+	]
+}
