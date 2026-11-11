@@ -1,0 +1,97 @@
+{
+	"assets": [
+		{
+			"id": "76db7b5db283738f",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 49/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 922284,
+			"sha": "d9b857746f45ce7e",
+			"parts": 16
+		},
+		{
+			"id": "2f98adc691b93c84",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck24 37.5 237 0",
+			"piece": 1,
+			"label": "LoneWreck24",
+			"turn": 0.0,
+			"bytes": 43832,
+			"sha": "cc50b7e579347a52",
+			"parts": 2
+		},
+		{
+			"id": "d2252ac111ca7184",
+			"key": "HubShop-509dc24f3a226285 1 x",
+			"piece": 1,
+			"label": "Market",
+			"turn": 0.0,
+			"bytes": 15451952,
+			"sha": "1aee748b34a848ad",
+			"parts": 22
+		}
+	],
+	"placements": [
+		{
+			"asset": "76db7b5db283738f",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-4_-4_0_010",
+					"position": [
+						-240.0188,
+						-25.642048,
+						195.83805999999998
+					]
+				},
+				{
+					"name": "Dirt_3_3_-1_001",
+					"position": [
+						208.627455,
+						-54.244988,
+						-207.92439000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "2f98adc691b93c84",
+			"label": "LoneWreck24",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						36.425,
+						2.03,
+						-236.475
+					]
+				}
+			]
+		},
+		{
+			"asset": "d2252ac111ca7184",
+			"label": "Market",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "CraneWeight",
+					"position": [
+						12.0057245,
+						22.967674000000002,
+						-51.135952
+					]
+				},
+				{
+					"name": "Stencil",
+					"position": [
+						-9.7932545,
+						16.300646,
+						-43.0575655
+					]
+				}
+			]
+		}
+	]
+}
