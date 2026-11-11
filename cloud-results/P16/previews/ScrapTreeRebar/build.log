@@ -1,0 +1,17 @@
+engine: taken from the build-engine branch
+[    0.0s] running ScrapTreeRebar/model.luau
+[    0.1s] baking on CPU (no GPU)
+[    0.2s] shaded Rebar 256×256 in 0.13s
+[    0.4s] shaded Footing 256×256 in 0.21s
+[    0.6s] shaded Ties 256×256 in 0.18s
+[    0.6s] writing ScrapTreeRebar.glb and 3 textures
+[    0.6s] rendering preview of 3 parts
+ScrapTreeRebar: 3 parts, script 556.21ms, total 1.05s
+  shade (creases, contact): 0.32s
+  coat: 0.07s
+  wear: 0.02s
+  combine: 0.00s
+  shade, surfaces, grid and texels: 0.01s
+  shade, neighbourhoods: 0.01s
+  shade, spreading over seams: 0.00s
+  coat, painting texels: 0.00s
