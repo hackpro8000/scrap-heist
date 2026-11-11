@@ -1,0 +1,489 @@
+{
+	"assets": [
+		{
+			"id": "20faa813276d5aaa",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 7/25",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 4102664,
+			"sha": "bd9ba96fdd4b5120",
+			"parts": 65
+		},
+		{
+			"id": "eed8d4e6a81b016d",
+			"key": "9edb366bcc5dfdf7-6ad7b70c6ecee2a9 Rough6 -204.71905462468763 -10.72887102980343 0",
+			"piece": 1,
+			"label": "Rough6",
+			"turn": 0.0,
+			"bytes": 271016,
+			"sha": "3ea9ad64e1f06856",
+			"parts": 2
+		},
+		{
+			"id": "82ffbcd5b889d515",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck1 137.9 44.8 0",
+			"piece": 1,
+			"label": "LoneWreck1",
+			"turn": 0.0,
+			"bytes": 66464,
+			"sha": "5638da62008fc310",
+			"parts": 3
+		},
+		{
+			"id": "000e0637814e7f0b",
+			"key": "YardFence-0f1495cb71d18f3d 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceBack3",
+			"turn": 112.5,
+			"bytes": 393868,
+			"sha": "1b97ff30226a061f",
+			"parts": 3
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard2_FootingBack4",
+			"turn": -22.5,
+			"bytes": 97832,
+			"sha": "f59ca684e9042613",
+			"parts": 1
+		},
+		{
+			"id": "c7d6aad2c87bdf7b",
+			"key": "9edb366bcc5dfdf7-4bed7244ea680ec2 YardShade4 -194.0147018273702 80.36352079666888 67.5",
+			"piece": 1,
+			"label": "YardShade4",
+			"turn": 0.0,
+			"bytes": 94924,
+			"sha": "8838074baa079d61",
+			"parts": 1
+		},
+		{
+			"id": "b5b9fa27b1cccdb1",
+			"key": "CapsuleLoop-bec128dfbc5e2284 1 x",
+			"piece": 1,
+			"label": "CapsuleLoop",
+			"turn": 0.0,
+			"bytes": 5692020,
+			"sha": "25458e1c744f50b4",
+			"parts": 62
+		},
+		{
+			"id": "33946110c6fa358a",
+			"key": "CapsuleScrap-965c252abcd91c2d 1 x",
+			"piece": 1,
+			"label": "Kit_CapsuleScrap",
+			"turn": 0.0,
+			"bytes": 399960,
+			"sha": "f8f5da194f41cb7f",
+			"parts": 4
+		},
+		{
+			"id": "65d4bd20e330aaf3",
+			"key": "JunkrotPannettoPatchato-b0d8eb9eb7dc17e5 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotPannettoPatchato",
+			"turn": 0.0,
+			"bytes": 610448,
+			"sha": "bcbb4d64f5e0e824",
+			"parts": 7
+		},
+		{
+			"id": "dfa401b75cc2b9e2",
+			"key": "JunkrotDrippiDroppi-c8b55e589d02ac9a 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotDrippiDroppi",
+			"turn": 0.0,
+			"bytes": 4648812,
+			"sha": "46cc53e90b602e44",
+			"parts": 29
+		},
+		{
+			"id": "229267bf71c754cd",
+			"key": "JunkrotSockettoSeiSette-45380ca69b67ced2 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotSockettoSeiSette",
+			"turn": 0.0,
+			"bytes": 5185680,
+			"sha": "b7c19095021ccfa8",
+			"parts": 32
+		},
+		{
+			"id": "7bf0f0a3aac941f6",
+			"key": "JunkrotTheMonolito-3ef696a9f233f6e8 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotTheMonolito",
+			"turn": 0.0,
+			"bytes": 124000,
+			"sha": "57b5facbadf64811",
+			"parts": 3
+		}
+	],
+	"placements": [
+		{
+			"asset": "20faa813276d5aaa",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_-3_0_110_100",
+					"position": [
+						-271.36341000000004,
+						-13.738019300000001,
+						158.258355
+					]
+				},
+				{
+					"name": "Grass_4_2_0_000_111",
+					"position": [
+						277.25232,
+						-10.0801765,
+						-150.208365
+					]
+				}
+			]
+		},
+		{
+			"asset": "eed8d4e6a81b016d",
+			"label": "Rough6",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-208.15717999999998,
+						2.03,
+						-0.2506680000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "82ffbcd5b889d515",
+			"label": "LoneWreck1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pipe",
+					"position": [
+						137.80185,
+						2.643356,
+						-45.425312000000005
+					]
+				},
+				{
+					"name": "PipeStone",
+					"position": [
+						137.82809,
+						2.16111595,
+						-41.231201
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceBack3",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						238.847575,
+						5.3468148499999995,
+						-118.411675
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceFront3",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						128.51692,
+						5.3468148499999995,
+						-92.20486
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingBack4",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						96.244565,
+						2.266335,
+						-248.04019
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingFront1",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						47.840745999999996,
+						2.266335,
+						-146.861785
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingFront5",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						81.1004125,
+						2.266335,
+						-133.08517999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingBack3",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-118.42294000000001,
+						2.266335,
+						-238.95793
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingBack8",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-62.990168499999996,
+						2.266335,
+						-261.91893
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingFront4",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-47.8460125,
+						2.266335,
+						-146.96393
+					]
+				}
+			]
+		},
+		{
+			"asset": "c7d6aad2c87bdf7b",
+			"label": "YardShade4",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-194.01471,
+						2.03,
+						-80.363523
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard8_FenceFront1",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						146.88912499999998,
+						5.3468148499999995,
+						47.849945000000005
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard8_FenceFront3",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						156.07352500000002,
+						5.3468148499999995,
+						25.676836
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard8_FenceFront5",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						133.112505,
+						5.3468148499999995,
+						81.10961
+					]
+				}
+			]
+		},
+		{
+			"asset": "b5b9fa27b1cccdb1",
+			"label": "CapsuleLoop",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "BeltRails_-2_0_0",
+					"position": [
+						-69.06479250000001,
+						2.525,
+						-19.858725000000003
+					]
+				},
+				{
+					"name": "DriveGears",
+					"position": [
+						78.97,
+						5.85,
+						0.575
+					]
+				}
+			]
+		},
+		{
+			"asset": "33946110c6fa358a",
+			"label": "Kit_CapsuleScrap",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Can",
+					"position": [
+						-696.0072849999999,
+						-258.77121,
+						0.010462399999999983
+					]
+				}
+			]
+		},
+		{
+			"asset": "65d4bd20e330aaf3",
+			"label": "Kit_JunkrotPannettoPatchato",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grip",
+					"position": [
+						-288.01872000000003,
+						-256.73941,
+						-0.8731452500000001
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						-287.985715,
+						-258.06495,
+						0.20634999999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "dfa401b75cc2b9e2",
+			"label": "Kit_JunkrotDrippiDroppi",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "TailFan",
+					"position": [
+						117.890405,
+						-259.56890999999996,
+						0.005923669999999992
+					]
+				},
+				{
+					"name": "Whiskers",
+					"position": [
+						122.237023,
+						-258.35596,
+						-0.009650419999999993
+					]
+				}
+			]
+		},
+		{
+			"asset": "229267bf71c754cd",
+			"label": "Kit_JunkrotSockettoSeiSette",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Foam",
+					"position": [
+						529.085525,
+						-258.858125,
+						-0.001141649999999994
+					]
+				},
+				{
+					"name": "TailLight",
+					"position": [
+						527.7907250000001,
+						-259.731675,
+						-0.7170242915
+					]
+				}
+			]
+		},
+		{
+			"asset": "7bf0f0a3aac941f6",
+			"label": "Kit_JunkrotTheMonolito",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Eye",
+					"position": [
+						936.0,
+						-256.1,
+						0.235
+					]
+				}
+			]
+		}
+	]
+}
