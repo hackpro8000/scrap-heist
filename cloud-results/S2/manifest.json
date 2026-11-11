@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "b6ec8a43ed0b984d",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 2/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 894772,
+			"sha": "d9202188db341355",
+			"parts": 17
+		},
+		{
+			"id": "14a31e6ea3d6d35b",
+			"key": "9edb366bcc5dfdf7-6ad7b70c6ecee2a9 Rough1 177.89156720939906 6.212110413045172 0",
+			"piece": 1,
+			"label": "Rough1",
+			"turn": 0.0,
+			"bytes": 283612,
+			"sha": "54efcb197d913bcd",
+			"parts": 2
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard7_FootingBack2",
+			"turn": 202.5,
+			"bytes": 97832,
+			"sha": "9b6e819856a62f77",
+			"parts": 1
+		},
+		{
+			"id": "cbae2df63e42b3f0",
+			"key": "9edb366bcc5dfdf7-96d3b9c80baa686a Streets 0 0 0",
+			"piece": 1,
+			"label": "Streets",
+			"turn": 0.0,
+			"bytes": 3840344,
+			"sha": "aba06a7300071f07",
+			"parts": 12
+		}
+	],
+	"placements": [
+		{
+			"asset": "b6ec8a43ed0b984d",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_0_0_010_101",
+					"position": [
+						-295.655535,
+						-14.186939,
+						-40.0
+					]
+				},
+				{
+					"name": "Grass_4_-1_0_100_110",
+					"position": [
+						312.336505,
+						-11.4484963,
+						41.084644
+					]
+				}
+			]
+		},
+		{
+			"asset": "14a31e6ea3d6d35b",
+			"label": "Rough1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						189.68498,
+						2.03,
+						-0.3396775000000005
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard7_FootingBack2",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						129.50949500000002,
+						2.266335,
+						234.36572999999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "cbae2df63e42b3f0",
+			"label": "Streets",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "RoadMarks_-1_0_0",
+					"position": [
+						-50.5,
+						2.07,
+						-50.50000000000001
+					]
+				},
+				{
+					"name": "RoadMarks_0_-1_0",
+					"position": [
+						50.49999999999999,
+						2.07,
+						50.50000000000001
+					]
+				}
+			]
+		}
+	]
+}
