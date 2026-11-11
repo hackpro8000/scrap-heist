@@ -1,0 +1,8 @@
+MainIsland 1 x	2955.160
+MainIsland 1 x #split	1
+slab Plaza	7.737
+slab Plaza #split	1
+slab RoughFoot8	0.051
+slab RoughFoot8 #split	1
+slab Plot1	12.472
+slab Plot1 #split	1

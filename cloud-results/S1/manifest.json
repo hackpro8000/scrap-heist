@@ -1,0 +1,138 @@
+{
+	"assets": [
+		{
+			"id": "c7983d6da71c7f3c",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 1/25",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 3973372,
+			"sha": "9d2532222192768f",
+			"parts": 65
+		},
+		{
+			"id": "fd9182ae81804ef6",
+			"key": "9edb366bcc5dfdf7-1140b5bda9dd140d Plaza 0 0 0",
+			"piece": 1,
+			"label": "Plaza",
+			"turn": 0.0,
+			"bytes": 4688960,
+			"sha": "3925dd1f5ff11015",
+			"parts": 4
+		},
+		{
+			"id": "fe862f134e7ed315",
+			"key": "9edb366bcc5dfdf7-dbd59378b4f53cfc RoughFoot8 -198.10190576094405 -193.74322551738953 0",
+			"piece": 1,
+			"label": "RoughFoot8",
+			"turn": 0.0,
+			"bytes": 37760,
+			"sha": "00fb12715d1825b1",
+			"parts": 2
+		},
+		{
+			"id": "053f45f0d15faeed",
+			"key": "9edb366bcc5dfdf7-09a6759228b03a28 Plot1 194.0147018273702 80.36352079666885 -67.5",
+			"piece": 1,
+			"label": "Plot1",
+			"turn": 0.0,
+			"bytes": 12047796,
+			"sha": "579e6e87348423d5",
+			"parts": 40
+		}
+	],
+	"placements": [
+		{
+			"asset": "c7983d6da71c7f3c",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_-1_0_000_111",
+					"position": [
+						-296.801115,
+						-13.904047,
+						40.0
+					]
+				},
+				{
+					"name": "Grass_5_-1_0",
+					"position": [
+						320.075625,
+						-18.38353625,
+						2.856179685
+					]
+				}
+			]
+		},
+		{
+			"asset": "fd9182ae81804ef6",
+			"label": "Plaza",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Paving_-1_-1_0",
+					"position": [
+						-50.5,
+						2.05,
+						50.49999999999999
+					]
+				},
+				{
+					"name": "Paving_0_0_0",
+					"position": [
+						50.5,
+						2.05,
+						-50.5
+					]
+				}
+			]
+		},
+		{
+			"asset": "fe862f134e7ed315",
+			"label": "RoughFoot8",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grit",
+					"position": [
+						-202.900505,
+						1.61071095,
+						202.260545
+					]
+				},
+				{
+					"name": "GroundShade",
+					"position": [
+						-202.294085,
+						2.03,
+						201.820085
+					]
+				}
+			]
+		},
+		{
+			"asset": "053f45f0d15faeed",
+			"label": "Plot1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_0_0_010",
+					"position": [
+						216.744945,
+						1.8649999999999998,
+						-135.23916499999999
+					]
+				},
+				{
+					"name": "Ground_0_-1_0_100",
+					"position": [
+						171.284465,
+						1.8649999999999998,
+						-25.4878755
+					]
+				}
+			]
+		}
+	]
+}
