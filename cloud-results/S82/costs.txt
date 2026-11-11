@@ -1,0 +1,6 @@
+MainIsland 1 x	3208.513
+MainIsland 1 x #split	1
+YardFence 1.037037037037037 x x1.5	0.351
+YardFence 1.037037037037037 x x1.5 #split	1
+JunkrotMixerellaVroom 1 x	1.472
+JunkrotMixerellaVroom 1 x #split	1

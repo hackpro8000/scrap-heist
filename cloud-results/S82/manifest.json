@@ -1,0 +1,217 @@
+{
+	"assets": [
+		{
+			"id": "597bf140462bc4df",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 82/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1053264,
+			"sha": "d7aee7422984b632",
+			"parts": 16
+		},
+		{
+			"id": "44dff41c5cc64f21",
+			"key": "YardFence-0f1495cb71d18f3d 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceRight4",
+			"turn": 22.5,
+			"bytes": 395304,
+			"sha": "45d5b90846e33ed1",
+			"parts": 3
+		},
+		{
+			"id": "6e46c674311cb06c",
+			"key": "JunkrotMixerellaVroom-b4c9735fa5d8e15d 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotMixerellaVroom",
+			"turn": 0.0,
+			"bytes": 801468,
+			"sha": "c2ce6e5171695f18",
+			"parts": 9
+		}
+	],
+	"placements": [
+		{
+			"asset": "597bf140462bc4df",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-4_3_0_110",
+					"position": [
+						-203.341865,
+						-11.058963,
+						-232.07121999999998
+					]
+				},
+				{
+					"name": "Grass_2_-4_0_100_111",
+					"position": [
+						183.89280000000002,
+						-16.420393,
+						232.04934500000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard1_FenceRight4",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						200.874215,
+						5.3468148499999995,
+						-31.271036000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard2_FenceRight3",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						115.165615,
+						5.3468148499999995,
+						-152.654665
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard3_FenceRight2",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-21.746470000000002,
+						5.3468148499999995,
+						-177.879875
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard4_FenceRight1",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-129.660325,
+						5.3468148499999995,
+						-105.64105
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard4_FenceRight9",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-221.637665,
+						5.3468148499999995,
+						-143.739315
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard5_FenceRight8",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-246.862875,
+						5.3468148499999995,
+						50.3201655
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard6_FenceRight7",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-134.214745,
+						5.3468148499999995,
+						198.643325
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceRight6",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						40.795601000000005,
+						5.3468148499999995,
+						223.86854499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard8_FenceRight5",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						175.648995,
+						5.3468148499999995,
+						124.69018
+					]
+				}
+			]
+		},
+		{
+			"asset": "6e46c674311cb06c",
+			"label": "Kit_JunkrotMixerellaVroom",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Knob",
+					"position": [
+						-47.4962635,
+						-257.08549500000004,
+						-0.190781565
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						-47.991,
+						-257.0316,
+						1.1308
+					]
+				}
+			]
+		}
+	]
+}
