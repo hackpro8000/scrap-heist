@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "f555366037b57116",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 8/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 841552,
+			"sha": "f45a65564190b108",
+			"parts": 16
+		},
+		{
+			"id": "c2b7bb1d240ace25",
+			"key": "9edb366bcc5dfdf7-6ad7b70c6ecee2a9 Rough7 -125.79283667849734 -117.30371793074971 0",
+			"piece": 1,
+			"label": "Rough7",
+			"turn": 0.0,
+			"bytes": 280160,
+			"sha": "57ff0a599af32417",
+			"parts": 2
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard7_FootingBack8",
+			"turn": 202.5,
+			"bytes": 97832,
+			"sha": "23c51e05249e2d66",
+			"parts": 1
+		},
+		{
+			"id": "6266a83ca21869e7",
+			"key": "BeltCrossing-416bf52bbd2f57b6 1 x",
+			"piece": 1,
+			"label": "Crossing6",
+			"turn": 247.5,
+			"bytes": 3057956,
+			"sha": "70659075769c9ad6",
+			"parts": 7
+		}
+	],
+	"placements": [
+		{
+			"asset": "f555366037b57116",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Columns_-4_-4_-1_010",
+					"position": [
+						-233.517845,
+						-56.50281699999999,
+						205.017945
+					]
+				},
+				{
+					"name": "Grass_2_3_0_110_001",
+					"position": [
+						168.0,
+						2.0,
+						-232.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "c2b7bb1d240ace25",
+			"label": "Rough7",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-129.765535,
+						2.03,
+						125.31630200000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard7_FootingBack8",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						62.990168499999996,
+						2.266335,
+						261.91893
+					]
+				}
+			]
+		},
+		{
+			"asset": "6266a83ca21869e7",
+			"label": "Crossing6",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Bulbs",
+					"position": [
+						-27.5532075,
+						12.35,
+						66.519329
+					]
+				},
+				{
+					"name": "WarningSign",
+					"position": [
+						-31.168398,
+						9.1545215,
+						65.03275500000001
+					]
+				}
+			]
+		}
+	]
+}
