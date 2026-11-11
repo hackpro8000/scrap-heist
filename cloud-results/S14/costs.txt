@@ -1,0 +1,12 @@
+MainIsland 1 x	2069.216
+MainIsland 1 x #split	1
+ScrapTreeExhaust 1 x x1.4	0.346
+ScrapTreeExhaust 1 x x1.4 #split	1
+slab LoneWreck10	0.216
+slab LoneWreck10 #split	1
+YardFooting 1 x x1.5	0.077
+YardFooting 1 x x1.5 #split	1
+PlotMarker 1 x x1.5	0.449
+PlotMarker 1 x x1.5 #split	1
+slab Plot7	10.460
+slab Plot7 #split	1
