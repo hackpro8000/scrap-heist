@@ -1,0 +1,21 @@
+MainIsland 1 x	2780.085
+MainIsland 1 x #split	1
+slab Rough5	3.359
+slab Rough5 #split	1
+slab RoughShade10	0.013
+YardFooting 1 x x1.5	0.102
+YardFooting 1 x x1.5 #split	1
+YardFooting 0.5 x x1.5	0.117
+YardFooting 0.5 x x1.5 #split	1
+slab YardShade2	0.224
+slab YardShade8	0.265
+JunkMound 1 x x1.6666666666666667	0.569
+JunkMound 1 x x1.6666666666666667 #split	1
+JunkrotCrumboPoppalot 1 x	1.660
+JunkrotCrumboPoppalot 1 x #split	1
+JunkrotCamerinoFlashetto 1 x	1.568
+JunkrotCamerinoFlashetto 1 x #split	1
+JunkrotTrashaleroTrashala 1 x	22.816
+JunkrotTrashaleroTrashala 1 x #split	1
+JunkrotLaVacuumaSaturnita 1 x	12.313
+JunkrotLaVacuumaSaturnita 1 x #split	1

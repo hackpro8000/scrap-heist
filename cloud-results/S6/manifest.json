@@ -1,0 +1,384 @@
+{
+	"assets": [
+		{
+			"id": "552fab73010d04ef",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 6/25",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 4056364,
+			"sha": "6ea106cf53e310f0",
+			"parts": 66
+		},
+		{
+			"id": "8fd0cc1f61f4c401",
+			"key": "9edb366bcc5dfdf7-6ad7b70c6ecee2a9 Rough5 -118.90317207638304 107.06089701741733 0",
+			"piece": 1,
+			"label": "Rough5",
+			"turn": 0.0,
+			"bytes": 318232,
+			"sha": "cafff6be747a545a",
+			"parts": 2
+		},
+		{
+			"id": "6c88ad73476e116e",
+			"key": "9edb366bcc5dfdf7-1439853d85f21bad RoughShade10 146.04240820479336 -149.99962501867964 0",
+			"piece": 1,
+			"label": "RoughShade10",
+			"turn": 0.0,
+			"bytes": 3320,
+			"sha": "176b2b7ae2084624",
+			"parts": 1
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingBack2",
+			"turn": -67.5,
+			"bytes": 97780,
+			"sha": "dacc8182d086bb90",
+			"parts": 1
+		},
+		{
+			"id": "c17402070a8a7f35",
+			"key": "YardFooting-748247116a86686c 0.5 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingFrontHalf2",
+			"turn": -67.5,
+			"bytes": 108260,
+			"sha": "9e7f24623541d407",
+			"parts": 1
+		},
+		{
+			"id": "d3c125222d1899ba",
+			"key": "9edb366bcc5dfdf7-4bed7244ea680ec2 YardShade2 80.36352079666887 194.0147018273702 -22.5",
+			"piece": 1,
+			"label": "YardShade2",
+			"turn": 0.0,
+			"bytes": 98160,
+			"sha": "4036d6ddf7b88811",
+			"parts": 1
+		},
+		{
+			"id": "1c46bc0ec82bfce8",
+			"key": "9edb366bcc5dfdf7-4bed7244ea680ec2 YardShade8 194.01470182737023 -80.36352079666881 247.5",
+			"piece": 1,
+			"label": "YardShade8",
+			"turn": 0.0,
+			"bytes": 94724,
+			"sha": "5066ee27239158d9",
+			"parts": 1
+		},
+		{
+			"id": "e1423fefda0fca41",
+			"key": "JunkMound-e2d48bd7d6f65eb3 1 x x1.6666666666666667",
+			"piece": 1,
+			"label": "Kit_Mound",
+			"turn": 0.0,
+			"bytes": 735576,
+			"sha": "924fd7e626fded83",
+			"parts": 5
+		},
+		{
+			"id": "8bfd636ea185d44d",
+			"key": "JunkrotCrumboPoppalot-f9eb904dd489effa 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotCrumboPoppalot",
+			"turn": 0.0,
+			"bytes": 810296,
+			"sha": "e21c492f4665f885",
+			"parts": 9
+		},
+		{
+			"id": "5cec693dffb6570b",
+			"key": "JunkrotCamerinoFlashetto-8e9b5b50896db9fc 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotCamerinoFlashetto",
+			"turn": 0.0,
+			"bytes": 849480,
+			"sha": "bccd1c5984f9840f",
+			"parts": 9
+		},
+		{
+			"id": "169147aea7f243e9",
+			"key": "JunkrotTrashaleroTrashala-83aa428f1188e759 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotTrashaleroTrashala",
+			"turn": 0.0,
+			"bytes": 5531536,
+			"sha": "83aac1241894ffee",
+			"parts": 32
+		},
+		{
+			"id": "77cc97d2a826e54e",
+			"key": "JunkrotLaVacuumaSaturnita-f6a178ed91371ab2 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotLaVacuumaSaturnita",
+			"turn": 0.0,
+			"bytes": 6438732,
+			"sha": "0706f2d9f92d717a",
+			"parts": 36
+		}
+	],
+	"placements": [
+		{
+			"asset": "552fab73010d04ef",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_-3_0_010",
+					"position": [
+						-287.93836,
+						-13.075420249999999,
+						131.22311000000002
+					]
+				},
+				{
+					"name": "Grass_4_2_0_000_100",
+					"position": [
+						282.76671,
+						-12.912332300000001,
+						-135.812175
+					]
+				}
+			]
+		},
+		{
+			"asset": "8fd0cc1f61f4c401",
+			"label": "Rough5",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-119.13117,
+						2.03,
+						-115.118618
+					]
+				}
+			]
+		},
+		{
+			"asset": "6c88ad73476e116e",
+			"label": "RoughShade10",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						146.04241000000002,
+						2.03,
+						149.99962499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard1_FootingBack2",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						234.36572999999999,
+						2.266335,
+						-129.50949500000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard1_FootingFront2",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						133.18732,
+						2.266335,
+						-81.10567499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "c17402070a8a7f35",
+			"label": "Yard1_FootingFrontHalf2",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						159.56735,
+						2.266335,
+						-17.35650175
+					]
+				}
+			]
+		},
+		{
+			"asset": "d3c125222d1899ba",
+			"label": "YardShade2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						80.363523,
+						2.03,
+						-194.01471
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard7_FootingFront6",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						25.672902999999998,
+						2.266335,
+						156.14833
+					]
+				}
+			]
+		},
+		{
+			"asset": "1c46bc0ec82bfce8",
+			"label": "YardShade8",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						194.01471,
+						2.03,
+						80.363523
+					]
+				}
+			]
+		},
+		{
+			"asset": "e1423fefda0fca41",
+			"label": "Kit_Mound",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Heap",
+					"position": [
+						-719.4729500000001,
+						-258.6483,
+						-0.012967149999999705
+					]
+				},
+				{
+					"name": "Tyre",
+					"position": [
+						-720.4917700000001,
+						-258.810245,
+						0.7765341000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "8bfd636ea185d44d",
+			"label": "Kit_JunkrotCrumboPoppalot",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Lever",
+					"position": [
+						-310.932345,
+						-258.73075,
+						-0.018249732500000004
+					]
+				},
+				{
+					"name": "Patch",
+					"position": [
+						-312.975555,
+						-258.63816999999995,
+						-0.11441843499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "5cec693dffb6570b",
+			"label": "Kit_JunkrotCamerinoFlashetto",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Flash",
+					"position": [
+						96.4612775,
+						-257.54192,
+						-0.029207705
+					]
+				},
+				{
+					"name": "LensGlass",
+					"position": [
+						96.0,
+						-258.73,
+						1.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "169147aea7f243e9",
+			"label": "Kit_JunkrotTrashaleroTrashala",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Fins",
+					"position": [
+						503.29161999999997,
+						-258.25816499999996,
+						-0.017872625000000003
+					]
+				},
+				{
+					"name": "NostrilPits",
+					"position": [
+						506.11539000000005,
+						-258.938675,
+						0.00011326249999999566
+					]
+				}
+			]
+		},
+		{
+			"asset": "77cc97d2a826e54e",
+			"label": "Kit_JunkrotLaVacuumaSaturnita",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Nostrils",
+					"position": [
+						913.844,
+						-257.757245,
+						0.0
+					]
+				},
+				{
+					"name": "RingBRASS",
+					"position": [
+						911.97605,
+						-257.44519,
+						0.006439100000000142
+					]
+				}
+			]
+		}
+	]
+}
