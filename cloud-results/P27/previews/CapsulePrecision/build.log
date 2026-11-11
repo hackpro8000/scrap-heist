@@ -1,0 +1,18 @@
+engine: taken from the build-engine branch
+[    0.0s] running CapsulePrecision/model.luau
+[    0.1s] baking on CPU (no GPU)
+[    0.1s] shaded Shell 256×256 in 0.08s
+[    0.2s] shaded Edges 256×256 in 0.07s
+[    0.3s] shaded Corners 256×256 in 0.10s
+[    0.4s] shaded Clasps 256×256 in 0.12s
+[    0.4s] writing CapsulePrecision.glb and 4 textures
+[    0.4s] rendering preview of 4 parts
+CapsulePrecision: 4 parts, script 426.73ms, total 1.84s
+  shade (creases, contact): 0.23s
+  coat: 0.05s
+  wear: 0.03s
+  combine: 0.01s
+  shade, surfaces, grid and texels: 0.02s
+  shade, neighbourhoods: 0.01s
+  shade, spreading over seams: 0.01s
+  coat, painting texels: 0.04s
