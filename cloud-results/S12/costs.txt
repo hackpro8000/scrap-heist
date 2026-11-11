@@ -1,0 +1,12 @@
+MainIsland 1 x	2552.550
+MainIsland 1 x #split	1
+ScrapTreeRebar 1 x x1.8	0.303
+ScrapTreeRebar 1 x x1.8 #split	1
+slab LoneWreck8	0.106
+slab LoneWreck8 #split	1
+YardFooting 1 x x1.5	0.092
+YardFooting 1 x x1.5 #split	1
+YardFooting 0.5 x x1.5	0.104
+YardFooting 0.5 x x1.5 #split	1
+slab Plot2	12.823
+slab Plot2 #split	1
