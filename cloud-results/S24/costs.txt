@@ -1,0 +1,17 @@
+MainIsland 1 x	3215.604
+MainIsland 1 x #split	1
+slab RoughShade7	0.012
+slab LoneWreck24	0.077
+slab LoneWreck24 #split	1
+YardFence 1.037037037037037 x x1.5	0.508
+YardFence 1.037037037037037 x x1.5 #split	1
+BeltCrossing 1 x	2.717
+BeltCrossing 1 x #split	1
+CapsuleSecret 1 x	0.117
+CapsuleSecret 1 x #split	1
+JunkrotFanettoWobblino 1 x	2.124
+JunkrotFanettoWobblino 1 x #split	1
+JunkrotLeafblowaWhooshini 1 x	2.782
+JunkrotLeafblowaWhooshini 1 x #split	1
+JunkrotWeldettaSparkalot 1 x	2.973
+JunkrotWeldettaSparkalot 1 x #split	1
