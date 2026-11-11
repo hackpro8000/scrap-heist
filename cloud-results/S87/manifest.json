@@ -1,0 +1,217 @@
+{
+	"assets": [
+		{
+			"id": "53e4a511dceaff17",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 87/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 849828,
+			"sha": "8c3d151f05f715fd",
+			"parts": 16
+		},
+		{
+			"id": "551fd0b5691ee789",
+			"key": "YardFooting-748247116a86686c 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingLeft5",
+			"turn": 22.5,
+			"bytes": 95648,
+			"sha": "bae3f87271c629f5",
+			"parts": 1
+		},
+		{
+			"id": "612e3b57c517ebd0",
+			"key": "JunkrotTypewrittoClackini-65902791a8dda508 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotTypewrittoClackini",
+			"turn": 0.0,
+			"bytes": 873660,
+			"sha": "1717a9dba7011ca8",
+			"parts": 9
+		}
+	],
+	"placements": [
+		{
+			"asset": "53e4a511dceaff17",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_0_-5_0_101",
+					"position": [
+						48.59837,
+						-25.018085,
+						292.47256000000004
+					]
+				},
+				{
+					"name": "Dirt_0_4_0_110",
+					"position": [
+						39.5842875,
+						-15.888355,
+						-294.69777999999997
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard1_FootingLeft5",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						175.64647000000002,
+						2.266335,
+						-124.80197
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard2_FootingLeft4",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						31.262809500000003,
+						2.266335,
+						-200.88031999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard3_FootingLeft3",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-115.27741,
+						2.266335,
+						-152.65213
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard4_FootingLeft2",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-177.88598000000002,
+						2.266335,
+						-21.7382425
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard5_FootingLeft1",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-129.657795,
+						2.266335,
+						105.75284199999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard5_FootingLeft9",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-221.63513999999998,
+						2.266335,
+						143.85110500000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard6_FootingLeft8",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-50.3119385,
+						2.266335,
+						246.86899
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard7_FootingLeft7",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						134.32654000000002,
+						2.266335,
+						198.640805
+					]
+				}
+			]
+		},
+		{
+			"asset": "551fd0b5691ee789",
+			"label": "Yard8_FootingLeft6",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						223.87464999999997,
+						2.266335,
+						40.787377
+					]
+				}
+			]
+		},
+		{
+			"asset": "612e3b57c517ebd0",
+			"label": "Kit_JunkrotTypewrittoClackini",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Keys",
+					"position": [
+						72.02256750000001,
+						-258.70924,
+						0.534169585
+					]
+				},
+				{
+					"name": "Paper",
+					"position": [
+						72.0,
+						-257.887455,
+						-0.728539525
+					]
+				}
+			]
+		}
+	]
+}
