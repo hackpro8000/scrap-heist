@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "89f9266e5d93efc8",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 48/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 860680,
+			"sha": "d80f1186fa8f9195",
+			"parts": 16
+		},
+		{
+			"id": "d1157eaf1bbc7c30",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck22 194.2 -141.1 0",
+			"piece": 1,
+			"label": "LoneWreck22",
+			"turn": 0.0,
+			"bytes": 68572,
+			"sha": "2c18fd2892808be8",
+			"parts": 3
+		},
+		{
+			"id": "8382f1eeae58ccf4",
+			"key": "9edb366bcc5dfdf7-387e6895a6242efb Spawn 0 22 0",
+			"piece": 1,
+			"label": "Spawn",
+			"turn": 0.0,
+			"bytes": 81260,
+			"sha": "5a3ff48b5c7954b8",
+			"parts": 1
+		},
+		{
+			"id": "49052c0d5bca56f4",
+			"key": "JunkrotVrrVrrPatatrim-ea7bbafb913e16f6 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotVrrVrrPatatrim",
+			"turn": 0.0,
+			"bytes": 6932756,
+			"sha": "2dc719ece8ac7577",
+			"parts": 32
+		}
+	],
+	"placements": [
+		{
+			"asset": "89f9266e5d93efc8",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-5_0_-1_001",
+					"position": [
+						-289.137925,
+						-46.789538,
+						-10.3912855
+					]
+				},
+				{
+					"name": "Dirt_4_0_0_100",
+					"position": [
+						307.42364499999996,
+						-22.794105,
+						-15.340773350000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "d1157eaf1bbc7c30",
+			"label": "LoneWreck22",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pipe",
+					"position": [
+						194.10393499999998,
+						2.643356,
+						141.74094
+					]
+				},
+				{
+					"name": "PipeStone",
+					"position": [
+						194.23831,
+						2.1936735,
+						137.38595500000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "8382f1eeae58ccf4",
+			"label": "Spawn",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pad",
+					"position": [
+						0.0,
+						2.0999999999999996,
+						-22.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "49052c0d5bca56f4",
+			"label": "Kit_JunkrotVrrVrrPatatrim",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "PanelsCOPPER",
+					"position": [
+						409.05472499999996,
+						-256.79158,
+						-0.2142496738
+					]
+				},
+				{
+					"name": "PanelsOLIVE",
+					"position": [
+						407.45621,
+						-257.73879999999997,
+						0.682466665
+					]
+				}
+			]
+		}
+	]
+}
