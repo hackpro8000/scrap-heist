@@ -1,0 +1,217 @@
+{
+	"assets": [
+		{
+			"id": "76edf94faa2cdd2a",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 93/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 874804,
+			"sha": "87a1331addb8d817",
+			"parts": 16
+		},
+		{
+			"id": "44dff41c5cc64f21",
+			"key": "YardFence-0f1495cb71d18f3d 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceLeft7",
+			"turn": 202.5,
+			"bytes": 395356,
+			"sha": "62de93790053682e",
+			"parts": 3
+		},
+		{
+			"id": "e4acf2e4dec754d0",
+			"key": "JunkrotDishwashinoSplashetto-6fa1993520dc4811 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotDishwashinoSplashetto",
+			"turn": 0.0,
+			"bytes": 744992,
+			"sha": "cb4377da4a50852d",
+			"parts": 9
+		}
+	],
+	"placements": [
+		{
+			"asset": "76edf94faa2cdd2a",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Columns_2_-3_-1_000_000",
+					"position": [
+						150.038935,
+						-73.648967,
+						173.50389
+					]
+				},
+				{
+					"name": "Grass_-2_4_0_100",
+					"position": [
+						-80.53148,
+						-9.9509335,
+						-273.1037
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard1_FenceLeft7",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						198.652355,
+						5.3468148499999995,
+						-134.218295
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard2_FenceLeft6",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						40.799143,
+						5.3468148499999995,
+						-223.87758000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard3_FenceLeft5",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-124.69372000000001,
+						5.3468148499999995,
+						-175.658025
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard4_FenceLeft4",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-200.88324,
+						5.3468148499999995,
+						-31.2745785
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard5_FenceLeft3",
+			"turn": 382.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-152.66369,
+						5.3468148499999995,
+						115.169158
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard6_FenceLeft2",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-21.750012499999997,
+						5.3468148499999995,
+						177.88889999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceLeft1",
+			"turn": 472.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						105.6445925,
+						5.3468148499999995,
+						129.66935999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceLeft9",
+			"turn": 472.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						143.74286,
+						5.3468148499999995,
+						221.646695
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard8_FenceLeft8",
+			"turn": 517.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						246.87191,
+						5.3468148499999995,
+						50.323708499999995
+					]
+				}
+			]
+		},
+		{
+			"asset": "e4acf2e4dec754d0",
+			"label": "Kit_JunkrotDishwashinoSplashetto",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Cabinet",
+					"position": [
+						216.0,
+						-258.075,
+						0.0
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						216.01100000000002,
+						-257.7164,
+						1.30968525
+					]
+				}
+			]
+		}
+	]
+}
