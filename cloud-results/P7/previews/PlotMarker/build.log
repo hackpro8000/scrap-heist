@@ -1,0 +1,18 @@
+engine: taken from the build-engine branch
+[    0.0s] running PlotMarker/model.luau
+[    0.2s] baking on CPU (no GPU)
+[    0.2s] shaded Post 256×256 in 0.21s
+[    0.5s] shaded Sign 256×256 in 0.21s
+[    0.6s] shaded Lamp 256×256 in 0.19s
+[    0.9s] shaded Fittings 256×256 in 0.22s
+[    0.9s] writing PlotMarker.glb and 4 textures
+[    0.9s] rendering preview of 4 parts
+PlotMarker: 4 parts, script 1.07s, total 1.91s
+  shade (creases, contact): 0.64s
+  coat: 0.06s
+  wear: 0.02s
+  combine: 0.00s
+  shade, surfaces, grid and texels: 0.01s
+  shade, neighbourhoods: 0.00s
+  shade, spreading over seams: 0.00s
+  coat, painting texels: 0.01s
