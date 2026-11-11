@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "ab630917be4367b5",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 11/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1087568,
+			"sha": "10093ad2c12d3a50",
+			"parts": 17
+		},
+		{
+			"id": "f1521bec9e1b22fa",
+			"key": "9edb366bcc5dfdf7-6ad7b70c6ecee2a9 Rough10 137.48179271331793 -123.78916217638876 0",
+			"piece": 1,
+			"label": "Rough10",
+			"turn": 0.0,
+			"bytes": 286828,
+			"sha": "3133ccb963f0c1d2",
+			"parts": 2
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard7_FootingFront3",
+			"turn": 202.5,
+			"bytes": 97776,
+			"sha": "3579ea1311b50572",
+			"parts": 1
+		},
+		{
+			"id": "93e4aaedf67e117a",
+			"key": "ProofToaster-2a79cc80cb602d80 1 x",
+			"piece": 1,
+			"label": "Kit_ProofToaster",
+			"turn": 0.0,
+			"bytes": 224252,
+			"sha": "ecbc94dc8cb21db6",
+			"parts": 2
+		}
+	],
+	"placements": [
+		{
+			"asset": "ab630917be4367b5",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_-3_0_110_000",
+					"position": [
+						-277.117735,
+						-13.486809300000001,
+						151.88232499999998
+					]
+				},
+				{
+					"name": "Grass_4_1_0_100_010",
+					"position": [
+						301.88878,
+						-12.845123800000001,
+						-90.012125
+					]
+				}
+			]
+		},
+		{
+			"asset": "f1521bec9e1b22fa",
+			"label": "Rough10",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						124.99063000000001,
+						2.03,
+						124.087655
+					]
+				},
+				{
+					"name": "Stones",
+					"position": [
+						125.10756500000001,
+						2.2073329999999998,
+						124.63228
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard7_FootingFront3",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						92.19222500000001,
+						2.266335,
+						128.595125
+					]
+				}
+			]
+		},
+		{
+			"asset": "93e4aaedf67e117a",
+			"label": "Kit_ProofToaster",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Shell",
+					"position": [
+						-935.8557000000001,
+						-258.93513,
+						-6.249999999996536e-05
+					]
+				}
+			]
+		}
+	]
+}
