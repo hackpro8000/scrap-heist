@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "9cf7a7931145bda5",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 37/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 885428,
+			"sha": "19134df6a2a42312",
+			"parts": 16
+		},
+		{
+			"id": "05ae7c6e2af0c4bb",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck8 65.8 -129.2 0",
+			"piece": 1,
+			"label": "LoneWreck8",
+			"turn": 0.0,
+			"bytes": 55112,
+			"sha": "adbaf949e6c63312",
+			"parts": 3
+		},
+		{
+			"id": "000e0637814e7f0b",
+			"key": "YardFence-0f1495cb71d18f3d 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FenceFront4",
+			"turn": 247.5,
+			"bytes": 393860,
+			"sha": "928b846db7eb0dc2",
+			"parts": 3
+		},
+		{
+			"id": "fc6f253b7d036b82",
+			"key": "JunkrotWeldettaSparkalot-f27a5f7573458f60 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotWeldettaSparkalot",
+			"turn": 0.0,
+			"bytes": 1115256,
+			"sha": "42f7888793af9001",
+			"parts": 14
+		}
+	],
+	"placements": [
+		{
+			"asset": "9cf7a7931145bda5",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-4_-4_0_101",
+					"position": [
+						-197.893515,
+						-30.60013,
+						233.022645
+					]
+				},
+				{
+					"name": "Grass_2_4_0_000_010",
+					"position": [
+						134.630165,
+						-11.3208918,
+						-278.278825
+					]
+				}
+			]
+		},
+		{
+			"asset": "05ae7c6e2af0c4bb",
+			"label": "LoneWreck8",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						66.6,
+						2.03,
+						128.57379500000002
+					]
+				},
+				{
+					"name": "SlabStone",
+					"position": [
+						68.1621225,
+						2.137969,
+						129.60459
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard8_FenceFront4",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						137.70472,
+						5.3468148499999995,
+						70.0230515
+					]
+				}
+			]
+		},
+		{
+			"asset": "fc6f253b7d036b82",
+			"label": "Kit_JunkrotWeldettaSparkalot",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Arc",
+					"position": [
+						673.27,
+						-258.160005,
+						1.07000002
+					]
+				},
+				{
+					"name": "Clamp",
+					"position": [
+						670.84845,
+						-259.97141999999997,
+						0.9488281199999999
+					]
+				}
+			]
+		}
+	]
+}
