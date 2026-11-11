@@ -1,0 +1,182 @@
+{
+	"assets": [
+		{
+			"id": "d02418fe51e05554",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 55/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 974192,
+			"sha": "94693aaf704920be",
+			"parts": 16
+		},
+		{
+			"id": "000e0637814e7f0b",
+			"key": "YardFence-0f1495cb71d18f3d 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceBack2",
+			"turn": 112.5,
+			"bytes": 393872,
+			"sha": "885aaada44f9eff7",
+			"parts": 3
+		},
+		{
+			"id": "18375dd3f18a5620",
+			"key": "9edb366bcc5dfdf7-4bed7244ea680ec2 YardShade3 -80.36352079666884 194.0147018273702 22.5",
+			"piece": 1,
+			"label": "YardShade3",
+			"turn": 0.0,
+			"bytes": 98396,
+			"sha": "299bb1224270dc24",
+			"parts": 1
+		},
+		{
+			"id": "907cd10fc6767c0a",
+			"key": "JunkrotHeadphonoBassimo-18abf4f82a84b7b1 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotHeadphonoBassimo",
+			"turn": 0.0,
+			"bytes": 887824,
+			"sha": "8f2656232e07ea42",
+			"parts": 10
+		}
+	],
+	"placements": [
+		{
+			"asset": "d02418fe51e05554",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-5_0_0_011",
+					"position": [
+						-291.489735,
+						-32.114802,
+						-51.29669
+					]
+				},
+				{
+					"name": "Grass_4_-1_0_110_111",
+					"position": [
+						311.971635,
+						-16.0730475,
+						7.973827035
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceBack2",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						234.25538,
+						5.3468148499999995,
+						-129.4982275
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceFront2",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						133.109125,
+						5.3468148499999995,
+						-81.11830900000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard2_FenceBack4",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						96.247265,
+						5.3468148499999995,
+						-248.02858500000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard2_FenceFront1",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						47.849945000000005,
+						5.3468148499999995,
+						-146.88912499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard2_FenceFront5",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						81.10961,
+						5.3468148499999995,
+						-133.112505
+					]
+				}
+			]
+		},
+		{
+			"asset": "18375dd3f18a5620",
+			"label": "YardShade3",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-80.363523,
+						2.03,
+						-194.01471
+					]
+				}
+			]
+		},
+		{
+			"asset": "907cd10fc6767c0a",
+			"label": "Kit_JunkrotHeadphonoBassimo",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Cable",
+					"position": [
+						743.0199700000001,
+						-259.567595,
+						0.26731405999999996
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						744.011,
+						-258.4164,
+						0.9232
+					]
+				}
+			]
+		}
+	]
+}

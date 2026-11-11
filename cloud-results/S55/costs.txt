@@ -1,0 +1,7 @@
+MainIsland 1 x	3052.195
+MainIsland 1 x #split	1
+YardFence 1 x x1.5	0.313
+YardFence 1 x x1.5 #split	1
+slab YardShade3	0.194
+JunkrotHeadphonoBassimo 1 x	1.695
+JunkrotHeadphonoBassimo 1 x #split	1
