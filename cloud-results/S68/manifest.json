@@ -1,0 +1,329 @@
+{
+	"assets": [
+		{
+			"id": "9129475ce82ffe68",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 68/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 977952,
+			"sha": "b259f6f27afac391",
+			"parts": 16
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingBack8",
+			"turn": -67.5,
+			"bytes": 97832,
+			"sha": "e7bf7d9afb71b8b5",
+			"parts": 1
+		},
+		{
+			"id": "12739fe8b535f857",
+			"key": "RebirthPress-e23cf11cc612d4c2 1 x",
+			"piece": 1,
+			"label": "Yard1_Press",
+			"turn": 112.5,
+			"bytes": 6674032,
+			"sha": "a4e63a47e7dc8764",
+			"parts": 19
+		},
+		{
+			"id": "52a91eefdb51de90",
+			"key": "JunkrotBallerinaTincuppina-b309f4ce3437fbe5 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotBallerinaTincuppina",
+			"turn": 0.0,
+			"bytes": 3792888,
+			"sha": "29439d1e38cfb6a0",
+			"parts": 30
+		}
+	],
+	"placements": [
+		{
+			"asset": "9129475ce82ffe68",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_1_0_110_010",
+					"position": [
+						-283.17539999999997,
+						-11.4835683,
+						-120.81197
+					]
+				},
+				{
+					"name": "Grass_3_-4_0_111",
+					"position": [
+						226.861735,
+						-26.5880975,
+						194.813895
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard1_FootingBack8",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						261.91893,
+						2.266335,
+						-62.990168499999996
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard1_FootingFront6",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						156.14833,
+						2.266335,
+						-25.672902999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard1_Press",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						155.05867,
+						7.33,
+						-51.6599025
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						156.31564,
+						4.1813891000000005,
+						-37.8461315
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard2_Press",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						73.05663,
+						7.33,
+						-146.314355
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						83.75852499999999,
+						4.1813891000000005,
+						-137.291625
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard3_Press",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						-51.6599025,
+						7.33,
+						-155.05867
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						-37.8461315,
+						4.1813891000000005,
+						-156.31564
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard4_Press",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						-146.314355,
+						7.33,
+						-73.05663
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						-137.291625,
+						4.1813891000000005,
+						-83.75852499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard5_Press",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						-155.05867,
+						7.33,
+						51.6599025
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						-156.31564,
+						4.1813891000000005,
+						37.8461315
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard6_Press",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						-73.05663,
+						7.33,
+						146.314355
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						-83.75852499999999,
+						4.1813891000000005,
+						137.291625
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard7_Press",
+			"turn": 382.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						51.6599025,
+						7.33,
+						155.05867
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						37.8461315,
+						4.1813891000000005,
+						156.31564
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Yard8_Press",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						146.314355,
+						7.33,
+						73.05663
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						137.291625,
+						4.1813891000000005,
+						83.75852499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "12739fe8b535f857",
+			"label": "Kit_Press",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						-737.565,
+						-254.67,
+						1.09538379
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						-750.852335,
+						-257.81859999999995,
+						-3.0608891500000004
+					]
+				}
+			]
+		},
+		{
+			"asset": "52a91eefdb51de90",
+			"label": "Kit_JunkrotBallerinaTincuppina",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Handle",
+					"position": [
+						480.008485,
+						-256.802575,
+						-0.87377198
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						480.84379,
+						-256.91627500000004,
+						0.0003734099999999907
+					]
+				}
+			]
+		}
+	]
+}
