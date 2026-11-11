@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "168479f9fb1dd64e",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 43/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 891640,
+			"sha": "dbe45d7f269cd5f6",
+			"parts": 16
+		},
+		{
+			"id": "f77413c3d258deb6",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck16 141.1 194.2 0",
+			"piece": 1,
+			"label": "LoneWreck16",
+			"turn": 0.0,
+			"bytes": 67988,
+			"sha": "6d9400038738909a",
+			"parts": 3
+		},
+		{
+			"id": "7b7a6cc4ddb0b567",
+			"key": "YardFenceHalf-66e102f35bc13698 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FenceFrontHalf2",
+			"turn": 247.5,
+			"bytes": 353508,
+			"sha": "5dfbca88b4cbbf15",
+			"parts": 3
+		},
+		{
+			"id": "229267bf71c754cd",
+			"key": "JunkrotSockettoSeiSette-45380ca69b67ced2 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotSockettoSeiSette",
+			"turn": 0.0,
+			"bytes": 5185628,
+			"sha": "dcb6367091e144b4",
+			"parts": 32
+		}
+	],
+	"placements": [
+		{
+			"asset": "168479f9fb1dd64e",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-1_-5_0_000_110",
+					"position": [
+						-41.6104125,
+						-13.522995300000002,
+						303.525165
+					]
+				},
+				{
+					"name": "Grass_2_3_0_110_011",
+					"position": [
+						168.6563,
+						-15.564508499999999,
+						-248.226335
+					]
+				}
+			]
+		},
+		{
+			"asset": "f77413c3d258deb6",
+			"label": "LoneWreck16",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pipe",
+					"position": [
+						141.00394,
+						2.643356,
+						-193.55906
+					]
+				},
+				{
+					"name": "PipeStone",
+					"position": [
+						141.024085,
+						2.2065055,
+						-197.77388000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "7b7a6cc4ddb0b567",
+			"label": "Yard8_FenceFrontHalf2",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						125.04375,
+						5.33874635,
+						100.50920500000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "229267bf71c754cd",
+			"label": "Kit_JunkrotSockettoSeiSette",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Foam",
+					"position": [
+						529.085525,
+						-258.858125,
+						-0.001141649999999994
+					]
+				},
+				{
+					"name": "TailLight",
+					"position": [
+						527.7907250000001,
+						-259.731675,
+						-0.7170242915
+					]
+				}
+			]
+		}
+	]
+}
