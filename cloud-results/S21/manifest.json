@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "97edc6d9636e49e6",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 21/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1064868,
+			"sha": "31f3b915ff36549d",
+			"parts": 17
+		},
+		{
+			"id": "ccd1d63e65cf9363",
+			"key": "RockBoulderPile-1d0940bd84bd2f34 1 x x2.2",
+			"piece": 1,
+			"label": "RoughScrap6",
+			"turn": 282.0,
+			"bytes": 467028,
+			"sha": "e43deb983f0390ab",
+			"parts": 4
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FootingBack1",
+			"turn": 247.5,
+			"bytes": 97776,
+			"sha": "dece8aa415481a5a",
+			"parts": 1
+		},
+		{
+			"id": "6b04c18090aabd08",
+			"key": "PadGarage-1c48f06bd044332e 1 x x1.6666666666666667",
+			"piece": 1,
+			"label": "Kit_PadGarage",
+			"turn": 0.0,
+			"bytes": 360548,
+			"sha": "68e6956e10f11d85",
+			"parts": 3
+		}
+	],
+	"placements": [
+		{
+			"asset": "97edc6d9636e49e6",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-3_3_0_010_010",
+					"position": [
+						-182.972245,
+						-11.9043688,
+						-246.1627
+					]
+				},
+				{
+					"name": "Grass_3_-3_0_100_100",
+					"position": [
+						243.137995,
+						-9.1517213,
+						179.308915
+					]
+				}
+			]
+		},
+		{
+			"asset": "ccd1d63e65cf9363",
+			"label": "RoughScrap6",
+			"turn": 282.0,
+			"anchors": [
+				{
+					"name": "Drums",
+					"position": [
+						-232.36111499999998,
+						4.15931055,
+						-2.6653810499999997
+					]
+				},
+				{
+					"name": "Mound",
+					"position": [
+						-232.498185,
+						2.923164,
+						-2.10629815
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingBack1",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						261.81678999999997,
+						2.266335,
+						62.984905
+					]
+				}
+			]
+		},
+		{
+			"asset": "6b04c18090aabd08",
+			"label": "Kit_PadGarage",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Hardware",
+					"position": [
+						-840.0089250000001,
+						-259.074625,
+						-1.15015185
+					]
+				},
+				{
+					"name": "Plate",
+					"position": [
+						-840.011675,
+						-259.69101,
+						0.006314500000000223
+					]
+				}
+			]
+		}
+	]
+}
