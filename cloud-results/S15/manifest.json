@@ -1,0 +1,486 @@
+{
+	"assets": [
+		{
+			"id": "635ef46177c70426",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 15/25",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 3835204,
+			"sha": "6f67d2465ef676e2",
+			"parts": 66
+		},
+		{
+			"id": "9eff9afd665017ae",
+			"key": "9edb366bcc5dfdf7-1439853d85f21bad RoughShade2 122.22340712809475 127.52670798699384 0",
+			"piece": 1,
+			"label": "RoughShade2",
+			"turn": 0.0,
+			"bytes": 3344,
+			"sha": "5c4779142211e8fb",
+			"parts": 1
+		},
+		{
+			"id": "5110873d0b318600",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck12 145 145 0",
+			"piece": 1,
+			"label": "LoneWreck12",
+			"turn": 0.0,
+			"bytes": 44020,
+			"sha": "78ac0d2e01738805",
+			"parts": 2
+		},
+		{
+			"id": "000e0637814e7f0b",
+			"key": "YardFence-0f1495cb71d18f3d 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceBack7",
+			"turn": 112.5,
+			"bytes": 393868,
+			"sha": "4af7af5ae0928631",
+			"parts": 3
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard2_FootingBack6",
+			"turn": -22.5,
+			"bytes": 97836,
+			"sha": "299c1cb355e8a05f",
+			"parts": 1
+		},
+		{
+			"id": "19e9dfbdd385f82f",
+			"key": "9edb366bcc5dfdf7-4bed7244ea680ec2 YardShade5 -194.01470182737023 -80.36352079666884 112.5",
+			"piece": 1,
+			"label": "YardShade5",
+			"turn": 0.0,
+			"bytes": 94788,
+			"sha": "73eef191aebca34e",
+			"parts": 1
+		},
+		{
+			"id": "7063474c8323e20a",
+			"key": "HubTinkerer-83364d2210b929bc 1 x",
+			"piece": 1,
+			"label": "Tinkerer",
+			"turn": 90.0,
+			"bytes": 8075168,
+			"sha": "fe69136b06b0f23e",
+			"parts": 22
+		},
+		{
+			"id": "95c78df2b4e9d77a",
+			"key": "CapsuleRefurbished-e292e1124d60e9c7 1 x",
+			"piece": 1,
+			"label": "Kit_CapsuleRefurbished",
+			"turn": 0.0,
+			"bytes": 456656,
+			"sha": "614a4d57a1580421",
+			"parts": 5
+		},
+		{
+			"id": "bb4045f809ea9e15",
+			"key": "JunkrotJackoloCrickato-da150c99dff5c753 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotJackoloCrickato",
+			"turn": 0.0,
+			"bytes": 735400,
+			"sha": "7909930e07fef4b5",
+			"parts": 7
+		},
+		{
+			"id": "0f6b40fcc3f55bbc",
+			"key": "JunkrotGrindoBeanbasher-48126bbc3cf190c7 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotGrindoBeanbasher",
+			"turn": 0.0,
+			"bytes": 970428,
+			"sha": "b9b19c48c6507771",
+			"parts": 10
+		},
+		{
+			"id": "3c6e01634a19cc87",
+			"key": "JunkrotSousvideSilvano-66da9611e621dcdf 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotSousvideSilvano",
+			"turn": 0.0,
+			"bytes": 668032,
+			"sha": "e6e9afc4118d3fb2",
+			"parts": 8
+		}
+	],
+	"placements": [
+		{
+			"asset": "635ef46177c70426",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-4_-4_0_001",
+					"position": [
+						-223.762775,
+						-25.0239785,
+						226.37579499999998
+					]
+				},
+				{
+					"name": "Grass_4_2_0_011",
+					"position": [
+						257.80434,
+						-23.962065000000003,
+						-174.75885
+					]
+				}
+			]
+		},
+		{
+			"asset": "9eff9afd665017ae",
+			"label": "RoughShade2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						122.22341,
+						2.03,
+						-127.52671000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "5110873d0b318600",
+			"label": "LoneWreck12",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						143.925,
+						2.03,
+						-144.475
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceBack7",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						257.21637499999997,
+						5.3468148499999995,
+						-74.06546
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard2_FenceBack1",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						62.987604,
+						5.3468148499999995,
+						-261.8052
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingBack6",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						118.4176775,
+						2.266335,
+						-238.85579
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingFront3",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						25.667638,
+						2.266335,
+						-156.04619
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingBack1",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-140.59605499999998,
+						2.266335,
+						-229.77353
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingBack5",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-96.24983499999999,
+						2.266335,
+						-248.142335
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard3_FenceFront2",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-81.11830900000001,
+						5.3468148499999995,
+						-133.109125
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingFront5",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-36.759457,
+						2.266335,
+						-151.55613
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard4_FootingBack1",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-261.81678999999997,
+						2.266335,
+						-62.984905
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard4_FenceBack4",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-248.02858500000002,
+						5.3468148499999995,
+						-96.247265
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard4_FenceBack7",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-234.251985,
+						5.3468148499999995,
+						-129.50693
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard4_FenceFront2",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-151.481315,
+						5.3468148499999995,
+						-36.76339
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard4_FootingFront4",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-137.67738,
+						2.266335,
+						-70.013855
+					]
+				}
+			]
+		},
+		{
+			"asset": "19e9dfbdd385f82f",
+			"label": "YardShade5",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-194.01471,
+						2.03,
+						80.363523
+					]
+				}
+			]
+		},
+		{
+			"asset": "7063474c8323e20a",
+			"label": "Tinkerer",
+			"turn": 90.0,
+			"anchors": [
+				{
+					"name": "PartsBins",
+					"position": [
+						-54.564774,
+						6.46167875,
+						-5.4049419
+					]
+				},
+				{
+					"name": "SignEmblem",
+					"position": [
+						-41.8,
+						9.522493,
+						0.0050000000000000044
+					]
+				}
+			]
+		},
+		{
+			"asset": "95c78df2b4e9d77a",
+			"label": "Kit_CapsuleRefurbished",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Box",
+					"position": [
+						-648.0017,
+						-259.401065,
+						-0.004411985000000007
+					]
+				}
+			]
+		},
+		{
+			"asset": "bb4045f809ea9e15",
+			"label": "Kit_JunkrotJackoloCrickato",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Nut",
+					"position": [
+						-238.503915,
+						-258.34487,
+						-0.014656382500000002
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						-239.991995,
+						-257.25919999999996,
+						0.40959999999999996
+					]
+				}
+			]
+		},
+		{
+			"asset": "0f6b40fcc3f55bbc",
+			"label": "Kit_JunkrotGrindoBeanbasher",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pupils",
+					"position": [
+						168.01,
+						-257.36400000000003,
+						0.902
+					]
+				},
+				{
+					"name": "Sticker",
+					"position": [
+						168.70999999999998,
+						-258.25,
+						-0.1
+					]
+				}
+			]
+		},
+		{
+			"asset": "3c6e01634a19cc87",
+			"label": "Kit_JunkrotSousvideSilvano",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Cable",
+					"position": [
+						576.165,
+						-258.326505,
+						-0.6651376099999999
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						576.0074999999999,
+						-257.40799000000004,
+						0.434
+					]
+				}
+			]
+		}
+	]
+}
