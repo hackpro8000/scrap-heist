@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "12cd1d72dbf785b4",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 62/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 934972,
+			"sha": "11fc00175057c1ed",
+			"parts": 17
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingBack5",
+			"turn": -67.5,
+			"bytes": 97780,
+			"sha": "cc97e70134477791",
+			"parts": 1
+		},
+		{
+			"id": "c17402070a8a7f35",
+			"key": "YardFooting-748247116a86686c 0.5 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingFrontHalf1",
+			"turn": -67.5,
+			"bytes": 108260,
+			"sha": "da939e5e7055568f",
+			"parts": 1
+		},
+		{
+			"id": "cdde9a2170642465",
+			"key": "9edb366bcc5dfdf7-09a6759228b03a28 Plot2 80.36352079666887 194.0147018273702 -22.5",
+			"piece": 1,
+			"label": "Plot2",
+			"turn": 0.0,
+			"bytes": 12032260,
+			"sha": "4112f82c957f1458",
+			"parts": 40
+		}
+	],
+	"placements": [
+		{
+			"asset": "12cd1d72dbf785b4",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-5_1_0_001",
+					"position": [
+						-288.41115,
+						-33.20618,
+						-77.55081999999999
+					]
+				},
+				{
+					"name": "Grass_4_-2_0_110_000",
+					"position": [
+						298.44429,
+						-11.0454723,
+						86.6755425
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard1_FootingBack5",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						248.142335,
+						2.266335,
+						-96.24983499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "c17402070a8a7f35",
+			"label": "Yard1_FootingFrontHalf1",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						125.1258475,
+						2.266335,
+						-100.5056625
+					]
+				}
+			]
+		},
+		{
+			"asset": "cdde9a2170642465",
+			"label": "Plot2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_-1_0_000",
+					"position": [
+						25.4878755,
+						1.8649999999999998,
+						-171.284465
+					]
+				},
+				{
+					"name": "Ground_0_0_0_110",
+					"position": [
+						135.23916499999999,
+						1.8649999999999998,
+						-216.744945
+					]
+				}
+			]
+		}
+	]
+}

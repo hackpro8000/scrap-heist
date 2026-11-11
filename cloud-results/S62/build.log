@@ -1,0 +1,211 @@
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses MainIsland (key 660b6fd7604d9003)
+assemble ServerMap: uses CapsuleLoop (key bec128dfbc5e2284)
+assemble ServerMap: uses RebirthPress (key e23cf11cc612d4c2)
+assemble ServerMap: uses BuildBay (key 1a2d08b1420d8cd7)
+assemble ServerMap: uses YardFence (key 0f1495cb71d18f3d)
+assemble ServerMap: uses YardFenceHalf (key 66e102f35bc13698)
+assemble ServerMap: uses YardFooting (key 748247116a86686c)
+assemble ServerMap: uses YardGate (key 06ec41d82d9efa42)
+assemble ServerMap: uses PlotMarker (key d53896012ff9aa6c)
+assemble ServerMap: uses HubShop (key 509dc24f3a226285)
+assemble ServerMap: uses HubTinkerer (key 83364d2210b929bc)
+assemble ServerMap: uses HubBeacon (key daeb9bb3cf737fff)
+assemble ServerMap: uses HubStage (key 88981208e356368e)
+assemble ServerMap: uses BeltCrossing (key 416bf52bbd2f57b6)
+assemble ServerMap: uses JunkMound (key e2d48bd7d6f65eb3)
+assemble ServerMap: uses ScrapPalm (key d5c69ef46be4a8a1)
+assemble ServerMap: uses ScrapTreeAntenna (key d1d8739b19b2b688)
+assemble ServerMap: uses ScrapTreeExhaust (key c27e7c1cf460c675)
+assemble ServerMap: uses ScrapTreeLamppost (key 06793a6d247e3d3e)
+assemble ServerMap: uses ScrapTreeRebar (key 06c988ae19846bea)
+assemble ServerMap: uses ScrapTreeSignpost (key 1c7a92632b33e8d4)
+assemble ServerMap: uses RockBoulderPile (key 1d0940bd84bd2f34)
+assemble ServerMap: uses HubSectionA (key 30fd970123b3f964)
+assemble ServerMap: uses HubSectionB (key 9d575456ca9aeb29)
+assemble ServerMap: uses HubSectionEnd (key 13f23b9fba9b0c5c)
+assemble ServerMap: uses YardIsland (key 62a0378ce9b20972)
+assemble ServerMap: uses PadKitchen (key 099d1fc77a51b0a3)
+assemble ServerMap: uses PadGarage (key 1c48f06bd044332e)
+assemble ServerMap: uses PadGadget (key 1214f913043828d4)
+assemble ServerMap: uses ScrapCrate (key 7ef72494de9eaaad)
+assemble ServerMap: uses CapsuleScrap (key 965c252abcd91c2d)
+assemble ServerMap: uses CapsuleSalvaged (key e9b7b70d4853878f)
+assemble ServerMap: uses CapsuleRefurbished (key e292e1124d60e9c7)
+assemble ServerMap: uses CapsuleFactory (key 37da6d8e21d18d23)
+assemble ServerMap: uses CapsulePrecision (key a3651d8dc8702d33)
+assemble ServerMap: uses CapsulePrototype (key 95d5f97f3b8c808c)
+assemble ServerMap: uses CapsuleSecret (key a6340baf703626b4)
+assemble ServerMap: uses JunkrotCanettoRustini (key 897a691198a3ca1e)
+assemble ServerMap: uses JunkrotSpoonzoBentolo (key eeca69727971cbb8)
+assemble ServerMap: uses JunkrotKettlinaDentata (key db41736d2fba5a60)
+assemble ServerMap: uses JunkrotTyroFlattino (key 306ec7d17be20c24)
+assemble ServerMap: uses JunkrotBoltoloLonelo (key 23ac6cb8a82b2c83)
+assemble ServerMap: uses JunkrotHubcappaWobbla (key 3f7ab62405a50f8a)
+assemble ServerMap: uses JunkrotRemotinoMuto (key 17a1c0bc82011f79)
+assemble ServerMap: uses JunkrotCabloTanglino (key 04c0f0fc7777a73a)
+assemble ServerMap: uses JunkrotBulboFulminato (key 69d24af98337c2e7)
+assemble ServerMap: uses JunkrotCrumboPoppalot (key f9eb904dd489effa)
+assemble ServerMap: uses JunkrotPannettoPatchato (key b0d8eb9eb7dc17e5)
+assemble ServerMap: uses JunkrotBlendroCigolante (key fa92150c310f4fa1)
+assemble ServerMap: uses JunkrotJackoloCrickato (key da150c99dff5c753)
+assemble ServerMap: uses JunkrotOilcannaGluglu (key 9e5cf90a23447e16)
+assemble ServerMap: uses JunkrotMuffleroTossetto (key 5025e9254f422b24)
+assemble ServerMap: uses JunkrotRadioloFruscio (key 5a304189562f4bd0)
+assemble ServerMap: uses JunkrotFanettoWobblino (key 8551f4d73d48a2a8)
+assemble ServerMap: uses JunkrotClockoTictacco (key 8065f65a4b9f86a9)
+assemble ServerMap: uses JunkrotFrostboxGelatone (key 0a9f1a91ffd3d8ae)
+assemble ServerMap: uses JunkrotMicrondoBippetto (key be6081410b508f75)
+assemble ServerMap: uses JunkrotMixerellaVroom (key b4c9735fa5d8e15d)
+assemble ServerMap: uses JunkrotMopaMopetta (key fd8032b1e71eb11c)
+assemble ServerMap: uses JunkrotDrilloTrapanino (key b69c588fcd38b615)
+assemble ServerMap: uses JunkrotGrindellaScintilla (key d3cef93e6963eed8)
+assemble ServerMap: uses JunkrotTelefonoRingaling (key 4b5109d984d8517e)
+assemble ServerMap: uses JunkrotTypewrittoClackini (key 65902791a8dda508)
+assemble ServerMap: uses JunkrotCamerinoFlashetto (key 8e9b5b50896db9fc)
+assemble ServerMap: uses JunkrotDrippiDroppi (key c8b55e589d02ac9a)
+assemble ServerMap: uses JunkrotDingDingDingDongo (key d42998b67ad1673b)
+assemble ServerMap: uses JunkrotGrindoBeanbasher (key 48126bbc3cf190c7)
+assemble ServerMap: uses JunkrotAirfryoCroccante (key ca1401f086de1570)
+assemble ServerMap: uses JunkrotDishwashinoSplashetto (key 6fa1993520dc4811)
+assemble ServerMap: uses JunkrotLawnmowoRuggito (key f25556e3f13e2d8a)
+assemble ServerMap: uses JunkrotLeafblowaWhooshini (key 498e7e7e827d9ac8)
+assemble ServerMap: uses JunkrotPressurwashoSprizzo (key a767ef79c103bbc6)
+assemble ServerMap: uses JunkrotConsoloJoypaddino (key 3f640a5d9bdb569c)
+assemble ServerMap: uses JunkrotSpeakeroneBoomba (key b0f99895aed1d336)
+assemble ServerMap: uses JunkrotRobovaccoGirotondo (key c0cc3e4844047d59)
+assemble ServerMap: uses JunkrotClankClankClankScrapur (key 5863edbae1d27f7a)
+assemble ServerMap: uses JunkrotVrrVrrPatatrim (key ea7bbafb913e16f6)
+assemble ServerMap: uses JunkrotChimneyziniSpannerini (key e593bb10d1d3d24f)
+assemble ServerMap: uses JunkrotRusteliRustela (key bb202a6d564909f7)
+assemble ServerMap: uses JunkrotBallerinaTincuppina (key b309f4ce3437fbe5)
+assemble ServerMap: uses JunkrotTrashaleroTrashala (key 83aa428f1188e759)
+assemble ServerMap: uses JunkrotSockettoSeiSette (key 45380ca69b67ced2)
+assemble ServerMap: uses JunkrotChefbotPrecisio (key f529c544cdf6e04b)
+assemble ServerMap: uses JunkrotSousvideSilvano (key 66da9611e621dcdf)
+assemble ServerMap: uses JunkrotKnifeblockSlicetta (key 5fdb96eaf16bb167)
+assemble ServerMap: uses JunkrotTorquoWrenchelli (key 1404d691f409f2e9)
+assemble ServerMap: uses JunkrotLaserlevelLineo (key 88f6e8b900d0d39c)
+assemble ServerMap: uses JunkrotWeldettaSparkalot (key f27a5f7573458f60)
+assemble ServerMap: uses JunkrotDronettoBuzzatti (key 4f3c4ffa1b256eee)
+assemble ServerMap: uses JunkrotTickworthPocketti (key c4a1c4bdf367c0f4)
+assemble ServerMap: uses JunkrotHeadphonoBassimo (key 18abf4f82a84b7b1)
+assemble ServerMap: uses JunkrotGascaniniHonkini (key 993176abbf5261f7)
+assemble ServerMap: uses JunkrotPercolattoNinjatto (key 0fba647cb678881b)
+assemble ServerMap: uses JunkrotBoilerdiroCrockpotilo (key 79d87e11c65a1923)
+assemble ServerMap: uses JunkrotSnackomaticPrototipo (key 2987de96ef6fd5e1)
+assemble ServerMap: uses JunkrotHoverbikkoZoomzoom (key 127ba8354d15bdf7)
+assemble ServerMap: uses JunkrotHolofonoShimmerra (key c8acfed17ef29ada)
+assemble ServerMap: uses JunkrotLaVacuumaSaturnita (key f6a178ed91371ab2)
+assemble ServerMap: uses JunkrotTheMonolito (key 3ef696a9f233f6e8)
+assemble ServerMap: uses JunkrotUnitZero (key 4abf38087588a870)
+assemble ServerMap: uses ProofToaster (key 2a79cc80cb602d80)
+assemble ServerMap: uses ProofKettle (key 8b727d57bdd08532)
+assemble ServerMap: uses ProofShark (key ba752d85a38f6d1d)
+assemble ServerMap: slab at ServerMap.luau:169-206 (key 1140b5bda9dd140d)
+assemble ServerMap: slab at ServerMap.luau:330-380 (key 6ad7b70c6ecee2a9)
+assemble ServerMap: slab at ServerMap.luau:409-412 (key 1439853d85f21bad)
+assemble ServerMap: slab at ServerMap.luau:417-428 (key dbd59378b4f53cfc)
+assemble ServerMap: slab at ServerMap.luau:457-503 (key e6328242ecab9497)
+assemble ServerMap: slab at ServerMap.luau:569-576 (key 09a6759228b03a28)
+assemble ServerMap: slab at ServerMap.luau:578-596 (key 4bed7244ea680ec2)
+assemble ServerMap: slab at ServerMap.luau:606-610 (key 387e6895a6242efb)
+assemble ServerMap: slab at ServerMap.luau:647-796 (key 96d3b9c80baa686a)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 308706 lines, in 1s
+engine: taken from the build-engine branch
+[    0.0s] running ServerMap/model.luau
+[    2.0s] building MainIsland 1 x part 62/100
+[    4.2s] baking on CPU (no GPU)
+[    4.6s]   shaded Columns_3_-2_-1 440×440 in 0.36s
+[    6.9s]   shaded Columns_0_-2_-2_111 944×944 in 2.22s
+[    7.2s]   shaded Columns_-2_-1_-2_000_111 400×400 in 0.31s
+[    7.4s]   shaded Columns_-2_0_-2_110_001 148×148 in 0.11s
+MEM 1101/16086 avail 14984 top 570MB modelkit-linux- cpu 23% of 4
+[    8.3s]   shaded Dirt_3_-3_-1_011 648×648 in 0.93s
+[    9.8s]   shaded Dirt_-4_2_0_111 776×776 in 1.39s
+[   10.8s]   shaded Dirt_-5_1_0_001 692×692 in 1.04s
+[   13.2s]   shaded Dirt_-1_-3_-1_001_011 824×824 in 2.31s
+[   13.5s]   shaded Dirt_-3_-2_-1_110_100 336×336 in 0.36s
+[   16.4s]   shaded Dirt_-3_0_-1_000 936×936 in 2.76s
+MEM 2169/16086 avail 13916 top 1534MB modelkit-linux- cpu 53% of 4
+[   23.5s]   shaded Dirt_-3_1_-1_110_010 1024×1024 in 6.98s
+[   24.3s]   shaded Grass_4_-2_0_110_000 564×564 in 0.70s
+[   25.1s]   shaded Grass_2_-4_0_100_110 596×596 in 0.81s
+[   25.1s]   shaded Grass_-4_-4_0_100_001 68×68 in 0.03s
+[   26.0s]   shaded Grass_4_1_0_100_011 508×508 in 0.85s
+[   26.1s]   shaded Grass_4_0_0_100_001 272×272 in 0.10s
+[   26.6s]   shaded Grass_-2_1_0_100 540×540 in 0.37s
+[   26.6s] built MainIsland 1 x part 62/100: 17 parts in 24.6s
+[   26.7s] building YardFooting 1 x x1.5
+[   26.8s]   shaded Footing 256×256 in 0.08s
+[   26.8s] built YardFooting 1 x x1.5: 1 parts in 0.1s
+[   26.8s] building YardFooting 0.5 x x1.5
+[   26.9s]   shaded Footing 256×256 in 0.09s
+[   26.9s] built YardFooting 0.5 x x1.5: 1 parts in 0.1s
+[   26.9s] building Plot2 80.36352079666887 194.0147018273702 -22.5
+MEM 2890/16086 avail 13195 top 2240MB modelkit-linux- cpu 50% of 4
+[   27.6s]   shaded Ground_-1_-1_0_000 744×744 in 0.58s
+[   28.1s]   shaded Ground_-1_-1_0_010 744×744 in 0.43s
+[   28.4s]   shaded Ground_-1_-1_0_100_000 756×756 in 0.27s
+[   28.8s]   shaded Ground_-1_-1_0_100_010 752×752 in 0.34s
+[   29.0s]   shaded Ground_-1_-1_0_100_100 552×552 in 0.19s
+[   29.2s]   shaded Ground_-1_-1_0_100_110 552×552 in 0.18s
+[   29.6s]   shaded Ground_-1_-1_0_110_000 752×752 in 0.33s
+[   30.1s]   shaded Ground_-1_-1_0_110_010 752×752 in 0.39s
+[   30.3s]   shaded Ground_-1_-1_0_110_100 552×552 in 0.21s
+[   30.5s]   shaded Ground_-1_-1_0_110_110 552×552 in 0.17s
+[   31.0s]   shaded Ground_-1_0_0_000 744×744 in 0.41s
+[   31.3s]   shaded Ground_-1_0_0_010 744×744 in 0.29s
+[   31.7s]   shaded Ground_-1_0_0_100_000 752×752 in 0.33s
+[   32.1s]   shaded Ground_-1_0_0_100_010 752×752 in 0.32s
+[   32.3s]   shaded Ground_-1_0_0_100_100 552×552 in 0.18s
+[   32.5s]   shaded Ground_-1_0_0_100_110 552×552 in 0.17s
+[   32.8s]   shaded Ground_-1_0_0_110_000 752×752 in 0.30s
+[   33.2s]   shaded Ground_-1_0_0_110_010 756×756 in 0.30s
+[   33.4s]   shaded Ground_-1_0_0_110_100 552×552 in 0.16s
+[   33.6s]   shaded Ground_-1_0_0_110_110 552×552 in 0.17s
+[   33.7s]   shaded Ground_0_-1_0_000_000 552×552 in 0.16s
+[   33.9s]   shaded Ground_0_-1_0_000_010 552×552 in 0.17s
+[   34.3s]   shaded Ground_0_-1_0_000_100 756×756 in 0.32s
+[   34.7s]   shaded Ground_0_-1_0_000_110 752×752 in 0.32s
+[   34.9s]   shaded Ground_0_-1_0_010_000 552×552 in 0.16s
+[   35.1s]   shaded Ground_0_-1_0_010_010 552×552 in 0.16s
+[   35.4s]   shaded Ground_0_-1_0_010_100 752×752 in 0.31s
+[   35.8s]   shaded Ground_0_-1_0_010_110 752×752 in 0.36s
+[   36.2s]   shaded Ground_0_-1_0_100 744×744 in 0.28s
+[   36.5s]   shaded Ground_0_-1_0_110 744×744 in 0.31s
+[   36.7s]   shaded Ground_0_0_0_000_000 552×552 in 0.16s
+[   36.9s]   shaded Ground_0_0_0_000_010 552×552 in 0.16s
+[   37.3s]   shaded Ground_0_0_0_000_100 752×752 in 0.33s
+MEM 3134/16086 avail 12951 top 2468MB modelkit-linux- cpu 49% of 4
+[   37.6s]   shaded Ground_0_0_0_000_110 752×752 in 0.30s
+[   37.8s]   shaded Ground_0_0_0_010_000 552×552 in 0.16s
+[   38.0s]   shaded Ground_0_0_0_010_010 552×552 in 0.16s
+[   38.4s]   shaded Ground_0_0_0_010_100 752×752 in 0.34s
+[   38.7s]   shaded Ground_0_0_0_010_110 756×756 in 0.28s
+[   39.1s]   shaded Ground_0_0_0_100 744×744 in 0.27s
+[   39.4s]   shaded Ground_0_0_0_110 744×744 in 0.25s
+[   39.4s] built Plot2 80.36352079666887 194.0147018273702 -22.5: 40 parts in 12.5s
+[   39.7s] writing ServerMap.glb and 59 textures
+ServerMap: 59 parts, script 39.71s, total 40.12s
+  shade (creases, contact): 13.00s
+  coat: 15.64s
+  wear: 1.90s
+  combine: 0.22s
+  shade, surfaces, grid and texels: 4.96s
+  shade, neighbourhoods: 2.15s
+  shade, spreading over seams: 2.29s
+  coat, painting texels: 2.22s
+PLACED	Island	0	MainIsland-660b6fd7604d9003 1 x part 62/100
+SHARD_COST	MainIsland 1 x	2462.698
+SHARD_COST	MainIsland 1 x #split	1
+PLACED	Yard1_FootingBack5	-67.5	YardFooting-748247116a86686c 1 x x1.5
+SHARD_COST	YardFooting 1 x x1.5	0.091
+SHARD_COST	YardFooting 1 x x1.5 #split	1
+PLACED	Yard1_FootingFrontHalf1	-67.5	YardFooting-748247116a86686c 0.5 x x1.5
+SHARD_COST	YardFooting 0.5 x x1.5	0.101
+SHARD_COST	YardFooting 0.5 x x1.5 #split	1
+PLACED	Plot2	0	9edb366bcc5dfdf7-09a6759228b03a28 Plot2 80.36352079666887 194.0147018273702 -22.5
+SHARD_COST	slab Plot2	12.467
+SHARD_COST	slab Plot2 #split	1
+export ServerMap: 4 objects (13.2 MB) for 4 placements
