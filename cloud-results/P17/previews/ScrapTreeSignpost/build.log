@@ -1,0 +1,19 @@
+engine: taken from the build-engine branch
+[    0.0s] running ScrapTreeSignpost/model.luau
+[    0.2s] baking on CPU (no GPU)
+[    0.2s] shaded Footing 256×256 in 0.15s
+[    0.3s] shaded Post 256×256 in 0.10s
+[    0.4s] shaded StreetSigns 256×256 in 0.07s
+[    0.5s] shaded WarningSigns 256×256 in 0.09s
+[    0.6s] shaded Clamps 256×256 in 0.15s
+[    0.6s] writing ScrapTreeSignpost.glb and 5 textures
+[    0.6s] rendering preview of 5 parts
+ScrapTreeSignpost: 5 parts, script 613.04ms, total 1.60s
+  shade (creases, contact): 0.27s
+  coat: 0.09s
+  wear: 0.08s
+  combine: 0.01s
+  shade, surfaces, grid and texels: 0.01s
+  shade, neighbourhoods: 0.01s
+  shade, spreading over seams: 0.01s
+  coat, painting texels: 0.00s
