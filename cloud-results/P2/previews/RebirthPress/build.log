@@ -1,0 +1,58 @@
+engine: taken from the build-engine branch
+[    0.0s] running RebirthPress/model.luau
+[    3.0s] baking on CPU (no GPU)
+[    3.3s] shaded Plinth 1024×1024 in 1.47s
+[    5.6s] shaded Anvil 1024×1024 in 2.05s
+[    7.1s] shaded Columns 1024×1024 in 1.39s
+[    9.2s] shaded Bands 1024×1024 in 1.93s
+[   11.1s] shaded Crown 1024×1024 in 1.76s
+[   12.7s] shaded Cylinder 1024×1024 in 1.43s
+[   13.9s] shaded Ram 1024×1024 in 1.09s
+[   15.1s] shaded Platen 1024×1024 in 1.10s
+[   17.1s] shaded Pile 1024×1024 in 1.84s
+[   19.1s] shaded PileJunk 1024×1024 in 1.89s
+[   20.8s] shaded Tray 1024×1024 in 1.58s
+[   22.1s] shaded Medal 1024×1024 in 1.20s
+[   23.6s] shaded Console 1024×1024 in 1.36s
+[   24.8s] shaded Cage 1024×1024 in 1.05s
+[   25.4s] shaded Hoses 1024×1024 in 0.57s
+[   27.5s] shaded Pump 1024×1024 in 2.01s
+[   30.2s] shaded Collars 1024×1024 in 2.53s
+[   30.2s] writing RebirthPress.glb and 19 textures
+[   30.7s] rendering preview of 19 parts
+[   38.4s] rendering eye 1/8
+[   39.4s] rendering eye 2/8
+[   40.3s] rendering eye 3/8
+[   41.1s] rendering eye 4/8
+[   42.4s] rendering eye 5/8
+[   44.3s] rendering eye 6/8
+[   45.8s] rendering eye 7/8
+[   47.1s] rendering eye 8/8
+RebirthPress: 19 parts, script 30.31s, total 48.99s
+  shade (creases, contact): 8.79s
+  coat: 7.90s
+  wear: 1.98s
+  combine: 0.33s
+  shade, surfaces, grid and texels: 0.99s
+  shade, neighbourhoods: 0.48s
+  shade, spreading over seams: 0.32s
+  coat, painting texels: 0.00s
+#f23d3d Plinth
+#85a5f2 Anvil
+#7bb32d Columns
+#b362a8 Bands
+#3df2d4 Crown
+#f2c085 Cylinder
+#4e2db3 Ram
+#66b362 Platen
+#f23d79 Pile
+#85c9f2 PileJunk
+#a8b32d Tray
+#a262b3 Medal
+#3df297 Console
+#f29c85 Cage
+#2d38b3 Button
+#80b362 Hoses
+#f23db6 Pump
+#85eef2 Collars
+#b3912d Beacons
