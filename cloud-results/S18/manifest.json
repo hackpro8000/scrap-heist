@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "4eceba549203bf54",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 18/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 975280,
+			"sha": "4ce4e2189963f941",
+			"parts": 17
+		},
+		{
+			"id": "0e50cade945a727f",
+			"key": "ScrapPalm-d5c69ef46be4a8a1 1 x x1.6",
+			"piece": 1,
+			"label": "RoughScrap5",
+			"turn": 235.0,
+			"bytes": 934708,
+			"sha": "2589e82072cc422f",
+			"parts": 6
+		},
+		{
+			"id": "11cf471fde41c435",
+			"key": "PlotMarker-d53896012ff9aa6c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard7_PlotMarker",
+			"turn": 202.5,
+			"bytes": 394088,
+			"sha": "4c0ebee47338ecb1",
+			"parts": 4
+		},
+		{
+			"id": "0ccb3fee17bb1d34",
+			"key": "JunkrotHoverbikkoZoomzoom-127ba8354d15bdf7 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotHoverbikkoZoomzoom",
+			"turn": 0.0,
+			"bytes": 824308,
+			"sha": "e20e3c7a49998e8f",
+			"parts": 13
+		}
+	],
+	"placements": [
+		{
+			"asset": "4eceba549203bf54",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_3_3_0_001",
+					"position": [
+						214.83898,
+						-30.590141499999998,
+						-213.74095
+					]
+				},
+				{
+					"name": "Grass_-4_-4_0_010_000",
+					"position": [
+						-241.98425500000002,
+						-5.1338755,
+						207.86342000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "0e50cade945a727f",
+			"label": "RoughScrap5",
+			"turn": 235.0,
+			"anchors": [
+				{
+					"name": "Fronds",
+					"position": [
+						-95.969465,
+						15.231188500000002,
+						-93.377655
+					]
+				},
+				{
+					"name": "TyreCollar",
+					"position": [
+						-94.60439,
+						2.4837686000000003,
+						-97.27840499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "11cf471fde41c435",
+			"label": "Yard7_PlotMarker",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						49.658875,
+						3.717558,
+						143.55101
+					]
+				}
+			]
+		},
+		{
+			"asset": "0ccb3fee17bb1d34",
+			"label": "Kit_JunkrotHoverbikkoZoomzoom",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Exhaust",
+					"position": [
+						862.24,
+						-258.83000000000004,
+						0.0
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						865.4268999999999,
+						-258.875125,
+						0.4753
+					]
+				}
+			]
+		}
+	]
+}
