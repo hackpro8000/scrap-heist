@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "8352fa4e466239f7",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 42/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 814364,
+			"sha": "37a89a6a8e93ac84",
+			"parts": 17
+		},
+		{
+			"id": "731dfcb459d09ac5",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck14 -145 -145 0",
+			"piece": 1,
+			"label": "LoneWreck14",
+			"turn": 0.0,
+			"bytes": 55400,
+			"sha": "7239e7ce9353c812",
+			"parts": 3
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FootingFront6",
+			"turn": 247.5,
+			"bytes": 97776,
+			"sha": "8ee9276b64aef860",
+			"parts": 1
+		},
+		{
+			"id": "d965246a5a97b929",
+			"key": "JunkrotKettlinaDentata-db41736d2fba5a60 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotKettlinaDentata",
+			"turn": 0.0,
+			"bytes": 762292,
+			"sha": "f4bc74e90fc6f451",
+			"parts": 8
+		}
+	],
+	"placements": [
+		{
+			"asset": "8352fa4e466239f7",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-1_-5_-1_001_110",
+					"position": [
+						-55.703631,
+						-34.155789999999996,
+						295.30474000000004
+					]
+				},
+				{
+					"name": "Grass_-1_4_0_110_111",
+					"position": [
+						-8.938131,
+						-20.9826065,
+						-304.543245
+					]
+				}
+			]
+		},
+		{
+			"asset": "731dfcb459d09ac5",
+			"label": "LoneWreck14",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Slab",
+					"position": [
+						-144.126015,
+						2.83000105,
+						144.28871500000002
+					]
+				},
+				{
+					"name": "SlabStone",
+					"position": [
+						-142.91330499999998,
+						2.186422425,
+						145.390415
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard8_FootingFront6",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						128.49298,
+						2.266335,
+						92.186965
+					]
+				}
+			]
+		},
+		{
+			"asset": "d965246a5a97b929",
+			"label": "Kit_JunkrotKettlinaDentata",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pupils",
+					"position": [
+						-479.98471,
+						-258.66235,
+						1.11685
+					]
+				},
+				{
+					"name": "Whistle",
+					"position": [
+						-478.544525,
+						-258.291105,
+						-0.009160265
+					]
+				}
+			]
+		}
+	]
+}
