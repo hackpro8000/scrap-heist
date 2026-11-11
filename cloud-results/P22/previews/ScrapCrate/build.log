@@ -1,0 +1,19 @@
+engine: taken from the build-engine branch
+[    0.0s] running ScrapCrate/model.luau
+[    0.1s] baking on CPU (no GPU)
+[    0.1s] shaded Planks 256×256 in 0.08s
+[    0.2s] shaded Bands 256×256 in 0.04s
+[    0.2s] shaded Stripe 256×256 in 0.03s
+[    0.3s] shaded Heap 256×256 in 0.08s
+[    0.3s] shaded Bits 256×256 in 0.03s
+[    0.3s] writing ScrapCrate.glb and 5 textures
+[    0.3s] rendering preview of 5 parts
+ScrapCrate: 5 parts, script 315.07ms, total 2.21s
+  shade (creases, contact): 0.08s
+  coat: 0.09s
+  wear: 0.05s
+  combine: 0.00s
+  shade, surfaces, grid and texels: 0.02s
+  shade, neighbourhoods: 0.04s
+  shade, spreading over seams: 0.00s
+  coat, painting texels: 0.03s
