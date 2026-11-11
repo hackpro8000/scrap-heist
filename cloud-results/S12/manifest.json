@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "501c4368fd6325b8",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 12/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 902720,
+			"sha": "f6acace6e420e3de",
+			"parts": 16
+		},
+		{
+			"id": "3eb9ccf5bcfd0537",
+			"key": "ScrapTreeRebar-06c988ae19846bea 1 x x1.8",
+			"piece": 1,
+			"label": "RoughScrap1",
+			"turn": 47.0,
+			"bytes": 425432,
+			"sha": "83e9976cc9cf634b",
+			"parts": 3
+		},
+		{
+			"id": "c17402070a8a7f35",
+			"key": "YardFooting-748247116a86686c 0.5 x x1.5",
+			"piece": 1,
+			"label": "Yard7_FootingFrontHalf1",
+			"turn": 202.5,
+			"bytes": 108260,
+			"sha": "bae0ee034211590d",
+			"parts": 1
+		},
+		{
+			"id": "f75093aa63e9aca7",
+			"key": "JunkrotTyroFlattino-306ec7d17be20c24 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotTyroFlattino",
+			"turn": 0.0,
+			"bytes": 663496,
+			"sha": "2f7e8108d5288923",
+			"parts": 7
+		}
+	],
+	"placements": [
+		{
+			"asset": "501c4368fd6325b8",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_4_1_0_111",
+					"position": [
+						291.61382000000003,
+						-29.437920499999997,
+						-98.366375
+					]
+				},
+				{
+					"name": "Grass_-3_-5_0_110_001",
+					"position": [
+						-151.70574,
+						-12.8300213,
+						275.51617
+					]
+				}
+			]
+		},
+		{
+			"asset": "3eb9ccf5bcfd0537",
+			"label": "RoughScrap1",
+			"turn": 47.0,
+			"anchors": [
+				{
+					"name": "Rebar",
+					"position": [
+						153.57232,
+						11.08729435,
+						-2.5707272
+					]
+				},
+				{
+					"name": "Ties",
+					"position": [
+						153.52967999999998,
+						5.6577316,
+						-2.07222665
+					]
+				}
+			]
+		},
+		{
+			"asset": "c17402070a8a7f35",
+			"label": "Yard7_FootingFrontHalf1",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						100.5056625,
+						2.266335,
+						125.1258475
+					]
+				}
+			]
+		},
+		{
+			"asset": "f75093aa63e9aca7",
+			"label": "Kit_JunkrotTyroFlattino",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Nail",
+					"position": [
+						-455.79902500000003,
+						-257.0779,
+						0.018334474
+					]
+				},
+				{
+					"name": "Patch",
+					"position": [
+						-456.61789999999996,
+						-257.79345,
+						0.36764258
+					]
+				}
+			]
+		}
+	]
+}
