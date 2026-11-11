@@ -1,0 +1,12 @@
+MainIsland 1 x	1821.033
+MainIsland 1 x #split	1
+slab Rough10	2.745
+slab Rough10 #split	1
+slab LoneWreck6	0.045
+slab LoneWreck6 #split	1
+YardFence 1 x x1.5	0.244
+YardFence 1 x x1.5 #split	1
+YardFooting 1 x x1.5	0.070
+YardFooting 1 x x1.5 #split	1
+slab Plot5	9.958
+slab Plot5 #split	1

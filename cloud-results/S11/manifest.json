@@ -1,0 +1,345 @@
+{
+	"assets": [
+		{
+			"id": "72a8b3ff8f4671bd",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 11/25",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 3744796,
+			"sha": "dc9d3b5f4e94e628",
+			"parts": 66
+		},
+		{
+			"id": "f1521bec9e1b22fa",
+			"key": "9edb366bcc5dfdf7-6ad7b70c6ecee2a9 Rough10 137.48179271331793 -123.78916217638876 0",
+			"piece": 1,
+			"label": "Rough10",
+			"turn": 0.0,
+			"bytes": 286828,
+			"sha": "8d7b2fabca97fd5c",
+			"parts": 2
+		},
+		{
+			"id": "0da34ddd5ac44bcf",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck6 -117.3 -85.2 0",
+			"piece": 1,
+			"label": "LoneWreck6",
+			"turn": 0.0,
+			"bytes": 43724,
+			"sha": "31179be9f4c1e702",
+			"parts": 2
+		},
+		{
+			"id": "000e0637814e7f0b",
+			"key": "YardFence-0f1495cb71d18f3d 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceBack5",
+			"turn": 112.5,
+			"bytes": 393816,
+			"sha": "657ba2fcf3ceffe2",
+			"parts": 3
+		},
+		{
+			"id": "f62c6153b624b4de",
+			"key": "YardFooting-748247116a86686c 1 x x1.5",
+			"piece": 1,
+			"label": "Yard2_FootingBack5",
+			"turn": -22.5,
+			"bytes": 97780,
+			"sha": "cd6bad7e5f3df2c1",
+			"parts": 1
+		},
+		{
+			"id": "bf6059c3cbb168d2",
+			"key": "9edb366bcc5dfdf7-09a6759228b03a28 Plot5 -194.01470182737023 -80.36352079666884 112.5",
+			"piece": 1,
+			"label": "Plot5",
+			"turn": 0.0,
+			"bytes": 12056112,
+			"sha": "107f4da49060845a",
+			"parts": 40
+		}
+	],
+	"placements": [
+		{
+			"asset": "72a8b3ff8f4671bd",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-3_-4_0_001",
+					"position": [
+						-184.81351999999998,
+						-23.6838865,
+						252.45797
+					]
+				},
+				{
+					"name": "Grass_2_3_0_110_110",
+					"position": [
+						184.707765,
+						-14.4647628,
+						-249.43709
+					]
+				}
+			]
+		},
+		{
+			"asset": "f1521bec9e1b22fa",
+			"label": "Rough10",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						124.99063000000001,
+						2.03,
+						124.087655
+					]
+				},
+				{
+					"name": "Stones",
+					"position": [
+						125.10756500000001,
+						2.2073329999999998,
+						124.63228
+					]
+				}
+			]
+		},
+		{
+			"asset": "0da34ddd5ac44bcf",
+			"label": "LoneWreck6",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-118.375,
+						2.03,
+						85.725
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceBack5",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						248.031975,
+						5.3468148499999995,
+						-96.238565
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceFront5",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						151.47792500000003,
+						5.3468148499999995,
+						-36.772088
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingBack5",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						107.331125,
+						2.266335,
+						-243.44799
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingFront2",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						36.754191,
+						2.266335,
+						-151.45398999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard2_FootingFront6",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						92.186965,
+						2.266335,
+						-128.49298
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingBack4",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-107.336385,
+						2.266335,
+						-243.55013000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard3_FootingFront1",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-70.01912300000001,
+						2.266335,
+						-137.779525
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard3_FenceFront5",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-36.772088,
+						5.3468148499999995,
+						-151.47792500000003
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard4_FenceBack1",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-261.8052,
+						5.3468148499999995,
+						-62.987604
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard4_FootingBack3",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-252.63239,
+						2.266335,
+						-85.158015
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard4_FootingBack6",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-238.85579,
+						2.266335,
+						-118.4176775
+					]
+				}
+			]
+		},
+		{
+			"asset": "f62c6153b624b4de",
+			"label": "Yard4_FootingFront1",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-146.861785,
+						2.266335,
+						-47.840745999999996
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard4_FenceFront4",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-137.70472,
+						5.3468148499999995,
+						-70.0230515
+					]
+				}
+			]
+		},
+		{
+			"asset": "bf6059c3cbb168d2",
+			"label": "Plot5",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_0_0_010",
+					"position": [
+						-216.744945,
+						1.8649999999999998,
+						135.23916499999999
+					]
+				},
+				{
+					"name": "Ground_0_-1_0_100",
+					"position": [
+						-171.284465,
+						1.8649999999999998,
+						25.4878755
+					]
+				}
+			]
+		}
+	]
+}
