@@ -1,0 +1,18 @@
+engine: taken from the build-engine branch
+[    0.0s] running CapsuleFactory/model.luau
+[    0.0s] baking on CPU (no GPU)
+[    0.1s] shaded Box 256×256 in 0.08s
+[    0.2s] shaded Tape 256×256 in 0.08s
+[    0.3s] shaded Stencil 256×256 in 0.05s
+[    0.3s] shaded Label 256×256 in 0.05s
+[    0.3s] writing CapsuleFactory.glb and 4 textures
+[    0.3s] rendering preview of 4 parts
+CapsuleFactory: 4 parts, script 308.04ms, total 2.31s
+  shade (creases, contact): 0.15s
+  coat: 0.05s
+  wear: 0.02s
+  combine: 0.01s
+  shade, surfaces, grid and texels: 0.01s
+  shade, neighbourhoods: 0.01s
+  shade, spreading over seams: 0.00s
+  coat, painting texels: 0.04s
