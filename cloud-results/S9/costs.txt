@@ -1,0 +1,22 @@
+MainIsland 1 x	2776.719
+MainIsland 1 x #split	1
+slab Rough8	3.352
+slab Rough8 #split	1
+slab LoneWreck4	0.306
+slab LoneWreck4 #split	1
+YardFence 1 x x1.5	0.350
+YardFence 1 x x1.5 #split	1
+YardFenceHalf 1 x x1.5	0.288
+YardFenceHalf 1 x x1.5 #split	1
+PlotMarker 1 x x1.5	0.563
+PlotMarker 1 x x1.5 #split	1
+PadGadget 1 x x1.6666666666666667	0.173
+PadGadget 1 x x1.6666666666666667 #split	1
+JunkrotCabloTanglino 1 x	2.960
+JunkrotCabloTanglino 1 x #split	1
+JunkrotTelefonoRingaling 1 x	3.020
+JunkrotTelefonoRingaling 1 x #split	1
+JunkrotRusteliRustela 1 x	17.358
+JunkrotRusteliRustela 1 x #split	1
+JunkrotHoverbikkoZoomzoom 1 x	1.859
+JunkrotHoverbikkoZoomzoom 1 x #split	1
