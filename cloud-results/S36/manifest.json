@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "ee83205133eb1813",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 36/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 840176,
+			"sha": "fc554870b2d029f6",
+			"parts": 17
+		},
+		{
+			"id": "0da34ddd5ac44bcf",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck6 -117.3 -85.2 0",
+			"piece": 1,
+			"label": "LoneWreck6",
+			"turn": 0.0,
+			"bytes": 43724,
+			"sha": "528dc7eac06b3b5a",
+			"parts": 2
+		},
+		{
+			"id": "c17402070a8a7f35",
+			"key": "YardFooting-748247116a86686c 0.5 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FootingFrontHalf1",
+			"turn": 247.5,
+			"bytes": 108256,
+			"sha": "d34c06de2008e636",
+			"parts": 1
+		},
+		{
+			"id": "264831e8bf0aa24c",
+			"key": "JunkrotHubcappaWobbla-3f7ab62405a50f8a 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotHubcappaWobbla",
+			"turn": 0.0,
+			"bytes": 649864,
+			"sha": "e7be8e54add59aaf",
+			"parts": 6
+		}
+	],
+	"placements": [
+		{
+			"asset": "ee83205133eb1813",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_-5_-2_-1_111",
+					"position": [
+						-275.84056,
+						-53.050045,
+						75.9950475
+					]
+				},
+				{
+					"name": "Grass_4_0_0_110_100",
+					"position": [
+						315.673475,
+						-11.2527273,
+						-39.35906
+					]
+				}
+			]
+		},
+		{
+			"asset": "0da34ddd5ac44bcf",
+			"label": "LoneWreck6",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-118.375,
+						2.03,
+						85.725
+					]
+				}
+			]
+		},
+		{
+			"asset": "c17402070a8a7f35",
+			"label": "Yard8_FootingFrontHalf1",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						159.48933499999998,
+						2.266335,
+						17.353939
+					]
+				}
+			]
+		},
+		{
+			"asset": "264831e8bf0aa24c",
+			"label": "Kit_JunkrotHubcappaWobbla",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Clips",
+					"position": [
+						-408.000505,
+						-258.28737,
+						-0.068660356
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						-407.98999000000003,
+						-258.06401,
+						0.492
+					]
+				}
+			]
+		}
+	]
+}
