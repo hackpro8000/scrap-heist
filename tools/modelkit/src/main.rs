@@ -298,7 +298,7 @@ impl UserData for MeshHandle {
 					Some(&[bottom, top]) if top > bottom => Some([bottom, top]),
 					_ => None,
 				},
-				// strokes = {{start, along, normal, length, width, tail, color, brush}, ...}:
+				// strokes = {{start, along, normal, length, width, tail, color, brush, seed}, ...}:
 				// lines drawn over the coat, color in sRGB. brush is "taper"
 				// (the default, crisp lines), "round" (a bristly mark pointed at
 				// both ends) or "sponge" (a lobed dab).
@@ -326,7 +326,9 @@ impl UserData for MeshHandle {
 								width: stroke.get("width")?,
 								color: stroke.get::<[f32; 3]>("color")?.map(bake::to_linear),
 								opacity: 1.0,
-								seed: index as u32,
+								// A stroke keeps the seed it is given, so a list cut down
+								// to the strokes near a chunk draws each as the whole list would.
+								seed: stroke.get::<Option<u32>>("seed")?.unwrap_or(index as u32),
 								tail: stroke.get::<Option<f64>>("tail")?.unwrap_or(0.0).clamp(0.0, 1.0),
 								marks: if stroke.contains_key("motion")? { Some(brush_spec(stroke)?) } else { None },
 							})

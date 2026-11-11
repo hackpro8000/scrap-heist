@@ -102,6 +102,46 @@ EOF
 build() {
 	local id started=${SECONDS} status="DONE" build_seconds="-" upload="skipped" handed
 	id="$(basename "${out}")"
+	# With the engine from before a change shipped beside the new one
+	# (tools/modelkit/proof-base, put there for the proof and never committed),
+	# this machine proves one sample model unchanged instead of building the
+	# layout (scripts/bake-proof.sh).
+	if [ -f tools/modelkit/proof-base/Cargo.toml ]; then
+		local samples=(ProofChunks BrushRock BrushCanvas PlotMarker ScrapCrate YardFence BeltCrossing RoughRocks)
+		local sample="${samples[$(((index - 1) % ${#samples[@]}))]}"
+		local proved="DONE"
+		scripts/bake-proof.sh tools/modelkit/proof-base "${sample}" > "${out}/proof.txt" 2>> "${out}/build.log" || proved="FAILED"
+		{
+			echo "status=${proved}"
+			echo "build=-"
+			echo "upload=skipped"
+			echo "total=$((SECONDS - started))"
+			echo "parts=0"
+			cat "${out}/proof.txt"
+		} > "${out}/summary.txt"
+		tail -n 30 "${out}/build.log" > "${out}/error.txt"
+		echo "${proved} in $((SECONDS - started))s: $(cat "${out}/proof.txt")"
+		return
+	fi
+	# TEMP-COLD: a marker in the task's commit empties this machine's cache first,
+	# to time a cold build on machines that are already warm.
+	[ ! -f tools/modelkit/cold-build ] || rm -rf "${model}/.cache"
+	# A reading in the log every 10s while the build runs: memory in use, the
+	# largest process, and how much of the machine's CPU was busy since the
+	# last reading (100% is every core).
+	(
+		busy_before=0 total_before=0
+		while sleep 10; do
+			read -r _ user nice system idle wait irq soft steal _ < /proc/stat
+			busy=$((user + nice + system + irq + soft + steal)) total=$((user + nice + system + irq + soft + steal + idle + wait))
+			echo "MEM $(free -m | awk 'NR==2{print $3"/"$2" avail "$7}') top $(ps -eo rss,comm --sort=-rss | awk 'NR==2{print int($1/1024)"MB "$2}') cpu $(((busy - busy_before) * 100 / (total - total_before + 1)))% of $(nproc)"
+			busy_before=${busy} total_before=${total}
+		done >> "${out}/build.log"
+	) &
+	local probe=$!
+	# The first two machines share the engine they compile, for the rest and for later runs.
+	[ "${index}" -gt 2 ] || export MODELKIT_SHARE_ENGINE=1
+	export MODELKIT_PROFILE=1
 	{
 		scripts/assemble-model.sh "${layout}" &&
 			{
@@ -112,6 +152,7 @@ build() {
 			scripts/export-objects.py "${layout}" &&
 			cp "${model}/objects/manifest.json" "${out}/"
 	} >> "${out}/build.log" 2>&1 || status="FAILED"
+	kill "${probe}" 2> /dev/null
 	if [ "${status}" = "DONE" ]; then
 		python3 - "${model}/${layout}.glb" > "${out}/parts.txt" << 'EOF' || status="FAILED"
 import json, struct, sys

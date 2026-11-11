@@ -65,8 +65,10 @@ local FOOTING_REACH = 0.75
 -- What stands on the sand in the slab being built: { x, y, radius x, radius y, seed }.
 local groundFeet = {}
 local SHADE = { 0.13, 0.09, 0.07 }
--- The turf stands proud of DECK; the shadow sheets lie just above it.
-local SHADE_Z = DECK + 0.85
+-- The island's top is flat at DECK (measured in Studio: sand 2.00, yard dirt
+-- 2.03); the shadow sheets lie as close above it as they can without
+-- fighting it, never more than 0.03 studs off the ground.
+local SHADE_Z = DECK + 0.03
 -- A contact shadow is ambient occlusion, not a cast shadow (the game lights the
 -- world itself): a thin stepped line hugging the foot, whatever the object's
 -- size. `past` is studs outside the foot's edge.
@@ -199,9 +201,6 @@ slab("Plaza", function()
 			return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * k
 		end
 		local k = 1 + fbm(x / 2, y / 2, 50) * 0.15
-		if r > HUB_ROAD - 1 or (r > HUB_PAVED and r < HUB_PAVED + 1) then
-			return MARK[1], MARK[2], MARK[3]
-		end
 		return ROAD[1] * k, ROAD[2] * k, ROAD[3] * k
 	end, true)
 end, 0, 0)
@@ -480,13 +479,14 @@ for n, spot in LONE_WRECKS do
 				boulder(mesh, 0, side * 3.6, DECK, 2.4, n * 9, 0.8)
 			end, nil, rockColour, nil, nil, true)
 			part("Pipe", nil, { 0.46, 0.28, 0.17 }, function(mesh)
-				-- Bent where it was dropped, flanged at one end, and a sheared-off length beside it.
-				for _, spot in { { -4.4, -0.4 }, { -2.2, 0 }, { 0.3, side * 1.2 }, { 3.1, side * 2.6 }, { 1.6, -2.2 * side }, { 4.2, -2.9 * side } } do
+				-- A straight run into a right-angle elbow, flanged at one end, and a
+				-- sheared-off length beside it.
+				for _, spot in { { -4.4, -0.4 }, { -2, -0.4 }, { 0.5, -0.4 }, { 2.6, -0.1 * side }, { 3, side * 1.4 }, { 3, side * 2.8 }, { 1.6, -2.6 * side }, { 4.2, -3.3 * side } } do
 					table.insert(groundFeet, { spot[1], spot[2], 0.9, 0.9, n })
 				end
-				tube(mesh, { { -4.4, -0.4, DECK + 0.65 }, { -0.4, side * 0.4, DECK + 1.0 }, { 3.1, side * 2.6, DECK + 0.55 } }, 1.1, 12)
+				tube(mesh, roundedPath({ { -4.4, -0.4, DECK + 0.65 }, { 3, -0.4, DECK + 0.65 }, { 3, side * 2.8, DECK + 0.65 } }, 1.7, 6), 1.1, 12)
 				ring(mesh, -4.5, -0.4, DECK + 0.65, 0.7, 1.55, 0.22, "x", 14)
-				tube(mesh, { { 1.6, -2.2 * side, DECK + 0.45 }, { 4.2, -2.9 * side, DECK + 0.5 } }, 0.8, 10)
+				tube(mesh, { { 1.6, -2.6 * side, DECK + 0.45 }, { 4.2, -3.3 * side, DECK + 0.5 } }, 0.8, 10)
 			end, nil, 0.8)
 		else
 			part("Slab", nil, { 0.56, 0.55, 0.52 }, function(mesh)
@@ -517,8 +517,9 @@ local function yardGround(u: number, v: number, seed: number): (number, number, 
 	local yardWork = smooth(reach, reach * 0.35, math.sqrt(du * du + dv * dv * 1.4) + fbm(u / 5, v / 5, seed + 4) * 8)
 	local packed = math.max(lane * 0.85, yardWork * (0.6 + (seed % 3) * 0.15))
 	local k = 1 + fbm(u / 3, v / 3, seed) * 0.2 + fbm(u * 2, v * 2, seed + 1) * 0.08
-	local r, g, b = YARD_DIRT[1] * k, YARD_DIRT[2] * k, YARD_DIRT[3] * k
-	return r + (0.54 * k - r) * packed, g + (0.53 * k - g) * packed, b + (0.5 * k - b) * packed
+	-- Trodden dirt packs a shade darker; it never bleaches.
+	local firm = k * (1 - 0.14 * packed)
+	return YARD_DIRT[1] * firm, YARD_DIRT[2] * firm, YARD_DIRT[3] * firm
 end
 
 -- A yard's shell on the plot at (x, y), turned so its gate (local -y) faces
@@ -600,10 +601,11 @@ end
 -- The capsule belt and its factory (CapsuleLoop), on the plaza.
 placeModel("CapsuleLoop", buildCapsuleLoop, 0, 0, DECK + 0.05)
 
--- New players start on a ring painted on the plaza.
+-- New players start on a ring painted on the plaza, over the walk it crosses
+-- (the walk's top is at DECK + 0.1).
 slab("Spawn", function()
 	part("Pad", nil, MARK, function(mesh)
-		ring(mesh, 0, 0, DECK + 0.05, 8, 9, 0.1, "z", 48)
+		ring(mesh, 0, 0, DECK + 0.1, 8, 9, 0.1, "z", 48)
 	end, nil, 0)
 end, 0, 22)
 
@@ -664,6 +666,12 @@ slab("Streets", function()
 		local k = (1 + fbm(x / 3, y / 3, 140) * 0.1) * trodden
 		return WALK[1] * k, WALK[2] * k, WALK[3] * k
 	end, nil, nil, true)
+	chunkedPart("RoadMarks", nil, MARK, function(mesh)
+		-- The ring road's edge lines, laid on the paving as their own sheets so
+		-- their edges print crisp.
+		flatRing(mesh, HUB_PAVED, HUB_PAVED + 1, DECK + 0.07)
+		flatRing(mesh, HUB_ROAD - 1, HUB_ROAD, DECK + 0.07)
+	end, nil, 0.5, true)
 	part("LaneMarks", nil, { 0.86, 0.7, 0.16 }, function(mesh)
 		-- Painted dashes round the promenade and along the walks, for the carts.
 		local PAINT_Z = STREET_Z + 0.02

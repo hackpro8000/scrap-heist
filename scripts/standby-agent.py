@@ -127,7 +127,14 @@ def last_line(path):
 	return next((line.strip() for line in reversed(lines) if line.strip()), "")[:200]
 
 
+WORKER_TOKEN = ""  # a cloud worker's minted token, taken from the environment by main()
+
+
 def identity_token():
+	# A worker that is not a GitHub machine (scripts/cloud-worker.sh) shows its
+	# minted token; taken out of the environment so builds never see it.
+	if WORKER_TOKEN:
+		return "worker:" + WORKER_TOKEN
 	url = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_URL")
 	bearer = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
 	if not url or not bearer:
@@ -502,7 +509,9 @@ class Agent:
 			await asyncio.sleep(min(self.idle_until, self.stop_at) - now)
 
 	async def main(self):
-		global forward
+		global forward, WORKER_TOKEN
+		# Out of the environment before any child process can see it.
+		WORKER_TOKEN = os.environ.pop("COORDINATOR_WORKER_TOKEN", "")
 		await asyncio.to_thread(ensure_tools)
 		self.backoff = 1
 		clock = asyncio.create_task(self.watch_clock())

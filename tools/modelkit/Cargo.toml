@@ -22,3 +22,7 @@ opt-level = 3
 
 [profile.release]
 opt-level = 3
+# One optimisation pass over the whole engine instead of one per unit: a
+# slower compile, paid once per engine change, for a faster bake.
+lto = "thin"
+codegen-units = 1
