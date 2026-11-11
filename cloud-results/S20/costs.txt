@@ -1,0 +1,18 @@
+MainIsland 1 x	2012.317
+MainIsland 1 x #split	1
+slab RoughFoot5	0.034
+slab RoughFoot5 #split	1
+slab LoneWreck18	0.043
+slab LoneWreck18 #split	1
+YardFence 1.037037037037037 x x1.5	0.255
+YardFence 1.037037037037037 x x1.5 #split	1
+HubStage 1 x	4.183
+HubStage 1 x #split	1
+CapsulePrecision 1 x	0.255
+CapsulePrecision 1 x #split	1
+JunkrotMuffleroTossetto 1 x	1.109
+JunkrotMuffleroTossetto 1 x #split	1
+JunkrotDishwashinoSplashetto 1 x	1.146
+JunkrotDishwashinoSplashetto 1 x #split	1
+JunkrotTorquoWrenchelli 1 x	1.573
+JunkrotTorquoWrenchelli 1 x #split	1
