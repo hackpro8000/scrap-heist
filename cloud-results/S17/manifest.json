@@ -1,0 +1,130 @@
+{
+	"assets": [
+		{
+			"id": "e7259dc180961a65",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 17/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1075664,
+			"sha": "668adcbda6c34038",
+			"parts": 17
+		},
+		{
+			"id": "1f40d97d59542c31",
+			"key": "JunkMound-e2d48bd7d6f65eb3 1 x x2.8",
+			"piece": 1,
+			"label": "RoughScrap4",
+			"turn": 188.0,
+			"bytes": 725752,
+			"sha": "1d3aa4944e000f39",
+			"parts": 5
+		},
+		{
+			"id": "130724f17f1a6aa4",
+			"key": "YardGate-06ec41d82d9efa42 1 x x1.5",
+			"piece": 1,
+			"label": "Yard7_Gate",
+			"turn": 202.5,
+			"bytes": 1142232,
+			"sha": "9ba8ea9fb4075f50",
+			"parts": 4
+		},
+		{
+			"id": "9b6cf4c376eaa459",
+			"key": "JunkrotGascaniniHonkini-993176abbf5261f7 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotGascaniniHonkini",
+			"turn": 0.0,
+			"bytes": 4891272,
+			"sha": "fe28ef80e4c32a53",
+			"parts": 34
+		}
+	],
+	"placements": [
+		{
+			"asset": "e7259dc180961a65",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_0_0_010_011",
+					"position": [
+						-304.00157,
+						-15.56074825,
+						-50.525912
+					]
+				},
+				{
+					"name": "Grass_4_0_0_101",
+					"position": [
+						317.30508999999995,
+						-20.7990475,
+						-15.54465874
+					]
+				}
+			]
+		},
+		{
+			"asset": "1f40d97d59542c31",
+			"label": "RoughScrap4",
+			"turn": 188.0,
+			"anchors": [
+				{
+					"name": "Spill",
+					"position": [
+						-185.80599,
+						2.17976675,
+						-190.568695
+					]
+				},
+				{
+					"name": "Tyre",
+					"position": [
+						-184.26459499999999,
+						3.99879005,
+						-191.54855
+					]
+				}
+			]
+		},
+		{
+			"asset": "130724f17f1a6aa4",
+			"label": "Yard7_Gate",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Doors",
+					"position": [
+						58.940757,
+						6.9146911499999995,
+						142.258055
+					]
+				}
+			]
+		},
+		{
+			"asset": "9b6cf4c376eaa459",
+			"label": "Kit_JunkrotGascaniniHonkini",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "BillRidge",
+					"position": [
+						769.97667,
+						-256.38698999999997,
+						0.005764970500000001
+					]
+				},
+				{
+					"name": "Jets",
+					"position": [
+						767.3,
+						-258.705005,
+						0.0
+					]
+				}
+			]
+		}
+	]
+}
