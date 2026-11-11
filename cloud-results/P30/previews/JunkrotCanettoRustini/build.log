@@ -1,0 +1,20 @@
+engine: taken from the build-engine branch
+[    0.0s] running JunkrotCanettoRustini/model.luau
+[    0.2s] baking on CPU (no GPU)
+[    0.3s] shaded Can 256×256 in 0.18s
+[    0.4s] shaded Label 256×256 in 0.12s
+[    0.5s] shaded Lid 256×256 in 0.04s
+[    1.0s] shaded Eyes 256×256 in 0.46s
+[    1.4s] shaded Pupils 256×256 in 0.45s
+[    1.6s] shaded Legs 256×256 in 0.17s
+[    1.6s] writing JunkrotCanettoRustini.glb and 6 textures
+[    1.6s] rendering preview of 6 parts
+JunkrotCanettoRustini: 6 parts, script 1.65s, total 2.64s
+  shade (creases, contact): 0.99s
+  coat: 0.29s
+  wear: 0.04s
+  combine: 0.01s
+  shade, surfaces, grid and texels: 0.03s
+  shade, neighbourhoods: 0.01s
+  shade, spreading over seams: 0.01s
+  coat, painting texels: 0.27s
