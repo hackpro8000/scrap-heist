@@ -1,0 +1,15 @@
+engine: taken from the build-engine branch
+[    0.0s] running YardFooting/model.luau
+[    0.1s] baking on CPU (no GPU)
+[    0.2s] shaded Footing 256×256 in 0.12s
+[    0.2s] writing YardFooting.glb and 1 textures
+[    0.2s] rendering preview of 1 parts
+YardFooting: 1 parts, script 188.78ms, total 788.88ms
+  shade (creases, contact): 0.04s
+  coat: 0.03s
+  wear: 0.01s
+  combine: 0.00s
+  shade, surfaces, grid and texels: 0.00s
+  shade, neighbourhoods: 0.00s
+  shade, spreading over seams: 0.00s
+  coat, painting texels: 0.00s
