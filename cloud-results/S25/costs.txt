@@ -1,0 +1,18 @@
+MainIsland 1 x	1976.477
+MainIsland 1 x #split	1
+RockBoulderPile 1 x x2.8	0.369
+RockBoulderPile 1 x x2.8 #split	1
+slab LoneWreck25	0.227
+slab LoneWreck25 #split	1
+YardFooting 1.037037037037037 x x1.5	0.077
+YardFooting 1.037037037037037 x x1.5 #split	1
+PadGarage 1 x x1.6666666666666667	0.155
+PadGarage 1 x x1.6666666666666667 #split	1
+JunkrotRemotinoMuto 1 x	4.668
+JunkrotRemotinoMuto 1 x #split	1
+JunkrotGrindellaScintilla 1 x	1.447
+JunkrotGrindellaScintilla 1 x #split	1
+JunkrotChimneyziniSpannerini 1 x	13.489
+JunkrotChimneyziniSpannerini 1 x #split	1
+JunkrotSnackomaticPrototipo 1 x	1.362
+JunkrotSnackomaticPrototipo 1 x #split	1
