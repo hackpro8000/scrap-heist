@@ -1,0 +1,122 @@
+{
+	"assets": [
+		{
+			"id": "c74fd686525f0920",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 45/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1104388,
+			"sha": "5163c28e15f3ee07",
+			"parts": 17
+		},
+		{
+			"id": "2df84b0f2627af93",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck18 -37.5 -237 0",
+			"piece": 1,
+			"label": "LoneWreck18",
+			"turn": 0.0,
+			"bytes": 43880,
+			"sha": "95a4658a3207615d",
+			"parts": 2
+		},
+		{
+			"id": "130724f17f1a6aa4",
+			"key": "YardGate-06ec41d82d9efa42 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_Gate",
+			"turn": 247.5,
+			"bytes": 1142180,
+			"sha": "05dbabe47b46f8fc",
+			"parts": 4
+		},
+		{
+			"id": "96900d65b06211c9",
+			"key": "JunkrotPercolattoNinjatto-0fba647cb678881b 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotPercolattoNinjatto",
+			"turn": 0.0,
+			"bytes": 4251652,
+			"sha": "668c876d039bb60b",
+			"parts": 31
+		}
+	],
+	"placements": [
+		{
+			"asset": "c74fd686525f0920",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_0_0_010_000",
+					"position": [
+						-304.879585,
+						-13.13753345,
+						-40.37137
+					]
+				},
+				{
+					"name": "Grass_4_1_0_101",
+					"position": [
+						306.865985,
+						-21.51097,
+						-80.1824375
+					]
+				}
+			]
+		},
+		{
+			"asset": "2df84b0f2627af93",
+			"label": "LoneWreck18",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						-38.575,
+						2.03,
+						237.525
+					]
+				}
+			]
+		},
+		{
+			"asset": "130724f17f1a6aa4",
+			"label": "Yard8_Gate",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Doors",
+					"position": [
+						142.274295,
+						6.9146911499999995,
+						58.895205000000004
+					]
+				}
+			]
+		},
+		{
+			"asset": "96900d65b06211c9",
+			"label": "Kit_JunkrotPercolattoNinjatto",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "HeadbandRivets",
+					"position": [
+						791.9947999999999,
+						-256.6938,
+						0.7947957
+					]
+				},
+				{
+					"name": "Tails",
+					"position": [
+						792.416425,
+						-256.777535,
+						-1.144581815
+					]
+				}
+			]
+		}
+	]
+}
