@@ -31,7 +31,9 @@ other.
 """
 import hashlib
 import json
+import math
 import os
+import re
 import shutil
 import struct
 import sys
@@ -58,6 +60,69 @@ def placements_in(log):
 		if len(fields) == 4 and fields[0] == "PLACED":
 			placed.append({"label": fields[1], "turn": float(fields[2]), "key": fields[3]})
 	return placed
+
+
+def told_in(log):
+	"""Where each told placement stands (STANDS lines), and the placements
+	skipped as already built (SKIPPED lines, shard 1 only): prelude.luau."""
+	stands, skipped = {}, []
+	for line in open(log, errors="replace"):
+		fields = line.rstrip("\n").split("\t")
+		if len(fields) == 3 and fields[0] == "STANDS":
+			stands[fields[1]] = [float(c) for c in fields[2].split()]
+		elif len(fields) == 5 and fields[0] == "SKIPPED":
+			skipped.append({"label": fields[1], "turn": float(fields[2]), "key": fields[3], "at": [float(c) for c in fields[4].split()]})
+	return stands, skipped
+
+
+def recordable(key):
+	"""Whether an object can be saved and skipped: keyed, and not one share of
+	a split model (its parts depend on the deal; it needs per-chunk keys)."""
+	return key != "-" and not re.search(r" part \d+/\d+( |$)", key)
+
+
+def read_record(path):
+	"""The layout's record of built objects (scripts/merge-shards.sh writes it):
+	each piece's key and parts, and where each placement of it stood, at what
+	turn, with its anchors' middles (studs, Y up)."""
+	pieces, placed = {}, {}
+	if os.path.isfile(path):
+		for line in open(path):
+			fields = line.rstrip("\n").split("\t")
+			if fields[0] == "object":
+				pieces.setdefault(fields[3], []).append((int(fields[2]), fields[1]))
+			elif fields[0] == "placed":
+				anchors = [anchor.split(" ") for anchor in fields[5:]]
+				placed.setdefault(fields[1], []).append({"label": fields[2], "at": [float(c) for c in fields[3].split()], "turn": float(fields[4]), "anchors": [(a[0], [float(c) for c in a[1:]]) for a in anchors]})
+	return {key: sorted(entries) for key, entries in pieces.items()}, placed
+
+
+def residue(turn):
+	text = f"{turn % 90:.6f}"
+	return "0.000000" if text == "90.000000" else text
+
+
+def anchors_at(stood, at, turn):
+	"""The anchors, (name, middle), of a copy standing at `at`, turned `turn`:
+	as recorded when a placement stood just there, else moved from the first
+	one a quarter-turn multiple away (a bounds' middle only turns with its
+	part in quarter turns), to within the float precision parts are written in."""
+	for entry in stood:
+		if entry["at"] == at and entry["turn"] == turn:
+			return entry["anchors"]
+	same = sorted((e for e in stood if residue(e["turn"]) == residue(turn)), key=lambda e: e["label"])
+	if not same:
+		return None
+	base = same[0]
+	angle = math.radians(turn - base["turn"])
+	c, s = math.cos(angle), math.sin(angle)
+	moved = []
+	for anchor, (x, y, z) in base["anchors"]:
+		# Y up as written, z up as built: (x, y, z) is (x, z, -y) there.
+		ex, ey, ez = x - base["at"][0], -z - base["at"][1], y - base["at"][2]
+		ex, ey = ex * c - ey * s + at[0], ex * s + ey * c + at[1]
+		moved.append((anchor, [ex, ez + at[2], -ey]))
+	return moved
 
 
 class Layout:
@@ -180,13 +245,16 @@ def main():
 	name = sys.argv[1]
 	root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "art", "models", name)
 	log = os.path.join(root, "build.out")
-	document, binary = read_glb(os.path.join(root, f"{name}.glb"))
+	# A shard whose share was all skipped as already built has no model.
+	glb = os.path.join(root, f"{name}.glb")
+	document, binary = read_glb(glb) if os.path.isfile(glb) else ({"nodes": []}, b"")
 	layout = Layout(document, binary)
 	out = os.path.join(root, "objects")
 	shutil.rmtree(out, ignore_errors=True)
 	os.makedirs(out)
 
 	placed = placements_in(log)
+	stands, skipped = told_in(log)
 	# Each part belongs to the placement with the longest label its name starts with.
 	labels = sorted({p["label"] for p in placed}, key=len, reverse=True)
 	parts = {label: [] for label in labels}
@@ -198,6 +266,9 @@ def main():
 			sys.exit(f"export {name}: part {node['name']} belongs to no placement in {log}")
 		parts[label].append((node["name"][len(label) + 1:], node))
 
+	# For the record of built objects (scripts/merge-shards.sh): each new
+	# keyed object's pieces, and where each keyed placement stands.
+	objects, stood = [], []
 	assets, placements, first = [], [], {}
 	for placement in placed:
 		label, key = placement["label"], placement["key"]
@@ -216,6 +287,8 @@ def main():
 					file.write(glb)
 				assets.append({"id": identity, "key": key, "piece": number, "label": label, "turn": placement["turn"], "bytes": len(glb), "sha": hashlib.sha256(glb).hexdigest()[:16], "parts": len(piece)})
 				entries.append((identity, [suffix for suffix, _ in piece], anchors_of(layout, piece)))
+				if recordable(key):
+					objects.append({"id": identity, "key": key, "piece": number, "parts": entries[-1][1]})
 			if key != "-":
 				first[key] = entries
 		else:
@@ -230,11 +303,34 @@ def main():
 				"turn": placement["turn"],
 				"anchors": [{"name": suffix, "position": layout.middle_of(own[suffix])} for suffix in anchors],
 			})
+			if recordable(key) and label in stands:
+				stood.append({"asset": identity, "label": label, "at": stands[label], "turn": placement["turn"]})
 
+	# Placements skipped as already built stand where the record says.
+	record_path = os.path.join(root, "..", "..", "src", "layouts", f"{name}Objects.tsv")
+	record, recorded = read_record(record_path) if skipped else ({}, {})
+	for placement in skipped:
+		if placement["key"] not in record:
+			sys.exit(f"export {name}: {placement['label']} was skipped, but {name}Objects.tsv has no object {placement['key']}")
+		for _, identity in record[placement["key"]]:
+			anchors = anchors_at(recorded.get(identity, []), placement["at"], placement["turn"])
+			if anchors is None:
+				sys.exit(f"export {name}: {placement['label']} was skipped, but {name}Objects.tsv has no placement of {identity} at its turn")
+			placements.append({
+				"asset": identity,
+				"label": placement["label"],
+				"turn": placement["turn"],
+				"anchors": [{"name": anchor, "position": position} for anchor, position in anchors],
+			})
+			stood.append({"asset": identity, "label": placement["label"], "at": placement["at"], "turn": placement["turn"]})
+
+	manifest = {"assets": assets, "placements": placements}
+	if objects or stood:
+		manifest["record"] = {"objects": objects, "stands": stood}
 	with open(os.path.join(out, "manifest.json"), "w") as file:
-		json.dump({"assets": assets, "placements": placements}, file, indent="\t")
+		json.dump(manifest, file, indent="\t")
 	total = sum(asset["bytes"] for asset in assets)
-	print(f"export {name}: {len(assets)} objects ({total / 1e6:.1f} MB) for {len(placements)} placements", file=sys.stderr)
+	print(f"export {name}: {len(assets)} objects ({total / 1e6:.1f} MB) for {len(placements)} placements, {len(skipped)} skipped as built", file=sys.stderr)
 
 
 if __name__ == "__main__":

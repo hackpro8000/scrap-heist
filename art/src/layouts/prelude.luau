@@ -451,6 +451,42 @@ local function tellPlacement(label: string, turn: number, key: string)
 		print(string.format("PLACED\t%s\t%s\t%s", label, tostring(turn), key))
 	end
 end
+--#unkeyed
+-- (Lines from here to "--#keyed" are left out of every cache key by
+-- scripts/assemble-model.sh: they only tell or skip placements, never change
+-- a build.)
+--
+-- Where a told placement stands (studs, z up), so scripts/export-objects.py
+-- can save it in the layout's record of built objects (<Layout>Objects.tsv).
+local function tellStand(label: string, x: number, y: number, z: number)
+	if not builtParts then
+		print(string.format("STANDS\t%s\t%.17g %.17g %.17g", label, x, y, z))
+	end
+end
+
+-- Whether a sharded build skips a placement because its finished object is
+-- already saved and uploaded: SKIP_BUILT (from the assembler, on the first
+-- line; empty for a full build) holds each such object's key and the turns,
+-- modulo 90 degrees, it has stood at. Its bounds' middles, the placer's
+-- anchors, only follow a copy turned by quarter turns from one of those.
+-- Skipped placements are dealt to no shard and cost none; shard 1 alone
+-- tells them, and scripts/export-objects.py places them from the record.
+local function skipsBuilt(label: string, key: string, x: number, y: number, z: number, turn: number): boolean
+	local turns = SKIP_BUILT[key]
+	if builtParts or not turns or SHARD_COUNT == nil or previewBand then
+		return false
+	end
+	local residue = string.format("%.6f", turn % 90)
+	residue = if residue == "90.000000" then "0.000000" else residue
+	if not string.find(turns, ` {residue} `, 1, true) then
+		return false
+	end
+	if SHARD_INDEX == 1 then
+		print(string.format("SKIPPED\t%s\t%s\t%s\t%.17g %.17g %.17g", label, tostring(turn), key, x, y, z))
+	end
+	return true
+end
+--#keyed
 
 -- `scale` builds the model that many times its own size, so its textures
 -- keep their density instead of being stretched with it.
@@ -479,6 +515,11 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 	-- place, so moving a prop never rebuilds it. Eye previews size textures by
 	-- distance, so there placements share a build per distance band.
 	local variant = if (scale or 1) == 1 then `{stretch or 1} {axis or "x"}` else `{stretch or 1} {axis or "x"} x{scale}`
+	--#unkeyed
+	if skipsBuilt(label, `{key} {variant}`, x, y, z or 0, turn or 0) then
+		return
+	end
+	--#keyed
 	-- Costs are keyed by model name, not source hash, so an edited model keeps
 	-- its last measured cost until it's measured again.
 	local costKey = `{string.match(key, "^(.-)%-%x+$") or key} {variant}`
@@ -503,6 +544,9 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 		end
 	end
 	tellPlacement(label, turn or 0, key)
+	--#unkeyed
+	tellStand(label, x, y, z or 0)
+	--#keyed
 	local x0, y0, z0, turn0 = placeX, placeY, placeZ, placeTurn
 	for _, part in model.cached(key, function()
 		local outerShare, outerImages = partShare, splitImages
@@ -542,11 +586,20 @@ local function placeSlab(label: string, build: () -> (), x: number, y: number, t
 		error(`slab {label} has no cache key; start its body on a line ending in "function()"`)
 	end
 	local costKey = `slab {label}`
+	--#unkeyed
+	-- Its key holds where it stands, so the record holds it unmoved and unturned.
+	if skipsBuilt(label, `{key} {label} {x} {y} {turn or 0}`, 0, 0, 0, 0) then
+		return
+	end
+	--#keyed
 	if not inThisShard(costKey) then
 		return
 	end
 	-- A slab is built where it stands, so it is its own object, unturned.
 	tellPlacement(label, 0, `{key} {label} {x} {y} {turn or 0}`)
+	--#unkeyed
+	tellStand(label, 0, 0, 0)
+	--#keyed
 	placeLabel = label
 	placeX, placeY, placeZ, placeTurn = x, y, 0, math.rad(turn or 0)
 	placeStretch, placeAxis, placeScale = 1, "x", 1

@@ -11,8 +11,9 @@
 # art/src/layouts/<Name>Uploads.tsv (object id, asset ID, the turn the object
 # was uploaded at, and its label), then writes every object the map uses into
 # Assets.MapChunks in src/shared/Assets.luau and every placement into
-# src/shared/Config/MapChunks.luau, for tools/studio/PlaceMap.luau. Commit all
-# three. It prints the asset IDs that are new, which the game needs
+# src/shared/Config/MapChunks.luau, for tools/studio/PlaceMap.luau, and adds
+# what was built to the record of built objects, art/src/layouts/
+# <Name>Objects.tsv, that lets the next build skip them. Commit all four. It prints the asset IDs that are new, which the game needs
 # permission to use before Studio can load them.
 #
 # It refuses to write anything if two shards built the same part, a shard
@@ -30,6 +31,7 @@ import json, os, re, sys
 
 name, root, shards = sys.argv[1], sys.argv[2], sys.argv[3:]
 ledger_path = os.path.join(root, "art", "src", "layouts", f"{name}Uploads.tsv")
+record_path = os.path.join(root, "art", "src", "layouts", f"{name}Objects.tsv")
 assets_path = os.path.join(root, "src", "shared", "Assets.luau")
 placements_path = os.path.join(root, "src", "shared", "Config", "MapChunks.luau")
 
@@ -70,11 +72,14 @@ if os.path.isfile(ledger_path):
 # shard's first placement of it does, so it joins the ledger with that
 # placement's turn. An object already in the ledger keeps its asset.
 placements, described, fresh = [], {}, []
+records = {"objects": [], "stands": []}
 for shard in shards:
 	manifest = json.load(open(os.path.join(shard, "manifest.json")))
 	number = os.path.basename(os.path.normpath(shard)).lstrip("S")
 	described[number] = {asset["id"]: asset for asset in manifest["assets"]}
 	placements.extend(manifest["placements"])
+	records["objects"] += manifest.get("record", {}).get("objects", [])
+	records["stands"] += manifest.get("record", {}).get("stands", [])
 uploaded = os.path.join(os.path.dirname(os.path.normpath(shards[0])), "uploaded.tsv")
 if os.path.isfile(uploaded):
 	for line in open(uploaded):
@@ -92,10 +97,51 @@ if missing:
 	labels = sorted({p["label"] for p in placements if p["asset"] in missing})
 	fail(f"{len(missing)} objects have no asset (not uploaded?): {' '.join(labels[:8])}")
 
+# The record of built objects, <Name>Objects.tsv: for each keyed object an
+# "object" line per piece (id, piece number, key, its parts) and a "placed"
+# line per placement of it (label, where it stands in studs z up, its turn,
+# then each anchor part and its middle in studs Y up). A later build skips
+# what it holds and has assets for (scripts/assemble-model.sh), and
+# scripts/export-objects.py places those copies from it. Objects this build
+# built join it; each object this build placed keeps only this build's
+# placements; the rest stay as they were.
+pieces, stood = {}, {}
+if os.path.isfile(record_path):
+	for line in open(record_path):
+		fields = line.rstrip("\n").split("\t")
+		if fields[0] == "object":
+			pieces[fields[1]] = fields[1:]
+		elif fields[0] == "placed":
+			stood.setdefault(fields[1], []).append(fields[1:])
+anchored = {(p["asset"], p["label"]): p["anchors"] for p in placements}
+fresh_stood = {}
+for entry in records["objects"]:
+	pieces[entry["id"]] = [entry["id"], str(entry["piece"]), entry["key"], " ".join(entry["parts"])]
+for entry in records["stands"]:
+	anchors = anchored.get((entry["asset"], entry["label"]))
+	if anchors is None:
+		fail(f"{entry['label']} stands in a manifest's record but has no placement of {entry['asset']}")
+	# Anchors are picked per built copy, by where its parts stand, so each
+	# placement keeps its own names.
+	fresh_stood.setdefault(entry["asset"], []).append(
+		[entry["asset"], entry["label"], " ".join(repr(float(c)) for c in entry["at"]), repr(float(entry["turn"]))]
+		+ [" ".join([a["name"]] + [repr(float(c)) for c in a["position"]]) for a in anchors]
+	)
+stood.update(fresh_stood)
+unknown = sorted(set(stood) - set(pieces))
+if unknown:
+	fail(f"{len(unknown)} placed objects have no object line for the record: {' '.join(unknown[:5])}")
+
 with open(ledger_path, "w") as file:
 	for identity in sorted(ledger):
 		asset, turn, label = ledger[identity]
 		file.write(f"{identity}\t{asset}\t{turn:g}\t{label}\n")
+
+with open(record_path, "w") as file:
+	for identity in sorted(pieces, key=lambda i: (pieces[i][2], int(pieces[i][1]))):
+		file.write("\t".join(["object"] + pieces[identity]) + "\n")
+		for fields in sorted(stood.get(identity, []), key=lambda f: f[1]):
+			file.write("\t".join(["placed"] + fields) + "\n")
 
 used = sorted({p["asset"] for p in placements})
 block = "Assets.MapChunks = {\n" + "".join(f'\t["{identity}"] = "rbxassetid://{ledger[identity][0]}",\n' for identity in used) + "}"

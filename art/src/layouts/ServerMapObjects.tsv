@@ -1,0 +1,893 @@
+object	09a24bc3f2ba5012	1	25df8b62f2990308-09a6759228b03a28 Plot1 194.0147018273702 80.36352079666885 -67.5	Ground_-1_-1_0_000 Ground_-1_-1_0_010 Ground_-1_-1_0_100_000 Ground_-1_-1_0_100_010 Ground_-1_-1_0_100_100 Ground_-1_-1_0_100_110 Ground_-1_-1_0_110_000 Ground_-1_-1_0_110_010 Ground_-1_-1_0_110_100 Ground_-1_-1_0_110_110 Ground_-1_0_0_000 Ground_-1_0_0_010 Ground_-1_0_0_100_000 Ground_-1_0_0_100_010 Ground_-1_0_0_100_100 Ground_-1_0_0_100_110 Ground_-1_0_0_110_000 Ground_-1_0_0_110_010 Ground_-1_0_0_110_100 Ground_-1_0_0_110_110 Ground_0_-1_0_000_000 Ground_0_-1_0_000_010 Ground_0_-1_0_000_100 Ground_0_-1_0_000_110 Ground_0_-1_0_010_000 Ground_0_-1_0_010_010 Ground_0_-1_0_010_100 Ground_0_-1_0_010_110 Ground_0_-1_0_100 Ground_0_-1_0_110 Ground_0_0_0_000_000 Ground_0_0_0_000_010 Ground_0_0_0_000_100 Ground_0_0_0_000_110 Ground_0_0_0_010_000 Ground_0_0_0_010_010 Ground_0_0_0_010_100 Ground_0_0_0_010_110 Ground_0_0_0_100 Ground_0_0_0_110
+placed	09a24bc3f2ba5012	Plot1	0.0 0.0 0.0	0.0	Ground_-1_0_0_010 216.744945 1.8649999999999998 -135.23916499999999	Ground_0_-1_0_100 171.284465 1.8649999999999998 -25.4878755
+object	ba591f14a0ebb9e1	1	25df8b62f2990308-09a6759228b03a28 Plot2 80.36352079666887 194.0147018273702 -22.5	Ground_-1_-1_0_000 Ground_-1_-1_0_010 Ground_-1_-1_0_100_000 Ground_-1_-1_0_100_010 Ground_-1_-1_0_100_100 Ground_-1_-1_0_100_110 Ground_-1_-1_0_110_000 Ground_-1_-1_0_110_010 Ground_-1_-1_0_110_100 Ground_-1_-1_0_110_110 Ground_-1_0_0_000 Ground_-1_0_0_010 Ground_-1_0_0_100_000 Ground_-1_0_0_100_010 Ground_-1_0_0_100_100 Ground_-1_0_0_100_110 Ground_-1_0_0_110_000 Ground_-1_0_0_110_010 Ground_-1_0_0_110_100 Ground_-1_0_0_110_110 Ground_0_-1_0_000_000 Ground_0_-1_0_000_010 Ground_0_-1_0_000_100 Ground_0_-1_0_000_110 Ground_0_-1_0_010_000 Ground_0_-1_0_010_010 Ground_0_-1_0_010_100 Ground_0_-1_0_010_110 Ground_0_-1_0_100 Ground_0_-1_0_110 Ground_0_0_0_000_000 Ground_0_0_0_000_010 Ground_0_0_0_000_100 Ground_0_0_0_000_110 Ground_0_0_0_010_000 Ground_0_0_0_010_010 Ground_0_0_0_010_100 Ground_0_0_0_010_110 Ground_0_0_0_100 Ground_0_0_0_110
+placed	ba591f14a0ebb9e1	Plot2	0.0 0.0 0.0	0.0	Ground_-1_-1_0_000 25.4878755 1.8649999999999998 -171.284465	Ground_0_0_0_110 135.23916499999999 1.8649999999999998 -216.744945
+object	a7778af3e0623070	1	25df8b62f2990308-09a6759228b03a28 Plot3 -80.36352079666884 194.0147018273702 22.5	Ground_-1_-1_0_000 Ground_-1_-1_0_010 Ground_-1_-1_0_100_000 Ground_-1_-1_0_100_010 Ground_-1_-1_0_100_100 Ground_-1_-1_0_100_110 Ground_-1_-1_0_110_000 Ground_-1_-1_0_110_010 Ground_-1_-1_0_110_100 Ground_-1_-1_0_110_110 Ground_-1_0_0_000 Ground_-1_0_0_010 Ground_-1_0_0_100_000 Ground_-1_0_0_100_010 Ground_-1_0_0_100_100 Ground_-1_0_0_100_110 Ground_-1_0_0_110_000 Ground_-1_0_0_110_010 Ground_-1_0_0_110_100 Ground_-1_0_0_110_110 Ground_0_-1_0_000_000 Ground_0_-1_0_000_010 Ground_0_-1_0_000_100 Ground_0_-1_0_000_110 Ground_0_-1_0_010_000 Ground_0_-1_0_010_010 Ground_0_-1_0_010_100 Ground_0_-1_0_010_110 Ground_0_-1_0_100 Ground_0_-1_0_110 Ground_0_0_0_000_000 Ground_0_0_0_000_010 Ground_0_0_0_000_100 Ground_0_0_0_000_110 Ground_0_0_0_010_000 Ground_0_0_0_010_010 Ground_0_0_0_010_100 Ground_0_0_0_010_110 Ground_0_0_0_100 Ground_0_0_0_110
+placed	a7778af3e0623070	Plot3	0.0 0.0 0.0	0.0	Ground_-1_0_0_010 -135.23916499999999 1.8649999999999998 -216.744945	Ground_0_-1_0_100 -25.4878755 1.8649999999999998 -171.284465
+object	1a35d1db9397cba2	1	25df8b62f2990308-09a6759228b03a28 Plot4 -194.0147018273702 80.36352079666888 67.5	Ground_-1_-1_0_000 Ground_-1_-1_0_010 Ground_-1_-1_0_100_000 Ground_-1_-1_0_100_010 Ground_-1_-1_0_100_100 Ground_-1_-1_0_100_110 Ground_-1_-1_0_110_000 Ground_-1_-1_0_110_010 Ground_-1_-1_0_110_100 Ground_-1_-1_0_110_110 Ground_-1_0_0_000 Ground_-1_0_0_010 Ground_-1_0_0_100_000 Ground_-1_0_0_100_010 Ground_-1_0_0_100_100 Ground_-1_0_0_100_110 Ground_-1_0_0_110_000 Ground_-1_0_0_110_010 Ground_-1_0_0_110_100 Ground_-1_0_0_110_110 Ground_0_-1_0_000_000 Ground_0_-1_0_000_010 Ground_0_-1_0_000_100 Ground_0_-1_0_000_110 Ground_0_-1_0_010_000 Ground_0_-1_0_010_010 Ground_0_-1_0_010_100 Ground_0_-1_0_010_110 Ground_0_-1_0_100 Ground_0_-1_0_110 Ground_0_0_0_000_000 Ground_0_0_0_000_010 Ground_0_0_0_000_100 Ground_0_0_0_000_110 Ground_0_0_0_010_000 Ground_0_0_0_010_010 Ground_0_0_0_010_100 Ground_0_0_0_010_110 Ground_0_0_0_100 Ground_0_0_0_110
+placed	1a35d1db9397cba2	Plot4	0.0 0.0 0.0	0.0	Ground_-1_-1_0_000 -171.284465 1.8649999999999998 -25.4878755	Ground_0_0_0_110 -216.744945 1.8649999999999998 -135.23916499999999
+object	8825e85f8ee59b58	1	25df8b62f2990308-09a6759228b03a28 Plot5 -194.01470182737023 -80.36352079666884 112.5	Ground_-1_-1_0_000 Ground_-1_-1_0_010 Ground_-1_-1_0_100_000 Ground_-1_-1_0_100_010 Ground_-1_-1_0_100_100 Ground_-1_-1_0_100_110 Ground_-1_-1_0_110_000 Ground_-1_-1_0_110_010 Ground_-1_-1_0_110_100 Ground_-1_-1_0_110_110 Ground_-1_0_0_000 Ground_-1_0_0_010 Ground_-1_0_0_100_000 Ground_-1_0_0_100_010 Ground_-1_0_0_100_100 Ground_-1_0_0_100_110 Ground_-1_0_0_110_000 Ground_-1_0_0_110_010 Ground_-1_0_0_110_100 Ground_-1_0_0_110_110 Ground_0_-1_0_000_000 Ground_0_-1_0_000_010 Ground_0_-1_0_000_100 Ground_0_-1_0_000_110 Ground_0_-1_0_010_000 Ground_0_-1_0_010_010 Ground_0_-1_0_010_100 Ground_0_-1_0_010_110 Ground_0_-1_0_100 Ground_0_-1_0_110 Ground_0_0_0_000_000 Ground_0_0_0_000_010 Ground_0_0_0_000_100 Ground_0_0_0_000_110 Ground_0_0_0_010_000 Ground_0_0_0_010_010 Ground_0_0_0_010_100 Ground_0_0_0_010_110 Ground_0_0_0_100 Ground_0_0_0_110
+placed	8825e85f8ee59b58	Plot5	0.0 0.0 0.0	0.0	Ground_-1_0_0_010 -216.744945 1.8649999999999998 135.23916499999999	Ground_0_-1_0_100 -171.284465 1.8649999999999998 25.4878755
+object	9cac11c6da370634	1	25df8b62f2990308-09a6759228b03a28 Plot6 -80.3635207966688 -194.01470182737023 157.5	Ground_-1_-1_0_000 Ground_-1_-1_0_010 Ground_-1_-1_0_100_000 Ground_-1_-1_0_100_010 Ground_-1_-1_0_100_100 Ground_-1_-1_0_100_110 Ground_-1_-1_0_110_000 Ground_-1_-1_0_110_010 Ground_-1_-1_0_110_100 Ground_-1_-1_0_110_110 Ground_-1_0_0_000 Ground_-1_0_0_010 Ground_-1_0_0_100_000 Ground_-1_0_0_100_010 Ground_-1_0_0_100_100 Ground_-1_0_0_100_110 Ground_-1_0_0_110_000 Ground_-1_0_0_110_010 Ground_-1_0_0_110_100 Ground_-1_0_0_110_110 Ground_0_-1_0_000_000 Ground_0_-1_0_000_010 Ground_0_-1_0_000_100 Ground_0_-1_0_000_110 Ground_0_-1_0_010_000 Ground_0_-1_0_010_010 Ground_0_-1_0_010_100 Ground_0_-1_0_010_110 Ground_0_-1_0_100 Ground_0_-1_0_110 Ground_0_0_0_000_000 Ground_0_0_0_000_010 Ground_0_0_0_000_100 Ground_0_0_0_000_110 Ground_0_0_0_010_000 Ground_0_0_0_010_010 Ground_0_0_0_010_100 Ground_0_0_0_010_110 Ground_0_0_0_100 Ground_0_0_0_110
+placed	9cac11c6da370634	Plot6	0.0 0.0 0.0	0.0	Ground_-1_-1_0_000 -25.4878755 1.8649999999999998 171.284465	Ground_0_0_0_110 -135.23916499999999 1.8649999999999998 216.744945
+object	6e418d43c0adaef0	1	25df8b62f2990308-09a6759228b03a28 Plot7 80.3635207966689 -194.0147018273702 202.5	Ground_-1_-1_0_000 Ground_-1_-1_0_010 Ground_-1_-1_0_100_000 Ground_-1_-1_0_100_010 Ground_-1_-1_0_100_100 Ground_-1_-1_0_100_110 Ground_-1_-1_0_110_000 Ground_-1_-1_0_110_010 Ground_-1_-1_0_110_100 Ground_-1_-1_0_110_110 Ground_-1_0_0_000 Ground_-1_0_0_010 Ground_-1_0_0_100_000 Ground_-1_0_0_100_010 Ground_-1_0_0_100_100 Ground_-1_0_0_100_110 Ground_-1_0_0_110_000 Ground_-1_0_0_110_010 Ground_-1_0_0_110_100 Ground_-1_0_0_110_110 Ground_0_-1_0_000_000 Ground_0_-1_0_000_010 Ground_0_-1_0_000_100 Ground_0_-1_0_000_110 Ground_0_-1_0_010_000 Ground_0_-1_0_010_010 Ground_0_-1_0_010_100 Ground_0_-1_0_010_110 Ground_0_-1_0_100 Ground_0_-1_0_110 Ground_0_0_0_000_000 Ground_0_0_0_000_010 Ground_0_0_0_000_100 Ground_0_0_0_000_110 Ground_0_0_0_010_000 Ground_0_0_0_010_010 Ground_0_0_0_010_100 Ground_0_0_0_010_110 Ground_0_0_0_100 Ground_0_0_0_110
+placed	6e418d43c0adaef0	Plot7	0.0 0.0 0.0	0.0	Ground_-1_0_0_010 135.23916499999999 1.8649999999999998 216.744945	Ground_0_-1_0_100 25.4878755 1.8649999999999998 171.284465
+object	22d4f14f0e747f9e	1	25df8b62f2990308-09a6759228b03a28 Plot8 194.01470182737023 -80.36352079666881 247.5	Ground_-1_-1_0_000 Ground_-1_-1_0_010 Ground_-1_-1_0_100_000 Ground_-1_-1_0_100_010 Ground_-1_-1_0_100_100 Ground_-1_-1_0_100_110 Ground_-1_-1_0_110_000 Ground_-1_-1_0_110_010 Ground_-1_-1_0_110_100 Ground_-1_-1_0_110_110 Ground_-1_0_0_000 Ground_-1_0_0_010 Ground_-1_0_0_100_000 Ground_-1_0_0_100_010 Ground_-1_0_0_100_100 Ground_-1_0_0_100_110 Ground_-1_0_0_110_000 Ground_-1_0_0_110_010 Ground_-1_0_0_110_100 Ground_-1_0_0_110_110 Ground_0_-1_0_000_000 Ground_0_-1_0_000_010 Ground_0_-1_0_000_100 Ground_0_-1_0_000_110 Ground_0_-1_0_010_000 Ground_0_-1_0_010_010 Ground_0_-1_0_010_100 Ground_0_-1_0_010_110 Ground_0_-1_0_100 Ground_0_-1_0_110 Ground_0_0_0_000_000 Ground_0_0_0_000_010 Ground_0_0_0_000_100 Ground_0_0_0_000_110 Ground_0_0_0_010_000 Ground_0_0_0_010_010 Ground_0_0_0_010_100 Ground_0_0_0_010_110 Ground_0_0_0_100 Ground_0_0_0_110
+placed	22d4f14f0e747f9e	Plot8	0.0 0.0 0.0	0.0	Ground_-1_-1_0_000 171.284465 1.8649999999999998 25.4878755	Ground_0_0_0_110 216.744945 1.8649999999999998 135.23916499999999
+object	84fbf049306644b4	1	25df8b62f2990308-1140b5bda9dd140d Plaza 0 0 0	Paving_-1_-1_0 Paving_-1_0_0 Paving_0_-1_0 Paving_0_0_0
+placed	84fbf049306644b4	Plaza	0.0 0.0 0.0	0.0	Paving_-1_-1_0 -50.5 2.05 50.49999999999999	Paving_0_0_0 50.5 2.05 -50.5
+object	8f4c4a52e8d87892	1	25df8b62f2990308-1439853d85f21bad RoughShade1 153.51991531171436 2.1090525560218367 0	GroundShade
+placed	8f4c4a52e8d87892	RoughShade1	0.0 0.0 0.0	0.0	GroundShade 153.51992 2.03 -2.109052475
+object	2a16e868b30b6db8	1	25df8b62f2990308-1439853d85f21bad RoughShade10 146.04240820479336 -149.99962501867964 0	GroundShade
+placed	2a16e868b30b6db8	RoughShade10	0.0 0.0 0.0	0.0	GroundShade 146.04241000000002 2.03 149.99962499999998
+object	2f1f1d60d936145d	1	25df8b62f2990308-1439853d85f21bad RoughShade2 122.22340712809475 127.52670798699384 0	GroundShade
+placed	2f1f1d60d936145d	RoughShade2	0.0 0.0 0.0	0.0	GroundShade 122.22341 2.03 -127.52671000000001
+object	1f5c763b235d59b9	1	25df8b62f2990308-1439853d85f21bad RoughShade5 -94.59963391240943 97.28858753028595 0	GroundShade
+placed	1f5c763b235d59b9	RoughShade5	0.0 0.0 0.0	0.0	GroundShade -95.517357 2.03 -95.97794300000001
+object	8ed573068e2856eb	1	25df8b62f2990308-1439853d85f21bad RoughShade7 -103.58929885200489 -108.56269922652999 0	GroundShade
+placed	8ed573068e2856eb	RoughShade7	0.0 0.0 0.0	0.0	GroundShade -103.58930000000001 2.03 108.5627
+object	f89a07e87c4a276a	1	25df8b62f2990308-1439853d85f21bad RoughShade9 2.100174824690046 -196.24625287048346 0	GroundShade
+placed	f89a07e87c4a276a	RoughShade9	0.0 0.0 0.0	0.0	GroundShade 2.10017491 2.03 196.24625500000002
+object	977a48962ecc2fca	1	25df8b62f2990308-387e6895a6242efb Spawn 0 22 0	Pad
+placed	977a48962ecc2fca	Spawn	0.0 0.0 0.0	0.0	Pad 0.0 2.0999999999999996 -22.0
+object	e7718d5e40e7ab90	1	25df8b62f2990308-4bed7244ea680ec2 YardShade1 194.0147018273702 80.36352079666885 -67.5	GroundShade
+placed	e7718d5e40e7ab90	YardShade1	0.0 0.0 0.0	0.0	GroundShade 194.01471 2.03 -80.363523
+object	55113e187cfbf056	1	25df8b62f2990308-4bed7244ea680ec2 YardShade2 80.36352079666887 194.0147018273702 -22.5	GroundShade
+placed	55113e187cfbf056	YardShade2	0.0 0.0 0.0	0.0	GroundShade 80.363523 2.03 -194.01471
+object	403c2d9d934c7b81	1	25df8b62f2990308-4bed7244ea680ec2 YardShade3 -80.36352079666884 194.0147018273702 22.5	GroundShade
+placed	403c2d9d934c7b81	YardShade3	0.0 0.0 0.0	0.0	GroundShade -80.363523 2.03 -194.01471
+object	c214b747c154e7da	1	25df8b62f2990308-4bed7244ea680ec2 YardShade4 -194.0147018273702 80.36352079666888 67.5	GroundShade
+placed	c214b747c154e7da	YardShade4	0.0 0.0 0.0	0.0	GroundShade -194.01471 2.03 -80.363523
+object	ddb21ddf9cca3eb9	1	25df8b62f2990308-4bed7244ea680ec2 YardShade5 -194.01470182737023 -80.36352079666884 112.5	GroundShade
+placed	ddb21ddf9cca3eb9	YardShade5	0.0 0.0 0.0	0.0	GroundShade -194.01471 2.03 80.363523
+object	266543cbf59fecc0	1	25df8b62f2990308-4bed7244ea680ec2 YardShade6 -80.3635207966688 -194.01470182737023 157.5	GroundShade
+placed	266543cbf59fecc0	YardShade6	0.0 0.0 0.0	0.0	GroundShade -80.363523 2.03 194.01471
+object	bb905f6a2e0c4e0d	1	25df8b62f2990308-4bed7244ea680ec2 YardShade7 80.3635207966689 -194.0147018273702 202.5	GroundShade
+placed	bb905f6a2e0c4e0d	YardShade7	0.0 0.0 0.0	0.0	GroundShade 80.363523 2.03 194.01471
+object	9fe67cd7f52fa8f5	1	25df8b62f2990308-4bed7244ea680ec2 YardShade8 194.01470182737023 -80.36352079666881 247.5	GroundShade
+placed	9fe67cd7f52fa8f5	YardShade8	0.0 0.0 0.0	0.0	GroundShade 194.01471 2.03 80.363523
+object	70edcb2f4541515b	1	25df8b62f2990308-6ad7b70c6ecee2a9 Rough1 177.89156720939906 6.212110413045172 0	GroundShade Stones
+placed	70edcb2f4541515b	Rough1	0.0 0.0 0.0	0.0	GroundShade 189.68498 2.03 -0.3396775000000005
+object	90d43d5f267fcd05	1	25df8b62f2990308-6ad7b70c6ecee2a9 Rough10 137.48179271331793 -123.78916217638876 0	GroundShade Stones
+placed	90d43d5f267fcd05	Rough10	0.0 0.0 0.0	0.0	GroundShade 124.99063000000001 2.03 124.087655	Stones 125.10756500000001 2.2073329999999998 124.63228
+object	8cdac21a702b1816	1	25df8b62f2990308-6ad7b70c6ecee2a9 Rough2 107.48023074035522 107.48023074035521 0	GroundShade Stones
+placed	8cdac21a702b1816	Rough2	0.0 0.0 0.0	0.0	GroundShade 103.82964 2.03 -105.3466875
+object	24d318569a8657cd	1	25df8b62f2990308-6ad7b70c6ecee2a9 Rough3 6.630904373475206 189.88425713362818 0	GroundShade Stones
+placed	24d318569a8657cd	Rough3	0.0 0.0 0.0	0.0	GroundShade -1.4492015 2.03 -187.089895	Stones -1.9625915000000003 2.510234 -187.154605
+object	4b6c85c6477ca429	1	25df8b62f2990308-6ad7b70c6ecee2a9 Rough4 -154.1738718127692 177.35675135235144 0	GroundShade Stones
+placed	4b6c85c6477ca429	Rough4	0.0 0.0 0.0	0.0	GroundShade -163.919105 2.03 -157.397835
+object	5363b53bd854c706	1	25df8b62f2990308-6ad7b70c6ecee2a9 Rough5 -118.90317207638304 107.06089701741733 0	GroundShade Stones
+placed	5363b53bd854c706	Rough5	0.0 0.0 0.0	0.0	GroundShade -119.13117 2.03 -115.118618
+object	ca22314670f2a832	1	25df8b62f2990308-6ad7b70c6ecee2a9 Rough6 -204.71905462468763 -10.72887102980343 0	GroundShade Stones
+placed	ca22314670f2a832	Rough6	0.0 0.0 0.0	0.0	GroundShade -208.15717999999998 2.03 -0.2506680000000001
+object	62f66e6e9f4f3a0e	1	25df8b62f2990308-6ad7b70c6ecee2a9 Rough7 -125.79283667849734 -117.30371793074971 0	GroundShade Stones
+placed	62f66e6e9f4f3a0e	Rough7	0.0 0.0 0.0	0.0	GroundShade -129.765535 2.03 125.31630200000001
+object	50d00fd45e19c316	1	25df8b62f2990308-6ad7b70c6ecee2a9 Rough8 -169.13559329549966 -181.37571800155428 0	GroundShade Stones
+placed	50d00fd45e19c316	Rough8	0.0 0.0 0.0	0.0	GroundShade -173.68966 2.03 171.72339	Stones -174.01085999999998 2.6351590000000003 172.249005
+object	042ba835bf7b03aa	1	25df8b62f2990308-6ad7b70c6ecee2a9 Rough9 7.677889274550282 -219.86598194420108 0	GroundShade Stones
+placed	042ba835bf7b03aa	Rough9	0.0 0.0 0.0	0.0	GroundShade -1.1723654999999997 2.03 216.473505
+object	3224270c13be3df1	1	25df8b62f2990308-96d3b9c80baa686a Streets 0 0 0	Conduits Drains Kerbs LampGlow LampPosts LaneMarks RoadMarks_-1_-1_0 RoadMarks_-1_0_0 RoadMarks_0_-1_0 RoadMarks_0_0_0 Tracks Walks
+placed	3224270c13be3df1	Streets	0.0 0.0 0.0	0.0	RoadMarks_-1_0_0 -50.5 2.07 -50.50000000000001	RoadMarks_0_-1_0 50.49999999999999 2.07 50.50000000000001
+object	971cd999c05b09ec	1	25df8b62f2990308-dbd59378b4f53cfc RoughFoot2 122.22340712809475 127.52670798699384 0	Grit GroundShade
+placed	971cd999c05b09ec	RoughFoot2	0.0 0.0 0.0	0.0	Grit 120.26491999999999 1.6564074500000001 -121.45975200000001	GroundShade 119.379895 2.03 -122.47156799999999
+object	abf124a3c484f82f	1	25df8b62f2990308-dbd59378b4f53cfc RoughFoot5 -94.59963391240943 97.28858753028595 0	Grit GroundShade
+placed	abf124a3c484f82f	RoughFoot5	0.0 0.0 0.0	0.0	Grit -98.13896249999999 1.655033725 -87.79461	GroundShade -99.735435 2.03 -87.787875
+object	a50345a785dbbfbc	1	25df8b62f2990308-dbd59378b4f53cfc RoughFoot6 -232.0545556037427 2.608778171764234 0	Grit
+placed	a50345a785dbbfbc	RoughFoot6	0.0 0.0 0.0	0.0	Grit -224.7828 1.6019195 -4.0275519
+object	18109ae1d7459dc5	1	25df8b62f2990308-dbd59378b4f53cfc RoughFoot8 -198.10190576094405 -193.74322551738953 0	Grit GroundShade
+placed	18109ae1d7459dc5	RoughFoot8	0.0 0.0 0.0	0.0	Grit -202.900505 1.61071095 202.260545	GroundShade -202.294085 2.03 201.820085
+object	803085db5bf6b1b3	1	25df8b62f2990308-dbd59378b4f53cfc RoughFoot9 2.100174824690046 -196.24625287048346 0	Grit
+placed	803085db5bf6b1b3	RoughFoot9	0.0 0.0 0.0	0.0	Grit 8.29133165 1.5991278999999998 195.125745
+object	a3a7364df7f35b86	1	25df8b62f2990308-e6328242ecab9497 LoneWreck1 137.9 44.8 0	GroundShade Pipe PipeStone
+placed	a3a7364df7f35b86	LoneWreck1	0.0 0.0 0.0	0.0	Pipe 137.80185 2.643356 -45.425312000000005	PipeStone 137.82809 2.16111595 -41.231201
+object	7ae9b2f7044379c6	1	25df8b62f2990308-e6328242ecab9497 LoneWreck10 -175 0 0	GroundShade Pipe PipeStone
+placed	7ae9b2f7044379c6	LoneWreck10	0.0 0.0 0.0	0.0	Pipe -175.096065 2.643356 0.6409348500000003	PipeStone -175.2957 2.15448053 -3.7661845
+object	7e18059b61847ec5	1	25df8b62f2990308-e6328242ecab9497 LoneWreck12 145 145 0	GroundShade Tyre
+placed	7e18059b61847ec5	LoneWreck12	0.0 0.0 0.0	0.0	GroundShade 143.925 2.03 -144.475
+object	a76487bed103ab78	1	25df8b62f2990308-e6328242ecab9497 LoneWreck13 -145 145 0	GroundShade Pipe PipeStone
+placed	a76487bed103ab78	LoneWreck13	0.0 0.0 0.0	0.0	Pipe -145.09815500000002 2.643356 -145.62531	PipeStone -145.178725 2.1470661 -141.35505
+object	61a5a62e9db1e6f3	1	25df8b62f2990308-e6328242ecab9497 LoneWreck14 -145 -145 0	GroundShade Slab SlabStone
+placed	61a5a62e9db1e6f3	LoneWreck14	0.0 0.0 0.0	0.0	Slab -144.126015 2.83000105 144.28871500000002	SlabStone -142.91330499999998 2.186422425 145.390415
+object	14924ccb96a13d4f	1	25df8b62f2990308-e6328242ecab9497 LoneWreck16 141.1 194.2 0	GroundShade Pipe PipeStone
+placed	14924ccb96a13d4f	LoneWreck16	0.0 0.0 0.0	0.0	Pipe 141.00394 2.643356 -193.55906	PipeStone 141.024085 2.2065055 -197.77388000000002
+object	98c177a334167c9e	1	25df8b62f2990308-e6328242ecab9497 LoneWreck17 0 240 0	GroundShade Slab SlabStone
+placed	98c177a334167c9e	LoneWreck17	0.0 0.0 0.0	0.0	GroundShade -0.7999999999999998 2.03 -240.64999999999998	SlabStone -2.330909 2.1309369 -239.52901500000002
+object	cf1285d645051b83	1	25df8b62f2990308-e6328242ecab9497 LoneWreck18 -37.5 -237 0	GroundShade Tyre
+placed	cf1285d645051b83	LoneWreck18	0.0 0.0 0.0	0.0	GroundShade -38.575 2.03 237.525
+object	15c5a4f45b5055f5	1	25df8b62f2990308-e6328242ecab9497 LoneWreck2 65.8 129.2 0	GroundShade Slab SlabStone
+placed	15c5a4f45b5055f5	LoneWreck2	0.0 0.0 0.0	0.0	GroundShade 66.6 2.03 -129.85000000000002	SlabStone 68.01265000000001 2.11059555 -128.705905
+object	1d3b2627c962078f	1	25df8b62f2990308-e6328242ecab9497 LoneWreck20 237 -37.5 0	GroundShade Slab SlabStone
+placed	1d3b2627c962078f	LoneWreck20	0.0 0.0 0.0	0.0	GroundShade 237.8 2.03 36.849999999999994	SlabStone 239.31179500000002 2.1548982 37.942675
+object	e9907e6b89c5ecc9	1	25df8b62f2990308-e6328242ecab9497 LoneWreck21 -237 37.5 0	GroundShade Tyre
+placed	e9907e6b89c5ecc9	LoneWreck21	0.0 0.0 0.0	0.0	GroundShade -235.775 2.03 -37.45
+object	4c3c8097a2084dd7	1	25df8b62f2990308-e6328242ecab9497 LoneWreck22 194.2 -141.1 0	GroundShade Pipe PipeStone
+placed	4c3c8097a2084dd7	LoneWreck22	0.0 0.0 0.0	0.0	Pipe 194.10393499999998 2.643356 141.74094	PipeStone 194.23831 2.1936735 137.38595500000002
+object	70036d911254be36	1	25df8b62f2990308-e6328242ecab9497 LoneWreck24 37.5 237 0	GroundShade Tyre
+placed	70036d911254be36	LoneWreck24	0.0 0.0 0.0	0.0	GroundShade 36.425 2.03 -236.475
+object	b499ea930d7eef7d	1	25df8b62f2990308-e6328242ecab9497 LoneWreck25 169.7 169.7 0	GroundShade Pipe PipeStone
+placed	b499ea930d7eef7d	LoneWreck25	0.0 0.0 0.0	0.0	Pipe 169.601845 2.643356 -170.32531	PipeStone 169.79406 2.1419335999999998 -166.10361999999998
+object	ce98401262a7a059	1	25df8b62f2990308-e6328242ecab9497 LoneWreck4 -85.2 117.3 0	GroundShade Pipe PipeStone
+placed	ce98401262a7a059	LoneWreck4	0.0 0.0 0.0	0.0	Pipe -85.2960625 2.643356 -116.659065	PipeStone -85.207048 2.16861952 -120.81221
+object	bda257787e425135	1	25df8b62f2990308-e6328242ecab9497 LoneWreck5 -137.9 -44.8 0	GroundShade Slab SlabStone
+placed	bda257787e425135	LoneWreck5	0.0 0.0 0.0	0.0	GroundShade -138.7 2.03 44.150000000000006	SlabStone -140.22339 2.10907015 45.342636
+object	d85d68ce6c06db17	1	25df8b62f2990308-e6328242ecab9497 LoneWreck6 -117.3 -85.2 0	GroundShade Tyre
+placed	d85d68ce6c06db17	LoneWreck6	0.0 0.0 0.0	0.0	GroundShade -118.375 2.03 85.725
+object	4c4fdeb3a6b30471	1	25df8b62f2990308-e6328242ecab9497 LoneWreck8 65.8 -129.2 0	GroundShade Slab SlabStone
+placed	4c4fdeb3a6b30471	LoneWreck8	0.0 0.0 0.0	0.0	GroundShade 66.6 2.03 128.57379500000002	SlabStone 68.1621225 2.137969 129.60459
+object	8437494a049b80bf	1	25df8b62f2990308-e6328242ecab9497 LoneWreck9 137.9 -44.8 0	GroundShade Tyre
+placed	8437494a049b80bf	LoneWreck9	0.0 0.0 0.0	0.0	GroundShade 139.125 2.03 44.849999999999994
+object	5c306e607d607dad	1	BeltCrossing-eee6b0e8964a303c 1 x	Bulbs Fittings Legs Railings Span Stairs WarningSign
+placed	5c306e607d607dad	Crossing1	66.51932634081264 27.553207130286463 2.05	22.5	Railings 66.513578 6.3091093 -27.555414	WarningSign 68.01933199999999 9.1545215 -23.9486655
+placed	5c306e607d607dad	Crossing2	27.553207130286467 66.51932634081264 2.05	67.5	Railings 27.5549945 6.3091093 -66.513225	WarningSign 31.168398 9.1545215 -65.03275500000001
+placed	5c306e607d607dad	Crossing3	-27.55320713028646 66.51932634081264 2.05	112.5	Railings -27.555414 6.3091093 -66.513578	WarningSign -23.9486655 9.1545215 -68.01933199999999
+placed	5c306e607d607dad	Crossing4	-66.51932634081264 27.553207130286474 2.05	157.5	Railings -66.513225 6.3091093 -27.5549945	WarningSign -65.03275500000001 9.1545215 -31.168398
+placed	5c306e607d607dad	Crossing5	-66.51932634081265 -27.553207130286456 2.05	202.5	Railings -66.513578 6.3091093 27.555414	WarningSign -68.01933199999999 9.1545215 23.9486655
+placed	5c306e607d607dad	Crossing6	-27.553207130286445 -66.51932634081265 2.05	247.5	Bulbs -27.5532075 12.35 66.519329	WarningSign -31.168398 9.1545215 65.03275500000001
+placed	5c306e607d607dad	Crossing7	27.55320713028648 -66.51932634081264 2.05	292.5	Railings 27.555414 6.3091093 66.513578	WarningSign 23.9486655 9.1545215 68.01933199999999
+placed	5c306e607d607dad	Crossing8	66.51932634081265 -27.55320713028645 2.05	337.5	Bulbs 66.519329 12.35 27.5532075	WarningSign 65.03275500000001 9.1545215 31.168398
+object	26ae3a997281405f	1	BuildBay-f8fddcb129310701 1 x	Arm BackLamps Bands Board Clamp1 Clamp2 Clamp3 Cradle Crate CrateGear CrateHeap CrateScrap Deck Drum Frame Pad1 Pad2 Pad3 Panel PostLamps Posts Tools
+placed	26ae3a997281405f	Kit_Bay	-792.0 0.0 -260.0	0.0	Board -792.0 -256.45 -3.9307499999999997	Posts -792.0 -257.40691 4.1738848
+placed	26ae3a997281405f	Yard1_Bay	141.47361951938046 79.16574372849391 2.0	112.5	Board 137.824295 5.55 -77.654145	Posts 145.53303499999998 4.59308935 -80.90695500000001
+placed	26ae3a997281405f	Yard2_Bay	44.058321493065016 156.01558994925387 2.0	157.5	Board 42.5467225 5.55 -152.366265	Posts 45.7995305 4.59308935 -160.075015
+placed	26ae3a997281405f	Yard3_Bay	-79.16574372849388 141.47361951938046 2.0	202.5	Board -77.654145 5.55 -137.824295	Posts -80.90695500000001 4.59308935 -145.53303499999998
+placed	26ae3a997281405f	Yard4_Bay	-156.01558994925387 44.05832149306502 2.0	247.5	Board -152.366265 5.55 -42.5467225	Posts -160.075015 4.59308935 -45.7995305
+placed	26ae3a997281405f	Yard5_Bay	-141.47361951938046 -79.16574372849388 2.0	292.5	Board -137.824295 5.55 77.654145	Posts -145.53303499999998 4.59308935 80.90695500000001
+placed	26ae3a997281405f	Yard6_Bay	-44.05832149306494 -156.01558994925387 2.0	337.5	Board -42.5467225 5.55 152.366265	Posts -45.7995305 4.59308935 160.075015
+placed	26ae3a997281405f	Yard7_Bay	79.16574372849394 -141.47361951938046 2.0	382.5	Board 77.654145 5.55 137.824295	Posts 80.90695500000001 4.59308935 145.53303499999998
+placed	26ae3a997281405f	Yard8_Bay	156.01558994925387 -44.05832149306497 2.0	427.5	Board 152.366265 5.55 42.5467225	Posts 160.075015 4.59308935 45.7995305
+object	a6fa218003ca3352	1	CapsuleFactory-60694d3d77ed9d5a 1 x	Box Label Stencil Tape
+placed	a6fa218003ca3352	Kit_CapsuleFactory	-624.0 0.0 -260.0	0.0	Label -624.6 -259.25 1.31	Tape -624.0 -258.015 0.0
+object	d8335fffe98212b0	1	CapsuleLoop-e122c768981a2fcf 1 x	Beacons BeltFeet BeltRails_-1_-1_0_000 BeltRails_-1_-1_0_010 BeltRails_-1_-1_0_100 BeltRails_-1_-2_0 BeltRails_-1_0_0_000 BeltRails_-1_0_0_010 BeltRails_-1_0_0_110 BeltRails_-1_1_0 BeltRails_-2_-1_0 BeltRails_-2_0_0 BeltRails_0_-1_0_000 BeltRails_0_-1_0_100 BeltRails_0_-1_0_110 BeltRails_0_-2_0 BeltRails_0_0_0_010 BeltRails_0_0_0_100 BeltRails_0_0_0_110 BeltRails_0_1_0 BeltRails_1_-1_0 BeltRails_1_0_0 Curtains DriveGears DrivePlate Frames Hopper Pipes Press Roof Shades Shed Signs Stack Tread_-1_-1_0_000_000 Tread_-1_-1_0_000_010 Tread_-1_-1_0_000_100 Tread_-1_-1_0_010 Tread_-1_-1_0_100 Tread_-1_-2_0 Tread_-1_0_0_000 Tread_-1_0_0_010_000 Tread_-1_0_0_010_010 Tread_-1_0_0_010_110 Tread_-1_0_0_110 Tread_-1_1_0 Tread_-2_-1_0 Tread_-2_0_0 Tread_0_-1_0_000 Tread_0_-1_0_100_000 Tread_0_-1_0_100_100 Tread_0_-1_0_100_110 Tread_0_-1_0_110 Tread_0_-2_0 Tread_0_0_0_010 Tread_0_0_0_100 Tread_0_0_0_110_010 Tread_0_0_0_110_100 Tread_0_0_0_110_110 Tread_0_1_0 Tread_1_-1_0 Tread_1_0_0
+placed	d8335fffe98212b0	CapsuleLoop	0.0 0.0 2.05	0.0	BeltRails_-2_0_0 -69.06479250000001 2.525 -19.858725000000003	DriveGears 78.97 5.85 0.575
+object	506250af762b16cd	1	CapsulePrecision-3d557e0f40945171 1 x	Clasps Corners Edges Shell
+placed	506250af762b16cd	Kit_CapsulePrecision	-600.0 0.0 -260.0	0.0	Clasps -600.00515 -258.54466 1.03341805	Corners -600.0038999999999 -258.899565 -0.007264300000000001
+object	4df22ffb2acc1e3a	1	CapsulePrototype-9a281c1af5b3a891 1 x	Pod Rings Tag Window
+placed	4df22ffb2acc1e3a	Kit_CapsulePrototype	-576.0 0.0 -260.0	0.0	Rings -576.009775 -258.49512000000004 -0.0030170500000000766	Tag -575.45 -257.42999999999995 0.9
+object	31d0fe0eacefa1f5	1	CapsuleRefurbished-534156bd2f7802d7 1 x	Box Handle Latches Lid Seam
+placed	31d0fe0eacefa1f5	Kit_CapsuleRefurbished	-648.0 0.0 -260.0	0.0	Box -648.0017 -259.401065 -0.004411985000000007
+object	401d504e89d65720	1	CapsuleSalvaged-7b96a534e82dbc68 1 x	Box Handle Lid Patch Trim
+placed	401d504e89d65720	Kit_CapsuleSalvaged	-672.0 0.0 -260.0	0.0	Box -672.0066999999999 -259.37694999999997 -0.005186370000000051	Patch -671.23795 -259.47592 0.8867474500000001
+object	9cb8e33e5682c231	1	CapsuleScrap-5c8d99bcabd6ec3a 1 x	Can Handle Lid Paint
+placed	9cb8e33e5682c231	Kit_CapsuleScrap	-696.0 0.0 -260.0	0.0	Can -696.0072849999999 -258.77121 0.010462399999999983
+object	26f0917043044da0	1	CapsuleSecret-dece8d5925a51c32 1 x	Seam Slab
+placed	26f0917043044da0	Kit_CapsuleSecret	-552.0 0.0 -260.0	0.0	Seam -552.0 -258.29999999999995 0.0
+object	9bfb7b292b910b21	1	HubBeacon-359a482ad806c4cb 1 x	BaleStraps BeaconLamp BigCog Bulbs Cable Cables CogBoss CrushedBlocks Fittings Mast Pipes Plinth PressedJunk SheetLayers Spotlights Supplies
+placed	9bfb7b292b910b21	Landmark	0.0 0.0 2.05	0.0	Pipes -4.0123089499999995 10.16005115 5.53166375	Supplies 4.82468735 3.905335 -5.15061405
+object	25d09f362d1588ec	1	HubShop-780fad43697b3086 1 x	Awning AwningPatches AwningPosts Bulbs Cables Counter CounterDrums Crane CraneHook CraneWeight Fittings LowerContainers PriceBoards ShelfStock Shelves Sign SignBraces Slab Stencil StockPiles Supplies UpperContainer
+placed	25d09f362d1588ec	Market	0.0 44.0 2.05	0.0	CraneWeight 12.0057245 22.967674000000002 -51.135952	Stencil -9.7932545 16.300646 -43.0575655
+object	73e992e45bc50b82	1	HubStage-16916797fdf77074 1 x	Backdrop BackdropRivets Banner Cables Fittings LampHousings Lamps Platform PlatformDrums SpeakerCones SpeakerSurrounds Speakers Steps Supplies Truss TrussTop
+placed	73e992e45bc50b82	EventStage	32.526911934581186 -32.526911934581186 2.05	225.0	Backdrop 39.0038055 9.17888975 38.9513695	Steps 24.8044035 2.94635355 24.817673
+object	bb08731ae7cf193c	1	HubTinkerer-8b76108c361ff045 1 x	Anvil BackWall BinParts Blueprint Bulbs Cables Deck Fittings HangingSign LampShade PartsBins RackTools Rafters RobotArm Roof RoofPosts SignEmblem Supplies ToolGrips ToolRack TorchAndWork Workbench
+placed	bb08731ae7cf193c	Tinkerer	-48.0 0.0 2.05	90.0	PartsBins -54.564774 6.46167875 -5.4049419	SignEmblem -41.8 9.522493 0.0050000000000000044
+object	d78817acf179e17f	1	JunkMound-fb80758d0e577fda 1 x x1.6666666666666667	Bits Heap Plates Spill Tyre
+placed	d78817acf179e17f	Kit_Mound	-720.0 0.0 -260.0	0.0	Heap -719.4729500000001 -258.6483 -0.012967149999999705	Tyre -720.4917700000001 -258.810245 0.7765341000000001
+object	128f6aca1b73ab2e	1	JunkMound-fb80758d0e577fda 1 x x2.8	Bits Heap Plates Spill Tyre
+placed	128f6aca1b73ab2e	RoughScrap4	-184.93828371515417 191.02655238603126 2.0	188.0	Spill -185.80599 2.17976675 -190.568695	Tyre -184.26459499999999 3.99879005 -191.54855
+object	92aea817c522c9dd	1	JunkrotAirfryoCroccante-7358ee385dce7619 1 x	Body Cord Dial Drawer Eyes Handle Legs Panel Pupils Sticker Window
+placed	92aea817c522c9dd	Kit_JunkrotAirfryoCroccante	192.0 0.0 -260.0	0.0	Cord 192.27370000000002 -259.556785 -1.305799865	Handle 191.997055 -258.538115 1.2890405999999999
+object	ed284465e6a50ee6	1	JunkrotBallerinaTincuppina-91cf3f497e7e7a74 1 x	Arms Bodice Cheeks Chest Clips Crema Cup Eyes FaceWire Handle Hands Legs PanelsALUMINIUM PanelsCHINA PanelsENAMEL PanelsGALVANISED PanelsTIN Pupils Rim Rivets Rosetta Shoes Stitches Tape TutuBLUSH TutuCore TutuPEACH TutuROSE TutuRivets Welds
+placed	ed284465e6a50ee6	Kit_JunkrotBallerinaTincuppina	480.0 0.0 -260.0	0.0	Handle 480.008485 -256.802575 -0.87377198	Pupils 480.84379 -256.91627500000004 0.0003734099999999907
+object	1128115342019383	1	JunkrotBlendroCigolante-dc460f67bbaa5b5d 1 x	Base Dial Eyes Gasket Jug Legs Lid Pupils
+placed	1128115342019383	Kit_JunkrotBlendroCigolante	-264.0 0.0 -260.0	0.0	Gasket -264.00538500000005 -259.14665 -0.31501926500000005	Pupils -263.990005 -258.69399999999996 0.762
+object	842faa6dc9eede4b	1	JunkrotBoilerdiroCrockpotilo-6812586e31713b96 1 x	Body Canopy CanopyFrames Clips Cowls Engines Eyes Hubs Jaw Mouth PanelsALUMINIUM PanelsBLUEGREY PanelsBRASS PanelsENAMEL PanelsGALVANISED PanelsGUNMETAL PanelsMOSS PanelsOLIVE PanelsPAINTED PanelsRUST PanelsSWAMP PanelsTIN PanelsVERDIGRIS Props Pupils Rivets Stitches Tail Tape Teeth Welds Wings
+placed	842faa6dc9eede4b	Kit_JunkrotBoilerdiroCrockpotilo	816.0 0.0 -260.0	0.0	Tail 813.571625 -257.969435 -0.0006496499999999461	Teeth 818.325 -259.48476000000005 0.0007763949999999853
+object	0e149e11daff8e57	1	JunkrotBoltoloLonelo-4c031a36c88faa1e 1 x	Eyes Head Legs Nut Pupils Shank Washer
+placed	0e149e11daff8e57	Kit_JunkrotBoltoloLonelo	-432.0 0.0 -260.0	0.0	Head -431.99371499999995 -257.648565 -0.006457599999999952	Pupils -431.987705 -257.680165 0.84395
+object	8883184f2556a0c5	1	JunkrotBulboFulminato-01ba25f2d9961d25 1 x	Cap Contact Eyes Filament Glass Legs Pupils Shards Soot
+placed	8883184f2556a0c5	Kit_JunkrotBulboFulminato	-336.0 0.0 -260.0	0.0	Contact -335.99609499999997 -259.422695 -0.018178029999999984	Pupils -335.9862 -257.95875 0.97075
+object	b012670ce51a64f5	1	JunkrotCabloTanglino-327a046f68912b00 1 x	Eyes Knot Legs Plug Prongs Pupils Tail Ties
+placed	b012670ce51a64f5	Kit_JunkrotCabloTanglino	-360.0 0.0 -260.0	0.0	Prongs -358.62343999999996 -257.78485 0.008849655000000001	Pupils -359.96813499999996 -258.39948000000004 0.9917500000000001
+object	916b32c22737e9f0	1	JunkrotCamerinoFlashetto-a8681520aa85dee1 1 x	Body Eyes Flash Knobs Legs Lens LensGlass Pupils Trim
+placed	916b32c22737e9f0	Kit_JunkrotCamerinoFlashetto	96.0 0.0 -260.0	0.0	Flash 96.4612775 -257.54192 -0.029207705	LensGlass 96.0 -258.73 1.0
+object	07511588a26a4480	1	JunkrotCanettoRustini-a064498d48b05d3e 1 x	Can Eyes Label Legs Lid Pupils
+placed	07511588a26a4480	Kit_JunkrotCanettoRustini	-528.0 0.0 -260.0	0.0	Lid -528.00085 -257.272875 -0.379192835	Pupils -527.9857 -258.15995 0.78635
+object	114c3a21fed159b4	1	JunkrotChefbotPrecisio-aaec862713eb929e 1 x	Base Dial DialGlow Eyes Jug Legs Lid Pupils Screen Spatula
+placed	114c3a21fed159b4	Kit_JunkrotChefbotPrecisio	552.0 0.0 -260.0	0.0	Pupils 552.0100199999999 -257.414005 0.792	Spatula 552.1779349999999 -256.24985499999997 -0.05718247525
+object	004393cd23990720	1	JunkrotChimneyziniSpannerini-20f0fdb6af9d19c6 1 x	Body Clips Ears Eyes Face Lips PanelsCREAM PanelsFADED PanelsIVORY PanelsLIME PanelsMOSS PanelsOCHRE PanelsOLIVEPAINT PanelsYELLOW PeelFaded PeelLining PeelOchre PeelRivets PeelYellow Pupils Rivets Stitches Tape Welds
+placed	004393cd23990720	Kit_JunkrotChimneyziniSpannerini	432.0 0.0 -260.0	0.0	Lips 432.88867500000003 -257.05215499999997 -0.002681799999999998	PeelOchre 431.83693 -258.23049000000003 -0.21715659999999998
+object	9db57b84729f0256	1	JunkrotClankClankClankScrapur-1b81f6c50475ab9b 1 x	Bat Body Clips Eyes Hands Limbs Mouth PanelsBLUEGREY PanelsBRASS PanelsGUNMETAL PanelsOLIVE PanelsPAINTED PanelsRUST Pupils Ribs Rivets Stitches Tape Welds
+placed	9db57b84729f0256	Kit_JunkrotClankClankClankScrapur	384.0 0.0 -260.0	0.0	Bat 384.80269 -259.047395 0.612757965	Welds 383.99523999999997 -257.40286000000003 -0.12464343
+object	72069e6a0337ca4f	1	JunkrotClockoTictacco-5869215acba377a6 1 x	Bells Case Dial Eyes Hands Legs Marks Pupils
+placed	72069e6a0337ca4f	Kit_JunkrotClockoTictacco	-120.0 0.0 -260.0	0.0	Bells -120.003815 -258.210915 -0.06624644999999998	Pupils -119.98671 -258.06255999999996 0.51515
+object	7c4936feb13da7c3	1	JunkrotConsoloJoypaddino-d7db424afedd777c 1 x	Buttons Cable Core Eyes Legs LightBar Pad Pupils Shell Vents
+placed	7c4936feb13da7c3	Kit_JunkrotConsoloJoypaddino	312.0 0.0 -260.0	0.0	Buttons 312.25 -258.28 1.01	Shell 312.0 -258.0 0.0
+object	bed1696b68d3f528	1	JunkrotCrumboPoppalot-58ec313829484869 1 x	Body Cord Eyes Legs Lever Patch Pupils Slots Toast
+placed	bed1696b68d3f528	Kit_JunkrotCrumboPoppalot	-312.0 0.0 -260.0	0.0	Lever -310.932345 -258.73075 -0.018249732500000004	Patch -312.975555 -258.63816999999995 -0.11441843499999999
+object	acec7d8e3509b3d5	1	JunkrotDingDingDingDongo-34969d0fecb5cb5b 1 x	BellChrome BellHousing BellNickel BellPost BellPressing BellRim BellRivets BellSteel BellStrap Body Clips Eyes Foot Lever PanelsALUMINIUM PanelsBLUEGREY PanelsBRASS PanelsENAMEL PanelsGALVANISED PanelsGUNMETAL PanelsOLIVE PanelsPAINTED PanelsRUST PanelsTIN Pupils Rivets StalkClamps Stalks Stitches Tape Welds
+placed	acec7d8e3509b3d5	Kit_JunkrotDingDingDingDongo	144.0 0.0 -260.0	0.0	BellPost 143.46022 -258.95572500000003 0.021630560000000004	Pupils 145.81897500000002 -257.939275 0.0
+object	37c88321110d3a65	1	JunkrotDishwashinoSplashetto-e379f1ace446e681 1 x	Cabinet Door Eyes Handle Legs Lights Panel Plates Pupils
+placed	37c88321110d3a65	Kit_JunkrotDishwashinoSplashetto	216.0 0.0 -260.0	0.0	Cabinet 216.0 -258.075 0.0	Pupils 216.01100000000002 -257.7164 1.30968525
+object	766745e300871706	1	JunkrotDrilloTrapanino-860a6e23307a027b 1 x	Battery Chuck Eyes Grip Legs Motor Pupils Switch Trigger
+placed	766745e300871706	Kit_JunkrotDrilloTrapanino	0.0 0.0 -260.0	0.0	Chuck -0.005301799999999995 -257.425505 1.24953608	Grip -0.02785063 -258.40063 -0.24015435
+object	6aa4e899dc7848f9	1	JunkrotDrippiDroppi-20cfa409ff18e1c4 1 x	Antennae Beads Body Clips Eyes Head Legs Nose PanelsALUMINIUM PanelsBLUEGREY PanelsBRASS PanelsCOPPER PanelsENAMEL PanelsGALVANISED PanelsGUNMETAL PanelsOLIVE PanelsPAINTED PanelsRUST PanelsTIN Pupils Ribs Rivets Stalks Stitches Stripes TailFan Tape Welds Whiskers
+placed	6aa4e899dc7848f9	Kit_JunkrotDrippiDroppi	120.0 0.0 -260.0	0.0	TailFan 117.890405 -259.56890999999996 0.005923669999999992	Whiskers 122.237023 -258.35596 -0.009650419999999993
+object	73b031b7b93ca0b0	1	JunkrotDronettoBuzzatti-2f52d676b6731f9d 1 x	Body Camera Eyes Guards Legs NavGreen NavRed Pupils Rotors
+placed	73b031b7b93ca0b0	Kit_JunkrotDronettoBuzzatti	696.0 0.0 -260.0	0.0	NavGreen 697.1500000000001 -258.0 1.31	NavRed 694.8499999999999 -258.0 1.31
+object	0f702e3c6df0c17a	1	JunkrotFanettoWobblino-57bdb48872b1ae2b 1 x	Base Blades Cage Eyes Knob Legs Motor Pupils
+placed	0f702e3c6df0c17a	Kit_JunkrotFanettoWobblino	-144.0 0.0 -260.0	0.0	Knob -143.98011 -257.07664 -0.49691708	Pupils -143.9915 -259.03041 0.7952
+object	89166834b94cb6a3	1	JunkrotFrostboxGelatone-08f95db89e78e772 1 x	Badge Cabinet Chrome Coil Doors Eyes Grille Legs Magnet Pupils
+placed	89166834b94cb6a3	Kit_JunkrotFrostboxGelatone	-96.0 0.0 -260.0	0.0	Coil -96.00297499999999 -258.110275 -0.70967439	Pupils -95.98899750000001 -256.9164 0.9332
+object	b52f95501c170aa3	1	JunkrotGrindellaScintilla-c9f1dceb3fdeb85d 1 x	Body Cord Disc Eyes Guard Handle Head Legs Pupils Sparks
+placed	b52f95501c170aa3	Kit_JunkrotGrindellaScintilla	24.0 0.0 -260.0	0.0	Cord 22.795459 -259.19434 -0.00048366499999999424	Guard 25.092915 -259.01071 -0.3385913235
+object	25caf9ad939ad9e0	1	JunkrotGrindoBeanbasher-638341bf871e5b9b 1 x	Body Buttons Cup Eyes Front Hopper Legs Pupils Sticker Wand
+placed	25caf9ad939ad9e0	Kit_JunkrotGrindoBeanbasher	168.0 0.0 -260.0	0.0	Pupils 168.01 -257.36400000000003 0.902	Sticker 168.70999999999998 -258.25 -0.1
+object	a5601f7d28bace8a	1	JunkrotHeadphonoBassimo-825442a133f62371 1 x	Band BandPad Cable Cups Eyes Glow Legs Pads Pupils Sliders
+placed	a5601f7d28bace8a	Kit_JunkrotHeadphonoBassimo	744.0 0.0 -260.0	0.0	Cable 743.0199700000001 -259.567595 0.26731405999999996	Pupils 744.011 -258.4164 0.9232
+object	32c419311bbc40b5	1	JunkrotHolofonoShimmerra-65c71b022df346dc 1 x	Cone Edge Eyes Figure Legs Lenses Pupils Slab
+placed	32c419311bbc40b5	Kit_JunkrotHolofonoShimmerra	888.0 0.0 -260.0	0.0	Cone 888.0 -256.59000000000003 0.0
+object	c9c8335523e0cfc3	1	JunkrotHoverbikkoZoomzoom-db972d323ae0db64 1 x	Bars Body Exhaust Eyes Fin Legs PadRims Pads Pupils Screen Seat Stripe Thruster
+placed	c9c8335523e0cfc3	Kit_JunkrotHoverbikkoZoomzoom	864.0 0.0 -260.0	0.0	Exhaust 862.24 -258.83000000000004 0.0	Pupils 865.4268999999999 -258.875125 0.4753
+object	fbfb808ef167f27d	1	JunkrotHubcappaWobbla-8e54228015c122eb 1 x	Cap Clips Disc Eyes Legs Pupils
+placed	fbfb808ef167f27d	Kit_JunkrotHubcappaWobbla	-408.0 0.0 -260.0	0.0	Clips -408.000505 -258.28737 -0.068660356	Pupils -407.98999000000003 -258.06401 0.492
+object	8109a108d60229a6	1	JunkrotJackoloCrickato-c4d46b4e17d60a5c 1 x	Arms Eyes Legs Nut Pupils Saddle Screw
+placed	8109a108d60229a6	Kit_JunkrotJackoloCrickato	-240.0 0.0 -260.0	0.0	Nut -238.503915 -258.34487 -0.014656382500000002	Pupils -239.991995 -257.25919999999996 0.40959999999999996
+object	9335b2f1e8a374ac	1	JunkrotKettlinaDentata-f1db44ca6d420d18 1 x	Body Eyes Grip Handle Legs Lid Pupils Whistle
+placed	9335b2f1e8a374ac	Kit_JunkrotKettlinaDentata	-480.0 0.0 -260.0	0.0	Pupils -479.98471 -258.66235 1.11685	Whistle -478.544525 -258.291105 -0.009160265
+object	8c8757082802a992	1	JunkrotKnifeblockSlicetta-ce4f7db091df93de 1 x	Block Caps Eyes Handles Honing Legs Pupils
+placed	8c8757082802a992	Kit_JunkrotKnifeblockSlicetta	600.0 0.0 -260.0	0.0	Honing 599.562175 -256.60578 -1.3641855	Pupils 600.01001 -258.26399000000004 0.17220000000000002
+object	ea8706e0919c10b3	1	JunkrotLaVacuumaSaturnita-73c8cdfcf36de575 1 x	Caps Clips Cuffs EarInsides Ears Eyes Feet Head Horns Muzzle Nostrils PanelsCOWWHITE PanelsCREAM PanelsPALETEAL PanelsPATCH PanelsSAND PanelsSKYBAND Planet Pupils RingALUMINIUM RingBLUEGREY RingBRASS RingENAMEL RingGALVANISED RingGUNMETAL RingOLIVE RingPAINTED RingRUST RingRivets RingTIN Rivets Shins Stitches Tape Toes Welds
+placed	ea8706e0919c10b3	Kit_JunkrotLaVacuumaSaturnita	912.0 0.0 -260.0	0.0	Nostrils 913.844 -257.757245 0.0	RingBRASS 911.97605 -257.44519 0.006439100000000142
+object	168055bf411d9382	1	JunkrotLaserlevelLineo-ea231812a0f7a247 1 x	Beam Body Ends Eyes Handle Legs Pupils Tripod Vials
+placed	168055bf411d9382	Kit_JunkrotLaserlevelLineo	648.0 0.0 -260.0	0.0	Beam 649.5799999999999 -257.65000999999995 0.0	Pupils 648.008 -257.55921 0.5196000000000001
+object	bc86051e6f585606	1	JunkrotLawnmowoRuggito-b1f3acb7c672f255 1 x	Bag Bars Chute Cord Deck Engine Eyes Legs Pupils Wheels
+placed	bc86051e6f585606	Kit_JunkrotLawnmowoRuggito	240.0 0.0 -260.0	0.0	Bag 240.023705 -258.878815 -1.24606917	Pupils 240.009505 -259.152805 1.0564
+object	c0e6d488a7d03cf9	1	JunkrotLeafblowaWhooshini-57d992fb6a703810 1 x	Eyes Grille Handle Housing Leaves Legs Nozzle Pupils Trigger
+placed	c0e6d488a7d03cf9	Kit_JunkrotLeafblowaWhooshini	264.0 0.0 -260.0	0.0	Leaves 266.600465 -258.86753999999996 0.015	Trigger 263.37155 -257.34198000000004 0.0007501269999999997
+object	3f3e4293c30f211f	1	JunkrotMicrondoBippetto-adc516e2dd5e72c3 1 x	Case Display Eyes Glass Handle Keypad Keys Legs Plate Pupils
+placed	3f3e4293c30f211f	Kit_JunkrotMicrondoBippetto	-72.0 0.0 -260.0	0.0	Keypad -71.169225 -258.7435 0.16949585000000003	Pupils -72.458 -258.668805 0.9844
+object	109471c029df2171	1	JunkrotMixerellaVroom-548a9f57cd079e9c 1 x	Band Bowl Eyes Head Knob Legs Pupils Stand Whisk
+placed	109471c029df2171	Kit_JunkrotMixerellaVroom	-48.0 0.0 -260.0	0.0	Knob -47.4962635 -257.08549500000004 -0.190781565	Pupils -47.991 -257.0316 1.1308
+object	dcdf44b54f57ac58	1	JunkrotMopaMopetta-4c59984c0fc86318 1 x	Bars Body Exhaust Eyes Hubs Legs Pupils Seat TailLight Wheels
+placed	dcdf44b54f57ac58	Kit_JunkrotMopaMopetta	-24.0 0.0 -260.0	0.0	Pupils -23.032500499999998 -257.88800000000003 0.404	TailLight -25.560000000000002 -258.58 0.0
+object	7d323a8c68ae6912	1	JunkrotMuffleroTossetto-7c86cf3991f5ba14 1 x	Eyes Hangers Legs Pipe Pupils Silencer Soot Tip
+placed	7d323a8c68ae6912	Kit_JunkrotMuffleroTossetto	-192.0 0.0 -260.0	0.0	Hangers -191.97296 -258.388915 -0.61513663	Pupils -191.99 -258.06401 0.712
+object	35a23525aba4bcdd	1	JunkrotOilcannaGluglu-6ff6832104c382de 1 x	Can Drip Eyes Label Legs Pump Pupils Spout
+placed	35a23525aba4bcdd	Kit_JunkrotOilcannaGluglu	-216.0 0.0 -260.0	0.0	Pump -216.02919500000002 -257.882965 -0.37025071	Pupils -215.985715 -258.68995 1.0063499999999999
+object	479e300a020e6048	1	JunkrotPannettoPatchato-0b7101933fb4837c 1 x	Eyes Grip Handle Legs Pan Patch Pupils
+placed	479e300a020e6048	Kit_JunkrotPannettoPatchato	-288.0 0.0 -260.0	0.0	Grip -288.01872000000003 -256.73941 -0.8731452500000001	Pupils -287.985715 -258.06495 0.20634999999999998
+object	6ab865f381264901	1	JunkrotPercolattoNinjatto-ac69fa142973c325 1 x	Arms Blades Body BootSplits Boots Brow Brows Clips CupBase EyeRims EyeWhites Face Glints Guards Headband HeadbandRivets Hilts Legs Lid PanelsALUMINIUM PanelsBURNT PanelsENAMEL PanelsSOOT PanelsTAR PanelsTIN Pupils Rivets Stitches Tails Tape Welds
+placed	6ab865f381264901	Kit_JunkrotPercolattoNinjatto	792.0 0.0 -260.0	0.0	HeadbandRivets 791.9947999999999 -256.6938 0.7947957	Tails 792.416425 -256.777535 -1.144581815
+object	c6aaac8a2f1acd68	1	JunkrotPressurwashoSprizzo-a760c62cdd6b8912 1 x	Badge Body Eyes Gauge GaugeRim Hose Lance Legs Pupils Wheels
+placed	c6aaac8a2f1acd68	Kit_JunkrotPressurwashoSprizzo	288.0 0.0 -260.0	0.0	Lance 287.11264 -257.47069 0.303465945	Wheels 288.00127 -259.60163 -0.312949485
+object	74534059d0ecf0aa	1	JunkrotRadioloFruscio-7944dbde3ea3df0f 1 x	Aerial Case Dials Eyes Grille Keys Legs Needle Pupils
+placed	74534059d0ecf0aa	Kit_JunkrotRadioloFruscio	-168.0 0.0 -260.0	0.0	Aerial -167.081605 -257.53033500000004 -0.043398651499999996	Keys -168.40409 -258.069625 0.24231149000000002
+object	c4e15264784efc52	1	JunkrotRemotinoMuto-dbb56c8f360f31d9 1 x	Battery Body Buttons Eyes Legs Power Pupils Rockers Window
+placed	c4e15264784efc52	Kit_JunkrotRemotinoMuto	-384.0 0.0 -260.0	0.0	Battery -384.00093 -258.7768 -0.094500884
+object	26cc6d68d8d3dc5d	1	JunkrotRobovaccoGirotondo-481a05e20ca06a5e 1 x	Brush Bumper Button Disc Eyes Legs Pupils Turret Wheels
+placed	26cc6d68d8d3dc5d	Kit_JunkrotRobovaccoGirotondo	360.0 0.0 -260.0	0.0	Brush 360.64082499999995 -259.03995 0.22	Wheels 359.996535 -258.374545 -0.296092555
+object	b73e8a9e463a7fcb	1	JunkrotRusteliRustela-4b6b3a1bd8910ae7 1 x	Buckles Cactus Clips Ears Eyes Footbeds Head Legs Outsoles PanelsASH PanelsCACTUS PanelsDEEPGREEN PanelsHIDE PanelsMOSSY PanelsSAGE PanelsSLATE Pupils Rivets Spines Stitches Straps Tape Toenails Trunk Tusks Welds
+placed	b73e8a9e463a7fcb	Kit_JunkrotRusteliRustela	456.0 0.0 -260.0	0.0	Spines 455.65139999999997 -257.51347499999997 0.00846297500000004	Tusks 457.38331500000004 -257.06012 0.0038045899999999966
+object	d9c897500c0189ac	1	JunkrotSnackomaticPrototipo-26288fa6a11388ac 1 x	Cabinet Chamber Doughnut Eyes Legs Nozzle Pupils Tag Trim
+placed	d9c897500c0189ac	Kit_JunkrotSnackomaticPrototipo	840.0 0.0 -260.0	0.0	Pupils 840.0100199999999 -256.884005 0.882	Tag 840.84 -257.73 0.26
+object	8e00a1456de614fd	1	JunkrotSousvideSilvano-0e51ca3c5109ec2c 1 x	Cable Clamp Column Eyes Head Legs Pupils Readout
+placed	8e00a1456de614fd	Kit_JunkrotSousvideSilvano	576.0 0.0 -260.0	0.0	Cable 576.165 -258.326505 -0.6651376099999999	Pupils 576.0074999999999 -257.40799000000004 0.434
+object	924c7da30eb472f9	1	JunkrotSpeakeroneBoomba-9b6dfbe5a05da0d6 1 x	Cabinet Cones Eyes Handle Legs Panel Pupils RingCyan RingPink
+placed	924c7da30eb472f9	Kit_JunkrotSpeakeroneBoomba	336.0 0.0 -260.0	0.0	Panel 336.0 -256.52 -0.25	Pupils 336.00901 -257.011595 0.7707999999999999
+object	62a59692ebe2a7c3	1	JunkrotSpoonzoBentolo-4e1ab35a0ea27e1c 1 x	Eyes Legs Pupils Spoon Stain
+placed	62a59692ebe2a7c3	Kit_JunkrotSpoonzoBentolo	-504.0 0.0 -260.0	0.0	Eyes -503.99528 -257.60527 0.09548828649999999
+object	c42b929edf21ba61	1	JunkrotTelefonoRingaling-af36e7dc8974b07a 1 x	Base Cord Cradle Dial Eyes Handset Holes Legs Plungers Pupils
+placed	c42b929edf21ba61	Kit_JunkrotTelefonoRingaling	48.0 0.0 -260.0	0.0	Cord 48.943592 -258.51282000000003 -0.33306345	Pupils 48.0085015 -258.8904 0.9152
+object	2e681935eb35809b	1	JunkrotTheMonolito-71c8928879741ca4 1 x	Eye Hum Slab
+placed	2e681935eb35809b	Kit_JunkrotTheMonolito	936.0 0.0 -260.0	0.0	Eye 936.0 -256.1 0.235
+object	e01ea5fbeb51fab6	1	JunkrotTickworthPocketti-3824cbc1375aadc1 1 x	Case Chain Dial Eyes Hands Legs Lid Marks Pupils
+placed	e01ea5fbeb51fab6	Kit_JunkrotTickworthPocketti	720.0 0.0 -260.0	0.0	Case 719.992465 -258.06258 0.01719089	Lid 721.31143 -258.38984000000005 1.02860554
+object	541d2adb7a955471	1	JunkrotTorquoWrenchelli-bfad669b4c49b133 1 x	Eyes Gauge Grip Legs Needle Pupils Shaft Socket
+placed	541d2adb7a955471	Kit_JunkrotTorquoWrenchelli	624.0 0.0 -260.0	0.0	Pupils 624.0074999999999 -256.328 0.364	Socket 623.974825 -257.39855 -0.20860605
+object	581d4302101006ac	1	JunkrotTypewrittoClackini-c21609d314f8119b 1 x	Body Eyes Keys Legs Lever Paper Pupils Roller Spools
+placed	581d4302101006ac	Kit_JunkrotTypewrittoClackini	72.0 0.0 -260.0	0.0	Keys 72.02256750000001 -258.70924 0.534169585	Paper 72.0 -257.887455 -0.728539525
+object	329818f4d6362bac	1	JunkrotTyroFlattino-b1e5d34174038c46 1 x	Eyes Legs Nail Patch Pupils Rim Tyre
+placed	329818f4d6362bac	Kit_JunkrotTyroFlattino	-456.0 0.0 -260.0	0.0	Nail -455.79902500000003 -257.0779 0.018334474	Patch -456.61789999999996 -257.79345 0.36764258
+object	47c4acdee2da68d6	1	JunkrotUnitZero-2fd55b80153e9ff1 1 x	Eye Rings Shadow Sphere
+placed	47c4acdee2da68d6	Kit_JunkrotUnitZero	960.0 0.0 -260.0	0.0	Eye 960.0 -257.65 1.12	Rings 960.0 -257.80001 0.0
+object	fd099d32a15192b7	1	JunkrotVrrVrrPatatrim-778e54cb919b38f3 1 x	Arms Body Clips Eyes Face Leaves LeavesDark Mouth Nails PanelsALUMINIUM PanelsBARK PanelsBLUEGREY PanelsBRASS PanelsBRONZE PanelsCOPPER PanelsENAMEL PanelsGALVANISED PanelsGUNMETAL PanelsLICHEN PanelsMOSS PanelsOLIVE PanelsPAINTED PanelsPEACH PanelsRUST PanelsTIN PanelsVERDIGRIS Pupils Rivets Stitches Tape Toes Welds
+placed	fd099d32a15192b7	Kit_JunkrotVrrVrrPatatrim	408.0 0.0 -260.0	0.0	PanelsCOPPER 409.05472499999996 -256.79158 -0.2142496738	PanelsOLIVE 407.45621 -257.73879999999997 0.682466665
+object	90edcc9c7aa1f45a	1	JunkrotWeldettaSparkalot-e2fb68fd3628fee8 1 x	Arc Case Clamp Dials Display Eyes Ground Legs Mask Nozzle Pupils Slots Torch Visor
+placed	90edcc9c7aa1f45a	Kit_JunkrotWeldettaSparkalot	672.0 0.0 -260.0	0.0	Arc 673.27 -258.160005 1.07000002	Clamp 670.84845 -259.97141999999997 0.9488281199999999
+object	5273f9a42a39c0c8	1	PadGadget-cb240e3b32ee2bc5 1 x x1.6666666666666667	Hardware Plate Stripes
+placed	5273f9a42a39c0c8	Kit_PadGadget	-816.0 0.0 -260.0	0.0	Hardware -816.0089250000001 -259.074625 -1.15015185	Plate -816.011675 -259.69101 0.006314500000000223
+object	6ded32a3bace4f77	1	PadGarage-89b5d290e5d87e2d 1 x x1.6666666666666667	Hardware Plate Stripes
+placed	6ded32a3bace4f77	Kit_PadGarage	-840.0 0.0 -260.0	0.0	Hardware -840.0089250000001 -259.074625 -1.15015185	Plate -840.011675 -259.69101 0.006314500000000223
+object	68ac2cb5f6d593f1	1	PadKitchen-ec71f489a049d2af 1 x x1.6666666666666667	Hardware Plate Stripes
+placed	68ac2cb5f6d593f1	Kit_PadKitchen	-864.0 0.0 -260.0	0.0	Hardware -864.0089250000001 -259.074625 -1.15015185	Plate -864.011675 -259.69101 0.006314500000000223
+object	89bcc6762dd59e87	1	PlotMarker-9172bd0ab180a2a2 1 x x1.5	Fittings Lamp Post Sign
+placed	89bcc6762dd59e87	Yard1_PlotMarker	143.64286994987356 49.75729506880079 2.0	-67.5	Fittings 143.55101 3.717558 -49.658875
+placed	89bcc6762dd59e87	Yard2_PlotMarker	66.38712665400396 136.75456816730195 2.0	-22.5	Fittings 66.2709975 3.717558 -136.664805
+placed	89bcc6762dd59e87	Yard3_PlotMarker	-49.75729506880077 143.64286994987356 2.0	22.5	Fittings -49.658875 3.717558 -143.55101
+placed	89bcc6762dd59e87	Yard4_PlotMarker	-136.75456816730195 66.38712665400398 2.0	67.5	Fittings -136.664805 3.717558 -66.2709975
+placed	89bcc6762dd59e87	Yard5_PlotMarker	-143.64286994987359 -49.75729506880078 2.0	112.5	Fittings -143.55101 3.717558 49.658875
+placed	89bcc6762dd59e87	Yard6_PlotMarker	-66.3871266540039 -136.75456816730198 2.0	157.5	Fittings -66.2709975 3.717558 136.664805
+placed	89bcc6762dd59e87	Yard7_PlotMarker	49.75729506880084 -143.64286994987356 2.0	202.5	Fittings 49.658875 3.717558 143.55101
+placed	89bcc6762dd59e87	Yard8_PlotMarker	136.75456816730195 -66.38712665400392 2.0	247.5	Fittings 136.664805 3.717558 66.2709975
+object	43a48b321a2b05e2	1	ProofKettle-51846c3931c745a0 1 x	Body
+placed	43a48b321a2b05e2	Kit_ProofKettle	-912.0 0.0 -260.0	0.0	Body -911.641025 -259.04358 0.006835219999999975
+object	94f58d419f0bdb35	1	ProofShark-4a36e81578067610 1 x	Body
+placed	94f58d419f0bdb35	Kit_ProofShark	-888.0 0.0 -260.0	0.0	Body -888.1800499999999 -258.179535 0.013317849999999964
+object	9d2f2bb448ba506e	1	ProofToaster-5f89e6721e662e90 1 x	Shell Toast
+placed	9d2f2bb448ba506e	Kit_ProofToaster	-936.0 0.0 -260.0	0.0	Shell -935.8557000000001 -258.93513 -6.249999999996536e-05
+object	102eed7d571eca86	1	RebirthPress-12dcb067617e705b 1 x	Anvil Bands Beacons Button Cage Collars Columns Console Crown Cylinder Hoses Medal Pile PileJunk Platen Plinth Pump Ram Tray
+placed	102eed7d571eca86	Kit_Press	-744.0 0.0 -260.0	0.0	Button -737.565 -254.67 1.09538379	Pump -750.852335 -257.81859999999995 -3.0608891500000004
+placed	102eed7d571eca86	Yard1_Press	156.55678604940007 45.36488445794137 2.0	112.5	Button 155.05867 7.33 -51.6599025	Pump 156.31564 4.1813891000000005 -37.8461315
+placed	102eed7d571eca86	Yard2_Press	78.62454762834773 142.78018248425684 2.0	157.5	Button 73.05663 7.33 -146.314355	Pump 83.75852499999999 4.1813891000000005 -137.291625
+placed	102eed7d571eca86	Yard3_Press	-45.364884457941365 156.55678604940005 2.0	202.5	Button -51.6599025 7.33 -155.05867	Pump -37.8461315 4.1813891000000005 -156.31564
+placed	102eed7d571eca86	Yard4_Press	-142.7801824842568 78.62454762834773 2.0	247.5	Button -146.314355 7.33 -73.05663	Pump -137.291625 4.1813891000000005 -83.75852499999999
+placed	102eed7d571eca86	Yard5_Press	-156.55678604940007 -45.364884457941365 2.0	292.5	Button -155.05867 7.33 51.6599025	Pump -156.31564 4.1813891000000005 37.8461315
+placed	102eed7d571eca86	Yard6_Press	-78.62454762834764 -142.78018248425684 2.0	337.5	Button -73.05663 7.33 146.314355	Pump -83.75852499999999 4.1813891000000005 137.291625
+placed	102eed7d571eca86	Yard7_Press	45.36488445794143 -156.55678604940005 2.0	382.5	Button 51.6599025 7.33 155.05867	Pump 37.8461315 4.1813891000000005 156.31564
+placed	102eed7d571eca86	Yard8_Press	142.78018248425687 -78.62454762834767 2.0	427.5	Button 146.314355 7.33 73.05663	Pump 137.291625 4.1813891000000005 83.75852499999999
+object	995a62d5554407a9	1	RockBoulderPile-9f587297437e5ec1 1 x x2.2	Discs Drums Hubs Mound
+placed	995a62d5554407a9	RoughScrap6	-232.0545556037427 2.608778171764234 2.0	282.0	Drums -232.36111499999998 4.15931055 -2.6653810499999997	Mound -232.498185 2.923164 -2.10629815
+object	2280dc8e21dc75ac	1	RockBoulderPile-9f587297437e5ec1 1 x x2.8	Discs Drums Hubs Mound
+placed	2280dc8e21dc75ac	RoughScrap8	-198.10190576094405 -193.74322551738953 2.0	376.0	Hubs -198.24045999999998 5.24274535 194.00146999999998	Mound -197.51378 3.17493615 194.42421000000002
+object	f3b34f31087b75c4	1	ScrapCrate-f83a4190e411eda4 1 x	Bands Bits Heap Planks Stripe
+placed	f3b34f31087b75c4	Kit_Crate	-768.0 0.0 -260.0	0.0	Bands -768.00623 -257.8929 -0.0017450000000001076
+object	e1fece55fbcd6f2b	1	ScrapPalm-46e4c25337945eb1 1 x x1.6	Cans Couplings Footing Fronds Trunk TyreCollar
+placed	e1fece55fbcd6f2b	RoughScrap5	-94.59963391240943 97.28858753028595 2.0	235.0	Fronds -95.969465 15.231188500000002 -93.377655	TyreCollar -94.60439 2.4837686000000003 -97.27840499999999
+object	09be2b92b7b62afa	1	ScrapTreeAntenna-a9248507734dd9c4 1 x x1.4	Cable Elements Fill Mast Tyre
+placed	09be2b92b7b62afa	RoughScrap9	2.100174824690046 -196.24625287048346 2.0	423.0	Cable 2.0046959500000003 9.3653867 195.04953	Mast 1.4454090499999999 9.67892765 196.14058
+object	7b68396ae2c0debb	1	ScrapTreeExhaust-6971958a5110f5e4 1 x x1.4	Footing Lashing Mufflers Pipes
+placed	7b68396ae2c0debb	RoughScrap2	122.22340712809475 127.52670798699384 2.0	94.0	Lashing 122.235958 6.228250000000001 -127.52857	Mufflers 121.40826999999999 8.9272558 -127.334825
+object	fdd43816bfada38e	1	ScrapTreeLamppost-b598ef50948d0308 1 x x1.3	Hubcaps Lamp Rubble Trunk
+placed	fdd43816bfada38e	RoughScrap10	146.04240820479336 -149.99962501867964 2.0	470.0	Lamp 145.264315 15.338000000000001 147.861825	Rubble 146.175945 2.6603606 149.94191999999998
+object	ff4cc1a08da43527	1	ScrapTreeRebar-173c33daa1f9b61c 1 x x1.8	Footing Rebar Ties
+placed	ff4cc1a08da43527	RoughScrap1	153.51991531171436 2.1090525560218367 2.0	47.0	Rebar 153.57232 11.08729435 -2.5707272	Ties 153.52967999999998 5.6577316 -2.07222665
+object	52ec575c66e344de	1	ScrapTreeSignpost-095cc13fc7d72ba7 1 x x1.4	Clamps Footing Post StreetSigns WarningSigns
+placed	52ec575c66e344de	RoughScrap7	-103.58929885200489 -108.56269922652999 2.0	329.0	StreetSigns -103.025505 11.262756249999999 107.32422249999999	WarningSigns -103.60475500000001 11.00821925 109.18877499999999
+object	0ce8f86efd1c3a4f	1	YardFence-ae9c0061f8170496 1 x x1.5	Fittings Posts Sheets
+placed	0ce8f86efd1c3a4f	Yard1_FenceBack1	229.67925148866848 140.59673337458793 2.0	112.5	Fittings 229.66317500000002 5.3468148499999995 -140.584785
+placed	0ce8f86efd1c3a4f	Yard1_FenceBack2	234.27145267704955 129.5101789844525 2.0	112.5	Fittings 234.25538 5.3468148499999995 -129.4982275
+placed	0ce8f86efd1c3a4f	Yard1_FenceBack3	238.86365386543062 118.42362459431705 2.0	112.5	Fittings 238.847575 5.3468148499999995 -118.411675
+placed	0ce8f86efd1c3a4f	Yard1_FenceBack4	243.45585505381172 107.3370702041816 2.0	112.5	Fittings 243.43977999999998 5.3468148499999995 -107.325119
+placed	0ce8f86efd1c3a4f	Yard1_FenceBack5	248.04805624219279 96.25051581404617 2.0	112.5	Fittings 248.031975 5.3468148499999995 -96.238565
+placed	0ce8f86efd1c3a4f	Yard1_FenceBack6	252.64025743057388 85.16396142391072 2.0	112.5	Fittings 252.62418 5.3468148499999995 -85.152015
+placed	0ce8f86efd1c3a4f	Yard1_FenceBack7	257.232458618955 74.07740703377527 2.0	112.5	Fittings 257.21637499999997 5.3468148499999995 -74.06546
+placed	0ce8f86efd1c3a4f	Yard1_FenceBack8	261.82465980733605 62.99085264363984 2.0	112.5	Fittings 261.80858 5.3468148499999995 -62.978905000000005
+placed	0ce8f86efd1c3a4f	Yard1_FenceFront1	137.6852468183571 70.01980297435927 2.0	-67.5	Fittings 137.701325 5.3468148499999995 -70.031755
+placed	0ce8f86efd1c3a4f	Yard1_FenceFront2	133.093045629976 81.1063573644947 2.0	-67.5	Fittings 133.109125 5.3468148499999995 -81.11830900000001
+placed	0ce8f86efd1c3a4f	Yard1_FenceFront3	128.50084444159492 92.19291175463013 2.0	-67.5	Fittings 128.51692 5.3468148499999995 -92.20486
+placed	0ce8f86efd1c3a4f	Yard1_FenceFront4	146.86964919511922 47.84669419408837 2.0	-67.5	Fittings 146.88572499999998 5.3468148499999995 -47.8586425
+placed	0ce8f86efd1c3a4f	Yard1_FenceFront5	151.46185038350032 36.76013980395294 2.0	-67.5	Fittings 151.47792500000003 5.3468148499999995 -36.772088
+placed	0ce8f86efd1c3a4f	Yard1_FenceFront6	156.0540515718814 25.6735854138175 2.0	-67.5	Fittings 156.07013 5.3468148499999995 -25.685535
+placed	0ce8f86efd1c3a4f	Yard2_FenceBack1	62.990852643639855 261.82465980733605 2.0	157.5	Fittings 62.987604 5.3468148499999995 -261.8052
+placed	0ce8f86efd1c3a4f	Yard2_FenceBack2	74.07740703377529 257.232458618955 2.0	157.5	Fittings 74.0741575 5.3468148499999995 -257.212985
+placed	0ce8f86efd1c3a4f	Yard2_FenceBack3	85.16396142391073 252.64025743057385 2.0	157.5	Fittings 85.16071 5.3468148499999995 -252.62079
+placed	0ce8f86efd1c3a4f	Yard2_FenceBack4	96.25051581404618 248.04805624219279 2.0	157.5	Fittings 96.247265 5.3468148499999995 -248.02858500000002
+placed	0ce8f86efd1c3a4f	Yard2_FenceBack5	107.33707020418161 243.45585505381172 2.0	157.5	Fittings 107.33382 5.3468148499999995 -243.43638499999997
+placed	0ce8f86efd1c3a4f	Yard2_FenceBack6	118.42362459431706 238.86365386543065 2.0	157.5	Fittings 118.4203775 5.3468148499999995 -238.84418499999998
+placed	0ce8f86efd1c3a4f	Yard2_FenceBack7	129.5101789844525 234.27145267704955 2.0	157.5	Fittings 129.50693 5.3468148499999995 -234.251985
+placed	0ce8f86efd1c3a4f	Yard2_FenceBack8	140.59673337458793 229.67925148866848 2.0	157.5	Fittings 140.593485 5.3468148499999995 -229.659785
+placed	0ce8f86efd1c3a4f	Yard2_FenceFront1	47.8466941940884 146.86964919511922 2.0	-22.5	Fittings 47.849945000000005 5.3468148499999995 -146.88912499999998
+placed	0ce8f86efd1c3a4f	Yard2_FenceFront2	36.76013980395295 151.46185038350032 2.0	-22.5	Fittings 36.76339 5.3468148499999995 -151.481315
+placed	0ce8f86efd1c3a4f	Yard2_FenceFront3	25.673585413817516 156.0540515718814 2.0	-22.5	Fittings 25.676836 5.3468148499999995 -156.07352500000002
+placed	0ce8f86efd1c3a4f	Yard2_FenceFront4	70.01980297435927 137.6852468183571 2.0	-22.5	Fittings 70.0230515 5.3468148499999995 -137.70472
+placed	0ce8f86efd1c3a4f	Yard2_FenceFront5	81.10635736449471 133.093045629976 2.0	-22.5	Fittings 81.10961 5.3468148499999995 -133.112505
+placed	0ce8f86efd1c3a4f	Yard2_FenceFront6	92.19291175463016 128.50084444159492 2.0	-22.5	Fittings 92.196162 5.3468148499999995 -128.52031499999998
+placed	0ce8f86efd1c3a4f	Yard3_FenceBack1	-140.5967333745879 229.67925148866848 2.0	202.5	Fittings -140.584785 5.3468148499999995 -229.66317500000002
+placed	0ce8f86efd1c3a4f	Yard3_FenceBack2	-129.51017898445247 234.27145267704955 2.0	202.5	Fittings -129.4982275 5.3468148499999995 -234.25538
+placed	0ce8f86efd1c3a4f	Yard3_FenceBack3	-118.42362459431703 238.86365386543065 2.0	202.5	Fittings -118.411675 5.3468148499999995 -238.847575
+placed	0ce8f86efd1c3a4f	Yard3_FenceBack4	-107.33707020418159 243.45585505381172 2.0	202.5	Fittings -107.325119 5.3468148499999995 -243.43977999999998
+placed	0ce8f86efd1c3a4f	Yard3_FenceBack5	-96.25051581404615 248.04805624219279 2.0	202.5	Fittings -96.238565 5.3468148499999995 -248.031975
+placed	0ce8f86efd1c3a4f	Yard3_FenceBack6	-85.1639614239107 252.64025743057385 2.0	202.5	Fittings -85.152015 5.3468148499999995 -252.62418
+placed	0ce8f86efd1c3a4f	Yard3_FenceBack7	-74.07740703377526 257.232458618955 2.0	202.5	Fittings -74.06546 5.3468148499999995 -257.21637499999997
+placed	0ce8f86efd1c3a4f	Yard3_FenceBack8	-62.990852643639826 261.82465980733605 2.0	202.5	Fittings -62.978905000000005 5.3468148499999995 -261.80858
+placed	0ce8f86efd1c3a4f	Yard3_FenceFront1	-70.01980297435924 137.6852468183571 2.0	22.5	Fittings -70.031755 5.3468148499999995 -137.701325
+placed	0ce8f86efd1c3a4f	Yard3_FenceFront2	-81.10635736449468 133.093045629976 2.0	22.5	Fittings -81.11830900000001 5.3468148499999995 -133.109125
+placed	0ce8f86efd1c3a4f	Yard3_FenceFront3	-92.19291175463013 128.50084444159492 2.0	22.5	Fittings -92.20486 5.3468148499999995 -128.51692
+placed	0ce8f86efd1c3a4f	Yard3_FenceFront4	-47.84669419408837 146.86964919511922 2.0	22.5	Fittings -47.8586425 5.3468148499999995 -146.88572499999998
+placed	0ce8f86efd1c3a4f	Yard3_FenceFront5	-36.760139803952924 151.46185038350032 2.0	22.5	Fittings -36.772088 5.3468148499999995 -151.47792500000003
+placed	0ce8f86efd1c3a4f	Yard3_FenceFront6	-25.673585413817488 156.0540515718814 2.0	22.5	Fittings -25.685535 5.3468148499999995 -156.07013
+placed	0ce8f86efd1c3a4f	Yard4_FenceBack1	-261.82465980733605 62.99085264363987 2.0	247.5	Fittings -261.8052 5.3468148499999995 -62.987604
+placed	0ce8f86efd1c3a4f	Yard4_FenceBack2	-257.232458618955 74.0774070337753 2.0	247.5	Fittings -257.212985 5.3468148499999995 -74.0741575
+placed	0ce8f86efd1c3a4f	Yard4_FenceBack3	-252.64025743057388 85.16396142391075 2.0	247.5	Fittings -252.62079 5.3468148499999995 -85.16071
+placed	0ce8f86efd1c3a4f	Yard4_FenceBack4	-248.04805624219279 96.2505158140462 2.0	247.5	Fittings -248.02858500000002 5.3468148499999995 -96.247265
+placed	0ce8f86efd1c3a4f	Yard4_FenceBack5	-243.45585505381172 107.33707020418163 2.0	247.5	Fittings -243.43638499999997 5.3468148499999995 -107.33382
+placed	0ce8f86efd1c3a4f	Yard4_FenceBack6	-238.86365386543062 118.42362459431708 2.0	247.5	Fittings -238.84418499999998 5.3468148499999995 -118.4203775
+placed	0ce8f86efd1c3a4f	Yard4_FenceBack7	-234.27145267704955 129.51017898445252 2.0	247.5	Fittings -234.251985 5.3468148499999995 -129.50693
+placed	0ce8f86efd1c3a4f	Yard4_FenceBack8	-229.67925148866848 140.59673337458796 2.0	247.5	Fittings -229.659785 5.3468148499999995 -140.593485
+placed	0ce8f86efd1c3a4f	Yard4_FenceFront1	-146.86964919511922 47.8466941940884 2.0	67.5	Fittings -146.88912499999998 5.3468148499999995 -47.849945000000005
+placed	0ce8f86efd1c3a4f	Yard4_FenceFront2	-151.46185038350032 36.76013980395297 2.0	67.5	Fittings -151.481315 5.3468148499999995 -36.76339
+placed	0ce8f86efd1c3a4f	Yard4_FenceFront3	-156.0540515718814 25.673585413817527 2.0	67.5	Fittings -156.07352500000002 5.3468148499999995 -25.676836
+placed	0ce8f86efd1c3a4f	Yard4_FenceFront4	-137.6852468183571 70.0198029743593 2.0	67.5	Fittings -137.70472 5.3468148499999995 -70.0230515
+placed	0ce8f86efd1c3a4f	Yard4_FenceFront5	-133.093045629976 81.10635736449473 2.0	67.5	Fittings -133.112505 5.3468148499999995 -81.10961
+placed	0ce8f86efd1c3a4f	Yard4_FenceFront6	-128.50084444159492 92.19291175463016 2.0	67.5	Fittings -128.52031499999998 5.3468148499999995 -92.196162
+placed	0ce8f86efd1c3a4f	Yard5_FenceBack1	-229.6792514886685 -140.5967333745879 2.0	292.5	Fittings -229.66317500000002 5.3468148499999995 140.584785
+placed	0ce8f86efd1c3a4f	Yard5_FenceBack2	-234.27145267704958 -129.51017898445247 2.0	292.5	Fittings -234.25538 5.3468148499999995 129.4982275
+placed	0ce8f86efd1c3a4f	Yard5_FenceBack3	-238.86365386543068 -118.42362459431703 2.0	292.5	Fittings -238.847575 5.3468148499999995 118.411675
+placed	0ce8f86efd1c3a4f	Yard5_FenceBack4	-243.45585505381175 -107.33707020418157 2.0	292.5	Fittings -243.43977999999998 5.3468148499999995 107.325119
+placed	0ce8f86efd1c3a4f	Yard5_FenceBack5	-248.0480562421928 -96.25051581404614 2.0	292.5	Fittings -248.031975 5.3468148499999995 96.238565
+placed	0ce8f86efd1c3a4f	Yard5_FenceBack6	-252.64025743057388 -85.1639614239107 2.0	292.5	Fittings -252.62418 5.3468148499999995 85.152015
+placed	0ce8f86efd1c3a4f	Yard5_FenceBack7	-257.232458618955 -74.07740703377526 2.0	292.5	Fittings -257.21637499999997 5.3468148499999995 74.06546
+placed	0ce8f86efd1c3a4f	Yard5_FenceBack8	-261.82465980733605 -62.99085264363982 2.0	292.5	Fittings -261.80858 5.3468148499999995 62.978905000000005
+placed	0ce8f86efd1c3a4f	Yard5_FenceFront1	-137.68524681835711 -70.01980297435924 2.0	112.5	Fittings -137.701325 5.3468148499999995 70.031755
+placed	0ce8f86efd1c3a4f	Yard5_FenceFront2	-133.09304562997602 -81.1063573644947 2.0	112.5	Fittings -133.109125 5.3468148499999995 81.11830900000001
+placed	0ce8f86efd1c3a4f	Yard5_FenceFront3	-128.50084444159495 -92.19291175463013 2.0	112.5	Fittings -128.51692 5.3468148499999995 92.20486
+placed	0ce8f86efd1c3a4f	Yard5_FenceFront4	-146.86964919511925 -47.84669419408838 2.0	112.5	Fittings -146.88572499999998 5.3468148499999995 47.8586425
+placed	0ce8f86efd1c3a4f	Yard5_FenceFront5	-151.46185038350035 -36.76013980395293 2.0	112.5	Fittings -151.47792500000003 5.3468148499999995 36.772088
+placed	0ce8f86efd1c3a4f	Yard5_FenceFront6	-156.05405157188142 -25.67358541381749 2.0	112.5	Fittings -156.07013 5.3468148499999995 25.685535
+placed	0ce8f86efd1c3a4f	Yard6_FenceBack1	-62.99085264363978 -261.82465980733605 2.0	337.5	Fittings -62.987604 5.3468148499999995 261.8052
+placed	0ce8f86efd1c3a4f	Yard6_FenceBack2	-74.07740703377522 -257.232458618955 2.0	337.5	Fittings -74.0741575 5.3468148499999995 257.212985
+placed	0ce8f86efd1c3a4f	Yard6_FenceBack3	-85.16396142391066 -252.6402574305739 2.0	337.5	Fittings -85.16071 5.3468148499999995 252.62079
+placed	0ce8f86efd1c3a4f	Yard6_FenceBack4	-96.25051581404611 -248.0480562421928 2.0	337.5	Fittings -96.247265 5.3468148499999995 248.02858500000002
+placed	0ce8f86efd1c3a4f	Yard6_FenceBack5	-107.33707020418154 -243.45585505381175 2.0	337.5	Fittings -107.33382 5.3468148499999995 243.43638499999997
+placed	0ce8f86efd1c3a4f	Yard6_FenceBack6	-118.42362459431699 -238.86365386543065 2.0	337.5	Fittings -118.4203775 5.3468148499999995 238.84418499999998
+placed	0ce8f86efd1c3a4f	Yard6_FenceBack7	-129.51017898445244 -234.27145267704958 2.0	337.5	Fittings -129.50693 5.3468148499999995 234.251985
+placed	0ce8f86efd1c3a4f	Yard6_FenceBack8	-140.59673337458787 -229.6792514886685 2.0	337.5	Fittings -140.593485 5.3468148499999995 229.659785
+placed	0ce8f86efd1c3a4f	Yard6_FenceFront1	-47.846694194088315 -146.86964919511925 2.0	157.5	Fittings -47.849945000000005 5.3468148499999995 146.88912499999998
+placed	0ce8f86efd1c3a4f	Yard6_FenceFront2	-36.76013980395288 -151.46185038350035 2.0	157.5	Fittings -36.76339 5.3468148499999995 151.481315
+placed	0ce8f86efd1c3a4f	Yard6_FenceFront3	-25.67358541381744 -156.05405157188142 2.0	157.5	Fittings -25.676836 5.3468148499999995 156.07352500000002
+placed	0ce8f86efd1c3a4f	Yard6_FenceFront4	-70.01980297435921 -137.68524681835711 2.0	157.5	Fittings -70.0230515 5.3468148499999995 137.70472
+placed	0ce8f86efd1c3a4f	Yard6_FenceFront5	-81.10635736449464 -133.09304562997602 2.0	157.5	Fittings -81.10961 5.3468148499999995 133.112505
+placed	0ce8f86efd1c3a4f	Yard6_FenceFront6	-92.19291175463007 -128.50084444159495 2.0	157.5	Fittings -92.196162 5.3468148499999995 128.52031499999998
+placed	0ce8f86efd1c3a4f	Yard7_FenceBack1	140.59673337458798 -229.6792514886685 2.0	382.5	Fittings 140.584785 5.3468148499999995 229.66317500000002
+placed	0ce8f86efd1c3a4f	Yard7_FenceBack2	129.51017898445252 -234.27145267704958 2.0	382.5	Fittings 129.4982275 5.3468148499999995 234.25538
+placed	0ce8f86efd1c3a4f	Yard7_FenceBack3	118.42362459431708 -238.86365386543065 2.0	382.5	Fittings 118.411675 5.3468148499999995 238.847575
+placed	0ce8f86efd1c3a4f	Yard7_FenceBack4	107.33707020418163 -243.45585505381172 2.0	382.5	Fittings 107.325119 5.3468148499999995 243.43977999999998
+placed	0ce8f86efd1c3a4f	Yard7_FenceBack5	96.2505158140462 -248.04805624219279 2.0	382.5	Fittings 96.238565 5.3468148499999995 248.031975
+placed	0ce8f86efd1c3a4f	Yard7_FenceBack6	85.16396142391075 -252.64025743057385 2.0	382.5	Fittings 85.152015 5.3468148499999995 252.62418
+placed	0ce8f86efd1c3a4f	Yard7_FenceBack7	74.0774070337753 -257.232458618955 2.0	382.5	Fittings 74.06546 5.3468148499999995 257.21637499999997
+placed	0ce8f86efd1c3a4f	Yard7_FenceBack8	62.99085264363987 -261.82465980733605 2.0	382.5	Fittings 62.978905000000005 5.3468148499999995 261.80858
+placed	0ce8f86efd1c3a4f	Yard7_FenceFront1	70.01980297435932 -137.6852468183571 2.0	202.5	Fittings 70.031755 5.3468148499999995 137.701325
+placed	0ce8f86efd1c3a4f	Yard7_FenceFront2	81.10635736449476 -133.09304562997596 2.0	202.5	Fittings 81.11830900000001 5.3468148499999995 133.109125
+placed	0ce8f86efd1c3a4f	Yard7_FenceFront3	92.1929117546302 -128.5008444415949 2.0	202.5	Fittings 92.20486 5.3468148499999995 128.51692
+placed	0ce8f86efd1c3a4f	Yard7_FenceFront4	47.84669419408843 -146.86964919511922 2.0	202.5	Fittings 47.8586425 5.3468148499999995 146.88572499999998
+placed	0ce8f86efd1c3a4f	Yard7_FenceFront5	36.760139803952995 -151.4618503835003 2.0	202.5	Fittings 36.772088 5.3468148499999995 151.47792500000003
+placed	0ce8f86efd1c3a4f	Yard7_FenceFront6	25.673585413817545 -156.05405157188136 2.0	202.5	Fittings 25.685535 5.3468148499999995 156.07013
+placed	0ce8f86efd1c3a4f	Yard8_FenceBack1	261.82465980733605 -62.99085264363977 2.0	427.5	Fittings 261.8052 5.3468148499999995 62.987604
+placed	0ce8f86efd1c3a4f	Yard8_FenceBack2	257.232458618955 -74.07740703377522 2.0	427.5	Fittings 257.212985 5.3468148499999995 74.0741575
+placed	0ce8f86efd1c3a4f	Yard8_FenceBack3	252.6402574305739 -85.16396142391065 2.0	427.5	Fittings 252.62079 5.3468148499999995 85.16071
+placed	0ce8f86efd1c3a4f	Yard8_FenceBack4	248.04805624219284 -96.25051581404611 2.0	427.5	Fittings 248.02858500000002 5.3468148499999995 96.247265
+placed	0ce8f86efd1c3a4f	Yard8_FenceBack5	243.45585505381177 -107.33707020418154 2.0	427.5	Fittings 243.43638499999997 5.3468148499999995 107.33382
+placed	0ce8f86efd1c3a4f	Yard8_FenceBack6	238.8636538654307 -118.42362459431698 2.0	427.5	Fittings 238.84418499999998 5.3468148499999995 118.4203775
+placed	0ce8f86efd1c3a4f	Yard8_FenceBack7	234.27145267704964 -129.51017898445244 2.0	427.5	Fittings 234.251985 5.3468148499999995 129.50693
+placed	0ce8f86efd1c3a4f	Yard8_FenceBack8	229.6792514886685 -140.59673337458787 2.0	427.5	Fittings 229.659785 5.3468148499999995 140.593485
+placed	0ce8f86efd1c3a4f	Yard8_FenceFront1	146.86964919511922 -47.84669419408835 2.0	247.5	Fittings 146.88912499999998 5.3468148499999995 47.849945000000005
+placed	0ce8f86efd1c3a4f	Yard8_FenceFront2	151.4618503835003 -36.76013980395292 2.0	247.5	Fittings 151.481315 5.3468148499999995 36.76339
+placed	0ce8f86efd1c3a4f	Yard8_FenceFront3	156.05405157188142 -25.67358541381747 2.0	247.5	Fittings 156.07352500000002 5.3468148499999995 25.676836
+placed	0ce8f86efd1c3a4f	Yard8_FenceFront4	137.6852468183571 -70.01980297435924 2.0	247.5	Fittings 137.70472 5.3468148499999995 70.0230515
+placed	0ce8f86efd1c3a4f	Yard8_FenceFront5	133.09304562997602 -81.10635736449467 2.0	247.5	Fittings 133.112505 5.3468148499999995 81.10961
+placed	0ce8f86efd1c3a4f	Yard8_FenceFront6	128.50084444159495 -92.19291175463013 2.0	247.5	Fittings 128.52031499999998 5.3468148499999995 92.196162
+object	39418744ba8f613a	1	YardFence-ae9c0061f8170496 1.037037037037037 x x1.5	Fittings Posts Sheets
+placed	39418744ba8f613a	Yard1_FenceLeft1	129.65722701106185 105.66060750170392 2.0	202.5	Fittings 129.66935999999998 5.3468148499999995 -105.6445925
+placed	39418744ba8f613a	Yard1_FenceLeft2	141.15439452675787 110.4228902155806 2.0	202.5	Fittings 141.166525 5.3468148499999995 -110.406875
+placed	39418744ba8f613a	Yard1_FenceLeft3	152.65156204245386 115.18517292945727 2.0	202.5	Fittings 152.66369 5.3468148499999995 -115.169158
+placed	39418744ba8f613a	Yard1_FenceLeft4	164.14872955814988 119.94745564333394 2.0	202.5	Fittings 164.160855 5.3468148499999995 -119.93144000000001
+placed	39418744ba8f613a	Yard1_FenceLeft5	175.6458970738459 124.70973835721061 2.0	202.5	Fittings 175.658025 5.3468148499999995 -124.69372000000001
+placed	39418744ba8f613a	Yard1_FenceLeft6	187.14306458954192 129.47202107108728 2.0	202.5	Fittings 187.15519 5.3468148499999995 -129.456008
+placed	39418744ba8f613a	Yard1_FenceLeft7	198.6402321052379 134.23430378496397 2.0	202.5	Fittings 198.652355 5.3468148499999995 -134.218295
+placed	39418744ba8f613a	Yard1_FenceLeft8	210.13739962093393 138.99658649884063 2.0	202.5	Fittings 210.14952499999998 5.3468148499999995 -138.980575
+placed	39418744ba8f613a	Yard1_FenceLeft9	221.63456713662995 143.75886921271731 2.0	202.5	Fittings 221.646695 5.3468148499999995 -143.74286
+placed	39418744ba8f613a	Yard1_FenceRight1	166.39483651811045 16.9681723806204 2.0	22.5	Fittings 166.382705 5.3468148499999995 -16.984187
+placed	39418744ba8f613a	Yard1_FenceRight2	177.89200403380647 21.730455094497074 2.0	22.5	Fittings 177.879875 5.3468148499999995 -21.746470000000002
+placed	39418744ba8f613a	Yard1_FenceRight3	189.38917154950246 26.492737808373747 2.0	22.5	Fittings 189.377035 5.3468148499999995 -26.508753
+placed	39418744ba8f613a	Yard1_FenceRight4	200.88633906519848 31.25502052225042 2.0	22.5	Fittings 200.874215 5.3468148499999995 -31.271036000000002
+placed	39418744ba8f613a	Yard1_FenceRight5	212.3835065808945 36.01730323612709 2.0	22.5	Fittings 212.371375 5.3468148499999995 -36.03332
+placed	39418744ba8f613a	Yard1_FenceRight6	223.88067409659052 40.779585950003764 2.0	22.5	Fittings 223.86854499999998 5.3468148499999995 -40.795601000000005
+placed	39418744ba8f613a	Yard1_FenceRight7	235.37784161228652 45.541868663880436 2.0	22.5	Fittings 235.36572 5.3468148499999995 -45.557884
+placed	39418744ba8f613a	Yard1_FenceRight8	246.87500912798254 50.30415137775711 2.0	22.5	Fittings 246.862875 5.3468148499999995 -50.3201655
+placed	39418744ba8f613a	Yard1_FenceRight9	258.3721766436786 55.06643409163379 2.0	22.5	Fittings 258.360045 5.3468148499999995 -55.08245
+placed	39418744ba8f613a	Yard2_FenceLeft1	16.968172380620413 166.39483651811045 2.0	247.5	Fittings 16.9877295 5.3468148499999995 -166.39174000000003
+placed	39418744ba8f613a	Yard2_FenceLeft2	21.73045509449709 177.89200403380647 2.0	247.5	Fittings 21.750012499999997 5.3468148499999995 -177.88889999999998
+placed	39418744ba8f613a	Yard2_FenceLeft3	26.49273780837376 189.38917154950246 2.0	247.5	Fittings 26.512296 5.3468148499999995 -189.38608
+placed	39418744ba8f613a	Yard2_FenceLeft4	31.255020522250433 200.88633906519848 2.0	247.5	Fittings 31.2745785 5.3468148499999995 -200.88324
+placed	39418744ba8f613a	Yard2_FenceLeft5	36.017303236127105 212.3835065808945 2.0	247.5	Fittings 36.036861 5.3468148499999995 -212.380405
+placed	39418744ba8f613a	Yard2_FenceLeft6	40.77958595000378 223.88067409659052 2.0	247.5	Fittings 40.799143 5.3468148499999995 -223.87758000000002
+placed	39418744ba8f613a	Yard2_FenceLeft7	45.54186866388045 235.37784161228652 2.0	247.5	Fittings 45.561426 5.3468148499999995 -235.37473999999997
+placed	39418744ba8f613a	Yard2_FenceLeft8	50.30415137775712 246.87500912798254 2.0	247.5	Fittings 50.323708499999995 5.3468148499999995 -246.87191
+placed	39418744ba8f613a	Yard2_FenceLeft9	55.066434091633795 258.3721766436786 2.0	247.5	Fittings 55.085991 5.3468148499999995 -258.369085
+placed	39418744ba8f613a	Yard2_FenceRight1	105.66060750170394 129.65722701106185 2.0	67.5	Fittings 105.64105 5.3468148499999995 -129.660325
+placed	39418744ba8f613a	Yard2_FenceRight2	110.42289021558061 141.15439452675787 2.0	67.5	Fittings 110.40333 5.3468148499999995 -141.157495
+placed	39418744ba8f613a	Yard2_FenceRight3	115.18517292945728 152.65156204245386 2.0	67.5	Fittings 115.165615 5.3468148499999995 -152.654665
+placed	39418744ba8f613a	Yard2_FenceRight4	119.94745564333395 164.14872955814988 2.0	67.5	Fittings 119.9279 5.3468148499999995 -164.151825
+placed	39418744ba8f613a	Yard2_FenceRight5	124.70973835721063 175.6458970738459 2.0	67.5	Fittings 124.69018 5.3468148499999995 -175.648995
+placed	39418744ba8f613a	Yard2_FenceRight6	129.47202107108728 187.14306458954192 2.0	67.5	Fittings 129.452463 5.3468148499999995 -187.146165
+placed	39418744ba8f613a	Yard2_FenceRight7	134.23430378496397 198.6402321052379 2.0	67.5	Fittings 134.214745 5.3468148499999995 -198.643325
+placed	39418744ba8f613a	Yard2_FenceRight8	138.99658649884066 210.13739962093393 2.0	67.5	Fittings 138.977025 5.3468148499999995 -210.140505
+placed	39418744ba8f613a	Yard2_FenceRight9	143.75886921271731 221.63456713662995 2.0	67.5	Fittings 143.739315 5.3468148499999995 -221.637665
+placed	39418744ba8f613a	Yard3_FenceLeft1	-105.66060750170391 129.65722701106185 2.0	292.5	Fittings -105.6445925 5.3468148499999995 -129.66935999999998
+placed	39418744ba8f613a	Yard3_FenceLeft2	-110.42289021558058 141.15439452675787 2.0	292.5	Fittings -110.406875 5.3468148499999995 -141.166525
+placed	39418744ba8f613a	Yard3_FenceLeft3	-115.18517292945725 152.65156204245386 2.0	292.5	Fittings -115.169158 5.3468148499999995 -152.66369
+placed	39418744ba8f613a	Yard3_FenceLeft4	-119.94745564333392 164.14872955814988 2.0	292.5	Fittings -119.93144000000001 5.3468148499999995 -164.160855
+placed	39418744ba8f613a	Yard3_FenceLeft5	-124.7097383572106 175.6458970738459 2.0	292.5	Fittings -124.69372000000001 5.3468148499999995 -175.658025
+placed	39418744ba8f613a	Yard3_FenceLeft6	-129.47202107108728 187.14306458954192 2.0	292.5	Fittings -129.456008 5.3468148499999995 -187.15519
+placed	39418744ba8f613a	Yard3_FenceLeft7	-134.23430378496394 198.6402321052379 2.0	292.5	Fittings -134.218295 5.3468148499999995 -198.652355
+placed	39418744ba8f613a	Yard3_FenceLeft8	-138.9965864988406 210.13739962093393 2.0	292.5	Fittings -138.980575 5.3468148499999995 -210.14952499999998
+placed	39418744ba8f613a	Yard3_FenceLeft9	-143.7588692127173 221.63456713662995 2.0	292.5	Fittings -143.74286 5.3468148499999995 -221.646695
+placed	39418744ba8f613a	Yard3_FenceRight1	-16.968172380620384 166.39483651811045 2.0	112.5	Fittings -16.984187 5.3468148499999995 -166.382705
+placed	39418744ba8f613a	Yard3_FenceRight2	-21.73045509449706 177.89200403380647 2.0	112.5	Fittings -21.746470000000002 5.3468148499999995 -177.879875
+placed	39418744ba8f613a	Yard3_FenceRight3	-26.492737808373732 189.38917154950246 2.0	112.5	Fittings -26.508753 5.3468148499999995 -189.377035
+placed	39418744ba8f613a	Yard3_FenceRight4	-31.255020522250405 200.88633906519848 2.0	112.5	Fittings -31.271036000000002 5.3468148499999995 -200.874215
+placed	39418744ba8f613a	Yard3_FenceRight5	-36.01730323612708 212.3835065808945 2.0	112.5	Fittings -36.03332 5.3468148499999995 -212.371375
+placed	39418744ba8f613a	Yard3_FenceRight6	-40.77958595000375 223.88067409659052 2.0	112.5	Fittings -40.795601000000005 5.3468148499999995 -223.86854499999998
+placed	39418744ba8f613a	Yard3_FenceRight7	-45.54186866388042 235.37784161228652 2.0	112.5	Fittings -45.557884 5.3468148499999995 -235.36572
+placed	39418744ba8f613a	Yard3_FenceRight8	-50.304151377757094 246.87500912798254 2.0	112.5	Fittings -50.3201655 5.3468148499999995 -246.862875
+placed	39418744ba8f613a	Yard3_FenceRight9	-55.06643409163377 258.3721766436786 2.0	112.5	Fittings -55.08245 5.3468148499999995 -258.360045
+placed	39418744ba8f613a	Yard4_FenceLeft1	-166.39483651811045 16.968172380620427 2.0	337.5	Fittings -166.39174000000003 5.3468148499999995 -16.9877295
+placed	39418744ba8f613a	Yard4_FenceLeft2	-177.89200403380647 21.730455094497103 2.0	337.5	Fittings -177.88889999999998 5.3468148499999995 -21.750012499999997
+placed	39418744ba8f613a	Yard4_FenceLeft3	-189.38917154950246 26.492737808373775 2.0	337.5	Fittings -189.38608 5.3468148499999995 -26.512296
+placed	39418744ba8f613a	Yard4_FenceLeft4	-200.88633906519848 31.255020522250447 2.0	337.5	Fittings -200.88324 5.3468148499999995 -31.2745785
+placed	39418744ba8f613a	Yard4_FenceLeft5	-212.3835065808945 36.01730323612712 2.0	337.5	Fittings -212.380405 5.3468148499999995 -36.036861
+placed	39418744ba8f613a	Yard4_FenceLeft6	-223.88067409659052 40.77958595000379 2.0	337.5	Fittings -223.87758000000002 5.3468148499999995 -40.799143
+placed	39418744ba8f613a	Yard4_FenceLeft7	-235.37784161228652 45.541868663880464 2.0	337.5	Fittings -235.37473999999997 5.3468148499999995 -45.561426
+placed	39418744ba8f613a	Yard4_FenceLeft8	-246.87500912798254 50.30415137775714 2.0	337.5	Fittings -246.87191 5.3468148499999995 -50.323708499999995
+placed	39418744ba8f613a	Yard4_FenceLeft9	-258.3721766436786 55.066434091633816 2.0	337.5	Fittings -258.369085 5.3468148499999995 -55.085991
+placed	39418744ba8f613a	Yard4_FenceRight1	-129.65722701106185 105.66060750170395 2.0	157.5	Fittings -129.660325 5.3468148499999995 -105.64105
+placed	39418744ba8f613a	Yard4_FenceRight2	-141.15439452675787 110.42289021558062 2.0	157.5	Fittings -141.157495 5.3468148499999995 -110.40333
+placed	39418744ba8f613a	Yard4_FenceRight3	-152.65156204245386 115.1851729294573 2.0	157.5	Fittings -152.654665 5.3468148499999995 -115.165615
+placed	39418744ba8f613a	Yard4_FenceRight4	-164.14872955814988 119.94745564333397 2.0	157.5	Fittings -164.151825 5.3468148499999995 -119.9279
+placed	39418744ba8f613a	Yard4_FenceRight5	-175.6458970738459 124.70973835721064 2.0	157.5	Fittings -175.648995 5.3468148499999995 -124.69018
+placed	39418744ba8f613a	Yard4_FenceRight6	-187.14306458954192 129.4720210710873 2.0	157.5	Fittings -187.146165 5.3468148499999995 -129.452463
+placed	39418744ba8f613a	Yard4_FenceRight7	-198.6402321052379 134.234303784964 2.0	157.5	Fittings -198.643325 5.3468148499999995 -134.214745
+placed	39418744ba8f613a	Yard4_FenceRight8	-210.13739962093393 138.99658649884066 2.0	157.5	Fittings -210.140505 5.3468148499999995 -138.977025
+placed	39418744ba8f613a	Yard4_FenceRight9	-221.63456713662995 143.75886921271734 2.0	157.5	Fittings -221.637665 5.3468148499999995 -143.739315
+placed	39418744ba8f613a	Yard5_FenceLeft1	-129.65722701106188 -105.66060750170391 2.0	382.5	Fittings -129.66935999999998 5.3468148499999995 105.6445925
+placed	39418744ba8f613a	Yard5_FenceLeft2	-141.1543945267579 -110.42289021558058 2.0	382.5	Fittings -141.166525 5.3468148499999995 110.406875
+placed	39418744ba8f613a	Yard5_FenceLeft3	-152.65156204245392 -115.18517292945725 2.0	382.5	Fittings -152.66369 5.3468148499999995 115.169158
+placed	39418744ba8f613a	Yard5_FenceLeft4	-164.1487295581499 -119.94745564333392 2.0	382.5	Fittings -164.160855 5.3468148499999995 119.93144000000001
+placed	39418744ba8f613a	Yard5_FenceLeft5	-175.64589707384593 -124.7097383572106 2.0	382.5	Fittings -175.658025 5.3468148499999995 124.69372000000001
+placed	39418744ba8f613a	Yard5_FenceLeft6	-187.14306458954195 -129.47202107108725 2.0	382.5	Fittings -187.15519 5.3468148499999995 129.456008
+placed	39418744ba8f613a	Yard5_FenceLeft7	-198.64023210523794 -134.23430378496394 2.0	382.5	Fittings -198.652355 5.3468148499999995 134.218295
+placed	39418744ba8f613a	Yard5_FenceLeft8	-210.13739962093396 -138.9965864988406 2.0	382.5	Fittings -210.14952499999998 5.3468148499999995 138.980575
+placed	39418744ba8f613a	Yard5_FenceLeft9	-221.63456713662998 -143.7588692127173 2.0	382.5	Fittings -221.646695 5.3468148499999995 143.74286
+placed	39418744ba8f613a	Yard5_FenceRight1	-166.39483651811048 -16.968172380620388 2.0	202.5	Fittings -166.382705 5.3468148499999995 16.984187
+placed	39418744ba8f613a	Yard5_FenceRight2	-177.8920040338065 -21.73045509449706 2.0	202.5	Fittings -177.879875 5.3468148499999995 21.746470000000002
+placed	39418744ba8f613a	Yard5_FenceRight3	-189.38917154950252 -26.492737808373732 2.0	202.5	Fittings -189.377035 5.3468148499999995 26.508753
+placed	39418744ba8f613a	Yard5_FenceRight4	-200.8863390651985 -31.255020522250405 2.0	202.5	Fittings -200.874215 5.3468148499999995 31.271036000000002
+placed	39418744ba8f613a	Yard5_FenceRight5	-212.38350658089453 -36.01730323612708 2.0	202.5	Fittings -212.371375 5.3468148499999995 36.03332
+placed	39418744ba8f613a	Yard5_FenceRight6	-223.88067409659055 -40.77958595000375 2.0	202.5	Fittings -223.86854499999998 5.3468148499999995 40.795601000000005
+placed	39418744ba8f613a	Yard5_FenceRight7	-235.37784161228655 -45.54186866388042 2.0	202.5	Fittings -235.36572 5.3468148499999995 45.557884
+placed	39418744ba8f613a	Yard5_FenceRight8	-246.87500912798257 -50.304151377757094 2.0	202.5	Fittings -246.862875 5.3468148499999995 50.3201655
+placed	39418744ba8f613a	Yard5_FenceRight9	-258.3721766436786 -55.06643409163377 2.0	202.5	Fittings -258.360045 5.3468148499999995 55.08245
+placed	39418744ba8f613a	Yard6_FenceLeft1	-16.968172380620338 -166.3948365181105 2.0	427.5	Fittings -16.9877295 5.3468148499999995 166.39174000000003
+placed	39418744ba8f613a	Yard6_FenceLeft2	-21.730455094497014 -177.89200403380653 2.0	427.5	Fittings -21.750012499999997 5.3468148499999995 177.88889999999998
+placed	39418744ba8f613a	Yard6_FenceLeft3	-26.492737808373686 -189.38917154950252 2.0	427.5	Fittings -26.512296 5.3468148499999995 189.38608
+placed	39418744ba8f613a	Yard6_FenceLeft4	-31.255020522250362 -200.88633906519854 2.0	427.5	Fittings -31.2745785 5.3468148499999995 200.88324
+placed	39418744ba8f613a	Yard6_FenceLeft5	-36.017303236127034 -212.38350658089456 2.0	427.5	Fittings -36.036861 5.3468148499999995 212.380405
+placed	39418744ba8f613a	Yard6_FenceLeft6	-40.77958595000371 -223.88067409659058 2.0	427.5	Fittings -40.799143 5.3468148499999995 223.87758000000002
+placed	39418744ba8f613a	Yard6_FenceLeft7	-45.54186866388038 -235.37784161228657 2.0	427.5	Fittings -45.561426 5.3468148499999995 235.37473999999997
+placed	39418744ba8f613a	Yard6_FenceLeft8	-50.30415137775705 -246.8750091279826 2.0	427.5	Fittings -50.323708499999995 5.3468148499999995 246.87191
+placed	39418744ba8f613a	Yard6_FenceLeft9	-55.06643409163374 -258.37217664367864 2.0	427.5	Fittings -55.085991 5.3468148499999995 258.369085
+placed	39418744ba8f613a	Yard6_FenceRight1	-105.66060750170385 -129.65722701106185 2.0	247.5	Fittings -105.64105 5.3468148499999995 129.660325
+placed	39418744ba8f613a	Yard6_FenceRight2	-110.42289021558054 -141.15439452675787 2.0	247.5	Fittings -110.40333 5.3468148499999995 141.157495
+placed	39418744ba8f613a	Yard6_FenceRight3	-115.18517292945721 -152.65156204245386 2.0	247.5	Fittings -115.165615 5.3468148499999995 152.654665
+placed	39418744ba8f613a	Yard6_FenceRight4	-119.94745564333388 -164.14872955814988 2.0	247.5	Fittings -119.9279 5.3468148499999995 164.151825
+placed	39418744ba8f613a	Yard6_FenceRight5	-124.70973835721055 -175.6458970738459 2.0	247.5	Fittings -124.69018 5.3468148499999995 175.648995
+placed	39418744ba8f613a	Yard6_FenceRight6	-129.47202107108723 -187.14306458954192 2.0	247.5	Fittings -129.452463 5.3468148499999995 187.146165
+placed	39418744ba8f613a	Yard6_FenceRight7	-134.2343037849639 -198.6402321052379 2.0	247.5	Fittings -134.214745 5.3468148499999995 198.643325
+placed	39418744ba8f613a	Yard6_FenceRight8	-138.99658649884057 -210.13739962093393 2.0	247.5	Fittings -138.977025 5.3468148499999995 210.140505
+placed	39418744ba8f613a	Yard6_FenceRight9	-143.75886921271726 -221.63456713662995 2.0	247.5	Fittings -143.739315 5.3468148499999995 221.637665
+placed	39418744ba8f613a	Yard7_FenceLeft1	105.66060750170396 -129.65722701106185 2.0	472.5	Fittings 105.6445925 5.3468148499999995 129.66935999999998
+placed	39418744ba8f613a	Yard7_FenceLeft2	110.42289021558064 -141.15439452675787 2.0	472.5	Fittings 110.406875 5.3468148499999995 141.166525
+placed	39418744ba8f613a	Yard7_FenceLeft3	115.18517292945731 -152.65156204245386 2.0	472.5	Fittings 115.169158 5.3468148499999995 152.66369
+placed	39418744ba8f613a	Yard7_FenceLeft4	119.94745564333398 -164.14872955814988 2.0	472.5	Fittings 119.93144000000001 5.3468148499999995 164.160855
+placed	39418744ba8f613a	Yard7_FenceLeft5	124.70973835721065 -175.6458970738459 2.0	472.5	Fittings 124.69372000000001 5.3468148499999995 175.658025
+placed	39418744ba8f613a	Yard7_FenceLeft6	129.4720210710873 -187.14306458954192 2.0	472.5	Fittings 129.456008 5.3468148499999995 187.15519
+placed	39418744ba8f613a	Yard7_FenceLeft7	134.234303784964 -198.64023210523794 2.0	472.5	Fittings 134.218295 5.3468148499999995 198.652355
+placed	39418744ba8f613a	Yard7_FenceLeft8	138.99658649884066 -210.13739962093393 2.0	472.5	Fittings 138.980575 5.3468148499999995 210.14952499999998
+placed	39418744ba8f613a	Yard7_FenceLeft9	143.75886921271734 -221.63456713662998 2.0	472.5	Fittings 143.74286 5.3468148499999995 221.646695
+placed	39418744ba8f613a	Yard7_FenceRight1	16.96817238062044 -166.39483651811045 2.0	292.5	Fittings 16.984187 5.3468148499999995 166.382705
+placed	39418744ba8f613a	Yard7_FenceRight2	21.730455094497117 -177.89200403380647 2.0	292.5	Fittings 21.746470000000002 5.3468148499999995 177.879875
+placed	39418744ba8f613a	Yard7_FenceRight3	26.492737808373782 -189.38917154950246 2.0	292.5	Fittings 26.508753 5.3468148499999995 189.377035
+placed	39418744ba8f613a	Yard7_FenceRight4	31.255020522250454 -200.88633906519848 2.0	292.5	Fittings 31.271036000000002 5.3468148499999995 200.874215
+placed	39418744ba8f613a	Yard7_FenceRight5	36.01730323612713 -212.3835065808945 2.0	292.5	Fittings 36.03332 5.3468148499999995 212.371375
+placed	39418744ba8f613a	Yard7_FenceRight6	40.7795859500038 -223.88067409659052 2.0	292.5	Fittings 40.795601000000005 5.3468148499999995 223.86854499999998
+placed	39418744ba8f613a	Yard7_FenceRight7	45.541868663880464 -235.37784161228655 2.0	292.5	Fittings 45.557884 5.3468148499999995 235.36572
+placed	39418744ba8f613a	Yard7_FenceRight8	50.30415137775714 -246.87500912798254 2.0	292.5	Fittings 50.3201655 5.3468148499999995 246.862875
+placed	39418744ba8f613a	Yard7_FenceRight9	55.066434091633816 -258.3721766436786 2.0	292.5	Fittings 55.08245 5.3468148499999995 258.360045
+placed	39418744ba8f613a	Yard8_FenceLeft1	166.39483651811048 -16.968172380620363 2.0	517.5	Fittings 166.39174000000003 5.3468148499999995 16.9877295
+placed	39418744ba8f613a	Yard8_FenceLeft2	177.8920040338065 -21.730455094497035 2.0	517.5	Fittings 177.88889999999998 5.3468148499999995 21.750012499999997
+placed	39418744ba8f613a	Yard8_FenceLeft3	189.3891715495025 -26.492737808373704 2.0	517.5	Fittings 189.38608 5.3468148499999995 26.512296
+placed	39418744ba8f613a	Yard8_FenceLeft4	200.8863390651985 -31.255020522250373 2.0	517.5	Fittings 200.88324 5.3468148499999995 31.2745785
+placed	39418744ba8f613a	Yard8_FenceLeft5	212.38350658089453 -36.01730323612704 2.0	517.5	Fittings 212.380405 5.3468148499999995 36.036861
+placed	39418744ba8f613a	Yard8_FenceLeft6	223.88067409659055 -40.77958595000371 2.0	517.5	Fittings 223.87758000000002 5.3468148499999995 40.799143
+placed	39418744ba8f613a	Yard8_FenceLeft7	235.37784161228655 -45.54186866388038 2.0	517.5	Fittings 235.37473999999997 5.3468148499999995 45.561426
+placed	39418744ba8f613a	Yard8_FenceLeft8	246.87500912798257 -50.30415137775705 2.0	517.5	Fittings 246.87191 5.3468148499999995 50.323708499999995
+placed	39418744ba8f613a	Yard8_FenceLeft9	258.3721766436786 -55.066434091633724 2.0	517.5	Fittings 258.369085 5.3468148499999995 55.085991
+placed	39418744ba8f613a	Yard8_FenceRight1	129.65722701106188 -105.6606075017039 2.0	337.5	Fittings 129.660325 5.3468148499999995 105.64105
+placed	39418744ba8f613a	Yard8_FenceRight2	141.1543945267579 -110.42289021558057 2.0	337.5	Fittings 141.157495 5.3468148499999995 110.40333
+placed	39418744ba8f613a	Yard8_FenceRight3	152.6515620424539 -115.18517292945722 2.0	337.5	Fittings 152.654665 5.3468148499999995 115.165615
+placed	39418744ba8f613a	Yard8_FenceRight4	164.1487295581499 -119.9474556433339 2.0	337.5	Fittings 164.151825 5.3468148499999995 119.9279
+placed	39418744ba8f613a	Yard8_FenceRight5	175.64589707384593 -124.70973835721057 2.0	337.5	Fittings 175.648995 5.3468148499999995 124.69018
+placed	39418744ba8f613a	Yard8_FenceRight6	187.14306458954195 -129.47202107108723 2.0	337.5	Fittings 187.146165 5.3468148499999995 129.452463
+placed	39418744ba8f613a	Yard8_FenceRight7	198.64023210523794 -134.2343037849639 2.0	337.5	Fittings 198.643325 5.3468148499999995 134.214745
+placed	39418744ba8f613a	Yard8_FenceRight8	210.13739962093396 -138.99658649884057 2.0	337.5	Fittings 210.140505 5.3468148499999995 138.977025
+placed	39418744ba8f613a	Yard8_FenceRight9	221.63456713662998 -143.75886921271726 2.0	337.5	Fittings 221.637665 5.3468148499999995 143.739315
+object	1f38333aa3288eed	1	YardFenceHalf-ca23e4e88ebebfbf 1 x x1.5	Fittings Posts Sheets
+placed	1f38333aa3288eed	Yard1_FenceFrontHalf1	125.05669355030912 100.50782754723173 2.0	-67.5	Fittings 125.04888249999999 5.33874635 -100.496955
+placed	1f38333aa3288eed	Yard1_FenceFrontHalf2	159.4982024631672 17.358669621215917 2.0	-67.5	Fittings 159.490385 5.33874635 -17.347797
+placed	1f38333aa3288eed	Yard2_FenceFrontHalf1	17.358669621215935 159.4982024631672 2.0	-22.5	Fittings 17.3600475 5.33874635 -159.48526
+placed	1f38333aa3288eed	Yard2_FenceFrontHalf2	100.50782754723173 125.05669355030912 2.0	-22.5	Fittings 100.50920500000001 5.33874635 -125.04375
+placed	1f38333aa3288eed	Yard3_FenceFrontHalf1	-100.5078275472317 125.05669355030912 2.0	22.5	Fittings -100.496955 5.33874635 -125.04888249999999
+placed	1f38333aa3288eed	Yard3_FenceFrontHalf2	-17.358669621215906 159.4982024631672 2.0	22.5	Fittings -17.347797 5.33874635 -159.490385
+placed	1f38333aa3288eed	Yard4_FenceFrontHalf1	-159.4982024631672 17.358669621215945 2.0	67.5	Fittings -159.48526 5.33874635 -17.3600475
+placed	1f38333aa3288eed	Yard4_FenceFrontHalf2	-125.05669355030912 100.50782754723176 2.0	67.5	Fittings -125.04375 5.33874635 -100.50920500000001
+placed	1f38333aa3288eed	Yard5_FenceFrontHalf1	-125.05669355030915 -100.5078275472317 2.0	112.5	Fittings -125.04888249999999 5.33874635 100.496955
+placed	1f38333aa3288eed	Yard5_FenceFrontHalf2	-159.49820246316722 -17.35866962121591 2.0	112.5	Fittings -159.490385 5.33874635 17.347797
+placed	1f38333aa3288eed	Yard6_FenceFrontHalf1	-17.35866962121586 -159.49820246316722 2.0	157.5	Fittings -17.3600475 5.33874635 159.48526
+placed	1f38333aa3288eed	Yard6_FenceFrontHalf2	-100.50782754723167 -125.05669355030915 2.0	157.5	Fittings -100.50920500000001 5.33874635 125.04375
+placed	1f38333aa3288eed	Yard7_FenceFrontHalf1	100.50782754723178 -125.0566935503091 2.0	202.5	Fittings 100.496955 5.33874635 125.04888249999999
+placed	1f38333aa3288eed	Yard7_FenceFrontHalf2	17.358669621215963 -159.49820246316716 2.0	202.5	Fittings 17.347797 5.33874635 159.490385
+placed	1f38333aa3288eed	Yard8_FenceFrontHalf1	159.49820246316722 -17.35866962121589 2.0	247.5	Fittings 159.48526 5.33874635 17.3600475
+placed	1f38333aa3288eed	Yard8_FenceFrontHalf2	125.05669355030913 -100.5078275472317 2.0	247.5	Fittings 125.04375 5.33874635 100.50920500000001
+object	d8fd97e18c74e1cd	1	YardFooting-ce1698371f70b42a 0.5 x x1.5	Footing
+placed	d8fd97e18c74e1cd	Yard1_FootingFrontHalf1	125.05669355030912 100.50782754723173 2.0	-67.5	Footing 125.1258475 2.266335 -100.5056625
+placed	d8fd97e18c74e1cd	Yard1_FootingFrontHalf2	159.4982024631672 17.358669621215917 2.0	-67.5	Footing 159.56735 2.266335 -17.35650175
+placed	d8fd97e18c74e1cd	Yard2_FootingFrontHalf1	17.358669621215935 159.4982024631672 2.0	-22.5	Footing 17.353939 2.266335 -159.48933499999998
+placed	d8fd97e18c74e1cd	Yard2_FootingFrontHalf2	100.50782754723173 125.05669355030912 2.0	-22.5	Footing 100.50309999999999 2.266335 -125.047825
+placed	d8fd97e18c74e1cd	Yard3_FootingFrontHalf1	-100.5078275472317 125.05669355030912 2.0	22.5	Footing -100.5056625 2.266335 -125.1258475
+placed	d8fd97e18c74e1cd	Yard3_FootingFrontHalf2	-17.358669621215906 159.4982024631672 2.0	22.5	Footing -17.35650175 2.266335 -159.56735
+placed	d8fd97e18c74e1cd	Yard4_FootingFrontHalf1	-159.4982024631672 17.358669621215945 2.0	67.5	Footing -159.48933499999998 2.266335 -17.353939
+placed	d8fd97e18c74e1cd	Yard4_FootingFrontHalf2	-125.05669355030912 100.50782754723176 2.0	67.5	Footing -125.047825 2.266335 -100.50309999999999
+placed	d8fd97e18c74e1cd	Yard5_FootingFrontHalf1	-125.05669355030915 -100.5078275472317 2.0	112.5	Footing -125.1258475 2.266335 100.5056625
+placed	d8fd97e18c74e1cd	Yard5_FootingFrontHalf2	-159.49820246316722 -17.35866962121591 2.0	112.5	Footing -159.56735 2.266335 17.35650175
+placed	d8fd97e18c74e1cd	Yard6_FootingFrontHalf1	-17.35866962121586 -159.49820246316722 2.0	157.5	Footing -17.353939 2.266335 159.48933499999998
+placed	d8fd97e18c74e1cd	Yard6_FootingFrontHalf2	-100.50782754723167 -125.05669355030915 2.0	157.5	Footing -100.50309999999999 2.266335 125.047825
+placed	d8fd97e18c74e1cd	Yard7_FootingFrontHalf1	100.50782754723178 -125.0566935503091 2.0	202.5	Footing 100.5056625 2.266335 125.1258475
+placed	d8fd97e18c74e1cd	Yard7_FootingFrontHalf2	17.358669621215963 -159.49820246316716 2.0	202.5	Footing 17.35650175 2.266335 159.56735
+placed	d8fd97e18c74e1cd	Yard8_FootingFrontHalf1	159.49820246316722 -17.35866962121589 2.0	247.5	Footing 159.48933499999998 2.266335 17.353939
+placed	d8fd97e18c74e1cd	Yard8_FootingFrontHalf2	125.05669355030913 -100.5078275472317 2.0	247.5	Footing 125.047825 2.266335 100.50309999999999
+object	e7577c7eb18a20c6	1	YardFooting-ce1698371f70b42a 1 x x1.5	Footing
+placed	e7577c7eb18a20c6	Yard1_FootingBack1	229.67925148866848 140.59673337458793 2.0	-67.5	Footing 229.77353 2.266335 -140.59605499999998
+placed	e7577c7eb18a20c6	Yard1_FootingBack2	234.27145267704955 129.5101789844525 2.0	-67.5	Footing 234.36572999999999 2.266335 -129.50949500000002
+placed	e7577c7eb18a20c6	Yard1_FootingBack3	238.86365386543062 118.42362459431705 2.0	-67.5	Footing 238.95793 2.266335 -118.42294000000001
+placed	e7577c7eb18a20c6	Yard1_FootingBack4	243.45585505381172 107.3370702041816 2.0	-67.5	Footing 243.55013000000002 2.266335 -107.336385
+placed	e7577c7eb18a20c6	Yard1_FootingBack5	248.04805624219279 96.25051581404617 2.0	-67.5	Footing 248.142335 2.266335 -96.24983499999999
+placed	e7577c7eb18a20c6	Yard1_FootingBack6	252.64025743057388 85.16396142391072 2.0	-67.5	Footing 252.734535 2.266335 -85.16327999999999
+placed	e7577c7eb18a20c6	Yard1_FootingBack7	257.232458618955 74.07740703377527 2.0	-67.5	Footing 257.326735 2.266335 -74.07672500000001
+placed	e7577c7eb18a20c6	Yard1_FootingBack8	261.82465980733605 62.99085264363984 2.0	-67.5	Footing 261.91893 2.266335 -62.990168499999996
+placed	e7577c7eb18a20c6	Yard1_FootingFront1	137.6852468183571 70.01980297435927 2.0	-67.5	Footing 137.779525 2.266335 -70.01912300000001
+placed	e7577c7eb18a20c6	Yard1_FootingFront2	133.093045629976 81.1063573644947 2.0	-67.5	Footing 133.18732 2.266335 -81.10567499999999
+placed	e7577c7eb18a20c6	Yard1_FootingFront3	128.50084444159492 92.19291175463013 2.0	-67.5	Footing 128.595125 2.266335 -92.19222500000001
+placed	e7577c7eb18a20c6	Yard1_FootingFront4	146.86964919511922 47.84669419408837 2.0	-67.5	Footing 146.96393 2.266335 -47.8460125
+placed	e7577c7eb18a20c6	Yard1_FootingFront5	151.46185038350032 36.76013980395294 2.0	-67.5	Footing 151.55613 2.266335 -36.759457
+placed	e7577c7eb18a20c6	Yard1_FootingFront6	156.0540515718814 25.6735854138175 2.0	-67.5	Footing 156.14833 2.266335 -25.672902999999998
+placed	e7577c7eb18a20c6	Yard2_FootingBack1	62.990852643639855 261.82465980733605 2.0	-22.5	Footing 62.984905 2.266335 -261.81678999999997
+placed	e7577c7eb18a20c6	Yard2_FootingBack2	74.07740703377529 257.232458618955 2.0	-22.5	Footing 74.071455 2.266335 -257.224595
+placed	e7577c7eb18a20c6	Yard2_FootingBack3	85.16396142391073 252.64025743057385 2.0	-22.5	Footing 85.158015 2.266335 -252.63239
+placed	e7577c7eb18a20c6	Yard2_FootingBack4	96.25051581404618 248.04805624219279 2.0	-22.5	Footing 96.244565 2.266335 -248.04019
+placed	e7577c7eb18a20c6	Yard2_FootingBack5	107.33707020418161 243.45585505381172 2.0	-22.5	Footing 107.331125 2.266335 -243.44799
+placed	e7577c7eb18a20c6	Yard2_FootingBack6	118.42362459431706 238.86365386543065 2.0	-22.5	Footing 118.4176775 2.266335 -238.85579
+placed	e7577c7eb18a20c6	Yard2_FootingBack7	129.5101789844525 234.27145267704955 2.0	-22.5	Footing 129.50423 2.266335 -234.26359000000002
+placed	e7577c7eb18a20c6	Yard2_FootingBack8	140.59673337458793 229.67925148866848 2.0	-22.5	Footing 140.59079 2.266335 -229.67139
+placed	e7577c7eb18a20c6	Yard2_FootingFront1	47.8466941940884 146.86964919511922 2.0	-22.5	Footing 47.840745999999996 2.266335 -146.861785
+placed	e7577c7eb18a20c6	Yard2_FootingFront2	36.76013980395295 151.46185038350032 2.0	-22.5	Footing 36.754191 2.266335 -151.45398999999998
+placed	e7577c7eb18a20c6	Yard2_FootingFront3	25.673585413817516 156.0540515718814 2.0	-22.5	Footing 25.667638 2.266335 -156.04619
+placed	e7577c7eb18a20c6	Yard2_FootingFront4	70.01980297435927 137.6852468183571 2.0	-22.5	Footing 70.013855 2.266335 -137.67738
+placed	e7577c7eb18a20c6	Yard2_FootingFront5	81.10635736449471 133.093045629976 2.0	-22.5	Footing 81.1004125 2.266335 -133.08517999999998
+placed	e7577c7eb18a20c6	Yard2_FootingFront6	92.19291175463016 128.50084444159492 2.0	-22.5	Footing 92.186965 2.266335 -128.49298
+placed	e7577c7eb18a20c6	Yard3_FootingBack1	-140.5967333745879 229.67925148866848 2.0	22.5	Footing -140.59605499999998 2.266335 -229.77353
+placed	e7577c7eb18a20c6	Yard3_FootingBack2	-129.51017898445247 234.27145267704955 2.0	22.5	Footing -129.50949500000002 2.266335 -234.36572999999999
+placed	e7577c7eb18a20c6	Yard3_FootingBack3	-118.42362459431703 238.86365386543065 2.0	22.5	Footing -118.42294000000001 2.266335 -238.95793
+placed	e7577c7eb18a20c6	Yard3_FootingBack4	-107.33707020418159 243.45585505381172 2.0	22.5	Footing -107.336385 2.266335 -243.55013000000002
+placed	e7577c7eb18a20c6	Yard3_FootingBack5	-96.25051581404615 248.04805624219279 2.0	22.5	Footing -96.24983499999999 2.266335 -248.142335
+placed	e7577c7eb18a20c6	Yard3_FootingBack6	-85.1639614239107 252.64025743057385 2.0	22.5	Footing -85.16327999999999 2.266335 -252.734535
+placed	e7577c7eb18a20c6	Yard3_FootingBack7	-74.07740703377526 257.232458618955 2.0	22.5	Footing -74.07672500000001 2.266335 -257.326735
+placed	e7577c7eb18a20c6	Yard3_FootingBack8	-62.990852643639826 261.82465980733605 2.0	22.5	Footing -62.990168499999996 2.266335 -261.91893
+placed	e7577c7eb18a20c6	Yard3_FootingFront1	-70.01980297435924 137.6852468183571 2.0	22.5	Footing -70.01912300000001 2.266335 -137.779525
+placed	e7577c7eb18a20c6	Yard3_FootingFront2	-81.10635736449468 133.093045629976 2.0	22.5	Footing -81.10567499999999 2.266335 -133.18732
+placed	e7577c7eb18a20c6	Yard3_FootingFront3	-92.19291175463013 128.50084444159492 2.0	22.5	Footing -92.19222500000001 2.266335 -128.595125
+placed	e7577c7eb18a20c6	Yard3_FootingFront4	-47.84669419408837 146.86964919511922 2.0	22.5	Footing -47.8460125 2.266335 -146.96393
+placed	e7577c7eb18a20c6	Yard3_FootingFront5	-36.760139803952924 151.46185038350032 2.0	22.5	Footing -36.759457 2.266335 -151.55613
+placed	e7577c7eb18a20c6	Yard3_FootingFront6	-25.673585413817488 156.0540515718814 2.0	22.5	Footing -25.672902999999998 2.266335 -156.14833
+placed	e7577c7eb18a20c6	Yard4_FootingBack1	-261.82465980733605 62.99085264363987 2.0	67.5	Footing -261.81678999999997 2.266335 -62.984905
+placed	e7577c7eb18a20c6	Yard4_FootingBack2	-257.232458618955 74.0774070337753 2.0	67.5	Footing -257.224595 2.266335 -74.071455
+placed	e7577c7eb18a20c6	Yard4_FootingBack3	-252.64025743057388 85.16396142391075 2.0	67.5	Footing -252.63239 2.266335 -85.158015
+placed	e7577c7eb18a20c6	Yard4_FootingBack4	-248.04805624219279 96.2505158140462 2.0	67.5	Footing -248.04019 2.266335 -96.244565
+placed	e7577c7eb18a20c6	Yard4_FootingBack5	-243.45585505381172 107.33707020418163 2.0	67.5	Footing -243.44799 2.266335 -107.331125
+placed	e7577c7eb18a20c6	Yard4_FootingBack6	-238.86365386543062 118.42362459431708 2.0	67.5	Footing -238.85579 2.266335 -118.4176775
+placed	e7577c7eb18a20c6	Yard4_FootingBack7	-234.27145267704955 129.51017898445252 2.0	67.5	Footing -234.26359000000002 2.266335 -129.50423
+placed	e7577c7eb18a20c6	Yard4_FootingBack8	-229.67925148866848 140.59673337458796 2.0	67.5	Footing -229.67139 2.266335 -140.59079
+placed	e7577c7eb18a20c6	Yard4_FootingFront1	-146.86964919511922 47.8466941940884 2.0	67.5	Footing -146.861785 2.266335 -47.840745999999996
+placed	e7577c7eb18a20c6	Yard4_FootingFront2	-151.46185038350032 36.76013980395297 2.0	67.5	Footing -151.45398999999998 2.266335 -36.754191
+placed	e7577c7eb18a20c6	Yard4_FootingFront3	-156.0540515718814 25.673585413817527 2.0	67.5	Footing -156.04619 2.266335 -25.667638
+placed	e7577c7eb18a20c6	Yard4_FootingFront4	-137.6852468183571 70.0198029743593 2.0	67.5	Footing -137.67738 2.266335 -70.013855
+placed	e7577c7eb18a20c6	Yard4_FootingFront5	-133.093045629976 81.10635736449473 2.0	67.5	Footing -133.08517999999998 2.266335 -81.1004125
+placed	e7577c7eb18a20c6	Yard4_FootingFront6	-128.50084444159492 92.19291175463016 2.0	67.5	Footing -128.49298 2.266335 -92.186965
+placed	e7577c7eb18a20c6	Yard5_FootingBack1	-229.6792514886685 -140.5967333745879 2.0	112.5	Footing -229.77353 2.266335 140.59605499999998
+placed	e7577c7eb18a20c6	Yard5_FootingBack2	-234.27145267704958 -129.51017898445247 2.0	112.5	Footing -234.36572999999999 2.266335 129.50949500000002
+placed	e7577c7eb18a20c6	Yard5_FootingBack3	-238.86365386543068 -118.42362459431703 2.0	112.5	Footing -238.95793 2.266335 118.42294000000001
+placed	e7577c7eb18a20c6	Yard5_FootingBack4	-243.45585505381175 -107.33707020418157 2.0	112.5	Footing -243.55013000000002 2.266335 107.336385
+placed	e7577c7eb18a20c6	Yard5_FootingBack5	-248.0480562421928 -96.25051581404614 2.0	112.5	Footing -248.142335 2.266335 96.24983499999999
+placed	e7577c7eb18a20c6	Yard5_FootingBack6	-252.64025743057388 -85.1639614239107 2.0	112.5	Footing -252.734535 2.266335 85.16327999999999
+placed	e7577c7eb18a20c6	Yard5_FootingBack7	-257.232458618955 -74.07740703377526 2.0	112.5	Footing -257.326735 2.266335 74.07672500000001
+placed	e7577c7eb18a20c6	Yard5_FootingBack8	-261.82465980733605 -62.99085264363982 2.0	112.5	Footing -261.91893 2.266335 62.990168499999996
+placed	e7577c7eb18a20c6	Yard5_FootingFront1	-137.68524681835711 -70.01980297435924 2.0	112.5	Footing -137.779525 2.266335 70.01912300000001
+placed	e7577c7eb18a20c6	Yard5_FootingFront2	-133.09304562997602 -81.1063573644947 2.0	112.5	Footing -133.18732 2.266335 81.10567499999999
+placed	e7577c7eb18a20c6	Yard5_FootingFront3	-128.50084444159495 -92.19291175463013 2.0	112.5	Footing -128.595125 2.266335 92.19222500000001
+placed	e7577c7eb18a20c6	Yard5_FootingFront4	-146.86964919511925 -47.84669419408838 2.0	112.5	Footing -146.96393 2.266335 47.8460125
+placed	e7577c7eb18a20c6	Yard5_FootingFront5	-151.46185038350035 -36.76013980395293 2.0	112.5	Footing -151.55613 2.266335 36.759457
+placed	e7577c7eb18a20c6	Yard5_FootingFront6	-156.05405157188142 -25.67358541381749 2.0	112.5	Footing -156.14833 2.266335 25.672902999999998
+placed	e7577c7eb18a20c6	Yard6_FootingBack1	-62.99085264363978 -261.82465980733605 2.0	157.5	Footing -62.984905 2.266335 261.81678999999997
+placed	e7577c7eb18a20c6	Yard6_FootingBack2	-74.07740703377522 -257.232458618955 2.0	157.5	Footing -74.071455 2.266335 257.224595
+placed	e7577c7eb18a20c6	Yard6_FootingBack3	-85.16396142391066 -252.6402574305739 2.0	157.5	Footing -85.158015 2.266335 252.63239
+placed	e7577c7eb18a20c6	Yard6_FootingBack4	-96.25051581404611 -248.0480562421928 2.0	157.5	Footing -96.244565 2.266335 248.04019
+placed	e7577c7eb18a20c6	Yard6_FootingBack5	-107.33707020418154 -243.45585505381175 2.0	157.5	Footing -107.331125 2.266335 243.44799
+placed	e7577c7eb18a20c6	Yard6_FootingBack6	-118.42362459431699 -238.86365386543065 2.0	157.5	Footing -118.4176775 2.266335 238.85579
+placed	e7577c7eb18a20c6	Yard6_FootingBack7	-129.51017898445244 -234.27145267704958 2.0	157.5	Footing -129.50423 2.266335 234.26359000000002
+placed	e7577c7eb18a20c6	Yard6_FootingBack8	-140.59673337458787 -229.6792514886685 2.0	157.5	Footing -140.59079 2.266335 229.67139
+placed	e7577c7eb18a20c6	Yard6_FootingFront1	-47.846694194088315 -146.86964919511925 2.0	157.5	Footing -47.840745999999996 2.266335 146.861785
+placed	e7577c7eb18a20c6	Yard6_FootingFront2	-36.76013980395288 -151.46185038350035 2.0	157.5	Footing -36.754191 2.266335 151.45398999999998
+placed	e7577c7eb18a20c6	Yard6_FootingFront3	-25.67358541381744 -156.05405157188142 2.0	157.5	Footing -25.667638 2.266335 156.04619
+placed	e7577c7eb18a20c6	Yard6_FootingFront4	-70.01980297435921 -137.68524681835711 2.0	157.5	Footing -70.013855 2.266335 137.67738
+placed	e7577c7eb18a20c6	Yard6_FootingFront5	-81.10635736449464 -133.09304562997602 2.0	157.5	Footing -81.1004125 2.266335 133.08517999999998
+placed	e7577c7eb18a20c6	Yard6_FootingFront6	-92.19291175463007 -128.50084444159495 2.0	157.5	Footing -92.186965 2.266335 128.49298
+placed	e7577c7eb18a20c6	Yard7_FootingBack1	140.59673337458798 -229.6792514886685 2.0	202.5	Footing 140.59605499999998 2.266335 229.77353
+placed	e7577c7eb18a20c6	Yard7_FootingBack2	129.51017898445252 -234.27145267704958 2.0	202.5	Footing 129.50949500000002 2.266335 234.36572999999999
+placed	e7577c7eb18a20c6	Yard7_FootingBack3	118.42362459431708 -238.86365386543065 2.0	202.5	Footing 118.42294000000001 2.266335 238.95793
+placed	e7577c7eb18a20c6	Yard7_FootingBack4	107.33707020418163 -243.45585505381172 2.0	202.5	Footing 107.336385 2.266335 243.55013000000002
+placed	e7577c7eb18a20c6	Yard7_FootingBack5	96.2505158140462 -248.04805624219279 2.0	202.5	Footing 96.24983499999999 2.266335 248.142335
+placed	e7577c7eb18a20c6	Yard7_FootingBack6	85.16396142391075 -252.64025743057385 2.0	202.5	Footing 85.16327999999999 2.266335 252.734535
+placed	e7577c7eb18a20c6	Yard7_FootingBack7	74.0774070337753 -257.232458618955 2.0	202.5	Footing 74.07672500000001 2.266335 257.326735
+placed	e7577c7eb18a20c6	Yard7_FootingBack8	62.99085264363987 -261.82465980733605 2.0	202.5	Footing 62.990168499999996 2.266335 261.91893
+placed	e7577c7eb18a20c6	Yard7_FootingFront1	70.01980297435932 -137.6852468183571 2.0	202.5	Footing 70.01912300000001 2.266335 137.779525
+placed	e7577c7eb18a20c6	Yard7_FootingFront2	81.10635736449476 -133.09304562997596 2.0	202.5	Footing 81.10567499999999 2.266335 133.18732
+placed	e7577c7eb18a20c6	Yard7_FootingFront3	92.1929117546302 -128.5008444415949 2.0	202.5	Footing 92.19222500000001 2.266335 128.595125
+placed	e7577c7eb18a20c6	Yard7_FootingFront4	47.84669419408843 -146.86964919511922 2.0	202.5	Footing 47.8460125 2.266335 146.96393
+placed	e7577c7eb18a20c6	Yard7_FootingFront5	36.760139803952995 -151.4618503835003 2.0	202.5	Footing 36.759457 2.266335 151.55613
+placed	e7577c7eb18a20c6	Yard7_FootingFront6	25.673585413817545 -156.05405157188136 2.0	202.5	Footing 25.672902999999998 2.266335 156.14833
+placed	e7577c7eb18a20c6	Yard8_FootingBack1	261.82465980733605 -62.99085264363977 2.0	247.5	Footing 261.81678999999997 2.266335 62.984905
+placed	e7577c7eb18a20c6	Yard8_FootingBack2	257.232458618955 -74.07740703377522 2.0	247.5	Footing 257.224595 2.266335 74.071455
+placed	e7577c7eb18a20c6	Yard8_FootingBack3	252.6402574305739 -85.16396142391065 2.0	247.5	Footing 252.63239 2.266335 85.158015
+placed	e7577c7eb18a20c6	Yard8_FootingBack4	248.04805624219284 -96.25051581404611 2.0	247.5	Footing 248.04019 2.266335 96.244565
+placed	e7577c7eb18a20c6	Yard8_FootingBack5	243.45585505381177 -107.33707020418154 2.0	247.5	Footing 243.44799 2.266335 107.331125
+placed	e7577c7eb18a20c6	Yard8_FootingBack6	238.8636538654307 -118.42362459431698 2.0	247.5	Footing 238.85579 2.266335 118.4176775
+placed	e7577c7eb18a20c6	Yard8_FootingBack7	234.27145267704964 -129.51017898445244 2.0	247.5	Footing 234.26359000000002 2.266335 129.50423
+placed	e7577c7eb18a20c6	Yard8_FootingBack8	229.6792514886685 -140.59673337458787 2.0	247.5	Footing 229.67139 2.266335 140.59079
+placed	e7577c7eb18a20c6	Yard8_FootingFront1	146.86964919511922 -47.84669419408835 2.0	247.5	Footing 146.861785 2.266335 47.840745999999996
+placed	e7577c7eb18a20c6	Yard8_FootingFront2	151.4618503835003 -36.76013980395292 2.0	247.5	Footing 151.45398999999998 2.266335 36.754191
+placed	e7577c7eb18a20c6	Yard8_FootingFront3	156.05405157188142 -25.67358541381747 2.0	247.5	Footing 156.04619 2.266335 25.667638
+placed	e7577c7eb18a20c6	Yard8_FootingFront4	137.6852468183571 -70.01980297435924 2.0	247.5	Footing 137.67738 2.266335 70.013855
+placed	e7577c7eb18a20c6	Yard8_FootingFront5	133.09304562997602 -81.10635736449467 2.0	247.5	Footing 133.08517999999998 2.266335 81.1004125
+placed	e7577c7eb18a20c6	Yard8_FootingFront6	128.50084444159495 -92.19291175463013 2.0	247.5	Footing 128.49298 2.266335 92.186965
+object	4d2610e613f25b84	1	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5	Footing
+placed	4d2610e613f25b84	Yard1_FootingLeft1	129.65722701106185 105.66060750170392 2.0	22.5	Footing 129.657795 2.266335 -105.75284199999999
+placed	4d2610e613f25b84	Yard1_FootingLeft2	141.15439452675787 110.4228902155806 2.0	22.5	Footing 141.154965 2.266335 -110.515125
+placed	4d2610e613f25b84	Yard1_FootingLeft3	152.65156204245386 115.18517292945727 2.0	22.5	Footing 152.65213 2.266335 -115.27741
+placed	4d2610e613f25b84	Yard1_FootingLeft4	164.14872955814988 119.94745564333394 2.0	22.5	Footing 164.14929999999998 2.266335 -120.039692
+placed	4d2610e613f25b84	Yard1_FootingLeft5	175.6458970738459 124.70973835721061 2.0	22.5	Footing 175.64647000000002 2.266335 -124.80197
+placed	4d2610e613f25b84	Yard1_FootingLeft6	187.14306458954192 129.47202107108728 2.0	22.5	Footing 187.14364 2.266335 -129.564255
+placed	4d2610e613f25b84	Yard1_FootingLeft7	198.6402321052379 134.23430378496397 2.0	22.5	Footing 198.640805 2.266335 -134.32654000000002
+placed	4d2610e613f25b84	Yard1_FootingLeft8	210.13739962093393 138.99658649884063 2.0	22.5	Footing 210.13797 2.266335 -139.08882
+placed	4d2610e613f25b84	Yard1_FootingLeft9	221.63456713662995 143.75886921271731 2.0	22.5	Footing 221.63513999999998 2.266335 -143.85110500000002
+placed	4d2610e613f25b84	Yard1_FootingRight1	166.39483651811045 16.9681723806204 2.0	22.5	Footing 166.39541 2.266335 -17.060408
+placed	4d2610e613f25b84	Yard1_FootingRight2	177.89200403380647 21.730455094497074 2.0	22.5	Footing 177.892575 2.266335 -21.82269
+placed	4d2610e613f25b84	Yard1_FootingRight3	189.38917154950246 26.492737808373747 2.0	22.5	Footing 189.389735 2.266335 -26.584973
+placed	4d2610e613f25b84	Yard1_FootingRight4	200.88633906519848 31.25502052225042 2.0	22.5	Footing 200.88691 2.266335 -31.347254999999997
+placed	4d2610e613f25b84	Yard1_FootingRight5	212.3835065808945 36.01730323612709 2.0	22.5	Footing 212.38407999999998 2.266335 -36.109537
+placed	4d2610e613f25b84	Yard1_FootingRight6	223.88067409659052 40.779585950003764 2.0	22.5	Footing 223.881245 2.266335 -40.87182
+placed	4d2610e613f25b84	Yard1_FootingRight7	235.37784161228652 45.541868663880436 2.0	22.5	Footing 235.378415 2.266335 -45.634104
+placed	4d2610e613f25b84	Yard1_FootingRight8	246.87500912798254 50.30415137775711 2.0	22.5	Footing 246.87558 2.266335 -50.396387000000004
+placed	4d2610e613f25b84	Yard1_FootingRight9	258.3721766436786 55.06643409163379 2.0	22.5	Footing 258.372755 2.266335 -55.15867
+placed	4d2610e613f25b84	Yard2_FootingLeft1	16.968172380620413 166.39483651811045 2.0	67.5	Footing 16.975961 2.266335 -166.38882
+placed	4d2610e613f25b84	Yard2_FootingLeft2	21.73045509449709 177.89200403380647 2.0	67.5	Footing 21.7382425 2.266335 -177.88598000000002
+placed	4d2610e613f25b84	Yard2_FootingLeft3	26.49273780837376 189.38917154950246 2.0	67.5	Footing 26.5005265 2.266335 -189.38315
+placed	4d2610e613f25b84	Yard2_FootingLeft4	31.255020522250433 200.88633906519848 2.0	67.5	Footing 31.262809500000003 2.266335 -200.88031999999998
+placed	4d2610e613f25b84	Yard2_FootingLeft5	36.017303236127105 212.3835065808945 2.0	67.5	Footing 36.0250925 2.266335 -212.37749000000002
+placed	4d2610e613f25b84	Yard2_FootingLeft6	40.77958595000378 223.88067409659052 2.0	67.5	Footing 40.787377 2.266335 -223.87464999999997
+placed	4d2610e613f25b84	Yard2_FootingLeft7	45.54186866388045 235.37784161228652 2.0	67.5	Footing 45.549656999999996 2.266335 -235.37182
+placed	4d2610e613f25b84	Yard2_FootingLeft8	50.30415137775712 246.87500912798254 2.0	67.5	Footing 50.3119385 2.266335 -246.86899
+placed	4d2610e613f25b84	Yard2_FootingLeft9	55.066434091633795 258.3721766436786 2.0	67.5	Footing 55.0742225 2.266335 -258.36617
+placed	4d2610e613f25b84	Yard2_FootingRight1	105.66060750170394 129.65722701106185 2.0	67.5	Footing 105.6684 2.266335 -129.651205
+placed	4d2610e613f25b84	Yard2_FootingRight2	110.42289021558061 141.15439452675787 2.0	67.5	Footing 110.43067500000001 2.266335 -141.14837
+placed	4d2610e613f25b84	Yard2_FootingRight3	115.18517292945728 152.65156204245386 2.0	67.5	Footing 115.19296 2.266335 -152.64553999999998
+placed	4d2610e613f25b84	Yard2_FootingRight4	119.94745564333395 164.14872955814988 2.0	67.5	Footing 119.955242 2.266335 -164.14271000000002
+placed	4d2610e613f25b84	Yard2_FootingRight5	124.70973835721063 175.6458970738459 2.0	67.5	Footing 124.717525 2.266335 -175.639875
+placed	4d2610e613f25b84	Yard2_FootingRight6	129.47202107108728 187.14306458954192 2.0	67.5	Footing 129.47981 2.266335 -187.13704
+placed	4d2610e613f25b84	Yard2_FootingRight7	134.23430378496397 198.6402321052379 2.0	67.5	Footing 134.2421 2.266335 -198.63421
+placed	4d2610e613f25b84	Yard2_FootingRight8	138.99658649884066 210.13739962093393 2.0	67.5	Footing 139.00437499999998 2.266335 -210.131375
+placed	4d2610e613f25b84	Yard2_FootingRight9	143.75886921271731 221.63456713662995 2.0	67.5	Footing 143.76665500000001 2.266335 -221.62855000000002
+placed	4d2610e613f25b84	Yard3_FootingLeft1	-105.66060750170391 129.65722701106185 2.0	112.5	Footing -105.75284199999999 2.266335 -129.657795
+placed	4d2610e613f25b84	Yard3_FootingLeft2	-110.42289021558058 141.15439452675787 2.0	112.5	Footing -110.515125 2.266335 -141.154965
+placed	4d2610e613f25b84	Yard3_FootingLeft3	-115.18517292945725 152.65156204245386 2.0	112.5	Footing -115.27741 2.266335 -152.65213
+placed	4d2610e613f25b84	Yard3_FootingLeft4	-119.94745564333392 164.14872955814988 2.0	112.5	Footing -120.039692 2.266335 -164.14929999999998
+placed	4d2610e613f25b84	Yard3_FootingLeft5	-124.7097383572106 175.6458970738459 2.0	112.5	Footing -124.80197 2.266335 -175.64647000000002
+placed	4d2610e613f25b84	Yard3_FootingLeft6	-129.47202107108728 187.14306458954192 2.0	112.5	Footing -129.564255 2.266335 -187.14364
+placed	4d2610e613f25b84	Yard3_FootingLeft7	-134.23430378496394 198.6402321052379 2.0	112.5	Footing -134.32654000000002 2.266335 -198.640805
+placed	4d2610e613f25b84	Yard3_FootingLeft8	-138.9965864988406 210.13739962093393 2.0	112.5	Footing -139.08882 2.266335 -210.13797
+placed	4d2610e613f25b84	Yard3_FootingLeft9	-143.7588692127173 221.63456713662995 2.0	112.5	Footing -143.85110500000002 2.266335 -221.63513999999998
+placed	4d2610e613f25b84	Yard3_FootingRight1	-16.968172380620384 166.39483651811045 2.0	112.5	Footing -17.060408 2.266335 -166.39541
+placed	4d2610e613f25b84	Yard3_FootingRight2	-21.73045509449706 177.89200403380647 2.0	112.5	Footing -21.82269 2.266335 -177.892575
+placed	4d2610e613f25b84	Yard3_FootingRight3	-26.492737808373732 189.38917154950246 2.0	112.5	Footing -26.584973 2.266335 -189.389735
+placed	4d2610e613f25b84	Yard3_FootingRight4	-31.255020522250405 200.88633906519848 2.0	112.5	Footing -31.347254999999997 2.266335 -200.88691
+placed	4d2610e613f25b84	Yard3_FootingRight5	-36.01730323612708 212.3835065808945 2.0	112.5	Footing -36.109537 2.266335 -212.38407999999998
+placed	4d2610e613f25b84	Yard3_FootingRight6	-40.77958595000375 223.88067409659052 2.0	112.5	Footing -40.87182 2.266335 -223.881245
+placed	4d2610e613f25b84	Yard3_FootingRight7	-45.54186866388042 235.37784161228652 2.0	112.5	Footing -45.634104 2.266335 -235.378415
+placed	4d2610e613f25b84	Yard3_FootingRight8	-50.304151377757094 246.87500912798254 2.0	112.5	Footing -50.396387000000004 2.266335 -246.87558
+placed	4d2610e613f25b84	Yard3_FootingRight9	-55.06643409163377 258.3721766436786 2.0	112.5	Footing -55.15867 2.266335 -258.372755
+placed	4d2610e613f25b84	Yard4_FootingLeft1	-166.39483651811045 16.968172380620427 2.0	157.5	Footing -166.38882 2.266335 -16.975961
+placed	4d2610e613f25b84	Yard4_FootingLeft2	-177.89200403380647 21.730455094497103 2.0	157.5	Footing -177.88598000000002 2.266335 -21.7382425
+placed	4d2610e613f25b84	Yard4_FootingLeft3	-189.38917154950246 26.492737808373775 2.0	157.5	Footing -189.38315 2.266335 -26.5005265
+placed	4d2610e613f25b84	Yard4_FootingLeft4	-200.88633906519848 31.255020522250447 2.0	157.5	Footing -200.88031999999998 2.266335 -31.262809500000003
+placed	4d2610e613f25b84	Yard4_FootingLeft5	-212.3835065808945 36.01730323612712 2.0	157.5	Footing -212.37749000000002 2.266335 -36.0250925
+placed	4d2610e613f25b84	Yard4_FootingLeft6	-223.88067409659052 40.77958595000379 2.0	157.5	Footing -223.87464999999997 2.266335 -40.787377
+placed	4d2610e613f25b84	Yard4_FootingLeft7	-235.37784161228652 45.541868663880464 2.0	157.5	Footing -235.37182 2.266335 -45.549656999999996
+placed	4d2610e613f25b84	Yard4_FootingLeft8	-246.87500912798254 50.30415137775714 2.0	157.5	Footing -246.86899 2.266335 -50.3119385
+placed	4d2610e613f25b84	Yard4_FootingLeft9	-258.3721766436786 55.066434091633816 2.0	157.5	Footing -258.36617 2.266335 -55.0742225
+placed	4d2610e613f25b84	Yard4_FootingRight1	-129.65722701106185 105.66060750170395 2.0	157.5	Footing -129.651205 2.266335 -105.6684
+placed	4d2610e613f25b84	Yard4_FootingRight2	-141.15439452675787 110.42289021558062 2.0	157.5	Footing -141.14837 2.266335 -110.43067500000001
+placed	4d2610e613f25b84	Yard4_FootingRight3	-152.65156204245386 115.1851729294573 2.0	157.5	Footing -152.64553999999998 2.266335 -115.19296
+placed	4d2610e613f25b84	Yard4_FootingRight4	-164.14872955814988 119.94745564333397 2.0	157.5	Footing -164.14271000000002 2.266335 -119.955242
+placed	4d2610e613f25b84	Yard4_FootingRight5	-175.6458970738459 124.70973835721064 2.0	157.5	Footing -175.639875 2.266335 -124.717525
+placed	4d2610e613f25b84	Yard4_FootingRight6	-187.14306458954192 129.4720210710873 2.0	157.5	Footing -187.13704 2.266335 -129.47981
+placed	4d2610e613f25b84	Yard4_FootingRight7	-198.6402321052379 134.234303784964 2.0	157.5	Footing -198.63421 2.266335 -134.2421
+placed	4d2610e613f25b84	Yard4_FootingRight8	-210.13739962093393 138.99658649884066 2.0	157.5	Footing -210.131375 2.266335 -139.00437499999998
+placed	4d2610e613f25b84	Yard4_FootingRight9	-221.63456713662995 143.75886921271734 2.0	157.5	Footing -221.62855000000002 2.266335 -143.76665500000001
+placed	4d2610e613f25b84	Yard5_FootingLeft1	-129.65722701106188 -105.66060750170391 2.0	202.5	Footing -129.657795 2.266335 105.75284199999999
+placed	4d2610e613f25b84	Yard5_FootingLeft2	-141.1543945267579 -110.42289021558058 2.0	202.5	Footing -141.154965 2.266335 110.515125
+placed	4d2610e613f25b84	Yard5_FootingLeft3	-152.65156204245392 -115.18517292945725 2.0	202.5	Footing -152.65213 2.266335 115.27741
+placed	4d2610e613f25b84	Yard5_FootingLeft4	-164.1487295581499 -119.94745564333392 2.0	202.5	Footing -164.14929999999998 2.266335 120.039692
+placed	4d2610e613f25b84	Yard5_FootingLeft5	-175.64589707384593 -124.7097383572106 2.0	202.5	Footing -175.64647000000002 2.266335 124.80197
+placed	4d2610e613f25b84	Yard5_FootingLeft6	-187.14306458954195 -129.47202107108725 2.0	202.5	Footing -187.14364 2.266335 129.564255
+placed	4d2610e613f25b84	Yard5_FootingLeft7	-198.64023210523794 -134.23430378496394 2.0	202.5	Footing -198.640805 2.266335 134.32654000000002
+placed	4d2610e613f25b84	Yard5_FootingLeft8	-210.13739962093396 -138.9965864988406 2.0	202.5	Footing -210.13797 2.266335 139.08882
+placed	4d2610e613f25b84	Yard5_FootingLeft9	-221.63456713662998 -143.7588692127173 2.0	202.5	Footing -221.63513999999998 2.266335 143.85110500000002
+placed	4d2610e613f25b84	Yard5_FootingRight1	-166.39483651811048 -16.968172380620388 2.0	202.5	Footing -166.39541 2.266335 17.060408
+placed	4d2610e613f25b84	Yard5_FootingRight2	-177.8920040338065 -21.73045509449706 2.0	202.5	Footing -177.892575 2.266335 21.82269
+placed	4d2610e613f25b84	Yard5_FootingRight3	-189.38917154950252 -26.492737808373732 2.0	202.5	Footing -189.389735 2.266335 26.584973
+placed	4d2610e613f25b84	Yard5_FootingRight4	-200.8863390651985 -31.255020522250405 2.0	202.5	Footing -200.88691 2.266335 31.347254999999997
+placed	4d2610e613f25b84	Yard5_FootingRight5	-212.38350658089453 -36.01730323612708 2.0	202.5	Footing -212.38407999999998 2.266335 36.109537
+placed	4d2610e613f25b84	Yard5_FootingRight6	-223.88067409659055 -40.77958595000375 2.0	202.5	Footing -223.881245 2.266335 40.87182
+placed	4d2610e613f25b84	Yard5_FootingRight7	-235.37784161228655 -45.54186866388042 2.0	202.5	Footing -235.378415 2.266335 45.634104
+placed	4d2610e613f25b84	Yard5_FootingRight8	-246.87500912798257 -50.304151377757094 2.0	202.5	Footing -246.87558 2.266335 50.396387000000004
+placed	4d2610e613f25b84	Yard5_FootingRight9	-258.3721766436786 -55.06643409163377 2.0	202.5	Footing -258.372755 2.266335 55.15867
+placed	4d2610e613f25b84	Yard6_FootingLeft1	-16.968172380620338 -166.3948365181105 2.0	247.5	Footing -16.975961 2.266335 166.38882
+placed	4d2610e613f25b84	Yard6_FootingLeft2	-21.730455094497014 -177.89200403380653 2.0	247.5	Footing -21.7382425 2.266335 177.88598000000002
+placed	4d2610e613f25b84	Yard6_FootingLeft3	-26.492737808373686 -189.38917154950252 2.0	247.5	Footing -26.5005265 2.266335 189.38315
+placed	4d2610e613f25b84	Yard6_FootingLeft4	-31.255020522250362 -200.88633906519854 2.0	247.5	Footing -31.262809500000003 2.266335 200.88031999999998
+placed	4d2610e613f25b84	Yard6_FootingLeft5	-36.017303236127034 -212.38350658089456 2.0	247.5	Footing -36.0250925 2.266335 212.37749000000002
+placed	4d2610e613f25b84	Yard6_FootingLeft6	-40.77958595000371 -223.88067409659058 2.0	247.5	Footing -40.787377 2.266335 223.87464999999997
+placed	4d2610e613f25b84	Yard6_FootingLeft7	-45.54186866388038 -235.37784161228657 2.0	247.5	Footing -45.549656999999996 2.266335 235.37182
+placed	4d2610e613f25b84	Yard6_FootingLeft8	-50.30415137775705 -246.8750091279826 2.0	247.5	Footing -50.3119385 2.266335 246.86899
+placed	4d2610e613f25b84	Yard6_FootingLeft9	-55.06643409163374 -258.37217664367864 2.0	247.5	Footing -55.0742225 2.266335 258.36617
+placed	4d2610e613f25b84	Yard6_FootingRight1	-105.66060750170385 -129.65722701106185 2.0	247.5	Footing -105.6684 2.266335 129.651205
+placed	4d2610e613f25b84	Yard6_FootingRight2	-110.42289021558054 -141.15439452675787 2.0	247.5	Footing -110.43067500000001 2.266335 141.14837
+placed	4d2610e613f25b84	Yard6_FootingRight3	-115.18517292945721 -152.65156204245386 2.0	247.5	Footing -115.19296 2.266335 152.64553999999998
+placed	4d2610e613f25b84	Yard6_FootingRight4	-119.94745564333388 -164.14872955814988 2.0	247.5	Footing -119.955242 2.266335 164.14271000000002
+placed	4d2610e613f25b84	Yard6_FootingRight5	-124.70973835721055 -175.6458970738459 2.0	247.5	Footing -124.717525 2.266335 175.639875
+placed	4d2610e613f25b84	Yard6_FootingRight6	-129.47202107108723 -187.14306458954192 2.0	247.5	Footing -129.47981 2.266335 187.13704
+placed	4d2610e613f25b84	Yard6_FootingRight7	-134.2343037849639 -198.6402321052379 2.0	247.5	Footing -134.2421 2.266335 198.63421
+placed	4d2610e613f25b84	Yard6_FootingRight8	-138.99658649884057 -210.13739962093393 2.0	247.5	Footing -139.00437499999998 2.266335 210.131375
+placed	4d2610e613f25b84	Yard6_FootingRight9	-143.75886921271726 -221.63456713662995 2.0	247.5	Footing -143.76665500000001 2.266335 221.62855000000002
+placed	4d2610e613f25b84	Yard7_FootingLeft1	105.66060750170396 -129.65722701106185 2.0	292.5	Footing 105.75284199999999 2.266335 129.657795
+placed	4d2610e613f25b84	Yard7_FootingLeft2	110.42289021558064 -141.15439452675787 2.0	292.5	Footing 110.515125 2.266335 141.154965
+placed	4d2610e613f25b84	Yard7_FootingLeft3	115.18517292945731 -152.65156204245386 2.0	292.5	Footing 115.27741 2.266335 152.65213
+placed	4d2610e613f25b84	Yard7_FootingLeft4	119.94745564333398 -164.14872955814988 2.0	292.5	Footing 120.039692 2.266335 164.14929999999998
+placed	4d2610e613f25b84	Yard7_FootingLeft5	124.70973835721065 -175.6458970738459 2.0	292.5	Footing 124.80197 2.266335 175.64647000000002
+placed	4d2610e613f25b84	Yard7_FootingLeft6	129.4720210710873 -187.14306458954192 2.0	292.5	Footing 129.564255 2.266335 187.14364
+placed	4d2610e613f25b84	Yard7_FootingLeft7	134.234303784964 -198.64023210523794 2.0	292.5	Footing 134.32654000000002 2.266335 198.640805
+placed	4d2610e613f25b84	Yard7_FootingLeft8	138.99658649884066 -210.13739962093393 2.0	292.5	Footing 139.08882 2.266335 210.13797
+placed	4d2610e613f25b84	Yard7_FootingLeft9	143.75886921271734 -221.63456713662998 2.0	292.5	Footing 143.85110500000002 2.266335 221.63513999999998
+placed	4d2610e613f25b84	Yard7_FootingRight1	16.96817238062044 -166.39483651811045 2.0	292.5	Footing 17.060408 2.266335 166.39541
+placed	4d2610e613f25b84	Yard7_FootingRight2	21.730455094497117 -177.89200403380647 2.0	292.5	Footing 21.82269 2.266335 177.892575
+placed	4d2610e613f25b84	Yard7_FootingRight3	26.492737808373782 -189.38917154950246 2.0	292.5	Footing 26.584973 2.266335 189.389735
+placed	4d2610e613f25b84	Yard7_FootingRight4	31.255020522250454 -200.88633906519848 2.0	292.5	Footing 31.347254999999997 2.266335 200.88691
+placed	4d2610e613f25b84	Yard7_FootingRight5	36.01730323612713 -212.3835065808945 2.0	292.5	Footing 36.109537 2.266335 212.38407999999998
+placed	4d2610e613f25b84	Yard7_FootingRight6	40.7795859500038 -223.88067409659052 2.0	292.5	Footing 40.87182 2.266335 223.881245
+placed	4d2610e613f25b84	Yard7_FootingRight7	45.541868663880464 -235.37784161228655 2.0	292.5	Footing 45.634104 2.266335 235.378415
+placed	4d2610e613f25b84	Yard7_FootingRight8	50.30415137775714 -246.87500912798254 2.0	292.5	Footing 50.396387000000004 2.266335 246.87558
+placed	4d2610e613f25b84	Yard7_FootingRight9	55.066434091633816 -258.3721766436786 2.0	292.5	Footing 55.15867 2.266335 258.372755
+placed	4d2610e613f25b84	Yard8_FootingLeft1	166.39483651811048 -16.968172380620363 2.0	337.5	Footing 166.38882 2.266335 16.975961
+placed	4d2610e613f25b84	Yard8_FootingLeft2	177.8920040338065 -21.730455094497035 2.0	337.5	Footing 177.88598000000002 2.266335 21.7382425
+placed	4d2610e613f25b84	Yard8_FootingLeft3	189.3891715495025 -26.492737808373704 2.0	337.5	Footing 189.38315 2.266335 26.5005265
+placed	4d2610e613f25b84	Yard8_FootingLeft4	200.8863390651985 -31.255020522250373 2.0	337.5	Footing 200.88031999999998 2.266335 31.262809500000003
+placed	4d2610e613f25b84	Yard8_FootingLeft5	212.38350658089453 -36.01730323612704 2.0	337.5	Footing 212.37749000000002 2.266335 36.0250925
+placed	4d2610e613f25b84	Yard8_FootingLeft6	223.88067409659055 -40.77958595000371 2.0	337.5	Footing 223.87464999999997 2.266335 40.787377
+placed	4d2610e613f25b84	Yard8_FootingLeft7	235.37784161228655 -45.54186866388038 2.0	337.5	Footing 235.37182 2.266335 45.549656999999996
+placed	4d2610e613f25b84	Yard8_FootingLeft8	246.87500912798257 -50.30415137775705 2.0	337.5	Footing 246.86899 2.266335 50.3119385
+placed	4d2610e613f25b84	Yard8_FootingLeft9	258.3721766436786 -55.066434091633724 2.0	337.5	Footing 258.36617 2.266335 55.0742225
+placed	4d2610e613f25b84	Yard8_FootingRight1	129.65722701106188 -105.6606075017039 2.0	337.5	Footing 129.651205 2.266335 105.6684
+placed	4d2610e613f25b84	Yard8_FootingRight2	141.1543945267579 -110.42289021558057 2.0	337.5	Footing 141.14837 2.266335 110.43067500000001
+placed	4d2610e613f25b84	Yard8_FootingRight3	152.6515620424539 -115.18517292945722 2.0	337.5	Footing 152.64553999999998 2.266335 115.19296
+placed	4d2610e613f25b84	Yard8_FootingRight4	164.1487295581499 -119.9474556433339 2.0	337.5	Footing 164.14271000000002 2.266335 119.955242
+placed	4d2610e613f25b84	Yard8_FootingRight5	175.64589707384593 -124.70973835721057 2.0	337.5	Footing 175.639875 2.266335 124.717525
+placed	4d2610e613f25b84	Yard8_FootingRight6	187.14306458954195 -129.47202107108723 2.0	337.5	Footing 187.13704 2.266335 129.47981
+placed	4d2610e613f25b84	Yard8_FootingRight7	198.64023210523794 -134.2343037849639 2.0	337.5	Footing 198.63421 2.266335 134.2421
+placed	4d2610e613f25b84	Yard8_FootingRight8	210.13739962093396 -138.99658649884057 2.0	337.5	Footing 210.131375 2.266335 139.00437499999998
+placed	4d2610e613f25b84	Yard8_FootingRight9	221.63456713662998 -143.75886921271726 2.0	337.5	Footing 221.62855000000002 2.266335 143.76665500000001
+object	b69869430f886e39	1	YardGate-bf1807569edc0b36 1 x x1.5	Doors Frame Hardware Padlock
+placed	b69869430f886e39	Yard1_Gate	142.27744800673815 58.93324858422382 2.0	-67.5	Doors 142.258055 6.9146911499999995 -58.940757
+placed	b69869430f886e39	Yard2_Gate	58.93324858422383 142.27744800673815 2.0	-22.5	Doors 58.895205000000004 6.9146911499999995 -142.274295
+placed	b69869430f886e39	Yard3_Gate	-58.933248584223804 142.27744800673815 2.0	22.5	Doors -58.940757 6.9146911499999995 -142.258055
+placed	b69869430f886e39	Yard4_Gate	-142.27744800673815 58.93324858422385 2.0	67.5	Doors -142.274295 6.9146911499999995 -58.895205000000004
+placed	b69869430f886e39	Yard5_Gate	-142.27744800673818 -58.93324858422381 2.0	112.5	Doors -142.258055 6.9146911499999995 58.940757
+placed	b69869430f886e39	Yard6_Gate	-58.93324858422376 -142.27744800673818 2.0	157.5	Doors -58.895205000000004 6.9146911499999995 142.274295
+placed	b69869430f886e39	Yard7_Gate	58.933248584223875 -142.27744800673815 2.0	202.5	Doors 58.940757 6.9146911499999995 142.258055
+placed	b69869430f886e39	Yard8_Gate	142.27744800673815 -58.9332485842238 2.0	247.5	Doors 142.274295 6.9146911499999995 58.895205000000004

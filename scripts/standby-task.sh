@@ -9,6 +9,8 @@
 #   ref=<commit>                      build this shard of the layout
 #   upload=no                         ... without handing its objects over
 #   build=no                          skip the build: render the previews only
+#   full=yes                          build every object, even those already
+#                                     built and uploaded (MAP_FULL_BUILD=1)
 #   upload-of=<build task id>         upload what that build handed over
 #   hand-over=coordinator             leave the objects in <results>/handed/
 #                                     for scripts/standby-agent.py to send
@@ -149,7 +151,15 @@ prepare_lanes() {
 # Starts a lane's build in its own process group, so all of it can be stopped.
 start_lane() {
 	local lane="$1"
-	setsid bash -c '"$1/scripts/build-model.sh" "$2" -- --shard "$3" && "$1/scripts/export-objects.py" "$2"' lane \
+	# A lane whose whole share was skipped as already built (prelude.luau,
+	# skipsBuilt) has no parts, which the engine refuses with "added no parts":
+	# that lane exports only what it told (shard 1: the skipped placements).
+	# The last task's model is removed first, so it can't pass for this one's.
+	setsid bash -c 'rm -f "$1/art/models/$2/$2.glb"
+		"$1/scripts/build-model.sh" "$2" -- --shard "$3" 2> "$1/art/models/$2/build.err"; status=$?
+		cat "$1/art/models/$2/build.err" >&2
+		[ ${status} -eq 0 ] || rg -q "added no parts" "$1/art/models/$2/build.err" || exit ${status}
+		"$1/scripts/export-objects.py" "$2"' lane \
 		"$(lane_root "${lane}")" "${layout}" "$(((index - 1) * LANES + lane))/$((count * LANES))" >> "${out}/lane-${lane}.log" 2>&1 &
 	lane_pid[${lane}]=$!
 	running+=("${lane}")
@@ -255,6 +265,9 @@ build() {
 	[ "${index}" -gt 2 ] || export MODELKIT_SHARE_ENGINE=1
 	export MODELKIT_PROFILE=1
 	local build_started=${SECONDS} lane
+	# Objects already built and uploaded are skipped (scripts/assemble-model.sh,
+	# SKIP_BUILT) unless the task says full=yes.
+	[ "$(field full)" != "yes" ] || export MAP_FULL_BUILD=1
 	{
 		scripts/assemble-model.sh "${layout}" && scripts/build-model.sh --engine && prepare_lanes
 	} >> "${out}/build.log" 2>&1 || status="FAILED"
@@ -287,10 +300,13 @@ build() {
 import json, os, shutil, struct, sys
 layout, out, roots = sys.argv[1], sys.argv[2], sys.argv[3:]
 names, costs, assets, placements, seen = [], [], [], [], set()
+record = {"objects": [], "stands": []}
 for root in roots:
-	data = open(os.path.join(root, layout + ".glb"), "rb").read()
-	length = struct.unpack_from("<I", data, 12)[0]
-	names += [node["name"] for node in json.loads(data[20:20 + length])["nodes"] if "mesh" in node]
+	# A lane with nothing left to build after skips has no model.
+	if os.path.isfile(os.path.join(root, layout + ".glb")):
+		data = open(os.path.join(root, layout + ".glb"), "rb").read()
+		length = struct.unpack_from("<I", data, 12)[0]
+		names += [node["name"] for node in json.loads(data[20:20 + length])["nodes"] if "mesh" in node]
 	for line in open(os.path.join(root, "build.out")):
 		fields = line.rstrip("\n").split("\t")
 		if fields[0] == "SHARD_COST":
@@ -305,8 +321,15 @@ for root in roots:
 		if root != roots[0]:
 			shutil.copy(os.path.join(root, "objects", asset["id"] + ".glb"), os.path.join(roots[0], "objects"))
 	placements += manifest["placements"]
+	# What scripts/merge-shards.sh adds to the record of built objects.
+	kept = {entry["id"] for entry in record["objects"]}
+	record["objects"] += [entry for entry in manifest.get("record", {}).get("objects", []) if entry["id"] not in kept]
+	record["stands"] += manifest.get("record", {}).get("stands", [])
+merged = {"assets": assets, "placements": placements}
+if record["objects"] or record["stands"]:
+	merged["record"] = record
 with open(os.path.join(roots[0], "objects", "manifest.json"), "w") as file:
-	json.dump({"assets": assets, "placements": placements}, file, indent="\t")
+	json.dump(merged, file, indent="\t")
 shutil.copy(os.path.join(roots[0], "objects", "manifest.json"), out)
 with open(os.path.join(out, "parts.txt"), "w") as file:
 	file.write("\n".join(sorted(names)) + "\n")
