@@ -1,0 +1,12 @@
+MainIsland 1 x	3029.563
+MainIsland 1 x #split	1
+slab LoneWreck24	0.064
+slab LoneWreck24 #split	1
+YardFooting 1.037037037037037 x x1.5	0.086
+YardFooting 1.037037037037037 x x1.5 #split	1
+YardFooting 1 x x1.5	0.104
+YardFooting 1 x x1.5 #split	1
+BeltCrossing 1 x	2.637
+BeltCrossing 1 x #split	1
+JunkrotClankClankClankScrapur 1 x	15.471
+JunkrotClankClankClankScrapur 1 x #split	1

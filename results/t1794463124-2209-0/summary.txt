@@ -1,0 +1,5 @@
+status=DONE
+build=50
+upload=skipped
+total=50
+parts=60

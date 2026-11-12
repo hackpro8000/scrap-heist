@@ -1,0 +1,13 @@
+MainIsland 1 x	5409.126
+MainIsland 1 x #split	1
+RebirthPress 1 x	14.006
+RebirthPress 1 x #split	1
+MainIsland 1 x	5573.809
+MainIsland 1 x #split	1
+slab Plot2	21.614
+slab Plot2 #split	1
+MainIsland 1 x	5047.993
+MainIsland 1 x #split	1
+slab YardShade2	0.331
+JunkrotDrippiDroppi 1 x	22.404
+JunkrotDrippiDroppi 1 x #split	1

@@ -1,0 +1,413 @@
+{
+	"assets": [
+		{
+			"id": "79855d067e818f93",
+			"key": "MainIsland-5bd6e7b05fafabe5 1 x part 124/129 deal 37712da2e8f4",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 998232,
+			"sha": "c600c993817cdd04",
+			"parts": 22
+		},
+		{
+			"id": "102eed7d571eca86",
+			"key": "RebirthPress-12dcb067617e705b 1 x",
+			"piece": 1,
+			"label": "Yard1_Press",
+			"turn": 112.5,
+			"bytes": 6674032,
+			"sha": "a4e63a47e7dc8764",
+			"parts": 19
+		},
+		{
+			"id": "aa718a078316c9e8",
+			"key": "MainIsland-5bd6e7b05fafabe5 1 x part 125/129 deal 37712da2e8f4",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1097316,
+			"sha": "dca36e912cd389b4",
+			"parts": 16
+		},
+		{
+			"id": "ba591f14a0ebb9e1",
+			"key": "25df8b62f2990308-09a6759228b03a28 Plot2 80.36352079666887 194.0147018273702 -22.5",
+			"piece": 1,
+			"label": "Plot2",
+			"turn": 0.0,
+			"bytes": 12032260,
+			"sha": "4112f82c957f1458",
+			"parts": 40
+		},
+		{
+			"id": "ccbe675f980dce64",
+			"key": "MainIsland-5bd6e7b05fafabe5 1 x part 126/129 deal 37712da2e8f4",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1584316,
+			"sha": "10d4d42e047aea0e",
+			"parts": 29
+		},
+		{
+			"id": "55113e187cfbf056",
+			"key": "25df8b62f2990308-4bed7244ea680ec2 YardShade2 80.36352079666887 194.0147018273702 -22.5",
+			"piece": 1,
+			"label": "YardShade2",
+			"turn": 0.0,
+			"bytes": 98160,
+			"sha": "4036d6ddf7b88811",
+			"parts": 1
+		},
+		{
+			"id": "6aa4e899dc7848f9",
+			"key": "JunkrotDrippiDroppi-20cfa409ff18e1c4 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotDrippiDroppi",
+			"turn": 0.0,
+			"bytes": 4648760,
+			"sha": "e7b3d4ecfbcd2ae0",
+			"parts": 29
+		}
+	],
+	"placements": [
+		{
+			"asset": "79855d067e818f93",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_2_4_0_101",
+					"position": [
+						170.107385,
+						-27.6701615,
+						-260.1821
+					]
+				},
+				{
+					"name": "Grass_4_-3_0_000",
+					"position": [
+						257.050975,
+						-13.35645675,
+						161.8199
+					]
+				}
+			]
+		},
+		{
+			"asset": "102eed7d571eca86",
+			"label": "Yard1_Press",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						155.05867,
+						7.33,
+						-51.6599025
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						156.31564,
+						4.1813891000000005,
+						-37.8461315
+					]
+				}
+			]
+		},
+		{
+			"asset": "102eed7d571eca86",
+			"label": "Yard2_Press",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						73.05663,
+						7.33,
+						-146.314355
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						83.75852499999999,
+						4.1813891000000005,
+						-137.291625
+					]
+				}
+			]
+		},
+		{
+			"asset": "102eed7d571eca86",
+			"label": "Yard3_Press",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						-51.6599025,
+						7.33,
+						-155.05867
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						-37.8461315,
+						4.1813891000000005,
+						-156.31564
+					]
+				}
+			]
+		},
+		{
+			"asset": "102eed7d571eca86",
+			"label": "Yard4_Press",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						-146.314355,
+						7.33,
+						-73.05663
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						-137.291625,
+						4.1813891000000005,
+						-83.75852499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "102eed7d571eca86",
+			"label": "Yard5_Press",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						-155.05867,
+						7.33,
+						51.6599025
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						-156.31564,
+						4.1813891000000005,
+						37.8461315
+					]
+				}
+			]
+		},
+		{
+			"asset": "102eed7d571eca86",
+			"label": "Yard6_Press",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						-73.05663,
+						7.33,
+						146.314355
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						-83.75852499999999,
+						4.1813891000000005,
+						137.291625
+					]
+				}
+			]
+		},
+		{
+			"asset": "102eed7d571eca86",
+			"label": "Yard7_Press",
+			"turn": 382.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						51.6599025,
+						7.33,
+						155.05867
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						37.8461315,
+						4.1813891000000005,
+						156.31564
+					]
+				}
+			]
+		},
+		{
+			"asset": "102eed7d571eca86",
+			"label": "Yard8_Press",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						146.314355,
+						7.33,
+						73.05663
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						137.291625,
+						4.1813891000000005,
+						83.75852499999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "102eed7d571eca86",
+			"label": "Kit_Press",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Button",
+					"position": [
+						-737.565,
+						-254.67,
+						1.09538379
+					]
+				},
+				{
+					"name": "Pump",
+					"position": [
+						-750.852335,
+						-257.81859999999995,
+						-3.0608891500000004
+					]
+				}
+			]
+		},
+		{
+			"asset": "aa718a078316c9e8",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_4_-1_-1_010_111",
+					"position": [
+						282.84901,
+						-57.605415,
+						15.970735150000001
+					]
+				},
+				{
+					"name": "Grass_4_-2_0_000",
+					"position": [
+						272.95635,
+						-10.718955,
+						113.19755
+					]
+				}
+			]
+		},
+		{
+			"asset": "ba591f14a0ebb9e1",
+			"label": "Plot2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_-1_0_000",
+					"position": [
+						25.4878755,
+						1.8649999999999998,
+						-171.284465
+					]
+				},
+				{
+					"name": "Ground_0_0_0_110",
+					"position": [
+						135.23916499999999,
+						1.8649999999999998,
+						-216.744945
+					]
+				}
+			]
+		},
+		{
+			"asset": "ccbe675f980dce64",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_4_-1_0_100_100",
+					"position": [
+						308.583015,
+						-11.535822300000001,
+						56.7471115
+					]
+				},
+				{
+					"name": "Grass_4_0_0_010",
+					"position": [
+						272.0,
+						2.0,
+						-48.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "55113e187cfbf056",
+			"label": "YardShade2",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						80.363523,
+						2.03,
+						-194.01471
+					]
+				}
+			]
+		},
+		{
+			"asset": "6aa4e899dc7848f9",
+			"label": "Kit_JunkrotDrippiDroppi",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "TailFan",
+					"position": [
+						117.890405,
+						-259.56890999999996,
+						0.005923669999999992
+					]
+				},
+				{
+					"name": "Whiskers",
+					"position": [
+						122.237023,
+						-258.35596,
+						-0.009650419999999993
+					]
+				}
+			]
+		}
+	]
+}

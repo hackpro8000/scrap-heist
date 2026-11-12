@@ -1,0 +1,12 @@
+MainIsland 1 x	4641.035
+MainIsland 1 x #split	1
+YardFooting 1.037037037037037 x x1.5	0.135
+YardFooting 1.037037037037037 x x1.5 #split	1
+HubBeacon 1 x	8.341
+HubBeacon 1 x #split	1
+MainIsland 1 x	4368.412
+MainIsland 1 x #split	1
+YardFooting 1.037037037037037 x x1.5	0.123
+YardFooting 1.037037037037037 x x1.5 #split	1
+HubStage 1 x	6.937
+HubStage 1 x #split	1

@@ -1,0 +1,12 @@
+MainIsland 1 x	2468.546
+MainIsland 1 x #split	1
+slab LoneWreck24	0.062
+slab LoneWreck24 #split	1
+YardFence 1.037037037037037 x x1.5	0.327
+YardFence 1.037037037037037 x x1.5 #split	1
+YardFence 1 x x1.5	0.329
+YardFence 1 x x1.5 #split	1
+JunkrotCabloTanglino 1 x	2.850
+JunkrotCabloTanglino 1 x #split	1
+JunkrotTorquoWrenchelli 1 x	1.966
+JunkrotTorquoWrenchelli 1 x #split	1

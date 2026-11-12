@@ -1,0 +1,16 @@
+MainIsland 1 x	6500.849
+MainIsland 1 x #split	1
+YardFooting 1.037037037037037 x x1.5	0.097
+YardFooting 1.037037037037037 x x1.5 #split	1
+JunkrotMicrondoBippetto 1 x	6.474
+JunkrotMicrondoBippetto 1 x #split	1
+MainIsland 1 x	5933.400
+MainIsland 1 x #split	1
+YardFooting 1.037037037037037 x x1.5	0.380
+YardFooting 1.037037037037037 x x1.5 #split	1
+JunkrotMixerellaVroom 1 x	3.700
+JunkrotMixerellaVroom 1 x #split	1
+MainIsland 1 x	7173.986
+MainIsland 1 x #split	1
+YardFence 1.037037037037037 x x1.5	0.622
+YardFence 1.037037037037037 x x1.5 #split	1

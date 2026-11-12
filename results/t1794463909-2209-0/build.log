@@ -1,0 +1,40 @@
+agent: 03:38:52.818 connection lost (server rejected WebSocket connection: HTTP 530); retrying in 60s
+agent: 03:39:54.712 connection lost (server rejected WebSocket connection: HTTP 530); retrying in 60s
+agent: 03:40:56.657 connection lost (server rejected WebSocket connection: HTTP 530); retrying in 60s
+agent: 03:41:58.568 connection lost (server rejected WebSocket connection: HTTP 530); retrying in 60s
+agent: 03:43:00.461 connection lost (server rejected WebSocket connection: HTTP 530); retrying in 60s
+agent: 03:44:02.514 connection lost (server rejected WebSocket connection: HTTP 530); retrying in 60s
+agent: 03:45:04.619 connection lost (server rejected WebSocket connection: HTTP 530); retrying in 60s
+agent: 03:46:05.731 connected to wss://hispanic-routes-apart-themselves.trycloudflare.com
+agent: 03:49:39.359 connection lost (received 4005 (private use) seats changed; then sent 4005 (private use) seats changed); retrying in 1s
+agent: 03:49:41.203 connected to wss://hispanic-routes-apart-themselves.trycloudflare.com
+agent: 03:49:41.233 seated as shard 42 of 43
+agent: 03:51:29.623 task t1794455381-2209-0: DONE in 106s (build 106s)
+agent: 03:53:06.928 task t1794455511-2209-0: DONE in 71s (build 67s)
+agent: 03:55:02.837 task t1794455617-2209-0: DONE in 80s (build 76s)
+agent: 03:56:45.805 task t1794455719-2209-0: DONE in 78s (build 73s)
+agent: 03:59:39.742 task t1794455853-2209-0: DONE in 119s (build 114s)
+agent: 04:26:12.571 connection lost (received 4005 (private use) seats changed; then sent 4005 (private use) seats changed); retrying in 1s
+agent: 04:26:14.607 connected to wss://hispanic-routes-apart-themselves.trycloudflare.com
+agent: 04:26:14.645 seated as shard 49 of 50
+agent: 04:26:16.394 task t1794457575-2209-0: DONE: no build, previews only
+agent: 04:39:43.841 task t1794458231-2209-0: DONE in 147s (build 147s)
+agent: 04:41:24.601 task t1794458441-2209-0: DONE in 36s (build 34s)
+agent: 04:42:42.524 task t1794458519-2209-0: DONE in 40s (build 38s)
+agent: 04:44:00.516 task t1794458597-2209-0: DONE in 34s (build 32s)
+agent: 04:53:18.761 task t1794459106-2209-0: DONE in 91s (build 90s)
+agent: 04:55:08.763 task t1794459233-2209-0: DONE in 70s (build 67s)
+agent: 04:56:35.718 task t1794459353-2209-0: DONE in 36s (build 35s)
+agent: 05:06:27.947 task t1794459986-2209-0: DONE: no build, previews only
+agent: 05:18:32.214 task t1794460620-2209-0: DONE in 86s (build 86s)
+agent: 05:23:31.681 task t1794460935-2209-0: DONE in 70s (build 66s)
+agent: 05:24:58.769 task t1794461056-2209-0: DONE in 38s (build 37s)
+agent: 05:27:14.557 task t1794461191-2209-0: DONE in 39s (build 38s)
+agent: 05:28:42.277 task t1794461269-2209-0: DONE in 50s (build 49s)
+agent: 05:46:35.462 task t1794462393-2209-0: DONE: no build, previews only
+agent: 05:59:36.983 task t1794463124-2209-0: DONE in 50s (build 50s)
+agent: 06:07:07.092 connection lost (received 4005 (private use) seats changed; then sent 4005 (private use) seats changed); retrying in 1s
+agent: 06:07:09.148 connected to wss://hispanic-routes-apart-themselves.trycloudflare.com
+agent: 06:07:09.185 seated as shard 48 of 49
+agent: 06:07:11.283 task t1794463629-2209-0: DONE: no build, previews only
+agent: 06:09:59.523 timing IslandPreview@48@49 script=104.8 chunks=47.8 claims=3 claim_wait=0.1 push=- wait=- fetch=- render=- send=2.4

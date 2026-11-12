@@ -1,0 +1,461 @@
+{
+	"assets": [
+		{
+			"id": "0c758153fe0ea7fa",
+			"key": "MainIsland-5bd6e7b05fafabe5 1 x part 145/150 deal 37712da2e8f4",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1090688,
+			"sha": "663bddb0df6d1d98",
+			"parts": 17
+		},
+		{
+			"id": "4d2610e613f25b84",
+			"key": "YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard2_FootingLeft1",
+			"turn": 67.5,
+			"bytes": 95700,
+			"sha": "ba0a2481e4eb387e",
+			"parts": 1
+		},
+		{
+			"id": "3f3e4293c30f211f",
+			"key": "JunkrotMicrondoBippetto-adc516e2dd5e72c3 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotMicrondoBippetto",
+			"turn": 0.0,
+			"bytes": 1024552,
+			"sha": "90044b6d8f156d8d",
+			"parts": 10
+		},
+		{
+			"id": "e9b4d0cdabc4e227",
+			"key": "MainIsland-5bd6e7b05fafabe5 1 x part 146/150 deal 37712da2e8f4",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1151856,
+			"sha": "8f8b8099aae1f8a5",
+			"parts": 19
+		},
+		{
+			"id": "109471c029df2171",
+			"key": "JunkrotMixerellaVroom-548a9f57cd079e9c 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotMixerellaVroom",
+			"turn": 0.0,
+			"bytes": 801468,
+			"sha": "c2ce6e5171695f18",
+			"parts": 9
+		},
+		{
+			"id": "6bbea310c7e67b0a",
+			"key": "MainIsland-5bd6e7b05fafabe5 1 x part 147/150 deal 37712da2e8f4",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1417804,
+			"sha": "85d0beab186cab99",
+			"parts": 24
+		},
+		{
+			"id": "39418744ba8f613a",
+			"key": "YardFence-ae9c0061f8170496 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard2_FenceLeft2",
+			"turn": 247.5,
+			"bytes": 395304,
+			"sha": "76473c1dde4135a6",
+			"parts": 3
+		}
+	],
+	"placements": [
+		{
+			"asset": "0c758153fe0ea7fa",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_4_-1_-1_010_001",
+					"position": [
+						256.72366999999997,
+						-62.096064999999996,
+						29.252471000000003
+					]
+				},
+				{
+					"name": "Dirt_4_-2_0_001_101",
+					"position": [
+						271.54918,
+						-31.134705,
+						122.841105
+					]
+				}
+			]
+		},
+		{
+			"asset": "4d2610e613f25b84",
+			"label": "Yard2_FootingLeft1",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						16.975961,
+						2.266335,
+						-166.38882
+					]
+				}
+			]
+		},
+		{
+			"asset": "4d2610e613f25b84",
+			"label": "Yard3_FootingRight3",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-26.584973,
+						2.266335,
+						-189.389735
+					]
+				}
+			]
+		},
+		{
+			"asset": "4d2610e613f25b84",
+			"label": "Yard4_FootingLeft6",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-223.87464999999997,
+						2.266335,
+						-40.787377
+					]
+				}
+			]
+		},
+		{
+			"asset": "4d2610e613f25b84",
+			"label": "Yard5_FootingRight8",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-246.87558,
+						2.266335,
+						50.396387000000004
+					]
+				}
+			]
+		},
+		{
+			"asset": "4d2610e613f25b84",
+			"label": "Yard7_FootingLeft2",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						110.515125,
+						2.266335,
+						141.154965
+					]
+				}
+			]
+		},
+		{
+			"asset": "4d2610e613f25b84",
+			"label": "Yard8_FootingRight4",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						164.14271000000002,
+						2.266335,
+						119.955242
+					]
+				}
+			]
+		},
+		{
+			"asset": "3f3e4293c30f211f",
+			"label": "Kit_JunkrotMicrondoBippetto",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Keypad",
+					"position": [
+						-71.169225,
+						-258.7435,
+						0.16949585000000003
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						-72.458,
+						-258.668805,
+						0.9844
+					]
+				}
+			]
+		},
+		{
+			"asset": "e9b4d0cdabc4e227",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_4_-1_0_110_110",
+					"position": [
+						317.171615,
+						-14.775308800000001,
+						8.039435295
+					]
+				},
+				{
+					"name": "Pebbles_4_-1_-1",
+					"position": [
+						283.37156500000003,
+						-49.566252000000006,
+						59.7965485
+					]
+				}
+			]
+		},
+		{
+			"asset": "4d2610e613f25b84",
+			"label": "Yard2_FootingRight1",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						105.6684,
+						2.266335,
+						-129.651205
+					]
+				}
+			]
+		},
+		{
+			"asset": "4d2610e613f25b84",
+			"label": "Yard3_FootingLeft4",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-120.039692,
+						2.266335,
+						-164.14929999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "4d2610e613f25b84",
+			"label": "Yard4_FootingRight6",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-187.13704,
+						2.266335,
+						-129.47981
+					]
+				}
+			]
+		},
+		{
+			"asset": "4d2610e613f25b84",
+			"label": "Yard5_FootingLeft9",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-221.63513999999998,
+						2.266335,
+						143.85110500000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "4d2610e613f25b84",
+			"label": "Yard7_FootingRight2",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						21.82269,
+						2.266335,
+						177.892575
+					]
+				}
+			]
+		},
+		{
+			"asset": "4d2610e613f25b84",
+			"label": "Yard8_FootingLeft5",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						212.37749000000002,
+						2.266335,
+						36.0250925
+					]
+				}
+			]
+		},
+		{
+			"asset": "109471c029df2171",
+			"label": "Kit_JunkrotMixerellaVroom",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Knob",
+					"position": [
+						-47.4962635,
+						-257.08549500000004,
+						-0.190781565
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						-47.991,
+						-257.0316,
+						1.1308
+					]
+				}
+			]
+		},
+		{
+			"asset": "6bbea310c7e67b0a",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_4_-1_0_111",
+					"position": [
+						316.93545500000005,
+						-20.7990475,
+						10.607385922499999
+					]
+				},
+				{
+					"name": "Grass_4_0_0_010",
+					"position": [
+						272.0,
+						2.0,
+						-48.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "39418744ba8f613a",
+			"label": "Yard2_FenceLeft2",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						21.750012499999997,
+						5.3468148499999995,
+						-177.88889999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "39418744ba8f613a",
+			"label": "Yard3_FenceLeft5",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-124.69372000000001,
+						5.3468148499999995,
+						-175.658025
+					]
+				}
+			]
+		},
+		{
+			"asset": "39418744ba8f613a",
+			"label": "Yard4_FenceLeft8",
+			"turn": 337.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-246.87191,
+						5.3468148499999995,
+						-50.323708499999995
+					]
+				}
+			]
+		},
+		{
+			"asset": "39418744ba8f613a",
+			"label": "Yard6_FenceLeft2",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-21.750012499999997,
+						5.3468148499999995,
+						177.88889999999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "39418744ba8f613a",
+			"label": "Yard7_FenceLeft5",
+			"turn": 472.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						124.69372000000001,
+						5.3468148499999995,
+						175.658025
+					]
+				}
+			]
+		},
+		{
+			"asset": "39418744ba8f613a",
+			"label": "Yard8_FenceLeft8",
+			"turn": 517.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						246.87191,
+						5.3468148499999995,
+						50.323708499999995
+					]
+				}
+			]
+		}
+	]
+}

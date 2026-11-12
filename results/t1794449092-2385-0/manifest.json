@@ -1,0 +1,300 @@
+{
+	"assets": [
+		{
+			"id": "02a7211f399127f3",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 49/49",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 1871924,
+			"sha": "30718bba88b1ee09",
+			"parts": 34
+		},
+		{
+			"id": "2f98adc691b93c84",
+			"key": "9edb366bcc5dfdf7-e6328242ecab9497 LoneWreck24 37.5 237 0",
+			"piece": 1,
+			"label": "LoneWreck24",
+			"turn": 0.0,
+			"bytes": 43780,
+			"sha": "b2bdd8c4f3cc36a3",
+			"parts": 2
+		},
+		{
+			"id": "44dff41c5cc64f21",
+			"key": "YardFence-0f1495cb71d18f3d 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceRight8",
+			"turn": 22.5,
+			"bytes": 395300,
+			"sha": "d6e0a59a711ee6fa",
+			"parts": 3
+		},
+		{
+			"id": "000e0637814e7f0b",
+			"key": "YardFence-0f1495cb71d18f3d 1 x x1.5",
+			"piece": 1,
+			"label": "Yard8_FenceBack8",
+			"turn": 427.5,
+			"bytes": 393812,
+			"sha": "28af156ed56518fd",
+			"parts": 3
+		},
+		{
+			"id": "3e831889ce3b361b",
+			"key": "JunkrotCabloTanglino-04c0f0fc7777a73a 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotCabloTanglino",
+			"turn": 0.0,
+			"bytes": 877112,
+			"sha": "2d62cea8d5e784cf",
+			"parts": 8
+		},
+		{
+			"id": "31aa08497a82291d",
+			"key": "JunkrotTorquoWrenchelli-1404d691f409f2e9 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotTorquoWrenchelli",
+			"turn": 0.0,
+			"bytes": 716748,
+			"sha": "eb544649adf5c12e",
+			"parts": 8
+		}
+	],
+	"placements": [
+		{
+			"asset": "02a7211f399127f3",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-3_-4_0_001",
+					"position": [
+						-184.81351999999998,
+						-23.6838865,
+						252.45797
+					]
+				},
+				{
+					"name": "Grass_2_3_0_110_010",
+					"position": [
+						175.669335,
+						0.37230525000000003,
+						-254.67562500000003
+					]
+				}
+			]
+		},
+		{
+			"asset": "2f98adc691b93c84",
+			"label": "LoneWreck24",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						36.425,
+						2.03,
+						-236.475
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard1_FenceRight8",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						246.862875,
+						5.3468148499999995,
+						-50.3201655
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard2_FenceRight7",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						134.214745,
+						5.3468148499999995,
+						-198.643325
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard3_FenceRight6",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-40.795601000000005,
+						5.3468148499999995,
+						-223.86854499999998
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard4_FenceRight5",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-175.648995,
+						5.3468148499999995,
+						-124.69018
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard5_FenceRight4",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-200.874215,
+						5.3468148499999995,
+						31.271036000000002
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard6_FenceRight3",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						-115.165615,
+						5.3468148499999995,
+						152.654665
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceRight1",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						16.984187,
+						5.3468148499999995,
+						166.382705
+					]
+				}
+			]
+		},
+		{
+			"asset": "44dff41c5cc64f21",
+			"label": "Yard7_FenceRight8",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						50.3201655,
+						5.3468148499999995,
+						246.862875
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard8_FenceBack8",
+			"turn": 427.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						229.659785,
+						5.3468148499999995,
+						140.593485
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard8_FenceFront5",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						133.112505,
+						5.3468148499999995,
+						81.10961
+					]
+				}
+			]
+		},
+		{
+			"asset": "3e831889ce3b361b",
+			"label": "Kit_JunkrotCabloTanglino",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Prongs",
+					"position": [
+						-358.62343999999996,
+						-257.78485,
+						0.008849655000000001
+					]
+				},
+				{
+					"name": "Pupils",
+					"position": [
+						-359.96813499999996,
+						-258.39948000000004,
+						0.9917500000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "31aa08497a82291d",
+			"label": "Kit_JunkrotTorquoWrenchelli",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pupils",
+					"position": [
+						624.0074999999999,
+						-256.328,
+						0.364
+					]
+				},
+				{
+					"name": "Socket",
+					"position": [
+						623.974825,
+						-257.39855,
+						-0.20860605
+					]
+				}
+			]
+		}
+	]
+}

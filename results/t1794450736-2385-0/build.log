@@ -1,0 +1,193 @@
+DISK before: cache 7640 MB, free 22051 MB of 258020 MB
+CPUS: nproc 4, online 4, cgroup cpu.max none
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses MainIsland (key 5bd6e7b05fafabe5)
+assemble ServerMap: uses CapsuleLoop (key e122c768981a2fcf)
+assemble ServerMap: uses RebirthPress (key 12dcb067617e705b)
+assemble ServerMap: uses BuildBay (key f8fddcb129310701)
+assemble ServerMap: uses YardFence (key ae9c0061f8170496)
+assemble ServerMap: uses YardFenceHalf (key ca23e4e88ebebfbf)
+assemble ServerMap: uses YardFooting (key ce1698371f70b42a)
+assemble ServerMap: uses YardGate (key bf1807569edc0b36)
+assemble ServerMap: uses PlotMarker (key 9172bd0ab180a2a2)
+assemble ServerMap: uses HubShop (key 780fad43697b3086)
+assemble ServerMap: uses HubTinkerer (key 8b76108c361ff045)
+assemble ServerMap: uses HubBeacon (key 359a482ad806c4cb)
+assemble ServerMap: uses HubStage (key 16916797fdf77074)
+assemble ServerMap: uses BeltCrossing (key eee6b0e8964a303c)
+assemble ServerMap: uses JunkMound (key fb80758d0e577fda)
+assemble ServerMap: uses ScrapPalm (key 46e4c25337945eb1)
+assemble ServerMap: uses ScrapTreeAntenna (key a9248507734dd9c4)
+assemble ServerMap: uses ScrapTreeExhaust (key 6971958a5110f5e4)
+assemble ServerMap: uses ScrapTreeLamppost (key b598ef50948d0308)
+assemble ServerMap: uses ScrapTreeRebar (key 173c33daa1f9b61c)
+assemble ServerMap: uses ScrapTreeSignpost (key 095cc13fc7d72ba7)
+assemble ServerMap: uses RockBoulderPile (key 9f587297437e5ec1)
+assemble ServerMap: uses HubSectionA (key ff58c7b212c3c455)
+assemble ServerMap: uses HubSectionB (key 64e249a2620f53b5)
+assemble ServerMap: uses HubSectionEnd (key a00fb3cb216eb4b1)
+assemble ServerMap: uses YardIsland (key 988e963f004cc874)
+assemble ServerMap: uses PadKitchen (key ec71f489a049d2af)
+assemble ServerMap: uses PadGarage (key 89b5d290e5d87e2d)
+assemble ServerMap: uses PadGadget (key cb240e3b32ee2bc5)
+assemble ServerMap: uses ScrapCrate (key f83a4190e411eda4)
+assemble ServerMap: uses CapsuleScrap (key 5c8d99bcabd6ec3a)
+assemble ServerMap: uses CapsuleSalvaged (key 7b96a534e82dbc68)
+assemble ServerMap: uses CapsuleRefurbished (key 534156bd2f7802d7)
+assemble ServerMap: uses CapsuleFactory (key 60694d3d77ed9d5a)
+assemble ServerMap: uses CapsulePrecision (key 3d557e0f40945171)
+assemble ServerMap: uses CapsulePrototype (key 9a281c1af5b3a891)
+assemble ServerMap: uses CapsuleSecret (key dece8d5925a51c32)
+assemble ServerMap: uses JunkrotCanettoRustini (key a064498d48b05d3e)
+assemble ServerMap: uses JunkrotSpoonzoBentolo (key 4e1ab35a0ea27e1c)
+assemble ServerMap: uses JunkrotKettlinaDentata (key f1db44ca6d420d18)
+assemble ServerMap: uses JunkrotTyroFlattino (key b1e5d34174038c46)
+assemble ServerMap: uses JunkrotBoltoloLonelo (key 4c031a36c88faa1e)
+assemble ServerMap: uses JunkrotHubcappaWobbla (key 8e54228015c122eb)
+assemble ServerMap: uses JunkrotRemotinoMuto (key dbb56c8f360f31d9)
+assemble ServerMap: uses JunkrotCabloTanglino (key 327a046f68912b00)
+assemble ServerMap: uses JunkrotBulboFulminato (key 01ba25f2d9961d25)
+assemble ServerMap: uses JunkrotCrumboPoppalot (key 58ec313829484869)
+assemble ServerMap: uses JunkrotPannettoPatchato (key 0b7101933fb4837c)
+assemble ServerMap: uses JunkrotBlendroCigolante (key dc460f67bbaa5b5d)
+assemble ServerMap: uses JunkrotJackoloCrickato (key c4d46b4e17d60a5c)
+assemble ServerMap: uses JunkrotOilcannaGluglu (key 6ff6832104c382de)
+assemble ServerMap: uses JunkrotMuffleroTossetto (key 7c86cf3991f5ba14)
+assemble ServerMap: uses JunkrotRadioloFruscio (key 7944dbde3ea3df0f)
+assemble ServerMap: uses JunkrotFanettoWobblino (key 57bdb48872b1ae2b)
+assemble ServerMap: uses JunkrotClockoTictacco (key 5869215acba377a6)
+assemble ServerMap: uses JunkrotFrostboxGelatone (key 08f95db89e78e772)
+assemble ServerMap: uses JunkrotMicrondoBippetto (key adc516e2dd5e72c3)
+assemble ServerMap: uses JunkrotMixerellaVroom (key 548a9f57cd079e9c)
+assemble ServerMap: uses JunkrotMopaMopetta (key 4c59984c0fc86318)
+assemble ServerMap: uses JunkrotDrilloTrapanino (key 860a6e23307a027b)
+assemble ServerMap: uses JunkrotGrindellaScintilla (key c9f1dceb3fdeb85d)
+assemble ServerMap: uses JunkrotTelefonoRingaling (key af36e7dc8974b07a)
+assemble ServerMap: uses JunkrotTypewrittoClackini (key c21609d314f8119b)
+assemble ServerMap: uses JunkrotCamerinoFlashetto (key a8681520aa85dee1)
+assemble ServerMap: uses JunkrotDrippiDroppi (key 20cfa409ff18e1c4)
+assemble ServerMap: uses JunkrotDingDingDingDongo (key 34969d0fecb5cb5b)
+assemble ServerMap: uses JunkrotGrindoBeanbasher (key 638341bf871e5b9b)
+assemble ServerMap: uses JunkrotAirfryoCroccante (key 7358ee385dce7619)
+assemble ServerMap: uses JunkrotDishwashinoSplashetto (key e379f1ace446e681)
+assemble ServerMap: uses JunkrotLawnmowoRuggito (key b1f3acb7c672f255)
+assemble ServerMap: uses JunkrotLeafblowaWhooshini (key 57d992fb6a703810)
+assemble ServerMap: uses JunkrotPressurwashoSprizzo (key a760c62cdd6b8912)
+assemble ServerMap: uses JunkrotConsoloJoypaddino (key d7db424afedd777c)
+assemble ServerMap: uses JunkrotSpeakeroneBoomba (key 9b6dfbe5a05da0d6)
+assemble ServerMap: uses JunkrotRobovaccoGirotondo (key 481a05e20ca06a5e)
+assemble ServerMap: uses JunkrotClankClankClankScrapur (key 1b81f6c50475ab9b)
+assemble ServerMap: uses JunkrotVrrVrrPatatrim (key 778e54cb919b38f3)
+assemble ServerMap: uses JunkrotChimneyziniSpannerini (key 20f0fdb6af9d19c6)
+assemble ServerMap: uses JunkrotRusteliRustela (key 4b6b3a1bd8910ae7)
+assemble ServerMap: uses JunkrotBallerinaTincuppina (key 91cf3f497e7e7a74)
+assemble ServerMap: uses JunkrotTrashaleroTrashala (key d8667e95896b9986)
+assemble ServerMap: uses JunkrotSockettoSeiSette (key d47dc2e74ac7ce8b)
+assemble ServerMap: uses JunkrotChefbotPrecisio (key aaec862713eb929e)
+assemble ServerMap: uses JunkrotSousvideSilvano (key 0e51ca3c5109ec2c)
+assemble ServerMap: uses JunkrotKnifeblockSlicetta (key ce4f7db091df93de)
+assemble ServerMap: uses JunkrotTorquoWrenchelli (key bfad669b4c49b133)
+assemble ServerMap: uses JunkrotLaserlevelLineo (key ea231812a0f7a247)
+assemble ServerMap: uses JunkrotWeldettaSparkalot (key e2fb68fd3628fee8)
+assemble ServerMap: uses JunkrotDronettoBuzzatti (key 2f52d676b6731f9d)
+assemble ServerMap: uses JunkrotTickworthPocketti (key 3824cbc1375aadc1)
+assemble ServerMap: uses JunkrotHeadphonoBassimo (key 825442a133f62371)
+assemble ServerMap: uses JunkrotGascaniniHonkini (key 43b3e42d9b976421)
+assemble ServerMap: uses JunkrotPercolattoNinjatto (key ac69fa142973c325)
+assemble ServerMap: uses JunkrotBoilerdiroCrockpotilo (key 6812586e31713b96)
+assemble ServerMap: uses JunkrotSnackomaticPrototipo (key 26288fa6a11388ac)
+assemble ServerMap: uses JunkrotHoverbikkoZoomzoom (key db972d323ae0db64)
+assemble ServerMap: uses JunkrotHolofonoShimmerra (key 65c71b022df346dc)
+assemble ServerMap: uses JunkrotLaVacuumaSaturnita (key 73c8cdfcf36de575)
+assemble ServerMap: uses JunkrotTheMonolito (key 71c8928879741ca4)
+assemble ServerMap: uses JunkrotUnitZero (key 2fd55b80153e9ff1)
+assemble ServerMap: uses ProofToaster (key 5f89e6721e662e90)
+assemble ServerMap: uses ProofKettle (key 51846c3931c745a0)
+assemble ServerMap: uses ProofShark (key 4a36e81578067610)
+assemble ServerMap: slab at ServerMap.luau:169-206 (key 1140b5bda9dd140d)
+assemble ServerMap: slab at ServerMap.luau:330-380 (key 6ad7b70c6ecee2a9)
+assemble ServerMap: slab at ServerMap.luau:409-412 (key 1439853d85f21bad)
+assemble ServerMap: slab at ServerMap.luau:417-428 (key dbd59378b4f53cfc)
+assemble ServerMap: slab at ServerMap.luau:457-503 (key e6328242ecab9497)
+assemble ServerMap: slab at ServerMap.luau:569-576 (key 09a6759228b03a28)
+assemble ServerMap: slab at ServerMap.luau:578-596 (key 4bed7244ea680ec2)
+assemble ServerMap: slab at ServerMap.luau:606-610 (key 387e6895a6242efb)
+assemble ServerMap: slab at ServerMap.luau:647-796 (key 96d3b9c80baa686a)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 308789 lines, in 1s
+engine: taken from the build-engine branch
+[    0.0s] running ServerMap/model.luau
+[    2.6s] cached MainIsland 1 x part 49/50 deal 37712da2e8f4
+[    2.6s] cached LoneWreck24 37.5 237 0
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1 x x1.5
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1 x x1.5
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1 x x1.5
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1 x x1.5
+[    2.6s] cached YardFooting 1 x x1.5
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1 x x1.5
+[    2.6s] cached YardFooting 1 x x1.5
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1 x x1.5
+[    2.6s] cached YardFooting 1 x x1.5
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1 x x1.5
+[    2.6s] cached YardFooting 1 x x1.5
+[    2.6s] cached YardFooting 1.037037037037037 x x1.5
+[    2.6s] cached YardFooting 1 x x1.5
+[    2.7s] cached BeltCrossing 1 x
+[    2.7s] cached JunkrotClankClankClankScrapur 1 x
+[    6.3s] writing ServerMap.glb and 116 textures
+ServerMap: 116 parts, script 6.30s, total 6.86s
+  shade (creases, contact): 0.00s
+  coat: 0.00s
+  wear: 0.00s
+  combine: 0.00s
+  shade, surfaces, grid and texels: 0.00s
+  shade, neighbourhoods: 0.00s
+  shade, spreading over seams: 0.00s
+  coat, painting texels: 0.00s
+PLACED	Island	0	MainIsland-5bd6e7b05fafabe5 1 x part 49/50 deal 37712da2e8f4
+PLACED	LoneWreck24	0	25df8b62f2990308-e6328242ecab9497 LoneWreck24 37.5 237 0
+PLACED	Yard1_FootingLeft1	22.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard1_FootingLeft2	22.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard1_FootingRight4	22.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard1_FootingLeft7	22.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard1_FootingRight9	22.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard2_FootingBack6	-22.5	YardFooting-ce1698371f70b42a 1 x x1.5
+PLACED	Yard2_FootingRight2	67.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard2_FootingRight5	67.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard2_FootingRight9	67.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard3_FootingBack5	22.5	YardFooting-ce1698371f70b42a 1 x x1.5
+PLACED	Yard3_FootingRight5	112.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard3_FootingRight9	112.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard4_FootingBack3	67.5	YardFooting-ce1698371f70b42a 1 x x1.5
+PLACED	Yard4_FootingLeft5	157.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard4_FootingLeft9	157.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard5_FootingBack2	112.5	YardFooting-ce1698371f70b42a 1 x x1.5
+PLACED	Yard5_FootingBack8	112.5	YardFooting-ce1698371f70b42a 1 x x1.5
+PLACED	Yard5_FootingRight8	202.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard6_FootingBack2	157.5	YardFooting-ce1698371f70b42a 1 x x1.5
+PLACED	Yard6_FootingBack8	157.5	YardFooting-ce1698371f70b42a 1 x x1.5
+PLACED	Yard6_FootingLeft9	247.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard7_FootingBack2	202.5	YardFooting-ce1698371f70b42a 1 x x1.5
+PLACED	Yard7_FootingBack8	202.5	YardFooting-ce1698371f70b42a 1 x x1.5
+PLACED	Yard7_FootingRight9	292.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard8_FootingBack1	247.5	YardFooting-ce1698371f70b42a 1 x x1.5
+PLACED	Yard8_FootingBack6	247.5	YardFooting-ce1698371f70b42a 1 x x1.5
+PLACED	Yard8_FootingRight9	337.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard8_FootingFront6	247.5	YardFooting-ce1698371f70b42a 1 x x1.5
+PLACED	Crossing4	157.5	BeltCrossing-eee6b0e8964a303c 1 x
+PLACED	Kit_JunkrotClankClankClankScrapur	0	JunkrotClankClankClankScrapur-1b81f6c50475ab9b 1 x
+export ServerMap: 6 objects (10.4 MB) for 32 placements

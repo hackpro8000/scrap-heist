@@ -1,0 +1,6 @@
+MainIsland 1 x	6293.328
+MainIsland 1 x #split	1
+MainIsland 1 x	5947.514
+MainIsland 1 x #split	1
+MainIsland 1 x	7010.015
+MainIsland 1 x #split	1

@@ -1,0 +1,285 @@
+{
+	"assets": [
+		{
+			"id": "7b58f718228884ab",
+			"key": "MainIsland-2b9f5dc7f917007f 1 x part 49/50 deal d61f7e87956d",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 2060732,
+			"sha": "94f0d84f1104eadb",
+			"parts": 31
+		},
+		{
+			"id": "20dc3d703b007e55",
+			"key": "7fe2f2b698757871-e6328242ecab9497 LoneWreck24 37.5 237 0",
+			"piece": 1,
+			"label": "LoneWreck24",
+			"turn": 0.0,
+			"bytes": 43780,
+			"sha": "df337703baa77861",
+			"parts": 2
+		},
+		{
+			"id": "471b7c774e29ff38",
+			"key": "YardFooting-304c3c0bb5f4572b 1.037037037037037 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FootingLeft8",
+			"turn": 22.5,
+			"bytes": 95648,
+			"sha": "1155302f111c375a",
+			"parts": 1
+		},
+		{
+			"id": "57c79b4bc104627e",
+			"key": "YardFenceHalf-21727101b35b7d12 1 x x1.5",
+			"piece": 1,
+			"label": "Yard7_FenceFrontHalf1",
+			"turn": 202.5,
+			"bytes": 353508,
+			"sha": "136dd6e9878b969c",
+			"parts": 3
+		},
+		{
+			"id": "6cbb4170c5971dd7",
+			"key": "CapsuleFactory-8bfb828006fcaa0e 1 x",
+			"piece": 1,
+			"label": "Kit_CapsuleFactory",
+			"turn": 0.0,
+			"bytes": 419092,
+			"sha": "9003f55ae3a62052",
+			"parts": 4
+		},
+		{
+			"id": "1dd9ffb0c56dfdfe",
+			"key": "JunkrotClankClankClankScrapur-54482ba960b23192 1 x",
+			"piece": 1,
+			"label": "Kit_JunkrotClankClankClankScrapur",
+			"turn": 0.0,
+			"bytes": 3437600,
+			"sha": "4c8debf515b65b6c",
+			"parts": 19
+		}
+	],
+	"placements": [
+		{
+			"asset": "7b58f718228884ab",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Dirt_4_1_0_100",
+					"position": [
+						297.70497,
+						-23.49384,
+						-78.964123
+					]
+				},
+				{
+					"name": "Grass_-5_-2_0_000",
+					"position": [
+						-292.521585,
+						-16.1787185,
+						110.81978000000001
+					]
+				}
+			]
+		},
+		{
+			"asset": "20dc3d703b007e55",
+			"label": "LoneWreck24",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						36.425,
+						2.03,
+						-236.475
+					]
+				}
+			]
+		},
+		{
+			"asset": "471b7c774e29ff38",
+			"label": "Yard1_FootingLeft8",
+			"turn": 22.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						210.13797,
+						2.266335,
+						-139.08882
+					]
+				}
+			]
+		},
+		{
+			"asset": "471b7c774e29ff38",
+			"label": "Yard2_FootingLeft7",
+			"turn": 67.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						45.549656999999996,
+						2.266335,
+						-235.37182
+					]
+				}
+			]
+		},
+		{
+			"asset": "471b7c774e29ff38",
+			"label": "Yard3_FootingLeft6",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-129.564255,
+						2.266335,
+						-187.14364
+					]
+				}
+			]
+		},
+		{
+			"asset": "471b7c774e29ff38",
+			"label": "Yard4_FootingLeft5",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-212.37749000000002,
+						2.266335,
+						-36.0250925
+					]
+				}
+			]
+		},
+		{
+			"asset": "471b7c774e29ff38",
+			"label": "Yard5_FootingLeft4",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-164.14929999999998,
+						2.266335,
+						120.039692
+					]
+				}
+			]
+		},
+		{
+			"asset": "471b7c774e29ff38",
+			"label": "Yard6_FootingLeft3",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						-26.5005265,
+						2.266335,
+						189.38315
+					]
+				}
+			]
+		},
+		{
+			"asset": "471b7c774e29ff38",
+			"label": "Yard7_FootingLeft2",
+			"turn": 292.5,
+			"anchors": [
+				{
+					"name": "Footing",
+					"position": [
+						110.515125,
+						2.266335,
+						141.154965
+					]
+				}
+			]
+		},
+		{
+			"asset": "57c79b4bc104627e",
+			"label": "Yard7_FenceFrontHalf1",
+			"turn": 202.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						100.496955,
+						5.33874635,
+						125.04888249999999
+					]
+				}
+			]
+		},
+		{
+			"asset": "57c79b4bc104627e",
+			"label": "Yard8_FenceFrontHalf1",
+			"turn": 247.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						159.48526,
+						5.33874635,
+						17.3600475
+					]
+				}
+			]
+		},
+		{
+			"asset": "6cbb4170c5971dd7",
+			"label": "Kit_CapsuleFactory",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Label",
+					"position": [
+						-624.6,
+						-259.25,
+						1.31
+					]
+				},
+				{
+					"name": "Tape",
+					"position": [
+						-624.0,
+						-258.015,
+						0.0
+					]
+				}
+			]
+		},
+		{
+			"asset": "1dd9ffb0c56dfdfe",
+			"label": "Kit_JunkrotClankClankClankScrapur",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Bat",
+					"position": [
+						384.80269,
+						-259.047395,
+						0.612757965
+					]
+				},
+				{
+					"name": "Welds",
+					"position": [
+						383.99523999999997,
+						-257.40286000000003,
+						-0.12464343
+					]
+				}
+			]
+		}
+	]
+}

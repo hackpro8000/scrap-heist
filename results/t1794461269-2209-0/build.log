@@ -1,0 +1,2550 @@
+DISK before: cache 0 MB, free 28011 MB of 258020 MB
+CPUS: nproc 4, online 4, cgroup cpu.max none
+assemble ServerMap: layout: prelude, rarity, shared helpers, used models, layout
+assemble ServerMap: uses MainIsland (key 5bd6e7b05fafabe5)
+assemble ServerMap: uses CapsuleLoop (key e122c768981a2fcf)
+assemble ServerMap: uses RebirthPress (key 12dcb067617e705b)
+assemble ServerMap: uses BuildBay (key f8fddcb129310701)
+assemble ServerMap: uses YardFence (key ae9c0061f8170496)
+assemble ServerMap: uses YardFenceHalf (key ca23e4e88ebebfbf)
+assemble ServerMap: uses YardFooting (key ce1698371f70b42a)
+assemble ServerMap: uses YardGate (key bf1807569edc0b36)
+assemble ServerMap: uses PlotMarker (key 9172bd0ab180a2a2)
+assemble ServerMap: uses HubShop (key 780fad43697b3086)
+assemble ServerMap: uses HubTinkerer (key 8b76108c361ff045)
+assemble ServerMap: uses HubBeacon (key 359a482ad806c4cb)
+assemble ServerMap: uses HubStage (key 16916797fdf77074)
+assemble ServerMap: uses BeltCrossing (key eee6b0e8964a303c)
+assemble ServerMap: uses JunkMound (key fb80758d0e577fda)
+assemble ServerMap: uses ScrapPalm (key 46e4c25337945eb1)
+assemble ServerMap: uses ScrapTreeAntenna (key a9248507734dd9c4)
+assemble ServerMap: uses ScrapTreeExhaust (key 6971958a5110f5e4)
+assemble ServerMap: uses ScrapTreeLamppost (key b598ef50948d0308)
+assemble ServerMap: uses ScrapTreeRebar (key 173c33daa1f9b61c)
+assemble ServerMap: uses ScrapTreeSignpost (key 095cc13fc7d72ba7)
+assemble ServerMap: uses RockBoulderPile (key 9f587297437e5ec1)
+assemble ServerMap: uses HubSectionA (key ff58c7b212c3c455)
+assemble ServerMap: uses HubSectionB (key 64e249a2620f53b5)
+assemble ServerMap: uses HubSectionEnd (key a00fb3cb216eb4b1)
+assemble ServerMap: uses YardIsland (key 988e963f004cc874)
+assemble ServerMap: uses PadKitchen (key ec71f489a049d2af)
+assemble ServerMap: uses PadGarage (key 89b5d290e5d87e2d)
+assemble ServerMap: uses PadGadget (key cb240e3b32ee2bc5)
+assemble ServerMap: uses ScrapCrate (key f83a4190e411eda4)
+assemble ServerMap: uses CapsuleScrap (key 5c8d99bcabd6ec3a)
+assemble ServerMap: uses CapsuleSalvaged (key 7b96a534e82dbc68)
+assemble ServerMap: uses CapsuleRefurbished (key 534156bd2f7802d7)
+assemble ServerMap: uses CapsuleFactory (key 60694d3d77ed9d5a)
+assemble ServerMap: uses CapsulePrecision (key 3d557e0f40945171)
+assemble ServerMap: uses CapsulePrototype (key 9a281c1af5b3a891)
+assemble ServerMap: uses CapsuleSecret (key dece8d5925a51c32)
+assemble ServerMap: uses JunkrotCanettoRustini (key a064498d48b05d3e)
+assemble ServerMap: uses JunkrotSpoonzoBentolo (key 4e1ab35a0ea27e1c)
+assemble ServerMap: uses JunkrotKettlinaDentata (key f1db44ca6d420d18)
+assemble ServerMap: uses JunkrotTyroFlattino (key b1e5d34174038c46)
+assemble ServerMap: uses JunkrotBoltoloLonelo (key 4c031a36c88faa1e)
+assemble ServerMap: uses JunkrotHubcappaWobbla (key 8e54228015c122eb)
+assemble ServerMap: uses JunkrotRemotinoMuto (key dbb56c8f360f31d9)
+assemble ServerMap: uses JunkrotCabloTanglino (key 327a046f68912b00)
+assemble ServerMap: uses JunkrotBulboFulminato (key 01ba25f2d9961d25)
+assemble ServerMap: uses JunkrotCrumboPoppalot (key 58ec313829484869)
+assemble ServerMap: uses JunkrotPannettoPatchato (key 0b7101933fb4837c)
+assemble ServerMap: uses JunkrotBlendroCigolante (key dc460f67bbaa5b5d)
+assemble ServerMap: uses JunkrotJackoloCrickato (key c4d46b4e17d60a5c)
+assemble ServerMap: uses JunkrotOilcannaGluglu (key 6ff6832104c382de)
+assemble ServerMap: uses JunkrotMuffleroTossetto (key 7c86cf3991f5ba14)
+assemble ServerMap: uses JunkrotRadioloFruscio (key 7944dbde3ea3df0f)
+assemble ServerMap: uses JunkrotFanettoWobblino (key 57bdb48872b1ae2b)
+assemble ServerMap: uses JunkrotClockoTictacco (key 5869215acba377a6)
+assemble ServerMap: uses JunkrotFrostboxGelatone (key 08f95db89e78e772)
+assemble ServerMap: uses JunkrotMicrondoBippetto (key adc516e2dd5e72c3)
+assemble ServerMap: uses JunkrotMixerellaVroom (key 548a9f57cd079e9c)
+assemble ServerMap: uses JunkrotMopaMopetta (key 4c59984c0fc86318)
+assemble ServerMap: uses JunkrotDrilloTrapanino (key 860a6e23307a027b)
+assemble ServerMap: uses JunkrotGrindellaScintilla (key c9f1dceb3fdeb85d)
+assemble ServerMap: uses JunkrotTelefonoRingaling (key af36e7dc8974b07a)
+assemble ServerMap: uses JunkrotTypewrittoClackini (key c21609d314f8119b)
+assemble ServerMap: uses JunkrotCamerinoFlashetto (key a8681520aa85dee1)
+assemble ServerMap: uses JunkrotDrippiDroppi (key 20cfa409ff18e1c4)
+assemble ServerMap: uses JunkrotDingDingDingDongo (key 34969d0fecb5cb5b)
+assemble ServerMap: uses JunkrotGrindoBeanbasher (key 638341bf871e5b9b)
+assemble ServerMap: uses JunkrotAirfryoCroccante (key 7358ee385dce7619)
+assemble ServerMap: uses JunkrotDishwashinoSplashetto (key e379f1ace446e681)
+assemble ServerMap: uses JunkrotLawnmowoRuggito (key b1f3acb7c672f255)
+assemble ServerMap: uses JunkrotLeafblowaWhooshini (key 57d992fb6a703810)
+assemble ServerMap: uses JunkrotPressurwashoSprizzo (key a760c62cdd6b8912)
+assemble ServerMap: uses JunkrotConsoloJoypaddino (key d7db424afedd777c)
+assemble ServerMap: uses JunkrotSpeakeroneBoomba (key 9b6dfbe5a05da0d6)
+assemble ServerMap: uses JunkrotRobovaccoGirotondo (key 481a05e20ca06a5e)
+assemble ServerMap: uses JunkrotClankClankClankScrapur (key 1b81f6c50475ab9b)
+assemble ServerMap: uses JunkrotVrrVrrPatatrim (key 778e54cb919b38f3)
+assemble ServerMap: uses JunkrotChimneyziniSpannerini (key 20f0fdb6af9d19c6)
+assemble ServerMap: uses JunkrotRusteliRustela (key 4b6b3a1bd8910ae7)
+assemble ServerMap: uses JunkrotBallerinaTincuppina (key 91cf3f497e7e7a74)
+assemble ServerMap: uses JunkrotTrashaleroTrashala (key d8667e95896b9986)
+assemble ServerMap: uses JunkrotSockettoSeiSette (key d47dc2e74ac7ce8b)
+assemble ServerMap: uses JunkrotChefbotPrecisio (key aaec862713eb929e)
+assemble ServerMap: uses JunkrotSousvideSilvano (key 0e51ca3c5109ec2c)
+assemble ServerMap: uses JunkrotKnifeblockSlicetta (key ce4f7db091df93de)
+assemble ServerMap: uses JunkrotTorquoWrenchelli (key bfad669b4c49b133)
+assemble ServerMap: uses JunkrotLaserlevelLineo (key ea231812a0f7a247)
+assemble ServerMap: uses JunkrotWeldettaSparkalot (key e2fb68fd3628fee8)
+assemble ServerMap: uses JunkrotDronettoBuzzatti (key 2f52d676b6731f9d)
+assemble ServerMap: uses JunkrotTickworthPocketti (key 3824cbc1375aadc1)
+assemble ServerMap: uses JunkrotHeadphonoBassimo (key 825442a133f62371)
+assemble ServerMap: uses JunkrotGascaniniHonkini (key 43b3e42d9b976421)
+assemble ServerMap: uses JunkrotPercolattoNinjatto (key ac69fa142973c325)
+assemble ServerMap: uses JunkrotBoilerdiroCrockpotilo (key 6812586e31713b96)
+assemble ServerMap: uses JunkrotSnackomaticPrototipo (key 26288fa6a11388ac)
+assemble ServerMap: uses JunkrotHoverbikkoZoomzoom (key db972d323ae0db64)
+assemble ServerMap: uses JunkrotHolofonoShimmerra (key 65c71b022df346dc)
+assemble ServerMap: uses JunkrotLaVacuumaSaturnita (key 73c8cdfcf36de575)
+assemble ServerMap: uses JunkrotTheMonolito (key 71c8928879741ca4)
+assemble ServerMap: uses JunkrotUnitZero (key 2fd55b80153e9ff1)
+assemble ServerMap: uses ProofToaster (key 5f89e6721e662e90)
+assemble ServerMap: uses ProofKettle (key 51846c3931c745a0)
+assemble ServerMap: uses ProofShark (key 4a36e81578067610)
+assemble ServerMap: slab at ServerMap.luau:169-206 (key 1140b5bda9dd140d)
+assemble ServerMap: slab at ServerMap.luau:330-380 (key 6ad7b70c6ecee2a9)
+assemble ServerMap: slab at ServerMap.luau:409-412 (key 1439853d85f21bad)
+assemble ServerMap: slab at ServerMap.luau:417-428 (key dbd59378b4f53cfc)
+assemble ServerMap: slab at ServerMap.luau:457-503 (key e6328242ecab9497)
+assemble ServerMap: slab at ServerMap.luau:569-576 (key 09a6759228b03a28)
+assemble ServerMap: slab at ServerMap.luau:578-596 (key 4bed7244ea680ec2)
+assemble ServerMap: slab at ServerMap.luau:606-610 (key 387e6895a6242efb)
+assemble ServerMap: slab at ServerMap.luau:647-796 (key 96d3b9c80baa686a)
+assemble ServerMap: wrote art/models/ServerMap/model.luau, 308789 lines, in 0s
+MEM 2534/16086 avail 13551 top 660MB modelkit-linux- cpu 8% of 4
+MEM 4028/16086 avail 12057 top 1105MB modelkit-linux- cpu 92% of 4
+MEM 4959/16086 avail 11126 top 1446MB modelkit-linux- cpu 95% of 4
+MEM 2883/16086 avail 13202 top 1794MB modelkit-linux- cpu 89% of 4
+TEX 1 ef6d40c3b85151c2 ./Crossing4_Bulbs.png
+TEX 1 58f93f6844cdee82 ./Crossing4_Bulbs_Emissive.png
+TEX 1 5fdf52b823829b88 ./Crossing4_Bulbs_Metalness.png
+TEX 1 58f93f6844cdee82 ./Crossing4_Bulbs_Roughness.png
+TEX 1 f04ca2d29aa793a5 ./Crossing4_Fittings.png
+TEX 1 5fdf52b823829b88 ./Crossing4_Fittings_Metalness.png
+TEX 1 58f93f6844cdee82 ./Crossing4_Fittings_Roughness.png
+TEX 1 2b919b9f215c2eb5 ./Crossing4_Legs.png
+TEX 1 5fdf52b823829b88 ./Crossing4_Legs_Metalness.png
+TEX 1 58f93f6844cdee82 ./Crossing4_Legs_Roughness.png
+TEX 1 5a6da9c950327f4d ./Crossing4_Railings.png
+TEX 1 5fdf52b823829b88 ./Crossing4_Railings_Metalness.png
+TEX 1 58f93f6844cdee82 ./Crossing4_Railings_Roughness.png
+TEX 1 0f131df02cbc63fa ./Crossing4_Span.png
+TEX 1 5fdf52b823829b88 ./Crossing4_Span_Metalness.png
+TEX 1 58f93f6844cdee82 ./Crossing4_Span_Roughness.png
+TEX 1 3ddca5827c7dff2f ./Crossing4_Stairs.png
+TEX 1 5fdf52b823829b88 ./Crossing4_Stairs_Metalness.png
+TEX 1 58f93f6844cdee82 ./Crossing4_Stairs_Roughness.png
+TEX 1 83e9d68ae1ff2abb ./Crossing4_WarningSign.png
+TEX 1 5fdf52b823829b88 ./Crossing4_WarningSign_Metalness.png
+TEX 1 58f93f6844cdee82 ./Crossing4_WarningSign_Roughness.png
+TEX 1 4292cc0f064a34f1 ./Island_Columns_-1_-1_-3_110.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_-1_-1_-3_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_-1_-1_-3_110_Roughness.png
+TEX 1 2e5273261bdd704a ./Island_Columns_-1_-3_-2_111.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_-1_-3_-2_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_-1_-3_-2_111_Roughness.png
+TEX 1 298e7b05934b115e ./Island_Columns_-1_0_-2_011.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_-1_0_-2_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_-1_0_-2_011_Roughness.png
+TEX 1 c89c448df2c601a5 ./Island_Columns_-1_1_-2_110_011.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_-1_1_-2_110_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_-1_1_-2_110_011_Roughness.png
+TEX 1 49b0f388e4d0f495 ./Island_Columns_-2_-2_-2_101.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_-2_-2_-2_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_-2_-2_-2_101_Roughness.png
+TEX 1 4d0f3575258fa374 ./Island_Columns_-2_-3_-1_100.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_-2_-3_-1_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_-2_-3_-1_100_Roughness.png
+TEX 1 ba78ae4a1f238d33 ./Island_Columns_-2_1_-2_001_000.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_-2_1_-2_001_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_-2_1_-2_001_000_Roughness.png
+TEX 1 7b4cda7a83dc2857 ./Island_Columns_-3_-3_-1_000.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_-3_-3_-1_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_-3_-3_-1_000_Roughness.png
+TEX 1 fec2a5355bab3a23 ./Island_Columns_-3_-4_-1_110_001.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_-3_-4_-1_110_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_-3_-4_-1_110_001_Roughness.png
+TEX 1 ee34e614e707ae15 ./Island_Columns_-3_-4_-1_110_010.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_-3_-4_-1_110_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_-3_-4_-1_110_010_Roughness.png
+TEX 1 e047154b61a5c55f ./Island_Columns_-3_1_-1_000.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_-3_1_-1_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_-3_1_-1_000_Roughness.png
+TEX 1 4075396d14f376ba ./Island_Columns_-3_1_-1_101_111.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_-3_1_-1_101_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_-3_1_-1_101_111_Roughness.png
+TEX 1 6e8ce92513f0cd4f ./Island_Columns_0_-3_-1_011.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_0_-3_-1_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_0_-3_-1_011_Roughness.png
+TEX 1 79be633162ba02dd ./Island_Columns_0_-4_-1_000.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_0_-4_-1_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_0_-4_-1_000_Roughness.png
+TEX 1 abf3ecd32446d8c8 ./Island_Columns_0_-4_-1_100.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_0_-4_-1_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_0_-4_-1_100_Roughness.png
+TEX 1 b9b550579d214dd0 ./Island_Columns_0_1_-2_001_111.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_0_1_-2_001_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_0_1_-2_001_111_Roughness.png
+TEX 1 33c30452b4a76712 ./Island_Columns_0_1_-2_100_010.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_0_1_-2_100_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_0_1_-2_100_010_Roughness.png
+TEX 1 4dd9b69f8725bb28 ./Island_Columns_1_-1_-2_101_100.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_1_-1_-2_101_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_1_-1_-2_101_100_Roughness.png
+TEX 1 465d1b57f4daee01 ./Island_Columns_1_-1_-2_110.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_1_-1_-2_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_1_-1_-2_110_Roughness.png
+TEX 1 17e7ac45e1aaa634 ./Island_Columns_1_-2_-1_111.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_1_-2_-1_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_1_-2_-1_111_Roughness.png
+TEX 1 58d921f6e3725614 ./Island_Columns_1_-2_-2_011.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_1_-2_-2_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_1_-2_-2_011_Roughness.png
+TEX 1 a0a00d752667d921 ./Island_Columns_1_-3_-1_001.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_1_-3_-1_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_1_-3_-1_001_Roughness.png
+TEX 1 69d06f58673b8b97 ./Island_Columns_1_-3_-1_010.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_1_-3_-1_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_1_-3_-1_010_Roughness.png
+TEX 1 66b72584bd60c67c ./Island_Columns_1_-4_-1_110.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_1_-4_-1_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_1_-4_-1_110_Roughness.png
+TEX 1 cac6c083c0d48ef6 ./Island_Columns_1_0_-1_111.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_1_0_-1_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_1_0_-1_111_Roughness.png
+TEX 1 b109154dd6f1ff26 ./Island_Columns_1_0_-2_111.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_1_0_-2_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_1_0_-2_111_Roughness.png
+TEX 1 c9bcb832f28a5eba ./Island_Columns_1_1_-1_101_101.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_1_1_-1_101_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_1_1_-1_101_101_Roughness.png
+TEX 1 e06cdede629bc8a1 ./Island_Columns_2_-1_-1_001.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_2_-1_-1_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_2_-1_-1_001_Roughness.png
+TEX 1 050c953dcaa20649 ./Island_Columns_2_-3_-1_000_011.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_2_-3_-1_000_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_2_-3_-1_000_011_Roughness.png
+TEX 1 123ece49445d7c46 ./Island_Columns_2_-3_-1_000_101.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_2_-3_-1_000_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_2_-3_-1_000_101_Roughness.png
+TEX 1 9ac85ffac3043a72 ./Island_Columns_2_1_-1_100_000.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_2_1_-1_100_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_2_1_-1_100_000_Roughness.png
+TEX 1 87cf4ae3c63bc86d ./Island_Columns_4_-2_-1.png
+TEX 1 5fdf52b823829b88 ./Island_Columns_4_-2_-1_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Columns_4_-2_-1_Roughness.png
+TEX 1 32fc36b1769fe838 ./Island_Dirt_-1_-3_-1_010_110_000.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-1_-3_-1_010_110_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-1_-3_-1_010_110_000_Roughness.png
+TEX 1 a2b8b9b27cd9660c ./Island_Dirt_-1_0_-2.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-1_0_-2_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-1_0_-2_Roughness.png
+TEX 1 5c0692a1ec275d51 ./Island_Dirt_-1_4_0_001.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-1_4_0_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-1_4_0_001_Roughness.png
+TEX 1 01cba6f946278533 ./Island_Dirt_-2_1_-1_001_001_110.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-2_1_-1_001_001_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-2_1_-1_001_001_110_Roughness.png
+TEX 1 9619d781f22a0e4a ./Island_Dirt_-2_1_-1_001_010.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-2_1_-1_001_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-2_1_-1_001_010_Roughness.png
+TEX 1 0562d8e8b3e0995c ./Island_Dirt_-2_2_-2.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-2_2_-2_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-2_2_-2_Roughness.png
+TEX 1 6ba3fab8b58187a6 ./Island_Dirt_-3_-2_-1_001.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-3_-2_-1_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-3_-2_-1_001_Roughness.png
+TEX 1 c4f147bf0eedc068 ./Island_Dirt_-3_-4_-1_110.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-3_-4_-1_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-3_-4_-1_110_Roughness.png
+TEX 1 e2c0e205c7258502 ./Island_Dirt_-3_0_-1_011.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-3_0_-1_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-3_0_-1_011_Roughness.png
+TEX 1 9ec0cd502266eee6 ./Island_Dirt_-3_3_-1_011.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-3_3_-1_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-3_3_-1_011_Roughness.png
+TEX 1 3d31db24e767485c ./Island_Dirt_-4_-1_-1_100_011.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-4_-1_-1_100_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-4_-1_-1_100_011_Roughness.png
+TEX 1 9cc32c5ecc82d3a3 ./Island_Dirt_-4_-4_0_010.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-4_-4_0_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-4_-4_0_010_Roughness.png
+TEX 1 47f04443a798b1dd ./Island_Dirt_-4_0_-1.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-4_0_-1_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-4_0_-1_Roughness.png
+TEX 1 a2a8742998e33750 ./Island_Dirt_-4_2_0_111.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-4_2_0_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-4_2_0_111_Roughness.png
+TEX 1 5c15ad49e0c05df5 ./Island_Dirt_-4_3_0_101.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-4_3_0_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-4_3_0_101_Roughness.png
+TEX 1 a49a03c3e0538129 ./Island_Dirt_-5_0_-1_101_011.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-5_0_-1_101_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-5_0_-1_101_011_Roughness.png
+TEX 1 2118e469cb680176 ./Island_Dirt_-5_0_-1_101_101.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_-5_0_-1_101_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_-5_0_-1_101_101_Roughness.png
+TEX 1 70b2b7a32abe4cf9 ./Island_Dirt_0_-3_-1_001_011_111.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_0_-3_-1_001_011_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_0_-3_-1_001_011_111_Roughness.png
+TEX 1 ac4a267fdf698983 ./Island_Dirt_0_-5_-1_001.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_0_-5_-1_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_0_-5_-1_001_Roughness.png
+TEX 1 2dc0525222f8c995 ./Island_Dirt_0_2_-1_100_110.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_0_2_-1_100_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_0_2_-1_100_110_Roughness.png
+TEX 1 030e023ecbaeb62a ./Island_Dirt_0_3_-1_111.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_0_3_-1_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_0_3_-1_111_Roughness.png
+TEX 1 c36d09a0ad01bb46 ./Island_Dirt_1_-4_-1_001_110.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_1_-4_-1_001_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_1_-4_-1_001_110_Roughness.png
+TEX 1 2e6535f92fd68075 ./Island_Dirt_1_-4_-1_100.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_1_-4_-1_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_1_-4_-1_100_Roughness.png
+TEX 1 f17534d363624120 ./Island_Dirt_1_-4_-1_101_110.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_1_-4_-1_101_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_1_-4_-1_101_110_Roughness.png
+TEX 1 592843fd50ddd02b ./Island_Dirt_1_0_-1_111.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_1_0_-1_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_1_0_-1_111_Roughness.png
+TEX 1 bcbb452736ccbbab ./Island_Dirt_1_1_-1_110_110.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_1_1_-1_110_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_1_1_-1_110_110_Roughness.png
+TEX 1 66a61efbad9cdf80 ./Island_Dirt_1_3_-1_001.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_1_3_-1_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_1_3_-1_001_Roughness.png
+TEX 1 804c1957ae08509a ./Island_Dirt_1_4_0_011.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_1_4_0_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_1_4_0_011_Roughness.png
+TEX 1 b101da76a0568e0d ./Island_Dirt_1_4_0_101.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_1_4_0_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_1_4_0_101_Roughness.png
+TEX 1 8ada3c925ca76cd3 ./Island_Dirt_2_-3_-1_000_011_000.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_2_-3_-1_000_011_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_2_-3_-1_000_011_000_Roughness.png
+TEX 1 fb7337c16da2ddf1 ./Island_Dirt_2_-4_0_111.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_2_-4_0_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_2_-4_0_111_Roughness.png
+TEX 1 dc5a506fa81350cf ./Island_Dirt_2_0_-1_011.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_2_0_-1_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_2_0_-1_011_Roughness.png
+TEX 1 137b6e509e0f714b ./Island_Dirt_2_2_-1_000.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_2_2_-1_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_2_2_-1_000_Roughness.png
+TEX 1 bcc3fb517a74246d ./Island_Dirt_2_3_-1_001.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_2_3_-1_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_2_3_-1_001_Roughness.png
+TEX 1 14bc9bf6e3a2f73a ./Island_Dirt_3_-3_-1_000.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_3_-3_-1_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_3_-3_-1_000_Roughness.png
+TEX 1 308fb6d5b488f8d8 ./Island_Dirt_3_2_-1_110.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_3_2_-1_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_3_2_-1_110_Roughness.png
+TEX 1 743f4196c293b27f ./Island_Dirt_4_-1_-1_001.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-1_-1_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-1_-1_001_Roughness.png
+TEX 1 9c15e22fde0213ff ./Island_Dirt_4_-1_-1_010_001.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-1_-1_010_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-1_-1_010_001_Roughness.png
+TEX 1 681fa64a4ff22f22 ./Island_Dirt_4_-1_-1_010_111.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-1_-1_010_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-1_-1_010_111_Roughness.png
+TEX 1 8f11a62dc51b6974 ./Island_Dirt_4_-1_-1_111.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-1_-1_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-1_-1_111_Roughness.png
+TEX 1 fcdb6f16073e23c5 ./Island_Dirt_4_-1_0.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-1_0_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-1_0_Roughness.png
+TEX 1 d74eff30b8ce4b69 ./Island_Dirt_4_-2_-1_000.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-2_-1_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-2_-1_000_Roughness.png
+TEX 1 f14abbeb89b49021 ./Island_Dirt_4_-2_-1_001.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-2_-1_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-2_-1_001_Roughness.png
+TEX 1 3e0be0d85c664e5f ./Island_Dirt_4_-2_-1_010.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-2_-1_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-2_-1_010_Roughness.png
+TEX 1 53508299884fcfd8 ./Island_Dirt_4_-2_-1_011.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-2_-1_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-2_-1_011_Roughness.png
+TEX 1 8ae84d4bd268093b ./Island_Dirt_4_-2_-1_111.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-2_-1_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-2_-1_111_Roughness.png
+TEX 1 a03b6c3cd314a3cb ./Island_Dirt_4_-2_0_001_100.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-2_0_001_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-2_0_001_100_Roughness.png
+TEX 1 78b2960bdf1a27f1 ./Island_Dirt_4_-2_0_001_101.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-2_0_001_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-2_0_001_101_Roughness.png
+TEX 1 b30b40a056720e1e ./Island_Dirt_4_-2_0_001_110.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-2_0_001_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-2_0_001_110_Roughness.png
+TEX 1 7fa71930678b7e39 ./Island_Dirt_4_-2_0_001_111.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-2_0_001_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-2_0_001_111_Roughness.png
+TEX 1 d40d0fb460c94ba5 ./Island_Dirt_4_-2_0_110.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-2_0_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-2_0_110_Roughness.png
+TEX 1 21a2b99a322ef047 ./Island_Dirt_4_-2_0_111.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-2_0_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-2_0_111_Roughness.png
+TEX 1 3f593a888997ac6a ./Island_Dirt_4_-3_-1.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-3_-1_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-3_-1_Roughness.png
+TEX 1 12ff47788273a1af ./Island_Dirt_4_-3_0.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_-3_0_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_-3_0_Roughness.png
+TEX 1 bb3a6618bc71ea3b ./Island_Dirt_4_0_-1_000.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_0_-1_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_0_-1_000_Roughness.png
+TEX 1 1770997b8c943ec6 ./Island_Dirt_4_0_-1_011.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_0_-1_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_0_-1_011_Roughness.png
+TEX 1 3e4d2eb2e0a6edd5 ./Island_Dirt_4_0_-1_111.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_0_-1_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_0_-1_111_Roughness.png
+TEX 1 406f9baf74c41c31 ./Island_Dirt_4_0_0_100.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_0_0_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_0_0_100_Roughness.png
+TEX 1 9201abf8ebc31839 ./Island_Dirt_4_0_0_101.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_0_0_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_0_0_101_Roughness.png
+TEX 1 c42818ddd2a69c3c ./Island_Dirt_4_0_0_110.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_0_0_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_0_0_110_Roughness.png
+TEX 1 220bf56f1446ef85 ./Island_Dirt_4_1_-1_001_001.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_1_-1_001_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_1_-1_001_001_Roughness.png
+TEX 1 5759b6a0d0b37be3 ./Island_Dirt_4_1_-1_001_110.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_1_-1_001_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_1_-1_001_110_Roughness.png
+TEX 1 881c7f2123e24099 ./Island_Dirt_4_1_-1_010.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_1_-1_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_1_-1_010_Roughness.png
+TEX 1 7dccaf5f25da1586 ./Island_Dirt_4_1_0_100.png
+TEX 1 5fdf52b823829b88 ./Island_Dirt_4_1_0_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Dirt_4_1_0_100_Roughness.png
+TEX 1 de45c6738c8b3fa5 ./Island_Grass_-1_-5_0_000_101.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-1_-5_0_000_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-1_-5_0_000_101_Roughness.png
+TEX 1 cab8cdc4f41fe5d0 ./Island_Grass_-1_-5_0_100_100.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-1_-5_0_100_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-1_-5_0_100_100_Roughness.png
+TEX 1 4091e0fe0f7722e6 ./Island_Grass_-1_4_0_011.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-1_4_0_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-1_4_0_011_Roughness.png
+TEX 1 00a920331297f9f1 ./Island_Grass_-1_4_0_110_000.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-1_4_0_110_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-1_4_0_110_000_Roughness.png
+TEX 1 c689b5a2f1056519 ./Island_Grass_-1_4_0_110_001.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-1_4_0_110_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-1_4_0_110_001_Roughness.png
+TEX 1 ab0ac84a58ae7464 ./Island_Grass_-1_4_0_111.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-1_4_0_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-1_4_0_111_Roughness.png
+TEX 1 340aee7502850217 ./Island_Grass_-2_-5_0_110.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-2_-5_0_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-2_-5_0_110_Roughness.png
+TEX 1 4c1b7b3e54b1b285 ./Island_Grass_-2_4_0_000_011.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-2_4_0_000_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-2_4_0_000_011_Roughness.png
+TEX 1 ba1fbd47c439251a ./Island_Grass_-2_4_0_000_110.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-2_4_0_000_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-2_4_0_000_110_Roughness.png
+TEX 1 403ac46da2234da9 ./Island_Grass_-2_4_0_010.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-2_4_0_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-2_4_0_010_Roughness.png
+TEX 1 cde329b92671431b ./Island_Grass_-3_-3_0_110.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-3_-3_0_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-3_-3_0_110_Roughness.png
+TEX 1 069d77880908f80e ./Island_Grass_-3_-4_0_001.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-3_-4_0_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-3_-4_0_001_Roughness.png
+TEX 1 a268b3ca748f793d ./Island_Grass_-3_-4_0_010.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-3_-4_0_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-3_-4_0_010_Roughness.png
+TEX 1 692d2ff6254f63cc ./Island_Grass_-3_3_0_010_001.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-3_3_0_010_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-3_3_0_010_001_Roughness.png
+TEX 1 bb097161a635d772 ./Island_Grass_-5_-1_0_010_011.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-5_-1_0_010_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-5_-1_0_010_011_Roughness.png
+TEX 1 e4d6f87af3ebabca ./Island_Grass_-5_-2_0_000.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-5_-2_0_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-5_-2_0_000_Roughness.png
+TEX 1 e121300199295829 ./Island_Grass_-5_0_0_000_100.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-5_0_0_000_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-5_0_0_000_100_Roughness.png
+TEX 1 993df1b2b1ca519e ./Island_Grass_-5_2_0_100_010.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_-5_2_0_100_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_-5_2_0_100_010_Roughness.png
+TEX 1 a25ca9e2d3a401bb ./Island_Grass_0_-2_0.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_0_-2_0_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_0_-2_0_Roughness.png
+TEX 1 bee60075bf90b114 ./Island_Grass_0_-4_0.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_0_-4_0_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_0_-4_0_Roughness.png
+TEX 1 c656299782830671 ./Island_Grass_0_-5_0_001.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_0_-5_0_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_0_-5_0_001_Roughness.png
+TEX 1 fc4afd3a95d1cb3d ./Island_Grass_0_3_0.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_0_3_0_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_0_3_0_Roughness.png
+TEX 1 cda2ef1eabaebe14 ./Island_Grass_1_-2_0_100.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_1_-2_0_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_1_-2_0_100_Roughness.png
+TEX 1 dda7491780c02a35 ./Island_Grass_1_0_0.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_1_0_0_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_1_0_0_Roughness.png
+TEX 1 8703a3f911c625db ./Island_Grass_1_4_0_000.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_1_4_0_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_1_4_0_000_Roughness.png
+TEX 1 d8881a01b30329de ./Island_Grass_2_-2_0.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_2_-2_0_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_2_-2_0_Roughness.png
+TEX 1 8870ea6e57d85099 ./Island_Grass_2_-4_0_100_110.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_2_-4_0_100_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_2_-4_0_100_110_Roughness.png
+TEX 1 569966b027d2190f ./Island_Grass_2_-5_0_011.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_2_-5_0_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_2_-5_0_011_Roughness.png
+TEX 1 d1f443a60d2a00b2 ./Island_Grass_2_3_0_110_010.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_2_3_0_110_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_2_3_0_110_010_Roughness.png
+TEX 1 86cb168bd032a5ca ./Island_Grass_2_3_0_110_111.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_2_3_0_110_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_2_3_0_110_111_Roughness.png
+TEX 1 1d7b368155660c03 ./Island_Grass_2_4_0_101.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_2_4_0_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_2_4_0_101_Roughness.png
+TEX 1 dc562e807a080f39 ./Island_Grass_3_-3_0_100_100.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_3_-3_0_100_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_3_-3_0_100_100_Roughness.png
+TEX 1 8ec90ed4722f0840 ./Island_Grass_3_-3_0_101.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_3_-3_0_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_3_-3_0_101_Roughness.png
+TEX 1 20db367e9651a8a4 ./Island_Grass_3_-4_0_010_001.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_3_-4_0_010_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_3_-4_0_010_001_Roughness.png
+TEX 1 4f353fca2fc12821 ./Island_Grass_4_-1_0_000.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_000_Roughness.png
+TEX 1 abbf8e98399a41e3 ./Island_Grass_4_-1_0_010.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_010_Roughness.png
+TEX 1 5584578f0c4fc8f6 ./Island_Grass_4_-1_0_100_001.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_001_Roughness.png
+TEX 1 4f4483947d73451c ./Island_Grass_4_-1_0_100_011.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_011_Roughness.png
+TEX 1 410bf68b24a83539 ./Island_Grass_4_-1_0_100_100.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_100_Roughness.png
+TEX 1 82c7fc5f7bcb4151 ./Island_Grass_4_-1_0_100_101.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_101_Roughness.png
+TEX 1 4b0bbceb837ee12a ./Island_Grass_4_-1_0_100_110.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_110_Roughness.png
+TEX 1 fddd70326e288b71 ./Island_Grass_4_-1_0_100_111.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_111_Roughness.png
+TEX 1 a9dc0f70aa913473 ./Island_Grass_4_-1_0_101.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_101_Roughness.png
+TEX 1 011a320af8fb2f3a ./Island_Grass_4_-1_0_110_001.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_001_Roughness.png
+TEX 1 e7bf79882d6439c3 ./Island_Grass_4_-1_0_110_011.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_011_Roughness.png
+TEX 1 1a88c733c2a299ad ./Island_Grass_4_-1_0_110_100.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_100_Roughness.png
+TEX 1 821ea088d3298d8b ./Island_Grass_4_-1_0_110_101.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_101_Roughness.png
+TEX 1 3dad3ea0c58e4511 ./Island_Grass_4_-1_0_110_110.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_110_Roughness.png
+TEX 1 2b3fd46ffbf634bf ./Island_Grass_4_-1_0_110_111.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_111_Roughness.png
+TEX 1 e6355be40e15a2c3 ./Island_Grass_4_-1_0_111.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-1_0_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-1_0_111_Roughness.png
+TEX 1 4a4579adb592f4cf ./Island_Grass_4_-2_0_000.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-2_0_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-2_0_000_Roughness.png
+TEX 1 e6554a9b28cb8306 ./Island_Grass_4_-2_0_010.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-2_0_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-2_0_010_Roughness.png
+TEX 1 c40a7ff6cd4ca78b ./Island_Grass_4_-2_0_100.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-2_0_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-2_0_100_Roughness.png
+TEX 1 af042d8598b6a5f4 ./Island_Grass_4_-2_0_110_000.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-2_0_110_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-2_0_110_000_Roughness.png
+TEX 1 077b5fd793c6053d ./Island_Grass_4_-2_0_110_001.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-2_0_110_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-2_0_110_001_Roughness.png
+TEX 1 d93a017de1c95e66 ./Island_Grass_4_-2_0_110_010.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-2_0_110_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-2_0_110_010_Roughness.png
+TEX 1 ed3fee513809a226 ./Island_Grass_4_-2_0_110_011.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-2_0_110_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-2_0_110_011_Roughness.png
+TEX 1 d84230cc9f9631e5 ./Island_Grass_4_-2_0_110_110.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-2_0_110_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-2_0_110_110_Roughness.png
+TEX 1 ba7afa6b1d09cd15 ./Island_Grass_4_-2_0_110_111.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-2_0_110_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-2_0_110_111_Roughness.png
+TEX 1 fb5ac2b0d523cd4a ./Island_Grass_4_-3_0_000.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-3_0_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-3_0_000_Roughness.png
+TEX 1 c2c33ee601b2cd8a ./Island_Grass_4_-3_0_010_000.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-3_0_010_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-3_0_010_000_Roughness.png
+TEX 1 c8b8a0207d02e6c2 ./Island_Grass_4_-3_0_010_001.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-3_0_010_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-3_0_010_001_Roughness.png
+TEX 1 fca6330061b9491d ./Island_Grass_4_-3_0_010_010.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-3_0_010_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-3_0_010_010_Roughness.png
+TEX 1 b1be2038be7b8be9 ./Island_Grass_4_-3_0_010_011.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-3_0_010_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-3_0_010_011_Roughness.png
+TEX 1 8ed60bcf6d033eb9 ./Island_Grass_4_-3_0_010_110.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-3_0_010_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-3_0_010_110_Roughness.png
+TEX 1 7d68f97b14ca0a96 ./Island_Grass_4_-3_0_010_111.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-3_0_010_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-3_0_010_111_Roughness.png
+TEX 1 787bb2d0261cc357 ./Island_Grass_4_-3_0_011.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_-3_0_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_-3_0_011_Roughness.png
+TEX 1 28fd9afd4a77440d ./Island_Grass_4_0_0_000.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_000_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_000_Roughness.png
+TEX 1 0d9f048fc106dcb7 ./Island_Grass_4_0_0_010.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_010_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_010_Roughness.png
+TEX 1 d8057857f48b204e ./Island_Grass_4_0_0_100_001.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_100_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_100_001_Roughness.png
+TEX 1 e7f7ac531cf7b660 ./Island_Grass_4_0_0_100_011.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_100_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_100_011_Roughness.png
+TEX 1 f5ef496e63a636e3 ./Island_Grass_4_0_0_100_100.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_100_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_100_100_Roughness.png
+TEX 1 a51217635243c382 ./Island_Grass_4_0_0_100_101.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_100_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_100_101_Roughness.png
+TEX 1 996deac1150c9962 ./Island_Grass_4_0_0_100_110.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_100_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_100_110_Roughness.png
+TEX 1 50a6818f8cf2f3f1 ./Island_Grass_4_0_0_100_111.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_100_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_100_111_Roughness.png
+TEX 1 b284ff557830efc0 ./Island_Grass_4_0_0_101.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_101_Roughness.png
+TEX 1 60dcf20757c02eef ./Island_Grass_4_0_0_110_001.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_110_001_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_110_001_Roughness.png
+TEX 1 a5852ca4fc725482 ./Island_Grass_4_0_0_110_011.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_110_011_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_110_011_Roughness.png
+TEX 1 a198d2684833b8af ./Island_Grass_4_0_0_110_100.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_110_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_110_100_Roughness.png
+TEX 1 3edda34b4382bbd9 ./Island_Grass_4_0_0_110_101.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_110_101_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_110_101_Roughness.png
+TEX 1 43607ae9d7807650 ./Island_Grass_4_0_0_110_110.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_110_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_110_110_Roughness.png
+TEX 1 f3ca985491a0418e ./Island_Grass_4_0_0_110_111.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_110_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_110_111_Roughness.png
+TEX 1 8b28caa88cbbd273 ./Island_Grass_4_0_0_111.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_4_0_0_111_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_4_0_0_111_Roughness.png
+TEX 1 a89edcc07e23c07d ./Island_Grass_5_-1_0.png
+TEX 1 5fdf52b823829b88 ./Island_Grass_5_-1_0_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Grass_5_-1_0_Roughness.png
+TEX 1 d68abdced9b7afaa ./Island_Pebbles_-2_0_-1.png
+TEX 1 5fdf52b823829b88 ./Island_Pebbles_-2_0_-1_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Pebbles_-2_0_-1_Roughness.png
+TEX 1 a3599ef409c1e84b ./Island_Pebbles_-3_-1_-1.png
+TEX 1 5fdf52b823829b88 ./Island_Pebbles_-3_-1_-1_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Pebbles_-3_-1_-1_Roughness.png
+TEX 1 447d1e28bf8d58a3 ./Island_Pebbles_-4_-3_-1_100.png
+TEX 1 5fdf52b823829b88 ./Island_Pebbles_-4_-3_-1_100_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Pebbles_-4_-3_-1_100_Roughness.png
+TEX 1 223256ecd8783d70 ./Island_Pebbles_-4_-3_-1_110.png
+TEX 1 5fdf52b823829b88 ./Island_Pebbles_-4_-3_-1_110_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Pebbles_-4_-3_-1_110_Roughness.png
+TEX 1 1aabf81070fe111f ./Island_Pebbles_-5_1_-1.png
+TEX 1 5fdf52b823829b88 ./Island_Pebbles_-5_1_-1_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Pebbles_-5_1_-1_Roughness.png
+TEX 1 bd83d156c15ffd37 ./Island_Pebbles_4_-1_-1.png
+TEX 1 5fdf52b823829b88 ./Island_Pebbles_4_-1_-1_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Pebbles_4_-1_-1_Roughness.png
+TEX 1 543447d1181b76bb ./Island_Pebbles_4_-2_-1.png
+TEX 1 5fdf52b823829b88 ./Island_Pebbles_4_-2_-1_Metalness.png
+TEX 1 58f93f6844cdee82 ./Island_Pebbles_4_-2_-1_Roughness.png
+TEX 1 8e9fd22df2e97c85 ./Kit_CapsuleFactory_Box.png
+TEX 1 5fdf52b823829b88 ./Kit_CapsuleFactory_Box_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_CapsuleFactory_Box_Roughness.png
+TEX 1 61253153ec3f5cb7 ./Kit_CapsuleFactory_Label.png
+TEX 1 5fdf52b823829b88 ./Kit_CapsuleFactory_Label_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_CapsuleFactory_Label_Roughness.png
+TEX 1 1a349bd33a9da3c6 ./Kit_CapsuleFactory_Stencil.png
+TEX 1 5fdf52b823829b88 ./Kit_CapsuleFactory_Stencil_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_CapsuleFactory_Stencil_Roughness.png
+TEX 1 bc1e5606a62bb00f ./Kit_CapsuleFactory_Tape.png
+TEX 1 5fdf52b823829b88 ./Kit_CapsuleFactory_Tape_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_CapsuleFactory_Tape_Roughness.png
+TEX 1 9c9bf348f01ddf06 ./Kit_JunkrotCabloTanglino_Eyes.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotCabloTanglino_Eyes_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotCabloTanglino_Eyes_Roughness.png
+TEX 1 6c94b04ee26f8565 ./Kit_JunkrotCabloTanglino_Knot.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotCabloTanglino_Knot_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotCabloTanglino_Knot_Roughness.png
+TEX 1 c2de0f931c52727d ./Kit_JunkrotCabloTanglino_Legs.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotCabloTanglino_Legs_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotCabloTanglino_Legs_Roughness.png
+TEX 1 4343def0ae44d6b5 ./Kit_JunkrotCabloTanglino_Plug.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotCabloTanglino_Plug_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotCabloTanglino_Plug_Roughness.png
+TEX 1 11fc31a41814a413 ./Kit_JunkrotCabloTanglino_Prongs.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotCabloTanglino_Prongs_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotCabloTanglino_Prongs_Roughness.png
+TEX 1 c8caac41ec667633 ./Kit_JunkrotCabloTanglino_Pupils.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotCabloTanglino_Pupils_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotCabloTanglino_Pupils_Roughness.png
+TEX 1 d9a2bdd7b9cc58fd ./Kit_JunkrotCabloTanglino_Tail.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotCabloTanglino_Tail_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotCabloTanglino_Tail_Roughness.png
+TEX 1 c97ac72d69790807 ./Kit_JunkrotCabloTanglino_Ties.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotCabloTanglino_Ties_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotCabloTanglino_Ties_Roughness.png
+TEX 1 e3939a1122e37c0c ./Kit_JunkrotClankClankClankScrapur_Bat.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_Bat_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_Bat_Roughness.png
+TEX 1 4fe02c8a181c1253 ./Kit_JunkrotClankClankClankScrapur_Body.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_Body_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_Body_Roughness.png
+TEX 1 7b531a203f88c2d8 ./Kit_JunkrotClankClankClankScrapur_Clips.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_Clips_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_Clips_Roughness.png
+TEX 1 c3836c556d68b0a9 ./Kit_JunkrotClankClankClankScrapur_Eyes.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_Eyes_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_Eyes_Roughness.png
+TEX 1 8fc5cd1ce66201a6 ./Kit_JunkrotClankClankClankScrapur_Hands.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_Hands_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_Hands_Roughness.png
+TEX 1 f7c761b147840143 ./Kit_JunkrotClankClankClankScrapur_Limbs.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_Limbs_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_Limbs_Roughness.png
+TEX 1 6dd127f020f3b4b9 ./Kit_JunkrotClankClankClankScrapur_Mouth.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_Mouth_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_Mouth_Roughness.png
+TEX 1 5c101d80d2e2fc62 ./Kit_JunkrotClankClankClankScrapur_PanelsBLUEGREY.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_PanelsBLUEGREY_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_PanelsBLUEGREY_Roughness.png
+TEX 1 009641db978ed4e4 ./Kit_JunkrotClankClankClankScrapur_PanelsBRASS.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_PanelsBRASS_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_PanelsBRASS_Roughness.png
+TEX 1 e8db83e7117958c9 ./Kit_JunkrotClankClankClankScrapur_PanelsGUNMETAL.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_PanelsGUNMETAL_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_PanelsGUNMETAL_Roughness.png
+TEX 1 71406f46b6a251ec ./Kit_JunkrotClankClankClankScrapur_PanelsOLIVE.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_PanelsOLIVE_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_PanelsOLIVE_Roughness.png
+TEX 1 60c07c76f0784b1b ./Kit_JunkrotClankClankClankScrapur_PanelsPAINTED.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_PanelsPAINTED_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_PanelsPAINTED_Roughness.png
+TEX 1 94487ea56bf9df51 ./Kit_JunkrotClankClankClankScrapur_PanelsRUST.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_PanelsRUST_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_PanelsRUST_Roughness.png
+TEX 1 c5a63408a5a40247 ./Kit_JunkrotClankClankClankScrapur_Pupils.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_Pupils_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_Pupils_Roughness.png
+TEX 1 a1103f0779716e74 ./Kit_JunkrotClankClankClankScrapur_Ribs.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_Ribs_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_Ribs_Roughness.png
+TEX 1 6fbc6ab85b2cc952 ./Kit_JunkrotClankClankClankScrapur_Rivets.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_Rivets_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_Rivets_Roughness.png
+TEX 1 10b40f86ecf1942c ./Kit_JunkrotClankClankClankScrapur_Stitches.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_Stitches_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_Stitches_Roughness.png
+TEX 1 8b3546361eb29bc4 ./Kit_JunkrotClankClankClankScrapur_Tape.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_Tape_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_Tape_Roughness.png
+TEX 1 058dc1ab181d1906 ./Kit_JunkrotClankClankClankScrapur_Welds.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotClankClankClankScrapur_Welds_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotClankClankClankScrapur_Welds_Roughness.png
+TEX 1 ea5eb725c91aa08d ./Kit_JunkrotMicrondoBippetto_Case.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotMicrondoBippetto_Case_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotMicrondoBippetto_Case_Roughness.png
+TEX 1 5e265f905c3c297b ./Kit_JunkrotMicrondoBippetto_Display.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotMicrondoBippetto_Display_Emissive.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotMicrondoBippetto_Display_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotMicrondoBippetto_Display_Roughness.png
+TEX 1 5793144e823ea51c ./Kit_JunkrotMicrondoBippetto_Eyes.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotMicrondoBippetto_Eyes_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotMicrondoBippetto_Eyes_Roughness.png
+TEX 1 dc7481bc6ad5dd7a ./Kit_JunkrotMicrondoBippetto_Glass.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotMicrondoBippetto_Glass_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotMicrondoBippetto_Glass_Roughness.png
+TEX 1 df13d2346c3d9242 ./Kit_JunkrotMicrondoBippetto_Handle.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotMicrondoBippetto_Handle_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotMicrondoBippetto_Handle_Roughness.png
+TEX 1 7c253eedc27104c0 ./Kit_JunkrotMicrondoBippetto_Keypad.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotMicrondoBippetto_Keypad_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotMicrondoBippetto_Keypad_Roughness.png
+TEX 1 194565fd8f510d87 ./Kit_JunkrotMicrondoBippetto_Keys.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotMicrondoBippetto_Keys_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotMicrondoBippetto_Keys_Roughness.png
+TEX 1 5a67cb48e91ad20c ./Kit_JunkrotMicrondoBippetto_Legs.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotMicrondoBippetto_Legs_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotMicrondoBippetto_Legs_Roughness.png
+TEX 1 668c5155adee92f7 ./Kit_JunkrotMicrondoBippetto_Plate.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotMicrondoBippetto_Plate_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotMicrondoBippetto_Plate_Roughness.png
+TEX 1 33b76dbb0e1ef6aa ./Kit_JunkrotMicrondoBippetto_Pupils.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotMicrondoBippetto_Pupils_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotMicrondoBippetto_Pupils_Roughness.png
+TEX 1 c396fbf430a03a5b ./Kit_JunkrotTorquoWrenchelli_Eyes.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotTorquoWrenchelli_Eyes_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotTorquoWrenchelli_Eyes_Roughness.png
+TEX 1 74e2d06442ac0ee7 ./Kit_JunkrotTorquoWrenchelli_Gauge.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotTorquoWrenchelli_Gauge_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotTorquoWrenchelli_Gauge_Roughness.png
+TEX 1 d03146cc917d5556 ./Kit_JunkrotTorquoWrenchelli_Grip.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotTorquoWrenchelli_Grip_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotTorquoWrenchelli_Grip_Roughness.png
+TEX 1 ec5081f8a0563714 ./Kit_JunkrotTorquoWrenchelli_Legs.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotTorquoWrenchelli_Legs_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotTorquoWrenchelli_Legs_Roughness.png
+TEX 1 bbf00ccc03f53be5 ./Kit_JunkrotTorquoWrenchelli_Needle.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotTorquoWrenchelli_Needle_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotTorquoWrenchelli_Needle_Roughness.png
+TEX 1 ef4d858170da9763 ./Kit_JunkrotTorquoWrenchelli_Pupils.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotTorquoWrenchelli_Pupils_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotTorquoWrenchelli_Pupils_Roughness.png
+TEX 1 81b433e6d50ded71 ./Kit_JunkrotTorquoWrenchelli_Shaft.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotTorquoWrenchelli_Shaft_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotTorquoWrenchelli_Shaft_Roughness.png
+TEX 1 0c9b1f9976fcba17 ./Kit_JunkrotTorquoWrenchelli_Socket.png
+TEX 1 5fdf52b823829b88 ./Kit_JunkrotTorquoWrenchelli_Socket_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_JunkrotTorquoWrenchelli_Socket_Roughness.png
+TEX 1 5b2863e26e354c79 ./Kit_Press_Anvil.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Anvil_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Anvil_Roughness.png
+TEX 1 1fd8737d12eb8cbc ./Kit_Press_Bands.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Bands_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Bands_Roughness.png
+TEX 1 b3d945b22cd1217d ./Kit_Press_Beacons.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Beacons_Emissive.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Beacons_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Beacons_Roughness.png
+TEX 1 37a473cb3090d782 ./Kit_Press_Button.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Button_Emissive.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Button_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Button_Roughness.png
+TEX 1 d68ffdd188efb139 ./Kit_Press_Cage.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Cage_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Cage_Roughness.png
+TEX 1 750987276f60d269 ./Kit_Press_Collars.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Collars_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Collars_Roughness.png
+TEX 1 74c06128badd4a6e ./Kit_Press_Columns.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Columns_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Columns_Roughness.png
+TEX 1 216f27fc2ab2cbb3 ./Kit_Press_Console.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Console_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Console_Roughness.png
+TEX 1 ba5ba7ef2a9ded2a ./Kit_Press_Crown.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Crown_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Crown_Roughness.png
+TEX 1 3d2db0c5ef512274 ./Kit_Press_Cylinder.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Cylinder_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Cylinder_Roughness.png
+TEX 1 543e58aa3723495d ./Kit_Press_Hoses.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Hoses_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Hoses_Roughness.png
+TEX 1 c3efea9620b804b9 ./Kit_Press_Medal.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Medal_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Medal_Roughness.png
+TEX 1 aec5222683deac8d ./Kit_Press_Pile.png
+TEX 1 e04ee73672386da9 ./Kit_Press_PileJunk.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_PileJunk_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_PileJunk_Roughness.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Pile_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Pile_Roughness.png
+TEX 1 f84e4349e7e96dd8 ./Kit_Press_Platen.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Platen_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Platen_Roughness.png
+TEX 1 5b8640145c8c07b3 ./Kit_Press_Plinth.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Plinth_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Plinth_Roughness.png
+TEX 1 0d4ac730b63a6219 ./Kit_Press_Pump.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Pump_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Pump_Roughness.png
+TEX 1 e568d37675ffb5ec ./Kit_Press_Ram.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Ram_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Ram_Roughness.png
+TEX 1 8d2ab64d4a799bbd ./Kit_Press_Tray.png
+TEX 1 5fdf52b823829b88 ./Kit_Press_Tray_Metalness.png
+TEX 1 58f93f6844cdee82 ./Kit_Press_Tray_Roughness.png
+TEX 1 e9015f57ab548f9b ./Landmark_BaleStraps.png
+TEX 1 5fdf52b823829b88 ./Landmark_BaleStraps_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_BaleStraps_Roughness.png
+TEX 1 d449008fc7391aab ./Landmark_BeaconLamp.png
+TEX 1 58f93f6844cdee82 ./Landmark_BeaconLamp_Emissive.png
+TEX 1 5fdf52b823829b88 ./Landmark_BeaconLamp_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_BeaconLamp_Roughness.png
+TEX 1 7e308cc04abe54cd ./Landmark_BigCog.png
+TEX 1 5fdf52b823829b88 ./Landmark_BigCog_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_BigCog_Roughness.png
+TEX 1 dfa86db14ecf60ec ./Landmark_Bulbs.png
+TEX 1 58f93f6844cdee82 ./Landmark_Bulbs_Emissive.png
+TEX 1 5fdf52b823829b88 ./Landmark_Bulbs_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_Bulbs_Roughness.png
+TEX 1 d5a73774c55e62fe ./Landmark_Cable.png
+TEX 1 5fdf52b823829b88 ./Landmark_Cable_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_Cable_Roughness.png
+TEX 1 f312cf681f477267 ./Landmark_Cables.png
+TEX 1 5fdf52b823829b88 ./Landmark_Cables_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_Cables_Roughness.png
+TEX 1 9a327c5dee16a8d1 ./Landmark_CogBoss.png
+TEX 1 5fdf52b823829b88 ./Landmark_CogBoss_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_CogBoss_Roughness.png
+TEX 1 f6d879520417688a ./Landmark_CrushedBlocks.png
+TEX 1 5fdf52b823829b88 ./Landmark_CrushedBlocks_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_CrushedBlocks_Roughness.png
+TEX 1 e490292c9c5144c4 ./Landmark_Fittings.png
+TEX 1 5fdf52b823829b88 ./Landmark_Fittings_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_Fittings_Roughness.png
+TEX 1 509e92c10d24c349 ./Landmark_Mast.png
+TEX 1 5fdf52b823829b88 ./Landmark_Mast_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_Mast_Roughness.png
+TEX 1 7b066e2646929c39 ./Landmark_Pipes.png
+TEX 1 5fdf52b823829b88 ./Landmark_Pipes_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_Pipes_Roughness.png
+TEX 1 a74fedb4217107a3 ./Landmark_Plinth.png
+TEX 1 5fdf52b823829b88 ./Landmark_Plinth_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_Plinth_Roughness.png
+TEX 1 3f884273df656ed5 ./Landmark_PressedJunk.png
+TEX 1 5fdf52b823829b88 ./Landmark_PressedJunk_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_PressedJunk_Roughness.png
+TEX 1 565eafae9ebd63db ./Landmark_SheetLayers.png
+TEX 1 5fdf52b823829b88 ./Landmark_SheetLayers_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_SheetLayers_Roughness.png
+TEX 1 dc5daab7250193f4 ./Landmark_Spotlights.png
+TEX 1 58f93f6844cdee82 ./Landmark_Spotlights_Emissive.png
+TEX 1 5fdf52b823829b88 ./Landmark_Spotlights_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_Spotlights_Roughness.png
+TEX 1 273d957da16a471a ./Landmark_Supplies.png
+TEX 1 5fdf52b823829b88 ./Landmark_Supplies_Metalness.png
+TEX 1 58f93f6844cdee82 ./Landmark_Supplies_Roughness.png
+TEX 1 34cee738725b4657 ./LoneWreck24_GroundShade.png
+TEX 1 5fdf52b823829b88 ./LoneWreck24_GroundShade_Metalness.png
+TEX 1 58f93f6844cdee82 ./LoneWreck24_GroundShade_Roughness.png
+TEX 1 bd7ce17dba1a6842 ./LoneWreck24_Tyre.png
+TEX 1 5fdf52b823829b88 ./LoneWreck24_Tyre_Metalness.png
+TEX 1 8402904fc01646d7 ./LoneWreck24_Tyre_Roughness.png
+TEX 1 1bbbd35ac607ac18 ./Yard1_FenceRight8_Fittings.png
+TEX 1 5fdf52b823829b88 ./Yard1_FenceRight8_Fittings_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_FenceRight8_Fittings_Roughness.png
+TEX 1 e55526bb54a1ceab ./Yard1_FenceRight8_Posts.png
+TEX 1 5fdf52b823829b88 ./Yard1_FenceRight8_Posts_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_FenceRight8_Posts_Roughness.png
+TEX 1 3c61178b34e6abc2 ./Yard1_FenceRight8_Sheets.png
+TEX 1 5fdf52b823829b88 ./Yard1_FenceRight8_Sheets_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_FenceRight8_Sheets_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard1_FootingLeft1_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard1_FootingLeft1_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_FootingLeft1_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard1_FootingLeft2_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard1_FootingLeft2_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_FootingLeft2_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard1_FootingLeft4_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard1_FootingLeft4_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_FootingLeft4_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard1_FootingLeft7_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard1_FootingLeft7_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_FootingLeft7_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard1_FootingLeft8_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard1_FootingLeft8_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_FootingLeft8_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard1_FootingLeft9_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard1_FootingLeft9_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_FootingLeft9_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard1_FootingRight4_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard1_FootingRight4_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_FootingRight4_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard1_FootingRight9_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard1_FootingRight9_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_FootingRight9_Footing_Roughness.png
+TEX 1 5b2863e26e354c79 ./Yard1_Press_Anvil.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Anvil_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Anvil_Roughness.png
+TEX 1 1fd8737d12eb8cbc ./Yard1_Press_Bands.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Bands_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Bands_Roughness.png
+TEX 1 b3d945b22cd1217d ./Yard1_Press_Beacons.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Beacons_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Beacons_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Beacons_Roughness.png
+TEX 1 37a473cb3090d782 ./Yard1_Press_Button.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Button_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Button_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Button_Roughness.png
+TEX 1 d68ffdd188efb139 ./Yard1_Press_Cage.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Cage_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Cage_Roughness.png
+TEX 1 750987276f60d269 ./Yard1_Press_Collars.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Collars_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Collars_Roughness.png
+TEX 1 74c06128badd4a6e ./Yard1_Press_Columns.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Columns_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Columns_Roughness.png
+TEX 1 216f27fc2ab2cbb3 ./Yard1_Press_Console.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Console_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Console_Roughness.png
+TEX 1 ba5ba7ef2a9ded2a ./Yard1_Press_Crown.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Crown_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Crown_Roughness.png
+TEX 1 3d2db0c5ef512274 ./Yard1_Press_Cylinder.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Cylinder_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Cylinder_Roughness.png
+TEX 1 543e58aa3723495d ./Yard1_Press_Hoses.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Hoses_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Hoses_Roughness.png
+TEX 1 c3efea9620b804b9 ./Yard1_Press_Medal.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Medal_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Medal_Roughness.png
+TEX 1 aec5222683deac8d ./Yard1_Press_Pile.png
+TEX 1 e04ee73672386da9 ./Yard1_Press_PileJunk.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_PileJunk_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_PileJunk_Roughness.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Pile_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Pile_Roughness.png
+TEX 1 f84e4349e7e96dd8 ./Yard1_Press_Platen.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Platen_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Platen_Roughness.png
+TEX 1 5b8640145c8c07b3 ./Yard1_Press_Plinth.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Plinth_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Plinth_Roughness.png
+TEX 1 0d4ac730b63a6219 ./Yard1_Press_Pump.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Pump_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Pump_Roughness.png
+TEX 1 e568d37675ffb5ec ./Yard1_Press_Ram.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Ram_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Ram_Roughness.png
+TEX 1 8d2ab64d4a799bbd ./Yard1_Press_Tray.png
+TEX 1 5fdf52b823829b88 ./Yard1_Press_Tray_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard1_Press_Tray_Roughness.png
+TEX 1 1bbbd35ac607ac18 ./Yard2_FenceRight7_Fittings.png
+TEX 1 5fdf52b823829b88 ./Yard2_FenceRight7_Fittings_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_FenceRight7_Fittings_Roughness.png
+TEX 1 e55526bb54a1ceab ./Yard2_FenceRight7_Posts.png
+TEX 1 5fdf52b823829b88 ./Yard2_FenceRight7_Posts_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_FenceRight7_Posts_Roughness.png
+TEX 1 3c61178b34e6abc2 ./Yard2_FenceRight7_Sheets.png
+TEX 1 5fdf52b823829b88 ./Yard2_FenceRight7_Sheets_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_FenceRight7_Sheets_Roughness.png
+TEX 1 d8de9b12712f7a60 ./Yard2_FootingBack6_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard2_FootingBack6_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_FootingBack6_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard2_FootingLeft1_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard2_FootingLeft1_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_FootingLeft1_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard2_FootingLeft5_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard2_FootingLeft5_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_FootingLeft5_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard2_FootingLeft7_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard2_FootingLeft7_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_FootingLeft7_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard2_FootingRight2_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard2_FootingRight2_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_FootingRight2_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard2_FootingRight5_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard2_FootingRight5_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_FootingRight5_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard2_FootingRight9_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard2_FootingRight9_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_FootingRight9_Footing_Roughness.png
+TEX 1 5b2863e26e354c79 ./Yard2_Press_Anvil.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Anvil_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Anvil_Roughness.png
+TEX 1 1fd8737d12eb8cbc ./Yard2_Press_Bands.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Bands_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Bands_Roughness.png
+TEX 1 b3d945b22cd1217d ./Yard2_Press_Beacons.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Beacons_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Beacons_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Beacons_Roughness.png
+TEX 1 37a473cb3090d782 ./Yard2_Press_Button.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Button_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Button_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Button_Roughness.png
+TEX 1 d68ffdd188efb139 ./Yard2_Press_Cage.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Cage_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Cage_Roughness.png
+TEX 1 750987276f60d269 ./Yard2_Press_Collars.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Collars_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Collars_Roughness.png
+TEX 1 74c06128badd4a6e ./Yard2_Press_Columns.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Columns_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Columns_Roughness.png
+TEX 1 216f27fc2ab2cbb3 ./Yard2_Press_Console.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Console_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Console_Roughness.png
+TEX 1 ba5ba7ef2a9ded2a ./Yard2_Press_Crown.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Crown_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Crown_Roughness.png
+TEX 1 3d2db0c5ef512274 ./Yard2_Press_Cylinder.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Cylinder_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Cylinder_Roughness.png
+TEX 1 543e58aa3723495d ./Yard2_Press_Hoses.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Hoses_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Hoses_Roughness.png
+TEX 1 c3efea9620b804b9 ./Yard2_Press_Medal.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Medal_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Medal_Roughness.png
+TEX 1 aec5222683deac8d ./Yard2_Press_Pile.png
+TEX 1 e04ee73672386da9 ./Yard2_Press_PileJunk.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_PileJunk_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_PileJunk_Roughness.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Pile_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Pile_Roughness.png
+TEX 1 f84e4349e7e96dd8 ./Yard2_Press_Platen.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Platen_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Platen_Roughness.png
+TEX 1 5b8640145c8c07b3 ./Yard2_Press_Plinth.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Plinth_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Plinth_Roughness.png
+TEX 1 0d4ac730b63a6219 ./Yard2_Press_Pump.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Pump_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Pump_Roughness.png
+TEX 1 e568d37675ffb5ec ./Yard2_Press_Ram.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Ram_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Ram_Roughness.png
+TEX 1 8d2ab64d4a799bbd ./Yard2_Press_Tray.png
+TEX 1 5fdf52b823829b88 ./Yard2_Press_Tray_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard2_Press_Tray_Roughness.png
+TEX 1 1bbbd35ac607ac18 ./Yard3_FenceRight6_Fittings.png
+TEX 1 5fdf52b823829b88 ./Yard3_FenceRight6_Fittings_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_FenceRight6_Fittings_Roughness.png
+TEX 1 e55526bb54a1ceab ./Yard3_FenceRight6_Posts.png
+TEX 1 5fdf52b823829b88 ./Yard3_FenceRight6_Posts_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_FenceRight6_Posts_Roughness.png
+TEX 1 3c61178b34e6abc2 ./Yard3_FenceRight6_Sheets.png
+TEX 1 5fdf52b823829b88 ./Yard3_FenceRight6_Sheets_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_FenceRight6_Sheets_Roughness.png
+TEX 1 d8de9b12712f7a60 ./Yard3_FootingBack5_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard3_FootingBack5_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_FootingBack5_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard3_FootingLeft1_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard3_FootingLeft1_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_FootingLeft1_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard3_FootingLeft6_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard3_FootingLeft6_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_FootingLeft6_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard3_FootingRight3_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard3_FootingRight3_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_FootingRight3_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard3_FootingRight5_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard3_FootingRight5_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_FootingRight5_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard3_FootingRight9_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard3_FootingRight9_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_FootingRight9_Footing_Roughness.png
+TEX 1 5b2863e26e354c79 ./Yard3_Press_Anvil.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Anvil_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Anvil_Roughness.png
+TEX 1 1fd8737d12eb8cbc ./Yard3_Press_Bands.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Bands_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Bands_Roughness.png
+TEX 1 b3d945b22cd1217d ./Yard3_Press_Beacons.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Beacons_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Beacons_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Beacons_Roughness.png
+TEX 1 37a473cb3090d782 ./Yard3_Press_Button.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Button_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Button_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Button_Roughness.png
+TEX 1 d68ffdd188efb139 ./Yard3_Press_Cage.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Cage_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Cage_Roughness.png
+TEX 1 750987276f60d269 ./Yard3_Press_Collars.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Collars_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Collars_Roughness.png
+TEX 1 74c06128badd4a6e ./Yard3_Press_Columns.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Columns_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Columns_Roughness.png
+TEX 1 216f27fc2ab2cbb3 ./Yard3_Press_Console.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Console_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Console_Roughness.png
+TEX 1 ba5ba7ef2a9ded2a ./Yard3_Press_Crown.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Crown_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Crown_Roughness.png
+TEX 1 3d2db0c5ef512274 ./Yard3_Press_Cylinder.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Cylinder_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Cylinder_Roughness.png
+TEX 1 543e58aa3723495d ./Yard3_Press_Hoses.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Hoses_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Hoses_Roughness.png
+TEX 1 c3efea9620b804b9 ./Yard3_Press_Medal.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Medal_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Medal_Roughness.png
+TEX 1 aec5222683deac8d ./Yard3_Press_Pile.png
+TEX 1 e04ee73672386da9 ./Yard3_Press_PileJunk.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_PileJunk_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_PileJunk_Roughness.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Pile_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Pile_Roughness.png
+TEX 1 f84e4349e7e96dd8 ./Yard3_Press_Platen.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Platen_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Platen_Roughness.png
+TEX 1 5b8640145c8c07b3 ./Yard3_Press_Plinth.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Plinth_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Plinth_Roughness.png
+TEX 1 0d4ac730b63a6219 ./Yard3_Press_Pump.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Pump_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Pump_Roughness.png
+TEX 1 e568d37675ffb5ec ./Yard3_Press_Ram.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Ram_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Ram_Roughness.png
+TEX 1 8d2ab64d4a799bbd ./Yard3_Press_Tray.png
+TEX 1 5fdf52b823829b88 ./Yard3_Press_Tray_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard3_Press_Tray_Roughness.png
+TEX 1 1bbbd35ac607ac18 ./Yard4_FenceRight5_Fittings.png
+TEX 1 5fdf52b823829b88 ./Yard4_FenceRight5_Fittings_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_FenceRight5_Fittings_Roughness.png
+TEX 1 e55526bb54a1ceab ./Yard4_FenceRight5_Posts.png
+TEX 1 5fdf52b823829b88 ./Yard4_FenceRight5_Posts_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_FenceRight5_Posts_Roughness.png
+TEX 1 3c61178b34e6abc2 ./Yard4_FenceRight5_Sheets.png
+TEX 1 5fdf52b823829b88 ./Yard4_FenceRight5_Sheets_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_FenceRight5_Sheets_Roughness.png
+TEX 1 d8de9b12712f7a60 ./Yard4_FootingBack3_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard4_FootingBack3_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_FootingBack3_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard4_FootingLeft2_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard4_FootingLeft2_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_FootingLeft2_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard4_FootingLeft5_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard4_FootingLeft5_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_FootingLeft5_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard4_FootingLeft6_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard4_FootingLeft6_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_FootingLeft6_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard4_FootingLeft7_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard4_FootingLeft7_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_FootingLeft7_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard4_FootingLeft9_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard4_FootingLeft9_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_FootingLeft9_Footing_Roughness.png
+TEX 1 5b2863e26e354c79 ./Yard4_Press_Anvil.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Anvil_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Anvil_Roughness.png
+TEX 1 1fd8737d12eb8cbc ./Yard4_Press_Bands.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Bands_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Bands_Roughness.png
+TEX 1 b3d945b22cd1217d ./Yard4_Press_Beacons.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Beacons_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Beacons_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Beacons_Roughness.png
+TEX 1 37a473cb3090d782 ./Yard4_Press_Button.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Button_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Button_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Button_Roughness.png
+TEX 1 d68ffdd188efb139 ./Yard4_Press_Cage.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Cage_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Cage_Roughness.png
+TEX 1 750987276f60d269 ./Yard4_Press_Collars.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Collars_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Collars_Roughness.png
+TEX 1 74c06128badd4a6e ./Yard4_Press_Columns.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Columns_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Columns_Roughness.png
+TEX 1 216f27fc2ab2cbb3 ./Yard4_Press_Console.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Console_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Console_Roughness.png
+TEX 1 ba5ba7ef2a9ded2a ./Yard4_Press_Crown.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Crown_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Crown_Roughness.png
+TEX 1 3d2db0c5ef512274 ./Yard4_Press_Cylinder.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Cylinder_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Cylinder_Roughness.png
+TEX 1 543e58aa3723495d ./Yard4_Press_Hoses.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Hoses_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Hoses_Roughness.png
+TEX 1 c3efea9620b804b9 ./Yard4_Press_Medal.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Medal_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Medal_Roughness.png
+TEX 1 aec5222683deac8d ./Yard4_Press_Pile.png
+TEX 1 e04ee73672386da9 ./Yard4_Press_PileJunk.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_PileJunk_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_PileJunk_Roughness.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Pile_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Pile_Roughness.png
+TEX 1 f84e4349e7e96dd8 ./Yard4_Press_Platen.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Platen_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Platen_Roughness.png
+TEX 1 5b8640145c8c07b3 ./Yard4_Press_Plinth.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Plinth_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Plinth_Roughness.png
+TEX 1 0d4ac730b63a6219 ./Yard4_Press_Pump.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Pump_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Pump_Roughness.png
+TEX 1 e568d37675ffb5ec ./Yard4_Press_Ram.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Ram_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Ram_Roughness.png
+TEX 1 8d2ab64d4a799bbd ./Yard4_Press_Tray.png
+TEX 1 5fdf52b823829b88 ./Yard4_Press_Tray_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard4_Press_Tray_Roughness.png
+TEX 1 1bbbd35ac607ac18 ./Yard5_FenceRight4_Fittings.png
+TEX 1 5fdf52b823829b88 ./Yard5_FenceRight4_Fittings_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_FenceRight4_Fittings_Roughness.png
+TEX 1 e55526bb54a1ceab ./Yard5_FenceRight4_Posts.png
+TEX 1 5fdf52b823829b88 ./Yard5_FenceRight4_Posts_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_FenceRight4_Posts_Roughness.png
+TEX 1 3c61178b34e6abc2 ./Yard5_FenceRight4_Sheets.png
+TEX 1 5fdf52b823829b88 ./Yard5_FenceRight4_Sheets_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_FenceRight4_Sheets_Roughness.png
+TEX 1 d8de9b12712f7a60 ./Yard5_FootingBack2_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard5_FootingBack2_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_FootingBack2_Footing_Roughness.png
+TEX 1 d8de9b12712f7a60 ./Yard5_FootingBack8_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard5_FootingBack8_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_FootingBack8_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard5_FootingLeft3_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard5_FootingLeft3_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_FootingLeft3_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard5_FootingLeft4_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard5_FootingLeft4_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_FootingLeft4_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard5_FootingLeft8_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard5_FootingLeft8_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_FootingLeft8_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard5_FootingRight8_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard5_FootingRight8_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_FootingRight8_Footing_Roughness.png
+TEX 1 5b2863e26e354c79 ./Yard5_Press_Anvil.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Anvil_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Anvil_Roughness.png
+TEX 1 1fd8737d12eb8cbc ./Yard5_Press_Bands.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Bands_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Bands_Roughness.png
+TEX 1 b3d945b22cd1217d ./Yard5_Press_Beacons.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Beacons_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Beacons_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Beacons_Roughness.png
+TEX 1 37a473cb3090d782 ./Yard5_Press_Button.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Button_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Button_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Button_Roughness.png
+TEX 1 d68ffdd188efb139 ./Yard5_Press_Cage.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Cage_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Cage_Roughness.png
+TEX 1 750987276f60d269 ./Yard5_Press_Collars.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Collars_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Collars_Roughness.png
+TEX 1 74c06128badd4a6e ./Yard5_Press_Columns.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Columns_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Columns_Roughness.png
+TEX 1 216f27fc2ab2cbb3 ./Yard5_Press_Console.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Console_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Console_Roughness.png
+TEX 1 ba5ba7ef2a9ded2a ./Yard5_Press_Crown.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Crown_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Crown_Roughness.png
+TEX 1 3d2db0c5ef512274 ./Yard5_Press_Cylinder.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Cylinder_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Cylinder_Roughness.png
+TEX 1 543e58aa3723495d ./Yard5_Press_Hoses.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Hoses_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Hoses_Roughness.png
+TEX 1 c3efea9620b804b9 ./Yard5_Press_Medal.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Medal_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Medal_Roughness.png
+TEX 1 aec5222683deac8d ./Yard5_Press_Pile.png
+TEX 1 e04ee73672386da9 ./Yard5_Press_PileJunk.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_PileJunk_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_PileJunk_Roughness.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Pile_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Pile_Roughness.png
+TEX 1 f84e4349e7e96dd8 ./Yard5_Press_Platen.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Platen_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Platen_Roughness.png
+TEX 1 5b8640145c8c07b3 ./Yard5_Press_Plinth.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Plinth_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Plinth_Roughness.png
+TEX 1 0d4ac730b63a6219 ./Yard5_Press_Pump.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Pump_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Pump_Roughness.png
+TEX 1 e568d37675ffb5ec ./Yard5_Press_Ram.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Ram_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Ram_Roughness.png
+TEX 1 8d2ab64d4a799bbd ./Yard5_Press_Tray.png
+TEX 1 5fdf52b823829b88 ./Yard5_Press_Tray_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard5_Press_Tray_Roughness.png
+TEX 1 1bbbd35ac607ac18 ./Yard6_FenceRight3_Fittings.png
+TEX 1 5fdf52b823829b88 ./Yard6_FenceRight3_Fittings_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_FenceRight3_Fittings_Roughness.png
+TEX 1 e55526bb54a1ceab ./Yard6_FenceRight3_Posts.png
+TEX 1 5fdf52b823829b88 ./Yard6_FenceRight3_Posts_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_FenceRight3_Posts_Roughness.png
+TEX 1 3c61178b34e6abc2 ./Yard6_FenceRight3_Sheets.png
+TEX 1 5fdf52b823829b88 ./Yard6_FenceRight3_Sheets_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_FenceRight3_Sheets_Roughness.png
+TEX 1 d8de9b12712f7a60 ./Yard6_FootingBack2_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard6_FootingBack2_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_FootingBack2_Footing_Roughness.png
+TEX 1 d8de9b12712f7a60 ./Yard6_FootingBack8_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard6_FootingBack8_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_FootingBack8_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard6_FootingLeft3_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard6_FootingLeft3_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_FootingLeft3_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard6_FootingLeft4_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard6_FootingLeft4_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_FootingLeft4_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard6_FootingLeft9_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard6_FootingLeft9_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_FootingLeft9_Footing_Roughness.png
+TEX 1 5b2863e26e354c79 ./Yard6_Press_Anvil.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Anvil_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Anvil_Roughness.png
+TEX 1 1fd8737d12eb8cbc ./Yard6_Press_Bands.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Bands_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Bands_Roughness.png
+TEX 1 b3d945b22cd1217d ./Yard6_Press_Beacons.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Beacons_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Beacons_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Beacons_Roughness.png
+TEX 1 37a473cb3090d782 ./Yard6_Press_Button.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Button_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Button_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Button_Roughness.png
+TEX 1 d68ffdd188efb139 ./Yard6_Press_Cage.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Cage_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Cage_Roughness.png
+TEX 1 750987276f60d269 ./Yard6_Press_Collars.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Collars_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Collars_Roughness.png
+TEX 1 74c06128badd4a6e ./Yard6_Press_Columns.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Columns_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Columns_Roughness.png
+TEX 1 216f27fc2ab2cbb3 ./Yard6_Press_Console.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Console_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Console_Roughness.png
+TEX 1 ba5ba7ef2a9ded2a ./Yard6_Press_Crown.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Crown_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Crown_Roughness.png
+TEX 1 3d2db0c5ef512274 ./Yard6_Press_Cylinder.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Cylinder_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Cylinder_Roughness.png
+TEX 1 543e58aa3723495d ./Yard6_Press_Hoses.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Hoses_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Hoses_Roughness.png
+TEX 1 c3efea9620b804b9 ./Yard6_Press_Medal.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Medal_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Medal_Roughness.png
+TEX 1 aec5222683deac8d ./Yard6_Press_Pile.png
+TEX 1 e04ee73672386da9 ./Yard6_Press_PileJunk.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_PileJunk_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_PileJunk_Roughness.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Pile_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Pile_Roughness.png
+TEX 1 f84e4349e7e96dd8 ./Yard6_Press_Platen.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Platen_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Platen_Roughness.png
+TEX 1 5b8640145c8c07b3 ./Yard6_Press_Plinth.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Plinth_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Plinth_Roughness.png
+TEX 1 0d4ac730b63a6219 ./Yard6_Press_Pump.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Pump_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Pump_Roughness.png
+TEX 1 e568d37675ffb5ec ./Yard6_Press_Ram.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Ram_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Ram_Roughness.png
+TEX 1 8d2ab64d4a799bbd ./Yard6_Press_Tray.png
+TEX 1 5fdf52b823829b88 ./Yard6_Press_Tray_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard6_Press_Tray_Roughness.png
+TEX 1 6447b5213bab1524 ./Yard7_FenceFrontHalf1_Fittings.png
+TEX 1 5fdf52b823829b88 ./Yard7_FenceFrontHalf1_Fittings_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_FenceFrontHalf1_Fittings_Roughness.png
+TEX 1 5b2e9af2d9345dcd ./Yard7_FenceFrontHalf1_Posts.png
+TEX 1 5fdf52b823829b88 ./Yard7_FenceFrontHalf1_Posts_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_FenceFrontHalf1_Posts_Roughness.png
+TEX 1 ad3ad93870db730d ./Yard7_FenceFrontHalf1_Sheets.png
+TEX 1 5fdf52b823829b88 ./Yard7_FenceFrontHalf1_Sheets_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_FenceFrontHalf1_Sheets_Roughness.png
+TEX 1 1bbbd35ac607ac18 ./Yard7_FenceRight1_Fittings.png
+TEX 1 5fdf52b823829b88 ./Yard7_FenceRight1_Fittings_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_FenceRight1_Fittings_Roughness.png
+TEX 1 e55526bb54a1ceab ./Yard7_FenceRight1_Posts.png
+TEX 1 5fdf52b823829b88 ./Yard7_FenceRight1_Posts_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_FenceRight1_Posts_Roughness.png
+TEX 1 3c61178b34e6abc2 ./Yard7_FenceRight1_Sheets.png
+TEX 1 5fdf52b823829b88 ./Yard7_FenceRight1_Sheets_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_FenceRight1_Sheets_Roughness.png
+TEX 1 1bbbd35ac607ac18 ./Yard7_FenceRight8_Fittings.png
+TEX 1 5fdf52b823829b88 ./Yard7_FenceRight8_Fittings_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_FenceRight8_Fittings_Roughness.png
+TEX 1 e55526bb54a1ceab ./Yard7_FenceRight8_Posts.png
+TEX 1 5fdf52b823829b88 ./Yard7_FenceRight8_Posts_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_FenceRight8_Posts_Roughness.png
+TEX 1 3c61178b34e6abc2 ./Yard7_FenceRight8_Sheets.png
+TEX 1 5fdf52b823829b88 ./Yard7_FenceRight8_Sheets_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_FenceRight8_Sheets_Roughness.png
+TEX 1 d8de9b12712f7a60 ./Yard7_FootingBack2_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard7_FootingBack2_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_FootingBack2_Footing_Roughness.png
+TEX 1 d8de9b12712f7a60 ./Yard7_FootingBack8_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard7_FootingBack8_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_FootingBack8_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard7_FootingLeft2_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard7_FootingLeft2_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_FootingLeft2_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard7_FootingLeft5_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard7_FootingLeft5_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_FootingLeft5_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard7_FootingRight9_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard7_FootingRight9_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_FootingRight9_Footing_Roughness.png
+TEX 1 5b2863e26e354c79 ./Yard7_Press_Anvil.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Anvil_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Anvil_Roughness.png
+TEX 1 1fd8737d12eb8cbc ./Yard7_Press_Bands.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Bands_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Bands_Roughness.png
+TEX 1 b3d945b22cd1217d ./Yard7_Press_Beacons.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Beacons_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Beacons_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Beacons_Roughness.png
+TEX 1 37a473cb3090d782 ./Yard7_Press_Button.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Button_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Button_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Button_Roughness.png
+TEX 1 d68ffdd188efb139 ./Yard7_Press_Cage.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Cage_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Cage_Roughness.png
+TEX 1 750987276f60d269 ./Yard7_Press_Collars.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Collars_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Collars_Roughness.png
+TEX 1 74c06128badd4a6e ./Yard7_Press_Columns.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Columns_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Columns_Roughness.png
+TEX 1 216f27fc2ab2cbb3 ./Yard7_Press_Console.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Console_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Console_Roughness.png
+TEX 1 ba5ba7ef2a9ded2a ./Yard7_Press_Crown.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Crown_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Crown_Roughness.png
+TEX 1 3d2db0c5ef512274 ./Yard7_Press_Cylinder.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Cylinder_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Cylinder_Roughness.png
+TEX 1 543e58aa3723495d ./Yard7_Press_Hoses.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Hoses_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Hoses_Roughness.png
+TEX 1 c3efea9620b804b9 ./Yard7_Press_Medal.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Medal_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Medal_Roughness.png
+TEX 1 aec5222683deac8d ./Yard7_Press_Pile.png
+TEX 1 e04ee73672386da9 ./Yard7_Press_PileJunk.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_PileJunk_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_PileJunk_Roughness.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Pile_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Pile_Roughness.png
+TEX 1 f84e4349e7e96dd8 ./Yard7_Press_Platen.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Platen_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Platen_Roughness.png
+TEX 1 5b8640145c8c07b3 ./Yard7_Press_Plinth.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Plinth_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Plinth_Roughness.png
+TEX 1 0d4ac730b63a6219 ./Yard7_Press_Pump.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Pump_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Pump_Roughness.png
+TEX 1 e568d37675ffb5ec ./Yard7_Press_Ram.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Ram_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Ram_Roughness.png
+TEX 1 8d2ab64d4a799bbd ./Yard7_Press_Tray.png
+TEX 1 5fdf52b823829b88 ./Yard7_Press_Tray_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard7_Press_Tray_Roughness.png
+TEX 1 c15650c480ee8f9e ./Yard8_FenceBack8_Fittings.png
+TEX 1 5fdf52b823829b88 ./Yard8_FenceBack8_Fittings_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FenceBack8_Fittings_Roughness.png
+TEX 1 b7aca49ba3072fca ./Yard8_FenceBack8_Posts.png
+TEX 1 5fdf52b823829b88 ./Yard8_FenceBack8_Posts_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FenceBack8_Posts_Roughness.png
+TEX 1 84a3572fc5142f5f ./Yard8_FenceBack8_Sheets.png
+TEX 1 5fdf52b823829b88 ./Yard8_FenceBack8_Sheets_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FenceBack8_Sheets_Roughness.png
+TEX 1 c15650c480ee8f9e ./Yard8_FenceFront5_Fittings.png
+TEX 1 5fdf52b823829b88 ./Yard8_FenceFront5_Fittings_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FenceFront5_Fittings_Roughness.png
+TEX 1 b7aca49ba3072fca ./Yard8_FenceFront5_Posts.png
+TEX 1 5fdf52b823829b88 ./Yard8_FenceFront5_Posts_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FenceFront5_Posts_Roughness.png
+TEX 1 84a3572fc5142f5f ./Yard8_FenceFront5_Sheets.png
+TEX 1 5fdf52b823829b88 ./Yard8_FenceFront5_Sheets_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FenceFront5_Sheets_Roughness.png
+TEX 1 6447b5213bab1524 ./Yard8_FenceFrontHalf1_Fittings.png
+TEX 1 5fdf52b823829b88 ./Yard8_FenceFrontHalf1_Fittings_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FenceFrontHalf1_Fittings_Roughness.png
+TEX 1 5b2e9af2d9345dcd ./Yard8_FenceFrontHalf1_Posts.png
+TEX 1 5fdf52b823829b88 ./Yard8_FenceFrontHalf1_Posts_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FenceFrontHalf1_Posts_Roughness.png
+TEX 1 ad3ad93870db730d ./Yard8_FenceFrontHalf1_Sheets.png
+TEX 1 5fdf52b823829b88 ./Yard8_FenceFrontHalf1_Sheets_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FenceFrontHalf1_Sheets_Roughness.png
+TEX 1 d8de9b12712f7a60 ./Yard8_FootingBack1_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard8_FootingBack1_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FootingBack1_Footing_Roughness.png
+TEX 1 d8de9b12712f7a60 ./Yard8_FootingBack6_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard8_FootingBack6_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FootingBack6_Footing_Roughness.png
+TEX 1 d8de9b12712f7a60 ./Yard8_FootingFront6_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard8_FootingFront6_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FootingFront6_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard8_FootingLeft1_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard8_FootingLeft1_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FootingLeft1_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard8_FootingLeft6_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard8_FootingLeft6_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FootingLeft6_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard8_FootingRight4_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard8_FootingRight4_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FootingRight4_Footing_Roughness.png
+TEX 1 3a73b2662fa2c58e ./Yard8_FootingRight9_Footing.png
+TEX 1 5fdf52b823829b88 ./Yard8_FootingRight9_Footing_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_FootingRight9_Footing_Roughness.png
+TEX 1 5b2863e26e354c79 ./Yard8_Press_Anvil.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Anvil_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Anvil_Roughness.png
+TEX 1 1fd8737d12eb8cbc ./Yard8_Press_Bands.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Bands_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Bands_Roughness.png
+TEX 1 b3d945b22cd1217d ./Yard8_Press_Beacons.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Beacons_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Beacons_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Beacons_Roughness.png
+TEX 1 37a473cb3090d782 ./Yard8_Press_Button.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Button_Emissive.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Button_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Button_Roughness.png
+TEX 1 d68ffdd188efb139 ./Yard8_Press_Cage.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Cage_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Cage_Roughness.png
+TEX 1 750987276f60d269 ./Yard8_Press_Collars.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Collars_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Collars_Roughness.png
+TEX 1 74c06128badd4a6e ./Yard8_Press_Columns.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Columns_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Columns_Roughness.png
+TEX 1 216f27fc2ab2cbb3 ./Yard8_Press_Console.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Console_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Console_Roughness.png
+TEX 1 ba5ba7ef2a9ded2a ./Yard8_Press_Crown.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Crown_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Crown_Roughness.png
+TEX 1 3d2db0c5ef512274 ./Yard8_Press_Cylinder.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Cylinder_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Cylinder_Roughness.png
+TEX 1 543e58aa3723495d ./Yard8_Press_Hoses.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Hoses_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Hoses_Roughness.png
+TEX 1 c3efea9620b804b9 ./Yard8_Press_Medal.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Medal_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Medal_Roughness.png
+TEX 1 aec5222683deac8d ./Yard8_Press_Pile.png
+TEX 1 e04ee73672386da9 ./Yard8_Press_PileJunk.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_PileJunk_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_PileJunk_Roughness.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Pile_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Pile_Roughness.png
+TEX 1 f84e4349e7e96dd8 ./Yard8_Press_Platen.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Platen_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Platen_Roughness.png
+TEX 1 5b8640145c8c07b3 ./Yard8_Press_Plinth.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Plinth_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Plinth_Roughness.png
+TEX 1 0d4ac730b63a6219 ./Yard8_Press_Pump.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Pump_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Pump_Roughness.png
+TEX 1 e568d37675ffb5ec ./Yard8_Press_Ram.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Ram_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Ram_Roughness.png
+TEX 1 8d2ab64d4a799bbd ./Yard8_Press_Tray.png
+TEX 1 5fdf52b823829b88 ./Yard8_Press_Tray_Metalness.png
+TEX 1 58f93f6844cdee82 ./Yard8_Press_Tray_Roughness.png
+TEX 1 8253aa5db22be683 ./YardShade1_GroundShade.png
+TEX 1 5fdf52b823829b88 ./YardShade1_GroundShade_Metalness.png
+TEX 1 58f93f6844cdee82 ./YardShade1_GroundShade_Roughness.png
+LANE 1: shard 145/150
+[    0.0s] running ServerMap/model.luau
+[    2.1s] building MainIsland 1 x part 145/150 deal 37712da2e8f4
+[    4.7s] baking on CPU (no GPU)
+[    5.8s]   shaded Dirt_4_-2_0_110 464×464 in 1.12s
+[    9.2s]   shaded Dirt_4_-2_0_111 692×692 in 3.37s
+[   10.8s]   shaded Dirt_4_-2_0_001_100 660×660 in 1.51s
+[   13.0s]   shaded Dirt_4_-2_0_001_111 592×592 in 2.15s
+[   15.8s]   shaded Dirt_4_-2_0_001_101 784×784 in 2.73s
+[   16.1s]   shaded Dirt_4_-2_0_001_110 268×268 in 0.28s
+[   21.8s]   shaded Dirt_4_-1_-1_010_001 1024×1024 in 5.45s
+[   26.4s]   shaded Dirt_4_-1_-1_001 860×860 in 4.60s
+[   27.1s]   shaded Grass_4_-2_0_110_111 252×252 in 0.59s
+[   27.6s]   shaded Grass_4_-2_0_110_110 304×304 in 0.54s
+[   29.4s]   shaded Grass_4_-2_0_110_011 564×564 in 1.73s
+[   30.1s]   shaded Grass_4_-2_0_110_010 356×356 in 0.63s
+[   30.8s]   shaded Grass_4_-2_0_110_000 564×564 in 0.72s
+[   32.6s]   shaded Grass_4_-2_0_110_001 604×604 in 1.80s
+[   33.9s]   shaded Grass_4_-2_0_100 620×620 in 1.18s
+[   39.7s]   shaded Grass_4_-2_0_000 1008×1008 in 5.64s
+[   40.3s]   shaded Grass_4_-2_0_010 540×540 in 0.53s
+[   40.3s] built MainIsland 1 x part 145/150 deal 37712da2e8f4: 17 parts in 38.2s
+[   40.4s] building YardFooting 1.037037037037037 x x1.5
+[   40.6s]   shaded Footing 256×256 in 0.09s
+[   40.6s] built YardFooting 1.037037037037037 x x1.5: 1 parts in 0.1s
+[   40.6s] cached YardFooting 1.037037037037037 x x1.5
+[   40.6s] cached YardFooting 1.037037037037037 x x1.5
+[   40.6s] cached YardFooting 1.037037037037037 x x1.5
+[   40.6s] cached YardFooting 1.037037037037037 x x1.5
+[   40.6s] cached YardFooting 1.037037037037037 x x1.5
+[   40.6s] building JunkrotMicrondoBippetto 1 x
+[   40.9s]   shaded Case 256×256 in 0.19s
+[   41.2s]   shaded Glass 256×256 in 0.28s
+[   41.3s]   shaded Handle 256×256 in 0.12s
+[   42.0s]   shaded Keypad 256×256 in 0.68s
+[   45.7s]   shaded Keys 256×256 in 3.66s
+[   45.7s]   shaded Plate 256×256 in 0.05s
+[   46.1s]   shaded Eyes 256×256 in 0.38s
+[   46.5s]   shaded Pupils 256×256 in 0.33s
+[   46.6s]   shaded Legs 256×256 in 0.12s
+[   46.6s] built JunkrotMicrondoBippetto 1 x: 10 parts in 6.0s
+[   46.6s] writing ServerMap.glb and 33 textures
+ServerMap: 33 parts, script 46.63s, total 46.82s
+  shade (creases, contact): 26.28s
+  coat: 13.14s
+  wear: 1.71s
+  combine: 0.14s
+  shade, surfaces, grid and texels: 5.11s
+  shade, neighbourhoods: 1.29s
+  shade, spreading over seams: 2.73s
+  coat, painting texels: 0.77s
+PLACED	Island	0	MainIsland-5bd6e7b05fafabe5 1 x part 145/150 deal 37712da2e8f4
+SHARD_COST	MainIsland 1 x	5445.073
+SHARD_COST	MainIsland 1 x #split	1
+PLACED	Yard2_FootingLeft1	67.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+SHARD_COST	YardFooting 1.037037037037037 x x1.5	0.106
+SHARD_COST	YardFooting 1.037037037037037 x x1.5 #split	1
+PLACED	Yard3_FootingRight3	112.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard4_FootingLeft6	157.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard5_FootingRight8	202.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard7_FootingLeft2	292.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard8_FootingRight4	337.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Kit_JunkrotMicrondoBippetto	0	JunkrotMicrondoBippetto-adc516e2dd5e72c3 1 x
+SHARD_COST	JunkrotMicrondoBippetto 1 x	6.024
+SHARD_COST	JunkrotMicrondoBippetto 1 x #split	1
+export ServerMap: 3 objects (2.2 MB) for 8 placements
+TEX 2 9ca71c5838fad5eb ./EventStage_Backdrop.png
+TEX 2 8499024e762bbd3c ./EventStage_BackdropRivets.png
+TEX 2 5fdf52b823829b88 ./EventStage_BackdropRivets_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_BackdropRivets_Roughness.png
+TEX 2 5fdf52b823829b88 ./EventStage_Backdrop_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_Backdrop_Roughness.png
+TEX 2 af66b44914037c7a ./EventStage_Banner.png
+TEX 2 5fdf52b823829b88 ./EventStage_Banner_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_Banner_Roughness.png
+TEX 2 32f2b3dc4987e844 ./EventStage_Cables.png
+TEX 2 5fdf52b823829b88 ./EventStage_Cables_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_Cables_Roughness.png
+TEX 2 85bb1ae528aa8957 ./EventStage_Fittings.png
+TEX 2 5fdf52b823829b88 ./EventStage_Fittings_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_Fittings_Roughness.png
+TEX 2 1a05c06bc4b6990f ./EventStage_LampHousings.png
+TEX 2 5fdf52b823829b88 ./EventStage_LampHousings_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_LampHousings_Roughness.png
+TEX 2 e51b24b3f6952b28 ./EventStage_Lamps.png
+TEX 2 58f93f6844cdee82 ./EventStage_Lamps_Emissive.png
+TEX 2 5fdf52b823829b88 ./EventStage_Lamps_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_Lamps_Roughness.png
+TEX 2 12df474e4c98fbb7 ./EventStage_Platform.png
+TEX 2 c1538a65b804f1dd ./EventStage_PlatformDrums.png
+TEX 2 5fdf52b823829b88 ./EventStage_PlatformDrums_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_PlatformDrums_Roughness.png
+TEX 2 5fdf52b823829b88 ./EventStage_Platform_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_Platform_Roughness.png
+TEX 2 52a5d0f4c33be8ad ./EventStage_SpeakerCones.png
+TEX 2 5fdf52b823829b88 ./EventStage_SpeakerCones_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_SpeakerCones_Roughness.png
+TEX 2 78879344835975d0 ./EventStage_SpeakerSurrounds.png
+TEX 2 5fdf52b823829b88 ./EventStage_SpeakerSurrounds_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_SpeakerSurrounds_Roughness.png
+TEX 2 8496899800885709 ./EventStage_Speakers.png
+TEX 2 5fdf52b823829b88 ./EventStage_Speakers_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_Speakers_Roughness.png
+TEX 2 0b5c7112e3a96dc7 ./EventStage_Steps.png
+TEX 2 5fdf52b823829b88 ./EventStage_Steps_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_Steps_Roughness.png
+TEX 2 bff6c3e0af0f11f1 ./EventStage_Supplies.png
+TEX 2 5fdf52b823829b88 ./EventStage_Supplies_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_Supplies_Roughness.png
+TEX 2 7929f4f8cd514168 ./EventStage_Truss.png
+TEX 2 766053fe19a4cd4a ./EventStage_TrussTop.png
+TEX 2 5fdf52b823829b88 ./EventStage_TrussTop_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_TrussTop_Roughness.png
+TEX 2 5fdf52b823829b88 ./EventStage_Truss_Metalness.png
+TEX 2 58f93f6844cdee82 ./EventStage_Truss_Roughness.png
+TEX 2 743f4196c293b27f ./Island_Dirt_4_-1_-1_001.png
+TEX 2 5fdf52b823829b88 ./Island_Dirt_4_-1_-1_001_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Dirt_4_-1_-1_001_Roughness.png
+TEX 2 9c15e22fde0213ff ./Island_Dirt_4_-1_-1_010_001.png
+TEX 2 5fdf52b823829b88 ./Island_Dirt_4_-1_-1_010_001_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Dirt_4_-1_-1_010_001_Roughness.png
+TEX 2 681fa64a4ff22f22 ./Island_Dirt_4_-1_-1_010_111.png
+TEX 2 5fdf52b823829b88 ./Island_Dirt_4_-1_-1_010_111_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Dirt_4_-1_-1_010_111_Roughness.png
+TEX 2 8f11a62dc51b6974 ./Island_Dirt_4_-1_-1_111.png
+TEX 2 5fdf52b823829b88 ./Island_Dirt_4_-1_-1_111_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Dirt_4_-1_-1_111_Roughness.png
+TEX 2 fcdb6f16073e23c5 ./Island_Dirt_4_-1_0.png
+TEX 2 5fdf52b823829b88 ./Island_Dirt_4_-1_0_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Dirt_4_-1_0_Roughness.png
+TEX 2 d40d0fb460c94ba5 ./Island_Dirt_4_-2_0_110.png
+TEX 2 5fdf52b823829b88 ./Island_Dirt_4_-2_0_110_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Dirt_4_-2_0_110_Roughness.png
+TEX 2 21a2b99a322ef047 ./Island_Dirt_4_-2_0_111.png
+TEX 2 5fdf52b823829b88 ./Island_Dirt_4_-2_0_111_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Dirt_4_-2_0_111_Roughness.png
+TEX 2 bb3a6618bc71ea3b ./Island_Dirt_4_0_-1_000.png
+TEX 2 5fdf52b823829b88 ./Island_Dirt_4_0_-1_000_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Dirt_4_0_-1_000_Roughness.png
+TEX 2 1770997b8c943ec6 ./Island_Dirt_4_0_-1_011.png
+TEX 2 5fdf52b823829b88 ./Island_Dirt_4_0_-1_011_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Dirt_4_0_-1_011_Roughness.png
+TEX 2 3e4d2eb2e0a6edd5 ./Island_Dirt_4_0_-1_111.png
+TEX 2 5fdf52b823829b88 ./Island_Dirt_4_0_-1_111_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Dirt_4_0_-1_111_Roughness.png
+TEX 2 406f9baf74c41c31 ./Island_Dirt_4_0_0_100.png
+TEX 2 5fdf52b823829b88 ./Island_Dirt_4_0_0_100_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Dirt_4_0_0_100_Roughness.png
+TEX 2 9201abf8ebc31839 ./Island_Dirt_4_0_0_101.png
+TEX 2 5fdf52b823829b88 ./Island_Dirt_4_0_0_101_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Dirt_4_0_0_101_Roughness.png
+TEX 2 c42818ddd2a69c3c ./Island_Dirt_4_0_0_110.png
+TEX 2 5fdf52b823829b88 ./Island_Dirt_4_0_0_110_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Dirt_4_0_0_110_Roughness.png
+TEX 2 4f353fca2fc12821 ./Island_Grass_4_-1_0_000.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_000_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_000_Roughness.png
+TEX 2 abbf8e98399a41e3 ./Island_Grass_4_-1_0_010.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_010_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_010_Roughness.png
+TEX 2 5584578f0c4fc8f6 ./Island_Grass_4_-1_0_100_001.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_001_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_001_Roughness.png
+TEX 2 4f4483947d73451c ./Island_Grass_4_-1_0_100_011.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_011_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_011_Roughness.png
+TEX 2 410bf68b24a83539 ./Island_Grass_4_-1_0_100_100.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_100_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_100_Roughness.png
+TEX 2 82c7fc5f7bcb4151 ./Island_Grass_4_-1_0_100_101.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_101_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_101_Roughness.png
+TEX 2 4b0bbceb837ee12a ./Island_Grass_4_-1_0_100_110.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_110_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_110_Roughness.png
+TEX 2 fddd70326e288b71 ./Island_Grass_4_-1_0_100_111.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_111_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_111_Roughness.png
+TEX 2 a9dc0f70aa913473 ./Island_Grass_4_-1_0_101.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_101_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_101_Roughness.png
+TEX 2 011a320af8fb2f3a ./Island_Grass_4_-1_0_110_001.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_001_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_001_Roughness.png
+TEX 2 e7bf79882d6439c3 ./Island_Grass_4_-1_0_110_011.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_011_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_011_Roughness.png
+TEX 2 1a88c733c2a299ad ./Island_Grass_4_-1_0_110_100.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_100_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_100_Roughness.png
+TEX 2 821ea088d3298d8b ./Island_Grass_4_-1_0_110_101.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_101_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_101_Roughness.png
+TEX 2 3dad3ea0c58e4511 ./Island_Grass_4_-1_0_110_110.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_110_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_110_Roughness.png
+TEX 2 2b3fd46ffbf634bf ./Island_Grass_4_-1_0_110_111.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_111_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_111_Roughness.png
+TEX 2 e6355be40e15a2c3 ./Island_Grass_4_-1_0_111.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-1_0_111_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-1_0_111_Roughness.png
+TEX 2 4a4579adb592f4cf ./Island_Grass_4_-2_0_000.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-2_0_000_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-2_0_000_Roughness.png
+TEX 2 e6554a9b28cb8306 ./Island_Grass_4_-2_0_010.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-2_0_010_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-2_0_010_Roughness.png
+TEX 2 c40a7ff6cd4ca78b ./Island_Grass_4_-2_0_100.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-2_0_100_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-2_0_100_Roughness.png
+TEX 2 af042d8598b6a5f4 ./Island_Grass_4_-2_0_110_000.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-2_0_110_000_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-2_0_110_000_Roughness.png
+TEX 2 077b5fd793c6053d ./Island_Grass_4_-2_0_110_001.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-2_0_110_001_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-2_0_110_001_Roughness.png
+TEX 2 d93a017de1c95e66 ./Island_Grass_4_-2_0_110_010.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-2_0_110_010_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-2_0_110_010_Roughness.png
+TEX 2 ed3fee513809a226 ./Island_Grass_4_-2_0_110_011.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-2_0_110_011_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-2_0_110_011_Roughness.png
+TEX 2 d84230cc9f9631e5 ./Island_Grass_4_-2_0_110_110.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-2_0_110_110_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-2_0_110_110_Roughness.png
+TEX 2 ba7afa6b1d09cd15 ./Island_Grass_4_-2_0_110_111.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_-2_0_110_111_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_-2_0_110_111_Roughness.png
+TEX 2 28fd9afd4a77440d ./Island_Grass_4_0_0_000.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_0_0_000_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_0_0_000_Roughness.png
+TEX 2 0d9f048fc106dcb7 ./Island_Grass_4_0_0_010.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_0_0_010_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_0_0_010_Roughness.png
+TEX 2 d8057857f48b204e ./Island_Grass_4_0_0_100_001.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_0_0_100_001_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_0_0_100_001_Roughness.png
+TEX 2 e7f7ac531cf7b660 ./Island_Grass_4_0_0_100_011.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_0_0_100_011_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_0_0_100_011_Roughness.png
+TEX 2 f5ef496e63a636e3 ./Island_Grass_4_0_0_100_100.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_4_0_0_100_100_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_4_0_0_100_100_Roughness.png
+TEX 2 a89edcc07e23c07d ./Island_Grass_5_-1_0.png
+TEX 2 5fdf52b823829b88 ./Island_Grass_5_-1_0_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Grass_5_-1_0_Roughness.png
+TEX 2 bd83d156c15ffd37 ./Island_Pebbles_4_-1_-1.png
+TEX 2 5fdf52b823829b88 ./Island_Pebbles_4_-1_-1_Metalness.png
+TEX 2 58f93f6844cdee82 ./Island_Pebbles_4_-1_-1_Roughness.png
+TEX 2 63bb00959e4c4917 ./Kit_JunkrotMixerellaVroom_Band.png
+TEX 2 5fdf52b823829b88 ./Kit_JunkrotMixerellaVroom_Band_Metalness.png
+TEX 2 58f93f6844cdee82 ./Kit_JunkrotMixerellaVroom_Band_Roughness.png
+TEX 2 761fb14db086dac7 ./Kit_JunkrotMixerellaVroom_Bowl.png
+TEX 2 5fdf52b823829b88 ./Kit_JunkrotMixerellaVroom_Bowl_Metalness.png
+TEX 2 58f93f6844cdee82 ./Kit_JunkrotMixerellaVroom_Bowl_Roughness.png
+TEX 2 54a87c5ec4103d7c ./Kit_JunkrotMixerellaVroom_Eyes.png
+TEX 2 5fdf52b823829b88 ./Kit_JunkrotMixerellaVroom_Eyes_Metalness.png
+TEX 2 58f93f6844cdee82 ./Kit_JunkrotMixerellaVroom_Eyes_Roughness.png
+TEX 2 83e69c2ade6d204d ./Kit_JunkrotMixerellaVroom_Head.png
+TEX 2 5fdf52b823829b88 ./Kit_JunkrotMixerellaVroom_Head_Metalness.png
+TEX 2 58f93f6844cdee82 ./Kit_JunkrotMixerellaVroom_Head_Roughness.png
+TEX 2 020074f2d6d4cbf0 ./Kit_JunkrotMixerellaVroom_Knob.png
+TEX 2 5fdf52b823829b88 ./Kit_JunkrotMixerellaVroom_Knob_Metalness.png
+TEX 2 58f93f6844cdee82 ./Kit_JunkrotMixerellaVroom_Knob_Roughness.png
+TEX 2 e02553b6f00ebdba ./Kit_JunkrotMixerellaVroom_Legs.png
+TEX 2 5fdf52b823829b88 ./Kit_JunkrotMixerellaVroom_Legs_Metalness.png
+TEX 2 58f93f6844cdee82 ./Kit_JunkrotMixerellaVroom_Legs_Roughness.png
+TEX 2 641b547ea421d633 ./Kit_JunkrotMixerellaVroom_Pupils.png
+TEX 2 5fdf52b823829b88 ./Kit_JunkrotMixerellaVroom_Pupils_Metalness.png
+TEX 2 58f93f6844cdee82 ./Kit_JunkrotMixerellaVroom_Pupils_Roughness.png
+TEX 2 f61d49e08c694f7f ./Kit_JunkrotMixerellaVroom_Stand.png
+TEX 2 5fdf52b823829b88 ./Kit_JunkrotMixerellaVroom_Stand_Metalness.png
+TEX 2 58f93f6844cdee82 ./Kit_JunkrotMixerellaVroom_Stand_Roughness.png
+TEX 2 24fe51a005cbf560 ./Kit_JunkrotMixerellaVroom_Whisk.png
+TEX 2 5fdf52b823829b88 ./Kit_JunkrotMixerellaVroom_Whisk_Metalness.png
+TEX 2 58f93f6844cdee82 ./Kit_JunkrotMixerellaVroom_Whisk_Roughness.png
+TEX 2 e8845e434bebe0c8 ./Plot2_Ground_-1_-1_0_000.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_-1_0_000_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_-1_0_000_Roughness.png
+TEX 2 fa3f9070f1703430 ./Plot2_Ground_-1_-1_0_010.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_-1_0_010_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_-1_0_010_Roughness.png
+TEX 2 b4e34a7d91e5e4ad ./Plot2_Ground_-1_-1_0_100_000.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_-1_0_100_000_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_-1_0_100_000_Roughness.png
+TEX 2 850f7f4e6af9cc58 ./Plot2_Ground_-1_-1_0_100_010.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_-1_0_100_010_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_-1_0_100_010_Roughness.png
+TEX 2 30dc971c67ac9325 ./Plot2_Ground_-1_-1_0_100_100.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_-1_0_100_100_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_-1_0_100_100_Roughness.png
+TEX 2 00cb95d4fd60f43e ./Plot2_Ground_-1_-1_0_100_110.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_-1_0_100_110_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_-1_0_100_110_Roughness.png
+TEX 2 cb61faa54433738d ./Plot2_Ground_-1_-1_0_110_000.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_-1_0_110_000_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_-1_0_110_000_Roughness.png
+TEX 2 e5ce4d62f4776ffc ./Plot2_Ground_-1_-1_0_110_010.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_-1_0_110_010_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_-1_0_110_010_Roughness.png
+TEX 2 2c8cd46518f8e87c ./Plot2_Ground_-1_-1_0_110_100.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_-1_0_110_100_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_-1_0_110_100_Roughness.png
+TEX 2 284d87b61f5213da ./Plot2_Ground_-1_-1_0_110_110.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_-1_0_110_110_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_-1_0_110_110_Roughness.png
+TEX 2 5103f66978f6fbdb ./Plot2_Ground_-1_0_0_000.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_0_0_000_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_0_0_000_Roughness.png
+TEX 2 4dbfee944dbc71d7 ./Plot2_Ground_-1_0_0_010.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_0_0_010_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_0_0_010_Roughness.png
+TEX 2 8c184bf20152dc10 ./Plot2_Ground_-1_0_0_100_000.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_0_0_100_000_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_0_0_100_000_Roughness.png
+TEX 2 328df526fd249d41 ./Plot2_Ground_-1_0_0_100_010.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_0_0_100_010_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_0_0_100_010_Roughness.png
+TEX 2 f170f6403f1cc16a ./Plot2_Ground_-1_0_0_100_100.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_0_0_100_100_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_0_0_100_100_Roughness.png
+TEX 2 42810e566f1778ad ./Plot2_Ground_-1_0_0_100_110.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_0_0_100_110_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_0_0_100_110_Roughness.png
+TEX 2 fab848706fa00c2d ./Plot2_Ground_-1_0_0_110_000.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_0_0_110_000_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_0_0_110_000_Roughness.png
+TEX 2 2ac3cca989d5d8a0 ./Plot2_Ground_-1_0_0_110_010.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_0_0_110_010_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_0_0_110_010_Roughness.png
+TEX 2 4e5cf7a183e772ca ./Plot2_Ground_-1_0_0_110_100.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_0_0_110_100_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_0_0_110_100_Roughness.png
+TEX 2 b10dda104826d334 ./Plot2_Ground_-1_0_0_110_110.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_-1_0_0_110_110_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_-1_0_0_110_110_Roughness.png
+TEX 2 19cb46dbcf068f37 ./Plot2_Ground_0_-1_0_000_000.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_-1_0_000_000_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_-1_0_000_000_Roughness.png
+TEX 2 bdffed63b6c348b1 ./Plot2_Ground_0_-1_0_000_010.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_-1_0_000_010_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_-1_0_000_010_Roughness.png
+TEX 2 a8e72779ebb9315e ./Plot2_Ground_0_-1_0_000_100.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_-1_0_000_100_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_-1_0_000_100_Roughness.png
+TEX 2 139f44aab37b7361 ./Plot2_Ground_0_-1_0_000_110.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_-1_0_000_110_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_-1_0_000_110_Roughness.png
+TEX 2 843869ecec24f010 ./Plot2_Ground_0_-1_0_010_000.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_-1_0_010_000_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_-1_0_010_000_Roughness.png
+TEX 2 b3ebb25fd110e96e ./Plot2_Ground_0_-1_0_010_010.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_-1_0_010_010_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_-1_0_010_010_Roughness.png
+TEX 2 0bc6a9ed024e15d3 ./Plot2_Ground_0_-1_0_010_100.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_-1_0_010_100_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_-1_0_010_100_Roughness.png
+TEX 2 c8687c72cde8f436 ./Plot2_Ground_0_-1_0_010_110.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_-1_0_010_110_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_-1_0_010_110_Roughness.png
+TEX 2 5e2023964175225c ./Plot2_Ground_0_-1_0_100.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_-1_0_100_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_-1_0_100_Roughness.png
+TEX 2 12e00fed4a7586c5 ./Plot2_Ground_0_-1_0_110.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_-1_0_110_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_-1_0_110_Roughness.png
+TEX 2 da64cc14b62d3b8f ./Plot2_Ground_0_0_0_000_000.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_0_0_000_000_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_0_0_000_000_Roughness.png
+TEX 2 ba370692a5f7cef5 ./Plot2_Ground_0_0_0_000_010.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_0_0_000_010_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_0_0_000_010_Roughness.png
+TEX 2 59eae35c81d2a7c3 ./Plot2_Ground_0_0_0_000_100.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_0_0_000_100_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_0_0_000_100_Roughness.png
+TEX 2 4f6108fbed503a39 ./Plot2_Ground_0_0_0_000_110.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_0_0_000_110_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_0_0_000_110_Roughness.png
+TEX 2 22a09d7233678714 ./Plot2_Ground_0_0_0_010_000.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_0_0_010_000_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_0_0_010_000_Roughness.png
+TEX 2 2cdcd2cb1da447a3 ./Plot2_Ground_0_0_0_010_010.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_0_0_010_010_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_0_0_010_010_Roughness.png
+TEX 2 c1c25fb42fb19cda ./Plot2_Ground_0_0_0_010_100.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_0_0_010_100_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_0_0_010_100_Roughness.png
+TEX 2 a151c4a76698d352 ./Plot2_Ground_0_0_0_010_110.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_0_0_010_110_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_0_0_010_110_Roughness.png
+TEX 2 7a5a5400eb9fe615 ./Plot2_Ground_0_0_0_100.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_0_0_100_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_0_0_100_Roughness.png
+TEX 2 ed2abfe338657882 ./Plot2_Ground_0_0_0_110.png
+TEX 2 5fdf52b823829b88 ./Plot2_Ground_0_0_0_110_Metalness.png
+TEX 2 58f93f6844cdee82 ./Plot2_Ground_0_0_0_110_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard1_FootingRight4_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard1_FootingRight4_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard1_FootingRight4_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard1_FootingRight9_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard1_FootingRight9_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard1_FootingRight9_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard2_FootingRight1_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard2_FootingRight1_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard2_FootingRight1_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard2_FootingRight5_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard2_FootingRight5_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard2_FootingRight5_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard3_FootingLeft4_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard3_FootingLeft4_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard3_FootingLeft4_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard3_FootingRight1_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard3_FootingRight1_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard3_FootingRight1_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard3_FootingRight6_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard3_FootingRight6_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard3_FootingRight6_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard4_FootingRight2_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard4_FootingRight2_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard4_FootingRight2_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard4_FootingRight6_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard4_FootingRight6_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard4_FootingRight6_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard4_FootingRight7_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard4_FootingRight7_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard4_FootingRight7_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard5_FootingLeft9_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard5_FootingLeft9_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard5_FootingLeft9_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard5_FootingRight3_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard5_FootingRight3_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard5_FootingRight3_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard5_FootingRight8_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard5_FootingRight8_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard5_FootingRight8_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard6_FootingRight4_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard6_FootingRight4_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard6_FootingRight4_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard6_FootingRight9_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard6_FootingRight9_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard6_FootingRight9_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard7_FootingRight2_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard7_FootingRight2_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard7_FootingRight2_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard7_FootingRight5_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard7_FootingRight5_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard7_FootingRight5_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard8_FootingLeft5_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard8_FootingLeft5_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard8_FootingLeft5_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard8_FootingRight1_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard8_FootingRight1_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard8_FootingRight1_Footing_Roughness.png
+TEX 2 3a73b2662fa2c58e ./Yard8_FootingRight6_Footing.png
+TEX 2 5fdf52b823829b88 ./Yard8_FootingRight6_Footing_Metalness.png
+TEX 2 58f93f6844cdee82 ./Yard8_FootingRight6_Footing_Roughness.png
+LANE 2: shard 146/150
+[    0.0s] running ServerMap/model.luau
+[    2.0s] building MainIsland 1 x part 146/150 deal 37712da2e8f4
+[    4.3s] baking on CPU (no GPU)
+[    5.1s]   shaded Dirt_4_-1_-1_010_111 780×780 in 0.82s
+[    8.4s]   shaded Dirt_4_-1_-1_111 1024×1024 in 3.16s
+[   16.0s]   shaded Dirt_4_-1_0 980×980 in 7.48s
+[   16.7s]   shaded Pebbles_4_-1_-1 356×356 in 0.60s
+[   19.2s]   shaded Grass_4_-1_0_110_111 684×684 in 2.53s
+[   20.3s]   shaded Grass_4_-1_0_110_110 524×524 in 1.03s
+[   21.9s]   shaded Grass_4_-1_0_110_101 612×612 in 1.57s
+[   22.6s]   shaded Grass_4_-1_0_110_100 532×532 in 0.67s
+[   22.9s]   shaded Grass_4_-1_0_110_001 272×272 in 0.33s
+[   23.2s]   shaded Grass_4_-1_0_110_011 272×272 in 0.20s
+[   24.3s]   shaded Grass_4_-1_0_100_111 520×520 in 1.07s
+[   25.6s]   shaded Grass_4_-1_0_100_110 556×556 in 1.27s
+[   27.6s]   shaded Grass_4_-1_0_100_101 604×604 in 2.04s
+[   29.5s]   shaded Grass_4_-1_0_100_100 596×596 in 1.86s
+[   30.0s]   shaded Grass_4_-1_0_100_001 348×348 in 0.47s
+[   30.2s]   shaded Grass_4_-1_0_100_011 272×272 in 0.17s
+[   30.8s]   shaded Grass_4_-1_0_101 340×340 in 0.58s
+[   32.1s]   shaded Grass_4_-1_0_000 540×540 in 1.20s
+[   33.1s]   shaded Grass_4_-1_0_010 540×540 in 0.90s
+[   33.1s] built MainIsland 1 x part 146/150 deal 37712da2e8f4: 19 parts in 31.2s
+[   33.5s] building YardFooting 1.037037037037037 x x1.5
+[   33.7s]   shaded Footing 256×256 in 0.16s
+[   33.7s] built YardFooting 1.037037037037037 x x1.5: 1 parts in 0.2s
+[   33.7s] cached YardFooting 1.037037037037037 x x1.5
+[   33.7s] cached YardFooting 1.037037037037037 x x1.5
+[   33.7s] cached YardFooting 1.037037037037037 x x1.5
+[   33.7s] cached YardFooting 1.037037037037037 x x1.5
+[   33.7s] cached YardFooting 1.037037037037037 x x1.5
+[   33.7s] building JunkrotMixerellaVroom 1 x
+[   33.9s]   shaded Stand 256×256 in 0.14s
+[   34.0s]   shaded Head 256×256 in 0.17s
+[   34.2s]   shaded Bowl 256×256 in 0.18s
+[   34.3s]   shaded Whisk 256×256 in 0.12s
+[   34.5s]   shaded Knob 256×256 in 0.20s
+[   34.6s]   shaded Band 256×256 in 0.10s
+[   35.8s]   shaded Eyes 256×256 in 1.15s
+[   36.5s]   shaded Pupils 256×256 in 0.72s
+[   36.8s]   shaded Legs 256×256 in 0.28s
+[   36.8s] built JunkrotMixerellaVroom 1 x: 9 parts in 3.1s
+[   36.8s] writing ServerMap.glb and 34 textures
+ServerMap: 34 parts, script 36.86s, total 37.03s
+  shade (creases, contact): 18.56s
+  coat: 10.12s
+  wear: 1.19s
+  combine: 0.19s
+  shade, surfaces, grid and texels: 4.33s
+  shade, neighbourhoods: 1.25s
+  shade, spreading over seams: 2.56s
+  coat, painting texels: 0.69s
+PLACED	Island	0	MainIsland-5bd6e7b05fafabe5 1 x part 146/150 deal 37712da2e8f4
+SHARD_COST	MainIsland 1 x	4882.726
+SHARD_COST	MainIsland 1 x #split	1
+PLACED	Yard2_FootingRight1	67.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+SHARD_COST	YardFooting 1.037037037037037 x x1.5	0.187
+SHARD_COST	YardFooting 1.037037037037037 x x1.5 #split	1
+PLACED	Yard3_FootingLeft4	112.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard4_FootingRight6	157.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard5_FootingLeft9	202.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard7_FootingRight2	292.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Yard8_FootingLeft5	337.5	YardFooting-ce1698371f70b42a 1.037037037037037 x x1.5
+PLACED	Kit_JunkrotMixerellaVroom	0	JunkrotMixerellaVroom-548a9f57cd079e9c 1 x
+SHARD_COST	JunkrotMixerellaVroom 1 x	3.137
+SHARD_COST	JunkrotMixerellaVroom 1 x #split	1
+export ServerMap: 3 objects (2.0 MB) for 8 placements
+TEX 3 fcdb6f16073e23c5 ./Island_Dirt_4_-1_0.png
+TEX 3 5fdf52b823829b88 ./Island_Dirt_4_-1_0_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Dirt_4_-1_0_Roughness.png
+TEX 3 bb3a6618bc71ea3b ./Island_Dirt_4_0_-1_000.png
+TEX 3 5fdf52b823829b88 ./Island_Dirt_4_0_-1_000_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Dirt_4_0_-1_000_Roughness.png
+TEX 3 1770997b8c943ec6 ./Island_Dirt_4_0_-1_011.png
+TEX 3 5fdf52b823829b88 ./Island_Dirt_4_0_-1_011_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Dirt_4_0_-1_011_Roughness.png
+TEX 3 3e4d2eb2e0a6edd5 ./Island_Dirt_4_0_-1_111.png
+TEX 3 5fdf52b823829b88 ./Island_Dirt_4_0_-1_111_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Dirt_4_0_-1_111_Roughness.png
+TEX 3 406f9baf74c41c31 ./Island_Dirt_4_0_0_100.png
+TEX 3 5fdf52b823829b88 ./Island_Dirt_4_0_0_100_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Dirt_4_0_0_100_Roughness.png
+TEX 3 9201abf8ebc31839 ./Island_Dirt_4_0_0_101.png
+TEX 3 5fdf52b823829b88 ./Island_Dirt_4_0_0_101_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Dirt_4_0_0_101_Roughness.png
+TEX 3 c42818ddd2a69c3c ./Island_Dirt_4_0_0_110.png
+TEX 3 5fdf52b823829b88 ./Island_Dirt_4_0_0_110_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Dirt_4_0_0_110_Roughness.png
+TEX 3 4f353fca2fc12821 ./Island_Grass_4_-1_0_000.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_000_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_000_Roughness.png
+TEX 3 abbf8e98399a41e3 ./Island_Grass_4_-1_0_010.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_010_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_010_Roughness.png
+TEX 3 5584578f0c4fc8f6 ./Island_Grass_4_-1_0_100_001.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_001_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_001_Roughness.png
+TEX 3 4f4483947d73451c ./Island_Grass_4_-1_0_100_011.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_011_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_011_Roughness.png
+TEX 3 410bf68b24a83539 ./Island_Grass_4_-1_0_100_100.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_100_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_100_Roughness.png
+TEX 3 82c7fc5f7bcb4151 ./Island_Grass_4_-1_0_100_101.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_101_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_101_Roughness.png
+TEX 3 4b0bbceb837ee12a ./Island_Grass_4_-1_0_100_110.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_110_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_110_Roughness.png
+TEX 3 fddd70326e288b71 ./Island_Grass_4_-1_0_100_111.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_100_111_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_100_111_Roughness.png
+TEX 3 a9dc0f70aa913473 ./Island_Grass_4_-1_0_101.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_101_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_101_Roughness.png
+TEX 3 011a320af8fb2f3a ./Island_Grass_4_-1_0_110_001.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_001_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_001_Roughness.png
+TEX 3 e7bf79882d6439c3 ./Island_Grass_4_-1_0_110_011.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_011_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_011_Roughness.png
+TEX 3 1a88c733c2a299ad ./Island_Grass_4_-1_0_110_100.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_100_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_100_Roughness.png
+TEX 3 821ea088d3298d8b ./Island_Grass_4_-1_0_110_101.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_101_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_101_Roughness.png
+TEX 3 3dad3ea0c58e4511 ./Island_Grass_4_-1_0_110_110.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_110_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_110_Roughness.png
+TEX 3 2b3fd46ffbf634bf ./Island_Grass_4_-1_0_110_111.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_110_111_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_110_111_Roughness.png
+TEX 3 e6355be40e15a2c3 ./Island_Grass_4_-1_0_111.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_-1_0_111_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_-1_0_111_Roughness.png
+TEX 3 28fd9afd4a77440d ./Island_Grass_4_0_0_000.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_000_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_000_Roughness.png
+TEX 3 0d9f048fc106dcb7 ./Island_Grass_4_0_0_010.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_010_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_010_Roughness.png
+TEX 3 d8057857f48b204e ./Island_Grass_4_0_0_100_001.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_100_001_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_100_001_Roughness.png
+TEX 3 e7f7ac531cf7b660 ./Island_Grass_4_0_0_100_011.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_100_011_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_100_011_Roughness.png
+TEX 3 f5ef496e63a636e3 ./Island_Grass_4_0_0_100_100.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_100_100_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_100_100_Roughness.png
+TEX 3 a51217635243c382 ./Island_Grass_4_0_0_100_101.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_100_101_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_100_101_Roughness.png
+TEX 3 996deac1150c9962 ./Island_Grass_4_0_0_100_110.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_100_110_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_100_110_Roughness.png
+TEX 3 50a6818f8cf2f3f1 ./Island_Grass_4_0_0_100_111.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_100_111_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_100_111_Roughness.png
+TEX 3 b284ff557830efc0 ./Island_Grass_4_0_0_101.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_101_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_101_Roughness.png
+TEX 3 60dcf20757c02eef ./Island_Grass_4_0_0_110_001.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_110_001_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_110_001_Roughness.png
+TEX 3 a5852ca4fc725482 ./Island_Grass_4_0_0_110_011.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_110_011_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_110_011_Roughness.png
+TEX 3 a198d2684833b8af ./Island_Grass_4_0_0_110_100.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_110_100_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_110_100_Roughness.png
+TEX 3 3edda34b4382bbd9 ./Island_Grass_4_0_0_110_101.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_110_101_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_110_101_Roughness.png
+TEX 3 43607ae9d7807650 ./Island_Grass_4_0_0_110_110.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_110_110_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_110_110_Roughness.png
+TEX 3 f3ca985491a0418e ./Island_Grass_4_0_0_110_111.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_110_111_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_110_111_Roughness.png
+TEX 3 8b28caa88cbbd273 ./Island_Grass_4_0_0_111.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_4_0_0_111_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_4_0_0_111_Roughness.png
+TEX 3 a89edcc07e23c07d ./Island_Grass_5_-1_0.png
+TEX 3 5fdf52b823829b88 ./Island_Grass_5_-1_0_Metalness.png
+TEX 3 58f93f6844cdee82 ./Island_Grass_5_-1_0_Roughness.png
+TEX 3 9b99babac6831c2d ./Kit_JunkrotDrippiDroppi_Antennae.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Antennae_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Antennae_Roughness.png
+TEX 3 f5c0534b48048c06 ./Kit_JunkrotDrippiDroppi_Beads.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Beads_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Beads_Roughness.png
+TEX 3 eb8b30957fa387c5 ./Kit_JunkrotDrippiDroppi_Body.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Body_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Body_Roughness.png
+TEX 3 b9d96b6db7f85eaf ./Kit_JunkrotDrippiDroppi_Clips.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Clips_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Clips_Roughness.png
+TEX 3 8a35d987ac256a66 ./Kit_JunkrotDrippiDroppi_Eyes.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Eyes_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Eyes_Roughness.png
+TEX 3 1c0cecc21cdd0416 ./Kit_JunkrotDrippiDroppi_Head.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Head_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Head_Roughness.png
+TEX 3 5c88166fe09016b8 ./Kit_JunkrotDrippiDroppi_Legs.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Legs_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Legs_Roughness.png
+TEX 3 1e198ee3f01b1f94 ./Kit_JunkrotDrippiDroppi_Nose.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Nose_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Nose_Roughness.png
+TEX 3 a585b267656b052d ./Kit_JunkrotDrippiDroppi_PanelsALUMINIUM.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_PanelsALUMINIUM_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_PanelsALUMINIUM_Roughness.png
+TEX 3 c8a2fc567b90d1cc ./Kit_JunkrotDrippiDroppi_PanelsBLUEGREY.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_PanelsBLUEGREY_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_PanelsBLUEGREY_Roughness.png
+TEX 3 fd51b1e1cea8993c ./Kit_JunkrotDrippiDroppi_PanelsBRASS.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_PanelsBRASS_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_PanelsBRASS_Roughness.png
+TEX 3 a99cfe7aec12ce84 ./Kit_JunkrotDrippiDroppi_PanelsCOPPER.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_PanelsCOPPER_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_PanelsCOPPER_Roughness.png
+TEX 3 f9d5b69115bf50dd ./Kit_JunkrotDrippiDroppi_PanelsENAMEL.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_PanelsENAMEL_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_PanelsENAMEL_Roughness.png
+TEX 3 70a3c4decac5e854 ./Kit_JunkrotDrippiDroppi_PanelsGALVANISED.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_PanelsGALVANISED_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_PanelsGALVANISED_Roughness.png
+TEX 3 10c0cceb255f940d ./Kit_JunkrotDrippiDroppi_PanelsGUNMETAL.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_PanelsGUNMETAL_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_PanelsGUNMETAL_Roughness.png
+TEX 3 d51a28fdcac38968 ./Kit_JunkrotDrippiDroppi_PanelsOLIVE.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_PanelsOLIVE_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_PanelsOLIVE_Roughness.png
+TEX 3 2e3ea3e6e7784a05 ./Kit_JunkrotDrippiDroppi_PanelsPAINTED.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_PanelsPAINTED_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_PanelsPAINTED_Roughness.png
+TEX 3 bbb6d5d620147f15 ./Kit_JunkrotDrippiDroppi_PanelsRUST.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_PanelsRUST_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_PanelsRUST_Roughness.png
+TEX 3 3a628eceace04c93 ./Kit_JunkrotDrippiDroppi_PanelsTIN.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_PanelsTIN_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_PanelsTIN_Roughness.png
+TEX 3 e7d2047a168806bd ./Kit_JunkrotDrippiDroppi_Pupils.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Pupils_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Pupils_Roughness.png
+TEX 3 133de222c7332720 ./Kit_JunkrotDrippiDroppi_Ribs.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Ribs_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Ribs_Roughness.png
+TEX 3 03f6b0f65d5f0ab5 ./Kit_JunkrotDrippiDroppi_Rivets.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Rivets_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Rivets_Roughness.png
+TEX 3 0c778090a3387de4 ./Kit_JunkrotDrippiDroppi_Stalks.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Stalks_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Stalks_Roughness.png
+TEX 3 31fdc74774a975be ./Kit_JunkrotDrippiDroppi_Stitches.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Stitches_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Stitches_Roughness.png
+TEX 3 8ef9ff407a4985b8 ./Kit_JunkrotDrippiDroppi_Stripes.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Stripes_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Stripes_Roughness.png
+TEX 3 9376454924e32bdf ./Kit_JunkrotDrippiDroppi_TailFan.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_TailFan_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_TailFan_Roughness.png
+TEX 3 542bcf6664ffc0f3 ./Kit_JunkrotDrippiDroppi_Tape.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Tape_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Tape_Roughness.png
+TEX 3 b95311e154df186d ./Kit_JunkrotDrippiDroppi_Welds.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Welds_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Welds_Roughness.png
+TEX 3 c70283a8639d5a6e ./Kit_JunkrotDrippiDroppi_Whiskers.png
+TEX 3 5fdf52b823829b88 ./Kit_JunkrotDrippiDroppi_Whiskers_Metalness.png
+TEX 3 58f93f6844cdee82 ./Kit_JunkrotDrippiDroppi_Whiskers_Roughness.png
+TEX 3 1bbbd35ac607ac18 ./Yard2_FenceLeft2_Fittings.png
+TEX 3 5fdf52b823829b88 ./Yard2_FenceLeft2_Fittings_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard2_FenceLeft2_Fittings_Roughness.png
+TEX 3 e55526bb54a1ceab ./Yard2_FenceLeft2_Posts.png
+TEX 3 5fdf52b823829b88 ./Yard2_FenceLeft2_Posts_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard2_FenceLeft2_Posts_Roughness.png
+TEX 3 3c61178b34e6abc2 ./Yard2_FenceLeft2_Sheets.png
+TEX 3 5fdf52b823829b88 ./Yard2_FenceLeft2_Sheets_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard2_FenceLeft2_Sheets_Roughness.png
+TEX 3 1bbbd35ac607ac18 ./Yard3_FenceLeft5_Fittings.png
+TEX 3 5fdf52b823829b88 ./Yard3_FenceLeft5_Fittings_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard3_FenceLeft5_Fittings_Roughness.png
+TEX 3 e55526bb54a1ceab ./Yard3_FenceLeft5_Posts.png
+TEX 3 5fdf52b823829b88 ./Yard3_FenceLeft5_Posts_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard3_FenceLeft5_Posts_Roughness.png
+TEX 3 3c61178b34e6abc2 ./Yard3_FenceLeft5_Sheets.png
+TEX 3 5fdf52b823829b88 ./Yard3_FenceLeft5_Sheets_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard3_FenceLeft5_Sheets_Roughness.png
+TEX 3 1bbbd35ac607ac18 ./Yard4_FenceLeft8_Fittings.png
+TEX 3 5fdf52b823829b88 ./Yard4_FenceLeft8_Fittings_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard4_FenceLeft8_Fittings_Roughness.png
+TEX 3 e55526bb54a1ceab ./Yard4_FenceLeft8_Posts.png
+TEX 3 5fdf52b823829b88 ./Yard4_FenceLeft8_Posts_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard4_FenceLeft8_Posts_Roughness.png
+TEX 3 3c61178b34e6abc2 ./Yard4_FenceLeft8_Sheets.png
+TEX 3 5fdf52b823829b88 ./Yard4_FenceLeft8_Sheets_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard4_FenceLeft8_Sheets_Roughness.png
+TEX 3 1bbbd35ac607ac18 ./Yard6_FenceLeft2_Fittings.png
+TEX 3 5fdf52b823829b88 ./Yard6_FenceLeft2_Fittings_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard6_FenceLeft2_Fittings_Roughness.png
+TEX 3 e55526bb54a1ceab ./Yard6_FenceLeft2_Posts.png
+TEX 3 5fdf52b823829b88 ./Yard6_FenceLeft2_Posts_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard6_FenceLeft2_Posts_Roughness.png
+TEX 3 3c61178b34e6abc2 ./Yard6_FenceLeft2_Sheets.png
+TEX 3 5fdf52b823829b88 ./Yard6_FenceLeft2_Sheets_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard6_FenceLeft2_Sheets_Roughness.png
+TEX 3 1bbbd35ac607ac18 ./Yard7_FenceLeft5_Fittings.png
+TEX 3 5fdf52b823829b88 ./Yard7_FenceLeft5_Fittings_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard7_FenceLeft5_Fittings_Roughness.png
+TEX 3 e55526bb54a1ceab ./Yard7_FenceLeft5_Posts.png
+TEX 3 5fdf52b823829b88 ./Yard7_FenceLeft5_Posts_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard7_FenceLeft5_Posts_Roughness.png
+TEX 3 3c61178b34e6abc2 ./Yard7_FenceLeft5_Sheets.png
+TEX 3 5fdf52b823829b88 ./Yard7_FenceLeft5_Sheets_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard7_FenceLeft5_Sheets_Roughness.png
+TEX 3 1bbbd35ac607ac18 ./Yard8_FenceLeft8_Fittings.png
+TEX 3 5fdf52b823829b88 ./Yard8_FenceLeft8_Fittings_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard8_FenceLeft8_Fittings_Roughness.png
+TEX 3 e55526bb54a1ceab ./Yard8_FenceLeft8_Posts.png
+TEX 3 5fdf52b823829b88 ./Yard8_FenceLeft8_Posts_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard8_FenceLeft8_Posts_Roughness.png
+TEX 3 3c61178b34e6abc2 ./Yard8_FenceLeft8_Sheets.png
+TEX 3 5fdf52b823829b88 ./Yard8_FenceLeft8_Sheets_Metalness.png
+TEX 3 58f93f6844cdee82 ./Yard8_FenceLeft8_Sheets_Roughness.png
+TEX 3 fda1d8d77ad56b2d ./YardShade2_GroundShade.png
+TEX 3 5fdf52b823829b88 ./YardShade2_GroundShade_Metalness.png
+TEX 3 58f93f6844cdee82 ./YardShade2_GroundShade_Roughness.png
+LANE 3: shard 147/150
+[    0.0s] running ServerMap/model.luau
+[    2.1s] building MainIsland 1 x part 147/150 deal 37712da2e8f4
+[    4.6s] baking on CPU (no GPU)
+[    5.4s]   shaded Dirt_4_0_0_110 508×508 in 0.86s
+[    6.7s]   shaded Dirt_4_0_0_100 536×536 in 1.26s
+[    7.5s]   shaded Dirt_4_0_0_101 520×520 in 0.75s
+[   13.5s]   shaded Dirt_4_0_-1_111 1024×1024 in 5.91s
+[   16.2s]   shaded Dirt_4_0_-1_011 1024×1024 in 2.68s
+[   18.1s]   shaded Dirt_4_0_-1_000 828×828 in 1.83s
+[   19.8s]   shaded Grass_4_-1_0_111 616×616 in 1.61s
+[   20.1s]   shaded Grass_5_-1_0 392×392 in 0.37s
+[   22.8s]   shaded Grass_4_0_0_110_111 720×720 in 2.56s
+[   23.9s]   shaded Grass_4_0_0_110_110 516×516 in 1.12s
+[   25.5s]   shaded Grass_4_0_0_110_101 572×572 in 1.58s
+[   26.4s]   shaded Grass_4_0_0_110_100 548×548 in 0.88s
+[   26.8s]   shaded Grass_4_0_0_110_001 272×272 in 0.30s
+[   27.0s]   shaded Grass_4_0_0_110_011 272×272 in 0.18s
+[   28.5s]   shaded Grass_4_0_0_111 560×560 in 1.53s
+[   30.6s]   shaded Grass_4_0_0_100_111 624×624 in 2.06s
+[   31.7s]   shaded Grass_4_0_0_100_110 540×540 in 1.02s
+[   32.9s]   shaded Grass_4_0_0_100_101 432×432 in 1.17s
+[   33.7s]   shaded Grass_4_0_0_100_100 488×488 in 0.81s
+[   33.9s]   shaded Grass_4_0_0_100_001 272×272 in 0.20s
+[   34.0s]   shaded Grass_4_0_0_100_011 272×272 in 0.11s
+[   36.7s]   shaded Grass_4_0_0_101 620×620 in 2.60s
+[   37.7s]   shaded Grass_4_0_0_000 540×540 in 0.77s
+[   38.3s]   shaded Grass_4_0_0_010 540×540 in 0.47s
+[   38.3s] built MainIsland 1 x part 147/150 deal 37712da2e8f4: 24 parts in 36.2s
+[   38.4s] building YardFence 1.037037037037037 x x1.5
+[   38.5s]   shaded Posts 256×256 in 0.08s
+[   38.7s]   shaded Sheets 256×256 in 0.16s
+[   38.8s]   shaded Fittings 256×256 in 0.14s
+[   38.8s] built YardFence 1.037037037037037 x x1.5: 3 parts in 0.4s
+[   38.8s] cached YardFence 1.037037037037037 x x1.5
+[   38.8s] cached YardFence 1.037037037037037 x x1.5
+[   38.8s] cached YardFence 1.037037037037037 x x1.5
+[   38.8s] cached YardFence 1.037037037037037 x x1.5
+[   38.8s] cached YardFence 1.037037037037037 x x1.5
+[   38.8s] writing ServerMap.glb and 42 textures
+ServerMap: 42 parts, script 38.85s, total 39.08s
+  shade (creases, contact): 18.40s
+  coat: 12.61s
+  wear: 1.39s
+  combine: 0.19s
+  shade, surfaces, grid and texels: 5.60s
+  shade, neighbourhoods: 1.36s
+  shade, spreading over seams: 3.30s
+  coat, painting texels: 0.17s
+PLACED	Island	0	MainIsland-5bd6e7b05fafabe5 1 x part 147/150 deal 37712da2e8f4
+SHARD_COST	MainIsland 1 x	6149.718
+SHARD_COST	MainIsland 1 x #split	1
+PLACED	Yard2_FenceLeft2	247.5	YardFence-ae9c0061f8170496 1.037037037037037 x x1.5
+SHARD_COST	YardFence 1.037037037037037 x x1.5	0.418
+SHARD_COST	YardFence 1.037037037037037 x x1.5 #split	1
+PLACED	Yard3_FenceLeft5	292.5	YardFence-ae9c0061f8170496 1.037037037037037 x x1.5
+PLACED	Yard4_FenceLeft8	337.5	YardFence-ae9c0061f8170496 1.037037037037037 x x1.5
+PLACED	Yard6_FenceLeft2	427.5	YardFence-ae9c0061f8170496 1.037037037037037 x x1.5
+PLACED	Yard7_FenceLeft5	472.5	YardFence-ae9c0061f8170496 1.037037037037037 x x1.5
+PLACED	Yard8_FenceLeft8	517.5	YardFence-ae9c0061f8170496 1.037037037037037 x x1.5
+export ServerMap: 2 objects (1.8 MB) for 7 placements
