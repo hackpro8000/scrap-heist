@@ -372,6 +372,13 @@ impl UserData for MeshHandle {
 					drip: brush_slot(options.as_ref(), "drip")?,
 					scratch: brush_slot(options.as_ref(), "scratch")?,
 				},
+				// tiledCoat = {tileStuds, variants}: paint the brushed coat's
+				// strokes once on seamless tiles and lay them by world position.
+				tiled: match options.as_ref().map(|o| o.get::<Option<Vec<f64>>>("tiledCoat")).transpose()?.flatten().as_deref() {
+					None => None,
+					Some(&[tile, variants]) if tile > 0.0 && variants >= 1.0 => Some(coat::TiledCoat { tile, variants: variants as u32 }),
+					Some(_) => return Err(mlua::Error::RuntimeError("tiledCoat is {tileStuds, variants}".into())),
+				},
 			};
 			let paint = options.as_ref().map(|o| o.get::<Option<mlua::Function>>("paint")).transpose()?.flatten();
 			// A custom paint fn is keyed by `salt`, the item's source key, since its code can't be hashed.
