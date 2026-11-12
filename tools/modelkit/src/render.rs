@@ -7,7 +7,8 @@ use crate::mesh::{add, cross, dot, normalize, scale, sub, Corner, Mesh, Vec3};
 use std::cell::{Ref, RefCell};
 use std::rc::Rc;
 use std::sync::atomic::{AtomicUsize, Ordering};
-use std::sync::Mutex;
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex, OnceLock};
 use std::time::Instant;
 
 use crate::anim::Pose;
@@ -293,10 +294,10 @@ pub fn render_frame(parts: &[&Part], view: &View) -> Frame {
 fn draw(parts: &[&Part], skin: &[Pose], view: &View) -> Frame {
 	let check = std::env::var("MODELKIT_RENDER_CHECK").is_ok_and(|value| value == "1");
 	if !check {
-		return draw_fast(parts, skin, view);
+		return draw_fast(parts, skin, view).0;
 	}
 	let start = Instant::now();
-	let frame = draw_fast(parts, skin, view);
+	let (frame, stages) = draw_fast(parts, skin, view);
 	let new = start.elapsed().as_secs_f64();
 	let start = Instant::now();
 	let reference = draw_reference(parts, skin, view);
@@ -307,8 +308,48 @@ fn draw(parts: &[&Part], skin: &[Pose], view: &View) -> Frame {
 		frame.pixels.iter().zip(&reference.pixels).map(|(a, b)| a.abs_diff(*b)).max().unwrap_or(0)
 	};
 	let owners = frame.owner.iter().zip(&reference.owner).filter(|(a, b)| a != b).count() + frame.owner.len().abs_diff(reference.owner.len());
-	eprintln!("RENDER_CHECK size={} max={max} reference={old:.3} new={new:.3} owner_mismatch={owners}", view.size);
+	eprintln!(
+		"RENDER_CHECK size={} max={max} reference={old:.3} new={new:.3} owner_mismatch={owners} {}",
+		view.size,
+		stages.line()
+	);
 	frame
+}
+
+// Seconds each stage of the fast renderer took, for the check line.
+#[derive(Default)]
+struct Stages {
+	// Part boxes, culling and triangle gathering.
+	setup: f64,
+	// Mip chains (only the ones missing from the cache are built).
+	mips: f64,
+	// Projecting triangles to the screen.
+	prepare: f64,
+	bin: f64,
+	// The visibility pass, or the whole forward pass for part colours.
+	raster: f64,
+	shade: f64,
+	// See-through parts blending over.
+	glass: f64,
+	bloom: f64,
+	// Grid, downsample and fxaa.
+	finish: f64,
+}
+
+impl Stages {
+	fn line(&self) -> String {
+		format!(
+			"setup={:.3} mips={:.3} prepare={:.3} bin={:.3} raster={:.3} shade={:.3} glass={:.3} bloom={:.3} finish={:.3}",
+			self.setup, self.mips, self.prepare, self.bin, self.raster, self.shade, self.glass, self.bloom, self.finish
+		)
+	}
+}
+
+// Seconds since `start`, restarting it.
+fn lap(start: &mut Instant) -> f64 {
+	let seconds = start.elapsed().as_secs_f64();
+	*start = Instant::now();
+	seconds
 }
 
 // Supersampled rows per band: the screen is cut into bands this tall, and
@@ -318,13 +359,40 @@ const BAND_ROWS: usize = 16;
 const NO_TRIANGLE: u32 = u32::MAX;
 // Triangles per setup job.
 const SETUP_CHUNK: usize = 4096;
+// Below this many samples a row-parallel stage runs on the calling thread,
+// since starting threads would cost more than the work.
+const INLINE_SAMPLES: usize = 64 * 1024;
 
 fn threads() -> usize {
 	std::thread::available_parallelism().map_or(4, |n| n.get())
 }
 
+// Splits `data`, `rows` rows of `row_len` items, into one run of whole rows
+// per core and calls `work(first_row, run)` on each; small data stays on
+// this thread.
+fn for_row_runs<T: Send>(data: &mut [T], row_len: usize, rows: usize, work: impl Fn(usize, &mut [T]) + Sync) {
+	if rows == 0 || row_len == 0 {
+		return;
+	}
+	let cores = threads().min(rows);
+	if cores <= 1 || rows * row_len < INLINE_SAMPLES {
+		work(0, &mut data[..rows * row_len]);
+		return;
+	}
+	let rows_each = rows.div_ceil(cores);
+	let work = &work;
+	std::thread::scope(|scope| {
+		for (i, run) in data[..rows * row_len].chunks_mut(rows_each * row_len).enumerate() {
+			scope.spawn(move || work(i * rows_each, run));
+		}
+	});
+}
+
 // Runs `work` for every index on all cores, results in index order.
 fn parallel_map<T: Send>(count: usize, work: impl Fn(usize) -> T + Sync) -> Vec<T> {
+	if count <= 1 {
+		return (0..count).map(work).collect();
+	}
 	let next = AtomicUsize::new(0);
 	let (next, work) = (&next, &work);
 	let mut done: Vec<(usize, T)> = std::thread::scope(|scope| {
@@ -450,6 +518,128 @@ struct Band<'a> {
 	glow: &'a mut [[f32; 3]],
 	owner: &'a mut [u32],
 	list: Vec<u32>,
+	// The visibility buffer: the nearest solid triangle at each sample.
+	nearest: Vec<u32>,
+}
+
+// Runs `work` on every band on all cores. Each band has its own lock, taken
+// once by whichever core claims its number, so no lock is ever contended;
+// bands are whole rows far apart, so cores never share cache lines either.
+fn run_bands(bands: &mut [Band], work: impl Fn(&mut Band) + Sync) {
+	let cores = threads().min(bands.len());
+	if cores <= 1 {
+		bands.iter_mut().for_each(|band| work(band));
+		return;
+	}
+	let slots: Vec<Mutex<&mut Band>> = bands.iter_mut().map(Mutex::new).collect();
+	let next = AtomicUsize::new(0);
+	let (slots, next, work) = (&slots, &next, &work);
+	std::thread::scope(|scope| {
+		for _ in 0..cores {
+			scope.spawn(move || loop {
+				let i = next.fetch_add(1, Ordering::Relaxed);
+				let Some(slot) = slots.get(i) else {
+					break;
+				};
+				let mut band = slot.lock().unwrap();
+				work(&mut **band);
+			});
+		}
+	});
+}
+
+// Mip chains kept between renders, so a model rendered for many views builds
+// each chain once. An image is known by its Rc and its buffers' addresses and
+// sizes, plus a hash of a spread of its texels, so a reused address or a
+// repainted image gets a fresh chain.
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+struct ImageStamp {
+	owner: usize,
+	pixels: usize,
+	alpha: usize,
+	width: usize,
+	height: usize,
+	coarse: u64,
+	texels: u64,
+}
+
+// Texels the stamp hashes, evenly spread over the image.
+const STAMP_TEXELS: usize = 4096;
+// Renders a chain may go unused before it is dropped.
+const MIP_CACHE_RENDERS: u64 = 8;
+// Most bytes of chains kept; the least recently used go first past it.
+const MIP_CACHE_BYTES: usize = 1 << 30;
+
+fn image_stamp(owner: usize, image: &Image) -> ImageStamp {
+	let mut hash: u64 = 0xcbf2_9ce4_8422_2325;
+	let mut mix = |bits: u32| hash = (hash ^ bits as u64).wrapping_mul(0x0000_0100_0000_01b3);
+	let count = image.pixels.len();
+	let step = (count / STAMP_TEXELS).max(1);
+	for at in (0..count).step_by(step) {
+		for channel in image.pixels[at] {
+			mix(channel.to_bits());
+		}
+		if let Some(alpha) = &image.alpha {
+			mix(alpha[at].to_bits());
+		}
+	}
+	ImageStamp {
+		owner,
+		pixels: image.pixels.as_ptr() as usize,
+		alpha: image.alpha.as_ref().map_or(0, |alpha| alpha.as_ptr() as usize),
+		width: image.width,
+		height: image.height,
+		coarse: image.coarse.to_bits(),
+		texels: hash,
+	}
+}
+
+struct CachedChain {
+	chain: Arc<Mips>,
+	bytes: usize,
+	last_used: u64,
+}
+
+#[derive(Default)]
+struct MipCache {
+	chains: HashMap<ImageStamp, CachedChain>,
+	renders: u64,
+}
+
+fn mip_cache() -> &'static Mutex<MipCache> {
+	static CACHE: OnceLock<Mutex<MipCache>> = OnceLock::new();
+	CACHE.get_or_init(|| Mutex::new(MipCache::default()))
+}
+
+// The chain for each image, from the cache or built on all cores.
+fn mip_chains(images: &[&Image], keys: &[usize]) -> Vec<Arc<Mips>> {
+	let stamps = parallel_map(images.len(), |k| image_stamp(keys[k], images[k]));
+	let mut cache = mip_cache().lock().unwrap();
+	cache.renders += 1;
+	let renders = cache.renders;
+	let missing: Vec<usize> = (0..images.len()).filter(|&k| !cache.chains.contains_key(&stamps[k])).collect();
+	let built = parallel_map(missing.len(), |m| Mips::new(images[missing[m]]));
+	for (m, chain) in missing.iter().zip(built) {
+		let bytes = chain.0.iter().map(|level| level.pixels.len() * 12 + level.alpha.as_ref().map_or(0, |alpha| alpha.len() * 4)).sum();
+		cache.chains.insert(stamps[*m], CachedChain { chain: Arc::new(chain), bytes, last_used: renders });
+	}
+	let chains: Vec<Arc<Mips>> = stamps
+		.iter()
+		.map(|stamp| {
+			let entry = cache.chains.get_mut(stamp).unwrap();
+			entry.last_used = renders;
+			entry.chain.clone()
+		})
+		.collect();
+	cache.chains.retain(|_, entry| entry.last_used + MIP_CACHE_RENDERS > renders);
+	let mut total: usize = cache.chains.values().map(|entry| entry.bytes).sum();
+	while total > MIP_CACHE_BYTES {
+		let Some((&oldest, _)) = cache.chains.iter().filter(|(_, entry)| entry.last_used < renders).min_by_key(|(_, entry)| entry.last_used) else {
+			break;
+		};
+		total -= cache.chains.remove(&oldest).map_or(0, |entry| entry.bytes);
+	}
+	chains
 }
 
 // The posed box around the corners a mesh's triangles use, or None when it
@@ -606,19 +796,23 @@ fn draw_forward(camera: &Camera, part: &Drawn, p: &Prepared, band: &mut Band) {
 	}
 }
 
-// Draws every triangle that reaches a band. Textured solid parts go through a
-// visibility buffer: the nearest triangle per sample is found first (the
-// first drawn wins a tie, as `z >= depth` skips in the reference), then each
-// sample is shaded once. See-through parts then blend over in order.
-fn draw_band(camera: &Camera, drawn: &[Drawn], prepared: &[Prepared], deferred: bool, mut band: Band) {
+// Band drawing runs in three phases, each over all bands before the next.
+// Textured solid parts go through the visibility buffer: the nearest triangle
+// per sample is found first (the first drawn wins a tie, as `z >= depth`
+// skips in the reference), then each sample is shaded once. See-through
+// parts then blend over in order. Flat part colours draw forward instead.
+
+// Phase one: the visibility pass, or the whole forward pass for part colours.
+fn band_raster(camera: &Camera, drawn: &[Drawn], prepared: &[Prepared], deferred: bool, band: &mut Band) {
 	let size = camera.size;
 	let eye = camera.eye.is_some();
 	let list = std::mem::take(&mut band.list);
 	if !deferred {
 		for &t in &list {
 			let p = &prepared[t as usize];
-			draw_forward(camera, &drawn[p.slot as usize], p, &mut band);
+			draw_forward(camera, &drawn[p.slot as usize], p, band);
 		}
+		band.list = list;
 		return;
 	}
 	let rows = band.depth.len() / size;
@@ -643,6 +837,15 @@ fn draw_band(camera: &Camera, drawn: &[Drawn], prepared: &[Prepared], deferred: 
 			}
 		}
 	}
+	band.list = list;
+	band.nearest = nearest;
+}
+
+// Phase two: each sample shaded once from its nearest triangle.
+fn band_shade(camera: &Camera, drawn: &[Drawn], prepared: &[Prepared], band: &mut Band) {
+	let size = camera.size;
+	let eye = camera.eye.is_some();
+	let nearest = std::mem::take(&mut band.nearest);
 	for (at, &t) in nearest.iter().enumerate() {
 		if t == NO_TRIANGLE {
 			continue;
@@ -655,16 +858,23 @@ fn draw_band(camera: &Camera, drawn: &[Drawn], prepared: &[Prepared], deferred: 
 		};
 		shade_sample(camera, part, p, w, &mut band.color[at], &mut band.glow[at]);
 	}
+}
+
+// Phase three: see-through parts blend over, in drawing order.
+fn band_glass(camera: &Camera, drawn: &[Drawn], prepared: &[Prepared], band: &mut Band) {
+	let list = std::mem::take(&mut band.list);
 	for &t in &list {
 		let p = &prepared[t as usize];
 		let part = &drawn[p.slot as usize];
 		if part.see_through {
-			draw_forward(camera, part, p, &mut band);
+			draw_forward(camera, part, p, band);
 		}
 	}
 }
 
-fn draw_fast(parts: &[&Part], skin: &[Pose], view: &View) -> Frame {
+fn draw_fast(parts: &[&Part], skin: &[Pose], view: &View) -> (Frame, Stages) {
+	let mut stages = Stages::default();
+	let mut clock = Instant::now();
 	// Meshes and poses as plain shared references, so threads can read them.
 	let mesh_borrows: Vec<Ref<Mesh>> = parts.iter().map(|part| part.mesh.borrow()).collect();
 	let meshes: Vec<&Mesh> = mesh_borrows.iter().map(|mesh| &**mesh).collect();
@@ -747,7 +957,10 @@ fn draw_fast(parts: &[&Part], skin: &[Pose], view: &View) -> Frame {
 	}
 	let image_borrows: Vec<Ref<Image>> = first_user.iter().map(|&i| parts[i].image.borrow()).collect();
 	let images: Vec<&Image> = image_borrows.iter().map(|image| &**image).collect();
-	let chains = parallel_map(images.len(), |k| Mips::new(images[k]));
+	stages.setup += lap(&mut clock);
+	let key_numbers: Vec<usize> = keys.iter().map(|key| *key as usize).collect();
+	let chains = mip_chains(&images, &key_numbers);
+	stages.mips = lap(&mut clock);
 
 	// Triangles of the kept parts, posed, on all cores; then solid parts
 	// first and see-through after, each group in part order, as drawn.
@@ -771,7 +984,7 @@ fn draw_fast(parts: &[&Part], skin: &[Pose], view: &View) -> Frame {
 			Drawn {
 				index: i as u32,
 				image,
-				mips: &chains[image_of[i]],
+				mips: &*chains[image_of[i]],
 				see_through: image.alpha.is_some(),
 				flat: colours.iter().find(|(name, _)| *name == part.name).map(|(_, c)| *c),
 				emissive: part.emissive,
@@ -780,7 +993,9 @@ fn draw_fast(parts: &[&Part], skin: &[Pose], view: &View) -> Frame {
 		})
 		.collect();
 	let (mut drawn, glass): (Vec<Drawn>, Vec<Drawn>) = all.into_iter().partition(|part| !part.see_through);
+	let any_glass = !glass.is_empty();
 	drawn.extend(glass);
+	stages.setup += lap(&mut clock);
 
 	// Setup on all cores in fixed chunks of the drawing order, joined back in
 	// that order.
@@ -808,11 +1023,14 @@ fn draw_fast(parts: &[&Part], skin: &[Pose], view: &View) -> Frame {
 		out
 	});
 	let prepared: Vec<Prepared> = chunks.into_iter().flatten().collect();
+	stages.prepare = lap(&mut clock);
 
-	let mut color = vec![BACKGROUND; size * size];
-	let mut depth = vec![f64::MAX; size * size];
+	// Zeroed buffers come from the system untouched; each band fills its own
+	// slice with the starting values on its core (see `band_raster`).
+	let mut color = vec![[0.0f32; 3]; size * size];
+	let mut depth = vec![0.0f64; size * size];
 	let mut glow = vec![[0.0f32; 3]; size * size];
-	let mut owner = vec![NO_PART; size * size];
+	let mut owner = vec![0u32; size * size];
 
 	// Binning: each triangle joins the list of every band its box reaches,
 	// in drawing order.
@@ -831,51 +1049,65 @@ fn draw_fast(parts: &[&Part], skin: &[Pose], view: &View) -> Frame {
 		.zip(owner.chunks_mut(chunk))
 		.zip(lists)
 		.enumerate()
-		.map(|(b, ((((depth, color), glow), owner), list))| Band { top: b * BAND_ROWS, depth, color, glow, owner, list })
+		.map(|(b, ((((depth, color), glow), owner), list))| Band { top: b * BAND_ROWS, depth, color, glow, owner, list, nearest: Vec::new() })
 		.collect();
+	let mut bands = bands;
+	stages.bin = lap(&mut clock);
+
 	// Flat part colours blend over what lay under, so they keep the
 	// reference's draw-and-shade order; textures go through the visibility
 	// buffer.
 	let deferred = !view.parts;
-	let band_queue = Mutex::new(bands);
-	let (queue, camera_ref, drawn_ref, prepared_ref) = (&band_queue, &camera, &drawn[..], &prepared[..]);
-	std::thread::scope(|scope| {
-		for _ in 0..threads() {
-			scope.spawn(move || loop {
-				let next = queue.lock().unwrap().pop();
-				let Some(band) = next else {
-					break;
-				};
-				draw_band(camera_ref, drawn_ref, prepared_ref, deferred, band);
-			});
-		}
+	let (camera_ref, drawn_ref, prepared_ref) = (&camera, &drawn[..], &prepared[..]);
+	run_bands(&mut bands, |band| {
+		band.color.fill(BACKGROUND);
+		band.depth.fill(f64::MAX);
+		band.owner.fill(NO_PART);
+		band_raster(camera_ref, drawn_ref, prepared_ref, deferred, band);
 	});
-	drop(band_queue);
+	stages.raster = lap(&mut clock);
+	if deferred {
+		run_bands(&mut bands, |band| band_shade(camera_ref, drawn_ref, prepared_ref, band));
+	}
+	stages.shade = lap(&mut clock);
+	if deferred && any_glass {
+		run_bands(&mut bands, |band| band_glass(camera_ref, drawn_ref, prepared_ref, band));
+	}
+	drop(bands);
+	stages.glass = lap(&mut clock);
 
 	if let (Some(_), Some(step)) = (view.side, view.grid) {
 		draw_grid(&mut color, size, width, [dot(center, right), dot(center, up)], step);
 	}
 
 	let bloom = blur_fast(&glow, size, size / 150);
+	stages.bloom = lap(&mut clock);
 
-	let mut data = Vec::with_capacity(view.size * view.size * 3);
-	for y in 0..view.size {
-		for x in 0..view.size {
-			let mut sum = [0.0f32; 3];
-			for dy in 0..SUPERSAMPLE {
-				for dx in 0..SUPERSAMPLE {
-					let at = (y * SUPERSAMPLE + dy) * size + x * SUPERSAMPLE + dx;
-					for a in 0..3 {
-						sum[a] += color[at][a] + bloom[at][a] * BLOOM;
+	// Each picture row averages its supersampled block, rows on all cores.
+	let mut data = vec![0u8; view.size * view.size * 3];
+	let (color, bloom) = (&color, &bloom);
+	for_row_runs(&mut data, view.size * 3, view.size, |first, run| {
+		for (row, line) in run.chunks_mut(view.size * 3).enumerate() {
+			let y = first + row;
+			for x in 0..view.size {
+				let mut sum = [0.0f32; 3];
+				for dy in 0..SUPERSAMPLE {
+					for dx in 0..SUPERSAMPLE {
+						let at = (y * SUPERSAMPLE + dy) * size + x * SUPERSAMPLE + dx;
+						for a in 0..3 {
+							sum[a] += color[at][a] + bloom[at][a] * BLOOM;
+						}
 					}
 				}
+				let samples = (SUPERSAMPLE * SUPERSAMPLE) as f32;
+				let pixel = sum.map(|c| ((c / samples).clamp(0.0, 1.0) * 255.0 + 0.5) as u8);
+				line[x * 3..x * 3 + 3].copy_from_slice(&pixel);
 			}
-			let samples = (SUPERSAMPLE * SUPERSAMPLE) as f32;
-			data.extend(sum.map(|c| ((c / samples).clamp(0.0, 1.0) * 255.0 + 0.5) as u8));
 		}
-	}
-	fxaa(&mut data, view.size, view.size);
-	Frame { pixels: data, owner, owner_size: size }
+	});
+	fxaa_fast(&mut data, view.size, view.size);
+	stages.finish = lap(&mut clock);
+	(Frame { pixels: data, owner, owner_size: size }, stages)
 }
 
 // The reference renderer, kept unchanged: every part, every triangle, each
@@ -1169,6 +1401,49 @@ fn fxaa(data: &mut [u8], width: usize, height: usize) {
 	}
 }
 
+// The same fxaa with rows on all cores; every pixel reads the untouched copy,
+// so rows are independent and the arithmetic is unchanged.
+fn fxaa_fast(data: &mut [u8], width: usize, height: usize) {
+	if width < 3 || height < 3 {
+		return;
+	}
+	let source = data.to_vec();
+	let luma: Vec<f32> = source.chunks(3).map(|c| (0.299 * c[0] as f32 + 0.587 * c[1] as f32 + 0.114 * c[2] as f32) / 255.0).collect();
+	let (source, luma) = (&source, &luma);
+	let at = |x: usize, y: usize| y * width + x;
+	for_row_runs(data, width * 3, height, |first, run| {
+		for (row, line) in run.chunks_mut(width * 3).enumerate() {
+			let y = first + row;
+			if y == 0 || y == height - 1 {
+				continue;
+			}
+			for x in 1..width - 1 {
+				let l = luma[at(x, y)];
+				let (n, s, w, e) = (luma[at(x, y - 1)], luma[at(x, y + 1)], luma[at(x - 1, y)], luma[at(x + 1, y)]);
+				let corners = [luma[at(x - 1, y - 1)], luma[at(x + 1, y - 1)], luma[at(x - 1, y + 1)], luma[at(x + 1, y + 1)]];
+				let (mut low, mut high, mut sum) = (l.min(n).min(s).min(w).min(e), l.max(n).max(s).max(w).max(e), l + n + s + w + e);
+				for &c in &corners {
+					low = low.min(c);
+					high = high.max(c);
+					sum += c;
+				}
+				let range = high - low;
+				if range < FXAA_EDGE_MIN.max(high * FXAA_EDGE_RELATIVE) {
+					continue;
+				}
+				let horizontal = (n + s - 2.0 * l).abs() >= (w + e - 2.0 * l).abs();
+				let (a, b) = if horizontal { (at(x, y - 1), at(x, y + 1)) } else { (at(x - 1, y), at(x + 1, y)) };
+				let weight = ((sum / 9.0 - l).abs() / range).clamp(0.0, 1.0).powi(2) * 0.5;
+				let p = at(x, y) * 3;
+				for k in 0..3 {
+					let blended = source[a * 3 + k] as f32 * 0.5 + source[b * 3 + k] as f32 * 0.5;
+					line[x * 3 + k] = (source[p + k] as f32 * (1.0 - weight) + blended * weight + 0.5) as u8;
+				}
+			}
+		}
+	});
+}
+
 // Box blur run three times each way, which is close to a gaussian.
 fn blur(pixels: &[[f32; 3]], size: usize, radius: usize) -> Vec<[f32; 3]> {
 	let mut out = pixels.to_vec();
@@ -1208,42 +1483,74 @@ fn blur(pixels: &[[f32; 3]], size: usize, radius: usize) -> Vec<[f32; 3]> {
 	out
 }
 
-// The same blur with rows on all cores: columns are blurred as rows of the
-// transposed picture, so every sum runs in the same order as in `blur`.
+// The same blur on all cores, every sum in the same order as in `blur`: rows
+// split into runs of whole rows, columns into blocks of whole columns that
+// sweep down the picture together (no transposes, reads stay in rows).
 fn blur_fast(pixels: &[[f32; 3]], size: usize, radius: usize) -> Vec<[f32; 3]> {
 	let mut out = pixels.to_vec();
 	if radius == 0 || out.iter().all(|p| *p == [0.0; 3]) {
 		return out;
 	}
 	for _ in 0..3 {
-		blur_rows(&mut out, size, radius);
-		let mut columns = transpose(&out, size);
-		blur_rows(&mut columns, size, radius);
-		out = transpose(&columns, size);
+		for_row_runs(&mut out, size, size, |_, run| {
+			let mut line = vec![[0.0f32; 3]; size];
+			for row in run.chunks_mut(size) {
+				blur_line(row, &mut line, radius);
+			}
+		});
+		blur_columns(&mut out, size, radius);
 	}
 	out
 }
 
-fn transpose(pixels: &[[f32; 3]], size: usize) -> Vec<[f32; 3]> {
-	let mut out = vec![[0.0f32; 3]; size * size];
-	for y in 0..size {
-		for x in 0..size {
-			out[x * size + y] = pixels[y * size + x];
-		}
-	}
-	out
-}
-
-fn blur_rows(pixels: &mut [[f32; 3]], size: usize, radius: usize) {
-	let rows_each = size.div_ceil(threads()).max(1);
-	std::thread::scope(|scope| {
-		for chunk in pixels.chunks_mut(rows_each * size) {
-			scope.spawn(move || {
-				let mut line = vec![[0.0f32; 3]; size];
-				for row in chunk.chunks_mut(size) {
-					blur_line(row, &mut line, radius);
+// One box-blur pass down every column. Each block of columns is blurred into
+// its own buffer from the untouched picture, then copied back row by row.
+fn blur_columns(pixels: &mut [[f32; 3]], size: usize, radius: usize) {
+	let width_each = size.div_ceil(threads().min(size).max(1)).max(1);
+	let source: &[[f32; 3]] = pixels;
+	let blocks: Vec<Vec<[f32; 3]>> = parallel_map(size.div_ceil(width_each), |b| {
+		let (x0, x1) = (b * width_each, ((b + 1) * width_each).min(size));
+		let w = x1 - x0;
+		let row = |y: usize| &source[y * size + x0..y * size + x1];
+		let divisor = (2 * radius + 1) as f32;
+		let mut out = vec![[0.0f32; 3]; size * w];
+		let mut sums = vec![[0.0f32; 3]; w];
+		for i in 0..=radius.min(size - 1) {
+			for (sum, p) in sums.iter_mut().zip(row(i)) {
+				for a in 0..3 {
+					sum[a] += p[a];
 				}
-			});
+			}
+		}
+		for i in 0..size {
+			for (target, sum) in out[i * w..(i + 1) * w].iter_mut().zip(&sums) {
+				*target = sum.map(|c| c / divisor);
+			}
+			if i + radius + 1 < size {
+				for (sum, p) in sums.iter_mut().zip(row(i + radius + 1)) {
+					for a in 0..3 {
+						sum[a] += p[a];
+					}
+				}
+			}
+			if i >= radius {
+				for (sum, p) in sums.iter_mut().zip(row(i - radius)) {
+					for a in 0..3 {
+						sum[a] -= p[a];
+					}
+				}
+			}
+		}
+		out
+	});
+	let blocks = &blocks;
+	for_row_runs(pixels, size, size, |first, run| {
+		for (r, line) in run.chunks_mut(size).enumerate() {
+			let y = first + r;
+			for (b, block) in blocks.iter().enumerate() {
+				let (x0, w) = (b * width_each, block.len() / size);
+				line[x0..x0 + w].copy_from_slice(&block[y * w..(y + 1) * w]);
+			}
 		}
 	});
 }
