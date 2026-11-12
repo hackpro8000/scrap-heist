@@ -1,0 +1,157 @@
+{
+	"assets": [
+		{
+			"id": "1125105e917dec0a",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 53/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 877500,
+			"sha": "22f02df1670fa89a",
+			"parts": 17
+		},
+		{
+			"id": "000e0637814e7f0b",
+			"key": "YardFence-0f1495cb71d18f3d 1 x x1.5",
+			"piece": 1,
+			"label": "Yard1_FenceBack1",
+			"turn": 112.5,
+			"bytes": 393816,
+			"sha": "fb2db64df2779bff",
+			"parts": 3
+		},
+		{
+			"id": "cab73efbe0acbbf5",
+			"key": "9edb366bcc5dfdf7-09a6759228b03a28 Plot3 -80.36352079666884 194.0147018273702 22.5",
+			"piece": 1,
+			"label": "Plot3",
+			"turn": 0.0,
+			"bytes": 12041640,
+			"sha": "9549c27475af1364",
+			"parts": 40
+		}
+	],
+	"placements": [
+		{
+			"asset": "1125105e917dec0a",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-5_-3_0_100",
+					"position": [
+						-265.483925,
+						-13.95922,
+						173.257885
+					]
+				},
+				{
+					"name": "Grass_3_3_0_100",
+					"position": [
+						234.83031499999998,
+						-13.1550635,
+						-204.614215
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceBack1",
+			"turn": 112.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						229.66317500000002,
+						5.3468148499999995,
+						-140.584785
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard1_FenceFront1",
+			"turn": -67.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						137.701325,
+						5.3468148499999995,
+						-70.031755
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard2_FenceBack3",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						85.16071,
+						5.3468148499999995,
+						-252.62079
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard2_FenceBack8",
+			"turn": 157.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						140.593485,
+						5.3468148499999995,
+						-229.659785
+					]
+				}
+			]
+		},
+		{
+			"asset": "000e0637814e7f0b",
+			"label": "Yard2_FenceFront4",
+			"turn": -22.5,
+			"anchors": [
+				{
+					"name": "Fittings",
+					"position": [
+						70.0230515,
+						5.3468148499999995,
+						-137.70472
+					]
+				}
+			]
+		},
+		{
+			"asset": "cab73efbe0acbbf5",
+			"label": "Plot3",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Ground_-1_0_0_010",
+					"position": [
+						-135.23916499999999,
+						1.8649999999999998,
+						-216.744945
+					]
+				},
+				{
+					"name": "Ground_0_-1_0_100",
+					"position": [
+						-25.4878755,
+						1.8649999999999998,
+						-171.284465
+					]
+				}
+			]
+		}
+	]
+}
