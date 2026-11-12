@@ -184,7 +184,8 @@ impl UserData for MeshHandle {
 			let mesh = this.0.borrow();
 			let (c, s) = (turn.cos(), turn.sin());
 			let positions = mesh.positions.iter().map(|p| [p[0] * c - p[1] * s + x, p[0] * s + p[1] * c + y, p[2] + z]).collect();
-			let moved = Mesh { positions, faces: mesh.faces.clone(), smooth_angle: mesh.smooth_angle };
+			let normals = mesh.normals.as_ref().map(|list| list.iter().map(|n| [n[0] * c - n[1] * s, n[0] * s + n[1] * c, n[2]]).collect());
+			let moved = Mesh { positions, faces: mesh.faces.clone(), smooth_angle: mesh.smooth_angle, normals };
 			Ok(MeshHandle(Rc::new(RefCell::new(moved))))
 		});
 		methods.add_method("vertexCount", |_, this, ()| Ok(this.0.borrow().positions.len()));
@@ -805,19 +806,22 @@ fn save_shot(out: &Path, parts: &[&Part], shot: &Shot, frame: &render::Frame) ->
 	std::fs::write(out.join("cells.txt"), render::cells(frame, parts, 6)).map_err(|e| e.to_string())
 }
 
-// The largest difference in any channel (0-255) and the mean one.
-fn difference(a: &[u8], b: &[u8]) -> (u8, f64) {
+// Two RGB pictures apart: the largest difference in any channel (0-255), the
+// mean one, and how many pixels differ by more than 2 in some channel.
+fn difference(a: &[u8], b: &[u8]) -> (u8, f64, usize) {
 	if a.len() != b.len() || a.is_empty() {
-		return (255, 255.0);
+		return (255, 255.0, a.len().max(b.len()) / 3);
 	}
 	let mut largest = 0;
 	let mut sum = 0u64;
-	for (x, y) in a.iter().zip(b) {
-		let gap = x.abs_diff(*y);
+	let mut over2 = 0;
+	for (x, y) in a.chunks_exact(3).zip(b.chunks_exact(3)) {
+		let gap = (0..3).map(|c| x[c].abs_diff(y[c])).max().unwrap_or(0);
 		largest = largest.max(gap);
-		sum += gap as u64;
+		over2 += (gap > 2) as usize;
+		sum += (0..3).map(|c| x[c].abs_diff(y[c]) as u64).sum::<u64>();
 	}
-	(largest, sum as f64 / a.len() as f64)
+	(largest, sum as f64 / a.len() as f64, over2)
 }
 
 // Reads a .glb back and decodes only the textures of parts some shot can see.
@@ -1032,7 +1036,12 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 		Some(bytes) => Some(load_for(bytes, &jobs)?),
 		None => None,
 	};
+	// Both lists keep the build's part order, and each shot's one View draws all three.
 	let reloaded_shown: Vec<&Part> = reloaded.as_ref().map_or(Vec::new(), |scene| scene.parts.iter().filter(|p| p.preview).collect());
+	// The shown parts with corners rounded as the .glb stores them: what the
+	// reader should match exactly, the rest being the format's own precision.
+	let rounded: Vec<Part> = if reloaded.is_some() { shown.iter().map(|part| scene::rounded(part)).collect() } else { Vec::new() };
+	let rounded_shown: Vec<&Part> = rounded.iter().collect();
 	for (at, job) in jobs.iter().enumerate() {
 		let mine = match claims.as_mut() {
 			Some(claims) => claims.mine(at),
@@ -1053,8 +1062,9 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 			let started = Instant::now();
 			let again = draw_shot(&reloaded_shown, shot);
 			let from_glb = started.elapsed().as_secs_f64();
-			let (max, mean) = difference(&frame.pixels, &again.pixels);
-			eprintln!("GLB_CHECK {} max={max} mean={mean:.3} direct={direct:.2} glb={from_glb:.2}", shot.file);
+			let (max, mean, over2) = difference(&frame.pixels, &again.pixels);
+			let (_, _, over2_f32) = difference(&draw_shot(&rounded_shown, shot).pixels, &again.pixels);
+			eprintln!("GLB_CHECK {} max={max} mean={mean:.3} over2={over2} over2_f32={over2_f32} direct={direct:.2} glb={from_glb:.2}", shot.file);
 		}
 	}
 	if let Some(wanted) = shown_clip {

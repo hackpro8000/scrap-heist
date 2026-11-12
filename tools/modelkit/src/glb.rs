@@ -9,7 +9,7 @@
 use crate::anim::{self, Clip};
 use crate::{Bone, Part};
 
-fn to_y_up(p: [f64; 3]) -> [f32; 3] {
+pub fn to_y_up(p: [f64; 3]) -> [f32; 3] {
 	[p[0] as f32, p[2] as f32, -p[1] as f32]
 }
 

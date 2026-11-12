@@ -19,6 +19,11 @@ pub struct Mesh {
 	// Faces meeting at less than this many degrees share smoothed normals:
 	// 0 is flat shading, 180 smooths everything.
 	pub smooth_angle: f64,
+	// Normals given outright, one per face corner in face order (face 0's
+	// corners, then face 1's...), as a mesh read back from a .glb carries
+	// them; triangles() then uses these instead of smoothing. None for meshes
+	// a script builds; anything that reshapes the faces drops them.
+	pub normals: Option<Vec<Vec3>>,
 }
 
 pub fn sub(a: Vec3, b: Vec3) -> Vec3 {
@@ -56,7 +61,7 @@ pub struct Corner {
 
 impl Mesh {
 	pub fn new() -> Self {
-		Mesh { positions: Vec::new(), faces: Vec::new(), smooth_angle: 180.0 }
+		Mesh { positions: Vec::new(), faces: Vec::new(), smooth_angle: 180.0, normals: None }
 	}
 
 	// Merges vertices closer than `distance`, like Blender's merge by distance.
@@ -102,6 +107,7 @@ impl Mesh {
 			};
 		}
 		self.positions = kept;
+		self.normals = None;
 		let faces = std::mem::take(&mut self.faces);
 		for face in faces {
 			let mut verts = Vec::new();
@@ -151,7 +157,11 @@ impl Mesh {
 		}
 		let limit = self.smooth_angle.to_radians().cos();
 		let mut triangles = Vec::new();
+		// Where this face's corners start in `normals`, when normals are given.
+		let mut first_corner = 0;
 		for (face, &face_normal) in self.faces.iter().zip(&face_normals) {
+			let given = self.normals.as_ref().and_then(|normals| normals.get(first_corner..first_corner + face.verts.len()));
+			first_corner += face.verts.len();
 			// Smooth each corner over the neighbouring faces within the angle.
 			let normal = |vert: usize| {
 				if self.smooth_angle <= 0.0 {
@@ -169,7 +179,10 @@ impl Mesh {
 			let corner = |k: usize| Corner {
 				position: self.positions[face.verts[k]],
 				uv: face.uvs.as_ref().map_or([0.0, 0.0], |uvs| uvs[k]),
-				normal: normal(face.verts[k]),
+				normal: match given {
+					Some(normals) => normals[k],
+					None => normal(face.verts[k]),
+				},
 			};
 			for k in 1..face.verts.len() - 1 {
 				triangles.push([corner(0), corner(k), corner(k + 1)]);
@@ -204,6 +217,7 @@ impl Mesh {
 		// Offsetting inward keeps the original as the outside; outward makes
 		// the copy the outside. The inside skin is wound the other way.
 		let inward = thickness < 0.0;
+		self.normals = None;
 		let faces = std::mem::take(&mut self.faces);
 		for face in &faces {
 			let len = face.verts.len();

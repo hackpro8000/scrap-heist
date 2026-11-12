@@ -6,8 +6,9 @@
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
+use crate::glb::to_y_up;
 use crate::image::Image;
-use crate::mesh::{add, cross, dot, normalize, scale, sub, Corner, Face, Mesh, Vec3};
+use crate::mesh::{add, dot, scale, sub, Corner, Face, Mesh, Vec3};
 use crate::{Bone, Part};
 
 pub struct Scene {
@@ -85,12 +86,7 @@ pub fn read(file: Vec<u8>) -> Result<Scene, String> {
 			return Err(format!("part {name}: attributes don't line up"));
 		}
 		let corners: Vec<Corner> = (0..count)
-			.map(|i| Corner {
-				position: from_y_up([positions[3 * i], positions[3 * i + 1], positions[3 * i + 2]]),
-				normal: from_y_up([normals[3 * i], normals[3 * i + 1], normals[3 * i + 2]]),
-				// glTF's V runs down from the top of the image; ours runs up.
-				uv: [uvs[2 * i] as f64, (1.0f32 - uvs[2 * i + 1]) as f64],
-			})
+			.map(|i| stored_corner([positions[3 * i], positions[3 * i + 1], positions[3 * i + 2]], [normals[3 * i], normals[3 * i + 1], normals[3 * i + 2]], [uvs[2 * i], uvs[2 * i + 1]]))
 			.collect();
 		// Rigid skin: every corner follows the same one bone.
 		let bone = match attributes.get("JOINTS_0").index() {
@@ -185,73 +181,32 @@ fn ball(corners: &[Corner]) -> (Vec3, f64) {
 	(scale(add(low, high), 0.5), dot(half, half).sqrt())
 }
 
-// How far a pull face's corners stand from the corner it pulls, in studs:
-// small enough that no picture sample lands on one, big enough that its
-// normal comes out exact to about 1e-7 at map distances.
-const PULL_SIZE: f64 = 1e-5;
+// A corner as the .glb holds it (f32, Y up, V from the top), back in ours.
+fn stored_corner(position: [f32; 3], normal: [f32; 3], uv: [f32; 2]) -> Corner {
+	Corner { position: from_y_up(position), normal: from_y_up(normal), uv: [uv[0] as f64, (1.0f32 - uv[1]) as f64] }
+}
 
-// A mesh whose triangles() gives back these triangles with these corner
-// normals. Mesh keeps no normals, it smooths them from its faces, so: every
-// triangle gets its own three vertices, smoothing is on (a vertex's normal is
-// the sum of its faces' normals), and where a stored normal differs from its
-// triangle's own, tiny pull faces at that vertex add what makes up the
-// difference. Triangles keep their order, so ties in depth draw the same.
+// A mesh whose triangles() gives back these triangles, in this order (so
+// ties in depth draw the same), with these corner normals carried as given.
 fn rebuild(corners: &[Corner], triangles: &[u32]) -> Mesh {
-	let mut mesh = Mesh { positions: Vec::new(), faces: Vec::new(), smooth_angle: 180.0 };
-	let mut pulls_wanted: Vec<(usize, Vec3, [f64; 2])> = Vec::new();
+	let mut mesh = Mesh { positions: corners.iter().map(|c| c.position).collect(), faces: Vec::new(), smooth_angle: 180.0, normals: None };
+	let mut normals = Vec::with_capacity(triangles.len());
 	for triangle in triangles.chunks_exact(3) {
-		let picked = [0, 1, 2].map(|k| corners[triangle[k] as usize]);
-		let first = mesh.positions.len();
-		mesh.positions.extend(picked.map(|c| c.position));
-		let face = Face { verts: vec![first, first + 1, first + 2], uvs: Some(picked.map(|c| c.uv).to_vec()) };
-		let span = cross(sub(picked[1].position, picked[0].position), sub(picked[2].position, picked[0].position));
-		// A triangle with no area draws nothing, so its normals don't matter.
-		if dot(span, span).sqrt() > 1e-12 {
-			let own = mesh.face_normal(&face);
-			for (k, corner) in picked.iter().enumerate() {
-				for pull in pulls(own, normalize(corner.normal)) {
-					pulls_wanted.push((first + k, pull, corner.uv));
-				}
-			}
-		}
-		mesh.faces.push(face);
+		let verts: Vec<usize> = triangle.iter().map(|&i| i as usize).collect();
+		normals.extend(verts.iter().map(|&v| corners[v].normal));
+		mesh.faces.push(Face { uvs: Some(verts.iter().map(|&v| corners[v].uv).collect()), verts });
 	}
-	for (vert, pull, uv) in pulls_wanted {
-		let at = mesh.positions[vert];
-		// Wound so its normal (across × along) is the pull.
-		let across = perpendicular(pull);
-		let along = cross(pull, across);
-		let first = mesh.positions.len();
-		mesh.positions.push(add(at, scale(across, PULL_SIZE)));
-		mesh.positions.push(add(at, scale(along, PULL_SIZE)));
-		mesh.faces.push(Face { verts: vec![vert, first, first + 1], uvs: Some(vec![uv; 3]) });
-	}
+	mesh.normals = Some(normals);
 	mesh
 }
 
-// Unit face normals that, summed with a triangle's own normal, point along
-// `target`; none when they already agree.
-fn pulls(own: Vec3, target: Vec3) -> Vec<Vec3> {
-	let gap = sub(target, own);
-	if dot(gap, gap) < 1e-12 {
-		return Vec::new();
-	}
-	let facing = dot(own, target);
-	// One pull mirrors `own` about `target`: own + pull = 2·facing·target.
-	if facing > 0.05 {
-		return vec![sub(scale(target, 2.0 * facing), own)];
-	}
-	// Near square or facing away: two pulls that add up to the gap exactly.
-	let half = scale(gap, 0.5);
-	let side = scale(perpendicular(gap), (1.0 - dot(half, half)).max(0.0).sqrt());
-	vec![add(half, side), sub(half, side)]
-}
-
-// Some unit direction square to `v`.
-fn perpendicular(v: Vec3) -> Vec3 {
-	let v = normalize(v);
-	let axis = if v[0].abs() < 0.6 { [1.0, 0.0, 0.0] } else { [0.0, 1.0, 0.0] };
-	normalize(cross(v, axis))
+// A copy of a part with its corners rounded exactly as a .glb stores them
+// (f32, through Y up and back), sharing its texture: --glb-check's measure of
+// what the file format alone changes.
+pub fn rounded(part: &Part) -> Part {
+	let (corners, triangles) = part.mesh.borrow().indexed();
+	let corners: Vec<Corner> = corners.iter().map(|c| stored_corner(to_y_up(c.position), to_y_up(c.normal), [c.uv[0] as f32, 1.0 - c.uv[1] as f32])).collect();
+	Part { mesh: Rc::new(RefCell::new(rebuild(&corners, &triangles))), ..part.clone() }
 }
 
 // A PNG as glb::write stores it: 8-bit RGB, or RGBA for a see-through part.
