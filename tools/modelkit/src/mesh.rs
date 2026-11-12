@@ -64,12 +64,39 @@ impl Mesh {
 	pub fn weld(&mut self, distance: f64) {
 		let mut remap = vec![0usize; self.positions.len()];
 		let mut kept: Vec<Vec3> = Vec::new();
+		// Kept vertices by grid cell, two welding distances across, so a point
+		// meets only the kept vertices in its own cell and the 26 round it. It
+		// still takes the earliest kept vertex in range, as a scan of them all would.
+		let gridded = distance > 0.0 && distance.is_finite();
+		let cell = |p: Vec3| p.map(|c| (c / (distance * 2.0)).floor() as i64);
+		let mut grid: HashMap<[i64; 3], Vec<usize>> = HashMap::new();
 		for (index, &point) in self.positions.iter().enumerate() {
-			let found = kept.iter().position(|&other| dot(sub(point, other), sub(point, other)) <= distance * distance);
+			let within = |other: Vec3| dot(sub(point, other), sub(point, other)) <= distance * distance;
+			let found = if gridded {
+				let home = cell(point);
+				let mut earliest: Option<usize> = None;
+				for x in -1..=1 {
+					for y in -1..=1 {
+						for z in -1..=1 {
+							for &candidate in grid.get(&[home[0] + x, home[1] + y, home[2] + z]).into_iter().flatten() {
+								if earliest.map_or(true, |first| candidate < first) && within(kept[candidate]) {
+									earliest = Some(candidate);
+								}
+							}
+						}
+					}
+				}
+				earliest
+			} else {
+				kept.iter().position(|&other| within(other))
+			};
 			remap[index] = match found {
 				Some(existing) => existing,
 				None => {
 					kept.push(point);
+					if gridded {
+						grid.entry(cell(point)).or_default().push(kept.len() - 1);
+					}
 					kept.len() - 1
 				}
 			};

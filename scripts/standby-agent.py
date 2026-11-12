@@ -22,6 +22,14 @@ no coordinator for LOST_MINUTES the machine ends, freeing its slot. A task
 sent again after a reconnect is not rebuilt: what it left is sent again.
 The machine ends after <idle minutes> without a task, at <max minutes>, or
 when the coordinator says stop.
+
+A numbered machine (scripts/cloud-worker.sh join) passes "published" as the
+url and 0 as the count. It reads the coordinator's address from
+address.json on the branch build-results/coordinator-address before every
+connection, so it follows a coordinator whose address changed or that was
+started again, and it never gives up for lack of one. Its hello carries its
+number; the coordinator answers {"type": "welcome"} with the shard and
+count it builds as, which may change between tasks.
 """
 import asyncio
 import json
@@ -44,6 +52,7 @@ import wire  # noqa: E402
 
 MAX_MESSAGE = 64 * 1024 * 1024
 LOST_MINUTES = 3
+ADDRESS_BRANCH = "build-results/coordinator-address"
 HEARTBEAT_SECONDS = 10
 SWAP_WAIT_SECONDS = 60
 CLAIM_WAIT_SECONDS = 15
@@ -127,7 +136,14 @@ def last_line(path):
 	return next((line.strip() for line in reversed(lines) if line.strip()), "")[:200]
 
 
+WORKER_TOKEN = ""  # a cloud worker's minted token, taken from the environment by main()
+
+
 def identity_token():
+	# A worker that is not a GitHub machine (scripts/cloud-worker.sh) shows its
+	# minted token; taken out of the environment so builds never see it.
+	if WORKER_TOKEN:
+		return "worker:" + WORKER_TOKEN
 	url = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_URL")
 	bearer = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
 	if not url or not bearer:
@@ -140,6 +156,8 @@ def identity_token():
 class Agent:
 	def __init__(self, url, layout, index, count, idle_minutes, max_minutes):
 		self.url, self.layout, self.index, self.count = url, layout, int(index), int(count)
+		self.published = url == "published"
+		self.machine = self.index if self.count == 0 else None
 		self.idle_seconds = int(idle_minutes) * 60
 		self.stop_at = time.monotonic() + int(max_minutes) * 60
 		self.idle_until = time.monotonic() + self.idle_seconds
@@ -244,7 +262,13 @@ class Agent:
 		try:
 			if identity not in self.built:
 				self.begin(identity, "build", os.path.join("results", identity, "build.log"))
-				self.built[identity] = await asyncio.to_thread(self.run_task, identity, text)
+				try:
+					self.built[identity] = await asyncio.to_thread(self.run_task, identity, text)
+				except Exception as error:
+					# A full disk, say: the coordinator must still hear this shard is over.
+					say(f"task {identity}: could not run: {error}")
+					await self.send(json.dumps({"type": "done", "task": identity, "summary": "status=FAILED\nbuild=-\nupload=-\ntotal=0\nparts=0\n"}))
+					return
 			await self.send_results(identity, self.built[identity])
 			self.idle_until = time.monotonic() + self.idle_seconds
 			await self.send_previews(identity, text)
@@ -440,12 +464,23 @@ class Agent:
 			if asset:
 				await socket.send(json.dumps({"type": "uploaded", "id": header["id"], "asset": asset}))
 
+	def published_address(self):
+		# Not through FETCH_HEAD: a task's checkout may be reading it.
+		with self.git_lock:
+			subprocess.run(["git", "fetch", "-q", "--depth=1", "--no-write-fetch-head", "origin",
+				f"+{ADDRESS_BRANCH}:refs/coordinator-address"], check=True, capture_output=True, timeout=60)
+			shown = subprocess.run(["git", "show", "refs/coordinator-address:address.json"], check=True, capture_output=True, text=True)
+		return json.loads(shown.stdout)["agent"]
+
 	async def session(self):
 		token = await asyncio.to_thread(identity_token)
-		async with websockets.connect(self.url, max_size=MAX_MESSAGE, ping_interval=20, ping_timeout=120) as socket:
-			await socket.send(json.dumps({"type": "hello", "token": token, "shard": self.index, "count": self.count,
-				"layout": self.layout}))
-			say(f"connected to {self.url}")
+		url = await asyncio.to_thread(self.published_address) if self.published else self.url
+		async with websockets.connect(url, max_size=MAX_MESSAGE, ping_interval=20, ping_timeout=120) as socket:
+			hello = {"type": "hello", "token": token, "shard": self.index, "count": self.count, "layout": self.layout}
+			if self.machine is not None:
+				hello["machine"] = self.machine
+			await socket.send(json.dumps(hello))
+			say(f"connected to {url}")
 			self.backoff = 1
 			self.socket, self.loop = socket, asyncio.get_running_loop()
 			global forward
@@ -487,6 +522,12 @@ class Agent:
 						ready = self.bakes_ready.get((event["task"], event["name"]))
 						if ready and not ready.done() and event.get("done", True):
 							ready.set_result(event["commits"])
+					elif event["type"] == "welcome":
+						self.index, self.count = event["shard"], event["count"]
+						say(f"seated as shard {self.index} of {self.count}")
+					elif event["type"] == "active":
+						# The coordinator on this machine has work going for others.
+						self.idle_until = time.monotonic() + self.idle_seconds
 					elif event["type"] == "stop":
 						self.stopped = True
 						return
@@ -502,7 +543,11 @@ class Agent:
 			await asyncio.sleep(min(self.idle_until, self.stop_at) - now)
 
 	async def main(self):
-		global forward
+		global forward, WORKER_TOKEN
+		# Out of the environment before any child process can see it.
+		WORKER_TOKEN = os.environ.pop("COORDINATOR_WORKER_TOKEN", "")
+		# The coordinator's own; no build on this machine needs it.
+		os.environ.pop("COORDINATOR_WORKER_KEY", None)
 		await asyncio.to_thread(ensure_tools)
 		self.backoff = 1
 		clock = asyncio.create_task(self.watch_clock())
@@ -519,12 +564,13 @@ class Agent:
 			forward = None
 			if self.backoff == 1:
 				lost_since = time.monotonic()
-			elif lost_since and time.monotonic() - lost_since > LOST_MINUTES * 60:
+			elif lost_since and not self.published and time.monotonic() - lost_since > LOST_MINUTES * 60:
 				say(f"no coordinator for {LOST_MINUTES} minutes; ending to free this machine's slot")
 				break
 			say(f"connection lost ({error}); retrying in {self.backoff}s")
 			await asyncio.sleep(self.backoff)
-			self.backoff = min(30, self.backoff * 2)
+			# A numbered machine waits for the next coordinator, a minute apart.
+			self.backoff = min(60 if self.published else 30, self.backoff * 2)
 		say("standby over")
 
 

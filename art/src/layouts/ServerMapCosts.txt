@@ -2,6 +2,26 @@ ArenaDrone 1 x	50.373
 ArenaDrone 1 x #split	1
 Barrels 1 x x1.9	0.183
 Barrels 1 x x1.9 #split	1
+BeltCrossing 1 x	3.165
+BeltCrossing 1 x #split	1
+BuildBay 1 x	4.338
+BuildBay 1 x #split	1
+CapsuleFactory 1 x	0.227
+CapsuleFactory 1 x #split	1
+CapsuleLoop 1 x	14.886
+CapsuleLoop 1 x #split	1
+CapsulePrecision 1 x	0.275
+CapsulePrecision 1 x #split	1
+CapsulePrototype 1 x	0.269
+CapsulePrototype 1 x #split	1
+CapsuleRefurbished 1 x	0.282
+CapsuleRefurbished 1 x #split	1
+CapsuleSalvaged 1 x	0.338
+CapsuleSalvaged 1 x #split	1
+CapsuleScrap 1 x	0.275
+CapsuleScrap 1 x #split	1
+CapsuleSecret 1 x	0.100
+CapsuleSecret 1 x #split	1
 CarStack 1 x x2.5	0.332
 CarStack 1 x x2.5 #split	1
 CrushedCar 1 x x2.5	0.166
@@ -10,30 +30,200 @@ Dumpster 1 x x2.2	0.220
 Dumpster 1 x x2.2 #split	1
 GroundTile 1 x x1.5	0.179
 GroundTile 1 x x1.5 #split	1
+HubBeacon 1 x	9.270
+HubBeacon 1 x #split	1
 HubSectionA 1 x	75.171
 HubSectionA 1 x #split	1
 HubSectionB 1 x	70.434
 HubSectionB 1 x #split	1
 HubSectionEnd 1 x	74.559
 HubSectionEnd 1 x #split	1
+HubShop 1 x	14.082
+HubShop 1 x #split	1
+HubStage 1 x	6.494
+HubStage 1 x #split	1
+HubTinkerer 1 x	6.786
+HubTinkerer 1 x #split	1
+JunkMound 1 x x1.6666666666666667	0.542
+JunkMound 1 x x1.6666666666666667 #split	1
+JunkMound 1 x x2.8	0.751
+JunkMound 1 x x2.8 #split	1
 JunkWall 1 x x1.75	0.236
 JunkWall 1 x x1.75 #split	1
+JunkrotAirfryoCroccante 1 x	1.859
+JunkrotAirfryoCroccante 1 x #split	1
+JunkrotBallerinaTincuppina 1 x	12.169
+JunkrotBallerinaTincuppina 1 x #split	1
+JunkrotBlendroCigolante 1 x	1.220
+JunkrotBlendroCigolante 1 x #split	1
+JunkrotBoilerdiroCrockpotilo 1 x	13.474
+JunkrotBoilerdiroCrockpotilo 1 x #split	1
+JunkrotBoltoloLonelo 1 x	1.325
+JunkrotBoltoloLonelo 1 x #split	1
+JunkrotBulboFulminato 1 x	1.919
+JunkrotBulboFulminato 1 x #split	1
+JunkrotCabloTanglino 1 x	2.143
+JunkrotCabloTanglino 1 x #split	1
+JunkrotCamerinoFlashetto 1 x	1.543
+JunkrotCamerinoFlashetto 1 x #split	1
+JunkrotCanettoRustini 1 x	1.374
+JunkrotCanettoRustini 1 x #split	1
+JunkrotChefbotPrecisio 1 x	1.207
+JunkrotChefbotPrecisio 1 x #split	1
+JunkrotChimneyziniSpannerini 1 x	18.670
+JunkrotChimneyziniSpannerini 1 x #split	1
+JunkrotClankClankClankScrapur 1 x	15.097
+JunkrotClankClankClankScrapur 1 x #split	1
+JunkrotClockoTictacco 1 x	2.366
+JunkrotClockoTictacco 1 x #split	1
+JunkrotConsoloJoypaddino 1 x	3.360
+JunkrotConsoloJoypaddino 1 x #split	1
+JunkrotCrumboPoppalot 1 x	1.828
+JunkrotCrumboPoppalot 1 x #split	1
+JunkrotDingDingDingDongo 1 x	17.847
+JunkrotDingDingDingDongo 1 x #split	1
+JunkrotDishwashinoSplashetto 1 x	1.527
+JunkrotDishwashinoSplashetto 1 x #split	1
+JunkrotDrilloTrapanino 1 x	3.181
+JunkrotDrilloTrapanino 1 x #split	1
+JunkrotDrippiDroppi 1 x	14.378
+JunkrotDrippiDroppi 1 x #split	1
+JunkrotDronettoBuzzatti 1 x	1.403
+JunkrotDronettoBuzzatti 1 x #split	1
+JunkrotFanettoWobblino 1 x	2.188
+JunkrotFanettoWobblino 1 x #split	1
+JunkrotFrostboxGelatone 1 x	1.952
+JunkrotFrostboxGelatone 1 x #split	1
+JunkrotGascaniniHonkini 1 x	23.361
+JunkrotGascaniniHonkini 1 x #split	1
+JunkrotGrindellaScintilla 1 x	1.907
+JunkrotGrindellaScintilla 1 x #split	1
+JunkrotGrindoBeanbasher 1 x	2.719
+JunkrotGrindoBeanbasher 1 x #split	1
+JunkrotHeadphonoBassimo 1 x	1.435
+JunkrotHeadphonoBassimo 1 x #split	1
+JunkrotHolofonoShimmerra 1 x	1.837
+JunkrotHolofonoShimmerra 1 x #split	1
+JunkrotHoverbikkoZoomzoom 1 x	2.329
+JunkrotHoverbikkoZoomzoom 1 x #split	1
+JunkrotHubcappaWobbla 1 x	2.325
+JunkrotHubcappaWobbla 1 x #split	1
+JunkrotJackoloCrickato 1 x	2.147
+JunkrotJackoloCrickato 1 x #split	1
+JunkrotKettlinaDentata 1 x	1.786
+JunkrotKettlinaDentata 1 x #split	1
+JunkrotKnifeblockSlicetta 1 x	3.572
+JunkrotKnifeblockSlicetta 1 x #split	1
+JunkrotLaVacuumaSaturnita 1 x	12.193
+JunkrotLaVacuumaSaturnita 1 x #split	1
+JunkrotLaserlevelLineo 1 x	1.064
+JunkrotLaserlevelLineo 1 x #split	1
+JunkrotLawnmowoRuggito 1 x	1.926
+JunkrotLawnmowoRuggito 1 x #split	1
+JunkrotLeafblowaWhooshini 1 x	2.675
+JunkrotLeafblowaWhooshini 1 x #split	1
+JunkrotMicrondoBippetto 1 x	5.076
+JunkrotMicrondoBippetto 1 x #split	1
+JunkrotMixerellaVroom 1 x	1.626
+JunkrotMixerellaVroom 1 x #split	1
+JunkrotMopaMopetta 1 x	2.623
+JunkrotMopaMopetta 1 x #split	1
+JunkrotMuffleroTossetto 1 x	1.475
+JunkrotMuffleroTossetto 1 x #split	1
+JunkrotOilcannaGluglu 1 x	1.622
+JunkrotOilcannaGluglu 1 x #split	1
+JunkrotPannettoPatchato 1 x	1.552
+JunkrotPannettoPatchato 1 x #split	1
+JunkrotPercolattoNinjatto 1 x	15.605
+JunkrotPercolattoNinjatto 1 x #split	1
+JunkrotPressurwashoSprizzo 1 x	2.944
+JunkrotPressurwashoSprizzo 1 x #split	1
+JunkrotRadioloFruscio 1 x	3.844
+JunkrotRadioloFruscio 1 x #split	1
+JunkrotRemotinoMuto 1 x	5.723
+JunkrotRemotinoMuto 1 x #split	1
+JunkrotRobovaccoGirotondo 1 x	1.111
+JunkrotRobovaccoGirotondo 1 x #split	1
+JunkrotRusteliRustela 1 x	15.961
+JunkrotRusteliRustela 1 x #split	1
+JunkrotSnackomaticPrototipo 1 x	1.669
+JunkrotSnackomaticPrototipo 1 x #split	1
+JunkrotSockettoSeiSette 1 x	23.693
+JunkrotSockettoSeiSette 1 x #split	1
+JunkrotSousvideSilvano 1 x	1.743
+JunkrotSousvideSilvano 1 x #split	1
+JunkrotSpeakeroneBoomba 1 x	1.917
+JunkrotSpeakeroneBoomba 1 x #split	1
+JunkrotSpoonzoBentolo 1 x	1.722
+JunkrotSpoonzoBentolo 1 x #split	1
+JunkrotTelefonoRingaling 1 x	3.223
+JunkrotTelefonoRingaling 1 x #split	1
+JunkrotTheMonolito 1 x	0.082
+JunkrotTickworthPocketti 1 x	2.666
+JunkrotTickworthPocketti 1 x #split	1
+JunkrotTorquoWrenchelli 1 x	1.893
+JunkrotTorquoWrenchelli 1 x #split	1
+JunkrotTrashaleroTrashala 1 x	29.210
+JunkrotTrashaleroTrashala 1 x #split	1
+JunkrotTypewrittoClackini 1 x	1.777
+JunkrotTypewrittoClackini 1 x #split	1
+JunkrotTyroFlattino 1 x	1.325
+JunkrotTyroFlattino 1 x #split	1
+JunkrotUnitZero 1 x	0.110
+JunkrotVrrVrrPatatrim 1 x	19.461
+JunkrotVrrVrrPatatrim 1 x #split	1
+JunkrotWeldettaSparkalot 1 x	3.308
+JunkrotWeldettaSparkalot 1 x #split	1
 MachinePad 1 x x1.5	0.182
 MachinePad 1 x x1.5 #split	1
+MainIsland 1 x	3665.248
+MainIsland 1 x #split	1
 MarketIsland 1 x	53.344
 MarketIsland 1 x #split	1
+PadGadget 1 x x1.6666666666666667	0.204
+PadGadget 1 x x1.6666666666666667 #split	1
+PadGarage 1 x x1.6666666666666667	0.247
+PadGarage 1 x x1.6666666666666667 #split	1
 PadIsland 1 x	11.137
 PadIsland 1 x #split	1
+PadKitchen 1 x x1.6666666666666667	0.204
+PadKitchen 1 x x1.6666666666666667 #split	1
 Pallets 1 x x1.4	0.185
 Pallets 1 x x1.4 #split	1
 ParkBench 1 x x1.85	0.083
 ParkBench 1 x x1.85 #split	1
-PlotMarker 1 x x1.5	0.379
+PlotMarker 1 x x1.5	0.593
 PlotMarker 1 x x1.5 #split	1
+ProofKettle 1 x	0.094
+ProofKettle 1 x #split	1
+ProofShark 1 x	0.130
+ProofShark 1 x #split	1
+ProofToaster 1 x	0.177
+ProofToaster 1 x #split	1
+RebirthPress 1 x	7.969
+RebirthPress 1 x #split	1
+RockBoulderPile 1 x x2.2	0.318
+RockBoulderPile 1 x x2.2 #split	1
+RockBoulderPile 1 x x2.8	0.539
+RockBoulderPile 1 x x2.8 #split	1
+ScrapCrate 1 x	0.382
+ScrapCrate 1 x #split	1
 ScrapPalm 1 x x1.5	0.177
 ScrapPalm 1 x x1.5 #split	1
+ScrapPalm 1 x x1.6	0.737
+ScrapPalm 1 x x1.6 #split	1
+ScrapTreeAntenna 1 x x1.4	0.364
+ScrapTreeAntenna 1 x x1.4 #split	1
+ScrapTreeExhaust 1 x x1.4	0.468
+ScrapTreeExhaust 1 x x1.4 #split	1
+ScrapTreeLamppost 1 x x1.3	0.341
+ScrapTreeLamppost 1 x x1.3 #split	1
 ScrapTreeLamppost 1 x x1.5	0.208
 ScrapTreeLamppost 1 x x1.5 #split	1
+ScrapTreeRebar 1 x x1.8	0.362
+ScrapTreeRebar 1 x x1.8 #split	1
+ScrapTreeSignpost 1 x x1.4	0.340
+ScrapTreeSignpost 1 x x1.4 #split	1
 ShippingContainer 1 x x1.5	0.307
 ShippingContainer 1 x x1.5 #split	1
 ShopConceptContainer 1 x x2.5	79.711
@@ -47,15 +237,19 @@ TyreStack 1 x x1.8	0.113
 TyreStack 1 x x1.8 #split	1
 VendingMachine 1 x x2	5.971
 VendingMachine 1 x x2 #split	1
-YardFence 1 x x1.5	0.169
+YardFence 1 x x1.5	0.476
 YardFence 1 x x1.5 #split	1
-YardFenceHalf 1 x x1.5	0.151
+YardFence 1.037037037037037 x x1.5	0.405
+YardFence 1.037037037037037 x x1.5 #split	1
+YardFenceHalf 1 x x1.5	0.296
 YardFenceHalf 1 x x1.5 #split	1
-YardFooting 0.5 x x1.5	0.066
+YardFooting 0.5 x x1.5	0.111
 YardFooting 0.5 x x1.5 #split	1
-YardFooting 1 x x1.5	0.059
+YardFooting 1 x x1.5	0.136
 YardFooting 1 x x1.5 #split	1
-YardGate 1 x x1.5	0.241
+YardFooting 1.037037037037037 x x1.5	0.134
+YardFooting 1.037037037037037 x x1.5 #split	1
+YardGate 1 x x1.5	1.155
 YardGate 1 x x1.5 #split	1
 YardIsland 1 x	83.475
 YardIsland 1 x #split	1
@@ -105,6 +299,44 @@ slab LandmarkPlanter	0.061
 slab LandmarkPlanter #split	1
 slab Line	33.177
 slab Line #split	1
+slab LoneWreck1	0.321
+slab LoneWreck1 #split	1
+slab LoneWreck10	0.258
+slab LoneWreck10 #split	1
+slab LoneWreck12	0.074
+slab LoneWreck12 #split	1
+slab LoneWreck13	0.258
+slab LoneWreck13 #split	1
+slab LoneWreck14	0.113
+slab LoneWreck14 #split	1
+slab LoneWreck16	0.243
+slab LoneWreck16 #split	1
+slab LoneWreck17	0.100
+slab LoneWreck17 #split	1
+slab LoneWreck18	0.062
+slab LoneWreck18 #split	1
+slab LoneWreck2	0.105
+slab LoneWreck2 #split	1
+slab LoneWreck20	0.163
+slab LoneWreck20 #split	1
+slab LoneWreck21	0.085
+slab LoneWreck21 #split	1
+slab LoneWreck22	0.237
+slab LoneWreck22 #split	1
+slab LoneWreck24	0.055
+slab LoneWreck24 #split	1
+slab LoneWreck25	0.269
+slab LoneWreck25 #split	1
+slab LoneWreck4	0.405
+slab LoneWreck4 #split	1
+slab LoneWreck5	0.105
+slab LoneWreck5 #split	1
+slab LoneWreck6	0.073
+slab LoneWreck6 #split	1
+slab LoneWreck8	0.116
+slab LoneWreck8 #split	1
+slab LoneWreck9	0.069
+slab LoneWreck9 #split	1
 slab MarketIsland	4.385
 slab MarketIsland #split	1
 slab Pad1	0.544
@@ -119,24 +351,62 @@ slab Palm1Planter	0.061
 slab Palm1Planter #split	1
 slab Palm2Planter	0.062
 slab Palm2Planter #split	1
-slab Plot1	4.136
+slab Plaza	7.722
+slab Plaza #split	1
+slab Plot1	13.392
 slab Plot1 #split	1
-slab Plot2	5.108
+slab Plot2	13.697
 slab Plot2 #split	1
-slab Plot3	4.819
+slab Plot3	9.984
 slab Plot3 #split	1
-slab Plot4	4.919
+slab Plot4	15.139
 slab Plot4 #split	1
-slab Plot5	5.103
+slab Plot5	13.276
 slab Plot5 #split	1
-slab Plot6	5.076
+slab Plot6	13.862
 slab Plot6 #split	1
-slab Plot7	3.650
+slab Plot7	13.091
 slab Plot7 #split	1
-slab Plot8	4.779
+slab Plot8	12.336
 slab Plot8 #split	1
 slab Ramps	4.571
 slab Ramps #split	1
+slab Rough1	4.387
+slab Rough1 #split	1
+slab Rough10	4.151
+slab Rough10 #split	1
+slab Rough2	3.889
+slab Rough2 #split	1
+slab Rough3	2.114
+slab Rough3 #split	1
+slab Rough4	2.607
+slab Rough4 #split	1
+slab Rough5	4.433
+slab Rough5 #split	1
+slab Rough6	2.500
+slab Rough6 #split	1
+slab Rough7	3.810
+slab Rough7 #split	1
+slab Rough8	2.510
+slab Rough8 #split	1
+slab Rough9	2.439
+slab Rough9 #split	1
+slab RoughFoot2	0.038
+slab RoughFoot2 #split	1
+slab RoughFoot5	0.042
+slab RoughFoot5 #split	1
+slab RoughFoot6	0.034
+slab RoughFoot6 #split	1
+slab RoughFoot8	0.033
+slab RoughFoot8 #split	1
+slab RoughFoot9	0.042
+slab RoughFoot9 #split	1
+slab RoughShade1	0.008
+slab RoughShade10	0.010
+slab RoughShade2	0.011
+slab RoughShade5	0.022
+slab RoughShade7	0.012
+slab RoughShade9	0.008
 slab Side1	0.894
 slab Side1 #split	1
 slab Side2	0.880
@@ -149,7 +419,7 @@ slab Side5	0.888
 slab Side5 #split	1
 slab Side6	0.877
 slab Side6 #split	1
-slab Spawn	0.093
+slab Spawn	0.027
 slab Spawn #split	1
 slab Spoke1	0.088
 slab Spoke1 #split	1
@@ -167,5 +437,13 @@ slab Spoke7	0.084
 slab Spoke7 #split	1
 slab Spoke8	0.087
 slab Spoke8 #split	1
-MainIsland 1 x	1800
-MainIsland 1 x #split	1
+slab Streets	4.529
+slab Streets #split	1
+slab YardShade1	0.289
+slab YardShade2	0.251
+slab YardShade3	0.216
+slab YardShade4	0.223
+slab YardShade5	0.179
+slab YardShade6	0.261
+slab YardShade7	0.181
+slab YardShade8	0.230
