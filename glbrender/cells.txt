@@ -1,0 +1,37 @@
+bounds: 110,229,913,926
+A1: -
+B1: Sign 16%, Fittings 5%
+C1: UpperContainer 19%, Sign 15%, Fittings 13%
+D1: UpperContainer 4%, Fittings 4%
+E1: -
+F1: -
+A2: -
+B2: UpperContainer 35%, Fittings 13%, Stencil 8%, Sign 2%
+C2: UpperContainer 44%, Sign 42%, Fittings 10%, Stencil 4%
+D2: UpperContainer 34%, Sign 28%, Fittings 27%, Crane 3%
+E2: Crane 30%, UpperContainer 13%, Fittings 7%, CraneWeight 5%
+F2: CraneWeight 5%, Crane 2%
+A3: Awning 25%, AwningPosts 6%
+B3: Awning 52%, AwningPatches 31%, UpperContainer 9%, Fittings 5%
+C3: UpperContainer 51%, Awning 30%, Fittings 16%, AwningPatches 2%
+D3: Fittings 56%, UpperContainer 37%, Crane 6%
+E3: Fittings 39%, Crane 26%, UpperContainer 5%, LowerContainers 5%, Supplies 3%
+F3: -
+A4: Slab 22%, StockPiles 12%, AwningPosts 6%
+B4: Slab 41%, Awning 21%, AwningPosts 12%, StockPiles 11%, Counter 6%, CounterDrums 5%
+C4: Awning 77%, AwningPosts 7%, Counter 6%, CounterDrums 5%, Slab 3%
+D4: Awning 45%, AwningPatches 30%, UpperContainer 7%, LowerContainers 7%, Fittings 6%, Supplies 4%, CraneHook 2%
+E4: LowerContainers 51%, Fittings 21%, Awning 14%, Crane 9%, Supplies 5%
+F4: LowerContainers 31%, Fittings 10%
+A5: Slab 2%
+B5: Slab 41%, AwningPosts 3%
+C5: Slab 71%, AwningPosts 9%, CounterDrums 8%, Counter 4%
+D5: Slab 27%, Awning 22%, StockPiles 11%, Counter 10%, LowerContainers 9%, AwningPosts 9%, CounterDrums 8%, AwningPatches 4%
+E5: LowerContainers 76%, Slab 14%, Supplies 8%
+F5: Slab 21%, LowerContainers 18%, Fittings 6%
+A6: -
+B6: -
+C6: Slab 8%
+D6: Slab 34%, StockPiles 15%, AwningPosts 4%
+E6: Slab 25%
+F6: -
