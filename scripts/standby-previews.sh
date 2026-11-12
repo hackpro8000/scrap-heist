@@ -85,7 +85,11 @@ for name in "${list[@]}"; do
 				[ "${#share[@]}" -eq 2 ] && [ "${share[0]}" = --renders ] && renders=("${share[@]}")
 				started=$(date +%s.%N)
 				echo "GLB_RENDER glb=$(stat -c '%s %y' "${rendered}/${model}.glb") args=--turntable 4 ${size[*]} ${renders[*]} ${views[*]}" >> "${dir}/build.log"
-				tools/modelkit/bin/modelkit-linux-x64 --render "${rendered}/${model}.glb" --out "${dir}/glbrender" --turntable 4 "${size[@]}" "${renders[@]}" "${views[@]}" >> "${dir}/build.log" 2>&1 &
+				# Capped at 8 GB so a runaway allocation fails with its size instead
+				# of freezing the machine; peak memory is logged either way.
+				timer=()
+				[ -x /usr/bin/time ] && timer=(/usr/bin/time -f "GLB_RENDER peak_kb=%M seconds=%e exit=%x")
+				(ulimit -v 8000000; exec "${timer[@]}" tools/modelkit/bin/modelkit-linux-x64 --render "${rendered}/${model}.glb" --out "${dir}/glbrender" --turntable 4 "${size[@]}" "${renders[@]}" "${views[@]}") >> "${dir}/build.log" 2>&1 &
 				render_pid=$!
 				waited=0
 				while kill -0 "${render_pid}" 2> /dev/null && [ "${waited}" -lt 60 ]; do sleep 1; waited=$((waited + 1)); done
