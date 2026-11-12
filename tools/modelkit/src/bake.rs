@@ -802,7 +802,8 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], group_sizes: &[(usize, usize)
 	};
 	let coat_marks: Vec<f64> = look.brushes.coat.iter().flat_map(|marks| marks.numbers()).collect();
 	// The coat and wear read the shade layer, so its key is part of theirs.
-	let coat_numbers = [&[look.gradient, look.brush, f64::from(u8::from(shading.crisp))][..], &style_numbers, &coat_marks, &range_key, &drawn_key, &shade_size, &[STROKE_LAYOUT_VERSION]].concat();
+	let tiled_key: Vec<f64> = look.tiled.map_or_else(Vec::new, |tiled| tiled.numbers().to_vec());
+	let coat_numbers = [&[look.gradient, look.brush, f64::from(u8::from(shading.crisp))][..], &style_numbers, &coat_marks, &range_key, &drawn_key, &tiled_key, &shade_size, &[STROKE_LAYOUT_VERSION]].concat();
 	let coat_path = cache::layer_path("coat", mesh, &neighbours, false, &coat_numbers, Some(&*image), source);
 	let shade_path = shade_layer_path(mesh, width, height, group, occluders, shading, source, reach, width_scale, bevel_reach, bevel_fold);
 	// A stroke reads the field of the chunk its spot lies on, and only near
@@ -837,16 +838,20 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], group_sizes: &[(usize, usize)
 	// lays the coat's strokes, whose colours come from the script and so can
 	// only be asked here. Those strokes read nothing the shade passes make.
 	let coat_early = look.hand.is_none() && !shading.crisp && coat_path.as_ref().map_or(true, |path| !path.exists());
-	let ((pass, siblings), mut early_canvas) = if coat_early {
+	// A tiled coat asks the script for its base colours here instead.
+	let ((pass, siblings), mut early_canvas, mut early_base) = if coat_early {
 		let unread = |_: usize, _: [f64; 2]| -> f64 { unreachable!("the coat's strokes read no edge field") };
 		let early_wear = coat::Wear { edge: &unread, crease: &unread, low: &low_wear, near: &near, near_box: Some((near_low, near_high)), own_box: Some(own_box), tri_chunk: &tri_chunk, face_chunk: &face_chunk };
 		std::thread::scope(|scope| {
 			let shade = scope.spawn(shade_all);
-			let canvas = profiled(1, || coat::coat(&whole, look, &early_wear, base));
-			(shade.join().expect("shade pass"), Some(canvas))
+			let (canvas, based) = match look.tiled {
+				Some(_) => (None, Some(profiled(1, || tiled_base(mesh, width, height, look, &early_wear, base)))),
+				None => (Some(profiled(1, || coat::coat(&whole, look, &early_wear, base))), None),
+			};
+			(shade.join().expect("shade pass"), canvas, based)
 		})
 	} else {
-		(shade_all(), None)
+		(shade_all(), None, None)
 	};
 	let ShadePass { full, layers: shade_layer, edge_field: own_field, .. } = pass;
 	fields[own_index] = Arc::new(ChunkField { pixels: own_field.clone(), width, height });
@@ -891,6 +896,37 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], group_sizes: &[(usize, usize)
 			if shading.crisp {
 				// `base` calls into Lua, so this runs on this thread alone.
 				let colours: Vec<[f32; 3]> = full.iter().map(|t| to_f32(coat::base_at(look, &wear, base, t.position, t.face_normal))).collect();
+				return vec![layer_image(width, height, &full, &colours)];
+			}
+			if let Some(tiled) = look.tiled {
+				let (based, per_stud) = match early_base.take() {
+					Some(found) => found,
+					None => tiled_base(mesh, width, height, look, &wear, base),
+				};
+				assert_eq!(based.len(), full.len(), "the tiled coat's texels match the shade pass's");
+				let stage = Instant::now();
+				let places = parallel(&full, |t| coat::tile_place(tiled, t.position, t.face_normal));
+				let mut wanted: Vec<(bool, u32)> = places.iter().map(|&(top, variant, _, _)| (top, variant)).collect();
+				wanted.sort_unstable();
+				wanted.dedup();
+				// Tiles are painted a little finer than the chunk, so a stroke stays as crisp.
+				let resolution = (per_stud.ceil().max(1.0) as usize).next_power_of_two();
+				let tiles: Vec<((bool, u32), Arc<coat::Tile>)> = wanted.iter().copied().zip(coat::tiles_for(look, tiled, &wanted, resolution)).collect();
+				// The part's own drawn strokes go over the coat as before.
+				let mut drawn = crate::brush::Canvas::new(look.brush);
+				for stroke in &shading.strokes {
+					if !wear.out_of_touch(stroke.centre(), stroke.reach() + drawn.cell_size()) {
+						drawn.add(stroke.clone());
+					}
+				}
+				let order: Vec<usize> = (0..full.len()).collect();
+				let colours = parallel(&order, |&i| {
+					let (top, variant, u, v) = places[i];
+					let tile = &tiles.iter().find(|(key, _)| *key == (top, variant)).expect("tile painted").1;
+					let factor = tile.sample(u, v);
+					to_f32(drawn.lay(full[i].position, full[i].face_normal, std::array::from_fn(|k| based[i][k] * factor[k])))
+				});
+				timed(7, stage);
 				return vec![layer_image(width, height, &full, &colours)];
 			}
 			let mut canvas = match early_canvas.take() {
@@ -1454,6 +1490,81 @@ const STROKE_REACH: f64 = 6.0;
 // Bumped when how strokes are laid over a part changes, so cached coat and
 // wear layers bake again.
 const STROKE_LAYOUT_VERSION: f64 = 2.0;
+
+// Studs between the texels a tiled coat asks the script for its base colour
+// at: half a stud, about one coat stroke's length, so the colour keeps the
+// detail today's strokes carry (each takes its colour at its own middle)
+// while the script is asked several times less often than once a stroke.
+const TILED_LATTICE: f64 = 0.5;
+
+// For a tiled coat: the base colour (linear, darkened low down as
+// `coat::base_at` does) at every texel of `texels(mesh, width, height)`, in
+// that order, and the texels a stud. The script is asked at texels on a
+// lattice every TILED_LATTICE studs across the texture, and each texel blends
+// the lattice texels round it that lie on the same stretch of surface; one
+// with none near is asked for itself. `base` calls into Lua, so this runs on
+// the script's thread.
+fn tiled_base(mesh: &Mesh, width: usize, height: usize, look: &coat::Look, wear: &coat::Wear, base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3]) -> (Vec<[f64; 3]>, f64) {
+	let all = texels(mesh, width, height);
+	let (mut texture_area, mut area) = (0.0, 0.0);
+	for c in mesh.triangles() {
+		let n = cross(sub(c[1].position, c[0].position), sub(c[2].position, c[0].position));
+		area += dot(n, n).sqrt();
+		texture_area += ((c[1].uv[0] - c[0].uv[0]) * (c[2].uv[1] - c[0].uv[1]) - (c[2].uv[0] - c[0].uv[0]) * (c[1].uv[1] - c[0].uv[1])).abs() * (width * height) as f64;
+	}
+	let per_stud = (texture_area / area.max(1e-12)).sqrt().max(1e-6);
+	let step = ((TILED_LATTICE * per_stud).round() as usize).max(1);
+	// A lattice texel farther than this lies on another stretch of the unwrap.
+	let near = 2.0 * step as f64 / per_stud;
+	let mut owner = vec![u32::MAX; width * height];
+	for (index, t) in all.iter().enumerate() {
+		if owner[t.pixel] == u32::MAX {
+			owner[t.pixel] = index as u32;
+		}
+	}
+	// The lattice texels round a texel, with their bilinear weights.
+	let corners = |t: &Texel| -> Vec<(usize, f64)> {
+		let (x, y) = (t.pixel % width, t.pixel / width);
+		let (gx, gy) = (x / step * step, y / step * step);
+		let (fx, fy) = ((x - gx) as f64 / step as f64, (y - gy) as f64 / step as f64);
+		[(gx, gy, (1.0 - fx) * (1.0 - fy)), (gx + step, gy, fx * (1.0 - fy)), (gx, gy + step, (1.0 - fx) * fy), (gx + step, gy + step, fx * fy)]
+			.into_iter()
+			.filter(|&(cx, cy, weight)| weight > 0.0 && cx < width && cy < height)
+			.map(|(cx, cy, weight)| (cy * width + cx, weight))
+			.filter(|&(pixel, _)| owner[pixel] != u32::MAX && {
+				let d = sub(all[owner[pixel] as usize].position, t.position);
+				dot(d, d) <= near * near
+			})
+			.collect()
+	};
+	let mut asked = vec![false; width * height];
+	for t in &all {
+		let found = corners(t);
+		if found.is_empty() {
+			asked[t.pixel] = true;
+		}
+		for (pixel, _) in found {
+			asked[pixel] = true;
+		}
+	}
+	let mut colours: std::collections::HashMap<usize, [f64; 3]> = std::collections::HashMap::new();
+	for (pixel, _) in asked.iter().enumerate().filter(|(_, &on)| on) {
+		let t = &all[owner[pixel] as usize];
+		colours.insert(pixel, coat::base_at(look, wear, base, t.position, t.face_normal));
+	}
+	let based = all
+		.iter()
+		.map(|t| {
+			let found = corners(t);
+			if found.is_empty() {
+				return colours[&t.pixel];
+			}
+			let total: f64 = found.iter().map(|(_, weight)| weight).sum();
+			std::array::from_fn(|k| found.iter().map(|(pixel, weight)| colours[pixel][k] * weight).sum::<f64>() / total)
+		})
+		.collect();
+	(based, per_stud)
+}
 
 // A part's chunks as one mesh, in group order, with each triangle's and each
 // face's chunk, so strokes scatter over the whole part identically for every

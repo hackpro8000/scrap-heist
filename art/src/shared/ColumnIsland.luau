@@ -26,6 +26,18 @@
 --   rimShape(angle)  how far out the rim stands at an angle, as a multiple
 --                 of the round rim: 1 all round for a round island, never
 --                 under 1, more toward the corners of a squarer one.
+
+-- Tiled coat, on MainIsland only: the brushed base coat is painted once on
+-- seamless square tiles and laid over every chunk by world position, instead
+-- of stroked over each chunk's own surface, so the coat repeats every
+-- TILED_COAT_STUDS but bakes far faster. TILED_COAT_VARIANTS differently
+-- stroked tiles are mixed so neighbouring tiles differ. Look choices: tune by eye.
+local TILED_COAT = false
+local TILED_COAT_STUDS = 32
+local TILED_COAT_VARIANTS = 4
+local tiledCoat = if TILED_COAT and string.match(CACHE_KEY, "^MainIsland%-")
+	then { TILED_COAT_STUDS, TILED_COAT_VARIANTS }
+	else nil
 -- Stone sizes at the summit and at the foot, as shares of the radius, so
 -- a bigger island has bigger stones rather than more of them.
 local SMALLEST, LARGEST = 0.055 * RADIUS, 0.34 * RADIUS
@@ -1798,6 +1810,7 @@ for index, entry in parts do
 		cornerTaper = CORNER_TAPER,
 		heightRange = entry.heightRange,
 		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then cracksNear(entry.mesh) else nil,
+		tiledCoat = tiledCoat,
 	})
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
