@@ -4,7 +4,7 @@
 // Parts sharing a group sit under one parent node, so the game can show one
 // group (like a fill level) at a time. With bones, every part is skinned
 // rigidly to its one bone and the joints come in as Studio Bones, each named
-// <Name>Bone after the script's model.bone(name).
+// <Name>Bone after the script's model.bone(name). scene::read reads it back.
 
 use crate::anim::{self, Clip};
 use crate::{Bone, Part};
@@ -156,7 +156,9 @@ pub fn write(parts: &[Part], bones: &[Bone], clips: &[Clip]) -> Vec<u8> {
 			base + 3
 		));
 		let skin = if part.bone.is_some() { ",\"skin\":0" } else { "" };
-		nodes.push(format!("{{\"name\":\"{}\",\"mesh\":{index}{skin}}}", part.name));
+		// A part left out of previews says so, for scene::read; importers ignore extras.
+		let hidden = if part.preview { "" } else { ",\"extras\":{\"preview\":false}" };
+		nodes.push(format!("{{\"name\":\"{}\",\"mesh\":{index}{skin}{hidden}}}", part.name));
 		match &part.group {
 			None => roots.push(index),
 			Some(group) => match groups.iter_mut().find(|(name, _)| name == group) {
