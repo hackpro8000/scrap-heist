@@ -74,6 +74,24 @@ for name in "${list[@]}"; do
 		# Review renders too, when the flags ask for them (--parts, --view):
 		# a review sheet, or a checkpoint (FROM=), can be made from them.
 		cp "${rendered}"/eye_*.png "${rendered}"/closeup_*.png "${rendered}"/parts.png "${rendered}"/face_*.png "${rendered}"/cells.txt "${dir}/" 2> /dev/null || true
+		# Test only: render the same views again from the saved .glb alone.
+		case " ${flags[*]} " in
+			*" --glb-check "*)
+				views=()
+				for flag in "${extra[@]}"; do
+					case "${flag}" in --glb-check | --max-detail | --normals | --roughness) ;; *) views+=("${flag}") ;; esac
+				done
+				renders=()
+				[ "${#share[@]}" -eq 2 ] && [ "${share[0]}" = --renders ] && renders=("${share[@]}")
+				started=$(date +%s.%N)
+				if tools/modelkit/bin/modelkit-linux-x64 --render "${rendered}/${model}.glb" --out "${dir}/glbrender" --turntable 4 "${size[@]}" "${renders[@]}" "${views[@]}" >> "${dir}/build.log" 2>&1; then
+					echo "GLB_RENDER ok seconds=$(echo "$(date +%s.%N) - ${started}" | bc) files=$(cd "${dir}/glbrender" && find . -name '*.png' | sort | tr '\n' ' ')" >> "${dir}/build.log"
+				else
+					echo "GLB_RENDER failed" >> "${dir}/build.log"
+				fi
+				echo "GLB_BUILT files=$(cd "${rendered}" && find . -maxdepth 2 \( -name 'preview.png' -o -name 'eye_*.png' -o -name 'closeup_*.png' -o -name 'parts.png' -o -name 'face_*.png' -o -path './turntable/*.png' \) | sort | tr '\n' ' ')" >> "${dir}/build.log"
+				;;
+		esac
 		# A normal-mapped build (--normals in the flags) sends its maps and
 		# GLB back too, since only Studio can show a normal map.
 		case " ${flags[*]} " in
