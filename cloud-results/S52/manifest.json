@@ -1,0 +1,97 @@
+{
+	"assets": [
+		{
+			"id": "2c47c5b115862db6",
+			"key": "MainIsland-660b6fd7604d9003 1 x part 52/100",
+			"piece": 1,
+			"label": "Island",
+			"turn": 0.0,
+			"bytes": 927300,
+			"sha": "0fd1a2d9999d064a",
+			"parts": 16
+		},
+		{
+			"id": "bb27ae7956731b17",
+			"key": "9edb366bcc5dfdf7-4bed7244ea680ec2 YardShade1 194.0147018273702 80.36352079666885 -67.5",
+			"piece": 1,
+			"label": "YardShade1",
+			"turn": 0.0,
+			"bytes": 94724,
+			"sha": "3f696ca10c3ba2c9",
+			"parts": 1
+		},
+		{
+			"id": "268e61f5245ddc20",
+			"key": "HubBeacon-daeb9bb3cf737fff 1 x",
+			"piece": 1,
+			"label": "Landmark",
+			"turn": 0.0,
+			"bytes": 11831556,
+			"sha": "ec095bc9b444a12e",
+			"parts": 16
+		}
+	],
+	"placements": [
+		{
+			"asset": "2c47c5b115862db6",
+			"label": "Island",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Grass_-1_-5_0_000_101",
+					"position": [
+						-39.246347,
+						-11.422550300000001,
+						305.83265
+					]
+				},
+				{
+					"name": "Grass_-1_4_0_011",
+					"position": [
+						-48.395714,
+						-24.881991,
+						-297.023425
+					]
+				}
+			]
+		},
+		{
+			"asset": "bb27ae7956731b17",
+			"label": "YardShade1",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "GroundShade",
+					"position": [
+						194.01471,
+						2.03,
+						-80.363523
+					]
+				}
+			]
+		},
+		{
+			"asset": "268e61f5245ddc20",
+			"label": "Landmark",
+			"turn": 0.0,
+			"anchors": [
+				{
+					"name": "Pipes",
+					"position": [
+						-4.0123089499999995,
+						10.16005115,
+						5.53166375
+					]
+				},
+				{
+					"name": "Supplies",
+					"position": [
+						4.82468735,
+						3.905335,
+						-5.15061405
+					]
+				}
+			]
+		}
+	]
+}
