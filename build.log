@@ -1,0 +1,137 @@
+warning: unused variable: `source`
+    --> src/bake.rs:1204:116
+     |
+1204 | ...esh], shading: &Shading, source: &cache::Source, reach: f64, width_scale: f64, bevel_reach: f64, bevel_fold: f64, grid_reach: f...
+     |                             ^^^^^^ help: if this is intentional, prefix it with an underscore: `_source`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: fields `width` and `height` are never read
+    --> src/bake.rs:1189:6
+     |
+1185 | pub struct ShadePass {
+     |            --------- fields in this struct
+...
+1189 |     pub width: usize,
+     |         ^^^^^
+1190 |     pub height: usize,
+     |         ^^^^^^
+     |
+     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `bones` is never read
+  --> src/scene.rs:17:6
+   |
+14 | pub struct Scene {
+   |            ----- field in this struct
+...
+17 |     pub bones: Vec<Bone>,
+   |         ^^^^^
+
+[    0.0s] running HubShop/model.luau
+[    1.7s] baked every chunk this machine claimed
+TMPL 892 Some([-7.243445556349513, -3.5956319012616897, 0.796814235570841]) shade 95c05db6a5f4d2e7 tilt cd575cf663b870e0 coat 8f1c8ab9f03efa4 wear fc21b7c19eeab11f cover f5650afac51bbebb
+[    2.8s] shaded CounterDrums 1024×1024 in 0.34s
+TMPL 372 Some([-10.854279341589184, 0.40159471297721006, 20.064053331164168]) shade 360e63902744be7d tilt 556ed033ca128bc6 coat 8af8ea3eee212925 wear 92d0ad18dcf291db cover baa9538e6cb99dae
+[    3.2s] shaded SignBraces 1024×1024 in 0.33s
+TMPL 9982 Some([6.145293320551404, -0.5040506440239774, 8.9772953509947]) shade 7b4bbc5dc76cb640 tilt d75a060f828bfea7 coat 2378a512f97ab177 wear fc8f75a237ee40f0 cover d24e4506c0fe8c0e
+[    3.7s] shaded Fittings 1024×1024 in 0.44s
+TMPL 270 Some([-13.010148890089697, -0.08217768394950056, 16.830098978540043]) shade c62a9662df8e3028 tilt d8a38f7b4a849265 coat 7bdaa884456e2924 wear ed64a9fe139af762 cover ed64a9fe139af762
+[    4.1s] shaded Sign 1024×1024 in 0.30s
+TMPL 6474 Some([-16.0, -10.0, 8.605]) shade e6f775451a0edfd6 tilt 3424b277928d09e0 coat 492ff5173088beda wear ed64a9fe139af762 cover ed64a9fe139af762
+[    4.5s] shaded Awning 1024×1024 in 0.33s
+TMPL 780 Some([-14.715648484488106, -9.633119342963926, 0.8038682665439795]) shade bf63eca889d8c815 tilt d1a3a87426cc4ec coat 79717a32fa8e1fd8 wear c74aa9a9e6ca64b7 cover 9f8ee18bc1899933
+[    4.8s] shaded AwningPosts 1024×1024 in 0.29s
+TMPL 146 Some([12.064253117433429, -6.462654208715527, 13.877258635547651]) shade 1a689b3dafa1e08d tilt 4238953fabe0cf7c coat 68d2a076f003f2ab wear ac440b71a72c2183 cover 2f7cb2467a9154c4
+[    5.1s] shaded CraneHook 1024×1024 in 0.23s
+TMPL 2588 Some([12.811435551864971, -7.665101529878441, 0.8195322306641413]) shade 147d22a44f7e3f3d tilt fd5b8e962ad251f7 coat b4968abefafcaee9 wear 676d36b893f6a0f8 cover 539c7234ae229ca7
+[    5.5s] shaded StockPiles 1024×1024 in 0.34s
+TMPL 848 Some([11.08392847373117, 3.0470072292312262, 8.796080533823053]) shade 8a51a9962f0f0e6f tilt 5bcefb4a153aacec coat f51b73dc403f904 wear ed3e8fd1646484b8 cover 3e5d03bc758fc87
+[    5.9s] shaded Crane 1024×1024 in 0.30s
+TMPL 270 Some([-16.985310492522455, -9.975705433155234, 0.011880846160783]) shade 38fd1350dacee04f tilt 2ff9835e116709da coat b9ef8d5703e8c579 wear 941cae54a024faf2 cover 371029828a6ff64d
+[    6.4s] shaded Slab 1024×1024 in 0.40s
+TMPL 10124 Some([-14.503789269125374, -0.9794288922564954, 0.8044006931495657]) shade c9ff28f2ba4f197 tilt 3b23a10bd4a4c8eb coat 203b0b8fe2cdcad2 wear a002c9ef7d30052a cover 28df91d0ee691f4d
+[    7.1s] shaded LowerContainers 1024×1024 in 0.48s
+TMPL 250 Some([11.153477198361104, 7.172493556158641, 19.43759925510303]) shade ee06c81511a54236 tilt f95cd08cd4d24b7a coat 968ef9d8fd658269 wear 6c447fda37c7a86b cover 5bd10e062bfe88a6
+[    7.5s] shaded CraneWeight 1024×1024 in 0.28s
+TMPL 1196 Some([-13.98239528122373, 7.178319108729447, 2.576507786555377]) shade 1d7fcbe4947be3f7 tilt 46f9c6491c3faa7b coat f240eb8d6a31d54f wear 2f84e3d923926dfd cover 29f9552415d78fae
+[    7.9s] shaded Shelves 1024×1024 in 0.31s
+TMPL 168 Some([-12.08661085219758, -1.083916009824968, 13.384271600484144]) shade ba9189230856297 tilt 59ec6be655216031 coat 8f8602463c642208 wear ed64a9fe139af762 cover ed64a9fe139af762
+[    8.3s] shaded Stencil 1024×1024 in 0.30s
+TMPL 896 Some([-11.0, -4.78, 3.0]) shade 15c78a2c23f1160b tilt 4b816f7a90daddce coat c54d53cf65c0c097 wear ed64a9fe139af762 cover ed64a9fe139af762
+[    8.7s] shaded Counter 1024×1024 in 0.30s
+TMPL 1454 Some([-15.38001722488702, 2.601215665705318, 0.7985108944311258]) shade 6a4ea1c5df8b3578 tilt 23d59b9794fb042c coat 8d97f75145da705 wear ed64a9fe139af762 cover ed64a9fe139af762
+[    9.2s] shaded Supplies 1024×1024 in 0.35s
+TMPL 171 Some([-15.0, -9.610000000000001, 7.9]) shade 7d3adf3c1ddbfc04 tilt 1045d6e4cba771 coat 9acf3bbd9a3966ce wear ed64a9fe139af762 cover ed64a9fe139af762
+[    9.4s] shaded Cables 1024×1024 in 0.24s
+TMPL 532 Some([-11.926456286100075, -1.1270735806684364, 7.6652046295156815]) shade 24248ca649c0a9d2 tilt 210d9eba814a2c92 coat fb32c9cbd6f4f798 wear ed64a9fe139af762 cover ed64a9fe139af762
+[    9.8s] shaded PriceBoards 1024×1024 in 0.28s
+TMPL 4450 Some([-12.78937037550555, 7.803638445576152, 2.745873105912605]) shade 171023a09ba2aca4 tilt ff0a6df2633964bf coat 5d1cbde601565d8 wear ed64a9fe139af762 cover ed64a9fe139af762
+[   10.2s] shaded ShelfStock 1024×1024 in 0.29s
+TMPL 2606 Some([-10.873397408252387, -8.198211583851615, 8.939152210311663]) shade 34d198a68f6dafbf tilt 20e005f0c9eae18b coat 2b664adc68e9321d wear 9124fdd515470757 cover 2cbec78a53d19dd0
+[   10.6s] shaded AwningPatches 1024×1024 in 0.31s
+TMPL 9166 Some([-13.691080429023788, -0.6826298130078788, 8.912040602452212]) shade 2002668703a89dd0 tilt 6a9cff4a5cb1954d coat 4d70a79eb03ab489 wear d26b1a53c8a8fcc8 cover af4718619413909d
+[   11.0s] shaded UpperContainer 1024×1024 in 0.35s
+[   11.0s] writing HubShop.glb and 22 textures
+[   11.8s] read 22 parts back, 22 textures decoded, in 232.31ms
+[   11.9s] rendering closeup_1.png of 22 parts
+RENDER_CHECK size=1024 max=0 reference=0.967 new=0.254 owner_mismatch=0 setup=0.005 mips=0.028 prepare=0.002 bin=0.000 raster=0.082 shade=0.062 glass=0.000 bloom=0.057 finish=0.013
+RENDER_CHECK size=1024 max=0 reference=1.000 new=0.217 owner_mismatch=0 setup=0.006 mips=0.029 prepare=0.001 bin=0.004 raster=0.064 shade=0.047 glass=0.000 bloom=0.043 finish=0.019
+RENDER_CHECK size=1024 max=0 reference=0.967 new=0.191 owner_mismatch=0 setup=0.005 mips=0.001 prepare=0.001 bin=0.000 raster=0.069 shade=0.054 glass=0.000 bloom=0.045 finish=0.011
+GLB_CHECK closeup_1.png max=18 mean=0.183 over2=38 over2_f32=22 direct=1.23 glb=1.22
+HubShop: 22 parts, script 11.04s, total 15.98s
+  shade (creases, contact): 0.41s
+  coat: 0.25s
+  wear: 0.78s
+  combine: 0.33s
+  shade, surfaces, grid and texels: 0.97s
+  shade, neighbourhoods: 0.74s
+  shade, spreading over seams: 0.33s
+  coat, painting texels: 0.00s
+[    0.0s] read 22 parts back, 22 textures decoded, in 247.13ms
+[    0.0s] rendering preview.png of 22 parts
+[    0.3s] rendering parts.png of 22 parts
+#f23d3d Slab
+#85a5f2 LowerContainers
+#7bb32d Shelves
+#b362a8 ShelfStock
+#3df2d4 UpperContainer
+#f2c085 Counter
+#4e2db3 CounterDrums
+#66b362 Awning
+#f23d79 AwningPatches
+#85c9f2 AwningPosts
+#a8b32d Sign
+#a262b3 SignBraces
+#3df297 Crane
+#f29c85 CraneWeight
+#2d38b3 CraneHook
+#80b362 StockPiles
+#f23db6 Fittings
+#85eef2 Stencil
+#b3912d PriceBoards
+#8762b3 Supplies
+#3df25a Cables
+#f28593 Bulbs
+[    0.6s] rendering face_front.png of 22 parts
+[    1.0s] rendering face_front_parts.png of 22 parts
+[    1.3s] rendering face_right.png of 22 parts
+[    1.7s] rendering face_right_parts.png of 22 parts
+[    1.9s] rendering face_top.png of 22 parts
+[    2.5s] rendering face_top_parts.png of 22 parts
+[    2.8s] rendering turntable/0000.png of 22 parts
+[    3.1s] rendering turntable/0001.png of 22 parts
+[    3.5s] rendering turntable/0002.png of 22 parts
+[    3.8s] rendering turntable/0003.png of 22 parts
+[    4.1s] rendering closeup_1.png of 22 parts
+[    4.7s] rendering closeup_2.png of 22 parts
+[    5.4s] rendering eye_1.png of 22 parts
+[    5.9s] rendering eye_2.png of 22 parts
+[    6.3s] rendering eye_3.png of 22 parts
+[    6.6s] rendering eye_4.png of 22 parts
+[    7.6s] rendering eye_5.png of 22 parts
+[    8.0s] rendering eye_6.png of 22 parts
+[    8.6s] rendering eye_7.png of 22 parts
+rendered 1 files, 22 parts, total 9.24s
+GLB_RENDER ok seconds=9.262681371 files=./closeup_1.png ./closeup_2.png ./eye_1.png ./eye_2.png ./eye_3.png ./eye_4.png ./eye_5.png ./eye_6.png ./eye_7.png ./face_front.png ./face_front_parts.png ./face_right.png ./face_right_parts.png ./face_top.png ./face_top_parts.png ./parts.png ./preview.png ./turntable/0000.png ./turntable/0001.png ./turntable/0002.png ./turntable/0003.png 
+GLB_BUILT files=./closeup_1.png 
