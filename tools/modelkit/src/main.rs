@@ -1038,9 +1038,10 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 	};
 	// Both lists keep the build's part order, and each shot's one View draws all three.
 	let reloaded_shown: Vec<&Part> = reloaded.as_ref().map_or(Vec::new(), |scene| scene.parts.iter().filter(|p| p.preview).collect());
-	// The shown parts with corners rounded as the .glb stores them: what the
-	// reader should match exactly, the rest being the format's own precision.
-	let rounded: Vec<Part> = if reloaded.is_some() { shown.iter().map(|part| scene::rounded(part)).collect() } else { Vec::new() };
+	// The shown parts rounded as the .glb stores them (f32 corners, 8-bit
+	// textures): the reference the reader must match, so the pass bar is
+	// on max_f32, not on the format's own precision.
+	let rounded: Vec<Part> = if reloaded.is_some() { scene::rounded(&shown)? } else { Vec::new() };
 	let rounded_shown: Vec<&Part> = rounded.iter().collect();
 	for (at, job) in jobs.iter().enumerate() {
 		let mine = match claims.as_mut() {
@@ -1063,8 +1064,8 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 			let again = draw_shot(&reloaded_shown, shot);
 			let from_glb = started.elapsed().as_secs_f64();
 			let (max, mean, over2) = difference(&frame.pixels, &again.pixels);
-			let (_, _, over2_f32) = difference(&draw_shot(&rounded_shown, shot).pixels, &again.pixels);
-			eprintln!("GLB_CHECK {} max={max} mean={mean:.3} over2={over2} over2_f32={over2_f32} direct={direct:.2} glb={from_glb:.2}", shot.file);
+			let (max_f32, mean_f32, over2_f32) = difference(&draw_shot(&rounded_shown, shot).pixels, &again.pixels);
+			eprintln!("GLB_CHECK {} max={max} mean={mean:.3} over2={over2} max_f32={max_f32} mean_f32={mean_f32:.3} over2_f32={over2_f32} direct={direct:.2} glb={from_glb:.2}", shot.file);
 		}
 	}
 	if let Some(wanted) = shown_clip {

@@ -4,6 +4,7 @@
 // them (load_textures): a part that falls in no view never has its PNG decoded.
 
 use std::cell::{Cell, RefCell};
+use std::collections::HashMap;
 use std::rc::Rc;
 
 use crate::glb::to_y_up;
@@ -200,13 +201,29 @@ fn rebuild(corners: &[Corner], triangles: &[u32]) -> Mesh {
 	mesh
 }
 
-// A copy of a part with its corners rounded exactly as a .glb stores them
-// (f32, through Y up and back), sharing its texture: --glb-check's measure of
-// what the file format alone changes.
-pub fn rounded(part: &Part) -> Part {
-	let (corners, triangles) = part.mesh.borrow().indexed();
-	let corners: Vec<Corner> = corners.iter().map(|c| stored_corner(to_y_up(c.position), to_y_up(c.normal), [c.uv[0] as f32, 1.0 - c.uv[1] as f32])).collect();
-	Part { mesh: Rc::new(RefCell::new(rebuild(&corners, &triangles))), ..part.clone() }
+// Copies of parts rounded exactly as a .glb stores them: corners as f32,
+// through Y up and back, and textures through the same 8-bit PNG. This is
+// --glb-check's reference: the reader must match it, and anything left over
+// would be a reader bug, not the file format. Parts that shared a texture
+// still share its rounded copy.
+pub fn rounded(parts: &[&Part]) -> Result<Vec<Part>, String> {
+	let mut images: HashMap<*const RefCell<Image>, Rc<RefCell<Image>>> = HashMap::new();
+	parts
+		.iter()
+		.map(|part| {
+			let (corners, triangles) = part.mesh.borrow().indexed();
+			let corners: Vec<Corner> = corners.iter().map(|c| stored_corner(to_y_up(c.position), to_y_up(c.normal), [c.uv[0] as f32, 1.0 - c.uv[1] as f32])).collect();
+			let image = match images.get(&Rc::as_ptr(&part.image)) {
+				Some(image) => image.clone(),
+				None => {
+					let image = Rc::new(RefCell::new(decode_png(&part.image.borrow().encode_png()).map_err(|e| format!("part {}: {e}", part.name))?));
+					images.insert(Rc::as_ptr(&part.image), image.clone());
+					image
+				}
+			};
+			Ok(Part { mesh: Rc::new(RefCell::new(rebuild(&corners, &triangles))), image, ..(*part).clone() })
+		})
+		.collect()
 }
 
 // A PNG as glb::write stores it: 8-bit RGB, or RGBA for a see-through part.
