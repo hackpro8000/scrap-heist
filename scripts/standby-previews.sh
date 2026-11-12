@@ -84,7 +84,27 @@ for name in "${list[@]}"; do
 				renders=()
 				[ "${#share[@]}" -eq 2 ] && [ "${share[0]}" = --renders ] && renders=("${share[@]}")
 				started=$(date +%s.%N)
-				if tools/modelkit/bin/modelkit-linux-x64 --render "${rendered}/${model}.glb" --out "${dir}/glbrender" --turntable 4 "${size[@]}" "${renders[@]}" "${views[@]}" >> "${dir}/build.log" 2>&1; then
+				echo "GLB_RENDER glb=$(stat -c '%s %y' "${rendered}/${model}.glb") args=--turntable 4 ${size[*]} ${renders[*]} ${views[*]}" >> "${dir}/build.log"
+				tools/modelkit/bin/modelkit-linux-x64 --render "${rendered}/${model}.glb" --out "${dir}/glbrender" --turntable 4 "${size[@]}" "${renders[@]}" "${views[@]}" >> "${dir}/build.log" 2>&1 &
+				render_pid=$!
+				waited=0
+				while kill -0 "${render_pid}" 2> /dev/null && [ "${waited}" -lt 60 ]; do sleep 1; waited=$((waited + 1)); done
+				if kill -0 "${render_pid}" 2> /dev/null; then
+					# Still going after a minute: record what every thread is doing.
+					{
+						echo "GLB_HANG after 60s"
+						for task in /proc/"${render_pid}"/task/*; do
+							echo "GLB_HANG thread $(basename "${task}") state=$(awk '{print $3}' "${task}/stat") wchan=$(cat "${task}/wchan" 2> /dev/null) cpu=$(awk '{print $14+$15}' "${task}/stat")"
+						done
+						if command -v gdb > /dev/null; then
+							sudo -n gdb -p "${render_pid}" -batch -ex 'thread apply all bt 12' 2>&1 | rg '^(Thread|#)' | head -n 120 | while read -r line; do echo "GLB_HANG ${line}"; done
+						else
+							echo "GLB_HANG no gdb"
+						fi
+					} >> "${dir}/build.log" 2>&1
+					kill -9 "${render_pid}" 2> /dev/null || true
+				fi
+				if wait "${render_pid}"; then
 					echo "GLB_RENDER ok seconds=$(echo "$(date +%s.%N) - ${started}" | bc) files=$(cd "${dir}/glbrender" && find . -name '*.png' | sort | tr '\n' ' ')" >> "${dir}/build.log"
 				else
 					echo "GLB_RENDER failed" >> "${dir}/build.log"
