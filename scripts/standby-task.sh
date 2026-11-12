@@ -362,6 +362,8 @@ of="$(field upload-of)"
 if [ "$(field build)" = "no" ]; then
 	# Previews only: they render once this result has gone.
 	printf 'status=DONE\nbuild=-\nupload=skipped\ntotal=0\nparts=0\n' > "${out}/summary.txt"
+	# TEMP-DIAG: what the worker said lately, to see why previews failed here.
+	{ find / -path /proc -prune -o -name build.log -path '*IslandPreview*' -newermt '-30 min' -print 2> /dev/null | head -n 5 | while read -r log; do echo "== ${log}"; wc -l "${log}"; rg -v "^PLACED|^SHARD_COST|^STANDS|^MEM" "${log}" | rg -v "shaded" | head -n 40; echo "-- tail"; tail -c 600 "${log}"; done; } >> "${out}/build.log" 2>&1
 	echo "DONE: no build, previews only"
 elif [ -z "${of}" ]; then
 	build

@@ -291,6 +291,21 @@ impl Canvas {
 		(color, covered)
 	}
 
+	// The colour at p once the strokes are laid over `color`, in the order
+	// they were added.
+	pub fn lay(&self, p: Vec3, n: Vec3, mut color: [f64; 3]) -> [f64; 3] {
+		let nearby = self.grid.get(&self.cell(p)).map(Vec::as_slice).unwrap_or(&[]);
+		for &index in nearby {
+			let stroke = &self.strokes[index];
+			let alpha = stroke.cover(p, n);
+			if alpha > 0.0 {
+				let paint = stroke.color.map(|c| c * stroke.tone(p));
+				color = std::array::from_fn(|k| color[k] + (paint[k] - color[k]) * alpha);
+			}
+		}
+		color
+	}
+
 	pub fn paint(&self, p: Vec3, n: Vec3) -> [f64; 3] {
 		let nearby = self.grid.get(&self.cell(p)).map(Vec::as_slice).unwrap_or(&[]);
 		let mut under = (f64::MAX, [0.5; 3]);

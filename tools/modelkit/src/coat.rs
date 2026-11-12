@@ -48,7 +48,28 @@ pub struct Look {
 	// Where a hand-painted coat gathers its finest strokes: a point and radius.
 	pub focus: Option<(Vec3, f64)>,
 	pub brushes: Brushes,
+	// Paint the plain brushed coat's strokes once on a seamless square tile
+	// and lay it over the part by world position, instead of stroking every
+	// chunk's own surface (see `tile_lookup`).
+	pub tiled: Option<TiledCoat>,
 }
+
+#[derive(Clone, Copy)]
+pub struct TiledCoat {
+	// The tile's side in studs, and how many differently stroked tiles there are.
+	pub tile: f64,
+	pub variants: u32,
+}
+
+impl TiledCoat {
+	// What a tiled coat adds to the coat layer's key.
+	pub fn numbers(&self) -> [f64; 4] {
+		[-7.0, self.tile, f64::from(self.variants), TILE_VERSION]
+	}
+}
+
+// Bumped when the tile's strokes or how a texel finds its place on a tile change.
+const TILE_VERSION: f64 = 1.0;
 
 type Motion = Option<std::sync::Arc<crate::marks::Marks>>;
 
@@ -254,16 +275,10 @@ pub fn base_at(look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Vec3) -> [f6
 pub fn coat(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Vec3) -> [f64; 3]) -> Canvas {
 	let mut canvas = Canvas::new(look.brush);
 	scatter(mesh, look, wear, COAT_DENSITY, 1, 1, |spot, id| {
-		let r = |j: u32| hash(id.wrapping_add(j));
-		let angle = (r(2) - 0.5) * 0.5 + if spot.normal[2].abs() > WALL { r(3) * std::f64::consts::TAU } else { 0.0 };
-		// Each stroke is mixed a little lighter or darker, warmer or cooler.
-		let shade = 1.0 + (r(4) - 0.5) * 0.3;
-		let warm = (r(7) - 0.5) * 0.14;
-		let (kind, length, width) = if look.stamps { (Brush::Stamp, 0.7 + 0.9 * r(5), 0.3 + 0.35 * r(6)) } else { (Brush::Flat, 0.35 + 0.35 * r(5), 0.16 + 0.08 * r(6)) };
 		// The stroke is shaped before it is coloured: its colour comes from the
 		// model script, one call at a time, and most strokes scattered on the
 		// neighbouring chunks can never touch this one.
-		let mut stroke = spot.stroke(kind, spot.at, spot.heading(angle), length, width, [0.0; 3], 1.0, id).marked(&look.brushes.coat);
+		let (mut stroke, shade, warm) = coat_stroke(look, &spot, id, spot.normal[2].abs() > WALL);
 		if wear.out_of_touch(stroke.centre(), stroke.reach() + canvas.cell_size()) {
 			return;
 		}
@@ -272,6 +287,199 @@ pub fn coat(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Ve
 		canvas.add(stroke);
 	});
 	canvas
+}
+
+// One coat stroke at a spot, still uncoloured, with how much lighter or
+// darker (`shade`) and warmer or cooler (`warm`) its paint is mixed. Tops
+// take strokes any way, walls sideways.
+fn coat_stroke(look: &Look, spot: &Spot, id: u32, top: bool) -> (Stroke, f64, f64) {
+	let r = |j: u32| hash(id.wrapping_add(j));
+	let angle = (r(2) - 0.5) * 0.5 + if top { r(3) * std::f64::consts::TAU } else { 0.0 };
+	// Each stroke is mixed a little lighter or darker, warmer or cooler.
+	let shade = 1.0 + (r(4) - 0.5) * 0.3;
+	let warm = (r(7) - 0.5) * 0.14;
+	let (kind, length, width) = if look.stamps { (Brush::Stamp, 0.7 + 0.9 * r(5), 0.3 + 0.35 * r(6)) } else { (Brush::Flat, 0.35 + 0.35 * r(5), 0.16 + 0.08 * r(6)) };
+	(spot.stroke(kind, spot.at, spot.heading(angle), length, width, [0.0; 3], 1.0, id).marked(&look.brushes.coat), shade, warm)
+}
+
+// A tiled coat's square of strokes, wrapping at its edges. Each texel holds
+// what the strokes multiply the base colour by (linear), the coat as a
+// canvas paints it on a white base, so a chunk's coat is its own base colour
+// times the tile.
+pub struct Tile {
+	size: usize,
+	per_stud: f64,
+	texels: Vec<[f32; 3]>,
+}
+
+impl Tile {
+	// The factor at (u, v) studs into the tile, blended between the four
+	// nearest texels, wrapping round the edges.
+	pub fn sample(&self, u: f64, v: f64) -> [f64; 3] {
+		let (x, y) = (u * self.per_stud - 0.5, v * self.per_stud - 0.5);
+		let (x0, y0) = (x.floor(), y.floor());
+		let (fx, fy) = (x - x0, y - y0);
+		let n = self.size as i64;
+		let at = |i: i64, j: i64| self.texels[(j.rem_euclid(n) * n + i.rem_euclid(n)) as usize];
+		let (i, j) = (x0 as i64, y0 as i64);
+		let (a, b, c, d) = (at(i, j), at(i + 1, j), at(i, j + 1), at(i + 1, j + 1));
+		std::array::from_fn(|k| {
+			let low = f64::from(a[k]) + (f64::from(b[k]) - f64::from(a[k])) * fx;
+			let high = f64::from(c[k]) + (f64::from(d[k]) - f64::from(c[k])) * fx;
+			low + (high - low) * fy
+		})
+	}
+}
+
+type TileKey = Vec<u64>;
+
+// Tiles painted this run, shared by every chunk with the same coat strokes.
+fn tiles() -> &'static std::sync::Mutex<std::collections::HashMap<TileKey, std::sync::Arc<Tile>>> {
+	static TILES: std::sync::OnceLock<std::sync::Mutex<std::collections::HashMap<TileKey, std::sync::Arc<Tile>>>> = std::sync::OnceLock::new();
+	TILES.get_or_init(Default::default)
+}
+
+// The tile for a top (strokes any way) or a wall (strokes sideways, along
+// the tile's u), painted at `per_stud` texels a stud the first time it is asked for.
+pub fn tile(look: &Look, tiled: TiledCoat, top: bool, variant: u32, per_stud: usize) -> std::sync::Arc<Tile> {
+	let key: TileKey = [tiled.tile, look.brush, f64::from(u8::from(look.stamps)), f64::from(u8::from(top)), f64::from(variant), per_stud as f64].into_iter().chain(look.brushes.coat.iter().flat_map(|marks| marks.numbers())).map(f64::to_bits).collect();
+	if let Some(found) = tiles().lock().expect("tile store").get(&key) {
+		return found.clone();
+	}
+	let painted = std::sync::Arc::new(paint_tile(look, tiled.tile, top, variant, per_stud));
+	tiles().lock().expect("tile store").entry(key).or_insert(painted).clone()
+}
+
+// The tiles a chunk reads, each painted on its own thread if not yet painted.
+pub fn tiles_for(look: &Look, tiled: TiledCoat, wanted: &[(bool, u32)], per_stud: usize) -> Vec<std::sync::Arc<Tile>> {
+	std::thread::scope(|scope| {
+		let handles: Vec<_> = wanted.iter().map(|&(top, variant)| scope.spawn(move || tile(look, tiled, top, variant, per_stud))).collect();
+		handles.into_iter().map(|h| h.join().expect("tile painting")).collect()
+	})
+}
+
+// The tile is painted stroke by stroke over each stroke's own footprint,
+// which gives what `Canvas::paint` gives texel by texel (each texel starts
+// from the nearest stroke's colour, then takes every stroke over it in the
+// order laid) while testing far fewer strokes per texel. A stroke running
+// over an edge carries on over the opposite one, so the edges meet seamlessly.
+fn paint_tile(look: &Look, side: f64, top: bool, variant: u32, per_stud: usize) -> Tile {
+	let size = ((side * per_stud as f64).round() as usize).max(1);
+	let normal = [0.0, 0.0, 1.0];
+	// As many strokes as `scatter` lays on that much surface.
+	let count = (side * side * COAT_DENSITY / (look.brush * look.brush)).round() as u32;
+	let salt = 0x7a11_e5u32 ^ (variant * 2 + u32::from(top)).wrapping_mul(0x9e37_79b9);
+	let strokes: Vec<Stroke> = (0..count)
+		.map(|k| {
+			let id = (salt ^ k.wrapping_mul(0x85eb_ca6b)).wrapping_mul(0xc2b2_ae35);
+			let at = [hash(id) * side, hash(id.wrapping_add(1)) * side, 0.0];
+			let spot = Spot { at, chunk: 0, uv: [0.0; 2], brush: look.brush, normal, up: [0.0, 1.0, 0.0], side: [1.0, 0.0, 0.0] };
+			let (mut stroke, shade, warm) = coat_stroke(look, &spot, id, top);
+			stroke.color = [shade * (1.0 + warm), shade, shade * (1.0 - warm)];
+			stroke
+		})
+		.collect();
+	let step = side / size as f64;
+	let n = size as i64;
+	// The texels a stroke may touch, unwrapped: round its painted rectangle,
+	// or round its whole reach when a motion draws it.
+	let span = |stroke: &Stroke, reach_only: bool| -> [i64; 4] {
+		let (low, high) = if reach_only || stroke.marks.is_some() {
+			let (c, r) = (stroke.centre(), stroke.reach());
+			([c[0] - r, c[1] - r], [c[0] + r, c[1] + r])
+		} else {
+			let half = scale(stroke.across, stroke.width / 2.0);
+			let end = add(stroke.start, scale(stroke.along, stroke.length));
+			let corners = [add(stroke.start, half), sub(stroke.start, half), add(end, half), sub(end, half)];
+			let low = [0, 1].map(|k| corners.iter().map(|c| c[k]).fold(f64::MAX, f64::min) - step);
+			let high = [0, 1].map(|k| corners.iter().map(|c| c[k]).fold(f64::MIN, f64::max) + step);
+			(low, high)
+		};
+		[(low[0] / step - 0.5).floor() as i64, (high[0] / step - 0.5).ceil() as i64, (low[1] / step - 0.5).floor() as i64, (high[1] / step - 0.5).ceil() as i64]
+	};
+	let at = |i: i64, j: i64| -> (usize, Vec3) { ((j.rem_euclid(n) * n + i.rem_euclid(n)) as usize, [(i as f64 + 0.5) * step, (j as f64 + 0.5) * step, 0.0]) };
+	// The nearest coat stroke's colour under every texel, as `Canvas::paint` starts.
+	let mut under = vec![(f64::MAX, [0.5; 3]); size * size];
+	for stroke in &strokes {
+		let [x0, x1, y0, y1] = span(stroke, true);
+		let centre = stroke.centre();
+		for j in y0..=y1 {
+			for i in x0..=x1 {
+				let (index, p) = at(i, j);
+				let offset = sub(p, centre);
+				let d = dot(offset, offset);
+				if d < under[index].0 {
+					under[index] = (d, stroke.color);
+				}
+			}
+		}
+	}
+	let mut colours: Vec<[f64; 3]> = under.into_iter().map(|(_, c)| c).collect();
+	for stroke in &strokes {
+		let [x0, x1, y0, y1] = span(stroke, false);
+		for j in y0..=y1 {
+			for i in x0..=x1 {
+				let (index, p) = at(i, j);
+				let alpha = stroke.cover(p, normal);
+				if alpha > 0.0 {
+					let paint = stroke.color.map(|c| c * stroke.tone(p));
+					let color = &mut colours[index];
+					*color = std::array::from_fn(|k| color[k] + (paint[k] - color[k]) * alpha);
+				}
+			}
+		}
+	}
+	if std::env::var_os("MODELKIT_PROFILE").is_some() {
+		eprintln!("tiled coat: painted a {} tile, variant {variant}, {size} x {size} texels", if top { "top" } else { "wall" });
+	}
+	Tile { size, per_stud: size as f64 / side, texels: colours.into_iter().map(|c| c.map(|x| x as f32)).collect() }
+}
+
+// Where a texel finds its coat on the tiles: whether it is a top, which
+// variant, and the spot (u, v) in studs on that tile. The texel's position is
+// projected along the axis its face normal most faces (triplanar, unblended)
+// and wrapped by the tile's side. Each tile-sized cell picks its variant and
+// turn from a hash, and cells meet along wavy lines so no grid shows. Tops
+// turn by quarters; walls only mirror, so their strokes stay sideways.
+pub fn tile_place(tiled: TiledCoat, p: Vec3, n: Vec3) -> (bool, u32, f64, f64) {
+	let a = n.map(f64::abs);
+	let axis = if a[0] >= a[1] && a[0] >= a[2] { 0 } else if a[1] >= a[2] { 1 } else { 2 };
+	let (u, v) = match axis {
+		0 => (p[1], p[2]),
+		1 => (p[0], p[2]),
+		_ => (p[0], p[1]),
+	};
+	let top = a[2] > WALL;
+	let side = tiled.tile;
+	let cell = [(u + wobble(u, v, side, 11)) / side, (v + wobble(u, v, side, 23)) / side].map(|c| c.floor() as i64 as u32);
+	let seed = cell[0].wrapping_mul(73_856_093) ^ cell[1].wrapping_mul(19_349_663) ^ (axis as u32 * 2 + u32::from(top)).wrapping_mul(83_492_791);
+	let variant = ((hash(seed) * f64::from(tiled.variants)) as u32).min(tiled.variants - 1);
+	let turn = (hash(seed ^ 0x5bd1_e995) * 4.0) as u32;
+	let (s, t) = (u.rem_euclid(side), v.rem_euclid(side));
+	let (s, t) = match (top, turn) {
+		(_, 0) => (s, t),
+		(true, 1) => (side - t, s),
+		(true, 2) => (side - s, side - t),
+		(true, _) => (t, side - s),
+		(false, 1) => (side - s, t),
+		(false, 2) => (s, side - t),
+		(false, _) => (side - s, side - t),
+	};
+	(top, variant, s, t)
+}
+
+// A smooth offset of up to an eighth of a tile either way, for bending the
+// lines where tile cells meet.
+fn wobble(u: f64, v: f64, side: f64, salt: u32) -> f64 {
+	let step = side / 4.0;
+	let (x, y) = (u / step, v / step);
+	let (x0, y0) = (x.floor(), y.floor());
+	let smooth = |t: f64| t * t * (3.0 - 2.0 * t);
+	let (sx, sy) = (smooth(x - x0), smooth(y - y0));
+	let at = |i: f64, j: f64| hash((i as i64 as u32).wrapping_mul(73_856_093) ^ (j as i64 as u32).wrapping_mul(19_349_663) ^ salt.wrapping_mul(0x9e37_79b9)) - 0.5;
+	let low = at(x0, y0) + (at(x0 + 1.0, y0) - at(x0, y0)) * sx;
+	let high = at(x0, y0 + 1.0) + (at(x0 + 1.0, y0 + 1.0) - at(x0, y0 + 1.0)) * sx;
+	(low + (high - low) * sy) * step
 }
 
 // Wear over the base coat: grime, rust, drips, scuffs and scratches.
