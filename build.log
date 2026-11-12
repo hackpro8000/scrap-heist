@@ -1,0 +1,128 @@
+warning: unused variable: `source`
+    --> src/bake.rs:1204:116
+     |
+1204 | ...esh], shading: &Shading, source: &cache::Source, reach: f64, width_scale: f64, bevel_reach: f64, bevel_fold: f64, grid_reach: f...
+     |                             ^^^^^^ help: if this is intentional, prefix it with an underscore: `_source`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: fields `width` and `height` are never read
+    --> src/bake.rs:1189:6
+     |
+1185 | pub struct ShadePass {
+     |            --------- fields in this struct
+...
+1189 |     pub width: usize,
+     |         ^^^^^
+1190 |     pub height: usize,
+     |         ^^^^^^
+     |
+     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `bones` is never read
+  --> src/scene.rs:17:6
+   |
+14 | pub struct Scene {
+   |            ----- field in this struct
+...
+17 |     pub bones: Vec<Bone>,
+   |         ^^^^^
+
+[    0.0s] running BuildBay/model.luau
+TMPL 604 Some([1.6, 3.62, 2.5]) shade 9ebc3e6409fabff9 tilt 57cb71be7e6a5b33 coat cfe7a5460bbbee5e wear ed64a9fe139af762 cover ed64a9fe139af762
+[    1.9s] shaded Panel 1024×1024 in 0.36s
+[    2.0s] baked every chunk this machine claimed
+TMPL 8 Some([0.31000000000000016, 2.56, 2.95]) shade 7426ad2c26c887b0 tilt e75d9790cabe4f95 coat e3b92ae63ca0bfad wear ed64a9fe139af762 cover ed64a9fe139af762
+[    2.9s] shaded Pad1 1024×1024 in 0.34s
+TMPL 400 Some([2.6, 0.0, 0.5000000000000001]) shade 7a0d56236d28fe tilt 69b2d0b763ba64c3 coat 8d1bea8fbbd5b694 wear ed64a9fe139af762 cover ed64a9fe139af762
+[    3.4s] shaded Cradle 1024×1024 in 0.35s
+TMPL 100 Some([0.30000000000000016, 2.7583437630408056, 1.1166034057714314]) shade 3755318c8f96d8c1 tilt 18bf72decb03d052 coat be71e33f7fbd1a7a wear ed64a9fe139af762 cover ed64a9fe139af762
+[    3.8s] shaded Clamp1 1024×1024 in 0.33s
+TMPL 100 Some([-2.5387957711637013, -1.1193642603850715, 1.1166034057714314]) shade fdfbac77c7fb5196 tilt a2147c3d2056567e coat 90ff49fc0933eb08 wear ed64a9fe139af762 cover ed64a9fe139af762
+[    4.2s] shaded Clamp2 1024×1024 in 0.31s
+TMPL 8 Some([2.0620250336881623, -1.548467875173177, 2.95]) shade fde5766a27aab673 tilt 1191721ab7b6893d coat a14ca90d7c1980f0 wear ed64a9fe139af762 cover ed64a9fe139af762
+[    4.6s] shaded Pad3 1024×1024 in 0.31s
+TMPL 2060 Some([-4.15, 3.4499999999999997, 0.48]) shade 3569ddd15910bdb0 tilt 1098d5ebf654017e coat 3735dbdb5589b0c6 wear ed64a9fe139af762 cover ed64a9fe139af762
+[    4.9s] shaded Frame 1024×1024 in 0.30s
+TMPL 288 Some([-4.26, 3.34, 0.48]) shade c685d753e159789d tilt 706bc54b9c600e coat a7e8accaeaa88934 wear ed64a9fe139af762 cover ed64a9fe139af762
+[    5.5s] shaded Bands 1024×1024 in 0.38s
+TMPL 852 Some([-5.0, -5.0, 0.0]) shade 18f7bc97e22690ff tilt 60e75e257207dad3 coat 840a7d7b3098cfd8 wear ed64a9fe139af762 cover ed64a9fe139af762
+[    6.0s] shaded Deck 1024×1024 in 0.36s
+TMPL 340 Some([4.225969922260266, 2.6318933016171893, 0.5176553522370476]) shade 3f0928c8063ced1d tilt ad94bfba95b4993b coat 32ec1294ace20774 wear 7f32e635e5909058 cover b26e00e93890ffc4
+[    6.4s] shaded Drum 1024×1024 in 0.31s
+TMPL 212 Some([-3.094783494648035, 2.366368101872958, 1.9065909021992038]) shade 4e5ad4991e3c95c2 tilt edf80a6c0c057647 coat eed838e704fedb16 wear 883ff8290b90efe0 cover daebdeebd2c8b7f9
+[    6.8s] shaded CrateScrap 1024×1024 in 0.30s
+TMPL 100 Some([2.2387957711637005, -1.6389795026557357, 1.1166034057714314]) shade 33bea3b03dc1a54c tilt 4da614f3f1e38e69 coat 3c3d99b481892c16 wear ed64a9fe139af762 cover ed64a9fe139af762
+[    7.2s] shaded Clamp3 1024×1024 in 0.33s
+TMPL 162 Some([-0.3, 3.2299999999999995, 6.75]) shade 9dd750af54a97e08 tilt 7194c3338e3dbfee coat 6e42e34a94a3b0c9 wear ed64a9fe139af762 cover ed64a9fe139af762
+[    7.6s] shaded Arm 1024×1024 in 0.35s
+TMPL 282 Some([-3.3, 3.85, 0.48]) shade e6b80641dfb41e85 tilt daa5c700baddb116 coat 780aff31e7435bd0 wear ed64a9fe139af762 cover ed64a9fe139af762
+[    8.2s] shaded Board 1024×1024 in 0.45s
+TMPL 712 Some([-2.299211500400226, 3.7, 6.410366735933511]) shade cb74cae54082b2a4 tilt 75f9681058f80538 coat 1bfb16096493601e wear ed64a9fe139af762 cover ed64a9fe139af762
+[    8.6s] shaded Tools 1024×1024 in 0.34s
+TMPL 218 Some([-3.613953857724021, 2.484718619879062, 1.4183246701296321]) shade a1a528467190d7a1 tilt f1487755a8eaa0b7 coat d69d2edb777297af wear ecb888725db2e841 cover 2216a866d8687cf9
+[    9.0s] shaded CrateHeap 1024×1024 in 0.34s
+TMPL 264 Some([-4.8, -4.8, 0.48]) shade eb163aaf2aff9081 tilt 30f2b3417cc59a60 coat 3f4536510df856ff wear 6035e8f8ee574861 cover a6f8ecbe39edad8
+[    9.4s] shaded Posts 1024×1024 in 0.29s
+TMPL 448 Some([-4.35, 1.9, 0.48]) shade 119e834471222250 tilt 489273b78d07f971 coat c01af29229aa7e28 wear ed64a9fe139af762 cover ed64a9fe139af762
+[    9.9s] shaded Crate 1024×1024 in 0.37s
+TMPL 108 Some([-3.824715717034316, 2.8461077974264577, 1.8758929458589857]) shade 72018def6609f2a5 tilt 775328567fed918e coat 60436cb5fe88e57c wear 340b7bb6f76f8294 cover 9a96619f55ac611d
+[   10.3s] shaded CrateGear 1024×1024 in 0.33s
+TMPL 8 Some([-2.372025033688163, -1.0115321248268243, 2.95]) shade e10450146f1454aa tilt 86f41becde04ca0 coat cc8dfe4ca43d5dc1 wear ed64a9fe139af762 cover ed64a9fe139af762
+[   10.8s] shaded Pad2 1024×1024 in 0.35s
+[   10.8s] writing BuildBay.glb and 22 textures
+[   11.6s] read 22 parts back, 22 textures decoded, in 254.61ms
+BuildBay: 22 parts, script 10.76s, total 11.65s
+  shade (creases, contact): 0.41s
+  coat: 0.28s
+  wear: 0.84s
+  combine: 0.38s
+  shade, surfaces, grid and texels: 1.01s
+  shade, neighbourhoods: 0.42s
+  shade, spreading over seams: 0.38s
+  coat, painting texels: 0.00s
+[    0.0s] read 22 parts back, 22 textures decoded, in 253.80ms
+[    0.0s] rendering preview.png of 22 parts
+[    0.6s] rendering parts.png of 22 parts
+#f23d3d Deck
+#85a5f2 Cradle
+#7bb32d Clamp1
+#b362a8 Pad1
+#3df2d4 Clamp2
+#f2c085 Pad2
+#4e2db3 Clamp3
+#66b362 Pad3
+#f23d79 Frame
+#85c9f2 Bands
+#a8b32d Board
+#a262b3 Tools
+#3df297 Panel
+#f29c85 Arm
+#2d38b3 Posts
+#80b362 PostLamps
+#f23db6 BackLamps
+#85eef2 Crate
+#b3912d CrateHeap
+#8762b3 CrateGear
+#3df25a CrateScrap
+#f28593 Drum
+[    0.8s] rendering face_front.png of 22 parts
+[    1.5s] rendering face_front_parts.png of 22 parts
+[    1.7s] rendering face_right.png of 22 parts
+[    2.0s] rendering face_right_parts.png of 22 parts
+[    2.2s] rendering face_top.png of 22 parts
+[    3.2s] rendering face_top_parts.png of 22 parts
+[    3.6s] rendering turntable/0000.png of 22 parts
+[    4.1s] rendering turntable/0001.png of 22 parts
+[    4.5s] rendering turntable/0002.png of 22 parts
+[    5.0s] rendering turntable/0003.png of 22 parts
+[    5.5s] rendering eye_1.png of 22 parts
+[    5.7s] rendering eye_2.png of 22 parts
+[    5.9s] rendering eye_3.png of 22 parts
+[    6.2s] rendering eye_4.png of 22 parts
+[    6.4s] rendering eye_5.png of 22 parts
+[    7.2s] rendering eye_6.png of 22 parts
+[    8.1s] rendering eye_7.png of 22 parts
+rendered 1 files, 22 parts, total 8.71s
+GLB_RENDER ok seconds=8.738517191 files=./eye_1.png ./eye_2.png ./eye_3.png ./eye_4.png ./eye_5.png ./eye_6.png ./eye_7.png ./face_front.png ./face_front_parts.png ./face_right.png ./face_right_parts.png ./face_top.png ./face_top_parts.png ./parts.png ./preview.png ./turntable/0000.png ./turntable/0001.png ./turntable/0002.png ./turntable/0003.png 
+GLB_BUILT files=
