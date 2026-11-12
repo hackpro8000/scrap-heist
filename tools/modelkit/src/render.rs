@@ -3,9 +3,12 @@
 // can orbit the model (turntables), and light is soft since the textures
 // carry their own painted shading.
 
-use crate::mesh::{cross, dot, normalize, scale, sub, Vec3};
-use std::cell::RefCell;
+use crate::mesh::{add, cross, dot, normalize, scale, sub, Corner, Mesh, Vec3};
+use std::cell::{Ref, RefCell};
 use std::rc::Rc;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::Mutex;
+use std::time::Instant;
 
 use crate::anim::Pose;
 use crate::image::Image;
@@ -36,6 +39,9 @@ pub struct View {
 	pub parts: bool,
 	// Stud lines this far apart over a side view, every fifth one stronger.
 	pub grid: Option<f64>,
+	// Skip triangles facing away from the camera, as Roblox does; off draws
+	// both sides, as the reference renderer always has.
+	pub cull_back: bool,
 }
 
 #[derive(Clone, Copy)]
@@ -281,7 +287,600 @@ pub fn render_frame(parts: &[&Part], view: &View) -> Frame {
 	draw(parts, &[], view)
 }
 
+// Draws with the fast renderer. With MODELKIT_RENDER_CHECK=1 the reference
+// renderer draws the same view too, and the largest channel difference
+// between the two pictures and both times go to stderr.
 fn draw(parts: &[&Part], skin: &[Pose], view: &View) -> Frame {
+	let check = std::env::var("MODELKIT_RENDER_CHECK").is_ok_and(|value| value == "1");
+	if !check {
+		return draw_fast(parts, skin, view);
+	}
+	let start = Instant::now();
+	let frame = draw_fast(parts, skin, view);
+	let new = start.elapsed().as_secs_f64();
+	let start = Instant::now();
+	let reference = draw_reference(parts, skin, view);
+	let old = start.elapsed().as_secs_f64();
+	let max = if frame.pixels.len() != reference.pixels.len() {
+		255
+	} else {
+		frame.pixels.iter().zip(&reference.pixels).map(|(a, b)| a.abs_diff(*b)).max().unwrap_or(0)
+	};
+	let owners = frame.owner.iter().zip(&reference.owner).filter(|(a, b)| a != b).count() + frame.owner.len().abs_diff(reference.owner.len());
+	eprintln!("RENDER_CHECK size={} max={max} reference={old:.3} new={new:.3} owner_mismatch={owners}", view.size);
+	frame
+}
+
+// Supersampled rows per band: the screen is cut into bands this tall, and
+// each core takes the next undrawn band until none are left.
+const BAND_ROWS: usize = 16;
+// Marks a sample no solid triangle covers in the visibility buffer.
+const NO_TRIANGLE: u32 = u32::MAX;
+// Triangles per setup job.
+const SETUP_CHUNK: usize = 4096;
+
+fn threads() -> usize {
+	std::thread::available_parallelism().map_or(4, |n| n.get())
+}
+
+// Runs `work` for every index on all cores, results in index order.
+fn parallel_map<T: Send>(count: usize, work: impl Fn(usize) -> T + Sync) -> Vec<T> {
+	let next = AtomicUsize::new(0);
+	let (next, work) = (&next, &work);
+	let mut done: Vec<(usize, T)> = std::thread::scope(|scope| {
+		let mut handles = Vec::new();
+		for _ in 0..threads().min(count.max(1)) {
+			handles.push(scope.spawn(move || {
+				let mut out = Vec::new();
+				loop {
+					let i = next.fetch_add(1, Ordering::Relaxed);
+					if i >= count {
+						break;
+					}
+					out.push((i, work(i)));
+				}
+				out
+			}));
+		}
+		handles.into_iter().flat_map(|handle| handle.join().unwrap()).collect()
+	});
+	done.sort_by_key(|(i, _)| *i);
+	done.into_iter().map(|(_, value)| value).collect()
+}
+
+// Where the camera stands and how the world maps onto the supersampled
+// screen; the same numbers, worked out the same way, as the reference.
+struct Camera {
+	eye: Option<Vec3>,
+	forward: Vec3,
+	right: Vec3,
+	up: Vec3,
+	center: Vec3,
+	width: f64,
+	spread: f64,
+	size: usize,
+	light: Vec3,
+	pixel_studs: f64,
+	cull_back: bool,
+}
+
+impl Camera {
+	fn to_screen(&self, p: Vec3) -> [f64; 3] {
+		let (forward, right, up, spread, size) = (self.forward, self.right, self.up, self.spread, self.size);
+		if let Some(eye) = self.eye {
+			let d = sub(p, eye);
+			let ahead = dot(d, forward);
+			return [
+				(dot(d, right) / (ahead * spread) + 0.5) * size as f64,
+				(0.5 - dot(d, up) / (ahead * spread)) * size as f64,
+				ahead,
+			];
+		}
+		let d = sub(p, self.center);
+		[
+			(dot(d, right) / self.width + 0.5) * size as f64,
+			(0.5 - dot(d, up) / self.width) * size as f64,
+			dot(d, forward),
+		]
+	}
+
+	// Whether a ball could put any triangle inside it on screen. False only
+	// when the ball lies wholly beyond a frame edge (with a two-sample margin
+	// against rounding) or, for an eye, wholly nearer than NEAR, where the
+	// reference skips every triangle too.
+	fn may_show(&self, centre: Vec3, radius: f64) -> bool {
+		const MARGIN: f64 = 2.0;
+		let size = self.size as f64;
+		let Some(eye) = self.eye else {
+			let p = self.to_screen(centre);
+			let r = radius / self.width * size;
+			let outside = p[0] + r < -MARGIN || p[0] - r > size + MARGIN || p[1] + r < -MARGIN || p[1] - r > size + MARGIN;
+			return !outside;
+		};
+		let d = sub(centre, eye);
+		if dot(d, self.forward) + radius < NEAR {
+			return false;
+		}
+		// Each frame edge, pushed out by the margin, is a plane through the
+		// eye; a corner past one lands off screen on that side.
+		let k = self.spread * (0.5 + MARGIN / size);
+		for side in [self.right, scale(self.right, -1.0), self.up, scale(self.up, -1.0)] {
+			let normal = add(side, scale(self.forward, k));
+			let length = dot(normal, normal).sqrt();
+			if dot(d, normal) / length < -radius {
+				return false;
+			}
+		}
+		true
+	}
+}
+
+// A part that survived culling, as plain data the drawing threads can share.
+struct Drawn<'a> {
+	// Its place in `parts`, which the owner buffer records.
+	index: u32,
+	image: &'a Image,
+	mips: &'a Mips,
+	see_through: bool,
+	flat: Option<[f32; 3]>,
+	emissive: f32,
+	triangles: Vec<[Corner; 3]>,
+}
+
+// One triangle ready to draw: its corners on screen, its texture footprint,
+// and the box of samples it may cover (already clipped to the screen).
+struct Prepared {
+	s: [[f64; 3]; 3],
+	area: f64,
+	texels_per_pixel: f64,
+	slot: u32,
+	triangle: u32,
+	x0: u32,
+	x1: u32,
+	y0: u32,
+	y1: u32,
+}
+
+// A band of whole screen rows starting at row `top`, with its own slices of
+// the frame's buffers and the triangles that reach it, in drawing order.
+struct Band<'a> {
+	top: usize,
+	depth: &'a mut [f64],
+	color: &'a mut [[f32; 3]],
+	glow: &'a mut [[f32; 3]],
+	owner: &'a mut [u32],
+	list: Vec<u32>,
+}
+
+// The posed box around the corners a mesh's triangles use, or None when it
+// makes no triangles.
+fn part_box(mesh: &Mesh, pose: Option<&Pose>) -> Option<(Vec3, Vec3)> {
+	let mut low = [f64::MAX; 3];
+	let mut high = [f64::MIN; 3];
+	let mut any = false;
+	for face in mesh.faces.iter().filter(|face| face.verts.len() >= 3) {
+		for &vert in &face.verts {
+			let p = match pose {
+				Some(pose) => pose.apply(mesh.positions[vert]),
+				None => mesh.positions[vert],
+			};
+			for axis in 0..3 {
+				low[axis] = low[axis].min(p[axis]);
+				high[axis] = high[axis].max(p[axis]);
+			}
+			any = true;
+		}
+	}
+	if any { Some((low, high)) } else { None }
+}
+
+// Projects one triangle and works out its footprint, as the reference does
+// before its sample loop; None when it would draw nothing.
+fn prepare(camera: &Camera, drawn: &[Drawn], slot: usize, index: usize) -> Option<Prepared> {
+	let part = &drawn[slot];
+	let triangle = &part.triangles[index];
+	let image = part.image;
+	let size = camera.size;
+	let s = triangle.map(|corner| camera.to_screen(corner.position));
+	if camera.eye.is_some() && s.iter().any(|p| p[2] < NEAR) {
+		return None;
+	}
+	let edge = |k: usize| sub(triangle[k].position, triangle[0].position);
+	let face = cross(edge(1), edge(2));
+	if camera.cull_back {
+		let look = match camera.eye {
+			Some(eye) => sub(triangle[0].position, eye),
+			None => camera.forward,
+		};
+		if dot(face, look) >= 0.0 {
+			return None;
+		}
+	}
+	let world_area = dot(face, face).sqrt();
+	let uv_edge = |k: usize, a: usize| (triangle[k].uv[a] - triangle[0].uv[a]) * if a == 0 { image.width } else { image.height } as f64;
+	let texel_area = (uv_edge(1, 0) * uv_edge(2, 1) - uv_edge(2, 0) * uv_edge(1, 1)).abs();
+	let density = if world_area > 1e-12 { (texel_area / world_area).sqrt() } else { 0.0 };
+	let facing = if world_area > 1e-12 { (dot(face, camera.forward).abs() / world_area).max(MIP_MIN_FACING) } else { 1.0 };
+	let texels_per_pixel = density * camera.pixel_studs / facing.sqrt();
+	let area = (s[1][0] - s[0][0]) * (s[2][1] - s[0][1]) - (s[2][0] - s[0][0]) * (s[1][1] - s[0][1]);
+	if area.abs() < 1e-12 {
+		return None;
+	}
+	let x0 = s.iter().map(|p| p[0]).fold(f64::MAX, f64::min).floor().max(0.0) as usize;
+	let x1 = (s.iter().map(|p| p[0]).fold(f64::MIN, f64::max).ceil() as usize).min(size);
+	let y0 = s.iter().map(|p| p[1]).fold(f64::MAX, f64::min).floor().max(0.0) as usize;
+	let y1 = (s.iter().map(|p| p[1]).fold(f64::MIN, f64::max).ceil() as usize).min(size);
+	if x0 >= x1 || y0 >= y1 {
+		return None;
+	}
+	Some(Prepared {
+		s,
+		area,
+		texels_per_pixel,
+		slot: slot as u32,
+		triangle: index as u32,
+		x0: x0 as u32,
+		x1: x1 as u32,
+		y0: y0 as u32,
+		y1: y1 as u32,
+	})
+}
+
+// The corner weights and depth at sample (x, y), or None outside the
+// triangle; the reference's arithmetic in the reference's order.
+fn weights(p: &Prepared, x: usize, y: usize, eye: bool) -> Option<(f64, f64, f64, f64)> {
+	let (s, area) = (&p.s, p.area);
+	let px = x as f64 + 0.5;
+	let py = y as f64 + 0.5;
+	let w0 = ((s[1][0] - px) * (s[2][1] - py) - (s[2][0] - px) * (s[1][1] - py)) / area;
+	let w1 = ((s[2][0] - px) * (s[0][1] - py) - (s[0][0] - px) * (s[2][1] - py)) / area;
+	let w2 = 1.0 - w0 - w1;
+	if w0 < 0.0 || w1 < 0.0 || w2 < 0.0 {
+		return None;
+	}
+	// Perspective: weights interpolate linearly in 1/depth.
+	Some(if eye {
+		let p = [w0 / s[0][2], w1 / s[1][2], w2 / s[2][2]];
+		let sum = p[0] + p[1] + p[2];
+		(p[0] / sum, p[1] / sum, p[2] / sum, 1.0 / sum)
+	} else {
+		(w0, w1, w2, w0 * s[0][2] + w1 * s[1][2] + w2 * s[2][2])
+	})
+}
+
+// Colours one sample of a triangle that passed the depth test, exactly as
+// the reference's sample loop does after its depth write.
+fn shade_sample(camera: &Camera, part: &Drawn, p: &Prepared, (w0, w1, w2, z): (f64, f64, f64, f64), color: &mut [f32; 3], glow: &mut [f32; 3]) {
+	let triangle = &part.triangles[p.triangle as usize];
+	let blend = |f: &dyn Fn(usize) -> f64| w0 * f(0) + w1 * f(1) + w2 * f(2);
+	let u = blend(&|k| triangle[k].uv[0]);
+	let v = blend(&|k| triangle[k].uv[1]);
+	let mut normal = normalize([0, 1, 2].map(|a| blend(&|k| triangle[k].normal[a])));
+	// Back faces seen through holes still light as if facing us.
+	if dot(normal, camera.forward) > 0.0 {
+		normal = scale(normal, -1.0);
+	}
+	let shade = (0.72 + 0.38 * dot(normal, camera.light).max(0.0)) as f32;
+	if let Some(tone) = part.flat {
+		let shade = (0.45 + 0.6 * dot(normal, camera.light).max(0.0)) as f32;
+		let opacity = if part.see_through { 0.4 } else { 1.0 };
+		let under = *color;
+		*color = [0, 1, 2].map(|a| under[a] + (tone[a] * shade - under[a]) * opacity);
+		return;
+	}
+	let footprint = if camera.eye.is_some() { p.texels_per_pixel * z } else { p.texels_per_pixel };
+	let albedo = part.mips.sample(part.image, u, v, footprint.max(1.0).log2());
+	if part.see_through {
+		let opacity = part.mips.sample_alpha(part.image, u, v, footprint.max(1.0).log2());
+		let under = *color;
+		*color = [0, 1, 2].map(|a| under[a] + (albedo[a] * shade - under[a]) * opacity);
+		return;
+	}
+	*color = albedo.map(|c| c * (shade + part.emissive));
+	*glow = albedo.map(|c| c * part.emissive);
+}
+
+// Draws one triangle sample by sample into a band, depth test and shading
+// together, as the reference does: used for flat part colours, whose blend
+// depends on what lay under, and for see-through parts.
+fn draw_forward(camera: &Camera, part: &Drawn, p: &Prepared, band: &mut Band) {
+	let size = camera.size;
+	let eye = camera.eye.is_some();
+	let rows = band.depth.len() / size;
+	let (y_start, y_end) = ((p.y0 as usize).max(band.top), (p.y1 as usize).min(band.top + rows));
+	for y in y_start..y_end {
+		for x in p.x0 as usize..p.x1 as usize {
+			let Some(w) = weights(p, x, y, eye) else {
+				continue;
+			};
+			let at = (y - band.top) * size + x;
+			if w.3 >= band.depth[at] {
+				continue;
+			}
+			if !part.see_through {
+				band.depth[at] = w.3;
+				band.owner[at] = part.index;
+			}
+			shade_sample(camera, part, p, w, &mut band.color[at], &mut band.glow[at]);
+		}
+	}
+}
+
+// Draws every triangle that reaches a band. Textured solid parts go through a
+// visibility buffer: the nearest triangle per sample is found first (the
+// first drawn wins a tie, as `z >= depth` skips in the reference), then each
+// sample is shaded once. See-through parts then blend over in order.
+fn draw_band(camera: &Camera, drawn: &[Drawn], prepared: &[Prepared], deferred: bool, mut band: Band) {
+	let size = camera.size;
+	let eye = camera.eye.is_some();
+	let list = std::mem::take(&mut band.list);
+	if !deferred {
+		for &t in &list {
+			let p = &prepared[t as usize];
+			draw_forward(camera, &drawn[p.slot as usize], p, &mut band);
+		}
+		return;
+	}
+	let rows = band.depth.len() / size;
+	let mut nearest = vec![NO_TRIANGLE; rows * size];
+	for &t in &list {
+		let p = &prepared[t as usize];
+		if drawn[p.slot as usize].see_through {
+			continue;
+		}
+		let (y_start, y_end) = ((p.y0 as usize).max(band.top), (p.y1 as usize).min(band.top + rows));
+		for y in y_start..y_end {
+			for x in p.x0 as usize..p.x1 as usize {
+				let Some((_, _, _, z)) = weights(p, x, y, eye) else {
+					continue;
+				};
+				let at = (y - band.top) * size + x;
+				if z >= band.depth[at] {
+					continue;
+				}
+				band.depth[at] = z;
+				nearest[at] = t;
+			}
+		}
+	}
+	for (at, &t) in nearest.iter().enumerate() {
+		if t == NO_TRIANGLE {
+			continue;
+		}
+		let p = &prepared[t as usize];
+		let part = &drawn[p.slot as usize];
+		band.owner[at] = part.index;
+		let Some(w) = weights(p, at % size, band.top + at / size, eye) else {
+			continue;
+		};
+		shade_sample(camera, part, p, w, &mut band.color[at], &mut band.glow[at]);
+	}
+	for &t in &list {
+		let p = &prepared[t as usize];
+		let part = &drawn[p.slot as usize];
+		if part.see_through {
+			draw_forward(camera, part, p, &mut band);
+		}
+	}
+}
+
+fn draw_fast(parts: &[&Part], skin: &[Pose], view: &View) -> Frame {
+	// Meshes and poses as plain shared references, so threads can read them.
+	let mesh_borrows: Vec<Ref<Mesh>> = parts.iter().map(|part| part.mesh.borrow()).collect();
+	let meshes: Vec<&Mesh> = mesh_borrows.iter().map(|mesh| &**mesh).collect();
+	let poses: Vec<Option<&Pose>> = parts.iter().map(|part| part.bone.and_then(|b| skin.get(b))).collect();
+	let boxes = parallel_map(parts.len(), |i| part_box(meshes[i], poses[i]));
+
+	// The model's bounds are the bounds of every part's corners, as the
+	// reference finds them over all triangles.
+	let mut low = [f64::MAX; 3];
+	let mut high = [f64::MIN; 3];
+	for (part_low, part_high) in boxes.iter().flatten() {
+		for axis in 0..3 {
+			low[axis] = low[axis].min(part_low[axis]);
+			high[axis] = high[axis].max(part_high[axis]);
+		}
+	}
+	let (center, extent) = match view.focus {
+		Some((point, radius)) => (point, radius * 2.0),
+		None => (
+			scale([low[0] + high[0], low[1] + high[1], low[2] + high[2]], 0.5),
+			(0..3).map(|a| high[a] - low[a]).fold(0.0, f64::max).max(1e-6),
+		),
+	};
+
+	let (sin, cos) = view.spin.sin_cos();
+	let (toward, screen_up) = match (view.side, view.eye) {
+		(Some(side), _) => side.axes(),
+		(None, Some((eye, target))) => (sub(eye, target), [0.0, 0.0, 1.0]),
+		(None, None) => ([cos + sin, sin - cos, 0.8], [0.0, 0.0, 1.0]),
+	};
+	let forward = normalize(scale(toward, -1.0));
+	let right = normalize(cross(forward, screen_up));
+	let up = cross(right, forward);
+	let tilt = normalize(toward);
+	let light = normalize([tilt[0] * 0.3 - right[0], tilt[1] * 0.3 - right[1], 1.5]);
+	let span = |axis: Vec3| (0..3).map(|a| (high[a] - low[a]) * axis[a].abs()).sum::<f64>();
+	let width = match view.side {
+		Some(_) => span(right).max(span(up)).max(1e-6) * 1.1,
+		None => extent * 2.2 / 1.4,
+	};
+	let colours = if view.parts { part_colours(parts) } else { Vec::new() };
+	let size = view.size * SUPERSAMPLE;
+	let spread = (EYE_FOV.to_radians() / 2.0).tan() * 2.0;
+	let pixel_studs = if view.eye.is_some() { spread / size as f64 } else { width / size as f64 };
+	let camera = Camera { eye: view.eye.map(|(eye, _)| eye), forward, right, up, center, width, spread, size, light, pixel_studs, cull_back: view.cull_back };
+
+	// Frustum culling: a part whose bounding ball lies wholly off screen is
+	// never triangulated, textured or walked. The ball is padded a little so
+	// rounding can never cull a part the reference would draw.
+	let kept: Vec<usize> = (0..parts.len())
+		.filter(|&i| {
+			let Some((part_low, part_high)) = boxes[i] else {
+				return false;
+			};
+			let centre = scale(add(part_low, part_high), 0.5);
+			let half = scale(sub(part_high, part_low), 0.5);
+			let radius = dot(half, half).sqrt();
+			let reach = dot(centre, centre).sqrt() + dot(camera.eye.unwrap_or(center), camera.eye.unwrap_or(center)).sqrt();
+			camera.may_show(centre, radius + 1e-6 * (1.0 + radius + reach))
+		})
+		.collect();
+
+	// Textures of the kept parts, each borrowed and mip-chained once (parts
+	// can share an image).
+	let mut keys: Vec<*const RefCell<Image>> = Vec::new();
+	let mut image_of = vec![0usize; parts.len()];
+	for &i in &kept {
+		let key = Rc::as_ptr(&parts[i].image);
+		image_of[i] = match keys.iter().position(|k| *k == key) {
+			Some(found) => found,
+			None => {
+				keys.push(key);
+				keys.len() - 1
+			}
+		};
+	}
+	let mut first_user = vec![usize::MAX; keys.len()];
+	for &i in kept.iter().rev() {
+		first_user[image_of[i]] = i;
+	}
+	let image_borrows: Vec<Ref<Image>> = first_user.iter().map(|&i| parts[i].image.borrow()).collect();
+	let images: Vec<&Image> = image_borrows.iter().map(|image| &**image).collect();
+	let chains = parallel_map(images.len(), |k| Mips::new(images[k]));
+
+	// Triangles of the kept parts, posed, on all cores; then solid parts
+	// first and see-through after, each group in part order, as drawn.
+	let lists = parallel_map(kept.len(), |k| {
+		let i = kept[k];
+		let mut list = meshes[i].triangles();
+		if let Some(pose) = poses[i] {
+			for corner in list.iter_mut().flatten() {
+				corner.position = pose.apply(corner.position);
+				corner.normal = pose.turn(corner.normal);
+			}
+		}
+		list
+	});
+	let all: Vec<Drawn> = kept
+		.iter()
+		.zip(lists)
+		.map(|(&i, triangles)| {
+			let part = parts[i];
+			let image = images[image_of[i]];
+			Drawn {
+				index: i as u32,
+				image,
+				mips: &chains[image_of[i]],
+				see_through: image.alpha.is_some(),
+				flat: colours.iter().find(|(name, _)| *name == part.name).map(|(_, c)| *c),
+				emissive: part.emissive,
+				triangles,
+			}
+		})
+		.collect();
+	let (mut drawn, glass): (Vec<Drawn>, Vec<Drawn>) = all.into_iter().partition(|part| !part.see_through);
+	drawn.extend(glass);
+
+	// Setup on all cores in fixed chunks of the drawing order, joined back in
+	// that order.
+	let mut starts = Vec::with_capacity(drawn.len());
+	let mut total = 0;
+	for part in &drawn {
+		starts.push(total);
+		total += part.triangles.len();
+	}
+	let chunks = parallel_map(total.div_ceil(SETUP_CHUNK), |c| {
+		let (begin, end) = (c * SETUP_CHUNK, ((c + 1) * SETUP_CHUNK).min(total));
+		let mut slot = starts.partition_point(|&start| start <= begin) - 1;
+		let mut index = begin - starts[slot];
+		let mut out = Vec::new();
+		for _ in begin..end {
+			while index >= drawn[slot].triangles.len() {
+				slot += 1;
+				index = 0;
+			}
+			if let Some(p) = prepare(&camera, &drawn, slot, index) {
+				out.push(p);
+			}
+			index += 1;
+		}
+		out
+	});
+	let prepared: Vec<Prepared> = chunks.into_iter().flatten().collect();
+
+	let mut color = vec![BACKGROUND; size * size];
+	let mut depth = vec![f64::MAX; size * size];
+	let mut glow = vec![[0.0f32; 3]; size * size];
+	let mut owner = vec![NO_PART; size * size];
+
+	// Binning: each triangle joins the list of every band its box reaches,
+	// in drawing order.
+	let band_count = size.div_ceil(BAND_ROWS);
+	let mut lists: Vec<Vec<u32>> = vec![Vec::new(); band_count];
+	for (t, p) in prepared.iter().enumerate() {
+		for band in p.y0 as usize / BAND_ROWS..=(p.y1 as usize - 1) / BAND_ROWS {
+			lists[band].push(t as u32);
+		}
+	}
+	let chunk = (BAND_ROWS * size).max(1);
+	let bands: Vec<Band> = depth
+		.chunks_mut(chunk)
+		.zip(color.chunks_mut(chunk))
+		.zip(glow.chunks_mut(chunk))
+		.zip(owner.chunks_mut(chunk))
+		.zip(lists)
+		.enumerate()
+		.map(|(b, ((((depth, color), glow), owner), list))| Band { top: b * BAND_ROWS, depth, color, glow, owner, list })
+		.collect();
+	// Flat part colours blend over what lay under, so they keep the
+	// reference's draw-and-shade order; textures go through the visibility
+	// buffer.
+	let deferred = !view.parts;
+	let band_queue = Mutex::new(bands);
+	let (queue, camera_ref, drawn_ref, prepared_ref) = (&band_queue, &camera, &drawn[..], &prepared[..]);
+	std::thread::scope(|scope| {
+		for _ in 0..threads() {
+			scope.spawn(move || loop {
+				let next = queue.lock().unwrap().pop();
+				let Some(band) = next else {
+					break;
+				};
+				draw_band(camera_ref, drawn_ref, prepared_ref, deferred, band);
+			});
+		}
+	});
+	drop(band_queue);
+
+	if let (Some(_), Some(step)) = (view.side, view.grid) {
+		draw_grid(&mut color, size, width, [dot(center, right), dot(center, up)], step);
+	}
+
+	let bloom = blur_fast(&glow, size, size / 150);
+
+	let mut data = Vec::with_capacity(view.size * view.size * 3);
+	for y in 0..view.size {
+		for x in 0..view.size {
+			let mut sum = [0.0f32; 3];
+			for dy in 0..SUPERSAMPLE {
+				for dx in 0..SUPERSAMPLE {
+					let at = (y * SUPERSAMPLE + dy) * size + x * SUPERSAMPLE + dx;
+					for a in 0..3 {
+						sum[a] += color[at][a] + bloom[at][a] * BLOOM;
+					}
+				}
+			}
+			let samples = (SUPERSAMPLE * SUPERSAMPLE) as f32;
+			data.extend(sum.map(|c| ((c / samples).clamp(0.0, 1.0) * 255.0 + 0.5) as u8));
+		}
+	}
+	fxaa(&mut data, view.size, view.size);
+	Frame { pixels: data, owner, owner_size: size }
+}
+
+// The reference renderer, kept unchanged: every part, every triangle, each
+// sample shaded as it is drawn. MODELKIT_RENDER_CHECK compares against it.
+fn draw_reference(parts: &[&Part], skin: &[Pose], view: &View) -> Frame {
 	let triangles: Vec<_> = parts
 		.iter()
 		.enumerate()
@@ -607,4 +1206,69 @@ fn blur(pixels: &[[f32; 3]], size: usize, radius: usize) -> Vec<[f32; 3]> {
 		}
 	}
 	out
+}
+
+// The same blur with rows on all cores: columns are blurred as rows of the
+// transposed picture, so every sum runs in the same order as in `blur`.
+fn blur_fast(pixels: &[[f32; 3]], size: usize, radius: usize) -> Vec<[f32; 3]> {
+	let mut out = pixels.to_vec();
+	if radius == 0 || out.iter().all(|p| *p == [0.0; 3]) {
+		return out;
+	}
+	for _ in 0..3 {
+		blur_rows(&mut out, size, radius);
+		let mut columns = transpose(&out, size);
+		blur_rows(&mut columns, size, radius);
+		out = transpose(&columns, size);
+	}
+	out
+}
+
+fn transpose(pixels: &[[f32; 3]], size: usize) -> Vec<[f32; 3]> {
+	let mut out = vec![[0.0f32; 3]; size * size];
+	for y in 0..size {
+		for x in 0..size {
+			out[x * size + y] = pixels[y * size + x];
+		}
+	}
+	out
+}
+
+fn blur_rows(pixels: &mut [[f32; 3]], size: usize, radius: usize) {
+	let rows_each = size.div_ceil(threads()).max(1);
+	std::thread::scope(|scope| {
+		for chunk in pixels.chunks_mut(rows_each * size) {
+			scope.spawn(move || {
+				let mut line = vec![[0.0f32; 3]; size];
+				for row in chunk.chunks_mut(size) {
+					blur_line(row, &mut line, radius);
+				}
+			});
+		}
+	});
+}
+
+// One box-blur pass along a row, the arithmetic of `blur` with a step of 1.
+fn blur_line(row: &mut [[f32; 3]], line: &mut [[f32; 3]], radius: usize) {
+	let size = row.len();
+	let mut sum = [0.0f32; 3];
+	for i in 0..=radius.min(size - 1) {
+		for a in 0..3 {
+			sum[a] += row[i][a];
+		}
+	}
+	for i in 0..size {
+		line[i] = sum.map(|c| c / (2 * radius + 1) as f32);
+		if i + radius + 1 < size {
+			for a in 0..3 {
+				sum[a] += row[i + radius + 1][a];
+			}
+		}
+		if i >= radius {
+			for a in 0..3 {
+				sum[a] -= row[i - radius][a];
+			}
+		}
+	}
+	row.copy_from_slice(line);
 }
