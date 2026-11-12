@@ -218,8 +218,9 @@ pub fn prune(dir: &Path, used: &[PathBuf]) {
 		return;
 	}
 	let Ok(entries) = std::fs::read_dir(dir.join(".cache")) else { return };
+	let used: std::collections::HashSet<&Path> = used.iter().map(PathBuf::as_path).collect();
 	for entry in entries.flatten() {
-		if !used.contains(&entry.path()) {
+		if !used.contains(entry.path().as_path()) {
 			let _ = std::fs::remove_file(entry.path());
 		}
 	}

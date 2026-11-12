@@ -95,6 +95,12 @@ elif [ -f "${src}/layouts/${name}.luau" ]; then
 	# everything and into no key, so new timings never invalidate the cache.
 	costs="${src}/layouts/${name}Costs.txt"
 	costs_line="local SHARD_COSTS = { $(if [ -f "${costs}" ]; then awk -F'\t' 'NF == 2 { printf "[\"%s\"] = %s, ", $1, $2 }' "${costs}"; fi) }"
+	# Measured paint times for dealing a split model's parts (scripts/paint-costs.sh
+	# writes them). Unlike the costs above they change which shard keeps which
+	# part, so PAINT_DEAL, a hash of them, goes into each split part's key
+	# (prelude.luau). On the same line, so the line numbers below stay put.
+	paint_costs="${src}/layouts/${name}PaintCosts.txt"
+	costs_line="${costs_line} local PAINT_COSTS: { [string]: number } = { $(if [ -f "${paint_costs}" ]; then awk -F'\t' 'NF == 2 { printf "[\"%s\"] = %s, ", $1, $2 }' "${paint_costs}"; fi) } local PAINT_DEAL = \"$(if [ -f "${paint_costs}" ]; then sha1sum < "${paint_costs}" | cut -c1-12; fi)\""
 	offset=$(( 1 + $(wc -l < "${out}.head") + $(printf '%s\n' "${spans}" | grep -c . || true) ))
 	{
 		echo "${costs_line}"
