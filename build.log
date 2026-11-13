@@ -1,0 +1,71 @@
+[    0.0s] running StorageCrate/model.luau
+[    2.3s] TIMING script: 2.3s
+[    2.5s] baking on CPU (no GPU)
+[    2.5s] shaded  256×256 in 0.04s
+[    2.9s] shaded  512×512 in 0.10s
+[    3.2s] shaded  256×256 in 0.12s
+[    3.4s] shaded  256×256 in 0.15s
+[    3.6s] shaded  256×256 in 0.07s
+[    3.8s] shaded  256×256 in 0.11s
+[    3.9s] shaded  1024×64 in 0.05s
+[    3.9s] shaded  256×256 in 0.03s
+[    4.1s] shaded  256×256 in 0.10s
+[    4.4s] shaded  256×256 in 0.10s
+[    5.5s] shaded  1024×1024 in 0.64s
+[    5.7s] shaded  256×256 in 0.07s
+[    5.9s] shaded  256×256 in 0.07s
+[    6.1s] shaded  256×256 in 0.15s
+[    7.3s] shaded  1024×1024 in 0.89s
+[    7.3s] baked every chunk this machine claimed
+[    7.3s] TIMING claimed bakes: 15 paints in 38 of 128 chunks, 5.0s with the waits to claim; layers 0 loaded in 0.0s and 45 baked in 1.9s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.1s, merging chunks 0.0s, colour samplers 0.3s
+[   20.5s] TIMING swap: 13.2s pushing, waiting for the other machines and fetching
+[   20.5s] shaded  256×256 in 0.01s
+[   20.6s] shaded  256×256 in 0.01s
+[   20.6s] shaded  256×256 in 0.01s
+[   20.6s] shaded  256×256 in 0.01s
+[   20.6s] shaded  256×256 in 0.01s
+[   20.6s] shaded  256×256 in 0.01s
+[   20.6s] shaded  256×256 in 0.01s
+[   20.6s] shaded  256×256 in 0.01s
+[   20.7s] shaded  256×256 in 0.01s
+[   21.0s] shaded  1024×1024 in 0.25s
+[   21.0s] shaded  256×256 in 0.01s
+[   21.0s] shaded  256×256 in 0.01s
+[   21.4s] shaded  1024×1024 in 0.24s
+[   21.4s] shaded  256×256 in 0.01s
+[   21.4s] shaded  256×256 in 0.01s
+[   21.5s] shaded  256×256 in 0.01s
+[   21.5s] shaded  256×256 in 0.01s
+[   21.5s] shaded  256×256 in 0.01s
+[   21.5s] shaded  256×256 in 0.01s
+[   21.9s] shaded  1024×1024 in 0.24s
+[   21.9s] shaded  512×512 in 0.05s
+[   21.9s] shaded  256×256 in 0.01s
+[   22.3s] shaded  1024×1024 in 0.25s
+[   22.7s] shaded  1024×1024 in 0.24s
+[   22.7s] shaded  256×256 in 0.01s
+[   22.7s] shaded  256×256 in 0.01s
+[   22.7s] shaded  256×256 in 0.01s
+[   22.7s] shaded  256×256 in 0.01s
+[   22.7s] TIMING paints after the swap: 28 paints, 2.2s; layers 84 loaded in 0.3s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.2s, merging chunks 0.0s, colour samplers 0.7s (baked here means a layer that did not arrive)
+[   22.7s] TIMING whole-part saves: 0 in 0.0s
+[   22.7s] writing StorageCrate.glb and 43 textures
+[   23.0s] TIMING StorageCrate.glb and 43 parts' texture files written: 0.3s
+[   23.0s] TIMING renders: 0 of 5 jobs made here, 0.1s with the waits to claim
+StorageCrate: 43 parts, script 22.73s, total 23.03s
+  shade (creases, contact): 1.39s
+  coat: 0.77s
+  wear: 0.29s
+  combine: 0.19s
+  shade, surfaces, grid and texels: 0.50s
+  shade, neighbourhoods: 0.13s
+  shade, spreading over seams: 0.14s
+  coat, painting texels: 0.63s
+TIMING script: 2.3s
+TIMING claimed bakes: 15 paints in 38 of 128 chunks, 5.0s with the waits to claim; layers 0 loaded in 0.0s and 45 baked in 1.9s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.1s, merging chunks 0.0s, colour samplers 0.3s
+TIMING swap: 13.2s pushing, waiting for the other machines and fetching
+TIMING paints after the swap: 28 paints, 2.2s; layers 84 loaded in 0.3s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.2s, merging chunks 0.0s, colour samplers 0.7s (baked here means a layer that did not arrive)
+TIMING whole-part saves: 0 in 0.0s
+TIMING StorageCrate.glb and 43 parts' texture files written: 0.3s
+TIMING renders: 0 of 5 jobs made here, 0.1s with the waits to claim
+TIMING StorageCrate: 43 parts, total 23.0s; shade (creases, contact) 1.4s, coat 0.8s, wear 0.3s, combine 0.2s, shade, surfaces, grid and texels 0.5s, shade, neighbourhoods 0.1s, shade, spreading over seams 0.1s, coat, painting texels 0.6s
