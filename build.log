@@ -1,0 +1,64 @@
+[    0.0s] running HubTinkerer/model.luau
+[    3.3s] baking on CPU (no GPU)
+[    3.6s] shaded Workbench 1024×1024 in 1.59s
+[    4.8s] shaded Fittings 1024×1024 in 0.94s
+[    6.8s] shaded BackWall 1024×1024 in 1.54s
+[    8.8s] shaded RobotArm 1024×1024 in 1.49s
+[   13.8s] shaded ToolRack 1024×1024 in 4.12s
+[   13.9s] baked every chunk this machine claimed
+[   62.8s] shaded PartsBins 1024×1024 in 0.26s
+[   63.2s] shaded HangingSign 1024×1024 in 0.22s
+[   63.4s] shaded RoofPosts 1024×1024 in 0.22s
+[   63.7s] shaded ToolGrips 1024×1024 in 0.21s
+[   64.0s] shaded Blueprint 1024×1024 in 0.21s
+[   64.2s] shaded Cables 1024×1024 in 0.17s
+[   64.6s] shaded Anvil 1024×1024 in 0.24s
+[   64.9s] shaded Roof 1024×1024 in 0.26s
+[   65.2s] shaded TorchAndWork 1024×1024 in 0.22s
+[   65.6s] shaded LampShade 1024×1024 in 0.24s
+[   65.9s] shaded RackTools 1024×1024 in 0.23s
+[   66.2s] shaded SignEmblem 1024×1024 in 0.23s
+[   66.5s] shaded Deck 1024×1024 in 0.26s
+[   66.9s] shaded Supplies 1024×1024 in 0.25s
+[   67.2s] shaded BinParts 1024×1024 in 0.23s
+[   67.5s] shaded Rafters 1024×1024 in 0.23s
+[   67.5s] writing HubTinkerer.glb and 22 textures
+[   68.1s] rendering preview.png of 22 parts
+[   68.7s] rendering parts.png of 22 parts
+[   69.0s] rendering turntable/0000.png of 22 parts
+[   69.5s] rendering turntable/0001.png of 22 parts
+[   70.0s] rendering turntable/0003.png of 22 parts
+[   70.6s] rendering eye_3.png of 22 parts
+[   71.1s] rendering eye_7.png of 22 parts
+[   71.8s] rendering eye_8.png of 22 parts
+HubTinkerer: 22 parts, script 67.52s, total 72.10s
+  shade (creases, contact): 5.33s
+  coat: 2.64s
+  wear: 0.86s
+  combine: 0.33s
+  shade, surfaces, grid and texels: 0.99s
+  shade, neighbourhoods: 0.31s
+  shade, spreading over seams: 0.30s
+  coat, painting texels: 0.00s
+#f23d3d Deck
+#85a5f2 BackWall
+#7bb32d ToolRack
+#b362a8 RackTools
+#3df2d4 ToolGrips
+#f2c085 Roof
+#4e2db3 Rafters
+#66b362 RoofPosts
+#f23d79 Workbench
+#85c9f2 RobotArm
+#a8b32d TorchAndWork
+#a262b3 PartsBins
+#3df297 BinParts
+#f29c85 HangingSign
+#2d38b3 SignEmblem
+#80b362 Anvil
+#f23db6 Fittings
+#85eef2 Blueprint
+#b3912d Supplies
+#8762b3 Cables
+#3df25a LampShade
+#f28593 Bulbs
