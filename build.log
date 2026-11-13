@@ -1,0 +1,28 @@
+[    0.0s] running HubStage/model.luau
+[    2.5s] baking on CPU (no GPU)
+[    2.8s] shaded Speakers 1024×1024 in 1.56s
+[    4.8s] shaded Steps 1024×1024 in 1.35s
+[    6.1s] baked every chunk this machine claimed
+[   37.7s] shaded Banner 1024×1024 in 0.24s
+[   38.0s] shaded Fittings 1024×1024 in 0.30s
+[   38.3s] shaded LampHousings 1024×1024 in 0.22s
+[   38.7s] shaded Platform 1024×1024 in 0.31s
+[   39.1s] shaded PlatformDrums 1024×1024 in 0.27s
+[   39.3s] shaded Cables 1024×1024 in 0.18s
+[   39.6s] shaded BackdropRivets 1024×1024 in 0.21s
+[   40.0s] shaded Supplies 1024×1024 in 0.24s
+[   40.4s] shaded Backdrop 1024×1024 in 0.28s
+[   40.7s] shaded Truss 1024×1024 in 0.24s
+[   40.9s] shaded TrussTop 1024×1024 in 0.22s
+[   41.2s] shaded SpeakerSurrounds 1024×1024 in 0.20s
+[   41.5s] shaded SpeakerCones 1024×1024 in 0.22s
+[   41.5s] writing HubStage.glb and 16 textures
+HubStage: 16 parts, script 41.50s, total 41.88s
+  shade (creases, contact): 1.22s
+  coat: 1.16s
+  wear: 0.63s
+  combine: 0.21s
+  shade, surfaces, grid and texels: 0.71s
+  shade, neighbourhoods: 0.29s
+  shade, spreading over seams: 0.23s
+  coat, painting texels: 0.00s
