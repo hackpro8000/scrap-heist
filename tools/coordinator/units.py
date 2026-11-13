@@ -52,6 +52,9 @@ class Lease:
 		# Jobs it claimed: [(model, kind), job, settled]. Unsettled ones go
 		# back to the task when the lease does, so the replacement isn't starved.
 		self.claims = []
+		# Models whose bakes it has handed over (bakes-pushed, or its preview
+		# in): it claims no more of their chunks (hub_previews.bakes_done).
+		self.swapped = set()
 
 
 class Machine:
@@ -95,6 +98,11 @@ class Task:
 		self.returned = {}  # (model, kind) -> jobs a returned lease claimed and never finished
 		self.job_answers = {}  # (lease number, claim number) -> job, so a repeated claim gets the same one
 		self.bakes = {}  # model -> share number -> commit of that machine's baked textures
+		self.bake_commits = {}  # model -> every commit of baked textures pushed, in order
+		self.totals = {}  # (model, kind) -> how many jobs there are, as the claims say
+		self.published = set()  # models whose preview is out
+		# Units still queued when their model's preview came out: they build, but render nothing.
+		self.skipped = set()
 		self.previews_waiting = set(range(1, count + 1)) if self.previews else set()
 		self.queue = list(range(1, count + 1))  # units not leased, front first
 		self.leases = {}  # shard -> its Lease
@@ -123,7 +131,12 @@ class Task:
 		build = self.build and shard not in self.done
 		return (f"ref={self.ref}\nhand-over={hand_over}\n" + ("" if self.upload else "upload=no\n")
 			+ ("" if build else "build=no\n")
-			+ (f"preview={','.join(self.units)}\n" if self.units else ""))
+			+ (f"preview={','.join(self.units)}\n" if self.units and shard not in self.skipped else ""))
+
+	def share_model(self, shard):
+		"""The model a unit is one share of (its preview unit is Name@i@n), or None."""
+		unit = self.units[shard - 1] if len(self.units) == self.count and 1 <= shard <= self.count else ""
+		return unit.split("@")[0] if "@" in unit else None
 
 	def unit_over(self, shard):
 		return shard in self.done and shard not in self.previews_waiting

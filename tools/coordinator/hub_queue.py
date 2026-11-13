@@ -59,10 +59,12 @@ class LeaseQueue:
 				say(f"task {task.id}: could not move S{shard}'s old results aside:\n{traceback.format_exc()}")
 		self.leases_made += 1
 		lease = Lease(self.leases_made, machine.name)
+		# Leased before anything is awaited: a unit is never seen neither queued
+		# nor leased (a swap asks who may still bake, hub_previews.bakes_done).
+		await self.lease_to(machine, task, shard, lease)
 		if moved:
 			say(f"task {task.id}: S{shard} re-dealt from {moved[0]} to {machine.name}: {moved[1]}")
 			await self.emit({"type": "redealt", "task": task.id, "shard": shard, "from": moved[0], "to": machine.name, "reason": moved[1]})
-		await self.lease_to(machine, task, shard, lease)
 
 	async def lease_to(self, machine, task, shard, lease):
 		task.leases[shard] = lease
@@ -141,6 +143,8 @@ class LeaseQueue:
 			await self.tell_cancel(machine, task.id, shard)
 		say(f"task {task.id}: S{shard} taken back from {lease.machine}: {reason}")
 		await self.deal()
+		# After the deal: a replacement already leased is waited for (bakes_done).
+		await self.claims_returned(task, lease)
 
 	def clear_unit(self, task, shard, lease_number):
 		"""A re-dealt unit starts clean: what its folder holds moves aside to

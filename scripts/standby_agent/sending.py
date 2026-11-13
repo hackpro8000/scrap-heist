@@ -37,8 +37,9 @@ class Sending:
 		"""One heartbeat: the stage, the log's last line, how long the log
 		has gone without a new one (a bake's line comes only when it ends),
 		and the machine's free disk and memory. Waiting in the swap for other
-		machines' bakes is never quiet: share_bakes bounds that wait itself,
-		and a peer's long bake must not get this unit re-dealt as wedged."""
+		machines' bakes is never quiet: the coordinator ends that wait (by the
+		bakers' own leases), and a peer's long bake must not get this unit
+		re-dealt as wedged."""
 		now = time.monotonic()
 		if work["stage"] == "swap":
 			work["moved"] = now

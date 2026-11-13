@@ -219,7 +219,7 @@ class MachineLinks:
 				elif kind == "claim":
 					await socket.send(json.dumps({"type": "claimed", "id": event["id"], "job": self.next_job(task, lease, event)}))
 				elif kind == "bakes-pushed":
-					await self.bakes_pushed(task, event, lease)
+					await self.bakes_pushed(task, event, lease, machine)
 				elif kind == "progress":
 					now = time.time()
 					quiet = event.get("quiet") if isinstance(event.get("quiet"), (int, float)) else 0

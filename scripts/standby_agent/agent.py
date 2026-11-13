@@ -39,8 +39,7 @@ class Agent(Units, Sending, Previews, Uploads):
 		self.claims = {}  # claim number -> future for the job the coordinator gives it
 		self.claim_number = 0
 		self.timings = {}  # (task id, model) -> seconds per stage, reported when the model is done
-		self.bakes_ready = {}  # (task id, model) -> future for the commits of every machine's bakes
-		self.bakes_seen = {}  # (task id, model) -> the commits announced so far
+		self.bakes_ready = {}  # (task id, model) -> future for the commits of every machine's bakes, set when the swap is over
 		self.activities = {}  # unit -> what this machine is doing for it (heartbeat() reports them)
 		self.stopped = False
 		self.failures = 0  # connections in a row that failed or dropped (ALERT TUNNEL_DOWN)
@@ -111,7 +110,6 @@ class Agent(Units, Sending, Previews, Uploads):
 						if claim and not claim.done():
 							claim.set_result(event["job"])
 					elif event["type"] == "bakes-ready":
-						self.bakes_seen[(event["task"], event["name"])] = event["commits"]
 						ready = self.bakes_ready.get((event["task"], event["name"]))
 						if ready and not ready.done() and event.get("done", True):
 							ready.set_result(event["commits"])

@@ -144,8 +144,13 @@ class Fake:
 					if self.deaf or unit in self.stopping:
 						continue
 					self.stopping[unit] = asyncio.ensure_future(self.cancel(unit))
+				else:
+					self.heard(event)
 		except websockets.ConnectionClosed:
 			pass
+
+	def heard(self, event):
+		"""Any other message: claim answers and bakes-ready, for test_swap.py's Sharer."""
 
 	def take(self, unit, event):
 		if unit in self.stopping:
@@ -705,6 +710,9 @@ CASES = [("a", case_a), ("b", case_b), ("c", case_c), ("d", case_d), ("e", case_
 async def main():
 	started = time.time()
 	failed = 0
+	# The bake swap and early publish cases, kept in their own file.
+	import test_swap
+	CASES.extend(test_swap.cases(sys.modules[__name__]))
 	for name, case in CASES:
 		began = time.time()
 		try:

@@ -6,7 +6,7 @@ import os
 import subprocess
 import time
 
-from standby_agent.common import CLAIM_TRIES, CLAIM_WAIT_SECONDS, SWAP_WAIT_SECONDS, say
+from standby_agent.common import CLAIM_TRIES, CLAIM_WAIT_SECONDS, say
 from standby_agent.machine import push_bakes, push_preview, trim_log
 import commits  # noqa: E402
 
@@ -131,7 +131,13 @@ class Previews:
 	async def share_bakes(self, unit, share, out, since, work):
 		"""Asked by the engine once it has baked what it claimed: pushes those
 		layers and takes every other machine's, so no two machines bake the
-		same texture. Anything that doesn't arrive, the engine bakes itself."""
+		same texture. The coordinator says when the swap is over: when every
+		chunk claimed has been pushed by its baker (hub_previews.bakes_done),
+		however many shares never claimed one. There is no time limit here: a
+		baker that dies loses its lease, and the coordinator ends the swap or
+		has another machine bake its chunks. The push is said again every
+		CLAIM_WAIT_SECONDS and answered with where the swap stands, so an
+		answer lost over a reconnect is asked for again."""
 		identity, shard = unit
 		model = share.split("@")[0]
 		log = os.path.join(out, "previews", share, "build.log")
@@ -139,22 +145,23 @@ class Previews:
 		timing["bake_end"] = time.monotonic()
 		self.begin(unit, "swap", log, share)
 		ready = self.bakes_ready[(identity, model)] = asyncio.get_running_loop().create_future()
-		mine = await asyncio.to_thread(push_bakes, model, share, out, since)
-		timing["pushed"] = time.monotonic()
-		if work["cancelled"]:
-			self.bakes_ready.pop((identity, model), None)
-			return
-		await self.send(json.dumps({"type": "bakes-pushed", "task": identity, "shard": shard, "share": share, "commit": mine,
-			"lease": work.get("lease")}))
 		try:
-			commits = await asyncio.wait_for(ready, max(SWAP_WAIT_SECONDS, (timing["bake_end"] - timing["bake_start"]) * 4))
-		except asyncio.TimeoutError:
-			commits = self.bakes_seen.get((identity, model), [])
-			say(f"task {identity}: could not get every machine's bakes of {model} in time; taking the {len(commits)} that arrived, the render bakes the rest")
+			mine = await asyncio.to_thread(push_bakes, model, share, out, since)
+			timing["pushed"] = time.monotonic()
+			while True:
+				if work["cancelled"]:
+					return
+				await self.send(json.dumps({"type": "bakes-pushed", "task": identity, "shard": shard, "share": share, "commit": mine,
+					"lease": work.get("lease")}))
+				try:
+					commits = await asyncio.wait_for(asyncio.shield(ready), CLAIM_WAIT_SECONDS)
+					break
+				except asyncio.TimeoutError:
+					continue
 		finally:
 			self.bakes_ready.pop((identity, model), None)
-			self.bakes_seen.pop((identity, model), None)
 		timing["ready"] = time.monotonic()
+		say(f"task {identity}: swap of {share} over {timing['ready'] - timing['pushed']:.1f}s after its push; taking {len([c for c in commits if c != mine])} machines' bakes")
 		cache = os.path.join("art", "models", model, ".cache")
 		fetched = await asyncio.gather(*[asyncio.to_thread(self.fetch_objects, commit, cache) for commit in commits if commit != mine], return_exceptions=True)
 		timing["fetched"] = time.monotonic()

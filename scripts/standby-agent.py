@@ -47,7 +47,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from standby_agent.common import (  # noqa: E402
 	ADDRESS_BRANCH, AUDIENCE, CLAIM_TRIES, CLAIM_WAIT_SECONDS, HEARTBEAT_SECONDS, LOG_LINES_KEPT, LOST_MINUTES, MAX_MESSAGE,
-	PART_BYTES, REQUIRED_TOOLS, ROOT, SWAP_WAIT_SECONDS, TUNNEL_ALERT_FAILURES, alert, forward, say)
+	PART_BYTES, REQUIRED_TOOLS, ROOT, TUNNEL_ALERT_FAILURES, alert, forward, say)
 from standby_agent.machine import (  # noqa: E402
 	WORKER_TOKEN, ensure_tools, free_space, http_status, identity_token, kill_tree, last_line, newest_log, push_bakes, push_preview,
 	remote_head, trim_log)
