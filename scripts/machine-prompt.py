@@ -63,7 +63,10 @@ def send_once(session, message):
 	# mode and stagger every line printed afterwards.
 	result = subprocess.run(["script", "-qfc", command, "/dev/null"], stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=120, cwd=ROOT)
 	ok = result.returncode == 0 and "Sent to cloud session" in result.stdout
-	return ok, (result.stdout + result.stderr).strip().splitlines()[-1:]
+	# On a failure the exit code and the last lines say why; an empty tail
+	# with exit 0 means the send printed no "Sent to cloud session" line.
+	tail = (result.stdout + result.stderr).strip().splitlines()[-2:]
+	return ok, tail if ok else [f"(exit {result.returncode})"] + tail
 
 
 def send(session, message):

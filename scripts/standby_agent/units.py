@@ -111,6 +111,7 @@ class Units:
 		if isinstance(unit[0], str) and isinstance(unit[1], int):
 			shutil.rmtree(out, ignore_errors=True)
 		await self.send(json.dumps({"type": "idle", "task": unit[0], "shard": unit[1]}))
+		self.update_if_due()
 
 	async def handle(self, unit, text, count, work):
 		identity, shard = unit
@@ -138,4 +139,8 @@ class Units:
 			self.handling.discard(unit)
 			if self.units.get(unit) is work:
 				self.units.pop(unit, None)
+			# Also on the early returns above; a no-op if the call below already started it.
+			asyncio.get_running_loop().call_soon(self.update_if_due)
 		await self.send(json.dumps({"type": "progress", "task": identity, "shard": shard, "stage": "done", "model": "", "line": "", "quiet": 0, "seconds": 0}))
+		# A hot update waits for the unit to end (update.py).
+		self.update_if_due()

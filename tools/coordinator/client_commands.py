@@ -8,16 +8,19 @@ import sys
 import wire
 from client_connection import alert, control
 from client_progress import SHORT_SECONDS, lifetime_alert
+from client_update import code_lines
 
 
 async def status(url):
 	async with control(url, {"type": "status"}) as socket:
 		answer = json.loads(await socket.recv())
 	up = answer["up"]
-	print(f"run={answer['run']} machines={answer['count']} up={len(up)} tasks={len(answer['tasks'])}")
+	print(f"run={answer['run']} machines={answer['count']} up={len(up)} tasks={len(answer['tasks'])} code={answer.get('code') or '?'}")
 	roster = answer.get("roster", [])
 	if roster:
 		print("roster: " + " ".join(f"{entry['name']}={roster_state(entry)}" for entry in roster))
+	for line in code_lines(answer):
+		print(line)
 	for task, queued in answer.get("queues", {}).items():
 		state = answer.get("task_states", {}).get(task, {})
 		print(f"task {task}: {state.get('done', 0)} of {state.get('count', '?')} units done, {state.get('leased', 0)} leased, {queued} queued")

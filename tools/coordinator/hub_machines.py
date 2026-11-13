@@ -109,7 +109,9 @@ class MachineLinks:
 		still on: one still queued goes back to it with no cancel (give_back:
 		a reconnect after the grace, or a restarted coordinator); any other
 		it is told to stop. Then its lease again (a reconnect inside the
-		grace), every cancel still owed, and a unit if it is idle."""
+		grace), every cancel still owed, a unit if it is idle, and last the
+		hub's code commit (hub_update), so a machine holding a unit has it first."""
+		self.note_code(machine, hello)
 		if machine.lease and machine.lease[0] not in self.tasks:
 			machine.lease = None
 		elif machine.lease:
@@ -130,6 +132,7 @@ class MachineLinks:
 		for task_id, shard in list(machine.cancelling):
 			await self.tell_cancel(machine, task_id, shard)
 		await self.deal()
+		await self.tell_code(machine)
 
 	def holding(self, machine, event):
 		"""The task, shard and lease a message is about, if this machine holds
@@ -199,6 +202,10 @@ class MachineLinks:
 					say(f"{name}: {event.get('text', '')}")
 					await self.emit({"type": "log", "machine": name, "shard": held, "text": event.get("text", "")})
 					continue
+				if kind == "update-failed":
+					self.note_update_failed(machine, event)
+					await self.deal()
+					continue
 				unit = self.holding(machine, event)
 				if not unit:
 					if kind == "claim":
@@ -220,6 +227,8 @@ class MachineLinks:
 					await socket.send(json.dumps({"type": "claimed", "id": event["id"], "job": self.next_job(task, lease, event)}))
 				elif kind == "bakes-pushed":
 					await self.bakes_pushed(task, event, lease, machine)
+				elif kind in ("engine-output", "engine-done") and task.engine:
+					await self.engine_event(task, shard, event, name)
 				elif kind == "progress":
 					now = time.time()
 					quiet = event.get("quiet") if isinstance(event.get("quiet"), (int, float)) else 0

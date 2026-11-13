@@ -27,6 +27,8 @@ class LeaseQueue:
 	def unit_message(self, task, shard):
 		# The lease number comes back in claims, so a cancelled lease's late claim is refused (holding).
 		lease = task.leases.get(shard)
+		if task.engine:
+			return task.message(shard, lease)
 		return json.dumps({"type": "task", "id": task.id, "task": task.text(shard), "shard": shard, "count": task.count,
 			"lease": lease.number if lease else 0})
 
@@ -37,12 +39,15 @@ class LeaseQueue:
 	async def deal(self):
 		"""Leases the front queued unit of the oldest open task to each idle
 		machine. Idle: connected, holding nothing, and every cancel answered.
-		A task reloaded after a restart waits out its hold."""
+		A task reloaded after a restart waits out its hold. Engine checks go
+		first, to machines with cargo (hub_engine); a machine on other code
+		than the hub's is dealt nothing until it updates (hub_update)."""
+		await self.deal_engine()
 		now = time.time()
 		for machine in list(self.roster.values()):
-			if machine.socket is None or machine.lease or machine.cancelling:
+			if machine.socket is None or machine.lease or machine.cancelling or self.stale(machine):
 				continue
-			task = next((task for task in self.tasks.values() if task.queue and task.held_until <= now), None)
+			task = next((task for task in self.tasks.values() if task.queue and task.held_until <= now and not task.engine), None)
 			if not task:
 				return
 			await self.grant(machine, task, task.queue.pop(0))

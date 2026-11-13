@@ -713,6 +713,9 @@ async def main():
 	# The bake swap and early publish cases, kept in their own file.
 	import test_swap
 	CASES.extend(test_swap.cases(sys.modules[__name__]))
+	# Hot updates and engine checks.
+	import test_update
+	CASES.extend(test_update.cases(sys.modules[__name__]))
 	for name, case in CASES:
 		began = time.time()
 		try:

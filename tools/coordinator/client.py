@@ -16,6 +16,12 @@
   tools/coordinator/client.py wait-machines [N] [--wait S]
                                               # returns once N machines are up
                                               # (default: all of the run)
+  tools/coordinator/client.py update <full sha> [--force] [--wait S]
+                                              # hot update: the hub and every machine
+                                              # move to that commit (default wait 180 s)
+  tools/coordinator/client.py engine <full sha> [--wait S]
+                                              # compile the engine on one machine with
+                                              # cargo; exits 1 on a failed compile
 
 While it waits, `build` prints a summary every 30 seconds and a line starting
 STALL that names any machine that goes quiet (RECOVERED when it comes back).
@@ -50,6 +56,7 @@ used its 5 reconnects or 180 s of reconnecting.
 import argparse
 import asyncio
 import os
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -65,17 +72,20 @@ from client_previews import PREVIEW_SECONDS, model_bytes, load_preview_seconds, 
 from client_relay import (RELAYED_REPO_FILE, TASK_ID, LAYOUT_NAME, MAX_RELAYED_FILES, MAX_RELAYED_BYTES,  # noqa: E402,F401
 	relayed_path, write_relayed, merge_here)
 from client_build import TASK_EVENTS, build, follow, resolve_ref  # noqa: E402,F401
+from client_update import engine, update  # noqa: E402
 
 
 def main():
 	parser = argparse.ArgumentParser()
-	parser.add_argument("command", choices=["status", "machines", "build", "stop-machines", "wait-machines", "mint-workers", "open-workers", "machine-tokens", "numbered", "clear-tasks"])
+	parser.add_argument("command", choices=["status", "machines", "build", "stop-machines", "wait-machines", "mint-workers", "open-workers",
+		"machine-tokens", "numbered", "clear-tasks", "update", "engine"])
 	parser.add_argument("ref", nargs="?")
 	parser.add_argument("last", nargs="?")
 	parser.add_argument("--no-upload", action="store_true")
 	parser.add_argument("--no-seat", action="store_true", help="build: accepted and ignored; there are no seats any more")
 	parser.add_argument("--units", type=int, default=0, help="build: cut the task into this many units (default: one per machine connected)")
-	parser.add_argument("--wait", type=int, default=600)
+	parser.add_argument("--wait", type=int, default=None, help="seconds (build, wait-machines 600; update 180; engine 900)")
+	parser.add_argument("--force", action="store_true", help="update: even with tasks open")
 	parser.add_argument("--preview", default="", help="models to render, comma-separated")
 	parser.add_argument("--preview-only", action="store_true", help="render the previews without building the layout")
 	arguments = parser.parse_args()
@@ -92,7 +102,14 @@ def main():
 	elif arguments.command == "machines":
 		code = asyncio.run(machines(url))
 	elif arguments.command == "wait-machines":
-		code = asyncio.run(wait_machines(url, int(arguments.ref or 0), arguments.wait))
+		code = asyncio.run(wait_machines(url, int(arguments.ref or 0), arguments.wait or 600))
+	elif arguments.command in ("update", "engine"):
+		if not re.fullmatch(r"[0-9a-f]{40}", arguments.ref or ""):
+			parser.error(f"{arguments.command} needs a full 40-character commit sha")
+		if arguments.command == "update":
+			code = asyncio.run(update(url, arguments.ref, arguments.force, arguments.wait or 180))
+		else:
+			code = asyncio.run(engine(url, arguments.ref, arguments.wait or 900))
 	elif arguments.command == "stop-machines":
 		code = asyncio.run(stop_machines(url))
 	elif arguments.command == "clear-tasks":
@@ -116,7 +133,7 @@ def main():
 		previews = [name for name in arguments.preview.split(",") if name]
 		if arguments.no_seat:
 			print("--no-seat: nothing to do; every connected machine takes units from the queue", file=sys.stderr)
-		code = asyncio.run(build(url, ref, not arguments.no_upload, arguments.wait, previews, not arguments.preview_only,
+		code = asyncio.run(build(url, ref, not arguments.no_upload, arguments.wait or 600, previews, not arguments.preview_only,
 			arguments.units or None))
 	sys.exit(code)
 

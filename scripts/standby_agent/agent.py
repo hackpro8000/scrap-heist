@@ -17,16 +17,24 @@ from standby_agent.previews import Previews
 from standby_agent.sending import Sending
 from standby_agent.units import Units
 from standby_agent.uploads import Uploads
+from standby_agent.update import Updates, current_commit, lifetime_left
+from standby_agent.engine import EngineUnits
 import wire  # noqa: E402
 
 
-class Agent(Units, Sending, Previews, Uploads):
+class Agent(Units, Sending, Previews, Uploads, Updates, EngineUnits):
 	def __init__(self, url, layout, index, count, idle_minutes, max_minutes):
 		self.url, self.layout, self.index, self.count = url, layout, int(index), int(count)
+		self.arguments = [str(url), str(layout), str(index), str(count), str(idle_minutes), str(max_minutes)]  # for reexec
 		self.published = url == "published"
 		self.machine = self.index if self.count == 0 else None
 		self.idle_seconds = int(idle_minutes) * 60
-		self.stop_at = time.monotonic() + int(max_minutes) * 60
+		self.stop_at = time.monotonic() + lifetime_left(max_minutes)
+		# Hot updates (update.py): the code this process runs, the hub's if different, commits that failed.
+		self.code_commit = current_commit()
+		self.update_to = None
+		self.update_failed = set()
+		self.updating = False
 		self.idle_until = time.monotonic() + self.idle_seconds
 		# A unit is (task id, shard); a machine may do several units of one task.
 		self.built = {}  # unit -> results folder
@@ -64,7 +72,8 @@ class Agent(Units, Sending, Previews, Uploads):
 		async with websockets.connect(url, max_size=MAX_MESSAGE, ping_interval=20, ping_timeout=120) as socket:
 			# The units still under way, so a restarted coordinator gives them back; not one being cancelled.
 			hello = {"type": "hello", "token": token, "shard": self.index, "count": self.count, "layout": self.layout,
-				"units": [list(unit) for unit in self.handling if unit not in self.cancelling]}
+				"units": [list(unit) for unit in self.handling if unit not in self.cancelling],
+				"code": self.code_commit, "cargo": shutil.which("cargo") is not None}
 			if self.machine is not None:
 				hello["machine"] = self.machine
 			await socket.send(json.dumps(hello))
@@ -105,6 +114,10 @@ class Agent(Units, Sending, Previews, Uploads):
 						self.take(event)
 					elif event["type"] == "cancel":
 						self.stop_unit(event)
+					elif event["type"] == "engine":
+						self.take_engine(event)
+					elif event["type"] in ("hub", "update"):
+						self.want_update(event.get("commit"))
 					elif event["type"] == "claimed":
 						claim = self.claims.get(event["id"])
 						if claim and not claim.done():

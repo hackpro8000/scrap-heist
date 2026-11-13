@@ -58,6 +58,12 @@ class SessionControl:
 			await socket.close()
 			return
 		kind = request.get("type")
+		if kind == "update":
+			await self.update_request(socket, request)
+			return
+		if kind == "engine":
+			await self.engine_request(socket, request)
+			return
 		if kind == "status":
 			now = time.time()
 			connected = self.connected()
@@ -69,7 +75,7 @@ class SessionControl:
 				"queues": {task.id: len(task.queue) for task in self.tasks.values()},
 				"machines": sorted(int(machine.name[1:]) for machine in connected if machine.kind == "numbered"),
 				"lease_seconds": {"grace": self.grace, "silent": self.silent, "wedged": self.wedged},
-				"task_states": self.task_states(), "run_started": self.run_started, **self.lifetime()}))
+				"task_states": self.task_states(), "run_started": self.run_started, **self.code_state(), **self.lifetime()}))
 			return
 		if kind == "clear-tasks":
 			# Tasks no machine is working on (ALERT STRANDED_TASK); a machine

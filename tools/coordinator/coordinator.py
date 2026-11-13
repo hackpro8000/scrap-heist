@@ -100,9 +100,11 @@ from hub_tasks import TaskBook  # noqa: E402
 from hub_machines import MachineLinks  # noqa: E402
 from hub_previews import PreviewJobs  # noqa: E402
 from hub_session import SessionControl, control_signers, local_or_tailnet  # noqa: E402
+from hub_update import HubUpdate, current_commit  # noqa: E402
+from hub_engine import EngineChecks  # noqa: E402
 
 
-class Coordinator(LeaseQueue, TaskBook, MachineLinks, PreviewJobs, SessionControl):
+class Coordinator(LeaseQueue, TaskBook, MachineLinks, PreviewJobs, SessionControl, HubUpdate, EngineChecks):
 	def __init__(self, layout, dry, test_without_identity=False, git_link=False, uploads_on_machine=False, relay_results=False,
 			timeouts=None, worker_key=None, tasks_file=None, results=None):
 		self.layout = layout
@@ -243,6 +245,8 @@ async def serve(arguments):
 	coordinator = Coordinator(arguments.layout, arguments.dry_upload, arguments.test_without_identity, arguments.git_link,
 		arguments.uploads_on_machine, arguments.relay_results)
 	coordinator.loop = asyncio.get_running_loop()
+	# The code this process loaded, and whether a loop restarts it (hub_update).
+	coordinator.code_commit, coordinator.restarts = current_commit(), arguments.relay_results
 	coordinator.load_tasks()
 	if arguments.control_key:
 		coordinator.control_signers = control_signers(arguments.control_key)

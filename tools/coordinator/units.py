@@ -70,6 +70,9 @@ class Machine:
 		self.cancelling = {}  # (task id, shard) told to stop -> when last told, until it answers idle (or times out)
 		self.progress = None  # its latest heartbeat, with the time it came
 		self.dropped = set()  # (task id, shard) whose late messages were dropped, logged once
+		self.code = None  # the commit its agent runs, from its hello (hub_update)
+		self.cargo = False  # it can compile the engine (hub_engine)
+		self.update_failed = None  # the commit it said it could not update to
 
 	def state(self, now):
 		if self.socket is None:
@@ -82,6 +85,8 @@ class Machine:
 
 
 class Task:
+	engine = False  # an engine check (hub_engine.EngineTask) instead of a build
+
 	def __init__(self, identity, ref, upload, count, previews=(), build=True, weights=None, results=RESULTS):
 		self.id, self.ref, self.upload, self.count = identity, ref, upload, count
 		# Without a build the units only render the previews.
