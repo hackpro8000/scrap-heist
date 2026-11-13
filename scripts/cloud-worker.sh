@@ -41,8 +41,9 @@ if [ "${1:-}" = "join" ]; then
 		kill -- "-$pid" 2> /dev/null || kill "$pid" 2> /dev/null || true
 		sleep 1
 	fi
-	# A full disk stops the worker before it can build anything.
-	if [ "$(df --output=avail -BG . | tail -n 1 | tr -dc 0-9)" -lt 8 ]; then
+	# A full disk stops the worker before it can build anything. A snapshot
+	# holding the file .cold-build empties the caches too, for a cold timing.
+	if [ -f .cold-build ] || [ "$(df --output=avail -BG . | tail -n 1 | tr -dc 0-9)" -lt 8 ]; then
 		rm -rf art/models/*/.cache "$(git rev-parse --absolute-git-dir)"/scrap-lanes/*/art/models/*/.cache results
 	fi
 	export COORDINATOR_WORKER_TOKEN="$token"

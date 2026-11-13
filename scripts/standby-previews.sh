@@ -64,6 +64,9 @@ for name in "${list[@]}"; do
 	# this one's.
 	rendered="art/models/${model}"
 	rm -rf "${rendered}"/preview.png "${rendered}"/eye_*.png "${rendered}"/closeup_*.png "${rendered}"/parts.png "${rendered}"/face_*.png "${rendered}"/cells.txt "${rendered}"/turntable
+	# A marker in the task's commit empties this machine's caches first, to
+	# time a cold build on machines that are already warm.
+	[ ! -f tools/modelkit/cold-build ] || rm -rf art/models/*/.cache
 	# The bake's time per layer goes in the log, so a build's cost can be read
 	# off the machine that paid it.
 	if MODELKIT_PROFILE=1 scripts/build-model.sh "${model}" -- "${quality[@]}" --turntable 4 "${size[@]}" "${share[@]}" "${extra[@]}" > "${dir}/build.log" 2>&1; then
