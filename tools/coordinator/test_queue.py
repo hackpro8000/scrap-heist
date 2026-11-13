@@ -43,7 +43,11 @@ CANCEL_SECONDS = 0.3  # how long a fake takes to kill a unit
 CASE_SECONDS = 20
 
 if "-v" not in sys.argv:
-	hub.say = lambda message: None
+	# Every hub module binds its own say (from hub_config import say).
+	for module in list(sys.modules.values()):
+		if module is hub or getattr(module, "__name__", "").startswith("hub_"):
+			if hasattr(module, "say"):
+				module.say = lambda message: None
 	AGENT.say = lambda message: None
 
 

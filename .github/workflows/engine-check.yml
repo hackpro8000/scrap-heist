@@ -1,0 +1,53 @@
+name: engine-check
+
+# Compiles the modelkit engine on a GitHub machine, so nothing compiles on the
+# user's computer. Started by scripts/engine-check.sh for a pushed commit;
+# compile errors show in the run's log. With share=true a clean build is left
+# on the build-engine branch for every build machine to take.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Commit or branch to compile
+        required: true
+      share:
+        description: Share the compiled engine on the build-engine branch
+        default: "false"
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            tools/modelkit/target
+          key: engine-check-${{ hashFiles('tools/modelkit/Cargo.lock') }}
+      - name: Compile
+        run: |
+          if [ "${{ inputs.share }}" = "true" ]; then
+            cargo build --release --manifest-path tools/modelkit/Cargo.toml 2>&1 | tee compile.log
+          else
+            cargo check --manifest-path tools/modelkit/Cargo.toml 2>&1 | tee compile.log
+          fi
+          test "${PIPESTATUS[0]}" -eq 0
+      - name: Share
+        if: inputs.share == 'true'
+        run: |
+          git config user.name "engine-check"
+          git config user.email "engine-check@users.noreply.github.com"
+          sha="$(cd tools/modelkit && find src Cargo.toml Cargo.lock -type f | LC_ALL=C sort | xargs sha256sum | sha256sum | cut -c1-64)"
+          shared="$(mktemp -d)"
+          cp tools/modelkit/target/release/modelkit "${shared}/modelkit-linux-x64"
+          echo "${sha}" > "${shared}/source-sha"
+          scripts/push-folder.sh "${shared}" build-engine "engine ${sha:0:12}"

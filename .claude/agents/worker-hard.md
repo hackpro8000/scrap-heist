@@ -4,6 +4,7 @@ description: "Does one difficult piece of code work to a checked finish: a new s
 tools:
   - Read
   - Edit
+  - Write
   - Grep
   - Glob
   - Bash

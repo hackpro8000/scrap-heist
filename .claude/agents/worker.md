@@ -4,6 +4,7 @@ description: Does one small, well-pointed piece of code work to a checked finish
 tools:
   - Read
   - Edit
+  - Write
   - Grep
   - Glob
   - Bash
