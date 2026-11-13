@@ -15,12 +15,18 @@ cd "${root}"
 # The newest standby run that's still going; its title carries its settings
 # (run-name in build-standby.yml).
 run="$(gh run list --workflow=build-standby.yml --limit 10 --json databaseId,status,displayTitle,createdAt \
-	--jq '[.[] | select(.status == "in_progress" or .status == "queued")][0] | select(. != null) | "\(.databaseId)\t\(.displayTitle)\t\(.createdAt)"')"
+	--jq '[.[] | select(.status == "in_progress" or .status == "queued")][0] | select(. != null) | "\(.databaseId)\t\(.displayTitle)\t\(.createdAt)\t\(.status)"')"
 if [ -z "${run}" ]; then
 	[ "${1:-}" = "--line" ] || echo "no build machines on standby; start some (idle up to an hour) with: gh workflow run build-standby.yml -f ref=wip/coordinator -f shards=20"
 	exit 1
 fi
-IFS=$'\t' read -r id title created <<< "${run}"
+IFS=$'\t' read -r id title created status <<< "${run}"
+# Held back by GitHub over a minute (as scripts/standby-start.sh alerts).
+if [ "${status}" = "queued" ] && [ $(( $(date +%s) - $(date -d "${created}" +%s) )) -ge 60 ]; then
+	holding="$(gh run list --status in_progress --limit 20 --json databaseId,workflowName \
+		--jq '[.[] | "\(.databaseId) (\(.workflowName))"] | join(", ")')"
+	echo "ALERT QUEUED: standby run ${id} still queued since ${created}; runs holding slots: ${holding:-none in this repo, so runs elsewhere on the account} | cancel them (gh run cancel <id>) or wait for them to end" >&2
+fi
 layout="$(sed -n 's/^Standby \([^ ]*\) x.*/\1/p' <<< "${title}")"
 shards="$(sed -n 's/^Standby [^ ]* x\([0-9]*\) .*/\1/p' <<< "${title}")"
 ref="$(sed -n 's/.* from \([^ ]*\) (.*/\1/p' <<< "${title}")"

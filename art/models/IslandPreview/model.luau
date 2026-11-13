@@ -1,4 +1,4 @@
-local SHARD_COSTS = {  }
+local SHARD_COSTS = {  } local PAINT_COSTS: { [string]: number } = {  } local PAINT_DEAL = ""
 -- Layout prelude: lets a layout build other models in place. Each model's
 -- script is wrapped as build<Name>(), and place() runs it with every vertex
 -- moved, turned about z, optionally scaled up or down as a whole and
@@ -16,13 +16,53 @@ local paintsPart: (name: string, image: any) -> boolean
 -- its parts can be dealt by texels before any is painted (see ownsPart).
 local RealImage = Image
 local splitImages: { any }? = nil
-Image = setmetatable({
-	new = function(...)
-		local image = RealImage.new(...)
-		if splitImages then
-			table.insert(splitImages, image)
+
+-- While a split model builds, an image is a promise of one: its size is known
+-- at once, for the deal, and its pixels are made when something first paints
+-- or reads them. A shard keeps only its share of a split model's parts, so it
+-- never makes the pixels of the rest.
+local function promisedImage(width: number, height: number, ...)
+	local made = nil
+	local colour = table.pack(...)
+	local function real()
+		if not made then
+			made = RealImage.new(width, height, table.unpack(colour, 1, colour.n))
 		end
-		return image
+		return made
+	end
+	return setmetatable({
+		_real = real,
+		width = function()
+			return width
+		end,
+		height = function()
+			return height
+		end,
+		size = function()
+			return width, height
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				local image = real()
+				return image[key](image, ...)
+			end
+		end,
+	})
+end
+
+local function unwrapImage(image)
+	return if type(image) == "table" and image._real then image._real() else image
+end
+
+Image = setmetatable({
+	new = function(width, height, ...)
+		if splitImages then
+			local image = promisedImage(width, height, ...)
+			table.insert(splitImages, image)
+			return image
+		end
+		return RealImage.new(width, height, ...)
 	end,
 }, { __index = RealImage })
 
@@ -58,7 +98,10 @@ Mesh = {
 						options[list] = real
 					end
 				end
-				return real:paintShading(image, options)
+				return real:paintShading(unwrapImage(image), options)
+			end,
+			paint = function(_, image, ...)
+				return real:paint(unwrapImage(image), ...)
 			end,
 		}, {
 			__index = function(_, key)
@@ -123,6 +166,20 @@ local slabKeys = {}
 -- sorted largest first and each goes to the share with the fewest texels so
 -- far. Every shard in the split deals the same images the same way. Placing
 -- that model again goes to the same shards, each keeping the same parts.
+--
+-- Texels are a poor guide to paint time (a ground chunk paints seven times
+-- faster than a dirt chunk of the same size), so once paint times have been
+-- measured (PAINT_COSTS, from the assembler's <Layout>PaintCosts.txt, which
+-- scripts/paint-costs.sh writes from a build's logs) parts are dealt by those
+-- instead. A chunk's paint also shades the chunks next to it unless this
+-- shard has shaded them already (bake.rs), so neighbours belong on one shard:
+-- the measured parts named for a place on the chunk grid (<Kind>_<x>_<y>_<z>,
+-- as chunkedPart names them) are put in order by 2 x 2 block of cells, then
+-- cell, and that line is cut into one run of equal paint time per share
+-- (plannedShares). Any other part, as its paint is asked for, goes to the
+-- share with the least paint time so far; one with no measured time counts as
+-- its texels at the measured average rate. Every shard asks for the same
+-- paints in the same order, so they still deal alike.
 local REPEAT_COST = 0.01
 -- Pieces are about this much of an even share; a model splits once it costs
 -- a quarter more than one piece.
@@ -157,7 +214,55 @@ local function texelsOf(image: any): number
 	return width * height
 end
 
--- Gives an image to the share with the fewest texels so far.
+local paintRate: number? = PAINT_COSTS["#rate"]
+
+-- What a part's paint weighs in the deal: its measured seconds, or its texels
+-- when no paint times have been measured.
+local function paintWeight(name: string?, image: any): number
+	if not paintRate then
+		return texelsOf(image)
+	end
+	return (name and PAINT_COSTS[name]) or texelsOf(image) * paintRate
+end
+
+-- The measured chunk parts' shares for a split into `count`, by name, and the
+-- paint time each share is given by them.
+local sharePlans: { [number]: { owners: { [string]: number }, loads: { number } } } = {}
+local function plannedShares(count: number)
+	if sharePlans[count] then
+		return sharePlans[count]
+	end
+	local chunks, total = {}, 0
+	for name, seconds in PAINT_COSTS do
+		local x, y, z = string.match(name, "^%a+_(%-?%d+)_(%-?%d+)_(%-?%d+)")
+		if x then
+			x, y, z = tonumber(x) :: number, tonumber(y) :: number, tonumber(z) :: number
+			table.insert(chunks, { name = name, seconds = seconds, key = { x // 2, y // 2, x, y, z } })
+			total += seconds
+		end
+	end
+	table.sort(chunks, function(a, b)
+		for i = 1, 5 do
+			if a.key[i] ~= b.key[i] then
+				return a.key[i] < b.key[i]
+			end
+		end
+		return a.name < b.name
+	end)
+	local plan = { owners = {}, loads = table.create(count, 0) }
+	local before = 0
+	for _, chunk in chunks do
+		-- By the middle of its own time, so a long paint lands on the run it mostly lies in.
+		local share = math.min(count, (before + chunk.seconds / 2) * count // total + 1)
+		plan.owners[chunk.name] = share
+		plan.loads[share] += chunk.seconds
+		before += chunk.seconds
+	end
+	sharePlans[count] = plan
+	return plan
+end
+
+-- Gives an image to the share with the least weight (texels, or seconds) so far.
 local function dealImage(share: PartShare, image: any, texels: number): number
 	local lightest = 1
 	for index = 2, share.count do
@@ -195,9 +300,26 @@ local function ownsPart(name: string, image: any?): boolean
 	end
 	if image then
 		if not partShare.owners then
-			dealImages(partShare)
+			if paintRate then
+				-- By measured paint time: the chunk parts' runs are planned,
+				-- and the rest are dealt one by one, as each is asked for.
+				partShare.owners = {}
+				partShare.texels = table.clone(plannedShares(partShare.count).loads)
+			else
+				dealImages(partShare)
+			end
 		end
-		local owner = (partShare.owners :: { [any]: number })[image] or dealImage(partShare, image, texelsOf(image))
+		local owners = partShare.owners :: { [any]: number }
+		local owner = owners[image]
+		if not owner then
+			local planned = if paintRate then plannedShares(partShare.count).owners[name] else nil
+			if planned then
+				owners[image] = planned
+				owner = planned
+			else
+				owner = dealImage(partShare, image, paintWeight(name, image))
+			end
+		end
 		return owner == partShare.index
 	end
 	local hash = 5381
@@ -314,10 +436,10 @@ model.part = function(name, mesh, image, options)
 		if skipPart(name) or not ownsPart(name, image) then
 			return
 		end
-		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview, emissive = options and options.emissive })
+		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = unwrapImage(image), preview = preview, emissive = options and options.emissive })
 		return
 	end
-	addPart(name, unwrapMesh(mesh), image, preview, options and options.emissive)
+	addPart(name, unwrapMesh(mesh), unwrapImage(image), preview, options and options.emissive)
 end
 
 -- Says which object a placement is, for the upload (scripts/export-objects.py
@@ -376,6 +498,10 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 	-- texel deal follows from the model's source, already in the key.
 	if share then
 		key = `{key} part {share}/{shares}`
+		-- The deal by measured paint times follows from those too.
+		if PAINT_DEAL ~= "" then
+			key = `{key} deal {PAINT_DEAL}`
+		end
 	end
 	tellPlacement(label, turn or 0, key)
 	local x0, y0, z0, turn0 = placeX, placeY, placeZ, placeTurn
@@ -1300,8 +1426,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -1317,10 +1445,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -1332,6 +1469,8 @@ local function finishParts()
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
@@ -1345,6 +1484,18 @@ local function finishParts()
 			rubber = entry.rubber,
 			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
 			highlightUnevenStep = entry.litUnevenStep,
@@ -1394,12 +1545,17 @@ local SMALL_MARKS = {
 -- pieces each lit from above) and `stain` (how far a short part's steps wander
 -- as blotches instead of bands; high values fleck a dark surface).
 local PRESETS = {
-	-- Steel standing alone on open ground.
-	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Steel standing alone on open ground. Its coat is paint over metal: the
+	-- roughness map polishes the worn rims and roughens creases and rust, and
+	-- the metalness map shows bare metal where the edge wear cuts through,
+	-- never under the rust.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 }, roughness = { base = 0.7, edge = -0.6, crease = 0.15, wear = 0.25 }, metalness = { base = 0.05, edge = 0.85, crease = 0, wear = -0.3 } },
 	-- Concrete footings and plinths.
 	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
 	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
-	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Stone's edges tilt hard in the normal map, along the highlight strokes,
+	-- and its roughness map polishes those worn rims while the creases stay matte.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 }, bevel = { tilt = 8 }, roughness = { base = 0.85, edge = -0.7, crease = 0.1, wear = 0 } },
 	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
 	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
 	-- The earth body of a heap: it darkens well under everything resting on it.
@@ -1474,15 +1630,38 @@ local function applyPreset(entry, preset)
 	if preset.softLit then
 		entry.softLit = preset.softLit
 	end
+	-- The normal map's bevel field, where the material shapes it.
+	if preset.bevel then
+		entry.bevelReach = entry.bevelReach or preset.bevel.reach
+		entry.bevelFold = entry.bevelFold or preset.bevel.fold
+		entry.bevelTilt = entry.bevelTilt or preset.bevel.tilt
+	end
+	-- The roughness map, from the material's base and the layers already baked.
+	if preset.roughness then
+		entry.roughnessBase = entry.roughnessBase or preset.roughness.base
+		entry.roughnessEdge = entry.roughnessEdge or preset.roughness.edge
+		entry.roughnessCrease = entry.roughnessCrease or preset.roughness.crease
+		entry.roughnessWear = entry.roughnessWear or preset.roughness.wear
+	end
+	if preset.metalness then
+		entry.metalnessBase = entry.metalnessBase or preset.metalness.base
+		entry.metalnessEdge = entry.metalnessEdge or preset.metalness.edge
+		entry.metalnessCrease = entry.metalnessCrease or preset.metalness.crease
+		entry.metalnessWear = entry.metalnessWear or preset.metalness.wear
+	end
 	entry.handTune = SMALL_MARKS
 	paintStepBands(entry, preset.bands)
 end
 
 local function handFinish(coats, plain, finish)
+	-- Every chunk of one part must come out with the same finish; a chunk
+	-- that doesn't is a seam in the paint, so it stops the build.
+	local finishes: { [string]: string } = {}
 	for _, entry in parts do
-		-- A chunked part takes the coat of the name it was built under.
-		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
-		if plain[name] then
+		-- A chunked part takes the coat of the part it was built under
+		-- (chunkedPart tags each chunk with it), not whatever its own name parses to.
+		local name = entry.chunkOf or entry.name
+		if plain[name] or plain[entry.name] then
 			continue
 		end
 		entry.hand = coats[name]
@@ -1500,6 +1679,11 @@ local function handFinish(coats, plain, finish)
 		if presetName then
 			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
 		end
+		local signature = `{entry.hand or "-"}/{presetName or "-"}`
+		if finishes[name] and finishes[name] ~= signature then
+			error(`chunks of {name} would wear different finishes ({finishes[name]} and {signature}); the paint would seam`)
+		end
+		finishes[name] = signature
 	end
 end
 function buildMainIsland()
@@ -4233,7 +4417,7 @@ for _, entry in parts do
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildMainIsland] = "MainIsland-f8b29761b5cbce6e"
+buildKeys[buildMainIsland] = "MainIsland-5bd6e7b05fafabe5"
 function buildCapsuleLoop()
 local CACHE_KEY = "CapsuleLoop-2eff1653a67db3ac"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -8442,7 +8626,7 @@ for _, entry in parts do
 end
 finishParts()
 end
-buildKeys[buildCapsuleLoop] = "CapsuleLoop-d5670c2ac9aba453"
+buildKeys[buildCapsuleLoop] = "CapsuleLoop-e122c768981a2fcf"
 function buildRebirthPress()
 local CACHE_KEY = "RebirthPress-d4815f7b07795958"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -10145,7 +10329,7 @@ handFinish({
 }, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildRebirthPress] = "RebirthPress-68bffec05b017d66"
+buildKeys[buildRebirthPress] = "RebirthPress-12dcb067617e705b"
 function buildBuildBay()
 local CACHE_KEY = "BuildBay-53489079ec725d33"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -11854,7 +12038,7 @@ end
 
 finishParts()
 end
-buildKeys[buildBuildBay] = "BuildBay-e350ca07c20253cf"
+buildKeys[buildBuildBay] = "BuildBay-f8fddcb129310701"
 function buildYardFence()
 local CACHE_KEY = "YardFence-ed9cc0a50c9a990b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -12977,7 +13161,7 @@ for _, entry in parts do
 end
 finishParts()
 end
-buildKeys[buildYardFence] = "YardFence-886ab0c6a9ab76d5"
+buildKeys[buildYardFence] = "YardFence-ae9c0061f8170496"
 function buildYardFenceHalf()
 local CACHE_KEY = "YardFenceHalf-44c06fd6c7d585e3"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -14099,7 +14283,7 @@ for _, entry in parts do
 end
 finishParts()
 end
-buildKeys[buildYardFenceHalf] = "YardFenceHalf-be79ee5d70226771"
+buildKeys[buildYardFenceHalf] = "YardFenceHalf-ca23e4e88ebebfbf"
 function buildYardFooting()
 local CACHE_KEY = "YardFooting-e42c4d0ae1d767cd"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -15185,7 +15369,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildYardFooting] = "YardFooting-f4adf27d60b77d68"
+buildKeys[buildYardFooting] = "YardFooting-ce1698371f70b42a"
 function buildYardGate()
 local CACHE_KEY = "YardGate-3d1b6f3f9e976258"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -16323,7 +16507,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildYardGate] = "YardGate-77592f166aa97f3a"
+buildKeys[buildYardGate] = "YardGate-bf1807569edc0b36"
 function buildPlotMarker()
 local CACHE_KEY = "PlotMarker-3541a7472aa1d9be"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -17444,7 +17628,7 @@ handFinish({
 }, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildPlotMarker] = "PlotMarker-1c3c3808c9f14059"
+buildKeys[buildPlotMarker] = "PlotMarker-9172bd0ab180a2a2"
 function buildHubShop()
 local CACHE_KEY = "HubShop-d28bf4508d6bb561"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -19166,7 +19350,7 @@ end
 
 finishParts()
 end
-buildKeys[buildHubShop] = "HubShop-350bbc2c45edc62c"
+buildKeys[buildHubShop] = "HubShop-780fad43697b3086"
 function buildHubTinkerer()
 local CACHE_KEY = "HubTinkerer-0c574345159805fc"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -20695,7 +20879,7 @@ handFinish({
 
 finishParts()
 end
-buildKeys[buildHubTinkerer] = "HubTinkerer-a3812e490488c94c"
+buildKeys[buildHubTinkerer] = "HubTinkerer-8b76108c361ff045"
 function buildHubBeacon()
 local CACHE_KEY = "HubBeacon-5c136ecd6fc092b2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -22263,7 +22447,7 @@ end
 
 finishParts()
 end
-buildKeys[buildHubBeacon] = "HubBeacon-c23008aba590234c"
+buildKeys[buildHubBeacon] = "HubBeacon-359a482ad806c4cb"
 function buildHubStage()
 local CACHE_KEY = "HubStage-2716653c17d04ee2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -23803,7 +23987,7 @@ handFinish({
 
 finishParts()
 end
-buildKeys[buildHubStage] = "HubStage-7ba8cdd6fa86707b"
+buildKeys[buildHubStage] = "HubStage-16916797fdf77074"
 function buildBeltCrossing()
 local CACHE_KEY = "BeltCrossing-5cb6aefa8e95af10"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -25201,7 +25385,7 @@ handFinish({ Fittings = "metal", Span = "metal", Railings = "metal", Legs = "met
 
 finishParts()
 end
-buildKeys[buildBeltCrossing] = "BeltCrossing-7662f957ab2603b0"
+buildKeys[buildBeltCrossing] = "BeltCrossing-eee6b0e8964a303c"
 function buildJunkMound()
 local CACHE_KEY = "JunkMound-0c304b50c56a837c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -26482,7 +26666,7 @@ handFinish({
 }, {}, { Heap = "heapBody", metal = "heapPiece", rock = "heapPiece" })
 finishParts()
 end
-buildKeys[buildJunkMound] = "JunkMound-7bbdef0fd1775b2f"
+buildKeys[buildJunkMound] = "JunkMound-fb80758d0e577fda"
 function buildScrapPalm()
 local CACHE_KEY = "ScrapPalm-f0897f0739e1b1dc"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -27716,7 +27900,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapPalm] = "ScrapPalm-4bb6bd416566bb39"
+buildKeys[buildScrapPalm] = "ScrapPalm-46e4c25337945eb1"
 function buildScrapTreeAntenna()
 local CACHE_KEY = "ScrapTreeAntenna-0cf69011a11142c9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -28849,9 +29033,9 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapTreeAntenna] = "ScrapTreeAntenna-4da8b04636649bdf"
+buildKeys[buildScrapTreeAntenna] = "ScrapTreeAntenna-a9248507734dd9c4"
 function buildScrapTreeExhaust()
-local CACHE_KEY = "ScrapTreeExhaust-83cdaeb809967dab"
+local CACHE_KEY = "ScrapTreeExhaust-0721066c009011f1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -29710,8 +29894,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -29755,6 +29941,18 @@ local function finishParts()
 			rubber = entry.rubber,
 			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
 			highlightUnevenStep = entry.litUnevenStep,
@@ -29807,12 +30005,17 @@ local SMALL_MARKS = {
 -- pieces each lit from above) and `stain` (how far a short part's steps wander
 -- as blotches instead of bands; high values fleck a dark surface).
 local PRESETS = {
-	-- Steel standing alone on open ground.
-	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Steel standing alone on open ground. Its coat is paint over metal: the
+	-- roughness map polishes the worn rims and roughens creases and rust, and
+	-- the metalness map shows bare metal where the edge wear cuts through,
+	-- never under the rust.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 }, roughness = { base = 0.7, edge = -0.4, crease = 0.15, wear = 0.25 }, metalness = { base = 0.05, edge = 0.85, crease = 0, wear = -0.3 } },
 	-- Concrete footings and plinths.
 	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
 	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
-	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Stone's edges tilt hard in the normal map, along the highlight strokes,
+	-- and its roughness map polishes those worn rims while the creases stay matte.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 }, bevel = { tilt = 1.5 }, roughness = { base = 0.85, edge = -0.45, crease = 0.1, wear = 0 } },
 	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
 	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
 	-- The earth body of a heap: it darkens well under everything resting on it.
@@ -29887,15 +30090,38 @@ local function applyPreset(entry, preset)
 	if preset.softLit then
 		entry.softLit = preset.softLit
 	end
+	-- The normal map's bevel field, where the material shapes it.
+	if preset.bevel then
+		entry.bevelReach = entry.bevelReach or preset.bevel.reach
+		entry.bevelFold = entry.bevelFold or preset.bevel.fold
+		entry.bevelTilt = entry.bevelTilt or preset.bevel.tilt
+	end
+	-- The roughness map, from the material's base and the layers already baked.
+	if preset.roughness then
+		entry.roughnessBase = entry.roughnessBase or preset.roughness.base
+		entry.roughnessEdge = entry.roughnessEdge or preset.roughness.edge
+		entry.roughnessCrease = entry.roughnessCrease or preset.roughness.crease
+		entry.roughnessWear = entry.roughnessWear or preset.roughness.wear
+	end
+	if preset.metalness then
+		entry.metalnessBase = entry.metalnessBase or preset.metalness.base
+		entry.metalnessEdge = entry.metalnessEdge or preset.metalness.edge
+		entry.metalnessCrease = entry.metalnessCrease or preset.metalness.crease
+		entry.metalnessWear = entry.metalnessWear or preset.metalness.wear
+	end
 	entry.handTune = SMALL_MARKS
 	paintStepBands(entry, preset.bands)
 end
 
 local function handFinish(coats, plain, finish)
+	-- Every chunk of one part must come out with the same finish; a chunk
+	-- that doesn't is a seam in the paint, so it stops the build.
+	local finishes: { [string]: string } = {}
 	for _, entry in parts do
-		-- A chunked part takes the coat of the name it was built under.
-		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
-		if plain[name] then
+		-- A chunked part takes the coat of the part it was built under
+		-- (chunkedPart tags each chunk with it), not whatever its own name parses to.
+		local name = entry.chunkOf or entry.name
+		if plain[name] or plain[entry.name] then
 			continue
 		end
 		entry.hand = coats[name]
@@ -29913,6 +30139,11 @@ local function handFinish(coats, plain, finish)
 		if presetName then
 			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
 		end
+		local signature = `{entry.hand or "-"}/{presetName or "-"}`
+		if finishes[name] and finishes[name] ~= signature then
+			error(`chunks of {name} would wear different finishes ({finishes[name]} and {signature}); the paint would seam`)
+		end
+		finishes[name] = signature
 	end
 end
 local CONCRETE = { 0.5, 0.48, 0.44 }
@@ -30047,7 +30278,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapTreeExhaust] = "ScrapTreeExhaust-79ef1f0acda2af91"
+buildKeys[buildScrapTreeExhaust] = "ScrapTreeExhaust-6971958a5110f5e4"
 function buildScrapTreeLamppost()
 local CACHE_KEY = "ScrapTreeLamppost-a4f045cef97604b9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -31250,7 +31481,7 @@ handFinish({
 }, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapTreeLamppost] = "ScrapTreeLamppost-ce32cfd63f66a229"
+buildKeys[buildScrapTreeLamppost] = "ScrapTreeLamppost-b598ef50948d0308"
 function buildScrapTreeRebar()
 local CACHE_KEY = "ScrapTreeRebar-402cb4318f5198e6"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -32388,7 +32619,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapTreeRebar] = "ScrapTreeRebar-faecca9350d53dad"
+buildKeys[buildScrapTreeRebar] = "ScrapTreeRebar-173c33daa1f9b61c"
 function buildScrapTreeSignpost()
 local CACHE_KEY = "ScrapTreeSignpost-de643e4e0ef172b9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -33556,7 +33787,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapTreeSignpost] = "ScrapTreeSignpost-33802aec7df5560d"
+buildKeys[buildScrapTreeSignpost] = "ScrapTreeSignpost-095cc13fc7d72ba7"
 function buildRockBoulderPile()
 local CACHE_KEY = "RockBoulderPile-255727f46d4ef30e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -34763,16 +34994,17 @@ handFinish({
 }, {}, { Mound = "heapBody", metal = "heapPiece" })
 finishParts()
 end
-buildKeys[buildRockBoulderPile] = "RockBoulderPile-eff3d5b047e416d1"
-slabKeys[34940] = "62cab22f2c1feedf-7ec5bfa1fe5329ef"
-slabKeys[35104] = "62cab22f2c1feedf-6ad7b70c6ecee2a9"
-slabKeys[35183] = "62cab22f2c1feedf-1439853d85f21bad"
-slabKeys[35191] = "62cab22f2c1feedf-dbd59378b4f53cfc"
-slabKeys[35231] = "62cab22f2c1feedf-68e8156566c13d8e"
-slabKeys[35341] = "62cab22f2c1feedf-09a6759228b03a28"
-slabKeys[35350] = "62cab22f2c1feedf-4bed7244ea680ec2"
-slabKeys[35377] = "62cab22f2c1feedf-2f5b4070ee3aa512"
-slabKeys[35418] = "62cab22f2c1feedf-61d86411205cd0df"
+buildKeys[buildRockBoulderPile] = "RockBoulderPile-9f587297437e5ec1"
+slabKeys[35169] = "6cb746773e15d552-3fdae4e14ff3605c"
+slabKeys[35328] = "6cb746773e15d552-6ad7b70c6ecee2a9"
+slabKeys[35407] = "6cb746773e15d552-1439853d85f21bad"
+slabKeys[35415] = "6cb746773e15d552-dbd59378b4f53cfc"
+slabKeys[35455] = "6cb746773e15d552-e6328242ecab9497"
+slabKeys[35564] = "6cb746773e15d552-09a6759228b03a28"
+slabKeys[35573] = "6cb746773e15d552-4bed7244ea680ec2"
+slabKeys[35600] = "6cb746773e15d552-2f5b4070ee3aa512"
+slabKeys[35631] = "6cb746773e15d552-7e2639cb9124201d"
+slabKeys[35660] = "6cb746773e15d552-0e10b2c0f9b2dae7"
 -- uses: MainIsland CapsuleLoop RebirthPress BuildBay YardFence YardFenceHalf YardFooting YardGate PlotMarker HubShop HubTinkerer HubBeacon HubStage BeltCrossing JunkMound ScrapPalm ScrapTreeAntenna ScrapTreeExhaust ScrapTreeLamppost ScrapTreeRebar ScrapTreeSignpost RockBoulderPile
 -- include: HandFinish
 -- Island Preview: the floating-island server map from
@@ -34781,7 +35013,7 @@ slabKeys[35418] = "62cab22f2c1feedf-61d86411205cd0df"
 -- origin: an open hub with a minecart loop round it, eight fenced yards on a
 -- ring near the rim with their gates facing the hub, and open ground
 -- between with rough ground in the gaps, and a town inside the belt.
--- Labels: Island, Plaza, Rough1-Rough10, Streets, Plot1-Plot8 with Yard1_<piece>-
+-- Labels: Island, Plaza, Rough1-Rough10, Lamps, Path1-Path8, Plot1-Plot8 with Yard1_<piece>-
 -- Yard8_<piece>, CapsuleLoop, Spawn, Market, Tinkerer, Landmark, EventStage
 -- and Crossing1-Crossing8.
 
@@ -34795,14 +35027,13 @@ local YARD_TIER = DECK
 local PLOT_WIDTH, PLOT_DEPTH = 96, 112
 -- Yards stand on a ring this far out, yard i at (i - 0.5) * 45 degrees.
 local YARD_RADIUS = 210
--- The hub: paved plaza to HUB_PAVED, then the ring road to HUB_ROAD.
-local HUB_PAVED, HUB_ROAD = 84, 101
+-- The hub's concrete plaza reaches this far out; dirt paths run on to the yards.
+local HUB_EDGE = 101
 -- MainIsland's turf thickness: the column generator's GRASS_HEIGHT, 0.45 of
 -- its DETAIL (0.34 * RADIUS / 4.5) for a RADIUS of 278.
 local ISLAND_TURF = 0.45 * 0.34 * 278 / 4.5
 
 local CONCRETE = { 0.55, 0.54, 0.5 }
-local ROAD = { 0.42, 0.41, 0.4 }
 local DIRT = { 0.47, 0.4, 0.31 }
 local ROCK = { 0.56, 0.5, 0.42 }
 local MARK = { 0.85, 0.65, 0.15 }
@@ -34825,11 +35056,6 @@ local SLAB_COATS = {
 	Pipe = "metal",
 	Slab = "rock",
 	SlabStone = "rock",
-	Walks = "rock",
-	Tracks = "rock",
-	Kerbs = "rock",
-	Drains = "metal",
-	Conduits = "metal",
 	LampPosts = "metal",
 }
 local ROCK_PARTS = { Stones = true, Grit = true, PipeStone = true, SlabStone = true }
@@ -34838,8 +35064,10 @@ local FOOTING_REACH = 0.75
 -- What stands on the sand in the slab being built: { x, y, radius x, radius y, seed }.
 local groundFeet = {}
 local SHADE = { 0.13, 0.09, 0.07 }
--- The turf stands proud of DECK; the shadow sheets lie just above it.
-local SHADE_Z = DECK + 0.85
+-- The island's top is flat at DECK (measured in Studio: sand 2.00, yard dirt
+-- 2.03); the shadow sheets lie 0.01 over it, the most a shade may stand off
+-- the ground.
+local SHADE_Z = DECK + 0.01
 -- A contact shadow is ambient occlusion, not a cast shadow (the game lights the
 -- world itself): a thin stepped line hugging the foot, whatever the object's
 -- size. `past` is studs outside the foot's edge.
@@ -34935,17 +35163,18 @@ end
 -- The island itself, its turf top at DECK.
 placeModel("Island", buildMainIsland, 0, 0, DECK - ISLAND_TURF)
 
--- The hub's paving: concrete slabs on the plaza, asphalt on the ring road,
--- a hair over the turf.
+-- The hub's floor: one plain, weathered concrete plaza out to HUB_EDGE, a
+-- hair over the turf. No joints or markings: a square grid would sit square
+-- to the world, not to the round hub.
 slab("Plaza", function()
 	chunkedPart("Paving", nil, CONCRETE, function(mesh)
 		local STEPS = 128
 		local rings = {}
-		for r = 4, HUB_ROAD, 4 do
+		for r = 4, HUB_EDGE, 4 do
 			table.insert(rings, r)
 		end
-		if rings[#rings] ~= HUB_ROAD then
-			table.insert(rings, HUB_ROAD)
+		if rings[#rings] ~= HUB_EDGE then
+			table.insert(rings, HUB_EDGE)
 		end
 		local middle = mesh:vertex(0, 0, DECK + 0.05)
 		local grid = {}
@@ -34963,19 +35192,14 @@ slab("Plaza", function()
 			end
 		end
 	end, nil, function(x, y)
+		-- Weathering: broad stains over a fine mottle, and dust blown in
+		-- toward the edge where it meets the turf.
 		local r = math.sqrt(x * x + y * y)
-		if r < HUB_PAVED then
-			local k = 1 + fbm(x / 4, y / 4, 120) * 0.12
-			if math.min(x % 6, 6 - x % 6, y % 6, 6 - y % 6) < 0.08 then
-				k -= 0.2
-			end
-			return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * k
-		end
-		local k = 1 + fbm(x / 2, y / 2, 50) * 0.15
-		if r > HUB_ROAD - 1 or (r > HUB_PAVED and r < HUB_PAVED + 1) then
-			return MARK[1], MARK[2], MARK[3]
-		end
-		return ROAD[1] * k, ROAD[2] * k, ROAD[3] * k
+		local stain = smooth(0.1, 0.35, fbm(x / 14, y / 14, 121))
+		local dust = smooth(HUB_EDGE - 10, HUB_EDGE, r + fbm(x / 5, y / 5, 122) * 4)
+		local k = (1 + fbm(x / 4, y / 4, 120) * 0.12) * (1 - 0.1 * stain)
+		local red, green, blue = CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * k
+		return red + (DIRT[1] - red) * dust * 0.45, green + (DIRT[2] - green) * dust * 0.45, blue + (DIRT[3] - blue) * dust * 0.45
 	end, true)
 end, 0, 0)
 
@@ -35253,13 +35477,14 @@ for n, spot in LONE_WRECKS do
 				boulder(mesh, 0, side * 3.6, DECK, 2.4, n * 9, 0.8)
 			end, nil, rockColour, nil, nil, true)
 			part("Pipe", nil, { 0.46, 0.28, 0.17 }, function(mesh)
-				-- Bent where it was dropped, flanged at one end, and a sheared-off length beside it.
-				for _, spot in { { -4.4, -0.4 }, { -2.2, 0 }, { 0.3, side * 1.2 }, { 3.1, side * 2.6 }, { 1.6, -2.2 * side }, { 4.2, -2.9 * side } } do
+				-- A straight run into a right-angle elbow, flanged at one end, and a
+				-- sheared-off length beside it.
+				for _, spot in { { -4.4, -0.4 }, { -2, -0.4 }, { 0.5, -0.4 }, { 2.6, -0.1 * side }, { 3, side * 1.4 }, { 3, side * 2.8 }, { 1.6, -2.6 * side }, { 4.2, -3.3 * side } } do
 					table.insert(groundFeet, { spot[1], spot[2], 0.9, 0.9, n })
 				end
-				tube(mesh, { { -4.4, -0.4, DECK + 0.65 }, { -0.4, side * 0.4, DECK + 1.0 }, { 3.1, side * 2.6, DECK + 0.55 } }, 1.1, 12)
+				tube(mesh, roundedPath({ { -4.4, -0.4, DECK + 0.65 }, { 3, -0.4, DECK + 0.65 }, { 3, side * 2.8, DECK + 0.65 } }, 1.7, 6), 1.1, 12)
 				ring(mesh, -4.5, -0.4, DECK + 0.65, 0.7, 1.55, 0.22, "x", 14)
-				tube(mesh, { { 1.6, -2.2 * side, DECK + 0.45 }, { 4.2, -2.9 * side, DECK + 0.5 } }, 0.8, 10)
+				tube(mesh, { { 1.6, -2.6 * side, DECK + 0.45 }, { 4.2, -3.3 * side, DECK + 0.5 } }, 0.8, 10)
 			end, nil, 0.8)
 		else
 			part("Slab", nil, { 0.56, 0.55, 0.52 }, function(mesh)
@@ -35290,8 +35515,9 @@ local function yardGround(u: number, v: number, seed: number): (number, number, 
 	local yardWork = smooth(reach, reach * 0.35, math.sqrt(du * du + dv * dv * 1.4) + fbm(u / 5, v / 5, seed + 4) * 8)
 	local packed = math.max(lane * 0.85, yardWork * (0.6 + (seed % 3) * 0.15))
 	local k = 1 + fbm(u / 3, v / 3, seed) * 0.2 + fbm(u * 2, v * 2, seed + 1) * 0.08
-	local r, g, b = YARD_DIRT[1] * k, YARD_DIRT[2] * k, YARD_DIRT[3] * k
-	return r + (0.54 * k - r) * packed, g + (0.53 * k - g) * packed, b + (0.5 * k - b) * packed
+	-- Trodden dirt packs a shade darker; it never bleaches.
+	local firm = k * (1 - 0.14 * packed)
+	return YARD_DIRT[1] * firm, YARD_DIRT[2] * firm, YARD_DIRT[3] * firm
 end
 
 -- A yard's shell on the plot at (x, y), turned so its gate (local -y) faces
@@ -35326,11 +35552,8 @@ local function yardShell(index: number, x: number, y: number, turn: number)
 	end
 	piece("Gate", buildYardGate, FENCE, 0, -PLOT_DEPTH / 2)
 	piece("PlotMarker", buildPlotMarker, FENCE, 9, -PLOT_DEPTH / 2 - 2.25)
-	-- The yard's remade props on their starter spots (STARTER_LAYOUT in
-	-- Config/Yard), turned to face into the yard: the fence is too close in
-	-- front of them for a player to stand there.
-	piece("Bay", buildBuildBay, 1, -19, -49, 0, 180)
-	piece("Press", buildRebirthPress, 1, 18, -48, 0, 180)
+	-- No Bay or Press here: the game clones the real, movable ones from the
+	-- kit into each yard at runtime (PlotService), so map copies would double them.
 end
 
 for i = 1, 8 do
@@ -35373,7 +35596,7 @@ end
 -- The capsule belt and its factory (CapsuleLoop), on the plaza.
 placeModel("CapsuleLoop", buildCapsuleLoop, 0, 0, DECK + 0.05)
 
--- New players start on a ring painted on the plaza.
+-- New players start on a ring painted on the plaza, resting on its top.
 slab("Spawn", function()
 	part("Pad", nil, MARK, function(mesh)
 		ring(mesh, 0, 0, DECK + 0.05, 8, 9, 0.1, "z", 48)
@@ -35387,178 +35610,70 @@ placeModel("Tinkerer", buildHubTinkerer, -48, 0, TOWN_Z, 90)
 placeModel("Landmark", buildHubBeacon, 0, 0, TOWN_Z)
 placeModel("EventStage", buildHubStage, math.cos(math.rad(-45)) * 46, math.sin(math.rad(-45)) * 46, TOWN_Z, 225)
 
--- The hub's streets. A promenade just inside the belt meets every bridge,
--- walks tie it to the landmark and the buildings, and a kerbed track runs from
--- each gate to the ring road.
-local PROMENADE_INNER, PROMENADE_OUTER = 60.5, 67
-local WALK = { 0.47, 0.46, 0.43 }
-local KERB = { 0.62, 0.6, 0.55 }
-local TRACK = { 0.3, 0.26, 0.21 }
-local TRACK_END = YARD_RADIUS - PLOT_DEPTH / 2
--- The turf stands proud of DECK, so a track is laid up on top of it.
-local TRACK_TOP = DECK + 0.8
-local WALK_BEARINGS = { 22.5, 157.5, 247.5, 292.5 }
--- A building's front toward the landmark: bearing and where the walk stops.
-local BUILDING_WALKS = { { 90, 33 }, { 180, 39 }, { -45, 33 } }
+-- The hub's lamp posts, round the plaza just inside the belt, each turned to
+-- face along its bearing so it sits square to the circle, not to the world.
+local LAMP_RADIUS = 67.8
 local function polar(degrees: number, r: number): (number, number)
 	return math.cos(math.rad(degrees)) * r, math.sin(math.rad(degrees)) * r
 end
-local function flatRing(mesh, inner: number, outer: number, z: number)
-	local STEPS = 96
-	for a = 0, STEPS - 1 do
-		local t0, t1 = 2 * math.pi * a / STEPS, 2 * math.pi * (a + 1) / STEPS
-		mesh:face({
-			mesh:vertex(math.cos(t0) * outer, math.sin(t0) * outer, z),
-			mesh:vertex(math.cos(t1) * outer, math.sin(t1) * outer, z),
-			mesh:vertex(math.cos(t1) * inner, math.sin(t1) * inner, z),
-			mesh:vertex(math.cos(t0) * inner, math.sin(t0) * inner, z),
-		})
-	end
+-- A mesh whose local x runs out along `degrees` from (cx, cy).
+local function facing(mesh, cx: number, cy: number, degrees: number)
+	local c, s = math.cos(math.rad(degrees)), math.sin(math.rad(degrees))
+	return {
+		vertex = function(_self, x: number, y: number, z: number)
+			return mesh:vertex(cx + x * c - y * s, cy + x * s + y * c, z)
+		end,
+		face = function(_self, face)
+			return mesh:face(face)
+		end,
+	}
 end
-slab("Streets", function()
-	local STREET_Z = DECK + 0.1
-	part("Walks", nil, WALK, function(mesh)
-		flatRing(mesh, PROMENADE_INNER, PROMENADE_OUTER, STREET_Z)
-		flatRing(mesh, 9, 12.5, STREET_Z)
-		for _, bearing in WALK_BEARINGS do
-			local x0, y0 = polar(bearing, 12)
-			local x1, y1 = polar(bearing, PROMENADE_INNER)
-			run(mesh, x0, y0, STREET_Z, x1, y1, STREET_Z, 2.5, DECK)
-		end
-		for _, building in BUILDING_WALKS do
-			local x0, y0 = polar(building[1], 12)
-			local x1, y1 = polar(building[1], building[2])
-			run(mesh, x0, y0, STREET_Z, x1, y1, STREET_Z, 2.5, DECK)
-		end
-	end, nil, function(x, y)
-		-- Trodden darker down the middle of the promenade.
-		local r = math.sqrt(x * x + y * y)
-		local trodden = 1 - 0.28 * math.exp(-((r - 63.75) / 2.6) ^ 2)
-		local k = (1 + fbm(x / 3, y / 3, 140) * 0.1) * trodden
-		return WALK[1] * k, WALK[2] * k, WALK[3] * k
-	end, nil, nil, true)
-	part("LaneMarks", nil, { 0.86, 0.7, 0.16 }, function(mesh)
-		-- Painted dashes round the promenade and along the walks, for the carts.
-		local PAINT_Z = STREET_Z + 0.02
-		for a = 0, 39 do
-			local t0, t1 = a * 9, a * 9 + 6
-			local x0, y0 = polar(t0, PROMENADE_INNER + 0.7)
-			local x1, y1 = polar(t1, PROMENADE_INNER + 0.7)
-			run(mesh, x0, y0, PAINT_Z, x1, y1, PAINT_Z, 0.32, DECK)
-		end
-		for _, bearing in WALK_BEARINGS do
-			local r = 15
-			while r < PROMENADE_INNER - 2 do
-				local x0, y0 = polar(bearing, r)
-				local x1, y1 = polar(bearing, r + 3)
-				run(mesh, x0, y0, PAINT_Z, x1, y1, PAINT_Z, 0.26, DECK)
-				r += 5
-			end
-		end
-	end, nil, 0.5, nil, nil, true)
-	part("Drains", nil, { 0.16, 0.16, 0.18 }, function(mesh)
-		-- A barred drain every so often round the promenade, flush with the walk.
-		local DRAIN_Z = STREET_Z + 0.02
-		for a = 1, 8 do
-			local cx, cy = polar(a * 45 - 8, PROMENADE_OUTER - 0.9)
-			box(mesh, cx, cy, DECK, 2.6, 2.6, DRAIN_Z - DECK)
-		end
-		-- And one at the foot of each walk into the town.
-		for _, bearing in WALK_BEARINGS do
-			local cx, cy = polar(bearing, 14.6)
-			box(mesh, cx, cy, DECK, 1.2, 1.2, DRAIN_Z - DECK)
-		end
-	end, nil, 0.4, nil, nil, true)
-	part("Tracks", nil, TRACK, function(mesh)
-		for i = 1, 8 do
-			local degrees = (i - 0.5) * 45
-			local x0, y0 = polar(degrees, HUB_ROAD - 0.5)
-			local x1, y1 = polar(degrees, TRACK_END + 1)
-			run(mesh, x0, y0, TRACK_TOP, x1, y1, TRACK_TOP, 4.75, DECK - 0.2)
-		end
-	end, nil, function(x, y)
-		local k = 1 + fbm(x / 2, y / 2, 150) * 0.16
-		return TRACK[1] * k, TRACK[2] * k, TRACK[3] * k
-	end, nil, nil, true)
-	part("Kerbs", nil, KERB, function(mesh)
-		local SEGMENT = 3
-		-- The pale bars over each drain, standing out on its dark pit.
-		for a = 1, 8 do
-			local cx, cy = polar(a * 45 - 8, PROMENADE_OUTER - 0.9)
-			for s = -3, 3 do
-				box(mesh, cx + s * 0.36, cy, STREET_Z + 0.02, 0.2, 2.4, 0.05)
-			end
-		end
-		for i = 1, 8 do
-			local degrees = (i - 0.5) * 45
-			local across = math.rad(degrees + 90)
-			for _, side in { -5, 5 } do
-				local ox, oy = math.cos(across) * side, math.sin(across) * side
-				local r = HUB_ROAD
-				while r + SEGMENT <= TRACK_END do
-					local x0, y0 = polar(degrees, r)
-					local x1, y1 = polar(degrees, r + SEGMENT - 0.15)
-					run(mesh, x0 + ox, y0 + oy, TRACK_TOP + 0.22, x1 + ox, y1 + oy, TRACK_TOP + 0.22, 0.3, DECK - 0.2)
-					r += SEGMENT
-				end
-			end
-		end
-	end, nil, function(x, y)
-		local k = 1 + fbm(x, y, 160) * 0.14
-		return KERB[1] * k, KERB[2] * k, KERB[3] * k
-	end, nil, nil, true)
-	part("Conduits", nil, { 0.24, 0.24, 0.26 }, function(mesh)
-		local CONDUIT_TOP, COVER_TOP = DECK + 0.4, DECK + 0.46
-		-- A run from a to b with clamps, and a riser into the building at b.
-		local function conduit(ax: number, ay: number, bx: number, by: number)
-			run(mesh, ax, ay, CONDUIT_TOP, bx, by, CONDUIT_TOP, 0.2, DECK)
-			local dx, dy = bx - ax, by - ay
-			local length = math.sqrt(dx * dx + dy * dy)
-			local ux, uy = dx / length, dy / length
-			local along = 5
-			while along < length - 2 do
-				local cx, cy = ax + ux * along, ay + uy * along
-				run(mesh, cx - uy * 0.42, cy + ux * 0.42, DECK + 0.5, cx + uy * 0.42, cy - ux * 0.42, DECK + 0.5, 0.14, DECK)
-				along += 5
-			end
-		end
-		-- A plate players walk over where a conduit crosses the landmark's ring.
-		local function cover(ax: number, ay: number, bx: number, by: number)
-			run(mesh, ax, ay, COVER_TOP, bx, by, COVER_TOP, 0.75, DECK)
-		end
-		-- The market's goes round the spawn ring, on the ring's +X side.
-		conduit(7.6, 6, 11, 6)
-		conduit(11, 6, 11, 33)
-		cover(7.6, 6, 11.4, 6)
-		box(mesh, 11, 33, DECK, 1, 1, 1.1)
-		-- The Tinkerer's and the Stage's run straight from the plinth.
-		for _, building in { { 180, 39 }, { -45, 33 } } do
-			local across = math.rad(building[1] + 90)
-			local ox, oy = math.cos(across) * 3.1, math.sin(across) * 3.1
-			local x0, y0 = polar(building[1], 7.5)
-			local x1, y1 = polar(building[1], building[2])
-			conduit(x0 + ox, y0 + oy, x1 + ox, y1 + oy)
-			local cx0, cy0 = polar(building[1], 8.6)
-			local cx1, cy1 = polar(building[1], 12.9)
-			cover(cx0 + ox, cy0 + oy, cx1 + ox, cy1 + oy)
-			box(mesh, x1 + ox, y1 + oy, DECK, 1, 1, 1.1)
-		end
-	end, nil, 0.2)
+slab("Lamps", function()
 	part("LampPosts", nil, { 0.2, 0.21, 0.23 }, function(mesh)
 		for n = 1, 7 do
-			local x, y = polar(n * 45, PROMENADE_OUTER + 0.8)
-			box(mesh, x, y, DECK, 0.9, 0.9, 0.5)
-			box(mesh, x, y, DECK + 0.5, 0.36, 0.36, 7)
-			box(mesh, x, y, DECK + 7.5, 1.5, 1.5, 0.3)
+			local x, y = polar(n * 45, LAMP_RADIUS)
+			local lamp = facing(mesh, x, y, n * 45)
+			box(lamp, 0, 0, TOWN_Z, 0.9, 0.9, 0.5)
+			box(lamp, 0, 0, TOWN_Z + 0.5, 0.36, 0.36, 7)
+			box(lamp, 0, 0, TOWN_Z + 7.5, 1.5, 1.5, 0.3)
 		end
 	end, nil, 0.2)
 	part("LampGlow", nil, { 1, 0.86, 0.55 }, function(mesh)
 		for n = 1, 7 do
-			local x, y = polar(n * 45, PROMENADE_OUTER + 0.8)
-			box(mesh, x, y, DECK + 6.9, 1.1, 1.1, 0.6)
+			local x, y = polar(n * 45, LAMP_RADIUS)
+			box(facing(mesh, x, y, n * 45), 0, 0, TOWN_Z + 6.9, 1.1, 1.1, 0.6)
 		end
 	end, nil, 0, nil, 1.6)
 end, 0, 0)
+
+-- A dirt path trodden from each yard's gate in to the plaza: painted on a
+-- see-through sheet a hair over the turf, nothing raised to trip on. Each
+-- runs under the plaza's edge at one end and the yard's floor at the other.
+local PATH_Z = SHADE_Z
+local PATH_HALF = 7
+local PATH_FROM, PATH_TO = HUB_EDGE - 2, YARD_RADIUS - PLOT_DEPTH / 2 + 1
+for i = 1, 8 do
+	local degrees = (i - 0.5) * 45
+	local turn = degrees - 90
+	local x, y = polar(degrees, (PATH_FROM + PATH_TO) / 2)
+	local c, s = math.cos(math.rad(turn)), math.sin(math.rad(turn))
+	slab(`Path{i}`, function()
+		part("Path", nil, DIRT, function(mesh)
+			local half = (PATH_TO - PATH_FROM) / 2
+			mesh:face({ mesh:vertex(-PATH_HALF, -half, PATH_Z), mesh:vertex(PATH_HALF, -half, PATH_Z), mesh:vertex(PATH_HALF, half, PATH_Z), mesh:vertex(-PATH_HALF, half, PATH_Z) })
+		end, nil, function(px: number, py: number)
+			-- u runs across the path, v along it toward the yard.
+			local u, v = (px - x) * c + (py - y) * s, (py - y) * c - (px - x) * s
+			local wander = fbm(v / 14, i, 170) * 2.2
+			local edge = math.abs(u - wander) + fbm(px / 2, py / 2, 171) * 1.4
+			local alpha = smooth(PATH_HALF - 0.5, PATH_HALF - 3, edge)
+			-- Trodden darker down the middle, in two worn ruts.
+			local rut = math.max(smooth(1.6, 0.4, math.abs(u - wander - 1.6)), smooth(1.6, 0.4, math.abs(u - wander + 1.6)))
+			local k = (1 + fbm(px / 3, py / 3, 172) * 0.16) * (1 - 0.12 * rut)
+			return DIRT[1] * k, DIRT[2] * k, DIRT[3] * k, alpha
+		end, nil, 0, true)
+	end, x, y, turn)
+end
 
 -- Crossings over the belt, whose middle runs at radius 72, one on each
 -- yard's path so the walk to the hub runs straight over.

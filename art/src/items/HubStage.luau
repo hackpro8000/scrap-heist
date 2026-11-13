@@ -348,20 +348,27 @@ end, nil, function(x, y, z)
 end)
 parts[#parts].crisp = true
 
+local supply, supplyPaint = supplyTones()
+local SANDBAG = { 0.52, 0.47, 0.34 }
 part("Supplies", nil, { 0.5, 0.45, 0.3 }, function(mesh)
 	-- Road cases stacked stage right, a crate and sandbags on the tower feet.
 	for _, case in { { 8.6, -5, 0, 2.4, 1.6, 1.3 }, { 8.9, -5, 1.3, 1.8, 1.3, 0.9 }, { 5, 11, 0, 2.4, 1.6, 1.5 } } do
-		box(mesh, case[1], case[2], DECK_TOP + case[3], case[4], case[5], case[6])
+		local bounds = boxProp(mesh, case[1], case[2], DECK_TOP + case[3], case[4], case[5], case[6])
 		box(mesh, case[1], case[2] - case[5] / 2 - 0.03, DECK_TOP + case[3] + case[6] * 0.55, case[4] * 0.3, 0.08, 0.14)
+		bounds[2] -= 0.07
+		supply(bounds)
 	end
-	barrel(mesh, 3.1, 11.7, DECK_TOP)
-	gasBottle(mesh, 3.5, 10.5, DECK_TOP)
-	box(mesh, 6.4, 10.2, DECK_TOP, 1.4, 1.2, 0.9)
-	-- Ballast heaped unevenly on the tower feet, inside the deck edge.
+	supply(barrel(mesh, 3.1, 11.7, DECK_TOP))
+	supply(gasBottle(mesh, 3.5, 10.5, DECK_TOP))
+	supply(boxProp(mesh, 6.4, 10.2, DECK_TOP, 1.4, 1.2, 0.9))
+	-- Ballast heaped unevenly on the tower feet, inside the deck edge: all one
+	-- sacking, each bag its own piece.
 	for _, bag in { { -1, -0.5, 7, 0 }, { -1, 0.5, 7.1, 0 }, { -1, 0, 7, 1 }, { 1, -0.7, 6.9, 0 }, { 1, 0.2, 7.2, 0 }, { 1, -0.3, 7.1, 1 }, { 1, 0.3, 6.95, 2 } } do
-		sphere(mesh, bag[1] * (TRUSS_X - 0.25) + bag[2], bag[3] - 0.6, DECK_TOP + 0.2 + bag[4] * 0.32, 0.46, 0.3, 0.22, 4, 10)
+		local x, y, z = bag[1] * (TRUSS_X - 0.25) + bag[2], bag[3] - 0.6, DECK_TOP + 0.2 + bag[4] * 0.32
+		sphere(mesh, x, y, z, 0.46, 0.3, 0.22, 4, 10)
+		supply({ x - 0.46, y - 0.3, z - 0.22, x + 0.46, y + 0.3, z + 0.22 }, SANDBAG)
 	end
-end, nil, supplyTones)
+end, nil, supplyPaint)
 
 part("Cables", nil, { 0.08, 0.08, 0.1 }, function(mesh)
 	local z = DECK_TOP + 0.05

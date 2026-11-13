@@ -22,6 +22,14 @@ no coordinator for LOST_MINUTES the machine ends, freeing its slot. A task
 sent again after a reconnect is not rebuilt: what it left is sent again.
 The machine ends after <idle minutes> without a task, at <max minutes>, or
 when the coordinator says stop.
+
+A numbered machine (scripts/cloud-worker.sh join) passes "published" as the
+url and 0 as the count. It reads the coordinator's address from
+address.json on the branch build-results/coordinator-address before every
+connection, so it follows a coordinator whose address changed or that was
+started again, and it never gives up for lack of one. Its hello carries its
+number; the coordinator answers {"type": "welcome"} with the shard and
+count it builds as, which may change between tasks.
 """
 import asyncio
 import json
@@ -44,6 +52,7 @@ import wire  # noqa: E402
 
 MAX_MESSAGE = 64 * 1024 * 1024
 LOST_MINUTES = 3
+ADDRESS_BRANCH = "build-results/coordinator-address"
 HEARTBEAT_SECONDS = 10
 SWAP_WAIT_SECONDS = 60
 CLAIM_WAIT_SECONDS = 15
@@ -51,6 +60,11 @@ CLAIM_TRIES = 4
 LOG_LINES_KEPT = 200
 REQUIRED_TOOLS = ("rg", "sd", "jq")
 AUDIENCE = "scrap-heist-coordinator"
+# A file bigger than this goes in parts, so heartbeats get onto the wire
+# between them instead of waiting behind the whole file (send_file).
+PART_BYTES = 1024 * 1024
+# Failed connections in a row before ALERT TUNNEL_DOWN.
+TUNNEL_ALERT_FAILURES = 3
 
 
 # Lines also go to the coordinator, live, once connected (Agent.session).
@@ -65,6 +79,42 @@ def say(message):
 	print(f"agent: {message}", file=sys.stderr, flush=True)
 	if forward:
 		forward(message)
+
+
+def alert(line):
+	"""An ALERT or CLEARED line (docs/plans/multi-machine.md, Alerts): alone
+	on its line in the job log, and passed to the hub when connected."""
+	print(line, file=sys.stderr, flush=True)
+	if forward:
+		forward(line)
+
+
+def http_status(error):
+	"""The HTTP status a refused websocket handshake answered with, or None
+	(websockets 10 names it status_code, 13 keeps it on the response)."""
+	code = getattr(error, "status_code", None)
+	return code or getattr(getattr(error, "response", None), "status_code", None)
+
+
+def free_space():
+	"""Free disk for the work folder and available memory, in GB, for heartbeats."""
+	disk = shutil.disk_usage(os.getcwd()).free / 1e9
+	memory = None
+	try:
+		with open("/proc/meminfo") as file:
+			for line in file:
+				if line.startswith("MemAvailable:"):
+					memory = round(int(line.split()[1]) / 1e6, 1)
+					break
+	except OSError:
+		pass
+	return round(disk, 1), memory
+
+
+def remote_head(branch):
+	"""The commit a branch on GitHub points at, or ""."""
+	listed = subprocess.run(["git", "ls-remote", "origin", f"refs/heads/{branch}"], capture_output=True, text=True, timeout=60)
+	return listed.stdout.split("\t")[0].strip() if listed.returncode == 0 else ""
 
 
 def ensure_tools():
@@ -97,7 +147,12 @@ def push_bakes(model, share, out, since):
 				os.link(entry.path, os.path.join(fresh, entry.name))
 		if not os.listdir(fresh):
 			return ""
-		pushed = subprocess.run(["scripts/push-folder.sh", fresh, "build-bakes/" + share.replace("@", "-"), f"bakes {share}"], capture_output=True, text=True)
+		branch = "build-bakes/" + share.replace("@", "-")
+		pushed = subprocess.run(["scripts/push-folder.sh", fresh, branch, f"bakes {share}"], capture_output=True, text=True)
+		if pushed.returncode != 0 and "cannot lock ref" in pushed.stderr and "reference already exists" in pushed.stderr:
+			# Another machine saved the same bake first: theirs serves as ours.
+			say(f"bakes of {share} already saved by another machine; taking theirs")
+			return remote_head(branch)
 		if pushed.returncode != 0:
 			say(f"could not push bakes of {share}: {pushed.stderr.strip()[-200:]}")
 			return ""
@@ -127,7 +182,14 @@ def last_line(path):
 	return next((line.strip() for line in reversed(lines) if line.strip()), "")[:200]
 
 
+WORKER_TOKEN = ""  # a cloud worker's minted token, taken from the environment by main()
+
+
 def identity_token():
+	# A worker that is not a GitHub machine (scripts/cloud-worker.sh) shows its
+	# minted token; taken out of the environment so builds never see it.
+	if WORKER_TOKEN:
+		return "worker:" + WORKER_TOKEN
 	url = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_URL")
 	bearer = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
 	if not url or not bearer:
@@ -140,6 +202,8 @@ def identity_token():
 class Agent:
 	def __init__(self, url, layout, index, count, idle_minutes, max_minutes):
 		self.url, self.layout, self.index, self.count = url, layout, int(index), int(count)
+		self.published = url == "published"
+		self.machine = self.index if self.count == 0 else None
 		self.idle_seconds = int(idle_minutes) * 60
 		self.stop_at = time.monotonic() + int(max_minutes) * 60
 		self.idle_until = time.monotonic() + self.idle_seconds
@@ -154,6 +218,8 @@ class Agent:
 		self.bakes_seen = {}  # (task id, model) -> the commits announced so far
 		self.activities = {}  # task id -> what this machine is doing for it (heartbeat() reports them)
 		self.stopped = False
+		self.failures = 0  # connections in a row that failed or dropped (ALERT TUNNEL_DOWN)
+		self.address = url  # the coordinator address last dialled
 		self.uploader = None
 		self.socket = None
 		self.loop = None
@@ -193,16 +259,27 @@ class Agent:
 	def begin(self, identity, stage, log, model=""):
 		self.activities[identity] = {"stage": stage, "model": model, "log": log, "since": time.monotonic()}
 
+	def moved(self, identity):
+		"""A send made progress: the stage is not quiet, whatever its log says."""
+		work = self.activities.get(identity)
+		if work:
+			work["moved"] = time.monotonic()
+
 	def report(self, identity, work):
-		"""One heartbeat: the stage, the log's last line, and how long the log
-		has gone without a new one (a bake's line comes only when it ends)."""
-		seconds = time.monotonic() - work["since"]
+		"""One heartbeat: the stage, the log's last line, how long the log
+		has gone without a new one (a bake's line comes only when it ends),
+		and the machine's free disk and memory."""
+		now = time.monotonic()
+		seconds = now - work["since"]
+		quiet = min(seconds, now - work.get("moved", work["since"]))
 		try:
-			quiet = min(seconds, time.time() - os.path.getmtime(work["log"]))
+			quiet = min(quiet, time.time() - os.path.getmtime(work["log"]))
 		except OSError:
-			quiet = seconds
+			pass
+		disk, memory = free_space()
 		return json.dumps({"type": "progress", "task": identity, "stage": work["stage"], "model": work["model"],
-			"line": last_line(work["log"]), "quiet": round(quiet), "seconds": round(seconds)})
+			"line": last_line(work["log"]), "quiet": round(quiet), "seconds": round(seconds),
+			"disk_gb": disk, "memory_gb": memory})
 
 	async def heartbeat(self, socket):
 		try:
@@ -226,12 +303,33 @@ class Agent:
 				files.append(relative)
 		# Names before objects, so the coordinator knows each object's label.
 		files.sort(key=lambda path: (not path.endswith("names.tsv"), path))
+		self.begin(identity, "send", os.path.join(out, "build.log"))
 		for relative in files:
 			with open(os.path.join(out, relative), "rb") as file:
 				data = file.read()
-			await self.send(wire.pack({"type": "file", "task": identity, "path": relative, "size": len(data)}, data))
+			await self.send_file(identity, relative, data)
 		summary = open(os.path.join(out, "summary.txt")).read() if os.path.isfile(os.path.join(out, "summary.txt")) else "status=FAILED\n"
 		await self.send(json.dumps({"type": "done", "task": identity, "summary": summary}))
+
+	async def send_file(self, identity, relative, data):
+		"""One result file. A big one goes in parts, each awaited, so a
+		heartbeat waits behind one part, never the whole file; the
+		coordinator joins them (Coordinator.join_part). If the connection
+		changes midway, the file starts again on the new one."""
+		if len(data) <= PART_BYTES:
+			await self.send(wire.pack({"type": "file", "task": identity, "path": relative, "size": len(data)}, data))
+			self.moved(identity)
+			return
+		while True:
+			socket = self.socket
+			for offset in range(0, len(data), PART_BYTES):
+				await self.send(wire.pack({"type": "file-part", "task": identity, "path": relative, "offset": offset,
+					"size": len(data)}, data[offset:offset + PART_BYTES]))
+				self.moved(identity)
+				if self.socket is not socket:
+					break
+			else:
+				return
 
 	async def handle(self, identity, text):
 		self.idle_until = time.monotonic() + self.idle_seconds
@@ -244,7 +342,13 @@ class Agent:
 		try:
 			if identity not in self.built:
 				self.begin(identity, "build", os.path.join("results", identity, "build.log"))
-				self.built[identity] = await asyncio.to_thread(self.run_task, identity, text)
+				try:
+					self.built[identity] = await asyncio.to_thread(self.run_task, identity, text)
+				except Exception as error:
+					# A full disk, say: the coordinator must still hear this shard is over.
+					say(f"task {identity}: could not run: {error}")
+					await self.send(json.dumps({"type": "done", "task": identity, "summary": "status=FAILED\nbuild=-\nupload=-\ntotal=0\nparts=0\n"}))
+					return
 			await self.send_results(identity, self.built[identity])
 			self.idle_until = time.monotonic() + self.idle_seconds
 			await self.send_previews(identity, text)
@@ -291,7 +395,7 @@ class Agent:
 				for name in sorted(os.listdir(folder)) if os.path.isdir(folder) else []:
 					with open(os.path.join(folder, name), "rb") as file:
 						data = file.read()
-					await self.send(wire.pack({"type": "file", "task": identity, "path": os.path.join("previews", model, name), "size": len(data)}, data))
+					await self.send_file(identity, os.path.join("previews", model, name), data)
 				await self.send(json.dumps({"type": "preview-ready", "task": identity, "name": model}))
 			self.report_timing(identity, model)
 		await self.send(json.dumps({"type": "previews-done", "task": identity}))
@@ -440,12 +544,24 @@ class Agent:
 			if asset:
 				await socket.send(json.dumps({"type": "uploaded", "id": header["id"], "asset": asset}))
 
+	def published_address(self):
+		# Not through FETCH_HEAD: a task's checkout may be reading it.
+		with self.git_lock:
+			subprocess.run(["git", "fetch", "-q", "--depth=1", "--no-write-fetch-head", "origin",
+				f"+{ADDRESS_BRANCH}:refs/coordinator-address"], check=True, capture_output=True, timeout=60)
+			shown = subprocess.run(["git", "show", "refs/coordinator-address:address.json"], check=True, capture_output=True, text=True)
+		return json.loads(shown.stdout)["agent"]
+
 	async def session(self):
 		token = await asyncio.to_thread(identity_token)
-		async with websockets.connect(self.url, max_size=MAX_MESSAGE, ping_interval=20, ping_timeout=120) as socket:
-			await socket.send(json.dumps({"type": "hello", "token": token, "shard": self.index, "count": self.count,
-				"layout": self.layout}))
-			say(f"connected to {self.url}")
+		url = await asyncio.to_thread(self.published_address) if self.published else self.url
+		self.address = url
+		async with websockets.connect(url, max_size=MAX_MESSAGE, ping_interval=20, ping_timeout=120) as socket:
+			hello = {"type": "hello", "token": token, "shard": self.index, "count": self.count, "layout": self.layout}
+			if self.machine is not None:
+				hello["machine"] = self.machine
+			await socket.send(json.dumps(hello))
+			say(f"connected to {url}")
 			self.backoff = 1
 			self.socket, self.loop = socket, asyncio.get_running_loop()
 			global forward
@@ -456,6 +572,9 @@ class Agent:
 				loop.call_soon_threadsafe(lambda: asyncio.ensure_future(socket.send(json.dumps({"type": "log", "text": text}))))
 
 			forward = forward_line
+			if self.failures >= TUNNEL_ALERT_FAILURES:
+				alert(f"CLEARED TUNNEL_DOWN: S{self.index} connected to {url} after {self.failures} failures")
+			self.failures = 0
 			lacking = [tool for tool in REQUIRED_TOOLS if not shutil.which(tool)]
 			if lacking:
 				say(f"could not find {', '.join(lacking)} on this machine")
@@ -487,6 +606,12 @@ class Agent:
 						ready = self.bakes_ready.get((event["task"], event["name"]))
 						if ready and not ready.done() and event.get("done", True):
 							ready.set_result(event["commits"])
+					elif event["type"] == "welcome":
+						self.index, self.count = event["shard"], event["count"]
+						say(f"seated as shard {self.index} of {self.count}")
+					elif event["type"] == "active":
+						# The coordinator on this machine has work going for others.
+						self.idle_until = time.monotonic() + self.idle_seconds
 					elif event["type"] == "stop":
 						self.stopped = True
 						return
@@ -502,7 +627,11 @@ class Agent:
 			await asyncio.sleep(min(self.idle_until, self.stop_at) - now)
 
 	async def main(self):
-		global forward
+		global forward, WORKER_TOKEN
+		# Out of the environment before any child process can see it.
+		WORKER_TOKEN = os.environ.pop("COORDINATOR_WORKER_TOKEN", "")
+		# The coordinator's own; no build on this machine needs it.
+		os.environ.pop("COORDINATOR_WORKER_KEY", None)
 		await asyncio.to_thread(ensure_tools)
 		self.backoff = 1
 		clock = asyncio.create_task(self.watch_clock())
@@ -519,12 +648,19 @@ class Agent:
 			forward = None
 			if self.backoff == 1:
 				lost_since = time.monotonic()
-			elif lost_since and time.monotonic() - lost_since > LOST_MINUTES * 60:
+			elif lost_since and not self.published and time.monotonic() - lost_since > LOST_MINUTES * 60:
 				say(f"no coordinator for {LOST_MINUTES} minutes; ending to free this machine's slot")
 				break
-			say(f"connection lost ({error}); retrying in {self.backoff}s")
+			self.failures += 1
+			status = http_status(error)
+			answered = f"HTTP {status}" if status else "no HTTP answer"
+			say(f"connection lost ({error}; {answered}); retrying in {self.backoff}s")
+			if self.failures == TUNNEL_ALERT_FAILURES:
+				alert(f"ALERT TUNNEL_DOWN: S{self.index} failed to reach {self.address} {self.failures} times in a row ({answered}: {error}) "
+					"| machine 1's tunnel or coordinator is down; if it stays down, start a new run (scripts/standby-start.sh)")
 			await asyncio.sleep(self.backoff)
-			self.backoff = min(30, self.backoff * 2)
+			# A numbered machine waits for the next coordinator, a minute apart.
+			self.backoff = min(60 if self.published else 30, self.backoff * 2)
 		say("standby over")
 
 
