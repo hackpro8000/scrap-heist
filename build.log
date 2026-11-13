@@ -1,0 +1,49 @@
+[    0.0s] running HubTinkerer/model.luau
+[    0.7s] TIMING script: 0.7s
+[    3.8s] baking on CPU (no GPU)
+[    4.6s] shaded PartsBins 1024×1024 in 3.73s
+[    8.5s] shaded HangingSign 1024×1024 in 3.77s
+[    8.6s] baked every chunk this machine claimed
+[    8.6s] TIMING claimed bakes: 2 paints in 1 of 128 chunks, 7.8s with the waits to claim; layers 0 loaded in 0.0s and 8 baked in 6.9s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.0s, merging chunks 0.0s, colour samplers 0.2s
+[   44.7s] TIMING swap: 36.2s pushing, waiting for the other machines and fetching
+[   45.0s] shaded RoofPosts 1024×1024 in 0.23s
+[   45.3s] shaded Workbench 1024×1024 in 0.23s
+[   45.6s] shaded ToolGrips 1024×1024 in 0.21s
+[   45.9s] shaded Blueprint 1024×1024 in 0.21s
+[   46.1s] shaded Cables 1024×1024 in 0.19s
+[   46.4s] shaded Anvil 1024×1024 in 0.25s
+[   46.7s] shaded Fittings 1024×1024 in 0.25s
+[   47.0s] shaded Roof 1024×1024 in 0.26s
+[   47.3s] shaded BackWall 1024×1024 in 0.22s
+[   47.6s] shaded TorchAndWork 1024×1024 in 0.22s
+[   48.0s] shaded LampShade 1024×1024 in 0.22s
+[   48.3s] shaded RobotArm 1024×1024 in 0.22s
+[   48.6s] shaded RackTools 1024×1024 in 0.21s
+[   48.8s] shaded SignEmblem 1024×1024 in 0.22s
+[   49.2s] shaded ToolRack 1024×1024 in 0.23s
+[   49.5s] shaded Deck 1024×1024 in 0.25s
+[   49.9s] shaded Supplies 1024×1024 in 0.22s
+[   50.2s] shaded BinParts 1024×1024 in 0.22s
+[   50.4s] shaded Rafters 1024×1024 in 0.20s
+[   50.4s] TIMING paints after the swap: 19 paints, 5.7s; layers 72 loaded in 0.8s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.4s, merging chunks 0.0s, colour samplers 1.4s (baked here means a layer that did not arrive)
+[   50.4s] TIMING whole-part saves: 0 in 0.0s
+[   50.4s] writing HubTinkerer.glb and 22 textures
+[   50.9s] TIMING HubTinkerer.glb and 22 parts' texture files written: 0.5s
+[   51.0s] TIMING renders: 0 of 14 jobs made here, 0.0s with the waits to claim
+HubTinkerer: 22 parts, script 50.41s, total 50.96s
+  shade (creases, contact): 4.10s
+  coat: 1.80s
+  wear: 0.50s
+  combine: 0.42s
+  shade, surfaces, grid and texels: 0.84s
+  shade, neighbourhoods: 0.36s
+  shade, spreading over seams: 0.34s
+  coat, painting texels: 0.00s
+TIMING script: 0.7s
+TIMING claimed bakes: 2 paints in 1 of 128 chunks, 7.8s with the waits to claim; layers 0 loaded in 0.0s and 8 baked in 6.9s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.0s, merging chunks 0.0s, colour samplers 0.2s
+TIMING swap: 36.2s pushing, waiting for the other machines and fetching
+TIMING paints after the swap: 19 paints, 5.7s; layers 72 loaded in 0.8s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.4s, merging chunks 0.0s, colour samplers 1.4s (baked here means a layer that did not arrive)
+TIMING whole-part saves: 0 in 0.0s
+TIMING HubTinkerer.glb and 22 parts' texture files written: 0.5s
+TIMING renders: 0 of 14 jobs made here, 0.0s with the waits to claim
+TIMING HubTinkerer: 22 parts, total 51.0s; shade (creases, contact) 4.1s, coat 1.8s, wear 0.5s, combine 0.4s, shade, surfaces, grid and texels 0.8s, shade, neighbourhoods 0.4s, shade, spreading over seams 0.3s, coat, painting texels 0.0s
