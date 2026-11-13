@@ -1,0 +1,99 @@
+[    0.0s] running HubBeacon/model.luau
+[    1.6s] TIMING script: 1.6s
+[    4.0s] baking on CPU (no GPU)
+[    4.6s] shaded CrushedBlocks 1024×1024 in 2.05s
+[    6.0s] shaded Supplies 1024×1024 in 1.22s
+[    7.4s] shaded Fittings 1024×1024 in 0.75s
+[    8.8s] shaded Cables 1024×1024 in 0.31s
+[    9.6s] shaded BigCog 1024×1024 in 0.67s
+[    9.7s] baked every chunk this machine claimed
+[    9.7s] TIMING claimed bakes: 5 paints in 42 of 128 chunks, 8.0s with the waits to claim; layers 0 loaded in 0.0s and 19 baked in 3.2s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.2s, merging chunks 0.0s, colour samplers 0.4s
+[   41.4s] TIMING swap: 31.7s pushing, waiting for the other machines and fetching
+[   41.6s] shaded Cable 1024×1024 in 0.20s
+[   42.0s] shaded SheetLayers 1024×1024 in 0.35s
+[   42.3s] shaded BaleStraps 1024×1024 in 0.27s
+[   42.7s] shaded Mast 1024×1024 in 0.31s
+[   43.0s] shaded PressedJunk 1024×1024 in 0.28s
+[   43.5s] shaded Plinth 1024×1024 in 0.32s
+[   43.8s] shaded Pipes 1024×1024 in 0.23s
+[   44.1s] shaded CogBoss 1024×1024 in 0.25s
+[   44.1s] TIMING paints after the swap: 8 paints, 2.7s; layers 30 loaded in 0.5s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.2s, merging chunks 0.0s, colour samplers 0.5s (baked here means a layer that did not arrive)
+[   44.1s] TIMING whole-part saves: 0 in 0.0s
+[   44.1s] writing HubBeacon.glb and 16 textures
+[   44.5s] TIMING HubBeacon.glb and 16 parts' texture files written: 0.4s
+[   44.5s] rendering preview.png of 16 parts
+[   44.8s] TIMING render preview.png: drawn in 0.2s, 0.3s with its save
+[   44.9s] rendering parts.png of 16 parts
+[   45.1s] TIMING render parts.png: drawn in 0.1s, 0.2s with its save
+[   45.2s] rendering turntable/0000.png of 16 parts
+[   45.4s] TIMING render turntable/0000.png: drawn in 0.2s, 0.2s with its save
+[   45.4s] rendering turntable/0001.png of 16 parts
+[   45.7s] TIMING render turntable/0001.png: drawn in 0.1s, 0.2s with its save
+[   45.7s] rendering turntable/0002.png of 16 parts
+[   46.0s] TIMING render turntable/0002.png: drawn in 0.2s, 0.2s with its save
+[   46.0s] rendering turntable/0003.png of 16 parts
+[   46.3s] TIMING render turntable/0003.png: drawn in 0.2s, 0.2s with its save
+[   46.3s] rendering closeup_1.png of 16 parts
+[   47.1s] TIMING render closeup_1.png: drawn in 0.2s, 0.7s with its save
+[   47.1s] rendering closeup_2.png of 16 parts
+[   47.4s] TIMING render closeup_2.png: drawn in 0.2s, 0.3s with its save
+[   47.5s] rendering eye_1.png of 16 parts
+[   47.7s] TIMING render eye_1.png: drawn in 0.2s, 0.3s with its save
+[   47.8s] rendering eye_2.png of 16 parts
+[   48.1s] TIMING render eye_2.png: drawn in 0.2s, 0.3s with its save
+[   48.1s] rendering eye_3.png of 16 parts
+[   48.4s] TIMING render eye_3.png: drawn in 0.2s, 0.3s with its save
+[   48.5s] rendering eye_4.png of 16 parts
+[   49.1s] TIMING render eye_4.png: drawn in 0.2s, 0.6s with its save
+[   49.2s] rendering eye_5.png of 16 parts
+[   49.4s] TIMING render eye_5.png: drawn in 0.2s, 0.3s with its save
+[   49.5s] rendering eye_6.png of 16 parts
+[   50.1s] TIMING render eye_6.png: drawn in 0.3s, 0.6s with its save
+[   50.1s] TIMING renders: 14 of 14 jobs made here, 5.6s with the waits to claim
+HubBeacon: 16 parts, script 44.13s, total 50.07s
+  shade (creases, contact): 1.87s
+  coat: 1.14s
+  wear: 0.54s
+  combine: 0.15s
+  shade, surfaces, grid and texels: 0.83s
+  shade, neighbourhoods: 0.58s
+  shade, spreading over seams: 0.21s
+  coat, painting texels: 0.15s
+#f23d3d Plinth
+#85a5f2 CrushedBlocks
+#7bb32d SheetLayers
+#b362a8 BaleStraps
+#3df2d4 PressedJunk
+#f2c085 Mast
+#4e2db3 BigCog
+#66b362 CogBoss
+#f23d79 BeaconLamp
+#85c9f2 Pipes
+#a8b32d Cable
+#a262b3 Fittings
+#3df297 Supplies
+#f29c85 Cables
+#2d38b3 Bulbs
+#80b362 Spotlights
+TIMING script: 1.6s
+TIMING claimed bakes: 5 paints in 42 of 128 chunks, 8.0s with the waits to claim; layers 0 loaded in 0.0s and 19 baked in 3.2s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.2s, merging chunks 0.0s, colour samplers 0.4s
+TIMING swap: 31.7s pushing, waiting for the other machines and fetching
+TIMING paints after the swap: 8 paints, 2.7s; layers 30 loaded in 0.5s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.2s, merging chunks 0.0s, colour samplers 0.5s (baked here means a layer that did not arrive)
+TIMING whole-part saves: 0 in 0.0s
+TIMING HubBeacon.glb and 16 parts' texture files written: 0.4s
+TIMING render preview.png: drawn in 0.2s, 0.3s with its save
+TIMING render parts.png: drawn in 0.1s, 0.2s with its save
+TIMING render turntable/0000.png: drawn in 0.2s, 0.2s with its save
+TIMING render turntable/0001.png: drawn in 0.1s, 0.2s with its save
+TIMING render turntable/0002.png: drawn in 0.2s, 0.2s with its save
+TIMING render turntable/0003.png: drawn in 0.2s, 0.2s with its save
+TIMING render closeup_1.png: drawn in 0.2s, 0.7s with its save
+TIMING render closeup_2.png: drawn in 0.2s, 0.3s with its save
+TIMING render eye_1.png: drawn in 0.2s, 0.3s with its save
+TIMING render eye_2.png: drawn in 0.2s, 0.3s with its save
+TIMING render eye_3.png: drawn in 0.2s, 0.3s with its save
+TIMING render eye_4.png: drawn in 0.2s, 0.6s with its save
+TIMING render eye_5.png: drawn in 0.2s, 0.3s with its save
+TIMING render eye_6.png: drawn in 0.3s, 0.6s with its save
+TIMING renders: 14 of 14 jobs made here, 5.6s with the waits to claim
+TIMING HubBeacon: 16 parts, total 50.1s; shade (creases, contact) 1.9s, coat 1.1s, wear 0.5s, combine 0.2s, shade, surfaces, grid and texels 0.8s, shade, neighbourhoods 0.6s, shade, spreading over seams 0.2s, coat, painting texels 0.2s
