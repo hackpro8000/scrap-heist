@@ -1,0 +1,34 @@
+[    0.0s] running HubShop/model.luau
+[    2.6s] baking on CPU (no GPU)
+[    3.0s] shaded StockPiles 1024×1024 in 1.65s
+[    3.1s] baked every chunk this machine claimed
+[   28.8s] shaded CounterDrums 1024×1024 in 0.23s
+[   29.0s] shaded SignBraces 1024×1024 in 0.19s
+[   29.4s] shaded Fittings 1024×1024 in 0.28s
+[   29.7s] shaded Sign 1024×1024 in 0.21s
+[   30.0s] shaded Awning 1024×1024 in 0.22s
+[   30.2s] shaded AwningPosts 1024×1024 in 0.19s
+[   30.3s] shaded CraneHook 1024×1024 in 0.15s
+[   30.5s] shaded Crane 1024×1024 in 0.18s
+[   30.9s] shaded Slab 1024×1024 in 0.27s
+[   31.4s] shaded LowerContainers 1024×1024 in 0.34s
+[   31.8s] shaded CraneWeight 1024×1024 in 0.21s
+[   32.0s] shaded Shelves 1024×1024 in 0.20s
+[   32.3s] shaded Stencil 1024×1024 in 0.20s
+[   32.6s] shaded Counter 1024×1024 in 0.21s
+[   32.8s] shaded Cables 1024×1024 in 0.15s
+[   33.1s] shaded PriceBoards 1024×1024 in 0.19s
+[   33.3s] shaded ShelfStock 1024×1024 in 0.22s
+[   33.7s] shaded Supplies 1024×1024 in 0.23s
+[   33.9s] shaded AwningPatches 1024×1024 in 0.19s
+[   34.2s] shaded UpperContainer 1024×1024 in 0.26s
+[   34.2s] writing HubShop.glb and 22 textures
+HubShop: 22 parts, script 34.25s, total 34.74s
+  shade (creases, contact): 0.71s
+  coat: 0.78s
+  wear: 0.68s
+  combine: 0.27s
+  shade, surfaces, grid and texels: 0.80s
+  shade, neighbourhoods: 0.51s
+  shade, spreading over seams: 0.26s
+  coat, painting texels: 0.00s
