@@ -1,4 +1,4 @@
-local CACHE_KEY = "MainIsland-43404b9dd9aef88d"
+local CACHE_KEY = "MainIsland-28c6f55359950c87"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -857,8 +857,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -874,10 +876,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -889,6 +900,8 @@ local function finishParts()
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
@@ -902,6 +915,18 @@ local function finishParts()
 			rubber = entry.rubber,
 			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
 			highlightUnevenStep = entry.litUnevenStep,
@@ -2285,7 +2310,9 @@ local function addCrack(points, normal, width: number)
 		local along = { (b[1] - a[1]) / length, (b[2] - a[2]) / length, -(b[3] - a[3]) / length }
 		local facing = { normal[1], normal[2], -normal[3] }
 		local function stroke(at, width: number, color)
-			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color })
+			-- Its place in the whole list is its seed, so it is drawn the same
+			-- whichever chunks are handed it.
+			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color, seed = #crackStrokes })
 		end
 		-- The lip sits on the crack's lower side, half a crack's width over.
 		local across = cross(facing, along)
@@ -2698,13 +2725,55 @@ local chunks = {}
 for _, entry in parts do
 	table.insert(chunks, entry.mesh)
 end
+-- The bake paints a chunk with every chunk of its group, itself included and
+-- in this order, each with its texture size and the chunk's own place in the
+-- list (as finishParts does in common.luau).
+local chunkSizes = {}
 for _, entry in parts do
-	local group = {}
-	for _, other in parts do
-		if other ~= entry then
-			table.insert(group, other.mesh)
+	table.insert(chunkSizes, { entry.image:width(), entry.image:height() })
+end
+
+-- A dirt chunk is handed only the cracks that could lie on it, not the whole
+-- island's: the bake reads every stroke it is given, for every chunk. Cracks
+-- are filed by the cell their start lies in, and a chunk takes those within
+-- its own radius plus the stroke's reach and some slack for the bake's
+-- stroke grid, in the order they were made.
+local CRACK_CELL = 32
+local CRACK_SLACK = 8
+local crackCells = {}
+local crackReach = 0
+for index, stroke in crackStrokes do
+	local key = `{math.floor(stroke.start[1] / CRACK_CELL)}_{math.floor(stroke.start[2] / CRACK_CELL)}_{math.floor(stroke.start[3] / CRACK_CELL)}`
+	crackCells[key] = crackCells[key] or {}
+	table.insert(crackCells[key], index)
+	crackReach = math.max(crackReach, stroke.length + stroke.width)
+end
+local function cracksNear(mesh)
+	local cx, cy, cz, radius = mesh:bounds()
+	local widest = radius + crackReach + CRACK_SLACK
+	local found = {}
+	for x = math.floor((cx - widest) / CRACK_CELL), math.floor((cx + widest) / CRACK_CELL) do
+		for y = math.floor((cy - widest) / CRACK_CELL), math.floor((cy + widest) / CRACK_CELL) do
+			for z = math.floor((cz - widest) / CRACK_CELL), math.floor((cz + widest) / CRACK_CELL) do
+				for _, index in crackCells[`{x}_{y}_{z}`] or {} do
+					local stroke = crackStrokes[index]
+					local dx, dy, dz = stroke.start[1] - cx, stroke.start[2] - cy, stroke.start[3] - cz
+					local far = radius + stroke.length + stroke.width + CRACK_SLACK
+					if dx * dx + dy * dy + dz * dz <= far * far then
+						table.insert(found, index)
+					end
+				end
+			end
 		end
 	end
+	table.sort(found)
+	local near = {}
+	for i, index in found do
+		near[i] = crackStrokes[index]
+	end
+	return near
+end
+for index, entry in parts do
 	local kind = string.match(entry.name, "^%a+")
 	local soft = kind == "Grass" or kind == "Dirt"
 	entry.mesh:paintShading(entry.image, {
@@ -2712,7 +2781,9 @@ for _, entry in parts do
 		shadow = if soft then CONTACT_SHADOW * SOFT_SHADING else CONTACT_SHADOW,
 		gradient = GRADIENT,
 		blend = EDGE_BLEND,
-		group = group,
+		group = chunks,
+		groupSizes = chunkSizes,
+		groupIndex = index,
 		name = entry.name,
 		paint = entry.paint,
 		-- The rock paint is cached under the item's key, since its code is not hashed.
@@ -2723,7 +2794,7 @@ for _, entry in parts do
 		highlightWidth = HIGHLIGHT_WIDTH,
 		cornerTaper = CORNER_TAPER,
 		heightRange = entry.heightRange,
-		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then crackStrokes else nil,
+		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then cracksNear(entry.mesh) else nil,
 	})
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end

@@ -376,6 +376,9 @@ fn candidates(mesh: &Mesh, wear: &Wear, layer: usize, density: f64, grain: Optio
 		let form = form_direction(mesh, &face.verts, normal, grain);
 		for tri in 1..face.verts.len().saturating_sub(1) {
 			let (a, b, c) = (mesh.positions[face.verts[0]], mesh.positions[face.verts[tri]], mesh.positions[face.verts[tri + 1]]);
+			if wear.far([a, b, c]) {
+				continue;
+			}
 			let uv_at = |k: usize| face.uvs.as_ref().map_or([0.0, 0.0], |uvs| uvs[k]);
 			let (uv_a, uv_b, uv_c) = (uv_at(0), uv_at(tri), uv_at(tri + 1));
 			let n = cross(sub(b, a), sub(c, a));

@@ -337,7 +337,7 @@ and LL3M (geometric checks catch what eyes miss, and edit in place).
    `lune run tools/modelcheck/check <Name>` until the plan check passes.
 3. **Critique, at most 3 rounds, stopping early once nothing is HIGH or MED.** Each round:
    - Run `scripts/review-model.sh <Name>`. It writes `review.png` (sketch, preview, part colours, front/right/top on a 1-stud grid) and prints the part legend and check output.
-   - Send the `model-critic` agent the paths of `review.png`, the sketch and the plan, plus the legend and check output. From round 2, also send its previous list. Reuse the same agent across rounds with SendMessage. Run `scripts/critic-atlas.sh <Name>` and send it the atlases it prints, not separate images, so it can review in a couple of tool calls.
+   - Send the `model-critic` agent the paths of `review.png`, the sketch and the plan, plus the legend and check output, the object list, and the fixed views of every object alone and, for a map, in place (`docs/art/review-views.md`). A map is split into scopes, each with its own critic, plus one map critic. From round 2, also send its previous list. Reuse the same agent across rounds with SendMessage. Run `scripts/critic-atlas.sh <Name>` and send it the atlases it prints, not separate images, so it can review in a couple of tool calls.
    - If its reply has `VIEW:` lines, run `scripts/critic-views.sh <Name> "<flags>" ...` with what it asked for and send it the one atlas it prints. The round isn't done until it stops asking.
    - Fix only what it listed, editing in place. Don't regenerate parts it didn't flag.
 4. **Checkpoint once** with `checkpoint-model.sh`. Write the notes file, then send the gridded screenshot and anything the critic still lists. From here it's one change per checkpoint.

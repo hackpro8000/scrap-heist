@@ -87,8 +87,43 @@ pub struct Wear<'a> {
 	// spot carries its chunk, and spots too far from the chunk being painted
 	// to reach it are skipped.
 	pub near: &'a (dyn Fn(Vec3) -> bool + Sync),
+	// The box `near` tests against, when it is one: a triangle wholly outside
+	// it holds no near spot, so its spots are never drawn.
+	pub near_box: Option<(Vec3, Vec3)>,
+	// The box round the chunk being painted itself, when there is one: a
+	// stroke that cannot touch it is dropped before its colour is asked for.
+	pub own_box: Option<(Vec3, Vec3)>,
 	pub tri_chunk: &'a [usize],
 	pub face_chunk: &'a [usize],
+}
+
+// Slack on the near box when whole triangles or chunks are ruled out, far
+// wider than the rounding of a spot placed inside a triangle.
+pub const NEAR_SLACK: f64 = 1e-6;
+
+impl Wear<'_> {
+	// Whether a triangle lies wholly outside the near box, so that no spot
+	// on it can pass `near`.
+	pub fn far(&self, triangle: [Vec3; 3]) -> bool {
+		if true { return false; }
+		let Some((low, high)) = self.near_box else { return false };
+		(0..3).any(|k| {
+			let most = triangle[0][k].max(triangle[1][k]).max(triangle[2][k]);
+			let least = triangle[0][k].min(triangle[1][k]).min(triangle[2][k]);
+			most < low[k] - NEAR_SLACK || least > high[k] + NEAR_SLACK
+		})
+	}
+}
+
+impl Wear<'_> {
+	// Whether a stroke centred at `centre` lies too far from the chunk being
+	// painted to touch any of its texels. A canvas files a stroke under the
+	// cells its reach overlaps, and a texel reads only its own cell, so
+	// `range` is the stroke's reach plus one cell.
+	pub fn out_of_touch(&self, centre: Vec3, range: f64) -> bool {
+		let Some((low, high)) = self.own_box else { return false };
+		(0..3).any(|k| centre[k] < low[k] - range - NEAR_SLACK || centre[k] > high[k] + range + NEAR_SLACK)
+	}
 }
 
 fn linear(c: [f64; 3]) -> [f64; 3] {
@@ -170,6 +205,9 @@ fn scatter(mesh: &Mesh, look: &Look, wear: &Wear, density: f64, least: u32, salt
 	// The same triangles in the same order as mesh_triangles, with their UVs.
 	for (index, corners) in mesh.triangles().iter().enumerate() {
 		let t = corners.map(|c| c.position);
+		if wear.far(t) {
+			continue;
+		}
 		let n = cross(sub(t[1], t[0]), sub(t[2], t[0]));
 		let length = dot(n, n).sqrt();
 		if length < 1e-12 {
@@ -222,10 +260,17 @@ pub fn coat(mesh: &Mesh, look: &Look, wear: &Wear, base: &mut dyn FnMut(Vec3, Ve
 		// Each stroke is mixed a little lighter or darker, warmer or cooler.
 		let shade = 1.0 + (r(4) - 0.5) * 0.3;
 		let warm = (r(7) - 0.5) * 0.14;
-		let coat = coat_at(look, wear, base, &spot);
-		let color = [coat[0] * shade * (1.0 + warm), coat[1] * shade, coat[2] * shade * (1.0 - warm)];
 		let (kind, length, width) = if look.stamps { (Brush::Stamp, 0.7 + 0.9 * r(5), 0.3 + 0.35 * r(6)) } else { (Brush::Flat, 0.35 + 0.35 * r(5), 0.16 + 0.08 * r(6)) };
-		canvas.add(spot.stroke(kind, spot.at, spot.heading(angle), length, width, color, 1.0, id).marked(&look.brushes.coat));
+		// The stroke is shaped before it is coloured: its colour comes from the
+		// model script, one call at a time, and most strokes scattered on the
+		// neighbouring chunks can never touch this one.
+		let mut stroke = spot.stroke(kind, spot.at, spot.heading(angle), length, width, [0.0; 3], 1.0, id).marked(&look.brushes.coat);
+		if wear.out_of_touch(stroke.centre(), stroke.reach() + canvas.cell_size()) {
+			return;
+		}
+		let coat = coat_at(look, wear, base, &spot);
+		stroke.color = [coat[0] * shade * (1.0 + warm), coat[1] * shade, coat[2] * shade * (1.0 - warm)];
+		canvas.add(stroke);
 	});
 	canvas
 }

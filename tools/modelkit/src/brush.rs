@@ -123,12 +123,12 @@ fn bristles(brush: Brush) -> (f64, f64) {
 }
 
 impl Stroke {
-	fn centre(&self) -> Vec3 {
+	pub fn centre(&self) -> Vec3 {
 		add(self.start, scale(self.along, self.length / 2.0))
 	}
 
 	// How far the stroke reaches from its centre.
-	fn reach(&self) -> f64 {
+	pub fn reach(&self) -> f64 {
 		self.length / 2.0 + self.marks.as_ref().map_or(self.width, |marks| self.width.max(marks.reach_on(self.width)))
 	}
 

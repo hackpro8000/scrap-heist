@@ -361,17 +361,19 @@ part("Fittings", nil, { 0.3, 0.32, 0.36 }, function(mesh)
 	end
 end, nil, 0.1)
 
+local supply, supplyPaint = supplyTones()
 part("Supplies", nil, { 0.5, 0.45, 0.3 }, function(mesh)
 	-- Scrap heaped in one corner at the foot of the tower.
 	-- Worn tracks and a crate round the back of the plinth.
-	box(mesh, 2.4, 7.25, 1, 1.5, 1, 0.7)
-	box(mesh, 3.4, 7.3, 1, 0.8, 0.8, 1.1)
-	barrel(mesh, 7.25, 5.6, 1)
-	box(mesh, 7.25, 4.1, 1, 1.2, 1.3, 0.8)
-	strut(mesh, 7.7, 3.4, 1, 6.9, 4.8, 2.4, 0.5)
+	supply(boxProp(mesh, 2.4, 7.25, 1, 1.5, 1, 0.7))
+	supply(boxProp(mesh, 3.4, 7.3, 1, 0.8, 0.8, 1.1))
+	supply(barrel(mesh, 7.25, 5.6, 1))
+	supply(boxProp(mesh, 7.25, 4.1, 1, 1.2, 1.3, 0.8))
+	supply(strutProp(mesh, 7.7, 3.4, 1, 6.9, 4.8, 2.4, 0.5))
 	gear(mesh, 7.25, 3.9, 1.9, 0.6, 0.2, 9, "x")
-	strut(mesh, 6.9, 2.6, 1, 7.6, 3.5, 1.5, 0.2)
-end, nil, supplyTones)
+	supply({ 7.15, 3.2, 1.2, 7.35, 4.6, 2.6 })
+	supply(strutProp(mesh, 6.9, 2.6, 1, 7.6, 3.5, 1.5, 0.2))
+end, nil, supplyPaint)
 
 part("Cables", nil, { 0.08, 0.08, 0.1 }, function(mesh)
 	tube(mesh, sagging(-7.2, -7.2, 2, 7.2, -7.2, 2, 0.42, 12), 0.05, 5)

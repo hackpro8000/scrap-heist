@@ -1,4 +1,4 @@
-local SHARD_COSTS = { ["ShopConceptContainer 1 x"] = 51, ["ShopConceptContainer 1 x #split"] = 1,  }
+local SHARD_COSTS = { ["ShopConceptContainer 1 x"] = 51, ["ShopConceptContainer 1 x #split"] = 1,  } local PAINT_COSTS: { [string]: number } = {  } local PAINT_DEAL = ""
 -- Layout prelude: lets a layout build other models in place. Each model's
 -- script is wrapped as build<Name>(), and place() runs it with every vertex
 -- moved, turned about z, optionally scaled up or down as a whole and
@@ -16,13 +16,53 @@ local paintsPart: (name: string, image: any) -> boolean
 -- its parts can be dealt by texels before any is painted (see ownsPart).
 local RealImage = Image
 local splitImages: { any }? = nil
-Image = setmetatable({
-	new = function(...)
-		local image = RealImage.new(...)
-		if splitImages then
-			table.insert(splitImages, image)
+
+-- While a split model builds, an image is a promise of one: its size is known
+-- at once, for the deal, and its pixels are made when something first paints
+-- or reads them. A shard keeps only its share of a split model's parts, so it
+-- never makes the pixels of the rest.
+local function promisedImage(width: number, height: number, ...)
+	local made = nil
+	local colour = table.pack(...)
+	local function real()
+		if not made then
+			made = RealImage.new(width, height, table.unpack(colour, 1, colour.n))
 		end
-		return image
+		return made
+	end
+	return setmetatable({
+		_real = real,
+		width = function()
+			return width
+		end,
+		height = function()
+			return height
+		end,
+		size = function()
+			return width, height
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				local image = real()
+				return image[key](image, ...)
+			end
+		end,
+	})
+end
+
+local function unwrapImage(image)
+	return if type(image) == "table" and image._real then image._real() else image
+end
+
+Image = setmetatable({
+	new = function(width, height, ...)
+		if splitImages then
+			local image = promisedImage(width, height, ...)
+			table.insert(splitImages, image)
+			return image
+		end
+		return RealImage.new(width, height, ...)
 	end,
 }, { __index = RealImage })
 
@@ -58,7 +98,10 @@ Mesh = {
 						options[list] = real
 					end
 				end
-				return real:paintShading(image, options)
+				return real:paintShading(unwrapImage(image), options)
+			end,
+			paint = function(_, image, ...)
+				return real:paint(unwrapImage(image), ...)
 			end,
 		}, {
 			__index = function(_, key)
@@ -113,15 +156,34 @@ local slabKeys = {}
 -- another one's build belongs to it, and isn't dealt: whether it runs depends
 -- on that build being cached.
 --
--- A model build costing well over an even share, and marked "#split" (most of
--- its parts are shaded through a named paint, as finishParts does), is split
--- across the least-loaded shards instead: each builds the geometry, which is
--- cheap, but paints and keeps only its share of the parts. Parts are dealt by
+-- A model build costing well over half an even share, and marked "#split"
+-- (most of its parts are shaded through a named paint, as finishParts does),
+-- is split into pieces of about half an even share across the least-loaded
+-- shards: small pieces leave the deal room to even the shards out. Each piece's
+-- shard builds the geometry, which is cheap, but paints and keeps only its
+-- share of the parts. Parts are dealt by
 -- texels: a build creates every image before painting any, so the images are
 -- sorted largest first and each goes to the share with the fewest texels so
 -- far. Every shard in the split deals the same images the same way. Placing
 -- that model again goes to the same shards, each keeping the same parts.
+--
+-- Texels are a poor guide to paint time (a ground chunk paints seven times
+-- faster than a dirt chunk of the same size), so once paint times have been
+-- measured (PAINT_COSTS, from the assembler's <Layout>PaintCosts.txt, which
+-- scripts/paint-costs.sh writes from a build's logs) parts are dealt by those
+-- instead. A chunk's paint also shades the chunks next to it unless this
+-- shard has shaded them already (bake.rs), so neighbours belong on one shard:
+-- the measured parts named for a place on the chunk grid (<Kind>_<x>_<y>_<z>,
+-- as chunkedPart names them) are put in order by 2 x 2 block of cells, then
+-- cell, and that line is cut into one run of equal paint time per share
+-- (plannedShares). Any other part, as its paint is asked for, goes to the
+-- share with the least paint time so far; one with no measured time counts as
+-- its texels at the measured average rate. Every shard asks for the same
+-- paints in the same order, so they still deal alike.
 local REPEAT_COST = 0.01
+-- Pieces are about this much of an even share; a model splits once it costs
+-- a quarter more than one piece.
+local SPLIT_PIECE = 0.5
 local SPLIT_ABOVE = 1.25
 local shardLoads, shardModels, splitModels = {}, {}, {}
 local medianCost, totalCost = 1, 0
@@ -152,7 +214,55 @@ local function texelsOf(image: any): number
 	return width * height
 end
 
--- Gives an image to the share with the fewest texels so far.
+local paintRate: number? = PAINT_COSTS["#rate"]
+
+-- What a part's paint weighs in the deal: its measured seconds, or its texels
+-- when no paint times have been measured.
+local function paintWeight(name: string?, image: any): number
+	if not paintRate then
+		return texelsOf(image)
+	end
+	return (name and PAINT_COSTS[name]) or texelsOf(image) * paintRate
+end
+
+-- The measured chunk parts' shares for a split into `count`, by name, and the
+-- paint time each share is given by them.
+local sharePlans: { [number]: { owners: { [string]: number }, loads: { number } } } = {}
+local function plannedShares(count: number)
+	if sharePlans[count] then
+		return sharePlans[count]
+	end
+	local chunks, total = {}, 0
+	for name, seconds in PAINT_COSTS do
+		local x, y, z = string.match(name, "^%a+_(%-?%d+)_(%-?%d+)_(%-?%d+)")
+		if x then
+			x, y, z = tonumber(x) :: number, tonumber(y) :: number, tonumber(z) :: number
+			table.insert(chunks, { name = name, seconds = seconds, key = { x // 2, y // 2, x, y, z } })
+			total += seconds
+		end
+	end
+	table.sort(chunks, function(a, b)
+		for i = 1, 5 do
+			if a.key[i] ~= b.key[i] then
+				return a.key[i] < b.key[i]
+			end
+		end
+		return a.name < b.name
+	end)
+	local plan = { owners = {}, loads = table.create(count, 0) }
+	local before = 0
+	for _, chunk in chunks do
+		-- By the middle of its own time, so a long paint lands on the run it mostly lies in.
+		local share = math.min(count, (before + chunk.seconds / 2) * count // total + 1)
+		plan.owners[chunk.name] = share
+		plan.loads[share] += chunk.seconds
+		before += chunk.seconds
+	end
+	sharePlans[count] = plan
+	return plan
+end
+
+-- Gives an image to the share with the least weight (texels, or seconds) so far.
 local function dealImage(share: PartShare, image: any, texels: number): number
 	local lightest = 1
 	for index = 2, share.count do
@@ -190,9 +300,26 @@ local function ownsPart(name: string, image: any?): boolean
 	end
 	if image then
 		if not partShare.owners then
-			dealImages(partShare)
+			if paintRate then
+				-- By measured paint time: the chunk parts' runs are planned,
+				-- and the rest are dealt one by one, as each is asked for.
+				partShare.owners = {}
+				partShare.texels = table.clone(plannedShares(partShare.count).loads)
+			else
+				dealImages(partShare)
+			end
 		end
-		local owner = (partShare.owners :: { [any]: number })[image] or dealImage(partShare, image, texelsOf(image))
+		local owners = partShare.owners :: { [any]: number }
+		local owner = owners[image]
+		if not owner then
+			local planned = if paintRate then plannedShares(partShare.count).owners[name] else nil
+			if planned then
+				owners[image] = planned
+				owner = planned
+			else
+				owner = dealImage(partShare, image, paintWeight(name, image))
+			end
+		end
 		return owner == partShare.index
 	end
 	local hash = 5381
@@ -230,7 +357,8 @@ local function inThisShard(costKey: string, reuses: string?): (boolean, number?,
 		return shareOf(split)
 	end
 	local fairShare = if totalCost > 0 then totalCost / SHARD_COUNT else medianCost
-	if reuses and SHARD_COSTS[`{costKey} #split`] and cost > fairShare * SPLIT_ABOVE then
+	local piece = fairShare * SPLIT_PIECE
+	if reuses and SHARD_COSTS[`{costKey} #split`] and cost > piece * SPLIT_ABOVE then
 		local order = {}
 		for shard = 1, SHARD_COUNT do
 			order[shard] = shard
@@ -239,7 +367,7 @@ local function inThisShard(costKey: string, reuses: string?): (boolean, number?,
 			local loadA, loadB = shardLoads[a] or 0, shardLoads[b] or 0
 			return if loadA ~= loadB then loadA < loadB else a < b
 		end)
-		split = table.move(order, 1, math.min(SHARD_COUNT, math.ceil(cost / fairShare)), 1, {})
+		split = table.move(order, 1, math.min(SHARD_COUNT, math.ceil(cost / piece)), 1, {})
 		for _, shard in split do
 			shardLoads[shard] = (shardLoads[shard] or 0) + cost / #split
 		end
@@ -308,20 +436,39 @@ model.part = function(name, mesh, image, options)
 		if skipPart(name) or not ownsPart(name, image) then
 			return
 		end
-		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview, emissive = options and options.emissive })
+		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = unwrapImage(image), preview = preview, emissive = options and options.emissive })
 		return
 	end
-	addPart(name, unwrapMesh(mesh), image, preview, options and options.emissive)
+	addPart(name, unwrapMesh(mesh), unwrapImage(image), preview, options and options.emissive)
+end
+
+-- Says which object a placement is, for the upload (scripts/export-objects.py
+-- reads these lines from the build's output): its label, its turn in
+-- degrees, and the key its build is cached under, or "-" when it has none.
+-- Placements with one key are copies of one object, uploaded once. A
+-- placement inside another's build is part of that object, and isn't told.
+local function tellPlacement(label: string, turn: number, key: string)
+	if not builtParts then
+		print(string.format("PLACED\t%s\t%s\t%s", label, tostring(turn), key))
+	end
 end
 
 -- `scale` builds the model that many times its own size, so its textures
 -- keep their density instead of being stretched with it.
+-- Set while a slab builds. A slab's cache key leaves out the models the
+-- layout uses (scripts/assemble-model.sh), so a slab must not place one.
+local slabBuilding: string? = nil
+
 local function place(label: string, build: () -> (), x: number, y: number, z: number?, turn: number?, stretch: number?, axis: string?, scale: number?)
+	if slabBuilding then
+		error(`slab {slabBuilding} places {label}: place models outside slabs, as a slab's cache key doesn't follow model changes`)
+	end
 	local key = buildKeys[build]
 	if not key then
 		if not inThisShard(`place {label}`) then
 			return
 		end
+		tellPlacement(label, turn or 0, "-")
 		placeLabel = label
 		placeX, placeY, placeZ, placeTurn = x, y, z or 0, math.rad(turn or 0)
 		placeStretch, placeAxis, placeScale = stretch or 1, axis or "x", scale or 1
@@ -351,7 +498,12 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 	-- texel deal follows from the model's source, already in the key.
 	if share then
 		key = `{key} part {share}/{shares}`
+		-- The deal by measured paint times follows from those too.
+		if PAINT_DEAL ~= "" then
+			key = `{key} deal {PAINT_DEAL}`
+		end
 	end
+	tellPlacement(label, turn or 0, key)
 	local x0, y0, z0, turn0 = placeX, placeY, placeZ, placeTurn
 	for _, part in model.cached(key, function()
 		local outerShare, outerImages = partShare, splitImages
@@ -394,16 +546,20 @@ local function placeSlab(label: string, build: () -> (), x: number, y: number, t
 	if not inThisShard(costKey) then
 		return
 	end
+	-- A slab is built where it stands, so it is its own object, unturned.
+	tellPlacement(label, 0, `{key} {label} {x} {y} {turn or 0}`)
 	placeLabel = label
 	placeX, placeY, placeZ, placeTurn = x, y, 0, math.rad(turn or 0)
 	placeStretch, placeAxis, placeScale = 1, "x", 1
 	for _, part in model.cached(`{key} {label} {x} {y} {turn or 0}`, function()
 		return timedBuild(costKey, function()
 			builtParts = {}
+			slabBuilding = label
 			build()
 			if finish then
 				finish()
 			end
+			slabBuilding = nil
 			local built = builtParts
 			builtParts = nil
 			return built
@@ -441,9 +597,13 @@ local GRID = 0.4
 -- instead of the fixed TEXTURE, so a layout reads at one texel density.
 -- A part's own `texture` size still wins.
 local texelDensity: number? = nil
+-- The density the layout asked for, before TEXEL_SCALE: chunk sizes follow
+-- this one, so a max-detail preview keeps the chunks it would ship with.
+local layoutDensity: number? = nil
 
 -- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
 local function useTexelDensity(pixelsPerStud: number)
+	layoutDensity = pixelsPerStud
 	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
 end
 
@@ -712,15 +872,57 @@ end
 -- strands, and bolts on curved faces.
 local function tube(mesh, points, radius, sides)
 	sides = sides or 8
+	local function unit(a, b)
+		local x, y, z = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local length = math.sqrt(x * x + y * y + z * z)
+		if length < 1e-6 then
+			return nil
+		end
+		return { x / length, y / length, z / length }
+	end
 	local rings = {}
+	local carried
 	for i, p in points do
-		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
-		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local before, after = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local into, out = i > 1 and unit(before, p) or nil, i < #points and unit(p, after) or nil
+		-- Each ring lies across the bisector of its bend.
+		local dx, dy, dz = after[1] - before[1], after[2] - before[2], after[3] - before[3]
+		if into and out then
+			local x, y, z = into[1] + out[1], into[2] + out[2], into[3] + out[3]
+			if x * x + y * y + z * z > 1e-6 then
+				dx, dy, dz = x, y, z
+			end
+		end
+		local tx, ty, tz, ux, uy, uz, vx, vy, vz = crossFrame(dx, dy, dz)
+		-- Carry the last ring's frame round the bend, so the tube can't twist.
+		if carried then
+			local along = carried[1] * tx + carried[2] * ty + carried[3] * tz
+			local x, y, z = carried[1] - tx * along, carried[2] - ty * along, carried[3] - tz * along
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				ux, uy, uz = x / length, y / length, z / length
+				vx, vy, vz = ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+			end
+		end
+		carried = { ux, uy, uz }
+		-- A ring across a bend is widened toward the bend's outside, or the tube
+		-- would pinch there.
+		local stretch, bx, by, bz = 1, 0, 0, 0
+		if into and out then
+			local x, y, z = out[1] - into[1], out[2] - into[2], out[3] - into[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				bx, by, bz = x / length, y / length, z / length
+				stretch = 1 / math.max(tx * out[1] + ty * out[2] + tz * out[3], 0.5)
+			end
+		end
 		local ring = {}
 		for k = 0, sides - 1 do
 			local t = k / sides * TAU
 			local c, n = math.cos(t) * radius, math.sin(t) * radius
-			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+			local x, y, z = ux * c + vx * n, uy * c + vy * n, uz * c + vz * n
+			local extra = (x * bx + y * by + z * bz) * (stretch - 1)
+			ring[k + 1] = mesh:vertex(p[1] + x + bx * extra, p[2] + y + by * extra, p[3] + z + bz * extra)
 		end
 		rings[i] = ring
 	end
@@ -737,6 +939,34 @@ local function tube(mesh, points, radius, sides)
 	end
 	mesh:face(cap)
 	mesh:face(rings[#rings])
+end
+
+-- `points` with each inner corner replaced by a curve starting up to `reach`
+-- studs before it, for wires and hoses that shouldn't have sharp elbows.
+local function roundedPath(points, reach, steps)
+	steps = steps or 4
+	local path = { points[1] }
+	for i = 2, #points - 1 do
+		local a, p, b = points[i - 1], points[i], points[i + 1]
+		local function towards(q)
+			local x, y, z = q[1] - p[1], q[2] - p[2], q[3] - p[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			local r = math.min(reach, length / 2) / length
+			return { p[1] + x * r, p[2] + y * r, p[3] + z * r }
+		end
+		local first, last = towards(a), towards(b)
+		for s = 0, steps do
+			local t = s / steps
+			local m0, m1, m2 = (1 - t) ^ 2, 2 * t * (1 - t), t * t
+			table.insert(path, {
+				first[1] * m0 + p[1] * m1 + last[1] * m2,
+				first[2] * m0 + p[2] * m1 + last[2] * m2,
+				first[3] * m0 + p[3] * m1 + last[3] * m2,
+			})
+		end
+	end
+	table.insert(path, points[#points])
+	return path
 end
 
 -- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
@@ -1012,6 +1242,8 @@ local function setLook(entry, color, rust)
 	entry.rubber = rust == RUBBER
 end
 
+local HAND_EDGE_MOTION = { rock = "feather", wood = "flick", metal = "worn" }
+
 -- `rust` can also be a paint fn for surfaces with their own look.
 -- `texture` overrides the texture size for parts that need more detail.
 -- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
@@ -1022,7 +1254,29 @@ end
 -- heavier shadow than the standard wear. `lit` scales the highlight strength
 -- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
 -- to paint its highlights as bold, fully loaded strokes instead of dry ones,
--- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+-- `blend` (0-1) to tint them from cream toward a lighter part colour, and
+-- `taper` (studs) to run them full width at corners, thinning along each edge.
+-- `softLit` (0-1) adds a wide, very soft highlight under the strokes, fading
+-- out over `softEdge` studs from each edge; `softUneven` (0-1) makes its width
+-- wander along the edge and `softTaper` (studs) thins it away from corners.
+-- `softToZero` lets that thinning reach nothing, and `softPower` steepens the fade.
+-- `strokes` lists brush strokes painted over the coat ({start, along, normal,
+-- length, width, tail, color, brush}, color in sRGB), such as cracks or dabs;
+-- `brush` is "taper" (crisp lines, the default), "round" or "sponge".
+-- `stamps` lays the coat with scanned stroke shapes instead of the flat brush.
+-- `hand` ("rock", "wood" or "metal") paints the coat the way a hand would, and
+-- `handFocus` ({x, y, z, radius}) is where it gathers its finest strokes.
+-- `handTune` sets any of its numbers by name (settings! in tools/modelkit/src/hand.rs).
+-- `litMotion` draws the hard edge highlight with a moving hand, `litTune` sets its
+-- numbers by name (tools/modelkit/src/marks.rs). A hand-painted part gets its
+-- material's motion unless it names another, or `false` for the default strokes.
+-- `brushes` draws any layer with a motion: edge, shade, soft, coat, grime, rust,
+-- drip or scratch, each {motion = "press", tune = {name = value}}. A `strokes`
+-- entry takes `motion` and `tune` the same way.
+-- With `hand` as well, `crisp` keeps the shapes exact and takes only the brushwork's tone.
+-- `crisp` lays the coat on texel by texel in the paint fn's exact colours
+-- instead of brush strokes, for machine finishes (hazard tape, ribbed
+-- rubber) that strokes would smear; shading still goes over it.
 local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
@@ -1051,7 +1305,7 @@ end
 -- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
 -- on across chunks instead of restarting in each (a flat chunk would go dark).
 local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
-	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	local CHUNK = if layoutDensity then math.min(128, 1024 / layoutDensity) else 128
 	-- Smallest cell a chunk is halved down to while looking for a split.
 	local MIN_CELL = 2
 	local positions, faces = {}, {}
@@ -1117,7 +1371,9 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		if texelDensity then
 			local mesh = chunkMesh(chunkFaces)
 			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
-			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			-- Split by the layout's density; the scale only sizes the texture.
+			local unwrap = mesh:unwrap()
+			local needed = math.ceil((layoutDensity or texelDensity) / unwrap / 4) * 4
 			if needed > 1024 and #chunkFaces > 1 then
 				local half = size / 2
 				local octants, octantOrder = {}, {}
@@ -1149,7 +1405,7 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 					return
 				end
 			end
-			texture = math.clamp(needed, 16, 1024)
+			texture = math.clamp(math.ceil(texelDensity / unwrap / 4) * 4, 16, 1024)
 		end
 		part(label, bone, color, function(mesh)
 			local handles = {}
@@ -1170,8 +1426,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -1187,10 +1445,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -1198,26 +1465,62 @@ local function finishParts()
 		entry.mesh:paintShading(entry.image, {
 			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
 			shadow = CONTACT_SHADOW * (entry.shade or 1),
-			gradient = GRADIENT,
+			gradient = entry.gradient or GRADIENT,
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
 			custom = entry.custom,
 			salt = if entry.custom then CACHE_KEY else nil,
 			rust = entry.rust * WEAR,
+			stamps = entry.stamps,
+			hand = entry.hand,
+			handFocus = entry.handFocus,
+			handTune = entry.handTune,
 			rubber = entry.rubber,
+			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
+			highlightUneven = entry.litUneven,
+			highlightUnevenStep = entry.litUnevenStep,
+			highlightMotion = if entry.litMotion == nil then (entry.hand and HAND_EDGE_MOTION[entry.hand]) else (entry.litMotion or nil),
+			highlightMotionTune = entry.litTune,
+			highlightToZero = entry.litToZero,
+			highlightEnd = entry.litEnd,
 			paintedHighlights = entry.painted,
+			cornerTaper = entry.taper,
+			softHighlight = entry.softLit,
+			softReach = entry.softEdge,
+			softUneven = entry.softUneven,
+			softTaper = entry.softTaper,
+			softToZero = entry.softToZero,
+			softPower = entry.softPower,
+			softEnd = entry.softEnd,
+			strokes = entry.strokes,
+			brushes = entry.brushes,
 			heightRange = entry.heightRange,
+			crisp = entry.crisp,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
 end
-local function buildShopConceptContainer()
+function buildShopConceptContainer()
 local CACHE_KEY = "ShopConceptContainer-6558ebfd0e67d87c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
@@ -2709,7 +3012,7 @@ end, nil, 0.6)
 
 finishParts()
 end
-buildKeys[buildShopConceptContainer] = "ShopConceptContainer-ea4f346237b0dbb0"
+buildKeys[buildShopConceptContainer] = "ShopConceptContainer-911175d17539cb26"
 -- uses: ShopConceptContainer
 -- Shop Test: the shop container on its own, for timing a split build of one
 -- heavy prop (build-map-shards with layout ShopTest).

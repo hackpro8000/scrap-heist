@@ -15,13 +15,53 @@ local paintsPart: (name: string, image: any) -> boolean
 -- its parts can be dealt by texels before any is painted (see ownsPart).
 local RealImage = Image
 local splitImages: { any }? = nil
-Image = setmetatable({
-	new = function(...)
-		local image = RealImage.new(...)
-		if splitImages then
-			table.insert(splitImages, image)
+
+-- While a split model builds, an image is a promise of one: its size is known
+-- at once, for the deal, and its pixels are made when something first paints
+-- or reads them. A shard keeps only its share of a split model's parts, so it
+-- never makes the pixels of the rest.
+local function promisedImage(width: number, height: number, ...)
+	local made = nil
+	local colour = table.pack(...)
+	local function real()
+		if not made then
+			made = RealImage.new(width, height, table.unpack(colour, 1, colour.n))
 		end
-		return image
+		return made
+	end
+	return setmetatable({
+		_real = real,
+		width = function()
+			return width
+		end,
+		height = function()
+			return height
+		end,
+		size = function()
+			return width, height
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				local image = real()
+				return image[key](image, ...)
+			end
+		end,
+	})
+end
+
+local function unwrapImage(image)
+	return if type(image) == "table" and image._real then image._real() else image
+end
+
+Image = setmetatable({
+	new = function(width, height, ...)
+		if splitImages then
+			local image = promisedImage(width, height, ...)
+			table.insert(splitImages, image)
+			return image
+		end
+		return RealImage.new(width, height, ...)
 	end,
 }, { __index = RealImage })
 
@@ -57,7 +97,10 @@ Mesh = {
 						options[list] = real
 					end
 				end
-				return real:paintShading(image, options)
+				return real:paintShading(unwrapImage(image), options)
+			end,
+			paint = function(_, image, ...)
+				return real:paint(unwrapImage(image), ...)
 			end,
 		}, {
 			__index = function(_, key)
@@ -122,6 +165,20 @@ local slabKeys = {}
 -- sorted largest first and each goes to the share with the fewest texels so
 -- far. Every shard in the split deals the same images the same way. Placing
 -- that model again goes to the same shards, each keeping the same parts.
+--
+-- Texels are a poor guide to paint time (a ground chunk paints seven times
+-- faster than a dirt chunk of the same size), so once paint times have been
+-- measured (PAINT_COSTS, from the assembler's <Layout>PaintCosts.txt, which
+-- scripts/paint-costs.sh writes from a build's logs) parts are dealt by those
+-- instead. A chunk's paint also shades the chunks next to it unless this
+-- shard has shaded them already (bake.rs), so neighbours belong on one shard:
+-- the measured parts named for a place on the chunk grid (<Kind>_<x>_<y>_<z>,
+-- as chunkedPart names them) are put in order by 2 x 2 block of cells, then
+-- cell, and that line is cut into one run of equal paint time per share
+-- (plannedShares). Any other part, as its paint is asked for, goes to the
+-- share with the least paint time so far; one with no measured time counts as
+-- its texels at the measured average rate. Every shard asks for the same
+-- paints in the same order, so they still deal alike.
 local REPEAT_COST = 0.01
 -- Pieces are about this much of an even share; a model splits once it costs
 -- a quarter more than one piece.
@@ -156,7 +213,55 @@ local function texelsOf(image: any): number
 	return width * height
 end
 
--- Gives an image to the share with the fewest texels so far.
+local paintRate: number? = PAINT_COSTS["#rate"]
+
+-- What a part's paint weighs in the deal: its measured seconds, or its texels
+-- when no paint times have been measured.
+local function paintWeight(name: string?, image: any): number
+	if not paintRate then
+		return texelsOf(image)
+	end
+	return (name and PAINT_COSTS[name]) or texelsOf(image) * paintRate
+end
+
+-- The measured chunk parts' shares for a split into `count`, by name, and the
+-- paint time each share is given by them.
+local sharePlans: { [number]: { owners: { [string]: number }, loads: { number } } } = {}
+local function plannedShares(count: number)
+	if sharePlans[count] then
+		return sharePlans[count]
+	end
+	local chunks, total = {}, 0
+	for name, seconds in PAINT_COSTS do
+		local x, y, z = string.match(name, "^%a+_(%-?%d+)_(%-?%d+)_(%-?%d+)")
+		if x then
+			x, y, z = tonumber(x) :: number, tonumber(y) :: number, tonumber(z) :: number
+			table.insert(chunks, { name = name, seconds = seconds, key = { x // 2, y // 2, x, y, z } })
+			total += seconds
+		end
+	end
+	table.sort(chunks, function(a, b)
+		for i = 1, 5 do
+			if a.key[i] ~= b.key[i] then
+				return a.key[i] < b.key[i]
+			end
+		end
+		return a.name < b.name
+	end)
+	local plan = { owners = {}, loads = table.create(count, 0) }
+	local before = 0
+	for _, chunk in chunks do
+		-- By the middle of its own time, so a long paint lands on the run it mostly lies in.
+		local share = math.min(count, (before + chunk.seconds / 2) * count // total + 1)
+		plan.owners[chunk.name] = share
+		plan.loads[share] += chunk.seconds
+		before += chunk.seconds
+	end
+	sharePlans[count] = plan
+	return plan
+end
+
+-- Gives an image to the share with the least weight (texels, or seconds) so far.
 local function dealImage(share: PartShare, image: any, texels: number): number
 	local lightest = 1
 	for index = 2, share.count do
@@ -194,9 +299,26 @@ local function ownsPart(name: string, image: any?): boolean
 	end
 	if image then
 		if not partShare.owners then
-			dealImages(partShare)
+			if paintRate then
+				-- By measured paint time: the chunk parts' runs are planned,
+				-- and the rest are dealt one by one, as each is asked for.
+				partShare.owners = {}
+				partShare.texels = table.clone(plannedShares(partShare.count).loads)
+			else
+				dealImages(partShare)
+			end
 		end
-		local owner = (partShare.owners :: { [any]: number })[image] or dealImage(partShare, image, texelsOf(image))
+		local owners = partShare.owners :: { [any]: number }
+		local owner = owners[image]
+		if not owner then
+			local planned = if paintRate then plannedShares(partShare.count).owners[name] else nil
+			if planned then
+				owners[image] = planned
+				owner = planned
+			else
+				owner = dealImage(partShare, image, paintWeight(name, image))
+			end
+		end
 		return owner == partShare.index
 	end
 	local hash = 5381
@@ -313,10 +435,10 @@ model.part = function(name, mesh, image, options)
 		if skipPart(name) or not ownsPart(name, image) then
 			return
 		end
-		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview, emissive = options and options.emissive })
+		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = unwrapImage(image), preview = preview, emissive = options and options.emissive })
 		return
 	end
-	addPart(name, unwrapMesh(mesh), image, preview, options and options.emissive)
+	addPart(name, unwrapMesh(mesh), unwrapImage(image), preview, options and options.emissive)
 end
 
 -- Says which object a placement is, for the upload (scripts/export-objects.py
@@ -375,6 +497,10 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 	-- texel deal follows from the model's source, already in the key.
 	if share then
 		key = `{key} part {share}/{shares}`
+		-- The deal by measured paint times follows from those too.
+		if PAINT_DEAL ~= "" then
+			key = `{key} deal {PAINT_DEAL}`
+		end
 	end
 	tellPlacement(label, turn or 0, key)
 	local x0, y0, z0, turn0 = placeX, placeY, placeZ, placeTurn

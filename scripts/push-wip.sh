@@ -14,6 +14,27 @@ branch="${1:-wip/coordinator}"
 root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "${root}"
 
+# Machines build each model from its assembled art/models/<Name>/model.luau,
+# so a source edited since its models were assembled would ship stale. Any
+# model whose assembled script names an art/src file changed in the working
+# tree, and is older than it, is assembled again first.
+changed_sources="$(git status --porcelain -- art/src | awk '{print $NF}' | rg '\.luau$' || true)"
+for source in ${changed_sources}; do
+	name="$(basename "${source}" .luau)"
+	for script in $(rg -l --fixed-strings -e "${name}" art/models/*/model.luau 2> /dev/null || true); do
+		[ "${script}" -nt "${source}" ] && continue
+		model="$(basename "$(dirname "${script}")")"
+		[ -f "art/src/items/${model}.luau" ] || [ -f "art/src/layouts/${model}.luau" ] || [ -d "art/src/bots/${model}" ] || continue
+		echo "push-wip: ${model} was assembled before ${source} changed; assembling it again" >&2
+		scripts/assemble-model.sh "${model}" > /dev/null || { echo "ALERT STALE_ASSEMBLY: ${model} would not assemble | fix it before building" >&2; exit 1; }
+	done
+done
+
+# The machines run the engine binary in tools/modelkit/bin; refresh it here
+# when its source changed (taken from the build-engine branch if a machine
+# already compiled this source, else compiled here), so no machine compiles.
+scripts/build-model.sh --engine || { echo "ALERT ENGINE_STALE: the engine would not refresh | fix the compile before building" >&2; exit 1; }
+
 index="$(mktemp)"
 trap 'rm -f "${index}"' EXIT
 GIT_INDEX_FILE="${index}" git read-tree HEAD

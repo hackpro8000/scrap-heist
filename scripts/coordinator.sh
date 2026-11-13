@@ -7,6 +7,16 @@
 #   scripts/coordinator.sh status
 #   scripts/coordinator.sh machines   # what each machine is doing right now
 #   scripts/coordinator.sh stop
+#   scripts/coordinator.sh attach [run id]   # use machine 1's coordinator
+#   scripts/coordinator.sh key        # prints this session's control key
+#   scripts/coordinator.sh worker-key # makes the numbered machines' key and stores it as a repo secret
+#
+# attach points this session at the coordinator build machine 1 runs for
+# that standby run: through its Cloudflare tunnel when the run published
+# one (address.json on build-results/coordinator-address; the newest run
+# when no id is given), else over the tailnet. stop then ends its machines
+# but kills nothing here. key makes, once, the key pair whose signature
+# machine 1's control port asks for; only the public half leaves here.
 #
 # Routes: tailscale puts the machine port on this session's tailnet address
 # (the machines join the tailnet with the repo's TS_AUTHKEY secret);
@@ -34,8 +44,63 @@ json() {
 	python3 -c "import json,sys; print(json.load(open('${state}')).get('$1', ''))" 2> /dev/null || true
 }
 
+remote() {
+	[ -f "${state}" ] && [ "$(json remote)" = True ]
+}
+
 running() {
-	[ -f "${state}" ] && kill -0 "$(json pid)" 2> /dev/null
+	remote || { [ -f "${state}" ] && kill -0 "$(json pid)" 2> /dev/null; }
+}
+
+attach() {
+	local address
+	# Attaching again replaces a machine-1 hub's record (that hub may have
+	# ended, or this is a newer run); only a hub running on this computer
+	# has to be stopped first.
+	if running && ! remote; then
+		echo "a coordinator is already running here; scripts/coordinator.sh stop it first" >&2
+		return 1
+	fi
+	address="$(gh api -H "Accept: application/vnd.github.raw" \
+		"repos/{owner}/{repo}/contents/address.json?ref=build-results/coordinator-address" 2> /dev/null || true)"
+	python3 - "${state}" "${1:-}" "${address}" << 'PY'
+import json, sys
+path, run, address = sys.argv[1:]
+try:
+	address = json.loads(address)
+except ValueError:
+	address = {}
+if address.get("control") and (not run or str(address.get("run")) == run):
+	run = str(address["run"])
+	state = {"remote": True, "control": address["control"], "agent_url": address["agent"], "route": "machine-1 over cloudflare"}
+elif run:
+	state = {"remote": True, "control": f"ws://scrap-coordinator-{run}:8766", "agent_url": "machine-1", "route": "machine-1 over tailscale"}
+else:
+	sys.exit("no address published by machine 1 yet; give the run id to attach over the tailnet")
+json.dump(state, open(path, "w"))
+print(f"attached to machine 1's coordinator of run {run} ({state['route']})", file=sys.stderr)
+PY
+}
+
+key() {
+	local key="${logs}/control-key"
+	if [ ! -f "${key}" ]; then
+		ssh-keygen -q -t ed25519 -N "" -C scrap-heist-control -f "${key}" < /dev/null
+		echo "made ${key}; it never leaves this computer" >&2
+	fi
+	cat "${key}.pub"
+}
+
+# The key the numbered cloud machines' tokens are made from: kept on this
+# computer and as the repo's WORKER_KEY secret, which machine 1 gives its
+# coordinator. Making a new one would cut off every machine that joined.
+worker_key() {
+	local key="${logs}/worker-key"
+	if [ ! -f "${key}" ]; then
+		(umask 077; python3 -c 'import secrets; print(secrets.token_hex(32))' > "${key}")
+		echo "made ${key}" >&2
+	fi
+	gh secret set WORKER_KEY < "${key}" > /dev/null && echo "the repo's WORKER_KEY secret holds this computer's worker key" >&2
 }
 
 set_url() {
@@ -111,6 +176,12 @@ stop() {
 	if running; then
 		python3 "${root}/tools/coordinator/client.py" stop-machines > /dev/null 2>&1 && echo "told the machines to stop" >&2 || true
 	fi
+	# Machine 1 runs a remote coordinator: nothing here to kill.
+	if remote; then
+		rm -f "${state}"
+		echo "detached from machine 1's coordinator" >&2
+		return 0
+	fi
 	if [ -f "${logs}/tunnel.pid" ]; then
 		kill "$(cat "${logs}/tunnel.pid")" 2> /dev/null || true
 		rm -f "${logs}/tunnel.pid"
@@ -125,6 +196,9 @@ stop() {
 case "${1:-status}" in
 	start) start "${2:-auto}" "${3:-}" ;;
 	stop) stop ;;
+	attach) attach "${2:-}" ;;
+	key) key ;;
+	worker-key) worker_key ;;
 	url) running && json agent_url ;;
 	status)
 		if running; then
@@ -135,5 +209,5 @@ case "${1:-status}" in
 		fi
 		;;
 	machines) python3 "${root}/tools/coordinator/client.py" machines ;;
-	*) sed -n '2,20p' "$0" >&2; exit 1 ;;
+	*) sed -n '2,26p' "$0" >&2; exit 1 ;;
 esac

@@ -15,6 +15,7 @@ You get:
 - The modelcheck output: floaters, clipping, plan differences. Trust it over your eyes for those.
 - From round 2: your previous list.
 - Usually atlases, `atlas_overview.png` and `atlas_eyes.png`, which lay out the same views larger and label each camera's position. Read those and don't open renders one by one or read scripts. If a tile is too small to judge something, ask for a closer view with a VIEW line.
+- The object list for your scope: every object you judge, with `looks` (what it objectively looks like) and `purpose` (what it is for), and the fixed views of each one, alone and, for a map, in place (`docs/art/review-views.md`). On a map you may be one of several critics, each with its own scope; judge only yours, and name anything wrong outside it in one `OUTSIDE` line.
 
 Every round, before judging, read `docs/art/critic-rules.md` in this repository, even if you read it last round, because it grows. Apply every rule in it. Read `docs/art/critic-settled.md` too: findings earlier critics withdrew after checking proof. Don't raise one of those again unless you name new evidence for it. Where a rule conflicts with "Don't list" below, the rule wins.
 
@@ -43,15 +44,20 @@ List what is wrong, most important first:
 
 Don't list: cosmetic counts, colour or wear nitpicks, drift under 10%, anything not visible in the views.
 
-Reply with only these lines, at most 10:
+When you have an object list, go through it entry by entry and give each one an `OBJECT` line, so none is skipped. Check its views alone and in place against its `looks` and `purpose`, and against every rule. Its defects then go in the ranked list. The 10-line limit covers the ranked list only; there is one `OBJECT` line for every entry, however many.
+
+Reply with only these lines:
 
 ```
 SUMMARY: <one line verdict>
+OBJECT [Name] <MATCHES or DIFFERS: how it differs from its looks or purpose> | <rules it breaks, or "none">
+...
 [HIGH|MED|LOW] [PartName] <problem, with a measurement when you have one>. FIX: <one direction, no code>
 ...
 RULES: <the heading of any rule you couldn't judge, and why; or "all judged">
 VIEW: <only if you need more views, as above>
 LANDED: <from round 2: which of last round's fixes landed, which didn't, any regression>
+OUTSIDE: <only on a scoped map review: a defect you saw outside your scope, and where>
 ```
 
 ## If you're argued with
