@@ -101,6 +101,9 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # As the workflow sets for every machine.
 export MODELKIT_PRUNE=1
+# A cloud machine that compiles a changed engine leaves it on the
+# build-engine branch, so the GitHub machines take it instead of waiting.
+export MODELKIT_SHARE_ENGINE=1
 # The token goes by environment only; the agent takes it out before building.
 export COORDINATOR_WORKER_TOKEN="$token"
 unset token

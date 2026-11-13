@@ -42,7 +42,7 @@ if [ "$(cat "${stamp}" 2>/dev/null || true)" != "${source_sha}" ]; then
 		done
 		[ "${waited}" -ge "${ENGINE_WAIT_SECONDS:-480}" ] && echo "ALERT ENGINE_WAIT: machine 1 shared no engine in ${waited}s; compiling here" >&2
 	fi
-	[ "${SHARD:-}" = "1" ] && export MODELKIT_SHARE_ENGINE=1
+	[ -n "${SHARD:-}" ] && export MODELKIT_SHARE_ENGINE=1
 	if [ -s "${fetched}" ] || shared_engine; then
 		install -m 755 "${fetched}" "${modelkit}"
 		echo "engine: taken from the build-engine branch" >&2
