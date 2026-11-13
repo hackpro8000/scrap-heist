@@ -1,0 +1,43 @@
+engine: taken from the build-engine branch
+[    0.0s] running HubStage/model.luau
+[    0.8s] TIMING script: 0.8s
+[    1.2s] shaded Banner 1024×1024 in 0.23s
+[    1.9s] shaded LampHousings 1024×1024 in 0.27s
+[    2.6s] shaded PlatformDrums 1024×1024 in 0.33s
+[    3.6s] shaded Supplies 1024×1024 in 0.30s
+[    4.2s] shaded Backdrop 1024×1024 in 0.33s
+[    5.1s] shaded TrussTop 1024×1024 in 0.26s
+[    5.1s] baked every chunk this machine claimed
+[    5.1s] TIMING claimed bakes: 6 paints in 39 of 128 chunks, 4.3s with the waits to claim; layers 22 loaded in 0.5s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.2s, merging chunks 0.0s, colour samplers 0.5s
+[   44.6s] TIMING swap: 39.5s pushing, waiting for the other machines and fetching
+[   45.1s] shaded Fittings 1024×1024 in 0.36s
+[   45.6s] shaded Speakers 1024×1024 in 0.36s
+[   46.1s] shaded Platform 1024×1024 in 0.39s
+[   46.2s] shaded Cables 1024×1024 in 0.17s
+[   46.6s] shaded Steps 1024×1024 in 0.26s
+[   47.0s] shaded BackdropRivets 1024×1024 in 0.25s
+[   47.3s] shaded Truss 1024×1024 in 0.26s
+[   47.5s] shaded SpeakerSurrounds 1024×1024 in 0.19s
+[   47.8s] shaded SpeakerCones 1024×1024 in 0.23s
+[   47.8s] TIMING paints after the swap: 9 paints, 3.2s; layers 32 loaded in 0.6s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.3s, merging chunks 0.0s, colour samplers 0.7s (baked here means a layer that did not arrive)
+[   47.8s] TIMING whole-part saves: 0 in 0.0s
+[   47.8s] writing HubStage.glb and 16 textures
+[   48.3s] TIMING HubStage.glb and 16 parts' texture files written: 0.5s
+[   48.4s] TIMING renders: 0 of 14 jobs made here, 0.1s with the waits to claim
+HubStage: 16 parts, script 47.85s, total 48.39s
+  shade (creases, contact): 0.47s
+  coat: 0.15s
+  wear: 0.34s
+  combine: 0.26s
+  shade, surfaces, grid and texels: 0.71s
+  shade, neighbourhoods: 0.43s
+  shade, spreading over seams: 0.28s
+  coat, painting texels: 0.00s
+TIMING script: 0.8s
+TIMING claimed bakes: 6 paints in 39 of 128 chunks, 4.3s with the waits to claim; layers 22 loaded in 0.5s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.2s, merging chunks 0.0s, colour samplers 0.5s
+TIMING swap: 39.5s pushing, waiting for the other machines and fetching
+TIMING paints after the swap: 9 paints, 3.2s; layers 32 loaded in 0.6s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.3s, merging chunks 0.0s, colour samplers 0.7s (baked here means a layer that did not arrive)
+TIMING whole-part saves: 0 in 0.0s
+TIMING HubStage.glb and 16 parts' texture files written: 0.5s
+TIMING renders: 0 of 14 jobs made here, 0.1s with the waits to claim
+TIMING HubStage: 16 parts, total 48.4s; shade (creases, contact) 0.5s, coat 0.2s, wear 0.3s, combine 0.3s, shade, surfaces, grid and texels 0.7s, shade, neighbourhoods 0.4s, shade, spreading over seams 0.3s, coat, painting texels 0.0s
