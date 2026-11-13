@@ -1,0 +1,101 @@
+[    0.0s] running HubStage/model.luau
+[    0.8s] TIMING script: 0.8s
+[    2.6s] baking on CPU (no GPU)
+[    3.1s] shaded Banner 1024×1024 in 0.50s
+[    4.8s] shaded Fittings 1024×1024 in 1.05s
+[    6.5s] shaded Speakers 1024×1024 in 1.50s
+[    7.9s] shaded LampHousings 1024×1024 in 0.88s
+[    9.8s] shaded Platform 1024×1024 in 1.40s
+[   11.8s] shaded PlatformDrums 1024×1024 in 1.52s
+[   12.6s] shaded Cables 1024×1024 in 0.29s
+[   14.6s] shaded Steps 1024×1024 in 1.22s
+[   16.4s] shaded BackdropRivets 1024×1024 in 1.13s
+[   18.2s] shaded Supplies 1024×1024 in 1.55s
+[   20.2s] shaded Backdrop 1024×1024 in 1.33s
+[   21.7s] shaded Truss 1024×1024 in 0.77s
+[   24.0s] shaded TrussTop 1024×1024 in 0.71s
+[   24.8s] shaded SpeakerSurrounds 1024×1024 in 0.69s
+[   26.5s] shaded SpeakerCones 1024×1024 in 1.56s
+[   26.8s] baked every chunk this machine claimed
+[   26.8s] TIMING claimed bakes: 15 paints in 128 of 128 chunks, 26.0s with the waits to claim; layers 0 loaded in 0.0s and 54 baked in 10.7s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.5s, merging chunks 0.0s, colour samplers 1.6s
+[   86.6s] TIMING swap: 59.8s pushing, waiting for the other machines and fetching
+[   86.6s] TIMING paints after the swap: 0 paints, 0.0s; layers 0 loaded in 0.0s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.0s, merging chunks 0.0s, colour samplers 0.0s (baked here means a layer that did not arrive)
+[   86.6s] TIMING whole-part saves: 0 in 0.0s
+[   86.6s] writing HubStage.glb and 16 textures
+[   87.2s] TIMING HubStage.glb and 16 parts' texture files written: 0.6s
+[   87.2s] rendering preview.png of 16 parts
+[   87.7s] TIMING render preview.png: drawn in 0.2s, 0.5s with its save
+[   87.8s] rendering parts.png of 16 parts
+[   88.1s] TIMING render parts.png: drawn in 0.1s, 0.3s with its save
+[   88.1s] rendering turntable/0000.png of 16 parts
+[   88.6s] TIMING render turntable/0000.png: drawn in 0.2s, 0.5s with its save
+[   88.6s] rendering turntable/0001.png of 16 parts
+[   89.0s] TIMING render turntable/0001.png: drawn in 0.1s, 0.3s with its save
+[   89.3s] rendering turntable/0002.png of 16 parts
+[   89.7s] TIMING render turntable/0002.png: drawn in 0.2s, 0.4s with its save
+[   89.7s] rendering turntable/0003.png of 16 parts
+[   90.2s] TIMING render turntable/0003.png: drawn in 0.2s, 0.4s with its save
+[   90.2s] rendering closeup_1.png of 16 parts
+[   91.2s] TIMING render closeup_1.png: drawn in 0.2s, 1.0s with its save
+[   91.3s] rendering eye_1.png of 16 parts
+[   91.7s] TIMING render eye_1.png: drawn in 0.2s, 0.3s with its save
+[   91.7s] rendering eye_2.png of 16 parts
+[   92.1s] TIMING render eye_2.png: drawn in 0.2s, 0.3s with its save
+[   92.1s] rendering eye_3.png of 16 parts
+[   92.5s] TIMING render eye_3.png: drawn in 0.2s, 0.4s with its save
+[   92.6s] rendering eye_4.png of 16 parts
+[   93.8s] TIMING render eye_4.png: drawn in 0.3s, 1.3s with its save
+[   93.9s] rendering eye_5.png of 16 parts
+[   94.3s] TIMING render eye_5.png: drawn in 0.1s, 0.5s with its save
+[   94.4s] rendering eye_6.png of 16 parts
+[   94.9s] TIMING render eye_6.png: drawn in 0.2s, 0.5s with its save
+[   95.0s] rendering eye_7.png of 16 parts
+[   95.4s] TIMING render eye_7.png: drawn in 0.2s, 0.5s with its save
+[   95.4s] TIMING renders: 14 of 14 jobs made here, 8.3s with the waits to claim
+HubStage: 16 parts, script 86.61s, total 95.44s
+  shade (creases, contact): 5.80s
+  coat: 4.02s
+  wear: 1.38s
+  combine: 0.24s
+  shade, surfaces, grid and texels: 0.88s
+  shade, neighbourhoods: 0.51s
+  shade, spreading over seams: 0.28s
+  coat, painting texels: 0.41s
+#f23d3d Platform
+#85a5f2 PlatformDrums
+#7bb32d Steps
+#b362a8 Truss
+#3df2d4 TrussTop
+#f2c085 Backdrop
+#4e2db3 BackdropRivets
+#66b362 Speakers
+#f23d79 SpeakerSurrounds
+#85c9f2 SpeakerCones
+#a8b32d LampHousings
+#a262b3 Lamps
+#3df297 Fittings
+#f29c85 Banner
+#2d38b3 Supplies
+#80b362 Cables
+TIMING script: 0.8s
+TIMING claimed bakes: 15 paints in 128 of 128 chunks, 26.0s with the waits to claim; layers 0 loaded in 0.0s and 54 baked in 10.7s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.5s, merging chunks 0.0s, colour samplers 1.6s
+TIMING swap: 59.8s pushing, waiting for the other machines and fetching
+TIMING paints after the swap: 0 paints, 0.0s; layers 0 loaded in 0.0s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.0s, merging chunks 0.0s, colour samplers 0.0s (baked here means a layer that did not arrive)
+TIMING whole-part saves: 0 in 0.0s
+TIMING HubStage.glb and 16 parts' texture files written: 0.6s
+TIMING render preview.png: drawn in 0.2s, 0.5s with its save
+TIMING render parts.png: drawn in 0.1s, 0.3s with its save
+TIMING render turntable/0000.png: drawn in 0.2s, 0.5s with its save
+TIMING render turntable/0001.png: drawn in 0.1s, 0.3s with its save
+TIMING render turntable/0002.png: drawn in 0.2s, 0.4s with its save
+TIMING render turntable/0003.png: drawn in 0.2s, 0.4s with its save
+TIMING render closeup_1.png: drawn in 0.2s, 1.0s with its save
+TIMING render eye_1.png: drawn in 0.2s, 0.3s with its save
+TIMING render eye_2.png: drawn in 0.2s, 0.3s with its save
+TIMING render eye_3.png: drawn in 0.2s, 0.4s with its save
+TIMING render eye_4.png: drawn in 0.3s, 1.3s with its save
+TIMING render eye_5.png: drawn in 0.1s, 0.5s with its save
+TIMING render eye_6.png: drawn in 0.2s, 0.5s with its save
+TIMING render eye_7.png: drawn in 0.2s, 0.5s with its save
+TIMING renders: 14 of 14 jobs made here, 8.3s with the waits to claim
+TIMING HubStage: 16 parts, total 95.4s; shade (creases, contact) 5.8s, coat 4.0s, wear 1.4s, combine 0.2s, shade, surfaces, grid and texels 0.9s, shade, neighbourhoods 0.5s, shade, spreading over seams 0.3s, coat, painting texels 0.4s
