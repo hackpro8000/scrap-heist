@@ -1,0 +1,38 @@
+engine: taken from the build-engine branch
+[    0.0s] running ProofKettle/model.luau
+[    0.1s] TIMING script: 0.1s
+[    0.5s] shaded Body 256×256 in 0.02s
+[    4.8s] baked every chunk this machine claimed
+[    4.8s] TIMING claimed bakes: 1 paints in 63 of 128 chunks, 4.7s with the waits to claim; layers 3 loaded in 0.0s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.0s, merging chunks 0.0s, colour samplers 0.0s
+[    4.9s] TIMING swap: 0.1s pushing, waiting for the other machines and fetching
+[    4.9s] TIMING paints after the swap: 0 paints, 0.0s; layers 0 loaded in 0.0s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.0s, merging chunks 0.0s, colour samplers 0.0s (baked here means a layer that did not arrive)
+[    4.9s] TIMING whole-part saves: 0 in 0.0s
+[    4.9s] writing ProofKettle.glb and 1 textures
+[    4.9s] TIMING ProofKettle.glb and 1 parts' texture files written: 0.0s
+[    5.0s] rendering preview.png of 1 parts
+[    5.0s] TIMING render preview.png: drawn in 0.0s, 0.0s with its save
+[    5.1s] rendering turntable/0001.png of 1 parts
+[    5.1s] TIMING render turntable/0001.png: drawn in 0.0s, 0.0s with its save
+[    5.2s] rendering turntable/0003.png of 1 parts
+[    5.2s] TIMING render turntable/0003.png: drawn in 0.0s, 0.0s with its save
+[    5.2s] TIMING renders: 3 of 5 jobs made here, 0.3s with the waits to claim
+ProofKettle: 1 parts, script 4.94s, total 5.24s
+  shade (creases, contact): 0.00s
+  coat: 0.00s
+  wear: 0.00s
+  combine: 0.00s
+  shade, surfaces, grid and texels: 0.00s
+  shade, neighbourhoods: 0.00s
+  shade, spreading over seams: 0.00s
+  coat, painting texels: 0.00s
+TIMING script: 0.1s
+TIMING claimed bakes: 1 paints in 63 of 128 chunks, 4.7s with the waits to claim; layers 3 loaded in 0.0s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.0s, merging chunks 0.0s, colour samplers 0.0s
+TIMING swap: 0.1s pushing, waiting for the other machines and fetching
+TIMING paints after the swap: 0 paints, 0.0s; layers 0 loaded in 0.0s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.0s, merging chunks 0.0s, colour samplers 0.0s (baked here means a layer that did not arrive)
+TIMING whole-part saves: 0 in 0.0s
+TIMING ProofKettle.glb and 1 parts' texture files written: 0.0s
+TIMING render preview.png: drawn in 0.0s, 0.0s with its save
+TIMING render turntable/0001.png: drawn in 0.0s, 0.0s with its save
+TIMING render turntable/0003.png: drawn in 0.0s, 0.0s with its save
+TIMING renders: 3 of 5 jobs made here, 0.3s with the waits to claim
+TIMING ProofKettle: 1 parts, total 5.2s; shade (creases, contact) 0.0s, coat 0.0s, wear 0.0s, combine 0.0s, shade, surfaces, grid and texels 0.0s, shade, neighbourhoods 0.0s, shade, spreading over seams 0.0s, coat, painting texels 0.0s
