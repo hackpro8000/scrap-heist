@@ -1,4 +1,4 @@
-local CACHE_KEY = "MarketIsland-a52e0af61a590727"
+local CACHE_KEY = "MarketIsland-59c7e7298e4b3e2c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -28,9 +28,13 @@ local GRID = 0.4
 -- instead of the fixed TEXTURE, so a layout reads at one texel density.
 -- A part's own `texture` size still wins.
 local texelDensity: number? = nil
+-- The density the layout asked for, before TEXEL_SCALE: chunk sizes follow
+-- this one, so a max-detail preview keeps the chunks it would ship with.
+local layoutDensity: number? = nil
 
 -- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
 local function useTexelDensity(pixelsPerStud: number)
+	layoutDensity = pixelsPerStud
 	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
 end
 
@@ -299,15 +303,57 @@ end
 -- strands, and bolts on curved faces.
 local function tube(mesh, points, radius, sides)
 	sides = sides or 8
+	local function unit(a, b)
+		local x, y, z = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local length = math.sqrt(x * x + y * y + z * z)
+		if length < 1e-6 then
+			return nil
+		end
+		return { x / length, y / length, z / length }
+	end
 	local rings = {}
+	local carried
 	for i, p in points do
-		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
-		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local before, after = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local into, out = i > 1 and unit(before, p) or nil, i < #points and unit(p, after) or nil
+		-- Each ring lies across the bisector of its bend.
+		local dx, dy, dz = after[1] - before[1], after[2] - before[2], after[3] - before[3]
+		if into and out then
+			local x, y, z = into[1] + out[1], into[2] + out[2], into[3] + out[3]
+			if x * x + y * y + z * z > 1e-6 then
+				dx, dy, dz = x, y, z
+			end
+		end
+		local tx, ty, tz, ux, uy, uz, vx, vy, vz = crossFrame(dx, dy, dz)
+		-- Carry the last ring's frame round the bend, so the tube can't twist.
+		if carried then
+			local along = carried[1] * tx + carried[2] * ty + carried[3] * tz
+			local x, y, z = carried[1] - tx * along, carried[2] - ty * along, carried[3] - tz * along
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				ux, uy, uz = x / length, y / length, z / length
+				vx, vy, vz = ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+			end
+		end
+		carried = { ux, uy, uz }
+		-- A ring across a bend is widened toward the bend's outside, or the tube
+		-- would pinch there.
+		local stretch, bx, by, bz = 1, 0, 0, 0
+		if into and out then
+			local x, y, z = out[1] - into[1], out[2] - into[2], out[3] - into[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				bx, by, bz = x / length, y / length, z / length
+				stretch = 1 / math.max(tx * out[1] + ty * out[2] + tz * out[3], 0.5)
+			end
+		end
 		local ring = {}
 		for k = 0, sides - 1 do
 			local t = k / sides * TAU
 			local c, n = math.cos(t) * radius, math.sin(t) * radius
-			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+			local x, y, z = ux * c + vx * n, uy * c + vy * n, uz * c + vz * n
+			local extra = (x * bx + y * by + z * bz) * (stretch - 1)
+			ring[k + 1] = mesh:vertex(p[1] + x + bx * extra, p[2] + y + by * extra, p[3] + z + bz * extra)
 		end
 		rings[i] = ring
 	end
@@ -324,6 +370,34 @@ local function tube(mesh, points, radius, sides)
 	end
 	mesh:face(cap)
 	mesh:face(rings[#rings])
+end
+
+-- `points` with each inner corner replaced by a curve starting up to `reach`
+-- studs before it, for wires and hoses that shouldn't have sharp elbows.
+local function roundedPath(points, reach, steps)
+	steps = steps or 4
+	local path = { points[1] }
+	for i = 2, #points - 1 do
+		local a, p, b = points[i - 1], points[i], points[i + 1]
+		local function towards(q)
+			local x, y, z = q[1] - p[1], q[2] - p[2], q[3] - p[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			local r = math.min(reach, length / 2) / length
+			return { p[1] + x * r, p[2] + y * r, p[3] + z * r }
+		end
+		local first, last = towards(a), towards(b)
+		for s = 0, steps do
+			local t = s / steps
+			local m0, m1, m2 = (1 - t) ^ 2, 2 * t * (1 - t), t * t
+			table.insert(path, {
+				first[1] * m0 + p[1] * m1 + last[1] * m2,
+				first[2] * m0 + p[2] * m1 + last[2] * m2,
+				first[3] * m0 + p[3] * m1 + last[3] * m2,
+			})
+		end
+	end
+	table.insert(path, points[#points])
+	return path
 end
 
 -- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
@@ -599,6 +673,8 @@ local function setLook(entry, color, rust)
 	entry.rubber = rust == RUBBER
 end
 
+local HAND_EDGE_MOTION = { rock = "feather", wood = "flick", metal = "worn" }
+
 -- `rust` can also be a paint fn for surfaces with their own look.
 -- `texture` overrides the texture size for parts that need more detail.
 -- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
@@ -609,7 +685,29 @@ end
 -- heavier shadow than the standard wear. `lit` scales the highlight strength
 -- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
 -- to paint its highlights as bold, fully loaded strokes instead of dry ones,
--- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+-- `blend` (0-1) to tint them from cream toward a lighter part colour, and
+-- `taper` (studs) to run them full width at corners, thinning along each edge.
+-- `softLit` (0-1) adds a wide, very soft highlight under the strokes, fading
+-- out over `softEdge` studs from each edge; `softUneven` (0-1) makes its width
+-- wander along the edge and `softTaper` (studs) thins it away from corners.
+-- `softToZero` lets that thinning reach nothing, and `softPower` steepens the fade.
+-- `strokes` lists brush strokes painted over the coat ({start, along, normal,
+-- length, width, tail, color, brush}, color in sRGB), such as cracks or dabs;
+-- `brush` is "taper" (crisp lines, the default), "round" or "sponge".
+-- `stamps` lays the coat with scanned stroke shapes instead of the flat brush.
+-- `hand` ("rock", "wood" or "metal") paints the coat the way a hand would, and
+-- `handFocus` ({x, y, z, radius}) is where it gathers its finest strokes.
+-- `handTune` sets any of its numbers by name (settings! in tools/modelkit/src/hand.rs).
+-- `litMotion` draws the hard edge highlight with a moving hand, `litTune` sets its
+-- numbers by name (tools/modelkit/src/marks.rs). A hand-painted part gets its
+-- material's motion unless it names another, or `false` for the default strokes.
+-- `brushes` draws any layer with a motion: edge, shade, soft, coat, grime, rust,
+-- drip or scratch, each {motion = "press", tune = {name = value}}. A `strokes`
+-- entry takes `motion` and `tune` the same way.
+-- With `hand` as well, `crisp` keeps the shapes exact and takes only the brushwork's tone.
+-- `crisp` lays the coat on texel by texel in the paint fn's exact colours
+-- instead of brush strokes, for machine finishes (hazard tape, ribbed
+-- rubber) that strokes would smear; shading still goes over it.
 local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
@@ -638,7 +736,7 @@ end
 -- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
 -- on across chunks instead of restarting in each (a flat chunk would go dark).
 local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
-	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	local CHUNK = if layoutDensity then math.min(128, 1024 / layoutDensity) else 128
 	-- Smallest cell a chunk is halved down to while looking for a split.
 	local MIN_CELL = 2
 	local positions, faces = {}, {}
@@ -704,7 +802,9 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		if texelDensity then
 			local mesh = chunkMesh(chunkFaces)
 			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
-			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			-- Split by the layout's density; the scale only sizes the texture.
+			local unwrap = mesh:unwrap()
+			local needed = math.ceil((layoutDensity or texelDensity) / unwrap / 4) * 4
 			if needed > 1024 and #chunkFaces > 1 then
 				local half = size / 2
 				local octants, octantOrder = {}, {}
@@ -736,7 +836,7 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 					return
 				end
 			end
-			texture = math.clamp(needed, 16, 1024)
+			texture = math.clamp(math.ceil(texelDensity / unwrap / 4) * 4, 16, 1024)
 		end
 		part(label, bone, color, function(mesh)
 			local handles = {}
@@ -757,8 +857,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -774,10 +876,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -785,21 +896,57 @@ local function finishParts()
 		entry.mesh:paintShading(entry.image, {
 			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
 			shadow = CONTACT_SHADOW * (entry.shade or 1),
-			gradient = GRADIENT,
+			gradient = entry.gradient or GRADIENT,
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
 			custom = entry.custom,
 			salt = if entry.custom then CACHE_KEY else nil,
 			rust = entry.rust * WEAR,
+			stamps = entry.stamps,
+			hand = entry.hand,
+			handFocus = entry.handFocus,
+			handTune = entry.handTune,
 			rubber = entry.rubber,
+			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
+			highlightUneven = entry.litUneven,
+			highlightUnevenStep = entry.litUnevenStep,
+			highlightMotion = if entry.litMotion == nil then (entry.hand and HAND_EDGE_MOTION[entry.hand]) else (entry.litMotion or nil),
+			highlightMotionTune = entry.litTune,
+			highlightToZero = entry.litToZero,
+			highlightEnd = entry.litEnd,
 			paintedHighlights = entry.painted,
+			cornerTaper = entry.taper,
+			softHighlight = entry.softLit,
+			softReach = entry.softEdge,
+			softUneven = entry.softUneven,
+			softTaper = entry.softTaper,
+			softToZero = entry.softToZero,
+			softPower = entry.softPower,
+			softEnd = entry.softEnd,
+			strokes = entry.strokes,
+			brushes = entry.brushes,
 			heightRange = entry.heightRange,
+			crisp = entry.crisp,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
@@ -1056,6 +1203,7 @@ local DRIP_SHADE = 0.35
 local GRASS_OLIVE = { 0.6, 0.57, 0.35 }
 local GRASS_OLIVE_COVER = 0.3
 local GRASS_PATCH_SIZE = 6 * DETAIL
+local GRASS_SPLOTCH = 0.25
 -- Within about APRON_WIDTH studs of what stands on the top (wornDistance)
 -- the grass is worn down to TRODDEN dirt and gravel, in patches toward the
 -- outside. These follow what stands there, not the stones, so DETAIL leaves
@@ -2141,7 +2289,9 @@ local function addCrack(points, normal, width: number)
 		local along = { (b[1] - a[1]) / length, (b[2] - a[2]) / length, -(b[3] - a[3]) / length }
 		local facing = { normal[1], normal[2], -normal[3] }
 		local function stroke(at, width: number, color)
-			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color })
+			-- Its place in the whole list is its seed, so it is drawn the same
+			-- whichever chunks are handed it.
+			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color, seed = #crackStrokes })
 		end
 		-- The lip sits on the crack's lower side, half a crack's width over.
 		local across = cross(facing, along)
@@ -2393,25 +2543,38 @@ local GRASS_DEEPEST = GRASS_LIP[1] + DRIP_LENGTH[2]
 local paintGrass = rusting(0, function(x, y, z)
 	local shade = 1 - DRIP_SHADE * math.clamp(-z / GRASS_DEEPEST, 0, 1)
 	local tone, warm = splotchAt(x, y, z)
+	-- On a big open island splotches read as hard discs, so grass takes a trace.
+	if SOFT_GRASS then
+		tone, warm = tone * GRASS_SPLOTCH, warm * GRASS_SPLOTCH
+	end
 	shade *= 1 + tone
 	-- Patch strength from soft noise: 0 outside, 1 well inside a patch
 	-- covering `cover` of the grass.
 	local function patch(cover: number, seed: number): number
 		local u, v = x / GRASS_PATCH_SIZE + seed, y / GRASS_PATCH_SIZE
 		local n = 0.5 + math.noise(u, v, seed) + 0.3 * math.noise(u * 3, v * 3, seed + 5)
-		return math.clamp((n - (1 - cover)) / 0.12, 0, 1)
+		return math.clamp((n - (1 - cover)) / (if SOFT_GRASS then 0.4 else 0.12), 0, 1)
 	end
 	local function toward(r, g, b, c, t)
 		return r + (c[1] - r) * t, g + (c[2] - g) * t, b + (c[3] - b) * t
 	end
 	local r, g, b = toward(GRASS[1], GRASS[2], GRASS[3], GRASS_OLIVE, patch(GRASS_OLIVE_COVER, 11.3))
+	-- Broad darker drifts of bare soil, so open ground isn't one even tone.
+	if SOFT_GRASS then
+		local drift = math.clamp((math.noise(x * 0.018, y * 0.018, 63.1) + 0.35 * math.noise(x * 0.07, y * 0.07, 12.4) - 0.28) / 0.45, 0, 1)
+		r, g, b = toward(r, g, b, TRODDEN, drift * 0.42)
+	end
 	-- The worn apron round what stands on the top.
 	local outside = wornDistance(x, y)
 	local wobble = 0.4 * APRON_WIDTH * math.noise(x * 0.3, y * 0.3, 71.3)
 	local wear = math.clamp(1 - (outside + wobble) / APRON_WIDTH, 0, 1)
 	if wear > 0 then
 		local patchy = 0.5 + 0.6 * math.noise(x * 0.55, y * 0.55, 93.1)
-		local worn = math.clamp((wear - 0.75 * (1 - patchy)) / 0.2, 0, 1)
+		local worn = math.clamp((wear - 0.75 * (1 - patchy)) / (if SOFT_GRASS then 0.55 else 0.2), 0, 1)
+		if SOFT_GRASS then
+			-- Wear gathers in stretches, not as an even ring round everything.
+			worn *= math.clamp(0.55 + 1.3 * math.noise(x * 0.09, y * 0.09, 41.7), 0, 1)
+		end
 		local grit = 0.9 + 0.2 * math.noise(x * 1.7, y * 1.7, 17.9)
 		r, g, b = toward(r, g, b, { TRODDEN[1] * grit, TRODDEN[2] * grit, TRODDEN[3] * grit }, worn)
 	end
@@ -2541,13 +2704,55 @@ local chunks = {}
 for _, entry in parts do
 	table.insert(chunks, entry.mesh)
 end
+-- The bake paints a chunk with every chunk of its group, itself included and
+-- in this order, each with its texture size and the chunk's own place in the
+-- list (as finishParts does in common.luau).
+local chunkSizes = {}
 for _, entry in parts do
-	local group = {}
-	for _, other in parts do
-		if other ~= entry then
-			table.insert(group, other.mesh)
+	table.insert(chunkSizes, { entry.image:width(), entry.image:height() })
+end
+
+-- A dirt chunk is handed only the cracks that could lie on it, not the whole
+-- island's: the bake reads every stroke it is given, for every chunk. Cracks
+-- are filed by the cell their start lies in, and a chunk takes those within
+-- its own radius plus the stroke's reach and some slack for the bake's
+-- stroke grid, in the order they were made.
+local CRACK_CELL = 32
+local CRACK_SLACK = 8
+local crackCells = {}
+local crackReach = 0
+for index, stroke in crackStrokes do
+	local key = `{math.floor(stroke.start[1] / CRACK_CELL)}_{math.floor(stroke.start[2] / CRACK_CELL)}_{math.floor(stroke.start[3] / CRACK_CELL)}`
+	crackCells[key] = crackCells[key] or {}
+	table.insert(crackCells[key], index)
+	crackReach = math.max(crackReach, stroke.length + stroke.width)
+end
+local function cracksNear(mesh)
+	local cx, cy, cz, radius = mesh:bounds()
+	local widest = radius + crackReach + CRACK_SLACK
+	local found = {}
+	for x = math.floor((cx - widest) / CRACK_CELL), math.floor((cx + widest) / CRACK_CELL) do
+		for y = math.floor((cy - widest) / CRACK_CELL), math.floor((cy + widest) / CRACK_CELL) do
+			for z = math.floor((cz - widest) / CRACK_CELL), math.floor((cz + widest) / CRACK_CELL) do
+				for _, index in crackCells[`{x}_{y}_{z}`] or {} do
+					local stroke = crackStrokes[index]
+					local dx, dy, dz = stroke.start[1] - cx, stroke.start[2] - cy, stroke.start[3] - cz
+					local far = radius + stroke.length + stroke.width + CRACK_SLACK
+					if dx * dx + dy * dy + dz * dz <= far * far then
+						table.insert(found, index)
+					end
+				end
+			end
 		end
 	end
+	table.sort(found)
+	local near = {}
+	for i, index in found do
+		near[i] = crackStrokes[index]
+	end
+	return near
+end
+for index, entry in parts do
 	local kind = string.match(entry.name, "^%a+")
 	local soft = kind == "Grass" or kind == "Dirt"
 	entry.mesh:paintShading(entry.image, {
@@ -2555,7 +2760,9 @@ for _, entry in parts do
 		shadow = if soft then CONTACT_SHADOW * SOFT_SHADING else CONTACT_SHADOW,
 		gradient = GRADIENT,
 		blend = EDGE_BLEND,
-		group = group,
+		group = chunks,
+		groupSizes = chunkSizes,
+		groupIndex = index,
 		name = entry.name,
 		paint = entry.paint,
 		-- The rock paint is cached under the item's key, since its code is not hashed.
@@ -2566,7 +2773,7 @@ for _, entry in parts do
 		highlightWidth = HIGHLIGHT_WIDTH,
 		cornerTaper = CORNER_TAPER,
 		heightRange = entry.heightRange,
-		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then crackStrokes else nil,
+		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then cracksNear(entry.mesh) else nil,
 	})
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end

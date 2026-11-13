@@ -9,6 +9,9 @@
 	  floats. Part names listed on a `-- floats: A, B` line of the item's
 	  source may float. Groups under SMALL of the model's longest side are
 	  left alone.
+	- resting gaps: a piece hovering a few hundredths over the pieces under it
+	  (more than TOUCH, under REST_GAP), as a stacked barrel stood a little
+	  too high would; `-- floats:` parts are exempt.
 	- clipping: pieces of different parts buried in each other (clipping.luau).
 	  Pairs listed on a `-- mates: A B, C D` line may.
 	- holes: edges with one face (parts listed on `-- open: A, B` may have them)
@@ -33,6 +36,8 @@ local Plan = require("./plan")
 
 local TOUCH = 0.03
 local SMALL = 0.01
+local REST_GAP = 0.15
+local REST_SHARE = 0.2
 
 type Box = { number }
 
@@ -399,6 +404,46 @@ local function check(name: string): (boolean, string)
 		if not allowed then
 			table.insert(problems, `floating: {table.concat(names, ", ")}`)
 		end
+	end
+
+	-- Pieces hovering just over what holds them up: one whose underside sits
+	-- more than TOUCH but under REST_GAP above the top of every piece under
+	-- it floats, even when its group touches something else (a bung or bolt
+	-- poking up into it joins the group, so the check above passes it). Only
+	-- pieces under a fair share (REST_SHARE) of its footprint count as holding it.
+	local rests = {}
+	for _, piece in pieces do
+		local b = piece.box
+		local area = (b[4] - b[1]) * (b[5] - b[2])
+		if area <= 0 or mayFloat[piece.part] then
+			continue
+		end
+		local highest, under, held = -math.huge, nil, false
+		for _, other in pieces do
+			local o = other.box
+			if other == piece or o[3] >= b[3] then
+				continue
+			end
+			local across = math.min(b[4], o[4]) - math.max(b[1], o[1])
+			local along = math.min(b[5], o[5]) - math.max(b[2], o[2])
+			if across <= 0 or along <= 0 or across * along < REST_SHARE * area then
+				continue
+			end
+			if o[6] >= b[3] - TOUCH then
+				held = true
+				break
+			end
+			if o[6] > b[3] - REST_GAP and o[6] > highest then
+				highest, under = o[6], other
+			end
+		end
+		if not held and under then
+			local key = `{piece.part} on {under.part}`
+			rests[key] = math.max(rests[key] or 0, b[3] - highest)
+		end
+	end
+	for key, gap in rests do
+		table.insert(problems, string.format("resting %.2f above: %s", gap, key))
 	end
 
 	for _, problem in Clipping.check(pieces, mates, pairKey) do

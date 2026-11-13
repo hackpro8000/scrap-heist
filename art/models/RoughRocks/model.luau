@@ -1,4 +1,4 @@
-local CACHE_KEY = "RoughRocks-71d875bf9afa9599"
+local CACHE_KEY = "RoughRocks-5842e7efbee34867"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -1128,7 +1128,7 @@ end
 useTexelDensity(64)
 local ROCK = { 0.56, 0.5, 0.42 }
 -- Just above the ground, where the layout traces each stone's contact line.
-local SHADE_Z = 0.03
+local SHADE_Z = 0.01
 -- What stands on the sand: { x, y, radius x, radius y, seed, rim }.
 local groundFeet = {}
 

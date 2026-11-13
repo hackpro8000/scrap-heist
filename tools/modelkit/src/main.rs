@@ -30,6 +30,15 @@
 //                                                a layout's placements (SHARD_INDEX
 //                                                and SHARD_COUNT in the script), with
 //                                                chunks tagged S3 so shards don't clash
+//   modelkit art/models/HubShop --view front --glb-check
+//                                                also read the .glb back and render every
+//                                                view from it too, logging GLB_CHECK <file>
+//                                                max= mean= direct= glb= per view
+//   modelkit --render a.glb b.glb --out DIR --eye ... --view front
+//                                                render-only: the same views and file names
+//                                                as a build, from saved .glb files (no
+//                                                script, no bake); --views FILE instead
+//                                                takes one view per line (see read_views)
 //
 // The script (model.luau) builds meshes and paints textures through the API
 // below; this engine does the heavy, generic work (triangulating, export,
@@ -50,6 +59,7 @@ mod mesh;
 mod progress;
 mod work;
 mod render;
+mod scene;
 
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
@@ -174,7 +184,8 @@ impl UserData for MeshHandle {
 			let mesh = this.0.borrow();
 			let (c, s) = (turn.cos(), turn.sin());
 			let positions = mesh.positions.iter().map(|p| [p[0] * c - p[1] * s + x, p[0] * s + p[1] * c + y, p[2] + z]).collect();
-			let moved = Mesh { positions, faces: mesh.faces.clone(), smooth_angle: mesh.smooth_angle };
+			let normals = mesh.normals.as_ref().map(|list| list.iter().map(|n| [n[0] * c - n[1] * s, n[0] * s + n[1] * c, n[2]]).collect());
+			let moved = Mesh { positions, faces: mesh.faces.clone(), smooth_angle: mesh.smooth_angle, normals };
 			Ok(MeshHandle(Rc::new(RefCell::new(moved))))
 		});
 		methods.add_method("vertexCount", |_, this, ()| Ok(this.0.borrow().positions.len()));
@@ -298,7 +309,7 @@ impl UserData for MeshHandle {
 					Some(&[bottom, top]) if top > bottom => Some([bottom, top]),
 					_ => None,
 				},
-				// strokes = {{start, along, normal, length, width, tail, color, brush}, ...}:
+				// strokes = {{start, along, normal, length, width, tail, color, brush, seed}, ...}:
 				// lines drawn over the coat, color in sRGB. brush is "taper"
 				// (the default, crisp lines), "round" (a bristly mark pointed at
 				// both ends) or "sponge" (a lobed dab).
@@ -326,7 +337,9 @@ impl UserData for MeshHandle {
 								width: stroke.get("width")?,
 								color: stroke.get::<[f32; 3]>("color")?.map(bake::to_linear),
 								opacity: 1.0,
-								seed: index as u32,
+								// A stroke keeps the seed it is given, so a list cut down
+								// to the strokes near a chunk draws each as the whole list would.
+								seed: stroke.get::<Option<u32>>("seed")?.unwrap_or(index as u32),
 								tail: stroke.get::<Option<f64>>("tail")?.unwrap_or(0.0).clamp(0.0, 1.0),
 								marks: if stroke.contains_key("motion")? { Some(brush_spec(stroke)?) } else { None },
 							})
@@ -421,7 +434,9 @@ fn paint_part(name: &str, mesh: &Mesh, group: &[Rc<RefCell<Mesh>>], group_sizes:
 	let refs: Vec<&Mesh> = borrowed.iter().map(|m| &**m).collect();
 	let borrowed_group: Vec<_> = group.iter().map(|m| m.borrow()).collect();
 	let group_refs: Vec<&Mesh> = borrowed_group.iter().map(|m| &**m).collect();
+	let sampling = Instant::now();
 	let painted = bake::ImageSampler::new(mesh, &image.borrow());
+	cache::spent(cache::SAMPLER_MICROS, sampling);
 	let mut failed = None;
 	let mut base = |p: mesh::Vec3, n: mesh::Vec3| -> [f64; 3] {
 		let Some(paint) = paint else {
@@ -699,6 +714,221 @@ struct Review {
 	grid: Option<f64>,
 	share: Option<(usize, usize)>,
 	work_port: Option<u16>,
+	// --glb-check: render every view again from the written .glb and log how far apart they come.
+	glb_check: bool,
+}
+
+// One picture a review render writes: its file under the output folder and
+// where the camera stands for it.
+struct Shot {
+	file: String,
+	size: usize,
+	spin: f64,
+	focus: Option<(mesh::Vec3, f64)>,
+	eye: Option<(mesh::Vec3, mesh::Vec3)>,
+	side: Option<render::Side>,
+	parts: bool,
+	grid: Option<f64>,
+	// parts.png also writes its colour legend (parts.txt, and on stdout) and cells.txt.
+	legend: bool,
+}
+
+impl Shot {
+	fn new(file: String, size: usize) -> Shot {
+		Shot { file, size, spin: 0.0, focus: None, eye: None, side: None, parts: false, grid: None, legend: false }
+	}
+
+	fn view(&self) -> render::View {
+		render::View { size: self.size, spin: self.spin, focus: self.focus, eye: self.eye, side: self.side, parts: self.parts, grid: self.grid, ..Default::default() }
+	}
+
+	// Whether a ball at `centre` with `radius` can show in this shot; only an
+	// eye camera leaves anything out, the orthographic views frame it all.
+	fn sees(&self, centre: mesh::Vec3, radius: f64) -> bool {
+		match self.eye {
+			Some((eye, target)) => render::in_view(eye, target, centre, radius),
+			None => true,
+		}
+	}
+}
+
+// The review renders as jobs in a fixed order (machines sharing the renders
+// count on it): preview, parts, side views (each with its parts view),
+// turntable frames, close-ups, eyes. A job's shots are claimed together.
+// Without `whole` (a shard, a scattered share of a layout nobody looks at
+// whole) the preview and parts view are left out.
+fn review_jobs(size: usize, turntable: usize, closeups: &[Closeup], eyes: &[(mesh::Vec3, mesh::Vec3)], review: &Review, whole: bool) -> Vec<Vec<Shot>> {
+	let mut jobs = Vec::new();
+	if whole {
+		jobs.push(vec![Shot::new("preview.png".into(), size)]);
+	}
+	if whole && review.parts {
+		jobs.push(vec![Shot { parts: true, legend: true, ..Shot::new("parts.png".into(), size) }]);
+	}
+	for &side in &review.sides {
+		let mut job = vec![Shot { side: Some(side), grid: review.grid, ..Shot::new(format!("face_{}.png", side.name()), size) }];
+		if review.parts {
+			job.push(Shot { side: Some(side), grid: review.grid, parts: true, ..Shot::new(format!("face_{}_parts.png", side.name()), size) });
+		}
+		jobs.push(job);
+	}
+	for frame in 0..turntable {
+		let spin = frame as f64 / turntable as f64 * std::f64::consts::TAU;
+		jobs.push(vec![Shot { spin, ..Shot::new(format!("turntable/{frame:04}.png"), size) }]);
+	}
+	for (n, &(x, y, z, radius, degrees)) in closeups.iter().enumerate() {
+		jobs.push(vec![Shot { spin: degrees.to_radians(), focus: Some(([x, y, z], radius)), ..Shot::new(format!("closeup_{}.png", n + 1), size) }]);
+	}
+	for (n, &(eye, target)) in eyes.iter().enumerate() {
+		jobs.push(vec![Shot { eye: Some((eye, target)), ..Shot::new(format!("eye_{}.png", n + 1), size) }]);
+	}
+	jobs
+}
+
+// Draws a shot; parts.png keeps which part shows where, for cells.txt.
+fn draw_shot(parts: &[&Part], shot: &Shot) -> render::Frame {
+	if shot.legend {
+		return render::render_frame(parts, &shot.view());
+	}
+	render::Frame { pixels: render::render(parts, &shot.view()), owner: Vec::new(), owner_size: 0 }
+}
+
+fn save_shot(out: &Path, parts: &[&Part], shot: &Shot, frame: &render::Frame) -> Result<(), String> {
+	let path = out.join(&shot.file);
+	if let Some(folder) = path.parent() {
+		std::fs::create_dir_all(folder).map_err(|e| e.to_string())?;
+	}
+	write_png(&path, shot.size, &frame.pixels).map_err(|e| format!("{}: {e}", path.display()))?;
+	if !shot.legend {
+		return Ok(());
+	}
+	let legend = render::legend(parts);
+	print!("{legend}");
+	std::fs::write(out.join("parts.txt"), legend).map_err(|e| e.to_string())?;
+	std::fs::write(out.join("cells.txt"), render::cells(frame, parts, 6)).map_err(|e| e.to_string())
+}
+
+// Two RGB pictures apart: the largest difference in any channel (0-255), the
+// mean one, and how many pixels differ by more than 2 in some channel.
+fn difference(a: &[u8], b: &[u8]) -> (u8, f64, usize) {
+	if a.len() != b.len() || a.is_empty() {
+		return (255, 255.0, a.len().max(b.len()) / 3);
+	}
+	let mut largest = 0;
+	let mut sum = 0u64;
+	let mut over2 = 0;
+	for (x, y) in a.chunks_exact(3).zip(b.chunks_exact(3)) {
+		let gap = (0..3).map(|c| x[c].abs_diff(y[c])).max().unwrap_or(0);
+		largest = largest.max(gap);
+		over2 += (gap > 2) as usize;
+		sum += (0..3).map(|c| x[c].abs_diff(y[c]) as u64).sum::<u64>();
+	}
+	(largest, sum as f64 / a.len() as f64, over2)
+}
+
+// Reads a .glb back and decodes only the textures of parts some shot can see.
+fn load_for(bytes: Vec<u8>, jobs: &[Vec<Shot>]) -> Result<scene::Scene, String> {
+	let started = Instant::now();
+	let scene = scene::read(bytes)?;
+	let wanted = |part: usize| {
+		let (centre, radius) = scene.bounds[part];
+		scene.parts[part].preview && jobs.iter().flatten().any(|shot| shot.sees(centre, radius))
+	};
+	let decoded = scene.load_textures(wanted)?;
+	progress::say(&format!("read {} parts back, {decoded} textures decoded, in {:.2?}", scene.parts.len(), started.elapsed()));
+	Ok(scene)
+}
+
+// Render-only: reads each .glb once and renders every shot from memory into `out`.
+fn render_saved(files: &[PathBuf], out: &Path, jobs: &[Vec<Shot>], share: Option<(usize, usize)>) -> Result<(), String> {
+	let started = Instant::now();
+	let mut scenes = Vec::new();
+	for file in files {
+		let bytes = std::fs::read(file).map_err(|e| format!("{}: {e}", file.display()))?;
+		scenes.push(load_for(bytes, jobs).map_err(|e| format!("{}: {e}", file.display()))?);
+	}
+	let shown: Vec<&Part> = scenes.iter().flat_map(|scene| scene.parts.iter()).filter(|p| p.preview).collect();
+	std::fs::create_dir_all(out).map_err(|e| e.to_string())?;
+	for (at, job) in jobs.iter().enumerate() {
+		if share.is_some_and(|(index, count)| at % count != index - 1) {
+			continue;
+		}
+		for shot in job {
+			progress::say(&format!("rendering {} of {} parts", shot.file, shown.len()));
+			save_shot(out, &shown, shot, &draw_shot(&shown, shot))?;
+		}
+	}
+	eprintln!("rendered {} files, {} parts, total {:.2?}", files.len(), shown.len(), started.elapsed());
+	Ok(())
+}
+
+// A --views file: one shot per line, its flags then its output file, like
+//   --eye 0,-40,6,0,0,4 eye_gate.png
+//   --closeup 0,0,4,6,30 --size 1024 closeup_door.png
+//   --view front --grid 1 --parts face_front_parts.png
+//   --spin 90 side_quarter.png
+// --size defaults to the command line's; blank lines and # lines are skipped.
+fn read_views(path: &Path, size: usize) -> Result<Vec<Vec<Shot>>, String> {
+	let text = std::fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
+	let mut jobs = Vec::new();
+	for (number, line) in text.lines().enumerate() {
+		let line = line.trim();
+		if line.is_empty() || line.starts_with('#') {
+			continue;
+		}
+		let shot = parse_shot(line, size).map_err(|e| format!("{} line {}: {e}", path.display(), number + 1))?;
+		jobs.push(vec![shot]);
+	}
+	Ok(jobs)
+}
+
+fn parse_shot(line: &str, size: usize) -> Result<Shot, String> {
+	let words: Vec<&str> = line.split_whitespace().collect();
+	let Some((&file, flags)) = words.split_last() else {
+		return Err("empty view".into());
+	};
+	if file.starts_with("--") {
+		return Err("a view line ends with its output file name".into());
+	}
+	let mut shot = Shot::new(file.to_string(), size);
+	let mut at = 0;
+	while at < flags.len() {
+		let flag = flags[at];
+		if flag == "--parts" {
+			shot.parts = true;
+			at += 1;
+			continue;
+		}
+		let value = *flags.get(at + 1).ok_or(format!("{flag} needs a value"))?;
+		let numbers: Vec<f64> = value.split(',').filter_map(|n| n.parse().ok()).collect();
+		match flag {
+			"--size" => shot.size = value.parse().map_err(|_| format!("--size takes PIXELS, not {value}"))?,
+			"--spin" => {
+				let [degrees] = numbers[..] else {
+					return Err("--spin takes DEGREES".into());
+				};
+				shot.spin = degrees.to_radians();
+			}
+			"--eye" => {
+				let [ex, ey, ez, tx, ty, tz] = numbers[..] else {
+					return Err("--eye takes EX,EY,EZ,TX,TY,TZ".into());
+				};
+				shot.eye = Some(([ex, ey, ez], [tx, ty, tz]));
+			}
+			"--closeup" => {
+				let [x, y, z, radius, spin] = numbers[..] else {
+					return Err("--closeup takes X,Y,Z,RADIUS,SPIN".into());
+				};
+				shot.focus = Some(([x, y, z], radius));
+				shot.spin = spin.to_radians();
+			}
+			"--view" => shot.side = Some(render::Side::parse(value).ok_or("--view takes front, back, left, right, top or bottom")?),
+			"--grid" => shot.grid = Some(value.parse().ok().filter(|&n: &f64| n > 0.0).ok_or("--grid takes STUDS above 0")?),
+			_ => return Err(format!("unknown view flag {flag}")),
+		}
+		at += 2;
+	}
+	Ok(shot)
 }
 
 fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[(mesh::Vec3, mesh::Vec3)], shown_clip: Option<&str>, texel_scale: f64, detail_eyes: &[(mesh::Vec3, mesh::Vec3)], chunks: bool, shard: Option<(usize, usize)>, review: &Review) -> Result<(), String> {
@@ -732,6 +962,7 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 	unsafe { lua.exec_raw::<()>((), |state| mlua::ffi::lua_setsafeenv(state, mlua::ffi::LUA_GLOBALSINDEX, 1)) }.map_err(|e| e.to_string())?;
 	progress::say(&format!("running {name}/model.luau"));
 	lua.load(source).set_name(format!("@{}", script.display())).exec().map_err(|e| e.to_string())?;
+	progress::total(&format!("TIMING script: {:.1}s", started.elapsed().as_secs_f64()));
 	// A shard uses only part of the cache, so pruning would throw away the
 	// other shards' entries, unless the cache is the shard's own
 	// (MODELKIT_PRUNE=1, as the build-map-shards workflow sets).
@@ -754,8 +985,12 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 		}
 	}
 	progress::say(&format!("writing {name}.glb and {} textures", parts.len()));
+	let writing = Instant::now();
 	let glb = dir.join(format!("{name}.glb"));
-	std::fs::write(&glb, glb::write(&parts, &bones, &clips.borrow())).map_err(|e| e.to_string())?;
+	let glb_bytes = glb::write(&parts, &bones, &clips.borrow());
+	std::fs::write(&glb, &glb_bytes).map_err(|e| e.to_string())?;
+	// --glb-check reads the file back below; otherwise its bytes go now.
+	let written = review.glb_check.then_some(glb_bytes);
 	if !clips.borrow().is_empty() {
 		std::fs::write(dir.join(format!("{name}Clips.luau")), anim::write_luau(&name, &bones, &clips.borrow())).map_err(|e| e.to_string())?;
 	}
@@ -794,75 +1029,55 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 			std::fs::write(dir.join(format!("{}_Emissive.png", part.name)), mask).map_err(|e| e.to_string())?;
 		}
 	}
+	progress::total(&format!("TIMING {name}.glb and {} parts' texture files written: {:.1}s", parts.len(), writing.elapsed().as_secs_f64()));
 	let shown: Vec<&Part> = parts.iter().filter(|p| p.preview).collect();
 	// Every render below counts as one job, in a fixed order; with a share
 	// this machine makes only its jobs, so machines split one model's renders,
 	// and with a work port it claims each next job as it comes free.
-	let total = shard.is_none() as usize + (review.parts && shard.is_none()) as usize + review.sides.len() + turntable + closeups.len() + eyes.len();
-	let claims = RefCell::new(review.work_port.map(|port| work::RenderClaims::connect(port, total)).transpose()?);
-	let job = std::cell::Cell::new(0usize);
-	let mine = || {
-		let at = job.get();
-		job.set(at + 1);
-		match claims.borrow_mut().as_mut() {
+	let jobs = review_jobs(size, turntable, closeups, eyes, review, shard.is_none());
+	let mut claims = review.work_port.map(|port| work::RenderClaims::connect(port, jobs.len())).transpose()?;
+	// --glb-check: the .glb just written, read back, renders every view again.
+	let reloaded = match written {
+		Some(bytes) => Some(load_for(bytes, &jobs)?),
+		None => None,
+	};
+	// Both lists keep the build's part order, and each shot's one View draws all three.
+	let reloaded_shown: Vec<&Part> = reloaded.as_ref().map_or(Vec::new(), |scene| scene.parts.iter().filter(|p| p.preview).collect());
+	// The shown parts rounded as the .glb stores them (f32 corners, 8-bit
+	// textures): the reference the reader must match, so the pass bar is
+	// on max_f32, not on the format's own precision.
+	let rounded: Vec<Part> = if reloaded.is_some() { scene::rounded(&shown)? } else { Vec::new() };
+	let rounded_shown: Vec<&Part> = rounded.iter().collect();
+	let rendering = Instant::now();
+	let mut taken = 0;
+	for (at, job) in jobs.iter().enumerate() {
+		let mine = match claims.as_mut() {
 			Some(claims) => claims.mine(at),
 			None => review.share.map_or(true, |(index, count)| at % count == index - 1),
-		}
-	};
-	// A shard holds a scattered share of a layout, so nobody looks at its
-	// preview; skip the render. Asked-for views (turntable, closeups, eyes) still run.
-	if shard.is_none() && mine() {
-		progress::say(&format!("rendering preview of {} parts", shown.len()));
-		let preview = render::render(&shown, &render::View { size, spin: 0.0, focus: None, eye: None, ..Default::default() });
-		write_png(&dir.join("preview.png"), size, &preview).map_err(|e| e.to_string())?;
-	}
-	if review.parts && shard.is_none() && mine() {
-		let frame = render::render_frame(&shown, &render::View { size, parts: true, ..Default::default() });
-		write_png(&dir.join("parts.png"), size, &frame.pixels).map_err(|e| e.to_string())?;
-		let legend = render::legend(&shown);
-		print!("{legend}");
-		std::fs::write(dir.join("parts.txt"), legend).map_err(|e| e.to_string())?;
-		std::fs::write(dir.join("cells.txt"), render::cells(&frame, &shown, 6)).map_err(|e| e.to_string())?;
-	}
-	for &side in &review.sides {
-		if !mine() {
+		};
+		if !mine {
 			continue;
 		}
-		let view = |parts| render::View { size, side: Some(side), parts, grid: review.grid, ..Default::default() };
-		write_png(&dir.join(format!("face_{}.png", side.name())), size, &render::render(&shown, &view(false))).map_err(|e| e.to_string())?;
-		if review.parts {
-			write_png(&dir.join(format!("face_{}_parts.png", side.name())), size, &render::render(&shown, &view(true))).map_err(|e| e.to_string())?;
-		}
-	}
-
-	if turntable > 0 {
-		let frames = dir.join("turntable");
-		std::fs::create_dir_all(&frames).map_err(|e| e.to_string())?;
-		for frame in 0..turntable {
-			if !mine() {
+		taken += 1;
+		for shot in job {
+			progress::say(&format!("rendering {} of {} parts", shot.file, shown.len()));
+			let started = Instant::now();
+			let frame = draw_shot(&shown, shot);
+			let direct = started.elapsed().as_secs_f64();
+			save_shot(dir, &shown, shot, &frame)?;
+			progress::total(&format!("TIMING render {}: drawn in {direct:.1}s, {:.1}s with its save", shot.file, started.elapsed().as_secs_f64()));
+			if reloaded.is_none() {
 				continue;
 			}
-			let spin = frame as f64 / turntable as f64 * std::f64::consts::TAU;
-			let data = render::render(&shown, &render::View { size, spin, focus: None, eye: None, ..Default::default() });
-			write_png(&frames.join(format!("{frame:04}.png")), size, &data).map_err(|e| e.to_string())?;
+			let started = Instant::now();
+			let again = draw_shot(&reloaded_shown, shot);
+			let from_glb = started.elapsed().as_secs_f64();
+			let (max, mean, over2) = difference(&frame.pixels, &again.pixels);
+			let (max_f32, mean_f32, over2_f32) = difference(&draw_shot(&rounded_shown, shot).pixels, &again.pixels);
+			eprintln!("GLB_CHECK {} max={max} mean={mean:.3} over2={over2} max_f32={max_f32} mean_f32={mean_f32:.3} over2_f32={over2_f32} direct={direct:.2} glb={from_glb:.2}", shot.file);
 		}
 	}
-	for (n, &(x, y, z, radius, degrees)) in closeups.iter().enumerate() {
-		if !mine() {
-			continue;
-		}
-		let focus = Some(([x, y, z], radius));
-		let data = render::render(&shown, &render::View { size, spin: degrees.to_radians(), focus, eye: None, ..Default::default() });
-		write_png(&dir.join(format!("closeup_{}.png", n + 1)), size, &data).map_err(|e| e.to_string())?;
-	}
-	for (n, &(eye, target)) in eyes.iter().enumerate() {
-		if !mine() {
-			continue;
-		}
-		progress::say(&format!("rendering eye {}/{}", n + 1, eyes.len()));
-		let data = render::render(&shown, &render::View { size, spin: 0.0, focus: None, eye: Some((eye, target)), ..Default::default() });
-		write_png(&dir.join(format!("eye_{}.png", n + 1)), size, &data).map_err(|e| e.to_string())?;
-	}
+	progress::total(&format!("TIMING renders: {taken} of {} jobs made here, {:.1}s with the waits to claim", jobs.len(), rendering.elapsed().as_secs_f64()));
 	if let Some(wanted) = shown_clip {
 		let clips = clips.borrow();
 		let clip = clips.iter().find(|c| c.name == wanted).ok_or(format!("no clip {wanted}"))?;
@@ -893,6 +1108,14 @@ fn run(dir: &Path, turntable: usize, size: usize, closeups: &[Closeup], eyes: &[
 			let seconds = bake::PROFILE[layer].load(std::sync::atomic::Ordering::Relaxed) as f64 / 1e6;
 			eprintln!("  {label}: {seconds:.2}s");
 		}
+		// The stage totals again, on stdout: build-model.sh shows the script's
+		// output after the progress lines, and a build machine keeps only the
+		// end of a log, so said on stderr alone they would be cut away.
+		for line in progress::totals() {
+			println!("{line}");
+		}
+		let layers: Vec<String> = bake::PROFILE_LAYERS.iter().enumerate().map(|(layer, label)| format!("{label} {:.1}s", bake::PROFILE[layer].load(std::sync::atomic::Ordering::Relaxed) as f64 / 1e6)).collect();
+		println!("TIMING {name}: {} parts, total {:.1}s; {}", parts.len(), started.elapsed().as_secs_f64(), layers.join(", "));
 	}
 	Ok(())
 }
@@ -955,7 +1178,8 @@ fn share_flag(args: &[String], flag: &str) -> Option<(usize, usize)> {
 fn main() {
 	let args: Vec<String> = std::env::args().skip(1).collect();
 	let Some(dir) = args.first() else {
-		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--eye EX,EY,EZ,TX,TY,TZ]... [--clip NAME] [--parts] [--view SIDE]... [--grid STUDS] [--chunks] [--shard INDEX/COUNT] [--renders INDEX/COUNT] [--share-bakes] [--work-port PORT]");
+		eprintln!("usage: modelkit <model folder> [--turntable FRAMES] [--size PIXELS] [--closeup X,Y,Z,RADIUS,SPIN]... [--eye EX,EY,EZ,TX,TY,TZ]... [--clip NAME] [--parts] [--view SIDE]... [--grid STUDS] [--chunks] [--shard INDEX/COUNT] [--renders INDEX/COUNT] [--share-bakes] [--work-port PORT] [--glb-check]");
+		eprintln!("       modelkit --render <a.glb> [<b.glb>...] --out DIR [view flags as above | --views FILE] [--renders INDEX/COUNT]");
 		std::process::exit(2);
 	};
 	let turntable = match args.iter().position(|a| a == "--turntable") {
@@ -1027,7 +1251,28 @@ fn main() {
 	if args.iter().any(|a| a == "--no-cache") {
 		std::env::set_var("MODELKIT_NO_CACHE", "1");
 	}
-	let review = Review { parts: args.iter().any(|a| a == "--parts"), sides, grid, share, work_port };
+	let review = Review { parts: args.iter().any(|a| a == "--parts"), sides, grid, share, work_port, glb_check: args.iter().any(|a| a == "--glb-check") };
+	if dir == "--render" {
+		// The .glb files come first, up to the first flag.
+		let files: Vec<PathBuf> = args[1..].iter().take_while(|a| !a.starts_with("--")).map(PathBuf::from).collect();
+		let Some(out) = args.iter().position(|a| a == "--out").and_then(|at| args.get(at + 1)) else {
+			eprintln!("--render needs --out DIR");
+			std::process::exit(2);
+		};
+		if files.is_empty() {
+			eprintln!("--render needs at least one .glb");
+			std::process::exit(2);
+		}
+		let jobs = match args.iter().position(|a| a == "--views").and_then(|at| args.get(at + 1)) {
+			Some(list) => read_views(Path::new(list), size),
+			None => Ok(review_jobs(size, turntable, &closeups, &eyes, &review, true)),
+		};
+		if let Err(error) = jobs.and_then(|jobs| render_saved(&files, Path::new(out), &jobs, share)) {
+			eprintln!("error: {error}");
+			std::process::exit(1);
+		}
+		return;
+	}
 	if let Err(error) = run(Path::new(dir), turntable, size, &closeups, &eyes, clip.map(|c| c.as_str()), texel_scale, &detail_eyes, chunks, shard, &review) {
 		eprintln!("error: {error}");
 		std::process::exit(1);

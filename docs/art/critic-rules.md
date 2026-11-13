@@ -9,28 +9,37 @@ Keep each rule short and true of any model. Never name a model or the defect tha
 **Settled, not defects:** flat material maps with no metal and full roughness; the family look of riveted dark steel, bronze, amber lamps and hazard tape; footprints in whole cells; black shading inside mouths; the cool violet tint every contact shadow and base gradient carries, which is the family's shadow colour, judged only for width and placement; edges stair-stepped by single texels up close, because previews don't filter textures and the game does.
 
 ## It has to hold and work
-Take each thing a player can see as a real object under gravity. Say what holds it up and whether it would stay: anything hanging, leaning, stacked or perched. Moving parts must be able to move as meant, gears must mesh, and heavy parts need something strong enough under them. Pipes, cables and hoses must connect at both ends. If the atlases are too small to judge this, ask for a closer view. Anything that couldn't stay or work as built is at least MED.
+Take each thing a player can see as a real object under gravity. Say what holds it up and whether it would stay: anything hanging, leaning, stacked or perched. Moving parts must be able to move as meant, with room to clear their frame through the whole movement: a door or lid that would strike its frame or a neighbour when opened, or a wheel that would rub, can't move. Gears must mesh, and heavy parts need something strong enough under them. Pipes, cables and hoses must connect at both ends, through a flange, collar, clamp or socket: flag an end hanging in the air or stopping flush in a surface with nothing to meet it. Anything stacked or resting must touch what holds it up: a sliver of background or light between a stacked piece and the one under it, however thin, means it floats. Check every stack in a flat side view and measure the gap. If the atlases are too small to judge this, ask for a closer view. Anything that couldn't stay or work as built is at least MED, and so is a visible float.
 
 ## Things line up with what they attach to
 Where one thing mounts on, plugs into or sits in another, the two must agree. A fixing belongs on the hole, slot, seam or plate made for it, and repeated features should share one pattern. Compare modelled parts with the painted detail around them, because the two are built separately and drift apart. A fixing hides whatever is under it, so don't take a hidden feature as a match: continue the rows and columns of the surrounding pattern across the fixing and say whether it falls on them. Ask for a close view to check. A mismatch a player can see up close is MED.
 
+Things laid out along a curve, ring or radial plan turn with it. A fitting set round a ring faces its centre or runs along its edge, as the ring does. Flag fittings, grates, posts and props squared to the world axes while the layout they belong to curves around them. Check it one by one, never at a glance: in every view where a round plan shows (an aerial, a top-down, a wide view over a plaza), find each repeated small fitting set round it, such as drains, lamp posts, bollards, grates, benches and planters, and compare its edges with the line from the plan's centre through it. Fittings at different bearings round a ring that all show the same square outline to the camera are squared to the world, since turned ones would each show a different angle. List every such set you checked, even when it passes. That is MED.
+
 ## Parts meet properly
 Parts should join through something: a weld, flange, collar, bracket or seam. Flag parts simply pushed through each other where a player can see the join. Things should look as if they could be assembled and serviced.
+
+Parts meant to touch must touch. Flag a thin line of light or background between a lid and its box, a handle and its body, a panel and its frame. Flag the other way too: fixings sunk until their heads vanish, and one object poking through another. Either is MED where a player can see it up close.
+
+## Geometry is sound
+Flag faces you can see through from one side, missing caps on cylinders and tubes, walls so thin they flicker or vanish edge-on, and slivers or spikes from tiny or stretched triangles. Round things need enough sides for their size and how close a player gets: a pipe, wheel or barrel that reads as a prism up close is MED. Any hole a player can see into is MED.
 
 ## Familiar objects look like themselves
 Being recognisable isn't enough, because a crude version still reads through context. For each object a player knows from real life, name it, state the real thing's key ratios from what you know (overall length to width, head to handle, thickest to thinnest), and measure the same ratios on the model in the flat views. Give the numbers for each object in your RULES line. A ratio off by more than a third, or an outline the real thing doesn't have, is MED.
 
+Objects also keep real sizes against each other and the player, a capsule 4 wide and 5.5 tall. Measure doors, steps, barrels, crates and handles against the capsule and against each other where they share a view. A known object more than a third too big or too small for its world is MED.
+
 ## Swept shapes keep their section
-Anything swept along a path, such as a wire, pipe, hose, cable or rail, must keep a steady thickness through every bend. Flag pinches, kinks, twists and sudden sharp elbows, and bends that should be curves. Ask for a close view of each bend. A visible pinch or twist is MED.
+Anything swept along a path, such as a wire, pipe, hose, cable or rail, must keep a steady thickness through every bend. Flag pinches, kinks, twists and sudden sharp elbows, and bends that should be curves. Rigid pipes travel in straight lines and turn only through elbows at a multiple of 90 degrees. Flag every pipe bend that is not: a 45 degree elbow, a shallow dog-leg, a mitred diagonal turn, a curved or wavy run, and a straight run that drifts off square to the pipes and walls around it. Trace every pipe end to end, including conduits and runs lying on the ground. Only flexible runs such as hoses and cables may curve or sag, and the branches of a scrap-built tree may fork at any angle. Ask for a close view of each bend. A visible pinch or twist is MED, and so is a pipe bend at any angle other than a right angle.
 
 ## Forms aren't just primitives
-Flag objects that read as stacks of boxes, cylinders and spheres. Flag heaps and rocks that read as lumpy blobs or crystals, organic forms ended by a straight cut, and unrelated parts that all share one proportion.
+Flag objects that read as stacks of boxes, cylinders and spheres. Flag heaps and rocks that read as lumpy blobs or crystals, organic forms ended by a straight cut, and unrelated parts that all share one proportion. Flag sizes and spacings that all fall on whole studs or the same few numbers, which reads as typed rather than made.
 
 ## Detail has a hierarchy
 There should be large, medium and small forms, and one area that leads the eye. Flag detail spread evenly over everything, and an outline that stays a plain block. Also judge how much there is overall. A piece players stand beside needs main masses, then secondary fixtures (brackets, pipes, panels, hatches, cable runs), then fine marks (bolts, handles, labels), and signs of use with a reason, such as tools left out, stored supplies or repairs. Look at any stretch about 10 studs wide from player distance: if it shows only flat faces and one or two kinds of small fixing, the piece is under-detailed, even when every single part is correct. That is MED, and HIGH on a landmark or a main building.
 
 ## Order has a cause
-Structure may mirror, but damage, wear and clutter should not. Fasteners belong along seams and plate joins, not everywhere at even spacing. A tilt should come from what the thing rests on, not a small random angle. Flag clutter scattered by rule, and repeated props that differ only in size or rotation.
+Structure may mirror, but damage, wear and clutter should not. Fasteners belong along seams and plate joins, not everywhere at even spacing. A tilt should come from what the thing rests on, not a small random angle. Flag clutter scattered by rule, and repeated props that differ only in size, rotation or colour. Variants need a change in shape: a dent, a missing piece, a different fitting.
 
 ## Materials read as what they are
 Judge from player views whether metal reads as metal through colour, painted highlights and wear. Flag a material that reads as another, such as bronze that looks like wood. Printed markings such as tape and labels must not show brush strokes.
@@ -38,12 +47,21 @@ Judge from player views whether metal reads as metal through colour, painted hig
 ## The base paint layers are all there
 Every painted part, from the largest mass to a lone prop on open ground, needs three layers, each visible from where a player stands: a contact shadow wherever it meets the ground or another part, edge wear along its hard edges, and a hand-drawn gradient, light at the top and stepping down to dark at the base in visible brush tiers. Go through the parts and name any layer missing in your RULES line. A smooth airbrushed fade or flat colour is not the gradient, rust specks are not edge wear, and a foot that meets the ground with no darkening around it has no contact shadow. Any missing layer is MED, on any part.
 
-A contact shadow is tight ambient occlusion: a thin dark line hugging the exact join, about a stud at most however large the object is. The game lights the world dynamically, so nothing may be painted that reads as a cast shadow: flag a wide pool or band of darkness on the ground, one that runs well past where the object touches, or a shadow shaped unlike the object's foot. That is MED.
+A contact shadow is tight ambient occlusion: a thin dark line hugging the exact join, about a stud at most however large the object is. The game lights the world dynamically, so nothing may be painted that reads as a cast shadow: flag a wide pool or band of darkness on the ground, one that runs well past where the object touches, or a shadow shaped unlike the object's foot. That is MED. A shadow lies on the surface it darkens: from a low view, flag a dark sheet standing visibly above the ground, a gap between the shadow and the ground, or ground showing through under it. A lifted sheet also gives itself away from above: its edge stays sharp and straight where it crosses a bump, kerb or slope instead of following the ground, and it covers the lower parts of what stands in it. When no view is low enough to tell, ask for one (`VIEW:` at about 0.3 studs up, looking along the ground past the object's foot) instead of passing it. That is MED.
+
+## Each object keeps its own colour
+A colour belongs to an object, not to a region of space. Flag one object that changes colour partway across with no seam, decal or repair to explain it, and one object's colour spreading onto a neighbour it touches. Look hardest at clusters of similar props in different colours, such as crates, barrels and supplies, and along every seam where two differently coloured pieces touch: a fringe of the neighbour's colour along the edge is a bleed. That is MED.
+
+Paint belongs to the object, not one placement of it. Flag darkening, dirt or a contact shadow where nothing touches the object in this view, which means it was painted for another setting. That is MED.
 
 ## The bake is clean
 Stripes and patterns should close at seams and corners. Flag smeared decals, visible tiling, smears along diagonal joins, crisp and blurry surfaces side by side, and paint flecks with no chip or old coat to explain them.
 
+Brushwork keeps one scale and shape everywhere. Flag strokes stretched long or squashed flat on one face, mostly on long thin parts and slopes, and a part noticeably sharper or blurrier than the parts beside it. Compare stroke sizes between neighbouring parts in a close view and name them; a clear mismatch is MED.
+
 One surface wears one finish all over. A large mesh is baked in chunks, so look for a straight line across a rock, a floor or a wall where the paint changes character on either side: soft and mottled on one side, scratchy or flat on the other, a gradient that stops dead, wear that starts at the line, or brush strokes that end at the line on both sides as if cut. That is a chunk that missed its coat or was painted apart from its neighbours, and it is MED however small the chunk.
+
+Paint never shows the mesh it lies on. A regular pattern that follows the model's faces or cells rather than the material, such as a lattice, grid, checker or row of diamonds across ground, a wall or a roof, with the colour only along the cell edges and bare white, grey or flat base colour inside each cell, means the bake painted part of each face and missed the rest. Look for it hardest from above and far away, where the cells line up into a pattern like halftone print, and in close views of large flat ground, where a patch reads as blank paper next to painted ground. Any surface left white or untextured where its neighbours are painted counts too. That is HIGH.
 
 ## Wear is uneven
 Edge highlights and wear must vary in width, strength and length, with gaps. Flag the same stroke outlining every edge, and metal with no wear at all: clean doesn't mean new. Only printed markings stay crisp.
@@ -58,7 +76,9 @@ Most junk should be torn, crushed, bent or partial. One or two readable pieces a
 Text must be correctly spelled and readable from where it's meant to be read. Blocky bitmap letters are LOW. The prop must still say what it does with its text hidden. Each light needs a job.
 
 ## It's made for a player
-Judge controls, tools, handles and open ends from where a player stands. They should face a sensible way and fit a capsule 4 wide and 5.5 tall.
+Judge controls, tools, handles and open ends from where a player stands. They should face a sensible way and fit a capsule 4 wide and 5.5 tall. A model's front, where its controls, door or face are, points the way its notes or plan say the front points; flag a front that faces any other way. That is MED.
+
+Nothing a person could trip over runs across ground players walk on: no cables, pipes, hoses or conduits laid over walks, plazas, paths or yards, even with cover plates. Feeds run overhead, along walls or below ground. Wreckage on a map's rough, unwalked edge is exempt. A tripping run on walkable ground is MED.
 
 ## Every side holds up
 Check the back, sides and underside a player can reach. Flag a model that only works from its preview camera, and treatments that don't belong to one style.

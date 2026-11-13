@@ -9,6 +9,8 @@ use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::time::Instant;
 
 use crate::image::Image;
 use crate::mesh::{Face, Mesh};
@@ -41,6 +43,46 @@ pub fn set_sharing() {
 
 pub fn sharing() -> bool {
 	SHARING.get().is_some()
+}
+
+// Totals for the stage timings a build prints (work.rs, main.rs): paint layers
+// loaded and baked, with their microseconds, and what every paint pays even
+// when all its layers load: finding the layer keys, merging the part's chunks,
+// and reading the part's texels for its colour sampler.
+pub const LOADED: usize = 0;
+pub const LOAD_MICROS: usize = 1;
+pub const BAKED: usize = 2;
+pub const BAKE_MICROS: usize = 3;
+pub const KEY_MICROS: usize = 4;
+pub const MERGE_MICROS: usize = 5;
+pub const SAMPLER_MICROS: usize = 6;
+static TALLY: [AtomicU64; 7] = [AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0)];
+
+pub fn spent(slot: usize, since: Instant) {
+	TALLY[slot].fetch_add(since.elapsed().as_micros() as u64, Ordering::Relaxed);
+}
+
+// One layer asked for: loaded from the cache, or baked because it wasn't there.
+pub fn layer_done(loaded: bool, since: Instant) {
+	let (count, micros) = if loaded { (LOADED, LOAD_MICROS) } else { (BAKED, BAKE_MICROS) };
+	TALLY[count].fetch_add(1, Ordering::Relaxed);
+	spent(micros, since);
+}
+
+pub fn tally() -> [u64; 7] {
+	std::array::from_fn(|slot| TALLY[slot].load(Ordering::Relaxed))
+}
+
+// What the tally grew by since `before`, in words. Layers of one part load and
+// bake on two threads at once, so their seconds can overlap.
+pub fn tally_since(before: [u64; 7]) -> String {
+	let now = tally();
+	let grew = |slot: usize| now[slot] - before[slot];
+	let seconds = |slot: usize| grew(slot) as f64 / 1e6;
+	format!(
+		"layers {} loaded in {:.1}s and {} baked in {:.1}s; layer keys {:.1}s, merging chunks {:.1}s, colour samplers {:.1}s",
+		grew(LOADED), seconds(LOAD_MICROS), grew(BAKED), seconds(BAKE_MICROS), seconds(KEY_MICROS), seconds(MERGE_MICROS), seconds(SAMPLER_MICROS)
+	)
 }
 
 // How many chunks a model's paints are grouped into for machines to claim.
@@ -218,8 +260,9 @@ pub fn prune(dir: &Path, used: &[PathBuf]) {
 		return;
 	}
 	let Ok(entries) = std::fs::read_dir(dir.join(".cache")) else { return };
+	let used: std::collections::HashSet<&Path> = used.iter().map(PathBuf::as_path).collect();
 	for entry in entries.flatten() {
-		if !used.contains(&entry.path()) {
+		if !used.contains(entry.path().as_path()) {
 			let _ = std::fs::remove_file(entry.path());
 		}
 	}
@@ -281,7 +324,8 @@ pub struct Source {
 // `numbers`, the colour it starts from when `colour`, and the paint source.
 // None when caching is off, or a custom paint has no salt.
 pub fn layer_path(kind: &str, mesh: &Mesh, occluders: &[&Mesh], reach: bool, numbers: &[f64], colour: Option<&Image>, source: &Source) -> Option<PathBuf> {
-	PAINT_CACHE.with(|cell| {
+	let started = Instant::now();
+	let path = PAINT_CACHE.with(|cell| {
 		let state = cell.borrow();
 		let (dir, used) = state.as_ref()?;
 		if source.custom && source.salt.is_none() {
@@ -306,7 +350,9 @@ pub fn layer_path(kind: &str, mesh: &Mesh, occluders: &[&Mesh], reach: bool, num
 		let path = path(dir, &format!("{kind} {:016x}", hasher.finish()));
 		used.borrow_mut().push(path.clone());
 		Some(path)
-	})
+	});
+	spent(KEY_MICROS, started);
+	path
 }
 
 fn hash_mesh(hasher: &mut DefaultHasher, mesh: &Mesh) {

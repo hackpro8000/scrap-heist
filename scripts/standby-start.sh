@@ -8,7 +8,12 @@
 #
 # --on-machine, for a session that can't connect out: build machine 1 runs
 # the coordinator and does the uploads, and this session reaches it through
-# the build-queue branch. Needs the repo's TS_AUTHKEY secret.
+# the build-queue branch. With the repo's TS_AUTHKEY secret it is reached
+# over the tailnet, else through Cloudflare tunnels whose control port
+# admits only this session's key (scripts/coordinator.sh key).
+#
+# STANDBY_WORKFLOW_REF picks the branch whose workflow file runs (default:
+# the current branch).
 
 set -euo pipefail
 
@@ -20,8 +25,10 @@ fi
 shards="${1:-20}"
 ref="${2:-wip/coordinator}"
 cd "$(dirname "$0")/.."
+control_key=""
 if [ "${on_machine}" = yes ]; then
 	url="machine-1"
+	control_key="$(scripts/coordinator.sh key)"
 else
 	url="$(scripts/coordinator.sh url 2> /dev/null || true)"
 fi
@@ -38,14 +45,28 @@ branch="$(git rev-parse --abbrev-ref HEAD)"
 case "${ref}" in
 	wip/*) scripts/push-wip.sh "${ref}" > /dev/null ;;
 esac
-gh workflow run build-standby.yml --ref "${branch}" -f ref="${ref}" -f shards="${shards}" -f coordinator="${url}"
-# Say straight away if GitHub holds the run back.
+gh workflow run build-standby.yml --ref "${STANDBY_WORKFLOW_REF:-${branch}}" -f ref="${ref}" -f shards="${shards}" \
+	-f coordinator="${url}" -f control_key="${control_key}"
+# Say straight away if GitHub holds the run back, and alert if it still
+# does a minute in (ALERT QUEUED, docs/plans/multi-machine.md).
+dispatched="$(date +%s)"
 sleep 8
 state="$(gh run list --workflow build-standby.yml --limit 1 --json status,databaseId --jq '.[0] | "\(.databaseId) \(.status)"')"
 echo "standby run ${state}" >&2
 case "${state}" in *queued*) echo "warning: the run is queued; another run may still hold the machine slots (gh run list)" >&2 ;; esac
+while [[ "${state}" == *queued* ]] && [ $(( $(date +%s) - dispatched )) -lt 60 ]; do
+	sleep 10
+	state="$(gh run list --workflow build-standby.yml --limit 1 --json status,databaseId --jq '.[0] | "\(.databaseId) \(.status)"')"
+done
+if [[ "${state}" == *queued* ]]; then
+	holding="$(gh run list --status in_progress --limit 20 --json databaseId,workflowName \
+		--jq '[.[] | "\(.databaseId) (\(.workflowName))"] | join(", ")')"
+	echo "ALERT QUEUED: standby run ${state%% *} still queued after 60s; runs holding slots: ${holding:-none in this repo, so runs elsewhere on the account} | cancel them (gh run cancel <id>) or wait for them to end"
+fi
 if [ "${url}" = "machine-1" ]; then
 	echo "starting ${shards} machines; machine 1 coordinates and uploads, tasks go by the build-queue branch" >&2
+	echo "to talk to it live once it is up: scripts/coordinator.sh attach ${state%% *}" >&2
+	echo "(without TS_AUTHKEY, attach works once machine 1 has published its tunnel address, about a minute in)" >&2
 elif [ -n "${url}" ]; then
 	echo "starting ${shards} machines; they connect to ${url} (scripts/coordinator.sh status shows them)" >&2
 else

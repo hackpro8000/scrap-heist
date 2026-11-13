@@ -1,4 +1,4 @@
-local CACHE_KEY = "HubShop-d28bf4508d6bb561"
+local CACHE_KEY = "HubShop-60f775a57a686e0d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -857,8 +857,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -874,10 +876,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -889,6 +900,8 @@ local function finishParts()
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
@@ -902,6 +915,18 @@ local function finishParts()
 			rubber = entry.rubber,
 			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
 			highlightUnevenStep = entry.litUnevenStep,
@@ -954,12 +979,17 @@ local SMALL_MARKS = {
 -- pieces each lit from above) and `stain` (how far a short part's steps wander
 -- as blotches instead of bands; high values fleck a dark surface).
 local PRESETS = {
-	-- Steel standing alone on open ground.
-	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Steel standing alone on open ground. Its coat is paint over metal: the
+	-- roughness map polishes the worn rims and roughens creases and rust, and
+	-- the metalness map shows bare metal where the edge wear cuts through,
+	-- never under the rust.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 }, roughness = { base = 0.7, edge = -0.6, crease = 0.15, wear = 0.25 }, metalness = { base = 0.05, edge = 0.85, crease = 0, wear = -0.3 } },
 	-- Concrete footings and plinths.
 	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
 	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
-	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Stone's edges tilt hard in the normal map, along the highlight strokes,
+	-- and its roughness map polishes those worn rims while the creases stay matte.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 }, bevel = { tilt = 8 }, roughness = { base = 0.85, edge = -0.7, crease = 0.1, wear = 0 } },
 	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
 	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
 	-- The earth body of a heap: it darkens well under everything resting on it.
@@ -1034,15 +1064,38 @@ local function applyPreset(entry, preset)
 	if preset.softLit then
 		entry.softLit = preset.softLit
 	end
+	-- The normal map's bevel field, where the material shapes it.
+	if preset.bevel then
+		entry.bevelReach = entry.bevelReach or preset.bevel.reach
+		entry.bevelFold = entry.bevelFold or preset.bevel.fold
+		entry.bevelTilt = entry.bevelTilt or preset.bevel.tilt
+	end
+	-- The roughness map, from the material's base and the layers already baked.
+	if preset.roughness then
+		entry.roughnessBase = entry.roughnessBase or preset.roughness.base
+		entry.roughnessEdge = entry.roughnessEdge or preset.roughness.edge
+		entry.roughnessCrease = entry.roughnessCrease or preset.roughness.crease
+		entry.roughnessWear = entry.roughnessWear or preset.roughness.wear
+	end
+	if preset.metalness then
+		entry.metalnessBase = entry.metalnessBase or preset.metalness.base
+		entry.metalnessEdge = entry.metalnessEdge or preset.metalness.edge
+		entry.metalnessCrease = entry.metalnessCrease or preset.metalness.crease
+		entry.metalnessWear = entry.metalnessWear or preset.metalness.wear
+	end
 	entry.handTune = SMALL_MARKS
 	paintStepBands(entry, preset.bands)
 end
 
 local function handFinish(coats, plain, finish)
+	-- Every chunk of one part must come out with the same finish; a chunk
+	-- that doesn't is a seam in the paint, so it stops the build.
+	local finishes: { [string]: string } = {}
 	for _, entry in parts do
-		-- A chunked part takes the coat of the name it was built under.
-		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
-		if plain[name] then
+		-- A chunked part takes the coat of the part it was built under
+		-- (chunkedPart tags each chunk with it), not whatever its own name parses to.
+		local name = entry.chunkOf or entry.name
+		if plain[name] or plain[entry.name] then
 			continue
 		end
 		entry.hand = coats[name]
@@ -1060,40 +1113,92 @@ local function handFinish(coats, plain, finish)
 		if presetName then
 			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
 		end
+		local signature = `{entry.hand or "-"}/{presetName or "-"}`
+		if finishes[name] and finishes[name] ~= signature then
+			error(`chunks of {name} would wear different finishes ({finishes[name]} and {signature}); the paint would seam`)
+		end
+		finishes[name] = signature
 	end
 end
--- Small props and fittings shared by the town pieces. Each takes the mesh and
--- stands at its base height `z`.
+-- Small props and fittings shared by the town pieces. Each takes the mesh,
+-- stands at its base height `z` and returns its bounds, { x0, y0, z0, x1, y1, z1 }.
 local SUPPLY_TONES = { { 0.64, 0.36, 0.2 }, { 0.3, 0.44, 0.52 }, { 0.72, 0.56, 0.2 }, { 0.5, 0.5, 0.48 }, { 0.32, 0.42, 0.3 }, { 0.58, 0.24, 0.2 } }
 
--- A paint that gives each prop its own colour, so a clutter part isn't one tone.
-local function supplyTones(x: number, y: number, z: number): (number, number, number)
-	local tone = SUPPLY_TONES[(math.floor(x * 0.32) * 3 + math.floor(y * 0.32) * 5 + math.floor(z * 0.22)) % #SUPPLY_TONES + 1]
-	return tone[1], tone[2], tone[3]
+type Bounds = { number }
+
+-- Colour by object, never by region of space: each prop in a clutter part is
+-- registered with `prop(bounds, tone?)` as it is built, and `paint` gives a
+-- point the tone of the smallest prop holding it (the nearest, for a point
+-- just outside every one). A prop without its own tone takes the next in
+-- SUPPLY_TONES, so neighbours built one after another differ. Make one pair
+-- per part, before the part, and pass `paint` as its paint.
+local function supplyTones(): ((Bounds, { number }?) -> (), (number, number, number) -> (number, number, number))
+	local props: { { bounds: Bounds, tone: { number } } } = {}
+	local function prop(bounds: Bounds, tone: { number }?)
+		table.insert(props, { bounds = bounds, tone = tone or SUPPLY_TONES[#props % #SUPPLY_TONES + 1] })
+	end
+	local function paint(x: number, y: number, z: number): (number, number, number)
+		local best, bestScore = props[1], math.huge
+		for _, entry in props do
+			local b = entry.bounds
+			-- Distance outside the box (0 inside), then size, so the smallest
+			-- holder wins over a larger one it rests against.
+			local dx = math.max(b[1] - x, 0, x - b[4])
+			local dy = math.max(b[2] - y, 0, y - b[5])
+			local dz = math.max(b[3] - z, 0, z - b[6])
+			local score = math.sqrt(dx * dx + dy * dy + dz * dz) * 1000 + (b[4] - b[1]) * (b[5] - b[2]) * (b[6] - b[3])
+			if score < bestScore then
+				best, bestScore = entry, score
+			end
+		end
+		return best.tone[1], best.tone[2], best.tone[3]
+	end
+	return prop, paint
 end
 
-local function barrel(mesh, x: number, y: number, z: number)
-	cylinder(mesh, x, y, z + 0.9, 0.6, 1.8, "z", 14)
+-- A box() as a prop, returning its bounds.
+local function boxProp(mesh, x: number, y: number, z: number, wide: number, deep: number, high: number): Bounds
+	box(mesh, x, y, z, wide, deep, high)
+	return { x - wide / 2, y - deep / 2, z, x + wide / 2, y + deep / 2, z + high }
+end
+
+-- A strut() as a prop, returning its bounds.
+local function strutProp(mesh, x0: number, y0: number, z0: number, x1: number, y1: number, z1: number, thick: number): Bounds
+	strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local half = thick / 2
+	return { math.min(x0, x1) - half, math.min(y0, y1) - half, math.min(z0, z1) - half, math.max(x0, x1) + half, math.max(y0, y1) + half, math.max(z0, z1) + half }
+end
+
+-- An upright barrel; its bung sits `bungTurn` radians round from +x, so a
+-- stack can keep bungs clear of the barrel above. A barrel stacked on others
+-- stands at their z + BARREL_HIGH.
+local BARREL_HIGH = 1.8
+local function barrel(mesh, x: number, y: number, z: number, bungTurn: number?): Bounds
+	cylinder(mesh, x, y, z + BARREL_HIGH / 2, 0.6, BARREL_HIGH, "z", 14)
 	for _, h in { 0.08, 0.62, 1.2, 1.74 } do
 		cylinder(mesh, x, y, z + h, 0.66, 0.1, "z", 14)
 	end
-	cylinder(mesh, x + 0.25, y, z + 1.86, 0.1, 0.12, "z", 8)
+	local turn = bungTurn or 0
+	cylinder(mesh, x + math.cos(turn) * 0.25, y + math.sin(turn) * 0.25, z + 1.86, 0.1, 0.12, "z", 8)
+	return { x - 0.66, y - 0.66, z, x + 0.66, y + 0.66, z + 1.92 }
 end
 
-local function gasBottle(mesh, x: number, y: number, z: number)
+local function gasBottle(mesh, x: number, y: number, z: number): Bounds
 	cylinder(mesh, x, y, z + 1.3, 0.29, 2.6, "z", 12)
 	sphere(mesh, x, y, z + 2.6, 0.27, 0.27, 0.2, 4, 12)
 	cylinder(mesh, x, y, z + 2.88, 0.08, 0.3, "z", 8)
 	cylinder(mesh, x, y, z + 3.05, 0.17, 0.08, "z", 8)
+	return { x - 0.29, y - 0.29, z, x + 0.29, y + 0.29, z + 3.09 }
 end
 
-local function tyres(mesh, x: number, y: number, z: number, count: number)
+local function tyres(mesh, x: number, y: number, z: number, count: number): Bounds
 	for n = 0, count - 1 do
 		ring(mesh, x + (n * 7 % 3 - 1) * 0.1, y + (n * 5 % 3 - 1) * 0.1, z + 0.22 + n * 0.44, 0.42, 0.95, 0.44, "z", 16)
 	end
+	return { x - 1.05, y - 1.05, z, x + 1.05, y + 1.05, z + count * 0.44 }
 end
 
-local function toolChest(mesh, x: number, y: number, z: number)
+local function toolChest(mesh, x: number, y: number, z: number): Bounds
 	box(mesh, x, y, z + 0.28, 2.3, 1.5, 2.3)
 	for row = 0, 4 do
 		box(mesh, x, y - 0.78, z + 0.42 + row * 0.42, 2.06, 0.08, 0.36)
@@ -1104,6 +1209,7 @@ local function toolChest(mesh, x: number, y: number, z: number)
 			cylinder(mesh, x + cx, y + cy, z + 0.16, 0.16, 0.34, "z", 8)
 		end
 	end
+	return { x - 1.15, y - 0.91, z, x + 1.15, y + 0.75, z + 2.58 }
 end
 
 -- A ladder along z, standing off a wall by `off` (negative for a wall on the
@@ -1455,9 +1561,13 @@ part("CraneHook", nil, PIPE, function(mesh)
 	tube(mesh, { { CRANE_X, -6.5, JIB_Z + 0.62 }, { CRANE_X, 5.9, JIB_Z + 1.3 } }, 0.05, 6)
 end, nil, 0.1)
 
+-- Each stack its own weathered timber or rusted sheet: coloured per piece
+-- (supplyTones), never by where in space it stands.
+local TALL_CRATE, SMALL_CRATE, LEFT_CRATE, SHEET = { 0.62, 0.36, 0.2 }, { 0.42, 0.34, 0.26 }, { 0.5, 0.3, 0.16 }, { 0.46, 0.44, 0.42 }
+local stockPiece, stockPaint = supplyTones()
 part("StockPiles", nil, CONTAINER_RUST, function(mesh)
 	-- Slatted crates on the right; a sagging stack and torn sheet on the left.
-	local function crate(x, y, wide, deep, high)
+	local function crate(x, y, wide, deep, high, tone)
 		box(mesh, x, y, FLOOR, wide, deep, high)
 		for z = FLOOR + 0.3, FLOOR + high - 0.2, 0.42 do
 			box(mesh, x, y, z, wide + 0.08, deep + 0.08, 0.12)
@@ -1465,31 +1575,22 @@ part("StockPiles", nil, CONTAINER_RUST, function(mesh)
 		for _, side in { -1, 1 } do
 			box(mesh, x + side * (wide / 2 - 0.1), y - deep / 2 - 0.04, FLOOR, 0.2, 0.1, high)
 		end
+		stockPiece({ x - wide / 2 - 0.04, y - deep / 2 - 0.09, FLOOR, x + wide / 2 + 0.04, y + deep / 2 + 0.04, FLOOR + high }, tone)
 	end
-	crate(13.8, -6.6, 2, 2.1, 2.2)
-	crate(11.1, -7.1, 1.5, 1.7, 1.3)
-	crate(-13.7, -6.4, 2, 2.2, 1.7)
-	box(mesh, -13.8, -6.3, FLOOR + 1.7, 1.2, 1.2, 0.5)
-	strut(mesh, -11.9, -7.4, FLOOR, -10.4, -6, FLOOR + 1.3, 0.3)
-	strut(mesh, -10.5, -7.8, FLOOR, -9.8, -6.3, FLOOR + 0.7, 0.2)
+	crate(13.8, -6.6, 2, 2.1, 2.2, TALL_CRATE)
+	crate(11.1, -7.1, 1.5, 1.7, 1.3, SMALL_CRATE)
+	crate(-13.7, -6.4, 2, 2.2, 1.7, LEFT_CRATE)
+	stockPiece(boxProp(mesh, -13.8, -6.3, FLOOR + 1.7, 1.2, 1.2, 0.5), LEFT_CRATE)
+	stockPiece(strutProp(mesh, -11.9, -7.4, FLOOR, -10.4, -6, FLOOR + 1.3, 0.3), SHEET)
+	stockPiece(strutProp(mesh, -10.5, -7.8, FLOOR, -9.8, -6.3, FLOOR + 0.7, 0.2), SHEET)
 	-- Torn sheet and bent lengths thrown against the left-hand stack.
-	strut(mesh, -12.1, -8, FLOOR, -11.7, -7.7, FLOOR + 1.8, 0.8)
-	strut(mesh, -14.8, -7.9, FLOOR, -14.5, -7.65, FLOOR + 1.5, 0.55)
+	stockPiece(strutProp(mesh, -12.1, -8, FLOOR, -11.7, -7.7, FLOOR + 1.8, 0.8), SHEET)
+	stockPiece(strutProp(mesh, -14.8, -7.9, FLOOR, -14.5, -7.65, FLOOR + 1.5, 0.55), LEFT_CRATE)
 	-- Torn sheet and bent bar leaning on the right-hand crates.
-	strut(mesh, 15, -7.9, FLOOR, 14.4, -7.75, FLOOR + 2.1, 0.85)
-	strut(mesh, 12.3, -8.3, FLOOR, 12.5, -7.2, FLOOR + 1.5, 0.3)
-	strut(mesh, 10.2, -7.7, FLOOR, 10.9, -8.2, FLOOR + 0.8, 0.2)
-end, nil, rusting(0.1, function(x, _y, _z)
-	-- Each stack its own weathered timber or rusted sheet.
-	if x > 13 then
-		return 0.62, 0.36, 0.2
-	elseif x > 9 then
-		return 0.42, 0.34, 0.26
-	elseif x < -12.4 then
-		return 0.5, 0.3, 0.16
-	end
-	return 0.46, 0.44, 0.42
-end))
+	stockPiece(strutProp(mesh, 15, -7.9, FLOOR, 14.4, -7.75, FLOOR + 2.1, 0.85), TALL_CRATE)
+	stockPiece(strutProp(mesh, 12.3, -8.3, FLOOR, 12.5, -7.2, FLOOR + 1.5, 0.3), SMALL_CRATE)
+	stockPiece(strutProp(mesh, 10.2, -7.7, FLOOR, 10.9, -8.2, FLOOR + 0.8, 0.2), SMALL_CRATE)
+end, nil, rusting(0.1, stockPaint))
 
 -- The lived-in layer: door hardware, roof plant, a ladder, conduit, strings of
 -- bulbs, price boards and supplies stacked round the shop.
@@ -1648,24 +1749,29 @@ end, nil, function(x, _y, z)
 end)
 parts[#parts].crisp = true
 
+local supply, supplyPaint = supplyTones()
 part("Supplies", nil, { 0.5, 0.45, 0.3 }, function(mesh)
-	barrel(mesh, -16, 2.6, FLOOR)
-	barrel(mesh, -16, 4.1, FLOOR)
-	barrel(mesh, -15.9, 3.4, FLOOR + 1.86)
-	gasBottle(mesh, -16.1, 6.2, FLOOR)
-	gasBottle(mesh, -16.1, 7.2, FLOOR)
-	tyres(mesh, 16, 1.6, FLOOR, 3)
+	-- Two barrels with a third stood on their rims, bungs turned out from under it.
+	supply(barrel(mesh, -16, 2.6, FLOOR, -math.pi / 2))
+	supply(barrel(mesh, -16, 4.1, FLOOR, math.pi / 2))
+	supply(barrel(mesh, -15.9, 3.4, FLOOR + BARREL_HIGH))
+	supply(gasBottle(mesh, -16.1, 6.2, FLOOR))
+	supply(gasBottle(mesh, -16.1, 7.2, FLOOR))
+	supply(tyres(mesh, 16, 1.6, FLOOR, 3))
 	-- Goods out on the counter.
-	box(mesh, 5.4, COUNTER_Y, 3.4, 1.4, 1, 0.6)
-	box(mesh, 7.2, COUNTER_Y + 0.2, 3.4, 0.9, 0.7, 0.4)
+	supply(boxProp(mesh, 5.4, COUNTER_Y, 3.4, 1.4, 1, 0.6))
+	supply(boxProp(mesh, 7.2, COUNTER_Y + 0.2, 3.4, 0.9, 0.7, 0.4))
 	gear(mesh, 2, COUNTER_Y, 3.5, 0.55, 0.2, 9, "z")
+	supply({ 1.3, COUNTER_Y - 0.7, 3.4, 2.7, COUNTER_Y + 0.7, 3.6 })
 	cylinder(mesh, -6, COUNTER_Y, 3.65, 0.3, 0.5, "z", 10)
+	supply({ -6.3, COUNTER_Y - 0.3, 3.4, -5.7, COUNTER_Y + 0.3, 3.9 })
 	-- Stored on the lower roof.
-	box(mesh, 9, 7.2, LOWER_TOP - 0.12, 2.2, 1.8, 1)
+	supply(boxProp(mesh, 9, 7.2, LOWER_TOP - 0.12, 2.2, 1.8, 1))
 	for n = 0, 2 do
 		cylinder(mesh, 8.8, 1 + n * 0.5, LOWER_TOP - 0.12 + 0.2, 0.22, 4.2, "x", 8)
+		supply({ 6.7, 0.78 + n * 0.5, LOWER_TOP - 0.12 - 0.02, 10.9, 1.22 + n * 0.5, LOWER_TOP - 0.12 + 0.42 })
 	end
-end, nil, supplyTones)
+end, nil, supplyPaint)
 
 part("Cables", nil, { 0.08, 0.08, 0.1 }, function(mesh)
 	local z = 7.9

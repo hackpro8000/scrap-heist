@@ -304,9 +304,13 @@ part("CraneHook", nil, PIPE, function(mesh)
 	tube(mesh, { { CRANE_X, -6.5, JIB_Z + 0.62 }, { CRANE_X, 5.9, JIB_Z + 1.3 } }, 0.05, 6)
 end, nil, 0.1)
 
+-- Each stack its own weathered timber or rusted sheet: coloured per piece
+-- (supplyTones), never by where in space it stands.
+local TALL_CRATE, SMALL_CRATE, LEFT_CRATE, SHEET = { 0.62, 0.36, 0.2 }, { 0.42, 0.34, 0.26 }, { 0.5, 0.3, 0.16 }, { 0.46, 0.44, 0.42 }
+local stockPiece, stockPaint = supplyTones()
 part("StockPiles", nil, CONTAINER_RUST, function(mesh)
 	-- Slatted crates on the right; a sagging stack and torn sheet on the left.
-	local function crate(x, y, wide, deep, high)
+	local function crate(x, y, wide, deep, high, tone)
 		box(mesh, x, y, FLOOR, wide, deep, high)
 		for z = FLOOR + 0.3, FLOOR + high - 0.2, 0.42 do
 			box(mesh, x, y, z, wide + 0.08, deep + 0.08, 0.12)
@@ -314,31 +318,22 @@ part("StockPiles", nil, CONTAINER_RUST, function(mesh)
 		for _, side in { -1, 1 } do
 			box(mesh, x + side * (wide / 2 - 0.1), y - deep / 2 - 0.04, FLOOR, 0.2, 0.1, high)
 		end
+		stockPiece({ x - wide / 2 - 0.04, y - deep / 2 - 0.09, FLOOR, x + wide / 2 + 0.04, y + deep / 2 + 0.04, FLOOR + high }, tone)
 	end
-	crate(13.8, -6.6, 2, 2.1, 2.2)
-	crate(11.1, -7.1, 1.5, 1.7, 1.3)
-	crate(-13.7, -6.4, 2, 2.2, 1.7)
-	box(mesh, -13.8, -6.3, FLOOR + 1.7, 1.2, 1.2, 0.5)
-	strut(mesh, -11.9, -7.4, FLOOR, -10.4, -6, FLOOR + 1.3, 0.3)
-	strut(mesh, -10.5, -7.8, FLOOR, -9.8, -6.3, FLOOR + 0.7, 0.2)
+	crate(13.8, -6.6, 2, 2.1, 2.2, TALL_CRATE)
+	crate(11.1, -7.1, 1.5, 1.7, 1.3, SMALL_CRATE)
+	crate(-13.7, -6.4, 2, 2.2, 1.7, LEFT_CRATE)
+	stockPiece(boxProp(mesh, -13.8, -6.3, FLOOR + 1.7, 1.2, 1.2, 0.5), LEFT_CRATE)
+	stockPiece(strutProp(mesh, -11.9, -7.4, FLOOR, -10.4, -6, FLOOR + 1.3, 0.3), SHEET)
+	stockPiece(strutProp(mesh, -10.5, -7.8, FLOOR, -9.8, -6.3, FLOOR + 0.7, 0.2), SHEET)
 	-- Torn sheet and bent lengths thrown against the left-hand stack.
-	strut(mesh, -12.1, -8, FLOOR, -11.7, -7.7, FLOOR + 1.8, 0.8)
-	strut(mesh, -14.8, -7.9, FLOOR, -14.5, -7.65, FLOOR + 1.5, 0.55)
+	stockPiece(strutProp(mesh, -12.1, -8, FLOOR, -11.7, -7.7, FLOOR + 1.8, 0.8), SHEET)
+	stockPiece(strutProp(mesh, -14.8, -7.9, FLOOR, -14.5, -7.65, FLOOR + 1.5, 0.55), LEFT_CRATE)
 	-- Torn sheet and bent bar leaning on the right-hand crates.
-	strut(mesh, 15, -7.9, FLOOR, 14.4, -7.75, FLOOR + 2.1, 0.85)
-	strut(mesh, 12.3, -8.3, FLOOR, 12.5, -7.2, FLOOR + 1.5, 0.3)
-	strut(mesh, 10.2, -7.7, FLOOR, 10.9, -8.2, FLOOR + 0.8, 0.2)
-end, nil, rusting(0.1, function(x, _y, _z)
-	-- Each stack its own weathered timber or rusted sheet.
-	if x > 13 then
-		return 0.62, 0.36, 0.2
-	elseif x > 9 then
-		return 0.42, 0.34, 0.26
-	elseif x < -12.4 then
-		return 0.5, 0.3, 0.16
-	end
-	return 0.46, 0.44, 0.42
-end))
+	stockPiece(strutProp(mesh, 15, -7.9, FLOOR, 14.4, -7.75, FLOOR + 2.1, 0.85), TALL_CRATE)
+	stockPiece(strutProp(mesh, 12.3, -8.3, FLOOR, 12.5, -7.2, FLOOR + 1.5, 0.3), SMALL_CRATE)
+	stockPiece(strutProp(mesh, 10.2, -7.7, FLOOR, 10.9, -8.2, FLOOR + 0.8, 0.2), SMALL_CRATE)
+end, nil, rusting(0.1, stockPaint))
 
 -- The lived-in layer: door hardware, roof plant, a ladder, conduit, strings of
 -- bulbs, price boards and supplies stacked round the shop.
@@ -497,24 +492,29 @@ end, nil, function(x, _y, z)
 end)
 parts[#parts].crisp = true
 
+local supply, supplyPaint = supplyTones()
 part("Supplies", nil, { 0.5, 0.45, 0.3 }, function(mesh)
-	barrel(mesh, -16, 2.6, FLOOR)
-	barrel(mesh, -16, 4.1, FLOOR)
-	barrel(mesh, -15.9, 3.4, FLOOR + 1.86)
-	gasBottle(mesh, -16.1, 6.2, FLOOR)
-	gasBottle(mesh, -16.1, 7.2, FLOOR)
-	tyres(mesh, 16, 1.6, FLOOR, 3)
+	-- Two barrels with a third stood on their rims, bungs turned out from under it.
+	supply(barrel(mesh, -16, 2.6, FLOOR, -math.pi / 2))
+	supply(barrel(mesh, -16, 4.1, FLOOR, math.pi / 2))
+	supply(barrel(mesh, -15.9, 3.4, FLOOR + BARREL_HIGH))
+	supply(gasBottle(mesh, -16.1, 6.2, FLOOR))
+	supply(gasBottle(mesh, -16.1, 7.2, FLOOR))
+	supply(tyres(mesh, 16, 1.6, FLOOR, 3))
 	-- Goods out on the counter.
-	box(mesh, 5.4, COUNTER_Y, 3.4, 1.4, 1, 0.6)
-	box(mesh, 7.2, COUNTER_Y + 0.2, 3.4, 0.9, 0.7, 0.4)
+	supply(boxProp(mesh, 5.4, COUNTER_Y, 3.4, 1.4, 1, 0.6))
+	supply(boxProp(mesh, 7.2, COUNTER_Y + 0.2, 3.4, 0.9, 0.7, 0.4))
 	gear(mesh, 2, COUNTER_Y, 3.5, 0.55, 0.2, 9, "z")
+	supply({ 1.3, COUNTER_Y - 0.7, 3.4, 2.7, COUNTER_Y + 0.7, 3.6 })
 	cylinder(mesh, -6, COUNTER_Y, 3.65, 0.3, 0.5, "z", 10)
+	supply({ -6.3, COUNTER_Y - 0.3, 3.4, -5.7, COUNTER_Y + 0.3, 3.9 })
 	-- Stored on the lower roof.
-	box(mesh, 9, 7.2, LOWER_TOP - 0.12, 2.2, 1.8, 1)
+	supply(boxProp(mesh, 9, 7.2, LOWER_TOP - 0.12, 2.2, 1.8, 1))
 	for n = 0, 2 do
 		cylinder(mesh, 8.8, 1 + n * 0.5, LOWER_TOP - 0.12 + 0.2, 0.22, 4.2, "x", 8)
+		supply({ 6.7, 0.78 + n * 0.5, LOWER_TOP - 0.12 - 0.02, 10.9, 1.22 + n * 0.5, LOWER_TOP - 0.12 + 0.42 })
 	end
-end, nil, supplyTones)
+end, nil, supplyPaint)
 
 part("Cables", nil, { 0.08, 0.08, 0.1 }, function(mesh)
 	local z = 7.9

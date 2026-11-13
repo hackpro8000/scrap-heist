@@ -1,16 +1,25 @@
 #!/usr/bin/env python3
 """Keeps one standby build machine on a live connection to the coordinator
-(tools/coordinator/coordinator.py): it is sent each task the moment it is
-posted, builds it, and sends the results straight back, so nothing polls.
+(tools/coordinator/coordinator.py): it is leased one unit of a task at a
+time, builds it, and sends the results straight back, so nothing polls.
 
   scripts/standby-agent.py <coordinator url> <Layout> <index> <count> <idle minutes> <max minutes>
 
 It proves who it is with the identity token GitHub gives this job (the
-workflow grants id-token: write). A task is run as scripts/standby.sh runs
-one: its commit checked out, then that commit's scripts/standby-task.sh,
-into results/<task id>/. Then every file there goes back to the
+workflow grants id-token: write); <index> names it on the hub (g<index>).
+A unit comes as {"type": "task", "id", "task", "shard", "count"} and is run
+as scripts/standby.sh runs a task: its commit checked out, then that
+commit's scripts/standby-task.sh as shard <shard> of <count>, into
+results/<task id>-S<shard>/. Then every file there goes back to the
 coordinator, the handed-over objects' names.tsv before the objects, and a
-"done" message last.
+"done" message last; then the unit's share of the previews. Every message
+about a unit names its task and shard. {"type": "cancel", "task", "shard"}
+stops a unit (its processes killed, its folder removed) and is answered
+{"type": "idle"}; a task for that unit arriving while the cancel runs starts
+once it is over. Claims and bake pushes carry the unit's lease number, so
+the coordinator refuses a cancelled lease's late ones. The hello names the
+units still under way, so a restarted coordinator gives them back. Speaks
+only to the coordinator of this commit.
 
 Machine 1 may also be the uploader (the coordinator says so): objects
 arrive over the connection and are uploaded with this job's
@@ -22,11 +31,20 @@ no coordinator for LOST_MINUTES the machine ends, freeing its slot. A task
 sent again after a reconnect is not rebuilt: what it left is sent again.
 The machine ends after <idle minutes> without a task, at <max minutes>, or
 when the coordinator says stop.
+
+A numbered machine (scripts/cloud-worker.sh join) passes "published" as the
+url and 0 as the count. It reads the coordinator's address from
+address.json on the branch build-results/coordinator-address before every
+connection, so it follows a coordinator whose address changed or that was
+started again, and it never gives up for lack of one. Its hello carries its
+number (it is m<number> on the hub) and it takes units like any machine.
 """
 import asyncio
+import glob
 import json
 import os
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -44,6 +62,7 @@ import wire  # noqa: E402
 
 MAX_MESSAGE = 64 * 1024 * 1024
 LOST_MINUTES = 3
+ADDRESS_BRANCH = "build-results/coordinator-address"
 HEARTBEAT_SECONDS = 10
 SWAP_WAIT_SECONDS = 60
 CLAIM_WAIT_SECONDS = 15
@@ -51,6 +70,11 @@ CLAIM_TRIES = 4
 LOG_LINES_KEPT = 200
 REQUIRED_TOOLS = ("rg", "sd", "jq")
 AUDIENCE = "scrap-heist-coordinator"
+# A file bigger than this goes in parts, so heartbeats get onto the wire
+# between them instead of waiting behind the whole file (send_file).
+PART_BYTES = 1024 * 1024
+# Failed connections in a row before ALERT TUNNEL_DOWN.
+TUNNEL_ALERT_FAILURES = 3
 
 
 # Lines also go to the coordinator, live, once connected (Agent.session).
@@ -65,6 +89,42 @@ def say(message):
 	print(f"agent: {message}", file=sys.stderr, flush=True)
 	if forward:
 		forward(message)
+
+
+def alert(line):
+	"""An ALERT or CLEARED line (docs/plans/multi-machine.md, Alerts): alone
+	on its line in the job log, and passed to the hub when connected."""
+	print(line, file=sys.stderr, flush=True)
+	if forward:
+		forward(line)
+
+
+def http_status(error):
+	"""The HTTP status a refused websocket handshake answered with, or None
+	(websockets 10 names it status_code, 13 keeps it on the response)."""
+	code = getattr(error, "status_code", None)
+	return code or getattr(getattr(error, "response", None), "status_code", None)
+
+
+def free_space():
+	"""Free disk for the work folder and available memory, in GB, for heartbeats."""
+	disk = shutil.disk_usage(os.getcwd()).free / 1e9
+	memory = None
+	try:
+		with open("/proc/meminfo") as file:
+			for line in file:
+				if line.startswith("MemAvailable:"):
+					memory = round(int(line.split()[1]) / 1e6, 1)
+					break
+	except OSError:
+		pass
+	return round(disk, 1), memory
+
+
+def remote_head(branch):
+	"""The commit a branch on GitHub points at, or ""."""
+	listed = subprocess.run(["git", "ls-remote", "origin", f"refs/heads/{branch}"], capture_output=True, text=True, timeout=60)
+	return listed.stdout.split("\t")[0].strip() if listed.returncode == 0 else ""
 
 
 def ensure_tools():
@@ -97,7 +157,12 @@ def push_bakes(model, share, out, since):
 				os.link(entry.path, os.path.join(fresh, entry.name))
 		if not os.listdir(fresh):
 			return ""
-		pushed = subprocess.run(["scripts/push-folder.sh", fresh, "build-bakes/" + share.replace("@", "-"), f"bakes {share}"], capture_output=True, text=True)
+		branch = "build-bakes/" + share.replace("@", "-")
+		pushed = subprocess.run(["scripts/push-folder.sh", fresh, branch, f"bakes {share}"], capture_output=True, text=True)
+		if pushed.returncode != 0 and "cannot lock ref" in pushed.stderr and "reference already exists" in pushed.stderr:
+			# Another machine saved the same bake first: theirs serves as ours.
+			say(f"bakes of {share} already saved by another machine; taking theirs")
+			return remote_head(branch)
 		if pushed.returncode != 0:
 			say(f"could not push bakes of {share}: {pushed.stderr.strip()[-200:]}")
 			return ""
@@ -116,6 +181,52 @@ def push_preview(folder, share):
 	return pushed.stdout.strip()
 
 
+def kill_tree(pid):
+	"""Kills a unit's process and everything under it. Its own process group
+	is not enough: scripts/standby-task.sh starts its lanes with setsid, so
+	every descendant's group goes too (found through /proc)."""
+	parents = {}
+	for entry in os.listdir("/proc"):
+		if not entry.isdigit():
+			continue
+		try:
+			with open(f"/proc/{entry}/stat") as file:
+				parents.setdefault(int(file.read().rsplit(")", 1)[1].split()[1]), []).append(int(entry))
+		except (OSError, IndexError, ValueError):
+			continue
+	tree, at = [pid], 0
+	while at < len(tree):
+		tree += parents.get(tree[at], [])
+		at += 1
+	own = os.getpgrp()
+	for process in tree:
+		try:
+			group = os.getpgid(process)
+			if group != own:
+				os.killpg(group, signal.SIGKILL)
+		except OSError:
+			pass
+		try:
+			os.kill(process, signal.SIGKILL)
+		except OSError:
+			pass
+
+
+def newest_log(path):
+	"""The log a stage wrote to last: its own, or in a build a lane's
+	(scripts/standby-task.sh writes lane-<n>.log beside build.log). The
+	memory probe's probe.log is left out: it writes every 10 s, hung or not."""
+	best, newest = path, -1.0
+	for candidate in [path, *glob.glob(os.path.join(os.path.dirname(path), "lane-*.log"))]:
+		try:
+			when = os.path.getmtime(candidate)
+		except OSError:
+			continue
+		if when > newest:
+			best, newest = candidate, when
+	return best
+
+
 def last_line(path):
 	try:
 		with open(path, "rb") as file:
@@ -127,7 +238,14 @@ def last_line(path):
 	return next((line.strip() for line in reversed(lines) if line.strip()), "")[:200]
 
 
+WORKER_TOKEN = ""  # a cloud worker's minted token, taken from the environment by main()
+
+
 def identity_token():
+	# A worker that is not a GitHub machine (scripts/cloud-worker.sh) shows its
+	# minted token; taken out of the environment so builds never see it.
+	if WORKER_TOKEN:
+		return "worker:" + WORKER_TOKEN
 	url = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_URL")
 	bearer = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
 	if not url or not bearer:
@@ -140,43 +258,69 @@ def identity_token():
 class Agent:
 	def __init__(self, url, layout, index, count, idle_minutes, max_minutes):
 		self.url, self.layout, self.index, self.count = url, layout, int(index), int(count)
+		self.published = url == "published"
+		self.machine = self.index if self.count == 0 else None
 		self.idle_seconds = int(idle_minutes) * 60
 		self.stop_at = time.monotonic() + int(max_minutes) * 60
 		self.idle_until = time.monotonic() + self.idle_seconds
-		self.built = {}  # task id -> results folder
+		# A unit is (task id, shard); a machine may do several units of one task.
+		self.built = {}  # unit -> results folder
 		self.by_branch = {}  # task id -> whether its objects went to a branch
 		self.git_lock = threading.Lock()
-		self.handling = set()  # task ids with a handle() still running
+		self.handling = set()  # units with a handle() still running
+		self.cancelling = {}  # unit -> its cancel() while it runs (stop_unit)
+		# unit -> {"cancelled": bool, "processes": set of Popen, "task": its asyncio task}
+		self.units = {}
 		self.claims = {}  # claim number -> future for the job the coordinator gives it
 		self.claim_number = 0
 		self.timings = {}  # (task id, model) -> seconds per stage, reported when the model is done
 		self.bakes_ready = {}  # (task id, model) -> future for the commits of every machine's bakes
 		self.bakes_seen = {}  # (task id, model) -> the commits announced so far
-		self.activities = {}  # task id -> what this machine is doing for it (heartbeat() reports them)
+		self.activities = {}  # unit -> what this machine is doing for it (heartbeat() reports them)
 		self.stopped = False
+		self.failures = 0  # connections in a row that failed or dropped (ALERT TUNNEL_DOWN)
+		self.address = url  # the coordinator address last dialled
 		self.uploader = None
 		self.socket = None
 		self.loop = None
 		self.inbox = os.path.join(os.getcwd(), "upload-inbox")
 
-	def run_task(self, identity, text):
-		out = os.path.join("results", identity)
+	@staticmethod
+	def run_process(work, command, **options):
+		"""Runs one of a unit's processes in its own session, so cancel() can
+		kill it with everything under it. Returns (exit code, stdout)."""
+		if work["cancelled"]:
+			return -9, ""
+		process = subprocess.Popen(command, start_new_session=True, **options)
+		work["processes"].add(process)
+		try:
+			output, _ = process.communicate()
+		finally:
+			work["processes"].discard(process)
+		return process.returncode, output or ""
+
+	def run_task(self, unit, text, count, out, work):
+		identity, shard = unit
+		# A unit starts clean, whatever an earlier try of it left.
+		shutil.rmtree(out, ignore_errors=True)
 		os.makedirs(out, exist_ok=True)
 		with open(os.path.join(out, "task.txt"), "w") as file:
 			file.write(text)
 		ref = next((line[4:] for line in text.splitlines() if line.startswith("ref=")), "")
 		log = open(os.path.join(out, "build.log"), "w")
-		ok = subprocess.run(["git", "fetch", "-q", "--depth=1", "origin", ref], stdout=log, stderr=log).returncode == 0
-		ok = ok and subprocess.run(["git", "checkout", "-q", "-f", "FETCH_HEAD"], stdout=log, stderr=log).returncode == 0
+		work["checkout"] = True
+		ok = self.run_process(work, ["git", "fetch", "-q", "--depth=1", "origin", ref], stdout=log, stderr=log)[0] == 0
+		ok = ok and self.run_process(work, ["git", "checkout", "-q", "-f", "FETCH_HEAD"], stdout=log, stderr=log)[0] == 0
+		work["checkout"] = False
 		log.close()
 		if ok:
-			result = subprocess.run(["scripts/standby-task.sh", self.layout, str(self.index), str(self.count), out],
-				capture_output=True, text=True)
-			say(f"task {identity}: {result.stdout.strip()}")
+			code, output = self.run_process(work, ["scripts/standby-task.sh", self.layout, str(shard), str(count), out],
+				stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+			say(f"task {identity} S{shard}: {output.strip()}")
 		else:
 			with open(os.path.join(out, "summary.txt"), "w") as file:
 				file.write("status=FAILED\nbuild=-\nupload=-\ntotal=0\nparts=0\n")
-			say(f"task {identity}: could not check out {ref}")
+			say(f"task {identity} S{shard}: could not check out {ref}")
 		return out
 
 	async def send(self, message):
@@ -190,30 +334,47 @@ class Agent:
 			except websockets.ConnectionClosed:
 				await asyncio.sleep(1)
 
-	def begin(self, identity, stage, log, model=""):
-		self.activities[identity] = {"stage": stage, "model": model, "log": log, "since": time.monotonic()}
+	def begin(self, unit, stage, log, model=""):
+		self.activities[unit] = {"stage": stage, "model": model, "log": log, "since": time.monotonic()}
 
-	def report(self, identity, work):
-		"""One heartbeat: the stage, the log's last line, and how long the log
-		has gone without a new one (a bake's line comes only when it ends)."""
-		seconds = time.monotonic() - work["since"]
+	def moved(self, unit):
+		"""A send or a claim made progress: the stage is not quiet, whatever its log says."""
+		work = self.activities.get(unit)
+		if work:
+			work["moved"] = time.monotonic()
+
+	def report(self, unit, work):
+		"""One heartbeat: the stage, the log's last line, how long the log
+		has gone without a new one (a bake's line comes only when it ends),
+		and the machine's free disk and memory. Waiting in the swap for other
+		machines' bakes is never quiet: share_bakes bounds that wait itself,
+		and a peer's long bake must not get this unit re-dealt as wedged."""
+		now = time.monotonic()
+		if work["stage"] == "swap":
+			work["moved"] = now
+		seconds = now - work["since"]
+		quiet = min(seconds, now - work.get("moved", work["since"]))
+		log = newest_log(work["log"])
 		try:
-			quiet = min(seconds, time.time() - os.path.getmtime(work["log"]))
+			quiet = min(quiet, time.time() - os.path.getmtime(log))
 		except OSError:
-			quiet = seconds
-		return json.dumps({"type": "progress", "task": identity, "stage": work["stage"], "model": work["model"],
-			"line": last_line(work["log"]), "quiet": round(quiet), "seconds": round(seconds)})
+			pass
+		disk, memory = free_space()
+		return json.dumps({"type": "progress", "task": unit[0], "shard": unit[1], "stage": work["stage"], "model": work["model"],
+			"line": last_line(log), "quiet": round(quiet), "seconds": round(seconds),
+			"disk_gb": disk, "memory_gb": memory})
 
 	async def heartbeat(self, socket):
 		try:
 			while True:
 				await asyncio.sleep(HEARTBEAT_SECONDS)
-				for identity, work in list(self.activities.items()):
-					await socket.send(self.report(identity, work))
+				for unit, work in list(self.activities.items()):
+					await socket.send(self.report(unit, work))
 		except websockets.ConnectionClosed:
 			pass  # session() ends too; the next connection starts its own
 
-	async def send_results(self, identity, out):
+	async def send_results(self, unit, out):
+		identity, shard = unit
 		files = []
 		for directory, _, names in os.walk(out):
 			for name in names:
@@ -226,75 +387,178 @@ class Agent:
 				files.append(relative)
 		# Names before objects, so the coordinator knows each object's label.
 		files.sort(key=lambda path: (not path.endswith("names.tsv"), path))
+		self.begin(unit, "send", os.path.join(out, "build.log"))
 		for relative in files:
 			with open(os.path.join(out, relative), "rb") as file:
 				data = file.read()
-			await self.send(wire.pack({"type": "file", "task": identity, "path": relative, "size": len(data)}, data))
+			await self.send_file(unit, relative, data)
 		summary = open(os.path.join(out, "summary.txt")).read() if os.path.isfile(os.path.join(out, "summary.txt")) else "status=FAILED\n"
-		await self.send(json.dumps({"type": "done", "task": identity, "summary": summary}))
+		await self.send(json.dumps({"type": "done", "task": identity, "shard": shard, "summary": summary}))
 
-	async def handle(self, identity, text):
+	async def send_file(self, unit, relative, data):
+		"""One result file. A big one goes in parts, each awaited, so a
+		heartbeat waits behind one part, never the whole file; the
+		coordinator joins them (Coordinator.join_part). If the connection
+		changes midway, the file starts again on the new one."""
+		identity, shard = unit
+		if len(data) <= PART_BYTES:
+			await self.send(wire.pack({"type": "file", "task": identity, "shard": shard, "path": relative, "size": len(data)}, data))
+			self.moved(unit)
+			return
+		while True:
+			socket = self.socket
+			for offset in range(0, len(data), PART_BYTES):
+				await self.send(wire.pack({"type": "file-part", "task": identity, "shard": shard, "path": relative, "offset": offset,
+					"size": len(data)}, data[offset:offset + PART_BYTES]))
+				self.moved(unit)
+				if self.socket is not socket:
+					break
+			else:
+				return
+
+	def take(self, event):
+		"""A unit leased by the coordinator. One already under way (sent again
+		after a reconnect) carries on, under the lease number it is sent now,
+		and answers on the new connection. One whose cancel is still running
+		starts once the cancel is over."""
+		unit = (event["id"], event["shard"])
+		stopping = self.cancelling.get(unit)
+		if stopping:
+			asyncio.create_task(self.take_after(stopping, event))
+			return
+		if unit in self.handling:
+			if unit in self.units:
+				self.units[unit]["lease"] = event.get("lease")
+			return
+		self.handling.add(unit)
+		work = self.units[unit] = {"cancelled": False, "processes": set(), "lease": event.get("lease")}
+		work["task"] = asyncio.create_task(self.handle(unit, event["task"], event["count"], work))
+
+	async def take_after(self, stopping, event):
+		# wait(), not await: this waiter's own end must not cancel the cancel.
+		await asyncio.wait({stopping})
+		self.take(event)
+
+	def stop_unit(self, event):
+		"""A cancel from the coordinator, run beside the connection's reading
+		and kept in self.cancelling until it is over, so take() can wait for it."""
+		unit = (event.get("task"), event.get("shard"))
+		if not isinstance(unit[0], str) or not isinstance(unit[1], int) or unit in self.cancelling:
+			return
+		stopping = self.cancelling[unit] = asyncio.create_task(self.cancel(event))
+		stopping.add_done_callback(lambda done: self.cancelling.pop(unit, None) if self.cancelling.get(unit) is done else None)
+
+	async def cancel(self, event):
+		"""The coordinator took a unit back: kill its processes, drop what it
+		made, and say this machine is idle. Answered even for a unit this
+		machine never had (it may have restarted since)."""
+		unit = (event.get("task"), event.get("shard"))
+		work = self.units.get(unit)
+		if work:
+			work["cancelled"] = True
+			for process in list(work["processes"]):
+				kill_tree(process.pid)
+			running = work.get("task")
+			if running and not running.done():
+				running.cancel()
+				try:
+					await running
+				except BaseException:
+					pass
+			if work.get("checkout") and os.path.exists(os.path.join(".git", "index.lock")):
+				# A checkout killed midway leaves its lock; the next unit's would fail.
+				os.remove(os.path.join(".git", "index.lock"))
+			say(f"task {unit[0]} S{unit[1]}: cancelled by the coordinator")
+		self.handling.discard(unit)
+		self.activities.pop(unit, None)
+		if self.units.get(unit) is work:
+			self.units.pop(unit, None)
+		out = self.built.pop(unit, None) or os.path.join("results", f"{unit[0]}-S{unit[1]}")
+		if isinstance(unit[0], str) and isinstance(unit[1], int):
+			shutil.rmtree(out, ignore_errors=True)
+		await self.send(json.dumps({"type": "idle", "task": unit[0], "shard": unit[1]}))
+
+	async def handle(self, unit, text, count, work):
+		identity, shard = unit
 		self.idle_until = time.monotonic() + self.idle_seconds
 		self.by_branch[identity] = "hand-over=branch" in text
-		# The coordinator posts a machine's unfinished tasks again when it
-		# reconnects. The run already going answers on the new connection.
-		if identity in self.handling:
-			return
-		self.handling.add(identity)
 		try:
-			if identity not in self.built:
-				self.begin(identity, "build", os.path.join("results", identity, "build.log"))
-				self.built[identity] = await asyncio.to_thread(self.run_task, identity, text)
-			await self.send_results(identity, self.built[identity])
+			if unit not in self.built:
+				out = os.path.join("results", f"{identity}-S{shard}")
+				self.begin(unit, "build", os.path.join(out, "build.log"))
+				try:
+					self.built[unit] = await asyncio.to_thread(self.run_task, unit, text, count, out, work)
+				except Exception as error:
+					# A full disk, say: the coordinator must still hear this unit is over.
+					say(f"task {identity} S{shard}: could not run: {error}")
+					await self.send(json.dumps({"type": "done", "task": identity, "shard": shard,
+						"summary": "status=FAILED\nbuild=-\nupload=-\ntotal=0\nparts=0\n"}))
+					return
+			if work["cancelled"]:
+				return
+			await self.send_results(unit, self.built[unit])
 			self.idle_until = time.monotonic() + self.idle_seconds
-			await self.send_previews(identity, text)
+			await self.send_previews(unit, text, count, work)
 		finally:
-			self.activities.pop(identity, None)
-			self.handling.discard(identity)
-		await self.send(json.dumps({"type": "progress", "task": identity, "stage": "done", "model": "", "line": "", "quiet": 0, "seconds": 0}))
+			self.activities.pop(unit, None)
+			self.handling.discard(unit)
+			if self.units.get(unit) is work:
+				self.units.pop(unit, None)
+		await self.send(json.dumps({"type": "progress", "task": identity, "shard": shard, "stage": "done", "model": "", "line": "", "quiet": 0, "seconds": 0}))
 
-	async def send_previews(self, identity, text):
-		"""Renders this shard's share of the task's previews once its build
+	async def send_previews(self, unit, text, count, work):
+		"""Renders this unit's share of the task's previews once its build
 		result has gone (scripts/standby-previews.sh), sends them, then says
-		so, even with nothing to render, so the coordinator can count shards."""
+		so, even with nothing to render, so the coordinator can count units."""
+		identity, shard = unit
 		names = next((line[8:] for line in text.splitlines() if line.startswith("preview=")), "")
 		if not names:
 			return
-		out = os.path.join(self.built[identity], "previews-run")
-		# This shard's share: every count-th name from its index. Each model
+		out = os.path.join(self.built[unit], "previews-run")
+		# This unit's share: every count-th name from its shard. Each model
 		# goes the moment it is rendered, so the first preview comes in seconds.
-		share = [name for n, name in enumerate(names.split(",")) if n % self.count == self.index - 1]
+		share = [name for n, name in enumerate(names.split(",")) if n % count == shard - 1]
 		for model in share:
 			folder = os.path.join(out, "previews", model)
+			began = time.monotonic()
 			if not os.path.isdir(folder):
 				env, server = dict(os.environ), None
 				log = os.path.join(folder, "build.log")
-				if "@" in model and int(model.rsplit("@", 1)[1]) > 1:
-					os.makedirs(out, exist_ok=True)
-					self.timings.setdefault((identity, model.split("@")[0]), {})["bake_start"] = time.monotonic()
-					# A second back, for a file saved in the second this began.
-					server = await self.claim_server(identity, model, out, time.time() - 1)
-					env["WORK_PORT"] = str(server.sockets[0].getsockname()[1])
-					self.begin(identity, "bake", log, model)
-				else:
-					self.begin(identity, "render", log, model)
-				await asyncio.to_thread(subprocess.run, ["scripts/standby-previews.sh", model, "1", "1", out], capture_output=True, env=env)
-				if server:
-					server.close()
+				try:
+					if "@" in model and int(model.rsplit("@", 1)[1]) > 1:
+						os.makedirs(out, exist_ok=True)
+						self.timings.setdefault((identity, model.split("@")[0]), {})["bake_start"] = time.monotonic()
+						# A second back, for a file saved in the second this began.
+						server = await self.claim_server(unit, model, out, time.time() - 1, work)
+						env["WORK_PORT"] = str(server.sockets[0].getsockname()[1])
+						self.begin(unit, "bake", log, model)
+					else:
+						self.begin(unit, "render", log, model)
+					await asyncio.to_thread(self.run_process, work, ["scripts/standby-previews.sh", model, "1", "1", out],
+						stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env)
+				finally:
+					# Closed on a cancel too, so a killed engine's port takes no more claims.
+					if server:
+						server.close()
 				self.timings.setdefault((identity, model.split("@")[0]), {})["render_end"] = time.monotonic()
+			if work["cancelled"]:
+				return
 			trim_log(os.path.join(folder, "build.log"))
 			pushed = await asyncio.to_thread(push_preview, folder, model) if os.path.isdir(folder) else ""
+			# Machine-seconds this share took, for cost-sized shares (client.py).
+			seconds = round(time.monotonic() - began, 1)
 			if pushed:
-				await self.send(json.dumps({"type": "preview-pushed", "task": identity, "name": model, "commit": pushed}))
+				await self.send(json.dumps({"type": "preview-pushed", "task": identity, "shard": shard, "name": model, "commit": pushed,
+					"seconds": seconds}))
 			else:
 				# GitHub turned the push away: the tunnel is slower, but it works.
 				for name in sorted(os.listdir(folder)) if os.path.isdir(folder) else []:
 					with open(os.path.join(folder, name), "rb") as file:
 						data = file.read()
-					await self.send(wire.pack({"type": "file", "task": identity, "path": os.path.join("previews", model, name), "size": len(data)}, data))
-				await self.send(json.dumps({"type": "preview-ready", "task": identity, "name": model}))
+					await self.send_file(unit, os.path.join("previews", model, name), data)
+				await self.send(json.dumps({"type": "preview-ready", "task": identity, "shard": shard, "name": model, "seconds": seconds}))
 			self.report_timing(identity, model)
-		await self.send(json.dumps({"type": "previews-done", "task": identity}))
+		await self.send(json.dumps({"type": "previews-done", "task": identity, "shard": shard}))
 		self.idle_until = time.monotonic() + self.idle_seconds
 
 	def report_timing(self, identity, share):
@@ -307,16 +571,23 @@ class Agent:
 			f"push={gap('bake_end', 'pushed')} wait={gap('pushed', 'ready')} fetch={gap('ready', 'fetched')} "
 			f"render={gap('fetched', 'render_end')} send={time.monotonic() - timing.get('render_end', time.monotonic()):.1f}")
 
-	async def claim(self, identity, model, kind, total):
-		"""The next job of this kind for this machine, -1 when none are left.
-		A retry repeats the number, so a lost answer can't lose a job."""
+	async def claim(self, unit, model, kind, total, work):
+		"""The next job of this kind for this machine, -1 when none are left
+		or the unit was cancelled. A retry repeats the number, so a lost
+		answer can't lose a job; the lease number lets the coordinator refuse
+		a cancelled lease's claim."""
+		identity, shard = unit
 		self.claim_number += 1
 		number = self.claim_number
 		timing = self.timings.setdefault((identity, model), {})
 		asked = time.monotonic()
 		timing.setdefault(f"first_{kind}", asked)
-		message = json.dumps({"type": "claim", "task": identity, "name": model, "kind": kind, "total": total, "id": number})
+		self.moved(unit)
+		message = json.dumps({"type": "claim", "task": identity, "shard": shard, "name": model, "kind": kind, "total": total, "id": number,
+			"lease": work.get("lease")})
 		for _ in range(CLAIM_TRIES):
+			if work["cancelled"]:
+				return -1
 			self.claims[number] = asyncio.get_running_loop().create_future()
 			await self.send(message)
 			try:
@@ -332,7 +603,7 @@ class Agent:
 				self.claims.pop(number, None)
 		return -1
 
-	async def claim_server(self, identity, share, out, since):
+	async def claim_server(self, unit, share, out, since, work):
 		"""A local port where this machine's engine asks for its next job, and
 		says when its baking is done."""
 		model = share.split("@")[0]
@@ -341,29 +612,34 @@ class Agent:
 			while line := await reader.readline():
 				kind, total = line.decode().split()
 				if kind == "swap":
-					await self.share_bakes(identity, share, out, since)
+					await self.share_bakes(unit, share, out, since, work)
 					answer = 0
 				else:
-					answer = await self.claim(identity, model, kind, int(total))
+					answer = await self.claim(unit, model, kind, int(total), work)
 				writer.write(f"{answer}\n".encode())
 				await writer.drain()
 			writer.close()
 
 		return await asyncio.start_server(serve, "127.0.0.1", 0)
 
-	async def share_bakes(self, identity, share, out, since):
+	async def share_bakes(self, unit, share, out, since, work):
 		"""Asked by the engine once it has baked what it claimed: pushes those
 		layers and takes every other machine's, so no two machines bake the
 		same texture. Anything that doesn't arrive, the engine bakes itself."""
+		identity, shard = unit
 		model = share.split("@")[0]
 		log = os.path.join(out, "previews", share, "build.log")
 		timing = self.timings.setdefault((identity, model), {})
 		timing["bake_end"] = time.monotonic()
-		self.begin(identity, "swap", log, share)
+		self.begin(unit, "swap", log, share)
 		ready = self.bakes_ready[(identity, model)] = asyncio.get_running_loop().create_future()
 		mine = await asyncio.to_thread(push_bakes, model, share, out, since)
 		timing["pushed"] = time.monotonic()
-		await self.send(json.dumps({"type": "bakes-pushed", "task": identity, "share": share, "commit": mine}))
+		if work["cancelled"]:
+			self.bakes_ready.pop((identity, model), None)
+			return
+		await self.send(json.dumps({"type": "bakes-pushed", "task": identity, "shard": shard, "share": share, "commit": mine,
+			"lease": work.get("lease")}))
 		try:
 			commits = await asyncio.wait_for(ready, max(SWAP_WAIT_SECONDS, (timing["bake_end"] - timing["bake_start"]) * 4))
 		except asyncio.TimeoutError:
@@ -378,7 +654,7 @@ class Agent:
 		timing["fetched"] = time.monotonic()
 		for error in [result for result in fetched if isinstance(result, Exception)]:
 			say(f"task {identity}: could not fetch bakes of {model}: {error}")
-		self.begin(identity, "render", log, share)
+		self.begin(unit, "render", log, share)
 
 	def answer(self, identity, asset, error):
 		"""From the uploader's threads: send the result on the live socket."""
@@ -440,12 +716,26 @@ class Agent:
 			if asset:
 				await socket.send(json.dumps({"type": "uploaded", "id": header["id"], "asset": asset}))
 
+	def published_address(self):
+		# Not through FETCH_HEAD: a task's checkout may be reading it.
+		with self.git_lock:
+			subprocess.run(["git", "fetch", "-q", "--depth=1", "--no-write-fetch-head", "origin",
+				f"+{ADDRESS_BRANCH}:refs/coordinator-address"], check=True, capture_output=True, timeout=60)
+			shown = subprocess.run(["git", "show", "refs/coordinator-address:address.json"], check=True, capture_output=True, text=True)
+		return json.loads(shown.stdout)["agent"]
+
 	async def session(self):
 		token = await asyncio.to_thread(identity_token)
-		async with websockets.connect(self.url, max_size=MAX_MESSAGE, ping_interval=20, ping_timeout=120) as socket:
-			await socket.send(json.dumps({"type": "hello", "token": token, "shard": self.index, "count": self.count,
-				"layout": self.layout}))
-			say(f"connected to {self.url}")
+		url = await asyncio.to_thread(self.published_address) if self.published else self.url
+		self.address = url
+		async with websockets.connect(url, max_size=MAX_MESSAGE, ping_interval=20, ping_timeout=120) as socket:
+			# The units still under way, so a restarted coordinator gives them back; not one being cancelled.
+			hello = {"type": "hello", "token": token, "shard": self.index, "count": self.count, "layout": self.layout,
+				"units": [list(unit) for unit in self.handling if unit not in self.cancelling]}
+			if self.machine is not None:
+				hello["machine"] = self.machine
+			await socket.send(json.dumps(hello))
+			say(f"connected to {url}")
 			self.backoff = 1
 			self.socket, self.loop = socket, asyncio.get_running_loop()
 			global forward
@@ -456,6 +746,9 @@ class Agent:
 				loop.call_soon_threadsafe(lambda: asyncio.ensure_future(socket.send(json.dumps({"type": "log", "text": text}))))
 
 			forward = forward_line
+			if self.failures >= TUNNEL_ALERT_FAILURES:
+				alert(f"CLEARED TUNNEL_DOWN: S{self.index} connected to {url} after {self.failures} failures")
+			self.failures = 0
 			lacking = [tool for tool in REQUIRED_TOOLS if not shutil.which(tool)]
 			if lacking:
 				say(f"could not find {', '.join(lacking)} on this machine")
@@ -477,7 +770,9 @@ class Agent:
 					elif event["type"] == "fetch-objects":
 						asyncio.create_task(self.receive_fetch(socket, event))
 					elif event["type"] == "task":
-						asyncio.create_task(self.handle(event["id"], event["task"]))
+						self.take(event)
+					elif event["type"] == "cancel":
+						self.stop_unit(event)
 					elif event["type"] == "claimed":
 						claim = self.claims.get(event["id"])
 						if claim and not claim.done():
@@ -487,6 +782,9 @@ class Agent:
 						ready = self.bakes_ready.get((event["task"], event["name"]))
 						if ready and not ready.done() and event.get("done", True):
 							ready.set_result(event["commits"])
+					elif event["type"] == "active":
+						# The coordinator on this machine has work going for others.
+						self.idle_until = time.monotonic() + self.idle_seconds
 					elif event["type"] == "stop":
 						self.stopped = True
 						return
@@ -502,7 +800,11 @@ class Agent:
 			await asyncio.sleep(min(self.idle_until, self.stop_at) - now)
 
 	async def main(self):
-		global forward
+		global forward, WORKER_TOKEN
+		# Out of the environment before any child process can see it.
+		WORKER_TOKEN = os.environ.pop("COORDINATOR_WORKER_TOKEN", "")
+		# The coordinator's own; no build on this machine needs it.
+		os.environ.pop("COORDINATOR_WORKER_KEY", None)
 		await asyncio.to_thread(ensure_tools)
 		self.backoff = 1
 		clock = asyncio.create_task(self.watch_clock())
@@ -519,12 +821,19 @@ class Agent:
 			forward = None
 			if self.backoff == 1:
 				lost_since = time.monotonic()
-			elif lost_since and time.monotonic() - lost_since > LOST_MINUTES * 60:
+			elif lost_since and not self.published and time.monotonic() - lost_since > LOST_MINUTES * 60:
 				say(f"no coordinator for {LOST_MINUTES} minutes; ending to free this machine's slot")
 				break
-			say(f"connection lost ({error}); retrying in {self.backoff}s")
+			self.failures += 1
+			status = http_status(error)
+			answered = f"HTTP {status}" if status else "no HTTP answer"
+			say(f"connection lost ({error}; {answered}); retrying in {self.backoff}s")
+			if self.failures == TUNNEL_ALERT_FAILURES:
+				alert(f"ALERT TUNNEL_DOWN: S{self.index} failed to reach {self.address} {self.failures} times in a row ({answered}: {error}) "
+					"| machine 1's tunnel or coordinator is down; if it stays down, start a new run (scripts/standby-start.sh)")
 			await asyncio.sleep(self.backoff)
-			self.backoff = min(30, self.backoff * 2)
+			# A numbered machine waits for the next coordinator, a minute apart.
+			self.backoff = min(60 if self.published else 30, self.backoff * 2)
 		say("standby over")
 
 

@@ -1,4 +1,4 @@
-local SHARD_COSTS = { ["ArenaDrone 1 x"] = 50.373, ["ArenaDrone 1 x #split"] = 1, ["Barrels 1 x x1.9"] = 0.183, ["Barrels 1 x x1.9 #split"] = 1, ["CarStack 1 x x2.5"] = 0.332, ["CarStack 1 x x2.5 #split"] = 1, ["CrushedCar 1 x x2.5"] = 0.166, ["CrushedCar 1 x x2.5 #split"] = 1, ["Dumpster 1 x x2.2"] = 0.220, ["Dumpster 1 x x2.2 #split"] = 1, ["GroundTile 1 x x1.5"] = 0.179, ["GroundTile 1 x x1.5 #split"] = 1, ["HubSectionA 1 x"] = 75.171, ["HubSectionA 1 x #split"] = 1, ["HubSectionB 1 x"] = 70.434, ["HubSectionB 1 x #split"] = 1, ["HubSectionEnd 1 x"] = 74.559, ["HubSectionEnd 1 x #split"] = 1, ["JunkWall 1 x x1.75"] = 0.236, ["JunkWall 1 x x1.75 #split"] = 1, ["MachinePad 1 x x1.5"] = 0.182, ["MachinePad 1 x x1.5 #split"] = 1, ["MarketIsland 1 x"] = 53.344, ["MarketIsland 1 x #split"] = 1, ["PadIsland 1 x"] = 11.137, ["PadIsland 1 x #split"] = 1, ["Pallets 1 x x1.4"] = 0.185, ["Pallets 1 x x1.4 #split"] = 1, ["ParkBench 1 x x1.85"] = 0.083, ["ParkBench 1 x x1.85 #split"] = 1, ["PlotMarker 1 x x1.5"] = 0.379, ["PlotMarker 1 x x1.5 #split"] = 1, ["ScrapPalm 1 x x1.5"] = 0.177, ["ScrapPalm 1 x x1.5 #split"] = 1, ["ScrapTreeLamppost 1 x x1.5"] = 0.208, ["ScrapTreeLamppost 1 x x1.5 #split"] = 1, ["ShippingContainer 1 x x1.5"] = 0.307, ["ShippingContainer 1 x x1.5 #split"] = 1, ["ShopConceptContainer 1 x x2.5"] = 79.711, ["ShopConceptContainer 1 x x2.5 #split"] = 1, ["StorageCrate 1 x x1.5"] = 9.657, ["StreetlightBroken 1 x x2"] = 0.120, ["StreetlightBroken 1 x x2 #split"] = 1, ["TrafficCones 1 x x1.8"] = 0.155, ["TrafficCones 1 x x1.8 #split"] = 1, ["TyreStack 1 x x1.8"] = 0.113, ["TyreStack 1 x x1.8 #split"] = 1, ["VendingMachine 1 x x2"] = 5.971, ["VendingMachine 1 x x2 #split"] = 1, ["YardFence 1 x x1.5"] = 0.169, ["YardFence 1 x x1.5 #split"] = 1, ["YardFenceHalf 1 x x1.5"] = 0.151, ["YardFenceHalf 1 x x1.5 #split"] = 1, ["YardFooting 0.5 x x1.5"] = 0.066, ["YardFooting 0.5 x x1.5 #split"] = 1, ["YardFooting 1 x x1.5"] = 0.059, ["YardFooting 1 x x1.5 #split"] = 1, ["YardGate 1 x x1.5"] = 0.241, ["YardGate 1 x x1.5 #split"] = 1, ["YardIsland 1 x"] = 83.475, ["YardIsland 1 x #split"] = 1, ["YardPath 1 x x1.5"] = 0.213, ["YardPath 1 x x1.5 #split"] = 1, ["YardPathStub 1 x x1.5"] = 0.175, ["YardPathStub 1 x x1.5 #split"] = 1, ["slab ArenaWall"] = 1.698, ["slab ArenaWall #split"] = 1, ["slab Avenue1"] = 1.371, ["slab Avenue1 #split"] = 1, ["slab Avenue2"] = 1.946, ["slab Avenue2 #split"] = 1, ["slab Avenue3"] = 2.037, ["slab Avenue3 #split"] = 1, ["slab Avenue4"] = 2.055, ["slab Avenue4 #split"] = 1, ["slab Avenue5"] = 1.910, ["slab Avenue5 #split"] = 1, ["slab Beacon"] = 0.634, ["slab Beacon #split"] = 1, ["slab Bridge1"] = 1.695, ["slab Bridge1 #split"] = 1, ["slab Bridge2"] = 1.720, ["slab Bridge2 #split"] = 1, ["slab Bridge3"] = 1.416, ["slab Bridge3 #split"] = 1, ["slab Bridge4"] = 1.591, ["slab Bridge4 #split"] = 1, ["slab Bridge5"] = 1.530, ["slab Bridge5 #split"] = 1, ["slab Bridge6"] = 1.286, ["slab Bridge6 #split"] = 1, ["slab Bridge7"] = 1.597, ["slab Bridge7 #split"] = 1, ["slab Bridge8"] = 1.524, ["slab Bridge8 #split"] = 1, ["slab Hatch1"] = 0.126, ["slab Hatch1 #split"] = 1, ["slab Hatch2"] = 0.131, ["slab Hatch2 #split"] = 1, ["slab Hatch3"] = 0.124, ["slab Hatch3 #split"] = 1, ["slab Hatch4"] = 0.131, ["slab Hatch4 #split"] = 1, ["slab LandmarkPlanter"] = 0.061, ["slab LandmarkPlanter #split"] = 1, ["slab Line"] = 33.177, ["slab Line #split"] = 1, ["slab MarketIsland"] = 4.385, ["slab MarketIsland #split"] = 1, ["slab Pad1"] = 0.544, ["slab Pad1 #split"] = 1, ["slab Pad2"] = 0.537, ["slab Pad2 #split"] = 1, ["slab Pad3"] = 0.540, ["slab Pad3 #split"] = 1, ["slab Pad4"] = 0.541, ["slab Pad4 #split"] = 1, ["slab Palm1Planter"] = 0.061, ["slab Palm1Planter #split"] = 1, ["slab Palm2Planter"] = 0.062, ["slab Palm2Planter #split"] = 1, ["slab Plot1"] = 4.136, ["slab Plot1 #split"] = 1, ["slab Plot2"] = 5.108, ["slab Plot2 #split"] = 1, ["slab Plot3"] = 4.819, ["slab Plot3 #split"] = 1, ["slab Plot4"] = 4.919, ["slab Plot4 #split"] = 1, ["slab Plot5"] = 5.103, ["slab Plot5 #split"] = 1, ["slab Plot6"] = 5.076, ["slab Plot6 #split"] = 1, ["slab Plot7"] = 3.650, ["slab Plot7 #split"] = 1, ["slab Plot8"] = 4.779, ["slab Plot8 #split"] = 1, ["slab Ramps"] = 4.571, ["slab Ramps #split"] = 1, ["slab Side1"] = 0.894, ["slab Side1 #split"] = 1, ["slab Side2"] = 0.880, ["slab Side2 #split"] = 1, ["slab Side3"] = 0.926, ["slab Side3 #split"] = 1, ["slab Side4"] = 0.722, ["slab Side4 #split"] = 1, ["slab Side5"] = 0.888, ["slab Side5 #split"] = 1, ["slab Side6"] = 0.877, ["slab Side6 #split"] = 1, ["slab Spawn"] = 0.093, ["slab Spawn #split"] = 1, ["slab Spoke1"] = 0.088, ["slab Spoke1 #split"] = 1, ["slab Spoke2"] = 0.084, ["slab Spoke2 #split"] = 1, ["slab Spoke3"] = 0.072, ["slab Spoke3 #split"] = 1, ["slab Spoke4"] = 0.086, ["slab Spoke4 #split"] = 1, ["slab Spoke5"] = 0.085, ["slab Spoke5 #split"] = 1, ["slab Spoke6"] = 0.070, ["slab Spoke6 #split"] = 1, ["slab Spoke7"] = 0.084, ["slab Spoke7 #split"] = 1, ["slab Spoke8"] = 0.087, ["slab Spoke8 #split"] = 1, ["MainIsland 1 x"] = 1800, ["MainIsland 1 x #split"] = 1,  }
+local SHARD_COSTS = { ["ArenaDrone 1 x"] = 50.373, ["ArenaDrone 1 x #split"] = 1, ["Barrels 1 x x1.9"] = 0.183, ["Barrels 1 x x1.9 #split"] = 1, ["BeltCrossing 1 x"] = 3.165, ["BeltCrossing 1 x #split"] = 1, ["BuildBay 1 x"] = 4.338, ["BuildBay 1 x #split"] = 1, ["CapsuleFactory 1 x"] = 0.227, ["CapsuleFactory 1 x #split"] = 1, ["CapsuleLoop 1 x"] = 14.886, ["CapsuleLoop 1 x #split"] = 1, ["CapsulePrecision 1 x"] = 0.275, ["CapsulePrecision 1 x #split"] = 1, ["CapsulePrototype 1 x"] = 0.269, ["CapsulePrototype 1 x #split"] = 1, ["CapsuleRefurbished 1 x"] = 0.282, ["CapsuleRefurbished 1 x #split"] = 1, ["CapsuleSalvaged 1 x"] = 0.338, ["CapsuleSalvaged 1 x #split"] = 1, ["CapsuleScrap 1 x"] = 0.275, ["CapsuleScrap 1 x #split"] = 1, ["CapsuleSecret 1 x"] = 0.100, ["CapsuleSecret 1 x #split"] = 1, ["CarStack 1 x x2.5"] = 0.332, ["CarStack 1 x x2.5 #split"] = 1, ["CrushedCar 1 x x2.5"] = 0.166, ["CrushedCar 1 x x2.5 #split"] = 1, ["Dumpster 1 x x2.2"] = 0.220, ["Dumpster 1 x x2.2 #split"] = 1, ["GroundTile 1 x x1.5"] = 0.179, ["GroundTile 1 x x1.5 #split"] = 1, ["HubBeacon 1 x"] = 9.270, ["HubBeacon 1 x #split"] = 1, ["HubSectionA 1 x"] = 75.171, ["HubSectionA 1 x #split"] = 1, ["HubSectionB 1 x"] = 70.434, ["HubSectionB 1 x #split"] = 1, ["HubSectionEnd 1 x"] = 74.559, ["HubSectionEnd 1 x #split"] = 1, ["HubShop 1 x"] = 14.082, ["HubShop 1 x #split"] = 1, ["HubStage 1 x"] = 6.494, ["HubStage 1 x #split"] = 1, ["HubTinkerer 1 x"] = 6.786, ["HubTinkerer 1 x #split"] = 1, ["JunkMound 1 x x1.6666666666666667"] = 0.542, ["JunkMound 1 x x1.6666666666666667 #split"] = 1, ["JunkMound 1 x x2.8"] = 0.751, ["JunkMound 1 x x2.8 #split"] = 1, ["JunkWall 1 x x1.75"] = 0.236, ["JunkWall 1 x x1.75 #split"] = 1, ["JunkrotAirfryoCroccante 1 x"] = 1.859, ["JunkrotAirfryoCroccante 1 x #split"] = 1, ["JunkrotBallerinaTincuppina 1 x"] = 12.169, ["JunkrotBallerinaTincuppina 1 x #split"] = 1, ["JunkrotBlendroCigolante 1 x"] = 1.220, ["JunkrotBlendroCigolante 1 x #split"] = 1, ["JunkrotBoilerdiroCrockpotilo 1 x"] = 13.474, ["JunkrotBoilerdiroCrockpotilo 1 x #split"] = 1, ["JunkrotBoltoloLonelo 1 x"] = 1.325, ["JunkrotBoltoloLonelo 1 x #split"] = 1, ["JunkrotBulboFulminato 1 x"] = 1.919, ["JunkrotBulboFulminato 1 x #split"] = 1, ["JunkrotCabloTanglino 1 x"] = 2.143, ["JunkrotCabloTanglino 1 x #split"] = 1, ["JunkrotCamerinoFlashetto 1 x"] = 1.543, ["JunkrotCamerinoFlashetto 1 x #split"] = 1, ["JunkrotCanettoRustini 1 x"] = 1.374, ["JunkrotCanettoRustini 1 x #split"] = 1, ["JunkrotChefbotPrecisio 1 x"] = 1.207, ["JunkrotChefbotPrecisio 1 x #split"] = 1, ["JunkrotChimneyziniSpannerini 1 x"] = 18.670, ["JunkrotChimneyziniSpannerini 1 x #split"] = 1, ["JunkrotClankClankClankScrapur 1 x"] = 15.097, ["JunkrotClankClankClankScrapur 1 x #split"] = 1, ["JunkrotClockoTictacco 1 x"] = 2.366, ["JunkrotClockoTictacco 1 x #split"] = 1, ["JunkrotConsoloJoypaddino 1 x"] = 3.360, ["JunkrotConsoloJoypaddino 1 x #split"] = 1, ["JunkrotCrumboPoppalot 1 x"] = 1.828, ["JunkrotCrumboPoppalot 1 x #split"] = 1, ["JunkrotDingDingDingDongo 1 x"] = 17.847, ["JunkrotDingDingDingDongo 1 x #split"] = 1, ["JunkrotDishwashinoSplashetto 1 x"] = 1.527, ["JunkrotDishwashinoSplashetto 1 x #split"] = 1, ["JunkrotDrilloTrapanino 1 x"] = 3.181, ["JunkrotDrilloTrapanino 1 x #split"] = 1, ["JunkrotDrippiDroppi 1 x"] = 14.378, ["JunkrotDrippiDroppi 1 x #split"] = 1, ["JunkrotDronettoBuzzatti 1 x"] = 1.403, ["JunkrotDronettoBuzzatti 1 x #split"] = 1, ["JunkrotFanettoWobblino 1 x"] = 2.188, ["JunkrotFanettoWobblino 1 x #split"] = 1, ["JunkrotFrostboxGelatone 1 x"] = 1.952, ["JunkrotFrostboxGelatone 1 x #split"] = 1, ["JunkrotGascaniniHonkini 1 x"] = 23.361, ["JunkrotGascaniniHonkini 1 x #split"] = 1, ["JunkrotGrindellaScintilla 1 x"] = 1.907, ["JunkrotGrindellaScintilla 1 x #split"] = 1, ["JunkrotGrindoBeanbasher 1 x"] = 2.719, ["JunkrotGrindoBeanbasher 1 x #split"] = 1, ["JunkrotHeadphonoBassimo 1 x"] = 1.435, ["JunkrotHeadphonoBassimo 1 x #split"] = 1, ["JunkrotHolofonoShimmerra 1 x"] = 1.837, ["JunkrotHolofonoShimmerra 1 x #split"] = 1, ["JunkrotHoverbikkoZoomzoom 1 x"] = 2.329, ["JunkrotHoverbikkoZoomzoom 1 x #split"] = 1, ["JunkrotHubcappaWobbla 1 x"] = 2.325, ["JunkrotHubcappaWobbla 1 x #split"] = 1, ["JunkrotJackoloCrickato 1 x"] = 2.147, ["JunkrotJackoloCrickato 1 x #split"] = 1, ["JunkrotKettlinaDentata 1 x"] = 1.786, ["JunkrotKettlinaDentata 1 x #split"] = 1, ["JunkrotKnifeblockSlicetta 1 x"] = 3.572, ["JunkrotKnifeblockSlicetta 1 x #split"] = 1, ["JunkrotLaVacuumaSaturnita 1 x"] = 12.193, ["JunkrotLaVacuumaSaturnita 1 x #split"] = 1, ["JunkrotLaserlevelLineo 1 x"] = 1.064, ["JunkrotLaserlevelLineo 1 x #split"] = 1, ["JunkrotLawnmowoRuggito 1 x"] = 1.926, ["JunkrotLawnmowoRuggito 1 x #split"] = 1, ["JunkrotLeafblowaWhooshini 1 x"] = 2.675, ["JunkrotLeafblowaWhooshini 1 x #split"] = 1, ["JunkrotMicrondoBippetto 1 x"] = 5.076, ["JunkrotMicrondoBippetto 1 x #split"] = 1, ["JunkrotMixerellaVroom 1 x"] = 1.626, ["JunkrotMixerellaVroom 1 x #split"] = 1, ["JunkrotMopaMopetta 1 x"] = 2.623, ["JunkrotMopaMopetta 1 x #split"] = 1, ["JunkrotMuffleroTossetto 1 x"] = 1.475, ["JunkrotMuffleroTossetto 1 x #split"] = 1, ["JunkrotOilcannaGluglu 1 x"] = 1.622, ["JunkrotOilcannaGluglu 1 x #split"] = 1, ["JunkrotPannettoPatchato 1 x"] = 1.552, ["JunkrotPannettoPatchato 1 x #split"] = 1, ["JunkrotPercolattoNinjatto 1 x"] = 15.605, ["JunkrotPercolattoNinjatto 1 x #split"] = 1, ["JunkrotPressurwashoSprizzo 1 x"] = 2.944, ["JunkrotPressurwashoSprizzo 1 x #split"] = 1, ["JunkrotRadioloFruscio 1 x"] = 3.844, ["JunkrotRadioloFruscio 1 x #split"] = 1, ["JunkrotRemotinoMuto 1 x"] = 5.723, ["JunkrotRemotinoMuto 1 x #split"] = 1, ["JunkrotRobovaccoGirotondo 1 x"] = 1.111, ["JunkrotRobovaccoGirotondo 1 x #split"] = 1, ["JunkrotRusteliRustela 1 x"] = 15.961, ["JunkrotRusteliRustela 1 x #split"] = 1, ["JunkrotSnackomaticPrototipo 1 x"] = 1.669, ["JunkrotSnackomaticPrototipo 1 x #split"] = 1, ["JunkrotSockettoSeiSette 1 x"] = 23.693, ["JunkrotSockettoSeiSette 1 x #split"] = 1, ["JunkrotSousvideSilvano 1 x"] = 1.743, ["JunkrotSousvideSilvano 1 x #split"] = 1, ["JunkrotSpeakeroneBoomba 1 x"] = 1.917, ["JunkrotSpeakeroneBoomba 1 x #split"] = 1, ["JunkrotSpoonzoBentolo 1 x"] = 1.722, ["JunkrotSpoonzoBentolo 1 x #split"] = 1, ["JunkrotTelefonoRingaling 1 x"] = 3.223, ["JunkrotTelefonoRingaling 1 x #split"] = 1, ["JunkrotTheMonolito 1 x"] = 0.082, ["JunkrotTickworthPocketti 1 x"] = 2.666, ["JunkrotTickworthPocketti 1 x #split"] = 1, ["JunkrotTorquoWrenchelli 1 x"] = 1.893, ["JunkrotTorquoWrenchelli 1 x #split"] = 1, ["JunkrotTrashaleroTrashala 1 x"] = 29.210, ["JunkrotTrashaleroTrashala 1 x #split"] = 1, ["JunkrotTypewrittoClackini 1 x"] = 1.777, ["JunkrotTypewrittoClackini 1 x #split"] = 1, ["JunkrotTyroFlattino 1 x"] = 1.325, ["JunkrotTyroFlattino 1 x #split"] = 1, ["JunkrotUnitZero 1 x"] = 0.110, ["JunkrotVrrVrrPatatrim 1 x"] = 19.461, ["JunkrotVrrVrrPatatrim 1 x #split"] = 1, ["JunkrotWeldettaSparkalot 1 x"] = 3.308, ["JunkrotWeldettaSparkalot 1 x #split"] = 1, ["MachinePad 1 x x1.5"] = 0.182, ["MachinePad 1 x x1.5 #split"] = 1, ["MainIsland 1 x"] = 3665.248, ["MainIsland 1 x #split"] = 1, ["MarketIsland 1 x"] = 53.344, ["MarketIsland 1 x #split"] = 1, ["PadGadget 1 x x1.6666666666666667"] = 0.204, ["PadGadget 1 x x1.6666666666666667 #split"] = 1, ["PadGarage 1 x x1.6666666666666667"] = 0.247, ["PadGarage 1 x x1.6666666666666667 #split"] = 1, ["PadIsland 1 x"] = 11.137, ["PadIsland 1 x #split"] = 1, ["PadKitchen 1 x x1.6666666666666667"] = 0.204, ["PadKitchen 1 x x1.6666666666666667 #split"] = 1, ["Pallets 1 x x1.4"] = 0.185, ["Pallets 1 x x1.4 #split"] = 1, ["ParkBench 1 x x1.85"] = 0.083, ["ParkBench 1 x x1.85 #split"] = 1, ["PlotMarker 1 x x1.5"] = 0.593, ["PlotMarker 1 x x1.5 #split"] = 1, ["ProofKettle 1 x"] = 0.094, ["ProofKettle 1 x #split"] = 1, ["ProofShark 1 x"] = 0.130, ["ProofShark 1 x #split"] = 1, ["ProofToaster 1 x"] = 0.177, ["ProofToaster 1 x #split"] = 1, ["RebirthPress 1 x"] = 7.969, ["RebirthPress 1 x #split"] = 1, ["RockBoulderPile 1 x x2.2"] = 0.318, ["RockBoulderPile 1 x x2.2 #split"] = 1, ["RockBoulderPile 1 x x2.8"] = 0.539, ["RockBoulderPile 1 x x2.8 #split"] = 1, ["ScrapCrate 1 x"] = 0.382, ["ScrapCrate 1 x #split"] = 1, ["ScrapPalm 1 x x1.5"] = 0.177, ["ScrapPalm 1 x x1.5 #split"] = 1, ["ScrapPalm 1 x x1.6"] = 0.737, ["ScrapPalm 1 x x1.6 #split"] = 1, ["ScrapTreeAntenna 1 x x1.4"] = 0.364, ["ScrapTreeAntenna 1 x x1.4 #split"] = 1, ["ScrapTreeExhaust 1 x x1.4"] = 0.468, ["ScrapTreeExhaust 1 x x1.4 #split"] = 1, ["ScrapTreeLamppost 1 x x1.3"] = 0.341, ["ScrapTreeLamppost 1 x x1.3 #split"] = 1, ["ScrapTreeLamppost 1 x x1.5"] = 0.208, ["ScrapTreeLamppost 1 x x1.5 #split"] = 1, ["ScrapTreeRebar 1 x x1.8"] = 0.362, ["ScrapTreeRebar 1 x x1.8 #split"] = 1, ["ScrapTreeSignpost 1 x x1.4"] = 0.340, ["ScrapTreeSignpost 1 x x1.4 #split"] = 1, ["ShippingContainer 1 x x1.5"] = 0.307, ["ShippingContainer 1 x x1.5 #split"] = 1, ["ShopConceptContainer 1 x x2.5"] = 79.711, ["ShopConceptContainer 1 x x2.5 #split"] = 1, ["StorageCrate 1 x x1.5"] = 9.657, ["StreetlightBroken 1 x x2"] = 0.120, ["StreetlightBroken 1 x x2 #split"] = 1, ["TrafficCones 1 x x1.8"] = 0.155, ["TrafficCones 1 x x1.8 #split"] = 1, ["TyreStack 1 x x1.8"] = 0.113, ["TyreStack 1 x x1.8 #split"] = 1, ["VendingMachine 1 x x2"] = 5.971, ["VendingMachine 1 x x2 #split"] = 1, ["YardFence 1 x x1.5"] = 0.476, ["YardFence 1 x x1.5 #split"] = 1, ["YardFence 1.037037037037037 x x1.5"] = 0.405, ["YardFence 1.037037037037037 x x1.5 #split"] = 1, ["YardFenceHalf 1 x x1.5"] = 0.296, ["YardFenceHalf 1 x x1.5 #split"] = 1, ["YardFooting 0.5 x x1.5"] = 0.111, ["YardFooting 0.5 x x1.5 #split"] = 1, ["YardFooting 1 x x1.5"] = 0.136, ["YardFooting 1 x x1.5 #split"] = 1, ["YardFooting 1.037037037037037 x x1.5"] = 0.134, ["YardFooting 1.037037037037037 x x1.5 #split"] = 1, ["YardGate 1 x x1.5"] = 1.155, ["YardGate 1 x x1.5 #split"] = 1, ["YardIsland 1 x"] = 83.475, ["YardIsland 1 x #split"] = 1, ["YardPath 1 x x1.5"] = 0.213, ["YardPath 1 x x1.5 #split"] = 1, ["YardPathStub 1 x x1.5"] = 0.175, ["YardPathStub 1 x x1.5 #split"] = 1, ["slab ArenaWall"] = 1.698, ["slab ArenaWall #split"] = 1, ["slab Avenue1"] = 1.371, ["slab Avenue1 #split"] = 1, ["slab Avenue2"] = 1.946, ["slab Avenue2 #split"] = 1, ["slab Avenue3"] = 2.037, ["slab Avenue3 #split"] = 1, ["slab Avenue4"] = 2.055, ["slab Avenue4 #split"] = 1, ["slab Avenue5"] = 1.910, ["slab Avenue5 #split"] = 1, ["slab Beacon"] = 0.634, ["slab Beacon #split"] = 1, ["slab Bridge1"] = 1.695, ["slab Bridge1 #split"] = 1, ["slab Bridge2"] = 1.720, ["slab Bridge2 #split"] = 1, ["slab Bridge3"] = 1.416, ["slab Bridge3 #split"] = 1, ["slab Bridge4"] = 1.591, ["slab Bridge4 #split"] = 1, ["slab Bridge5"] = 1.530, ["slab Bridge5 #split"] = 1, ["slab Bridge6"] = 1.286, ["slab Bridge6 #split"] = 1, ["slab Bridge7"] = 1.597, ["slab Bridge7 #split"] = 1, ["slab Bridge8"] = 1.524, ["slab Bridge8 #split"] = 1, ["slab Hatch1"] = 0.126, ["slab Hatch1 #split"] = 1, ["slab Hatch2"] = 0.131, ["slab Hatch2 #split"] = 1, ["slab Hatch3"] = 0.124, ["slab Hatch3 #split"] = 1, ["slab Hatch4"] = 0.131, ["slab Hatch4 #split"] = 1, ["slab LandmarkPlanter"] = 0.061, ["slab LandmarkPlanter #split"] = 1, ["slab Line"] = 33.177, ["slab Line #split"] = 1, ["slab LoneWreck1"] = 0.321, ["slab LoneWreck1 #split"] = 1, ["slab LoneWreck10"] = 0.258, ["slab LoneWreck10 #split"] = 1, ["slab LoneWreck12"] = 0.074, ["slab LoneWreck12 #split"] = 1, ["slab LoneWreck13"] = 0.258, ["slab LoneWreck13 #split"] = 1, ["slab LoneWreck14"] = 0.113, ["slab LoneWreck14 #split"] = 1, ["slab LoneWreck16"] = 0.243, ["slab LoneWreck16 #split"] = 1, ["slab LoneWreck17"] = 0.100, ["slab LoneWreck17 #split"] = 1, ["slab LoneWreck18"] = 0.062, ["slab LoneWreck18 #split"] = 1, ["slab LoneWreck2"] = 0.105, ["slab LoneWreck2 #split"] = 1, ["slab LoneWreck20"] = 0.163, ["slab LoneWreck20 #split"] = 1, ["slab LoneWreck21"] = 0.085, ["slab LoneWreck21 #split"] = 1, ["slab LoneWreck22"] = 0.237, ["slab LoneWreck22 #split"] = 1, ["slab LoneWreck24"] = 0.055, ["slab LoneWreck24 #split"] = 1, ["slab LoneWreck25"] = 0.269, ["slab LoneWreck25 #split"] = 1, ["slab LoneWreck4"] = 0.405, ["slab LoneWreck4 #split"] = 1, ["slab LoneWreck5"] = 0.105, ["slab LoneWreck5 #split"] = 1, ["slab LoneWreck6"] = 0.073, ["slab LoneWreck6 #split"] = 1, ["slab LoneWreck8"] = 0.116, ["slab LoneWreck8 #split"] = 1, ["slab LoneWreck9"] = 0.069, ["slab LoneWreck9 #split"] = 1, ["slab MarketIsland"] = 4.385, ["slab MarketIsland #split"] = 1, ["slab Pad1"] = 0.544, ["slab Pad1 #split"] = 1, ["slab Pad2"] = 0.537, ["slab Pad2 #split"] = 1, ["slab Pad3"] = 0.540, ["slab Pad3 #split"] = 1, ["slab Pad4"] = 0.541, ["slab Pad4 #split"] = 1, ["slab Palm1Planter"] = 0.061, ["slab Palm1Planter #split"] = 1, ["slab Palm2Planter"] = 0.062, ["slab Palm2Planter #split"] = 1, ["slab Plaza"] = 7.722, ["slab Plaza #split"] = 1, ["slab Plot1"] = 13.392, ["slab Plot1 #split"] = 1, ["slab Plot2"] = 13.697, ["slab Plot2 #split"] = 1, ["slab Plot3"] = 9.984, ["slab Plot3 #split"] = 1, ["slab Plot4"] = 15.139, ["slab Plot4 #split"] = 1, ["slab Plot5"] = 13.276, ["slab Plot5 #split"] = 1, ["slab Plot6"] = 13.862, ["slab Plot6 #split"] = 1, ["slab Plot7"] = 13.091, ["slab Plot7 #split"] = 1, ["slab Plot8"] = 12.336, ["slab Plot8 #split"] = 1, ["slab Ramps"] = 4.571, ["slab Ramps #split"] = 1, ["slab Rough1"] = 4.387, ["slab Rough1 #split"] = 1, ["slab Rough10"] = 4.151, ["slab Rough10 #split"] = 1, ["slab Rough2"] = 3.889, ["slab Rough2 #split"] = 1, ["slab Rough3"] = 2.114, ["slab Rough3 #split"] = 1, ["slab Rough4"] = 2.607, ["slab Rough4 #split"] = 1, ["slab Rough5"] = 4.433, ["slab Rough5 #split"] = 1, ["slab Rough6"] = 2.500, ["slab Rough6 #split"] = 1, ["slab Rough7"] = 3.810, ["slab Rough7 #split"] = 1, ["slab Rough8"] = 2.510, ["slab Rough8 #split"] = 1, ["slab Rough9"] = 2.439, ["slab Rough9 #split"] = 1, ["slab RoughFoot2"] = 0.038, ["slab RoughFoot2 #split"] = 1, ["slab RoughFoot5"] = 0.042, ["slab RoughFoot5 #split"] = 1, ["slab RoughFoot6"] = 0.034, ["slab RoughFoot6 #split"] = 1, ["slab RoughFoot8"] = 0.033, ["slab RoughFoot8 #split"] = 1, ["slab RoughFoot9"] = 0.042, ["slab RoughFoot9 #split"] = 1, ["slab RoughShade1"] = 0.008, ["slab RoughShade10"] = 0.010, ["slab RoughShade2"] = 0.011, ["slab RoughShade5"] = 0.022, ["slab RoughShade7"] = 0.012, ["slab RoughShade9"] = 0.008, ["slab Side1"] = 0.894, ["slab Side1 #split"] = 1, ["slab Side2"] = 0.880, ["slab Side2 #split"] = 1, ["slab Side3"] = 0.926, ["slab Side3 #split"] = 1, ["slab Side4"] = 0.722, ["slab Side4 #split"] = 1, ["slab Side5"] = 0.888, ["slab Side5 #split"] = 1, ["slab Side6"] = 0.877, ["slab Side6 #split"] = 1, ["slab Spawn"] = 0.027, ["slab Spawn #split"] = 1, ["slab Spoke1"] = 0.088, ["slab Spoke1 #split"] = 1, ["slab Spoke2"] = 0.084, ["slab Spoke2 #split"] = 1, ["slab Spoke3"] = 0.072, ["slab Spoke3 #split"] = 1, ["slab Spoke4"] = 0.086, ["slab Spoke4 #split"] = 1, ["slab Spoke5"] = 0.085, ["slab Spoke5 #split"] = 1, ["slab Spoke6"] = 0.070, ["slab Spoke6 #split"] = 1, ["slab Spoke7"] = 0.084, ["slab Spoke7 #split"] = 1, ["slab Spoke8"] = 0.087, ["slab Spoke8 #split"] = 1, ["slab Streets"] = 4.529, ["slab Streets #split"] = 1, ["slab YardShade1"] = 0.289, ["slab YardShade2"] = 0.251, ["slab YardShade3"] = 0.216, ["slab YardShade4"] = 0.223, ["slab YardShade5"] = 0.179, ["slab YardShade6"] = 0.261, ["slab YardShade7"] = 0.181, ["slab YardShade8"] = 0.230,  } local PAINT_COSTS: { [string]: number } = { ["#rate"] = 0.000003732, ["Aerial"] = 0.030, ["Antennae"] = 0.040, ["Anvil"] = 0.315, ["Arm"] = 0.050, ["ArmCollars"] = 0.550, ["Arms"] = 0.238, ["Awning"] = 1.100, ["AwningPatches"] = 0.640, ["AwningPosts"] = 0.680, ["BackWall"] = 1.230, ["Backdrop"] = 0.660, ["BackdropRivets"] = 0.020, ["Badge"] = 0.425, ["Bag"] = 0.080, ["BaleStraps"] = 0.680, ["Band"] = 0.045, ["BandPad"] = 0.080, ["Bands"] = 0.207, ["Banner"] = 0.040, ["Bars"] = 0.073, ["Base"] = 0.107, ["Bat"] = 0.090, ["Battery"] = 0.190, ["Beads"] = 0.240, ["BellChrome"] = 0.200, ["BellHousing"] = 0.390, ["BellNickel"] = 0.250, ["BellPost"] = 0.230, ["BellPressing"] = 0.230, ["BellRim"] = 0.080, ["BellRivets"] = 0.250, ["BellSteel"] = 0.180, ["BellStrap"] = 0.290, ["Bells"] = 0.070, ["Belly"] = 0.870, ["BeltFeet"] = 0.160, ["BeltRails_-1_-1_0_000"] = 0.760, ["BeltRails_-1_-1_0_010"] = 0.040, ["BeltRails_-1_-1_0_100"] = 0.040, ["BeltRails_-1_-2_0"] = 0.320, ["BeltRails_-1_0_0_000"] = 0.040, ["BeltRails_-1_0_0_010"] = 0.720, ["BeltRails_-1_0_0_110"] = 0.040, ["BeltRails_-1_1_0"] = 0.320, ["BeltRails_-2_-1_0"] = 0.340, ["BeltRails_-2_0_0"] = 0.350, ["BeltRails_0_-1_0_000"] = 0.040, ["BeltRails_0_-1_0_100"] = 0.820, ["BeltRails_0_-1_0_110"] = 0.040, ["BeltRails_0_-2_0"] = 0.320, ["BeltRails_0_0_0_010"] = 0.050, ["BeltRails_0_0_0_100"] = 0.040, ["BeltRails_0_0_0_110"] = 0.660, ["BeltRails_0_1_0"] = 0.350, ["BeltRails_1_-1_0"] = 0.330, ["BeltRails_1_0_0"] = 0.490, ["BigCog"] = 0.490, ["Bill"] = 1.370, ["BillRidge"] = 0.740, ["BinParts"] = 0.300, ["Bits"] = 0.123, ["Blades"] = 0.055, ["Block"] = 0.200, ["Blueprint"] = 0.010, ["Board"] = 0.250, ["Bodice"] = 0.210, ["Body"] = 0.431, ["Bomb"] = 0.520, ["BombNose"] = 0.730, ["BootSplits"] = 0.820, ["Boots"] = 0.340, ["Bowl"] = 0.070, ["Box"] = 0.057, ["Brow"] = 0.610, ["Brows"] = 0.250, ["Brush"] = 0.060, ["Buckles"] = 0.570, ["Bumper"] = 0.030, ["Buttons"] = 1.103, ["Cabinet"] = 0.095, ["Cable"] = 0.048, ["Cables"] = 0.107, ["Cactus"] = 0.570, ["Cage"] = 0.035, ["Camera"] = 0.110, ["Can"] = 0.120, ["Canopy"] = 0.330, ["CanopyFrames"] = 0.140, ["Cans"] = 0.130, ["Cap"] = 0.180, ["Caps"] = 0.725, ["Case"] = 0.212, ["Chain"] = 0.040, ["Cheeks"] = 0.550, ["Chest"] = 0.250, ["Chrome"] = 0.170, ["Chuck"] = 0.090, ["Chute"] = 0.150, ["Clamp"] = 0.355, ["Clamp1"] = 0.050, ["Clamp2"] = 0.040, ["Clamp3"] = 0.040, ["Clamps"] = 0.090, ["Clasps"] = 0.080, ["Clips"] = 1.595, ["CogBoss"] = 0.090, ["Coil"] = 0.040, ["Collars"] = 0.070, ["Column"] = 0.080, ["Columns"] = 0.940, ["Columns_-1_-1_-2_000"] = 1.670, ["Columns_-1_-1_-2_001"] = 1.480, ["Columns_-1_-1_-2_011"] = 3.850, ["Columns_-1_-1_-2_101"] = 1.220, ["Columns_-1_-1_-2_111"] = 0.440, ["Columns_-1_-1_-3_101"] = 3.560, ["Columns_-1_-1_-3_110"] = 0.400, ["Columns_-1_-1_-3_111"] = 3.940, ["Columns_-1_-2_-1"] = 0.040, ["Columns_-1_-2_-2_000"] = 4.310, ["Columns_-1_-2_-2_001"] = 1.640, ["Columns_-1_-2_-2_010_001"] = 0.720, ["Columns_-1_-2_-2_010_011"] = 1.800, ["Columns_-1_-2_-2_010_101"] = 0.840, ["Columns_-1_-2_-2_011"] = 0.450, ["Columns_-1_-2_-2_100_010"] = 1.210, ["Columns_-1_-2_-2_100_011"] = 0.140, ["Columns_-1_-2_-2_100_110"] = 4.700, ["Columns_-1_-2_-2_101"] = 3.460, ["Columns_-1_-2_-2_110"] = 0.870, ["Columns_-1_-2_-2_111_001"] = 0.520, ["Columns_-1_-2_-2_111_011"] = 0.380, ["Columns_-1_-2_-2_111_101"] = 1.050, ["Columns_-1_-2_-2_111_110"] = 0.270, ["Columns_-1_-2_-2_111_111"] = 1.030, ["Columns_-1_-3_-1_000"] = 3.180, ["Columns_-1_-3_-1_001_011"] = 4.400, ["Columns_-1_-3_-1_001_110"] = 1.040, ["Columns_-1_-3_-1_001_111"] = 0.790, ["Columns_-1_-3_-1_010"] = 5.380, ["Columns_-1_-3_-1_011"] = 5.550, ["Columns_-1_-3_-1_100_000"] = 3.050, ["Columns_-1_-3_-1_100_010"] = 0.220, ["Columns_-1_-3_-1_100_011"] = 0.570, ["Columns_-1_-3_-1_100_101"] = 3.330, ["Columns_-1_-3_-1_100_111"] = 0.560, ["Columns_-1_-3_-1_101"] = 8.170, ["Columns_-1_-3_-1_110"] = 1.020, ["Columns_-1_-3_-1_111"] = 3.510, ["Columns_-1_-3_-2_011_001"] = 1.680, ["Columns_-1_-3_-2_011_011"] = 0.820, ["Columns_-1_-3_-2_011_110"] = 3.090, ["Columns_-1_-3_-2_111"] = 2.700, ["Columns_-1_-4_-1_010"] = 0.990, ["Columns_-1_-4_-1_100"] = 1.640, ["Columns_-1_-4_-1_110"] = 1.970, ["Columns_-1_0_-2_000"] = 0.510, ["Columns_-1_0_-2_001_001"] = 2.800, ["Columns_-1_0_-2_001_101"] = 0.500, ["Columns_-1_0_-2_001_110"] = 0.920, ["Columns_-1_0_-2_001_111"] = 0.320, ["Columns_-1_0_-2_010"] = 6.750, ["Columns_-1_0_-2_011"] = 1.770, ["Columns_-1_0_-2_100"] = 0.100, ["Columns_-1_0_-2_101"] = 4.120, ["Columns_-1_0_-2_110"] = 1.310, ["Columns_-1_0_-2_111_000"] = 1.910, ["Columns_-1_0_-2_111_001"] = 0.790, ["Columns_-1_0_-2_111_011"] = 1.170, ["Columns_-1_0_-2_111_100"] = 0.080, ["Columns_-1_0_-2_111_110"] = 0.950, ["Columns_-1_0_-3_100"] = 0.640, ["Columns_-1_0_-3_101"] = 6.510, ["Columns_-1_1_-2_000"] = 2.960, ["Columns_-1_1_-2_001"] = 0.230, ["Columns_-1_1_-2_010_011"] = 3.290, ["Columns_-1_1_-2_010_101"] = 1.290, ["Columns_-1_1_-2_010_111"] = 0.180, ["Columns_-1_1_-2_100_000"] = 0.420, ["Columns_-1_1_-2_100_001"] = 0.210, ["Columns_-1_1_-2_100_011"] = 1.830, ["Columns_-1_1_-2_100_100"] = 0.450, ["Columns_-1_1_-2_100_101"] = 1.950, ["Columns_-1_1_-2_100_111"] = 0.340, ["Columns_-1_1_-2_101"] = 0.370, ["Columns_-1_1_-2_110_010"] = 1.910, ["Columns_-1_1_-2_110_011"] = 0.940, ["Columns_-1_1_-2_110_100"] = 1.250, ["Columns_-1_1_-2_110_111"] = 0.110, ["Columns_-1_1_-2_111"] = 1.540, ["Columns_-1_2_-1_001"] = 0.360, ["Columns_-1_2_-1_011"] = 1.410, ["Columns_-1_2_-1_101"] = 3.610, ["Columns_-1_2_-1_110"] = 2.150, ["Columns_-1_2_-2"] = 3.480, ["Columns_-2_-1_-1"] = 0.180, ["Columns_-2_-1_-2_000_100"] = 3.070, ["Columns_-2_-1_-2_000_101"] = 0.040, ["Columns_-2_-1_-2_000_111"] = 0.360, ["Columns_-2_-1_-2_001"] = 6.330, ["Columns_-2_-1_-2_010"] = 5.570, ["Columns_-2_-1_-2_011"] = 1.780, ["Columns_-2_-1_-2_100"] = 1.660, ["Columns_-2_-1_-2_110_000"] = 0.350, ["Columns_-2_-1_-2_110_001"] = 0.810, ["Columns_-2_-1_-2_110_011"] = 1.770, ["Columns_-2_-1_-2_110_110"] = 0.810, ["Columns_-2_-1_-2_110_111"] = 0.440, ["Columns_-2_-1_-2_111"] = 0.270, ["Columns_-2_-2_-1_000_010"] = 0.550, ["Columns_-2_-2_-1_000_111"] = 6.850, ["Columns_-2_-2_-1_001"] = 4.700, ["Columns_-2_-2_-1_010"] = 1.840, ["Columns_-2_-2_-1_011"] = 0.630, ["Columns_-2_-2_-1_101"] = 3.160, ["Columns_-2_-2_-2_010"] = 0.680, ["Columns_-2_-2_-2_011"] = 1.560, ["Columns_-2_-2_-2_100"] = 0.070, ["Columns_-2_-2_-2_101"] = 3.760, ["Columns_-2_-2_-2_110"] = 1.290, ["Columns_-2_-3_-1_010_100"] = 5.970, ["Columns_-2_-3_-1_010_110"] = 6.020, ["Columns_-2_-3_-1_100"] = 3.270, ["Columns_-2_-3_-1_101"] = 0.530, ["Columns_-2_-3_-1_110"] = 7.780, ["Columns_-2_-3_-1_111"] = 2.210, ["Columns_-2_-3_-2"] = 2.600, ["Columns_-2_-4_-1_010_010_011"] = 7.650, ["Columns_-2_-4_-1_010_010_100"] = 0.760, ["Columns_-2_-4_-1_010_100_000"] = 0.990, ["Columns_-2_-4_-1_010_100_100"] = 2.970, ["Columns_-2_-4_-1_010_100_101"] = 0.050, ["Columns_-2_-4_-1_010_110"] = 5.310, ["Columns_-2_-4_-1_100"] = 0.480, ["Columns_-2_-4_-1_110_010"] = 2.370, ["Columns_-2_-4_-1_110_100"] = 3.880, ["Columns_-2_0_-1"] = 6.240, ["Columns_-2_0_-2_000_011"] = 0.460, ["Columns_-2_0_-2_000_101"] = 2.040, ["Columns_-2_0_-2_001"] = 4.470, ["Columns_-2_0_-2_010"] = 1.720, ["Columns_-2_0_-2_011"] = 1.990, ["Columns_-2_0_-2_100"] = 0.550, ["Columns_-2_0_-2_101"] = 3.780, ["Columns_-2_0_-2_110_000"] = 0.160, ["Columns_-2_0_-2_110_001"] = 0.120, ["Columns_-2_0_-2_110_010"] = 1.350, ["Columns_-2_0_-2_110_101"] = 1.520, ["Columns_-2_0_-2_111"] = 2.140, ["Columns_-2_1_-1"] = 4.120, ["Columns_-2_1_-2_001_000"] = 1.610, ["Columns_-2_1_-2_001_101"] = 1.390, ["Columns_-2_1_-2_100"] = 0.690, ["Columns_-2_1_-2_101"] = 1.650, ["Columns_-3_-1_-1_001"] = 0.840, ["Columns_-3_-1_-1_010"] = 0.600, ["Columns_-3_-1_-1_011"] = 0.530, ["Columns_-3_-1_-1_100"] = 2.170, ["Columns_-3_-1_-1_110"] = 0.300, ["Columns_-3_-1_-1_111"] = 0.730, ["Columns_-3_-1_-2_001"] = 3.340, ["Columns_-3_-1_-2_011"] = 1.840, ["Columns_-3_-1_-2_101"] = 0.070, ["Columns_-3_-1_-2_111"] = 7.180, ["Columns_-3_-2_-1"] = 7.180, ["Columns_-3_-3_-1_000"] = 3.840, ["Columns_-3_-3_-1_010"] = 0.090, ["Columns_-3_-3_-1_100"] = 0.430, ["Columns_-3_-3_-1_110"] = 1.380, ["Columns_-3_-4_-1_000"] = 1.910, ["Columns_-3_-4_-1_010"] = 4.750, ["Columns_-3_-4_-1_011"] = 4.000, ["Columns_-3_-4_-1_100"] = 0.530, ["Columns_-3_-4_-1_101"] = 0.150, ["Columns_-3_-4_-1_110_001"] = 0.570, ["Columns_-3_-4_-1_110_010"] = 3.860, ["Columns_-3_-4_-1_110_101"] = 0.770, ["Columns_-3_-4_-1_111"] = 3.330, ["Columns_-3_0_-1_000"] = 2.770, ["Columns_-3_0_-1_010"] = 2.780, ["Columns_-3_0_-1_011"] = 2.400, ["Columns_-3_0_-1_101"] = 0.040, ["Columns_-3_0_-1_111_001"] = 2.540, ["Columns_-3_0_-1_111_110"] = 0.770, ["Columns_-3_0_-2_001"] = 1.030, ["Columns_-3_0_-2_100"] = 0.370, ["Columns_-3_0_-2_101"] = 2.300, ["Columns_-3_0_-2_111"] = 0.320, ["Columns_-3_1_-1_000"] = 2.680, ["Columns_-3_1_-1_100"] = 3.600, ["Columns_-3_1_-1_101_001"] = 4.470, ["Columns_-3_1_-1_101_111"] = 3.610, ["Columns_-3_1_-1_110"] = 0.190, ["Columns_-4_-1_-1_000"] = 0.720, ["Columns_-4_-1_-1_010_000"] = 2.230, ["Columns_-4_-1_-1_010_111"] = 2.350, ["Columns_-4_-1_-1_011"] = 0.100, ["Columns_-4_-1_-1_100"] = 0.620, ["Columns_-4_-1_-1_101"] = 2.790, ["Columns_-4_-1_-1_110"] = 4.700, ["Columns_-4_-1_-1_111"] = 0.550, ["Columns_-4_-1_-2"] = 0.240, ["Columns_-4_-3_-1"] = 1.010, ["Columns_-4_-3_0"] = 0.420, ["Columns_-4_-4_-1_010"] = 0.460, ["Columns_-4_-4_-1_011"] = 0.770, ["Columns_-4_-4_-1_100"] = 1.310, ["Columns_-4_-4_-1_101_011_011"] = 0.070, ["Columns_-4_-4_-1_101_011_100"] = 0.060, ["Columns_-4_-4_-1_101_011_111"] = 6.930, ["Columns_-4_-4_-1_101_111"] = 0.060, ["Columns_-4_-4_-1_110"] = 3.600, ["Columns_-4_-4_-1_111"] = 0.240, ["Columns_-4_-4_0"] = 2.560, ["Columns_-4_0_-1_001_001"] = 0.340, ["Columns_-4_0_-1_001_111"] = 0.920, ["Columns_-4_0_-1_010"] = 3.980, ["Columns_-4_0_-1_011"] = 0.970, ["Columns_-4_0_-1_100"] = 1.590, ["Columns_-4_0_-1_110"] = 1.460, ["Columns_-4_0_-1_111_011"] = 0.780, ["Columns_-4_0_-1_111_101"] = 1.600, ["Columns_-4_0_-1_111_111"] = 0.050, ["Columns_-4_1_-1_000"] = 1.880, ["Columns_-4_1_-1_111"] = 0.110, ["Columns_-4_2_-1"] = 1.550, ["Columns_-5_-1_-1"] = 4.370, ["Columns_-5_0_-1_011"] = 0.400, ["Columns_-5_0_-1_100_000"] = 0.260, ["Columns_-5_0_-1_100_001"] = 0.420, ["Columns_-5_0_-1_100_011"] = 1.780, ["Columns_-5_0_-1_100_100"] = 0.400, ["Columns_-5_0_-1_100_101"] = 1.080, ["Columns_-5_0_-1_101"] = 4.910, ["Columns_-5_0_-1_110_010"] = 0.970, ["Columns_-5_0_-1_110_110"] = 4.760, ["Columns_-5_1_-1_000"] = 0.510, ["Columns_-5_1_-1_010"] = 0.070, ["Columns_-5_1_-1_100"] = 3.330, ["Columns_-5_1_-1_101"] = 2.080, ["Columns_-5_1_-1_110"] = 1.760, ["Columns_0_-1_-2_001"] = 0.610, ["Columns_0_-1_-2_101"] = 3.690, ["Columns_0_-1_-2_111"] = 1.320, ["Columns_0_-1_-3_001"] = 2.310, ["Columns_0_-1_-3_010"] = 4.330, ["Columns_0_-1_-3_011"] = 0.740, ["Columns_0_-1_-3_111"] = 3.820, ["Columns_0_-2_-1"] = 0.430, ["Columns_0_-2_-2_000"] = 1.100, ["Columns_0_-2_-2_001"] = 3.000, ["Columns_0_-2_-2_010"] = 1.770, ["Columns_0_-2_-2_011"] = 2.940, ["Columns_0_-2_-2_100_000"] = 0.740, ["Columns_0_-2_-2_100_011"] = 0.640, ["Columns_0_-2_-2_100_111"] = 2.510, ["Columns_0_-2_-2_101"] = 2.910, ["Columns_0_-2_-2_110"] = 0.480, ["Columns_0_-2_-2_111"] = 2.460, ["Columns_0_-3_-1_000"] = 2.050, ["Columns_0_-3_-1_001_110"] = 3.470, ["Columns_0_-3_-1_001_111"] = 1.900, ["Columns_0_-3_-1_011"] = 1.000, ["Columns_0_-3_-1_100"] = 3.650, ["Columns_0_-3_-1_101"] = 2.970, ["Columns_0_-3_-1_111"] = 0.890, ["Columns_0_-3_-2"] = 5.270, ["Columns_0_-4_-1_000"] = 0.180, ["Columns_0_-4_-1_010"] = 1.150, ["Columns_0_-4_-1_100"] = 3.870, ["Columns_0_-4_-1_101"] = 5.720, ["Columns_0_-5_-1"] = 0.910, ["Columns_0_0_-1"] = 1.840, ["Columns_0_0_-2_011"] = 1.960, ["Columns_0_0_-2_100"] = 0.030, ["Columns_0_0_-2_101"] = 3.740, ["Columns_0_0_-2_110"] = 1.870, ["Columns_0_0_-2_111_000"] = 3.410, ["Columns_0_0_-2_111_010_000"] = 1.730, ["Columns_0_0_-2_111_010_011"] = 3.170, ["Columns_0_0_-2_111_100"] = 0.160, ["Columns_0_0_-2_111_101"] = 0.760, ["Columns_0_0_-2_111_111"] = 0.140, ["Columns_0_0_-3_000"] = 0.210, ["Columns_0_0_-3_001_001"] = 0.420, ["Columns_0_0_-3_001_011"] = 2.910, ["Columns_0_0_-3_001_101"] = 0.840, ["Columns_0_0_-3_001_110"] = 0.580, ["Columns_0_0_-3_001_111"] = 0.040, ["Columns_0_0_-3_011"] = 1.800, ["Columns_0_0_-3_101"] = 1.450, ["Columns_0_1_-1"] = 1.820, ["Columns_0_1_-2_001_001"] = 2.800, ["Columns_0_1_-2_001_100"] = 0.940, ["Columns_0_1_-2_001_101"] = 0.150, ["Columns_0_1_-2_001_111"] = 2.870, ["Columns_0_1_-2_010"] = 5.090, ["Columns_0_1_-2_100_001"] = 0.610, ["Columns_0_1_-2_100_010"] = 0.090, ["Columns_0_1_-2_100_011"] = 0.630, ["Columns_0_1_-2_100_100"] = 0.300, ["Columns_0_1_-2_100_101"] = 0.880, ["Columns_0_1_-2_100_110"] = 3.630, ["Columns_0_1_-2_101"] = 0.860, ["Columns_0_1_-2_110_000"] = 2.400, ["Columns_0_1_-2_110_010"] = 0.570, ["Columns_0_1_-2_110_100"] = 0.120, ["Columns_0_1_-2_110_101"] = 0.140, ["Columns_0_1_-2_110_110"] = 0.660, ["Columns_0_1_-2_110_111"] = 1.300, ["Columns_0_2_-1_000"] = 0.250, ["Columns_0_2_-1_001"] = 0.210, ["Columns_0_2_-1_010"] = 0.230, ["Columns_0_2_-1_011"] = 5.930, ["Columns_0_2_-1_100"] = 1.920, ["Columns_0_2_-1_101"] = 0.390, ["Columns_0_2_-1_111_000"] = 1.020, ["Columns_0_2_-1_111_010"] = 2.190, ["Columns_0_2_-2_000"] = 3.630, ["Columns_0_2_-2_001"] = 1.660, ["Columns_0_2_-2_100"] = 0.080, ["Columns_0_2_-2_101"] = 1.690, ["Columns_0_3_-1_000"] = 2.630, ["Columns_0_3_-1_100"] = 5.800, ["Columns_0_3_-1_101"] = 1.180, ["Columns_0_3_-1_110"] = 11.900, ["Columns_0_3_-1_111"] = 0.110, ["Columns_1_-1_-1_000"] = 0.310, ["Columns_1_-1_-1_100"] = 2.900, ["Columns_1_-1_-1_101"] = 2.160, ["Columns_1_-1_-1_110"] = 3.170, ["Columns_1_-1_-2_000"] = 2.300, ["Columns_1_-1_-2_001"] = 0.860, ["Columns_1_-1_-2_010_001"] = 0.350, ["Columns_1_-1_-2_010_011"] = 0.350, ["Columns_1_-1_-2_010_100"] = 3.280, ["Columns_1_-1_-2_011"] = 0.050, ["Columns_1_-1_-2_100"] = 0.220, ["Columns_1_-1_-2_101_000"] = 0.220, ["Columns_1_-1_-2_101_001"] = 0.330, ["Columns_1_-1_-2_101_011"] = 2.170, ["Columns_1_-1_-2_101_100"] = 0.280, ["Columns_1_-1_-2_101_110"] = 0.130, ["Columns_1_-1_-2_110"] = 0.590, ["Columns_1_-1_-2_111"] = 1.210, ["Columns_1_-1_-3"] = 0.240, ["Columns_1_-2_-1_010"] = 3.570, ["Columns_1_-2_-1_011"] = 1.490, ["Columns_1_-2_-1_100"] = 0.340, ["Columns_1_-2_-1_110"] = 2.900, ["Columns_1_-2_-1_111"] = 2.210, ["Columns_1_-2_-2_010"] = 3.020, ["Columns_1_-2_-2_011"] = 0.790, ["Columns_1_-2_-2_111"] = 2.110, ["Columns_1_-3_-1_001"] = 1.410, ["Columns_1_-3_-1_010"] = 1.360, ["Columns_1_-3_-1_011"] = 0.510, ["Columns_1_-3_-1_100"] = 0.440, ["Columns_1_-3_-1_101"] = 3.320, ["Columns_1_-3_-1_110"] = 2.600, ["Columns_1_-3_-1_111"] = 1.450, ["Columns_1_-3_-2"] = 0.920, ["Columns_1_-4_-1_000"] = 3.260, ["Columns_1_-4_-1_010"] = 4.560, ["Columns_1_-4_-1_100"] = 2.880, ["Columns_1_-4_-1_101"] = 0.050, ["Columns_1_-4_-1_110"] = 3.020, ["Columns_1_-4_-1_111"] = 1.800, ["Columns_1_0_-1_001"] = 0.980, ["Columns_1_0_-1_011"] = 1.190, ["Columns_1_0_-1_101"] = 2.490, ["Columns_1_0_-1_111"] = 0.690, ["Columns_1_0_-2_000_000"] = 3.260, ["Columns_1_0_-2_000_101"] = 0.660, ["Columns_1_0_-2_000_110"] = 1.130, ["Columns_1_0_-2_000_111"] = 0.570, ["Columns_1_0_-2_001"] = 4.050, ["Columns_1_0_-2_010"] = 3.220, ["Columns_1_0_-2_011"] = 5.010, ["Columns_1_0_-2_100_000"] = 0.910, ["Columns_1_0_-2_100_001"] = 0.750, ["Columns_1_0_-2_100_100"] = 0.990, ["Columns_1_0_-2_100_110"] = 2.670, ["Columns_1_0_-2_101"] = 0.560, ["Columns_1_0_-2_110"] = 3.590, ["Columns_1_0_-2_111"] = 0.360, ["Columns_1_1_-1_100_011"] = 1.100, ["Columns_1_1_-1_100_100"] = 4.500, ["Columns_1_1_-1_100_101"] = 1.790, ["Columns_1_1_-1_101_010"] = 2.730, ["Columns_1_1_-1_101_011"] = 0.290, ["Columns_1_1_-1_101_100"] = 1.540, ["Columns_1_1_-1_101_101"] = 0.920, ["Columns_1_1_-1_101_111"] = 1.400, ["Columns_1_1_-1_110"] = 1.060, ["Columns_1_1_-2_000"] = 2.080, ["Columns_1_1_-2_001_101"] = 3.460, ["Columns_1_1_-2_001_110"] = 0.290, ["Columns_1_1_-2_001_111"] = 1.150, ["Columns_1_1_-2_010_000"] = 0.730, ["Columns_1_1_-2_010_001"] = 0.390, ["Columns_1_1_-2_010_010"] = 0.730, ["Columns_1_1_-2_010_100"] = 0.460, ["Columns_1_1_-2_010_110"] = 1.550, ["Columns_1_1_-2_100"] = 0.530, ["Columns_1_1_-2_101"] = 3.690, ["Columns_1_1_-2_110"] = 0.810, ["Columns_1_1_-2_111"] = 3.770, ["Columns_1_2_-1_000"] = 0.920, ["Columns_1_2_-1_001"] = 0.280, ["Columns_1_2_-1_010"] = 0.070, ["Columns_1_2_-1_011_000"] = 0.900, ["Columns_1_2_-1_011_010"] = 0.600, ["Columns_1_2_-1_011_101"] = 0.110, ["Columns_1_2_-1_011_111"] = 2.380, ["Columns_1_2_-1_100"] = 4.890, ["Columns_1_2_-1_101"] = 2.000, ["Columns_1_2_-2_000"] = 4.310, ["Columns_1_2_-2_100"] = 0.460, ["Columns_1_3_-1_000_011"] = 0.960, ["Columns_1_3_-1_000_100"] = 6.650, ["Columns_1_3_-1_000_111"] = 0.180, ["Columns_1_3_-1_001"] = 1.460, ["Columns_1_3_-1_010"] = 1.460, ["Columns_1_3_-1_011"] = 2.810, ["Columns_2_-1_-1_000"] = 2.840, ["Columns_2_-1_-1_001"] = 8.680, ["Columns_2_-1_-1_010"] = 1.920, ["Columns_2_-1_-1_011"] = 8.650, ["Columns_2_-1_-1_100"] = 1.460, ["Columns_2_-1_-2_001"] = 1.010, ["Columns_2_-1_-2_010"] = 1.420, ["Columns_2_-1_-2_011"] = 1.440, ["Columns_2_-2_-1_000_000"] = 2.610, ["Columns_2_-2_-1_000_001"] = 0.070, ["Columns_2_-2_-1_000_010"] = 3.350, ["Columns_2_-2_-1_000_011"] = 0.100, ["Columns_2_-2_-1_000_100"] = 0.050, ["Columns_2_-2_-1_000_101"] = 0.540, ["Columns_2_-2_-1_010_001"] = 1.980, ["Columns_2_-2_-1_010_011"] = 1.930, ["Columns_2_-2_-1_010_101"] = 3.980, ["Columns_2_-2_-1_010_111"] = 5.300, ["Columns_2_-2_-1_011"] = 10.850, ["Columns_2_-2_-1_110"] = 1.800, ["Columns_2_-2_-2"] = 1.760, ["Columns_2_-3_-1_000_000"] = 5.570, ["Columns_2_-3_-1_000_010"] = 8.500, ["Columns_2_-3_-1_000_011"] = 6.580, ["Columns_2_-3_-1_000_101"] = 5.270, ["Columns_2_-3_-1_001"] = 4.310, ["Columns_2_-3_-1_010"] = 0.500, ["Columns_2_-3_-1_100_000"] = 6.350, ["Columns_2_-3_-1_100_111"] = 1.970, ["Columns_2_-3_-1_110"] = 1.470, ["Columns_2_-3_-1_111"] = 2.930, ["Columns_2_-3_-2"] = 3.080, ["Columns_2_-4_-1"] = 5.210, ["Columns_2_0_-1_000"] = 3.640, ["Columns_2_0_-1_001"] = 0.060, ["Columns_2_0_-1_010_001"] = 0.410, ["Columns_2_0_-1_010_010"] = 4.430, ["Columns_2_0_-1_010_011"] = 0.840, ["Columns_2_0_-1_010_111"] = 0.310, ["Columns_2_0_-1_011"] = 1.060, ["Columns_2_0_-2_001"] = 4.090, ["Columns_2_0_-2_011"] = 1.270, ["Columns_2_1_-1_000"] = 2.710, ["Columns_2_1_-1_001"] = 0.370, ["Columns_2_1_-1_010_011"] = 1.420, ["Columns_2_1_-1_010_101"] = 2.300, ["Columns_2_1_-1_010_111_010"] = 0.040, ["Columns_2_1_-1_010_111_101"] = 3.760, ["Columns_2_1_-1_100_000"] = 2.850, ["Columns_2_1_-1_100_011"] = 3.920, ["Columns_2_1_-1_110"] = 1.620, ["Columns_3_-2_-1"] = 0.390, ["Columns_3_-3_-1_000_000"] = 1.040, ["Columns_3_-3_-1_000_001"] = 0.550, ["Columns_3_-3_-1_000_010"] = 0.650, ["Columns_3_-3_-1_010"] = 0.910, ["Columns_3_-3_-1_110"] = 1.430, ["Columns_3_-4_-1"] = 0.320, ["Columns_3_1_-1"] = 0.040, ["Columns_4_-2_-1"] = 0.080, ["Conduits"] = 0.070, ["Cones"] = 0.150, ["Console"] = 0.200, ["Contact"] = 0.120, ["Cord"] = 0.346, ["Core"] = 0.150, ["Corners"] = 0.070, ["Counter"] = 0.680, ["CounterDrums"] = 0.250, ["Couplings"] = 0.070, ["Cowls"] = 0.120, ["Cradle"] = 0.350, ["Crane"] = 0.690, ["CraneHook"] = 0.080, ["CraneWeight"] = 0.050, ["Crate"] = 0.320, ["CrateGear"] = 0.030, ["CrateHeap"] = 0.070, ["CrateScrap"] = 0.050, ["Crema"] = 0.300, ["Crown"] = 0.960, ["CrushedBlocks"] = 3.110, ["Cuffs"] = 0.160, ["Cup"] = 0.415, ["CupBase"] = 0.250, ["Cups"] = 0.080, ["Curtains"] = 0.180, ["Cylinder"] = 0.370, ["Deck"] = 0.790, ["Dial"] = 0.190, ["Dials"] = 0.260, ["Dirt_-1_-2_-1"] = 0.230, ["Dirt_-1_-3_-1_000"] = 3.330, ["Dirt_-1_-3_-1_001_000"] = 0.860, ["Dirt_-1_-3_-1_001_010"] = 1.880, ["Dirt_-1_-3_-1_001_011"] = 1.980, ["Dirt_-1_-3_-1_001_100"] = 0.060, ["Dirt_-1_-3_-1_001_110"] = 0.110, ["Dirt_-1_-3_-1_001_111"] = 0.970, ["Dirt_-1_-3_-1_010_100"] = 8.820, ["Dirt_-1_-3_-1_010_101"] = 0.920, ["Dirt_-1_-3_-1_010_110_000"] = 5.630, ["Dirt_-1_-3_-1_010_110_001"] = 5.430, ["Dirt_-1_-3_-1_100"] = 0.420, ["Dirt_-1_-3_-1_101"] = 1.630, ["Dirt_-1_-3_-1_110_000"] = 1.760, ["Dirt_-1_-3_-1_110_011"] = 6.230, ["Dirt_-1_-3_-1_110_100"] = 0.180, ["Dirt_-1_-3_-1_111"] = 1.400, ["Dirt_-1_-3_0"] = 0.130, ["Dirt_-1_-4_-1_001"] = 0.680, ["Dirt_-1_-4_-1_010"] = 0.920, ["Dirt_-1_-4_-1_011"] = 0.500, ["Dirt_-1_-4_-1_101"] = 1.930, ["Dirt_-1_-4_-1_110"] = 10.870, ["Dirt_-1_-4_0"] = 0.290, ["Dirt_-1_-5_-1_001_110"] = 7.870, ["Dirt_-1_-5_-1_001_111"] = 0.070, ["Dirt_-1_-5_-1_011"] = 0.340, ["Dirt_-1_-5_-1_101"] = 2.510, ["Dirt_-1_-5_-1_111"] = 6.210, ["Dirt_-1_-5_0_000"] = 0.440, ["Dirt_-1_-5_0_001"] = 1.370, ["Dirt_-1_-5_0_100"] = 1.830, ["Dirt_-1_-5_0_101"] = 3.380, ["Dirt_-1_0_-2"] = 1.130, ["Dirt_-1_2_-1_001"] = 1.870, ["Dirt_-1_2_-1_010"] = 1.350, ["Dirt_-1_2_-1_011"] = 2.210, ["Dirt_-1_2_-1_110_010"] = 1.300, ["Dirt_-1_2_-1_110_011"] = 0.280, ["Dirt_-1_2_-1_110_110"] = 2.610, ["Dirt_-1_2_-1_110_111"] = 2.330, ["Dirt_-1_2_-1_111"] = 0.360, ["Dirt_-1_2_-2"] = 2.240, ["Dirt_-1_3_-1_001"] = 1.750, ["Dirt_-1_3_-1_010"] = 2.680, ["Dirt_-1_3_-1_100"] = 4.150, ["Dirt_-1_4_-1_000"] = 0.210, ["Dirt_-1_4_-1_001"] = 2.280, ["Dirt_-1_4_-1_100"] = 0.490, ["Dirt_-1_4_-1_101"] = 1.970, ["Dirt_-1_4_-1_111"] = 0.120, ["Dirt_-1_4_0_001"] = 0.420, ["Dirt_-1_4_0_010"] = 2.100, ["Dirt_-1_4_0_011"] = 0.730, ["Dirt_-1_4_0_110"] = 1.580, ["Dirt_-1_4_0_111"] = 5.130, ["Dirt_-2_-1_-1"] = 0.110, ["Dirt_-2_-1_-2"] = 0.040, ["Dirt_-2_-2_-1_000_001"] = 4.490, ["Dirt_-2_-2_-1_000_011"] = 2.840, ["Dirt_-2_-2_-1_000_111"] = 0.680, ["Dirt_-2_-2_-1_001"] = 3.950, ["Dirt_-2_-2_-1_010"] = 1.000, ["Dirt_-2_-2_-1_011"] = 2.740, ["Dirt_-2_-2_-1_100_001"] = 0.430, ["Dirt_-2_-2_-1_100_010"] = 8.630, ["Dirt_-2_-2_-1_100_011"] = 0.370, ["Dirt_-2_-2_-1_100_100"] = 0.260, ["Dirt_-2_-2_-1_100_101"] = 3.240, ["Dirt_-2_-2_-1_101_000"] = 3.720, ["Dirt_-2_-2_-1_101_001"] = 2.150, ["Dirt_-2_-2_-1_101_100"] = 1.920, ["Dirt_-2_-2_-1_101_101"] = 1.250, ["Dirt_-2_-3_-1"] = 2.990, ["Dirt_-2_-3_0"] = 4.300, ["Dirt_-2_-4_-1_000"] = 2.340, ["Dirt_-2_-4_-1_001"] = 2.490, ["Dirt_-2_-4_-1_010"] = 3.830, ["Dirt_-2_-4_-1_101_000"] = 0.200, ["Dirt_-2_-4_-1_101_100"] = 4.520, ["Dirt_-2_-4_-1_101_110"] = 0.810, ["Dirt_-2_-4_-1_101_111"] = 0.940, ["Dirt_-2_-4_-1_110"] = 2.370, ["Dirt_-2_-5_-1"] = 6.080, ["Dirt_-2_-5_0_010"] = 1.570, ["Dirt_-2_-5_0_011_001"] = 1.210, ["Dirt_-2_-5_0_011_010"] = 0.560, ["Dirt_-2_-5_0_011_100"] = 0.190, ["Dirt_-2_-5_0_011_101"] = 0.290, ["Dirt_-2_-5_0_011_110"] = 1.620, ["Dirt_-2_-5_0_100"] = 0.870, ["Dirt_-2_-5_0_101"] = 0.150, ["Dirt_-2_-5_0_111"] = 4.140, ["Dirt_-2_0_-1_000"] = 3.160, ["Dirt_-2_0_-1_001"] = 3.780, ["Dirt_-2_0_-1_010"] = 2.940, ["Dirt_-2_0_-1_011"] = 0.140, ["Dirt_-2_1_-1_000"] = 1.950, ["Dirt_-2_1_-1_001_000"] = 2.340, ["Dirt_-2_1_-1_001_001_100"] = 1.420, ["Dirt_-2_1_-1_001_001_110"] = 0.680, ["Dirt_-2_1_-1_001_010"] = 1.670, ["Dirt_-2_1_-1_010"] = 0.710, ["Dirt_-2_1_-1_011"] = 3.770, ["Dirt_-2_1_-1_111"] = 3.950, ["Dirt_-2_1_-2_001"] = 0.080, ["Dirt_-2_1_-2_101"] = 0.710, ["Dirt_-2_1_-2_111"] = 2.650, ["Dirt_-2_2_-1_000"] = 2.260, ["Dirt_-2_2_-1_001"] = 1.060, ["Dirt_-2_2_-1_010"] = 3.160, ["Dirt_-2_2_-1_011"] = 2.660, ["Dirt_-2_2_-1_101"] = 0.650, ["Dirt_-2_2_-2"] = 2.250, ["Dirt_-2_3_-1_000_000"] = 0.110, ["Dirt_-2_3_-1_000_001"] = 0.080, ["Dirt_-2_3_-1_000_110"] = 0.530, ["Dirt_-2_3_-1_000_111"] = 4.280, ["Dirt_-2_3_-1_001"] = 0.650, ["Dirt_-2_3_-1_011_100"] = 0.230, ["Dirt_-2_3_-1_011_111"] = 8.500, ["Dirt_-2_3_-1_101"] = 3.370, ["Dirt_-2_3_-1_110"] = 4.410, ["Dirt_-2_3_-1_111"] = 1.820, ["Dirt_-2_3_-2"] = 0.890, ["Dirt_-2_4_-1"] = 0.890, ["Dirt_-2_4_0_000"] = 0.890, ["Dirt_-2_4_0_001"] = 5.530, ["Dirt_-2_4_0_100"] = 1.020, ["Dirt_-2_4_0_101"] = 0.750, ["Dirt_-3_-1_-1_000"] = 2.020, ["Dirt_-3_-1_-1_001"] = 2.570, ["Dirt_-3_-1_-1_010"] = 4.140, ["Dirt_-3_-1_-1_011"] = 2.010, ["Dirt_-3_-1_-1_100"] = 1.200, ["Dirt_-3_-1_-1_101"] = 6.830, ["Dirt_-3_-1_-1_110"] = 0.170, ["Dirt_-3_-1_-1_111"] = 0.270, ["Dirt_-3_-1_-2"] = 5.080, ["Dirt_-3_-2_-1_000_000"] = 0.360, ["Dirt_-3_-2_-1_000_001"] = 2.630, ["Dirt_-3_-2_-1_000_101"] = 1.020, ["Dirt_-3_-2_-1_001"] = 5.850, ["Dirt_-3_-2_-1_010"] = 3.730, ["Dirt_-3_-2_-1_011"] = 2.470, ["Dirt_-3_-2_-1_100"] = 6.010, ["Dirt_-3_-2_-1_110_000"] = 6.800, ["Dirt_-3_-2_-1_110_011"] = 0.160, ["Dirt_-3_-2_-1_110_100"] = 0.420, ["Dirt_-3_-2_-1_110_111"] = 0.370, ["Dirt_-3_-2_-1_111_010"] = 0.040, ["Dirt_-3_-2_-1_111_011"] = 1.320, ["Dirt_-3_-2_-1_111_100"] = 0.250, ["Dirt_-3_-2_-1_111_101"] = 0.700, ["Dirt_-3_-2_-1_111_110"] = 0.460, ["Dirt_-3_-2_-1_111_111"] = 2.120, ["Dirt_-3_-2_-2"] = 0.380, ["Dirt_-3_-3_-1_000"] = 0.270, ["Dirt_-3_-3_-1_001_000"] = 3.790, ["Dirt_-3_-3_-1_001_001"] = 0.470, ["Dirt_-3_-3_-1_001_011"] = 5.160, ["Dirt_-3_-3_-1_010"] = 1.010, ["Dirt_-3_-3_-1_011_001"] = 0.930, ["Dirt_-3_-3_-1_011_010"] = 1.900, ["Dirt_-3_-3_-1_011_011"] = 0.840, ["Dirt_-3_-3_0"] = 2.700, ["Dirt_-3_-4_-1_000"] = 1.590, ["Dirt_-3_-4_-1_001"] = 0.560, ["Dirt_-3_-4_-1_010"] = 6.040, ["Dirt_-3_-4_-1_011"] = 3.020, ["Dirt_-3_-4_-1_100"] = 3.330, ["Dirt_-3_-4_-1_101"] = 7.080, ["Dirt_-3_-4_-1_110"] = 0.130, ["Dirt_-3_-4_-1_111"] = 2.770, ["Dirt_-3_-4_0"] = 9.200, ["Dirt_-3_-5_-1"] = 0.740, ["Dirt_-3_-5_0_011"] = 1.020, ["Dirt_-3_-5_0_111"] = 2.930, ["Dirt_-3_0_-1_000"] = 2.190, ["Dirt_-3_0_-1_010"] = 1.370, ["Dirt_-3_0_-1_011"] = 1.170, ["Dirt_-3_0_-1_100"] = 1.240, ["Dirt_-3_0_-1_101"] = 4.030, ["Dirt_-3_0_-2"] = 0.300, ["Dirt_-3_1_-1_000_000"] = 0.200, ["Dirt_-3_1_-1_000_001"] = 1.230, ["Dirt_-3_1_-1_000_101"] = 2.090, ["Dirt_-3_1_-1_000_111"] = 1.210, ["Dirt_-3_1_-1_001"] = 0.320, ["Dirt_-3_1_-1_101"] = 0.290, ["Dirt_-3_1_-1_110_010"] = 9.000, ["Dirt_-3_1_-1_110_100"] = 0.850, ["Dirt_-3_1_-1_110_101"] = 0.610, ["Dirt_-3_1_-1_110_110"] = 0.100, ["Dirt_-3_1_-1_111"] = 5.080, ["Dirt_-3_1_0"] = 0.170, ["Dirt_-3_2_-1_000_001"] = 3.280, ["Dirt_-3_2_-1_000_011"] = 2.160, ["Dirt_-3_2_-1_000_110"] = 0.220, ["Dirt_-3_2_-1_001"] = 1.540, ["Dirt_-3_2_-1_010"] = 3.950, ["Dirt_-3_2_-1_011"] = 5.160, ["Dirt_-3_2_-1_100"] = 2.200, ["Dirt_-3_2_-1_110"] = 2.370, ["Dirt_-3_3_-1_000"] = 4.250, ["Dirt_-3_3_-1_001"] = 2.960, ["Dirt_-3_3_-1_010"] = 0.330, ["Dirt_-3_3_-1_011"] = 2.260, ["Dirt_-3_3_-1_101_010"] = 0.120, ["Dirt_-3_3_-1_101_101"] = 1.170, ["Dirt_-3_3_-1_101_110_001"] = 2.120, ["Dirt_-3_3_-1_101_110_010"] = 3.740, ["Dirt_-3_3_-1_111_000"] = 0.380, ["Dirt_-3_3_-1_111_001"] = 0.390, ["Dirt_-3_3_-1_111_100"] = 3.000, ["Dirt_-3_3_-1_111_110"] = 1.350, ["Dirt_-3_3_0_001"] = 1.060, ["Dirt_-3_3_0_010"] = 2.780, ["Dirt_-3_3_0_011"] = 3.940, ["Dirt_-3_3_0_110"] = 0.420, ["Dirt_-3_3_0_111"] = 0.150, ["Dirt_-3_4_0_100"] = 0.420, ["Dirt_-3_4_0_101"] = 7.690, ["Dirt_-4_-1_-1_000"] = 5.030, ["Dirt_-4_-1_-1_011"] = 0.530, ["Dirt_-4_-1_-1_100_001"] = 0.150, ["Dirt_-4_-1_-1_100_010"] = 1.180, ["Dirt_-4_-1_-1_100_011"] = 0.320, ["Dirt_-4_-1_-1_100_101"] = 1.480, ["Dirt_-4_-1_-1_100_110"] = 0.810, ["Dirt_-4_-1_-1_101"] = 2.330, ["Dirt_-4_-1_-1_110"] = 1.220, ["Dirt_-4_-1_0"] = 0.240, ["Dirt_-4_-2_-1_000"] = 1.360, ["Dirt_-4_-2_-1_100"] = 2.250, ["Dirt_-4_-2_-1_101"] = 0.170, ["Dirt_-4_-2_-1_110_000"] = 4.830, ["Dirt_-4_-2_-1_110_100"] = 0.050, ["Dirt_-4_-2_-1_110_111"] = 0.250, ["Dirt_-4_-2_-1_111"] = 1.260, ["Dirt_-4_-3_-1_001"] = 1.240, ["Dirt_-4_-3_-1_011_000"] = 0.090, ["Dirt_-4_-3_-1_011_011"] = 2.980, ["Dirt_-4_-3_-1_100"] = 0.070, ["Dirt_-4_-3_-1_101"] = 1.310, ["Dirt_-4_-3_-1_110"] = 5.660, ["Dirt_-4_-3_-1_111"] = 1.910, ["Dirt_-4_-3_0"] = 6.320, ["Dirt_-4_-4_0_010"] = 1.390, ["Dirt_-4_-4_0_011"] = 1.030, ["Dirt_-4_-4_0_101"] = 2.780, ["Dirt_-4_-4_0_111"] = 2.460, ["Dirt_-4_0_-1"] = 0.330, ["Dirt_-4_1_-1_010"] = 1.530, ["Dirt_-4_1_-1_100"] = 0.470, ["Dirt_-4_1_-1_110"] = 3.220, ["Dirt_-4_2_-1_000"] = 1.600, ["Dirt_-4_2_-1_001"] = 6.340, ["Dirt_-4_2_-1_010"] = 1.380, ["Dirt_-4_2_-1_011"] = 4.280, ["Dirt_-4_2_-1_100"] = 0.080, ["Dirt_-4_2_-1_101_001"] = 1.890, ["Dirt_-4_2_-1_101_010_010"] = 0.850, ["Dirt_-4_2_-1_101_010_101"] = 3.610, ["Dirt_-4_2_-1_110_000"] = 0.210, ["Dirt_-4_2_-1_110_001"] = 0.350, ["Dirt_-4_2_-1_110_010"] = 1.540, ["Dirt_-4_2_-1_110_011"] = 0.820, ["Dirt_-4_2_-1_110_110"] = 2.260, ["Dirt_-4_2_-1_111"] = 1.350, ["Dirt_-4_2_0_001"] = 1.080, ["Dirt_-4_2_0_010"] = 0.720, ["Dirt_-4_2_0_011"] = 0.910, ["Dirt_-4_2_0_111"] = 1.670, ["Dirt_-4_3_-1_001"] = 0.250, ["Dirt_-4_3_-1_100_100_000"] = 2.300, ["Dirt_-4_3_-1_100_100_011"] = 0.900, ["Dirt_-4_3_-1_100_101_011"] = 0.070, ["Dirt_-4_3_-1_100_101_110"] = 9.130, ["Dirt_-4_3_-1_100_111"] = 0.630, ["Dirt_-4_3_-1_101"] = 1.620, ["Dirt_-4_3_-1_110"] = 1.130, ["Dirt_-4_3_-1_111"] = 0.560, ["Dirt_-4_3_0_000"] = 0.690, ["Dirt_-4_3_0_001"] = 0.850, ["Dirt_-4_3_0_100"] = 1.040, ["Dirt_-4_3_0_101"] = 1.320, ["Dirt_-4_3_0_110"] = 0.110, ["Dirt_-4_3_0_111"] = 2.570, ["Dirt_-5_-1_-1_001"] = 0.430, ["Dirt_-5_-1_-1_011"] = 0.960, ["Dirt_-5_-1_-1_101"] = 2.640, ["Dirt_-5_-1_-1_110"] = 1.630, ["Dirt_-5_-1_-1_111"] = 6.470, ["Dirt_-5_-1_0_000"] = 0.190, ["Dirt_-5_-1_0_001"] = 2.530, ["Dirt_-5_-1_0_010"] = 2.250, ["Dirt_-5_-1_0_011"] = 1.210, ["Dirt_-5_-1_0_111"] = 1.710, ["Dirt_-5_-2_-1_101"] = 2.260, ["Dirt_-5_-2_-1_111"] = 1.960, ["Dirt_-5_-2_0_011"] = 0.750, ["Dirt_-5_-2_0_100"] = 2.980, ["Dirt_-5_-2_0_111"] = 0.580, ["Dirt_-5_-3_0"] = 3.730, ["Dirt_-5_0_-1_001"] = 2.120, ["Dirt_-5_0_-1_100"] = 0.340, ["Dirt_-5_0_-1_101_000"] = 0.340, ["Dirt_-5_0_-1_101_001"] = 0.560, ["Dirt_-5_0_-1_101_010"] = 0.810, ["Dirt_-5_0_-1_101_011"] = 0.390, ["Dirt_-5_0_-1_101_100"] = 1.000, ["Dirt_-5_0_-1_101_101"] = 0.380, ["Dirt_-5_0_-1_101_110"] = 0.190, ["Dirt_-5_0_-1_111"] = 1.190, ["Dirt_-5_0_0_001"] = 2.730, ["Dirt_-5_0_0_010"] = 2.320, ["Dirt_-5_0_0_011"] = 3.510, ["Dirt_-5_0_0_100"] = 0.040, ["Dirt_-5_0_0_101"] = 0.910, ["Dirt_-5_1_-1"] = 0.670, ["Dirt_-5_1_0_000"] = 0.350, ["Dirt_-5_1_0_001"] = 0.650, ["Dirt_-5_1_0_010"] = 0.050, ["Dirt_-5_1_0_101"] = 1.270, ["Dirt_-5_1_0_110"] = 1.410, ["Dirt_-5_1_0_111"] = 4.600, ["Dirt_-5_2_-1"] = 1.130, ["Dirt_-5_2_0"] = 3.280, ["Dirt_0_-2_-1"] = 0.050, ["Dirt_0_-3_-1_001_000"] = 0.260, ["Dirt_0_-3_-1_001_011_101"] = 1.630, ["Dirt_0_-3_-1_001_011_111"] = 2.670, ["Dirt_0_-3_-1_001_101"] = 0.520, ["Dirt_0_-3_-1_001_111"] = 0.910, ["Dirt_0_-3_-1_011"] = 0.860, ["Dirt_0_-3_-1_101"] = 0.510, ["Dirt_0_-3_-1_111"] = 1.540, ["Dirt_0_-4_-1_000"] = 4.340, ["Dirt_0_-4_-1_001"] = 0.990, ["Dirt_0_-4_-1_010"] = 0.400, ["Dirt_0_-4_-1_101"] = 1.920, ["Dirt_0_-4_0"] = 0.100, ["Dirt_0_-5_-1_001"] = 0.880, ["Dirt_0_-5_-1_011"] = 2.240, ["Dirt_0_-5_-1_101"] = 1.190, ["Dirt_0_-5_-1_110"] = 6.680, ["Dirt_0_-5_-1_111"] = 3.310, ["Dirt_0_-5_0_000"] = 0.620, ["Dirt_0_-5_0_001"] = 2.870, ["Dirt_0_-5_0_100"] = 0.350, ["Dirt_0_-5_0_101"] = 1.660, ["Dirt_0_-5_0_111"] = 1.170, ["Dirt_0_0_-1_011"] = 0.130, ["Dirt_0_0_-1_101"] = 0.100, ["Dirt_0_0_-1_111_000"] = 1.430, ["Dirt_0_0_-1_111_001"] = 1.290, ["Dirt_0_0_-1_111_011"] = 1.360, ["Dirt_0_0_-1_111_100"] = 0.270, ["Dirt_0_0_-1_111_111"] = 0.480, ["Dirt_0_0_-2"] = 0.370, ["Dirt_0_1_-1"] = 0.380, ["Dirt_0_2_-1_000"] = 1.650, ["Dirt_0_2_-1_001"] = 1.000, ["Dirt_0_2_-1_010"] = 0.510, ["Dirt_0_2_-1_011"] = 0.090, ["Dirt_0_2_-1_100_010"] = 3.220, ["Dirt_0_2_-1_100_011"] = 1.850, ["Dirt_0_2_-1_100_100"] = 1.400, ["Dirt_0_2_-1_100_101"] = 0.460, ["Dirt_0_2_-1_100_110"] = 0.730, ["Dirt_0_2_-1_100_111"] = 0.900, ["Dirt_0_2_-1_101"] = 1.180, ["Dirt_0_3_-1_101"] = 0.510, ["Dirt_0_3_-1_110"] = 11.920, ["Dirt_0_3_-1_111"] = 0.180, ["Dirt_0_4_-1_001"] = 6.500, ["Dirt_0_4_-1_011"] = 0.140, ["Dirt_0_4_0_010"] = 1.590, ["Dirt_0_4_0_011"] = 0.660, ["Dirt_0_4_0_101"] = 0.110, ["Dirt_0_4_0_110"] = 1.530, ["Dirt_0_4_0_111"] = 2.520, ["Dirt_1_-1_-1_000"] = 0.660, ["Dirt_1_-1_-1_100_000"] = 1.430, ["Dirt_1_-1_-1_100_001"] = 0.240, ["Dirt_1_-1_-1_100_010"] = 3.130, ["Dirt_1_-1_-1_101"] = 0.710, ["Dirt_1_-1_-1_110_000"] = 2.540, ["Dirt_1_-1_-1_110_010"] = 0.120, ["Dirt_1_-1_-1_110_100"] = 2.870, ["Dirt_1_-1_-1_110_101"] = 0.830, ["Dirt_1_-1_0_100"] = 0.770, ["Dirt_1_-1_0_101"] = 0.560, ["Dirt_1_-1_0_110"] = 0.310, ["Dirt_1_-1_0_111"] = 0.400, ["Dirt_1_-2_-1_001"] = 1.260, ["Dirt_1_-2_-1_010_010"] = 1.090, ["Dirt_1_-2_-1_010_011"] = 2.210, ["Dirt_1_-2_-1_010_101"] = 0.470, ["Dirt_1_-2_-1_010_110"] = 2.530, ["Dirt_1_-2_-1_010_111"] = 1.810, ["Dirt_1_-2_-1_011_001"] = 4.440, ["Dirt_1_-2_-1_011_100"] = 0.630, ["Dirt_1_-2_-1_011_101"] = 1.790, ["Dirt_1_-2_-1_011_111"] = 1.940, ["Dirt_1_-2_-1_100"] = 6.850, ["Dirt_1_-2_-1_101_011"] = 1.020, ["Dirt_1_-2_-1_101_101"] = 0.860, ["Dirt_1_-2_-1_101_110"] = 0.210, ["Dirt_1_-2_-1_101_111"] = 1.120, ["Dirt_1_-2_-1_110"] = 3.780, ["Dirt_1_-2_-1_111"] = 1.170, ["Dirt_1_-2_0"] = 0.050, ["Dirt_1_-3_-1_010"] = 7.310, ["Dirt_1_-3_-1_011_011"] = 0.160, ["Dirt_1_-3_-1_011_111"] = 5.720, ["Dirt_1_-3_-1_100"] = 4.210, ["Dirt_1_-3_-1_101"] = 0.100, ["Dirt_1_-3_-1_110_001"] = 0.580, ["Dirt_1_-3_-1_110_011"] = 3.590, ["Dirt_1_-3_-1_111"] = 0.490, ["Dirt_1_-4_-1_001_000"] = 4.340, ["Dirt_1_-4_-1_001_110"] = 0.570, ["Dirt_1_-4_-1_100"] = 1.600, ["Dirt_1_-4_-1_101_010"] = 0.400, ["Dirt_1_-4_-1_101_101"] = 5.850, ["Dirt_1_-4_-1_101_110"] = 0.110, ["Dirt_1_-4_-1_111"] = 3.390, ["Dirt_1_-4_0"] = 0.110, ["Dirt_1_-5_-1_010"] = 2.950, ["Dirt_1_-5_-1_011"] = 0.340, ["Dirt_1_-5_-1_110"] = 1.770, ["Dirt_1_-5_-1_111"] = 2.120, ["Dirt_1_-5_0_011"] = 2.410, ["Dirt_1_-5_0_110"] = 1.160, ["Dirt_1_-5_0_111"] = 1.130, ["Dirt_1_0_-1_000"] = 0.350, ["Dirt_1_0_-1_001"] = 5.620, ["Dirt_1_0_-1_100"] = 2.700, ["Dirt_1_0_-1_101"] = 1.370, ["Dirt_1_0_-1_110"] = 0.050, ["Dirt_1_0_-1_111"] = 1.380, ["Dirt_1_1_-1_100"] = 1.650, ["Dirt_1_1_-1_101"] = 7.540, ["Dirt_1_1_-1_110_010"] = 2.240, ["Dirt_1_1_-1_110_011"] = 1.050, ["Dirt_1_1_-1_110_100"] = 0.100, ["Dirt_1_1_-1_110_110"] = 1.840, ["Dirt_1_1_-1_110_111"] = 2.060, ["Dirt_1_1_0"] = 1.300, ["Dirt_1_2_-1_000_010"] = 1.540, ["Dirt_1_2_-1_000_011"] = 4.270, ["Dirt_1_2_-1_000_101"] = 0.080, ["Dirt_1_2_-1_001"] = 3.040, ["Dirt_1_2_-1_010"] = 3.160, ["Dirt_1_2_-1_011"] = 0.140, ["Dirt_1_2_-1_100"] = 1.380, ["Dirt_1_2_-1_101_001"] = 2.640, ["Dirt_1_2_-1_101_011"] = 3.680, ["Dirt_1_2_-1_101_101"] = 1.460, ["Dirt_1_2_-1_101_111"] = 0.700, ["Dirt_1_2_-1_111"] = 1.690, ["Dirt_1_2_0"] = 0.300, ["Dirt_1_3_-1_000"] = 3.360, ["Dirt_1_3_-1_001"] = 0.960, ["Dirt_1_3_-1_010"] = 0.910, ["Dirt_1_3_-1_011_000"] = 1.810, ["Dirt_1_3_-1_011_001"] = 0.950, ["Dirt_1_3_-1_011_010"] = 3.350, ["Dirt_1_3_-1_011_100"] = 0.070, ["Dirt_1_3_-1_011_101"] = 0.210, ["Dirt_1_3_-1_011_110"] = 2.830, ["Dirt_1_3_-1_011_111"] = 2.030, ["Dirt_1_3_-1_101"] = 5.280, ["Dirt_1_3_-1_111_001"] = 8.740, ["Dirt_1_3_-1_111_011"] = 1.970, ["Dirt_1_3_-1_111_110"] = 0.380, ["Dirt_1_3_-1_111_111"] = 1.540, ["Dirt_1_3_0"] = 0.190, ["Dirt_1_4_-1_001"] = 3.400, ["Dirt_1_4_-1_101"] = 7.270, ["Dirt_1_4_0_001"] = 0.230, ["Dirt_1_4_0_010"] = 1.160, ["Dirt_1_4_0_011"] = 1.220, ["Dirt_1_4_0_100"] = 1.020, ["Dirt_1_4_0_101"] = 1.900, ["Dirt_2_-1_-1_000"] = 0.500, ["Dirt_2_-1_-1_001"] = 2.410, ["Dirt_2_-1_-1_010"] = 1.040, ["Dirt_2_-1_-1_011"] = 0.260, ["Dirt_2_-1_-1_100"] = 0.340, ["Dirt_2_-1_-1_101"] = 1.360, ["Dirt_2_-1_-1_110"] = 6.490, ["Dirt_2_-1_0"] = 0.270, ["Dirt_2_-2_-1_000"] = 5.500, ["Dirt_2_-2_-1_001"] = 1.210, ["Dirt_2_-2_-1_010"] = 1.110, ["Dirt_2_-2_-1_011_001"] = 2.210, ["Dirt_2_-2_-1_011_100"] = 0.320, ["Dirt_2_-2_-1_011_101"] = 2.910, ["Dirt_2_-2_-1_011_110"] = 3.830, ["Dirt_2_-2_-1_011_111"] = 1.180, ["Dirt_2_-2_-1_100"] = 5.160, ["Dirt_2_-2_-1_110"] = 3.990, ["Dirt_2_-2_-1_111"] = 3.720, ["Dirt_2_-2_0"] = 0.120, ["Dirt_2_-3_-1_000_011_000"] = 3.420, ["Dirt_2_-3_-1_000_011_010"] = 4.710, ["Dirt_2_-3_-1_000_011_100"] = 2.470, ["Dirt_2_-3_-1_000_111"] = 8.720, ["Dirt_2_-3_-1_001"] = 0.320, ["Dirt_2_-3_-1_010"] = 5.120, ["Dirt_2_-3_-1_110"] = 0.070, ["Dirt_2_-3_-1_111"] = 0.060, ["Dirt_2_-4_-1_000"] = 1.870, ["Dirt_2_-4_-1_001"] = 0.670, ["Dirt_2_-4_-1_010_000"] = 4.700, ["Dirt_2_-4_-1_010_001"] = 0.940, ["Dirt_2_-4_-1_010_010"] = 0.150, ["Dirt_2_-4_-1_010_011"] = 0.410, ["Dirt_2_-4_-1_010_100"] = 1.070, ["Dirt_2_-4_-1_011"] = 0.090, ["Dirt_2_-4_-1_101"] = 0.540, ["Dirt_2_-4_-1_110"] = 5.720, ["Dirt_2_-4_0_000"] = 0.600, ["Dirt_2_-4_0_001"] = 1.230, ["Dirt_2_-4_0_101"] = 3.940, ["Dirt_2_-4_0_111"] = 0.110, ["Dirt_2_-5_0"] = 1.480, ["Dirt_2_0_-1_000"] = 0.870, ["Dirt_2_0_-1_001"] = 1.100, ["Dirt_2_0_-1_011"] = 3.340, ["Dirt_2_0_-1_100"] = 4.840, ["Dirt_2_0_0"] = 0.890, ["Dirt_2_1_-1_001"] = 2.310, ["Dirt_2_1_-1_101"] = 3.600, ["Dirt_2_1_-1_110"] = 3.560, ["Dirt_2_2_-1_000"] = 4.820, ["Dirt_2_2_-1_001"] = 0.680, ["Dirt_2_2_-1_011"] = 3.410, ["Dirt_2_2_-1_100"] = 3.110, ["Dirt_2_2_-1_110_001"] = 5.980, ["Dirt_2_2_-1_110_101"] = 1.330, ["Dirt_2_2_-1_110_110"] = 0.770, ["Dirt_2_2_-1_111"] = 5.640, ["Dirt_2_3_-1_001"] = 3.260, ["Dirt_2_3_-1_011_010"] = 0.620, ["Dirt_2_3_-1_011_011"] = 3.630, ["Dirt_2_3_-1_011_100"] = 5.260, ["Dirt_2_3_-1_011_110"] = 0.980, ["Dirt_2_3_-1_011_111"] = 2.260, ["Dirt_2_3_-1_100"] = 2.200, ["Dirt_2_3_-1_101"] = 3.710, ["Dirt_2_3_-1_111"] = 1.380, ["Dirt_2_3_0_101"] = 0.130, ["Dirt_2_3_0_110"] = 1.790, ["Dirt_2_3_0_111"] = 7.810, ["Dirt_2_4_-1"] = 2.240, ["Dirt_2_4_0"] = 6.230, ["Dirt_3_-1_-1_000"] = 6.300, ["Dirt_3_-1_-1_100"] = 2.500, ["Dirt_3_-1_-1_110"] = 1.280, ["Dirt_3_-2_-1_000"] = 0.590, ["Dirt_3_-2_-1_001"] = 1.420, ["Dirt_3_-2_-1_010"] = 2.890, ["Dirt_3_-2_-1_100"] = 4.380, ["Dirt_3_-2_-1_101"] = 6.750, ["Dirt_3_-2_-1_110"] = 4.750, ["Dirt_3_-2_0"] = 1.070, ["Dirt_3_-3_-1_000"] = 6.120, ["Dirt_3_-3_-1_001"] = 0.770, ["Dirt_3_-3_-1_010_001"] = 2.510, ["Dirt_3_-3_-1_010_011"] = 1.980, ["Dirt_3_-3_-1_010_100"] = 0.250, ["Dirt_3_-3_-1_010_101"] = 0.200, ["Dirt_3_-3_-1_010_111"] = 0.360, ["Dirt_3_-3_-1_011"] = 1.060, ["Dirt_3_-3_-1_100"] = 0.660, ["Dirt_3_-3_-1_101"] = 0.160, ["Dirt_3_-3_-1_110_000"] = 0.540, ["Dirt_3_-3_-1_110_001"] = 0.700, ["Dirt_3_-3_-1_110_010"] = 1.740, ["Dirt_3_-3_-1_110_101"] = 0.090, ["Dirt_3_-3_-1_110_110"] = 0.470, ["Dirt_3_-3_-1_111"] = 0.300, ["Dirt_3_-3_0_011"] = 0.050, ["Dirt_3_-3_0_100"] = 3.450, ["Dirt_3_-3_0_101_001"] = 3.250, ["Dirt_3_-3_0_101_010"] = 1.660, ["Dirt_3_-3_0_101_110"] = 2.300, ["Dirt_3_-3_0_111"] = 2.710, ["Dirt_3_-4_0_010"] = 1.960, ["Dirt_3_-4_0_011"] = 5.780, ["Dirt_3_0_-1_000"] = 3.590, ["Dirt_3_0_-1_010"] = 5.000, ["Dirt_3_0_-1_100_000"] = 1.280, ["Dirt_3_0_-1_100_100"] = 1.120, ["Dirt_3_0_-1_100_110"] = 1.290, ["Dirt_3_0_-1_110"] = 1.600, ["Dirt_3_1_-1_000"] = 1.180, ["Dirt_3_1_-1_010"] = 3.690, ["Dirt_3_1_-1_011"] = 0.760, ["Dirt_3_1_-1_101"] = 1.500, ["Dirt_3_1_-1_110"] = 3.140, ["Dirt_3_2_-1_000_001"] = 0.080, ["Dirt_3_2_-1_000_010"] = 6.130, ["Dirt_3_2_-1_000_011"] = 1.280, ["Dirt_3_2_-1_000_110"] = 4.440, ["Dirt_3_2_-1_010"] = 2.150, ["Dirt_3_2_-1_100_010"] = 3.700, ["Dirt_3_2_-1_100_110"] = 0.750, ["Dirt_3_2_-1_110"] = 1.130, ["Dirt_3_2_-1_111"] = 0.170, ["Dirt_3_2_0"] = 3.740, ["Dirt_3_3_-1_000"] = 4.370, ["Dirt_3_3_-1_001"] = 3.130, ["Dirt_3_3_-1_011"] = 0.170, ["Dirt_3_3_-1_100"] = 0.300, ["Dirt_3_3_0_001"] = 1.360, ["Dirt_3_3_0_010"] = 0.090, ["Dirt_3_3_0_011"] = 1.080, ["Dirt_3_3_0_101"] = 1.360, ["Dirt_4_-1_-1_001"] = 2.540, ["Dirt_4_-1_-1_010_001"] = 2.850, ["Dirt_4_-1_-1_010_111"] = 0.550, ["Dirt_4_-1_-1_111"] = 1.580, ["Dirt_4_-1_0"] = 5.500, ["Dirt_4_-2_-1_000"] = 3.900, ["Dirt_4_-2_-1_001"] = 2.280, ["Dirt_4_-2_-1_010"] = 1.690, ["Dirt_4_-2_-1_011"] = 0.110, ["Dirt_4_-2_-1_111"] = 0.040, ["Dirt_4_-2_0_001_100"] = 0.790, ["Dirt_4_-2_0_001_101"] = 1.460, ["Dirt_4_-2_0_001_110"] = 0.140, ["Dirt_4_-2_0_001_111"] = 1.160, ["Dirt_4_-2_0_110"] = 0.610, ["Dirt_4_-2_0_111"] = 1.870, ["Dirt_4_-3_-1"] = 0.040, ["Dirt_4_-3_0"] = 5.530, ["Dirt_4_0_-1_000"] = 1.030, ["Dirt_4_0_-1_011"] = 0.990, ["Dirt_4_0_-1_111"] = 2.770, ["Dirt_4_0_0_100"] = 0.810, ["Dirt_4_0_0_101"] = 0.420, ["Dirt_4_0_0_110"] = 0.560, ["Dirt_4_1_-1_001_001"] = 3.670, ["Dirt_4_1_-1_001_110"] = 0.700, ["Dirt_4_1_-1_010"] = 1.140, ["Dirt_4_1_-1_011"] = 3.460, ["Dirt_4_1_-1_101"] = 0.090, ["Dirt_4_1_0_001"] = 0.710, ["Dirt_4_1_0_011"] = 0.520, ["Dirt_4_1_0_100"] = 3.460, ["Dirt_4_1_0_101"] = 2.110, ["Dirt_4_1_0_110"] = 1.140, ["Dirt_4_1_0_111"] = 0.330, ["Dirt_4_2_-1"] = 4.060, ["Dirt_4_2_0_000"] = 0.400, ["Dirt_4_2_0_001"] = 4.970, ["Dirt_4_2_0_010"] = 0.560, ["Dirt_4_2_0_011"] = 0.300, ["Disc"] = 0.093, ["Discs"] = 0.080, ["Door"] = 0.090, ["Doors"] = 0.380, ["Drains"] = 0.100, ["Drawer"] = 0.110, ["Drip"] = 0.180, ["DriveGears"] = 0.080, ["DrivePlate"] = 0.070, ["Drum"] = 0.070, ["Drums"] = 0.110, ["EarInsides"] = 0.380, ["Ears"] = 0.442, ["Edge"] = 0.270, ["Edges"] = 0.050, ["Elements"] = 0.060, ["Ends"] = 0.070, ["Engine"] = 0.130, ["Engines"] = 0.250, ["Exhaust"] = 0.090, ["EyeRims"] = 0.260, ["EyeWhites"] = 0.370, ["Eyelets"] = 0.550, ["Eyes"] = 0.478, ["Face"] = 0.523, ["FaceWire"] = 0.360, ["Feet"] = 0.910, ["Filament"] = 0.030, ["Fill"] = 0.090, ["Fin"] = 0.050, ["Fins"] = 0.390, ["Fittings"] = 0.192, ["Flash"] = 0.140, ["Foam"] = 0.490, ["Foot"] = 0.760, ["Footbeds"] = 0.420, ["Footing"] = 0.093, ["Frame"] = 0.267, ["Frames"] = 0.090, ["Fronds"] = 0.150, ["Front"] = 0.300, ["GasCansOlive"] = 0.630, ["GasCansRed"] = 0.590, ["Gasket"] = 0.040, ["Gauge"] = 0.250, ["GaugeRim"] = 0.310, ["Glass"] = 0.130, ["Glints"] = 0.300, ["Grass_-1_-2_0"] = 1.470, ["Grass_-1_-3_0"] = 2.030, ["Grass_-1_-4_0"] = 2.930, ["Grass_-1_-5_0_000_000"] = 0.480, ["Grass_-1_-5_0_000_001"] = 0.290, ["Grass_-1_-5_0_000_010"] = 0.630, ["Grass_-1_-5_0_000_011"] = 1.020, ["Grass_-1_-5_0_000_100"] = 0.640, ["Grass_-1_-5_0_000_101"] = 0.510, ["Grass_-1_-5_0_000_110"] = 0.210, ["Grass_-1_-5_0_000_111"] = 0.870, ["Grass_-1_-5_0_001"] = 1.400, ["Grass_-1_-5_0_010"] = 0.610, ["Grass_-1_-5_0_100_000"] = 1.310, ["Grass_-1_-5_0_100_001"] = 0.930, ["Grass_-1_-5_0_100_010"] = 0.270, ["Grass_-1_-5_0_100_011"] = 0.200, ["Grass_-1_-5_0_100_100"] = 1.570, ["Grass_-1_-5_0_100_101"] = 1.190, ["Grass_-1_-5_0_100_111"] = 0.250, ["Grass_-1_-5_0_101"] = 1.260, ["Grass_-1_-5_0_110"] = 0.470, ["Grass_-1_1_0"] = 1.820, ["Grass_-1_2_0"] = 1.720, ["Grass_-1_3_0"] = 2.370, ["Grass_-1_4_0_000"] = 0.600, ["Grass_-1_4_0_010"] = 4.400, ["Grass_-1_4_0_011"] = 0.880, ["Grass_-1_4_0_100"] = 0.670, ["Grass_-1_4_0_110_000"] = 0.850, ["Grass_-1_4_0_110_001"] = 1.310, ["Grass_-1_4_0_110_010"] = 0.200, ["Grass_-1_4_0_110_011"] = 0.110, ["Grass_-1_4_0_110_100"] = 0.760, ["Grass_-1_4_0_110_101"] = 1.160, ["Grass_-1_4_0_110_110"] = 0.430, ["Grass_-1_4_0_110_111"] = 0.090, ["Grass_-1_4_0_111"] = 0.050, ["Grass_-2_-1_0"] = 2.150, ["Grass_-2_-2_0_000"] = 0.610, ["Grass_-2_-2_0_010"] = 0.420, ["Grass_-2_-2_0_100"] = 0.290, ["Grass_-2_-2_0_110"] = 0.140, ["Grass_-2_-3_0"] = 1.360, ["Grass_-2_-4_0"] = 0.540, ["Grass_-2_-5_0_000"] = 2.560, ["Grass_-2_-5_0_001"] = 0.880, ["Grass_-2_-5_0_010"] = 5.620, ["Grass_-2_-5_0_011"] = 0.990, ["Grass_-2_-5_0_100_010"] = 1.060, ["Grass_-2_-5_0_100_011"] = 0.970, ["Grass_-2_-5_0_100_101"] = 0.190, ["Grass_-2_-5_0_100_110"] = 0.730, ["Grass_-2_-5_0_100_111"] = 1.420, ["Grass_-2_-5_0_101"] = 0.620, ["Grass_-2_-5_0_110"] = 0.320, ["Grass_-2_0_0"] = 1.720, ["Grass_-2_1_0_000"] = 0.470, ["Grass_-2_1_0_010"] = 0.290, ["Grass_-2_1_0_100"] = 0.200, ["Grass_-2_1_0_110"] = 0.170, ["Grass_-2_2_0"] = 1.050, ["Grass_-2_3_0"] = 0.440, ["Grass_-2_4_0_000_001"] = 0.160, ["Grass_-2_4_0_000_010"] = 1.470, ["Grass_-2_4_0_000_011"] = 0.810, ["Grass_-2_4_0_000_101"] = 0.100, ["Grass_-2_4_0_000_110"] = 0.550, ["Grass_-2_4_0_000_111"] = 0.990, ["Grass_-2_4_0_001"] = 0.460, ["Grass_-2_4_0_010"] = 0.060, ["Grass_-2_4_0_100"] = 1.690, ["Grass_-2_4_0_110"] = 1.610, ["Grass_-2_4_0_111"] = 0.040, ["Grass_-3_-1_0"] = 1.460, ["Grass_-3_-2_0"] = 1.060, ["Grass_-3_-3_0_000"] = 0.370, ["Grass_-3_-3_0_010"] = 0.250, ["Grass_-3_-3_0_100"] = 0.160, ["Grass_-3_-3_0_110"] = 0.200, ["Grass_-3_-4_0_000"] = 2.840, ["Grass_-3_-4_0_001"] = 0.120, ["Grass_-3_-4_0_010"] = 0.690, ["Grass_-3_-4_0_100"] = 0.470, ["Grass_-3_-4_0_110"] = 0.500, ["Grass_-3_-5_0_010"] = 1.490, ["Grass_-3_-5_0_011"] = 0.240, ["Grass_-3_-5_0_110_000"] = 0.330, ["Grass_-3_-5_0_110_001"] = 0.390, ["Grass_-3_-5_0_110_010"] = 0.240, ["Grass_-3_-5_0_110_011"] = 0.470, ["Grass_-3_-5_0_110_100"] = 0.790, ["Grass_-3_-5_0_110_101"] = 0.720, ["Grass_-3_-5_0_110_111"] = 0.140, ["Grass_-3_-5_0_111"] = 0.290, ["Grass_-3_0_0"] = 2.010, ["Grass_-3_1_0"] = 0.820, ["Grass_-3_2_0_000"] = 0.520, ["Grass_-3_2_0_010"] = 0.500, ["Grass_-3_2_0_100"] = 0.350, ["Grass_-3_2_0_110"] = 0.160, ["Grass_-3_3_0_000"] = 0.620, ["Grass_-3_3_0_010_000"] = 0.230, ["Grass_-3_3_0_010_001"] = 0.660, ["Grass_-3_3_0_010_010"] = 1.000, ["Grass_-3_3_0_010_011"] = 0.880, ["Grass_-3_3_0_010_101"] = 0.120, ["Grass_-3_3_0_010_110"] = 0.370, ["Grass_-3_3_0_010_111"] = 1.900, ["Grass_-3_3_0_011"] = 0.910, ["Grass_-3_3_0_100"] = 0.520, ["Grass_-3_3_0_110"] = 0.420, ["Grass_-3_4_0_000"] = 0.550, ["Grass_-3_4_0_001"] = 0.680, ["Grass_-3_4_0_100_000"] = 1.000, ["Grass_-3_4_0_100_001"] = 1.420, ["Grass_-3_4_0_100_100"] = 0.590, ["Grass_-3_4_0_100_101"] = 1.310, ["Grass_-3_4_0_100_110"] = 0.430, ["Grass_-3_4_0_100_111"] = 0.350, ["Grass_-3_4_0_101"] = 3.330, ["Grass_-4_-1_0"] = 2.470, ["Grass_-4_-2_0"] = 0.440, ["Grass_-4_-3_0_000"] = 3.330, ["Grass_-4_-3_0_001"] = 0.120, ["Grass_-4_-3_0_010"] = 0.690, ["Grass_-4_-3_0_100"] = 0.520, ["Grass_-4_-3_0_110"] = 0.500, ["Grass_-4_-4_0_000"] = 0.160, ["Grass_-4_-4_0_001"] = 0.030, ["Grass_-4_-4_0_010_000"] = 0.040, ["Grass_-4_-4_0_010_001"] = 0.240, ["Grass_-4_-4_0_010_010"] = 0.910, ["Grass_-4_-4_0_010_011"] = 1.410, ["Grass_-4_-4_0_010_100"] = 0.900, ["Grass_-4_-4_0_010_101"] = 1.220, ["Grass_-4_-4_0_010_110"] = 0.030, ["Grass_-4_-4_0_010_111"] = 1.070, ["Grass_-4_-4_0_011"] = 2.600, ["Grass_-4_-4_0_100_000"] = 0.100, ["Grass_-4_-4_0_100_001"] = 0.030, ["Grass_-4_-4_0_100_010"] = 0.950, ["Grass_-4_-4_0_100_011"] = 0.590, ["Grass_-4_-4_0_100_100"] = 0.510, ["Grass_-4_-4_0_100_101"] = 0.490, ["Grass_-4_-4_0_100_110"] = 0.120, ["Grass_-4_-4_0_100_111"] = 0.490, ["Grass_-4_-4_0_101"] = 1.030, ["Grass_-4_-4_0_110"] = 2.970, ["Grass_-4_-4_0_111"] = 0.060, ["Grass_-4_0_0"] = 1.810, ["Grass_-4_1_0"] = 0.390, ["Grass_-4_2_0_000"] = 0.610, ["Grass_-4_2_0_010"] = 5.300, ["Grass_-4_2_0_011"] = 0.340, ["Grass_-4_2_0_100"] = 0.630, ["Grass_-4_2_0_110"] = 0.580, ["Grass_-4_3_0_000"] = 3.260, ["Grass_-4_3_0_100"] = 3.840, ["Grass_-4_3_0_110"] = 3.270, ["Grass_-4_3_0_111"] = 0.070, ["Grass_-5_-1_0_000_000"] = 0.270, ["Grass_-5_-1_0_000_001"] = 0.170, ["Grass_-5_-1_0_000_010"] = 0.500, ["Grass_-5_-1_0_000_011"] = 0.290, ["Grass_-5_-1_0_000_100"] = 0.390, ["Grass_-5_-1_0_000_101"] = 0.550, ["Grass_-5_-1_0_000_110"] = 0.370, ["Grass_-5_-1_0_000_111"] = 0.910, ["Grass_-5_-1_0_001"] = 0.560, ["Grass_-5_-1_0_010_000"] = 0.530, ["Grass_-5_-1_0_010_001"] = 0.500, ["Grass_-5_-1_0_010_010"] = 0.760, ["Grass_-5_-1_0_010_011"] = 0.650, ["Grass_-5_-1_0_010_100"] = 0.330, ["Grass_-5_-1_0_010_101"] = 1.140, ["Grass_-5_-1_0_010_110"] = 0.430, ["Grass_-5_-1_0_010_111"] = 1.290, ["Grass_-5_-1_0_011"] = 1.770, ["Grass_-5_-1_0_100"] = 0.450, ["Grass_-5_-1_0_110"] = 0.390, ["Grass_-5_-2_0_000"] = 2.600, ["Grass_-5_-2_0_001"] = 1.140, ["Grass_-5_-2_0_010"] = 2.780, ["Grass_-5_-2_0_011"] = 1.460, ["Grass_-5_-2_0_100"] = 1.950, ["Grass_-5_-2_0_101"] = 0.080, ["Grass_-5_-2_0_110"] = 0.450, ["Grass_-5_-3_0_010"] = 0.070, ["Grass_-5_-3_0_100"] = 2.650, ["Grass_-5_-3_0_101"] = 0.920, ["Grass_-5_-3_0_110_000"] = 0.930, ["Grass_-5_-3_0_110_001"] = 0.500, ["Grass_-5_-3_0_110_010"] = 0.650, ["Grass_-5_-3_0_110_011"] = 0.810, ["Grass_-5_-3_0_110_100"] = 0.180, ["Grass_-5_-3_0_110_101"] = 0.760, ["Grass_-5_-3_0_110_111"] = 0.110, ["Grass_-5_-3_0_111"] = 0.430, ["Grass_-5_0_0_000_000"] = 0.760, ["Grass_-5_0_0_000_001"] = 0.650, ["Grass_-5_0_0_000_010"] = 0.720, ["Grass_-5_0_0_000_011"] = 0.240, ["Grass_-5_0_0_000_100"] = 0.320, ["Grass_-5_0_0_000_101"] = 1.230, ["Grass_-5_0_0_000_110"] = 0.410, ["Grass_-5_0_0_000_111"] = 0.960, ["Grass_-5_0_0_001"] = 1.770, ["Grass_-5_0_0_010_000"] = 0.420, ["Grass_-5_0_0_010_001"] = 0.230, ["Grass_-5_0_0_010_010"] = 0.160, ["Grass_-5_0_0_010_011"] = 0.140, ["Grass_-5_0_0_010_100"] = 0.520, ["Grass_-5_0_0_010_101"] = 0.830, ["Grass_-5_0_0_010_110"] = 0.890, ["Grass_-5_0_0_010_111"] = 1.200, ["Grass_-5_0_0_011"] = 0.830, ["Grass_-5_0_0_100"] = 0.300, ["Grass_-5_0_0_110"] = 0.310, ["Grass_-5_1_0_000"] = 2.670, ["Grass_-5_1_0_001"] = 0.090, ["Grass_-5_1_0_010"] = 0.570, ["Grass_-5_1_0_100"] = 0.470, ["Grass_-5_1_0_110_000"] = 0.180, ["Grass_-5_1_0_110_001"] = 0.490, ["Grass_-5_1_0_110_010"] = 0.470, ["Grass_-5_1_0_110_011"] = 0.790, ["Grass_-5_1_0_110_101"] = 0.080, ["Grass_-5_1_0_110_111"] = 0.080, ["Grass_-5_1_0_111"] = 0.140, ["Grass_-5_2_0_100_000"] = 0.620, ["Grass_-5_2_0_100_001"] = 0.560, ["Grass_-5_2_0_100_010"] = 0.220, ["Grass_-5_2_0_100_011"] = 0.140, ["Grass_-5_2_0_100_101"] = 0.650, ["Grass_-5_2_0_100_110"] = 0.970, ["Grass_-5_2_0_100_111"] = 1.080, ["Grass_-5_2_0_101"] = 1.200, ["Grass_-5_2_0_110"] = 1.060, ["Grass_-5_2_0_111"] = 0.280, ["Grass_0_-2_0"] = 1.530, ["Grass_0_-3_0"] = 2.260, ["Grass_0_-4_0"] = 2.580, ["Grass_0_-5_0_000"] = 5.170, ["Grass_0_-5_0_001"] = 0.690, ["Grass_0_-5_0_010"] = 0.700, ["Grass_0_-5_0_100_000"] = 0.300, ["Grass_0_-5_0_100_001"] = 0.200, ["Grass_0_-5_0_100_010"] = 0.420, ["Grass_0_-5_0_100_011"] = 1.270, ["Grass_0_-5_0_100_100"] = 0.110, ["Grass_0_-5_0_100_101"] = 0.040, ["Grass_0_-5_0_100_110"] = 1.140, ["Grass_0_-5_0_100_111"] = 1.160, ["Grass_0_-5_0_101"] = 1.230, ["Grass_0_-5_0_110"] = 0.490, ["Grass_0_1_0"] = 1.750, ["Grass_0_2_0"] = 2.590, ["Grass_0_3_0"] = 3.170, ["Grass_0_4_0_000"] = 0.610, ["Grass_0_4_0_010"] = 3.670, ["Grass_0_4_0_011"] = 0.120, ["Grass_0_4_0_100"] = 0.380, ["Grass_0_4_0_110"] = 3.570, ["Grass_0_4_0_111"] = 0.750, ["Grass_1_-1_0"] = 1.650, ["Grass_1_-2_0_000"] = 0.450, ["Grass_1_-2_0_010"] = 0.250, ["Grass_1_-2_0_100"] = 0.240, ["Grass_1_-2_0_110"] = 0.180, ["Grass_1_-3_0"] = 0.840, ["Grass_1_-4_0"] = 0.510, ["Grass_1_-5_0_000"] = 2.710, ["Grass_1_-5_0_001"] = 0.160, ["Grass_1_-5_0_010"] = 2.920, ["Grass_1_-5_0_011"] = 0.070, ["Grass_1_-5_0_100"] = 0.180, ["Grass_1_-5_0_101"] = 0.060, ["Grass_1_-5_0_110_000"] = 1.070, ["Grass_1_-5_0_110_001"] = 1.460, ["Grass_1_-5_0_110_011"] = 0.120, ["Grass_1_-5_0_110_100"] = 0.870, ["Grass_1_-5_0_110_101"] = 1.000, ["Grass_1_-5_0_110_111"] = 0.130, ["Grass_1_-5_0_111"] = 3.290, ["Grass_1_0_0"] = 1.900, ["Grass_1_1_0_000"] = 0.490, ["Grass_1_1_0_010"] = 0.390, ["Grass_1_1_0_100"] = 0.240, ["Grass_1_1_0_110"] = 0.280, ["Grass_1_2_0"] = 1.100, ["Grass_1_3_0"] = 0.310, ["Grass_1_4_0_000"] = 0.670, ["Grass_1_4_0_010"] = 4.680, ["Grass_1_4_0_011"] = 1.210, ["Grass_1_4_0_100"] = 5.370, ["Grass_1_4_0_101"] = 0.470, ["Grass_1_4_0_110"] = 0.940, ["Grass_1_4_0_111"] = 0.290, ["Grass_2_-1_0"] = 1.840, ["Grass_2_-2_0"] = 0.890, ["Grass_2_-3_0_000"] = 0.600, ["Grass_2_-3_0_010"] = 0.370, ["Grass_2_-3_0_100"] = 0.370, ["Grass_2_-3_0_110"] = 0.140, ["Grass_2_-4_0_000"] = 4.510, ["Grass_2_-4_0_001"] = 0.590, ["Grass_2_-4_0_010"] = 0.750, ["Grass_2_-4_0_100_000"] = 1.000, ["Grass_2_-4_0_100_001"] = 1.920, ["Grass_2_-4_0_100_011"] = 0.170, ["Grass_2_-4_0_100_100"] = 0.320, ["Grass_2_-4_0_100_101"] = 0.220, ["Grass_2_-4_0_100_110"] = 1.020, ["Grass_2_-4_0_100_111"] = 1.740, ["Grass_2_-4_0_101"] = 4.360, ["Grass_2_-4_0_110"] = 1.050, ["Grass_2_-5_0_010"] = 4.640, ["Grass_2_-5_0_011"] = 3.230, ["Grass_2_0_0"] = 1.960, ["Grass_2_1_0"] = 1.060, ["Grass_2_2_0_000"] = 0.590, ["Grass_2_2_0_010"] = 0.410, ["Grass_2_2_0_100"] = 0.310, ["Grass_2_2_0_110"] = 0.200, ["Grass_2_3_0_000"] = 0.770, ["Grass_2_3_0_010"] = 0.800, ["Grass_2_3_0_100"] = 0.890, ["Grass_2_3_0_110_001"] = 0.170, ["Grass_2_3_0_110_010"] = 0.030, ["Grass_2_3_0_110_011"] = 1.500, ["Grass_2_3_0_110_101"] = 0.200, ["Grass_2_3_0_110_110"] = 1.290, ["Grass_2_3_0_110_111"] = 2.080, ["Grass_2_3_0_111"] = 2.690, ["Grass_2_4_0_000_000"] = 0.130, ["Grass_2_4_0_000_001"] = 0.380, ["Grass_2_4_0_000_010"] = 0.920, ["Grass_2_4_0_000_011"] = 0.780, ["Grass_2_4_0_000_100"] = 0.570, ["Grass_2_4_0_000_101"] = 1.430, ["Grass_2_4_0_000_110"] = 0.200, ["Grass_2_4_0_000_111"] = 0.070, ["Grass_2_4_0_001"] = 0.230, ["Grass_2_4_0_100"] = 1.230, ["Grass_2_4_0_101"] = 0.390, ["Grass_3_-1_0"] = 2.530, ["Grass_3_-2_0"] = 0.430, ["Grass_3_-3_0_000"] = 1.090, ["Grass_3_-3_0_010"] = 0.550, ["Grass_3_-3_0_100_000"] = 0.910, ["Grass_3_-3_0_100_001"] = 1.340, ["Grass_3_-3_0_100_011"] = 0.170, ["Grass_3_-3_0_100_100"] = 0.210, ["Grass_3_-3_0_100_101"] = 0.090, ["Grass_3_-3_0_100_110"] = 1.260, ["Grass_3_-3_0_100_111"] = 1.140, ["Grass_3_-3_0_101"] = 1.050, ["Grass_3_-3_0_110"] = 1.700, ["Grass_3_-3_0_111"] = 0.060, ["Grass_3_-4_0_000"] = 0.430, ["Grass_3_-4_0_001"] = 0.070, ["Grass_3_-4_0_010_000"] = 0.630, ["Grass_3_-4_0_010_001"] = 1.250, ["Grass_3_-4_0_010_011"] = 0.250, ["Grass_3_-4_0_010_100"] = 0.290, ["Grass_3_-4_0_010_101"] = 0.280, ["Grass_3_-4_0_010_110"] = 0.830, ["Grass_3_-4_0_010_111"] = 0.940, ["Grass_3_-4_0_011"] = 0.960, ["Grass_3_-4_0_110"] = 0.390, ["Grass_3_-4_0_111"] = 0.130, ["Grass_3_0_0"] = 2.540, ["Grass_3_1_0"] = 0.490, ["Grass_3_2_0_000"] = 0.540, ["Grass_3_2_0_010"] = 0.680, ["Grass_3_2_0_100"] = 0.530, ["Grass_3_2_0_110"] = 4.710, ["Grass_3_2_0_111"] = 0.330, ["Grass_3_3_0_000"] = 2.730, ["Grass_3_3_0_001"] = 0.110, ["Grass_3_3_0_010"] = 1.970, ["Grass_3_3_0_011"] = 1.140, ["Grass_3_3_0_100"] = 2.030, ["Grass_3_3_0_101"] = 0.590, ["Grass_4_-1_0_000"] = 0.750, ["Grass_4_-1_0_010"] = 0.520, ["Grass_4_-1_0_100_001"] = 0.290, ["Grass_4_-1_0_100_011"] = 0.070, ["Grass_4_-1_0_100_100"] = 0.990, ["Grass_4_-1_0_100_101"] = 1.050, ["Grass_4_-1_0_100_110"] = 0.650, ["Grass_4_-1_0_100_111"] = 0.760, ["Grass_4_-1_0_101"] = 0.260, ["Grass_4_-1_0_110_001"] = 0.170, ["Grass_4_-1_0_110_011"] = 0.100, ["Grass_4_-1_0_110_100"] = 0.380, ["Grass_4_-1_0_110_101"] = 0.970, ["Grass_4_-1_0_110_110"] = 0.620, ["Grass_4_-1_0_110_111"] = 1.800, ["Grass_4_-1_0_111"] = 0.760, ["Grass_4_-2_0_000"] = 3.530, ["Grass_4_-2_0_010"] = 0.290, ["Grass_4_-2_0_100"] = 0.600, ["Grass_4_-2_0_110_000"] = 0.480, ["Grass_4_-2_0_110_001"] = 0.790, ["Grass_4_-2_0_110_010"] = 0.360, ["Grass_4_-2_0_110_011"] = 1.020, ["Grass_4_-2_0_110_110"] = 0.250, ["Grass_4_-2_0_110_111"] = 0.430, ["Grass_4_-3_0_000"] = 0.230, ["Grass_4_-3_0_010_000"] = 0.930, ["Grass_4_-3_0_010_001"] = 0.680, ["Grass_4_-3_0_010_010"] = 0.250, ["Grass_4_-3_0_010_011"] = 0.520, ["Grass_4_-3_0_010_110"] = 0.350, ["Grass_4_-3_0_010_111"] = 0.330, ["Grass_4_-3_0_011"] = 0.180, ["Grass_4_0_0_000"] = 0.380, ["Grass_4_0_0_010"] = 0.360, ["Grass_4_0_0_100_001"] = 0.050, ["Grass_4_0_0_100_011"] = 0.050, ["Grass_4_0_0_100_100"] = 0.520, ["Grass_4_0_0_100_101"] = 0.590, ["Grass_4_0_0_100_110"] = 0.520, ["Grass_4_0_0_100_111"] = 1.000, ["Grass_4_0_0_101"] = 1.070, ["Grass_4_0_0_110_001"] = 0.110, ["Grass_4_0_0_110_011"] = 0.080, ["Grass_4_0_0_110_100"] = 0.480, ["Grass_4_0_0_110_101"] = 0.770, ["Grass_4_0_0_110_110"] = 0.540, ["Grass_4_0_0_110_111"] = 1.390, ["Grass_4_0_0_111"] = 0.660, ["Grass_4_1_0_000"] = 0.530, ["Grass_4_1_0_010"] = 2.880, ["Grass_4_1_0_011"] = 0.070, ["Grass_4_1_0_100_001"] = 0.250, ["Grass_4_1_0_100_010"] = 0.430, ["Grass_4_1_0_100_011"] = 0.920, ["Grass_4_1_0_100_100"] = 0.810, ["Grass_4_1_0_100_101"] = 1.260, ["Grass_4_1_0_100_110"] = 0.740, ["Grass_4_1_0_100_111"] = 0.520, ["Grass_4_1_0_101"] = 2.220, ["Grass_4_1_0_110"] = 5.070, ["Grass_4_1_0_111"] = 2.040, ["Grass_4_2_0_000_001"] = 0.140, ["Grass_4_2_0_000_010"] = 0.320, ["Grass_4_2_0_000_011"] = 0.920, ["Grass_4_2_0_000_100"] = 0.970, ["Grass_4_2_0_000_101"] = 1.250, ["Grass_4_2_0_000_110"] = 0.740, ["Grass_4_2_0_000_111"] = 0.560, ["Grass_4_2_0_001"] = 0.170, ["Grass_4_2_0_010"] = 2.070, ["Grass_4_2_0_011"] = 0.110, ["Grass_4_2_0_100"] = 0.450, ["Grass_4_2_0_101"] = 0.080, ["Grass_5_-1_0"] = 0.160, ["Grass_5_0_0"] = 0.310, ["Grille"] = 0.393, ["Grip"] = 0.108, ["Grit"] = 0.028, ["Ground"] = 0.060, ["Ground_-1_-1_0_000"] = 0.561, ["Ground_-1_-1_0_010"] = 0.524, ["Ground_-1_-1_0_100_000"] = 0.309, ["Ground_-1_-1_0_100_010"] = 0.364, ["Ground_-1_-1_0_100_100"] = 0.231, ["Ground_-1_-1_0_100_110"] = 0.196, ["Ground_-1_-1_0_110_000"] = 0.344, ["Ground_-1_-1_0_110_010"] = 0.360, ["Ground_-1_-1_0_110_100"] = 0.185, ["Ground_-1_-1_0_110_110"] = 0.184, ["Ground_-1_0_0_000"] = 0.378, ["Ground_-1_0_0_010"] = 0.290, ["Ground_-1_0_0_100_000"] = 0.354, ["Ground_-1_0_0_100_010"] = 0.363, ["Ground_-1_0_0_100_100"] = 0.191, ["Ground_-1_0_0_100_110"] = 0.184, ["Ground_-1_0_0_110_000"] = 0.356, ["Ground_-1_0_0_110_010"] = 0.316, ["Ground_-1_0_0_110_100"] = 0.182, ["Ground_-1_0_0_110_110"] = 0.160, ["Ground_0_-1_0_000_000"] = 0.159, ["Ground_0_-1_0_000_010"] = 0.171, ["Ground_0_-1_0_000_100"] = 0.346, ["Ground_0_-1_0_000_110"] = 0.340, ["Ground_0_-1_0_010_000"] = 0.175, ["Ground_0_-1_0_010_010"] = 0.176, ["Ground_0_-1_0_010_100"] = 0.355, ["Ground_0_-1_0_010_110"] = 0.358, ["Ground_0_-1_0_100"] = 0.310, ["Ground_0_-1_0_110"] = 0.324, ["Ground_0_0_0_000_000"] = 0.175, ["Ground_0_0_0_000_010"] = 0.171, ["Ground_0_0_0_000_100"] = 0.339, ["Ground_0_0_0_000_110"] = 0.356, ["Ground_0_0_0_010_000"] = 0.182, ["Ground_0_0_0_010_010"] = 0.172, ["Ground_0_0_0_010_100"] = 0.369, ["Ground_0_0_0_010_110"] = 0.311, ["Ground_0_0_0_100"] = 0.300, ["Ground_0_0_0_110"] = 0.298, ["Guard"] = 0.060, ["Guards"] = 0.140, ["Handle"] = 0.089, ["Handles"] = 0.850, ["Hands"] = 0.738, ["Handset"] = 0.140, ["Hangers"] = 0.100, ["HangingSign"] = 0.060, ["Hardware"] = 0.066, ["Head"] = 0.326, ["HeadEnamel"] = 1.070, ["Headband"] = 0.730, ["HeadbandRivets"] = 0.420, ["Heap"] = 0.137, ["HeelCounters"] = 0.660, ["Hilts"] = 0.290, ["Holes"] = 0.280, ["Honing"] = 0.100, ["Hopper"] = 0.095, ["Horns"] = 0.320, ["Hose"] = 0.390, ["Hoses"] = 0.200, ["Housing"] = 0.160, ["Hubcaps"] = 0.140, ["Hubs"] = 0.118, ["Jaw"] = 0.535, ["Jug"] = 0.055, ["Kerbs"] = 0.880, ["Keypad"] = 0.570, ["Keys"] = 1.517, ["Knob"] = 0.095, ["Knobs"] = 0.240, ["Knot"] = 0.100, ["Label"] = 0.070, ["Lamp"] = 0.120, ["LampHousings"] = 0.050, ["LampPosts"] = 0.070, ["LampShade"] = 0.020, ["Lance"] = 0.070, ["LaneMarks"] = 0.100, ["Lashing"] = 0.100, ["Latches"] = 0.060, ["Leaves"] = 0.175, ["LeavesDark"] = 0.280, ["Legs"] = 0.186, ["Lens"] = 0.060, ["LensGlass"] = 0.040, ["Lenses"] = 0.220, ["Lever"] = 0.320, ["Lid"] = 0.074, ["Limbs"] = 0.280, ["Lips"] = 0.395, ["LowerContainers"] = 1.690, ["Magnet"] = 0.060, ["Marks"] = 0.775, ["Mask"] = 0.070, ["Mast"] = 0.610, ["Medal"] = 0.050, ["Motor"] = 0.215, ["Mound"] = 0.095, ["Mouth"] = 0.562, ["Mufflers"] = 0.100, ["Muzzle"] = 0.320, ["Nail"] = 0.050, ["Nails"] = 2.270, ["NeckBlack"] = 0.670, ["NeckCharcoal"] = 0.410, ["NeckGunmetal"] = 0.750, ["NeckSlate"] = 0.530, ["Needle"] = 0.380, ["Nose"] = 0.255, ["NostrilPits"] = 3.810, ["Nostrils"] = 0.290, ["Nozzle"] = 0.083, ["Nut"] = 0.050, ["Outsoles"] = 0.390, ["Pad"] = 0.100, ["Pad1"] = 0.010, ["Pad2"] = 0.010, ["Pad3"] = 0.010, ["PadRims"] = 0.110, ["Padlock"] = 0.240, ["Pads"] = 0.070, ["Paint"] = 0.050, ["Pan"] = 0.080, ["Panel"] = 0.198, ["PanelsALUMINIUM"] = 0.653, ["PanelsASH"] = 0.490, ["PanelsBARK"] = 0.370, ["PanelsBLUEGREY"] = 0.614, ["PanelsBRASS"] = 0.530, ["PanelsBRONZE"] = 0.730, ["PanelsBURNT"] = 0.700, ["PanelsCACTUS"] = 0.680, ["PanelsCHINA"] = 0.510, ["PanelsCOPPER"] = 0.515, ["PanelsCOWWHITE"] = 0.620, ["PanelsCREAM"] = 0.785, ["PanelsDEEPGREEN"] = 0.720, ["PanelsENAMEL"] = 0.680, ["PanelsFADED"] = 0.910, ["PanelsGALVANISED"] = 0.635, ["PanelsGUNMETAL"] = 0.623, ["PanelsHIDE"] = 0.550, ["PanelsIVORY"] = 1.020, ["PanelsLICHEN"] = 0.430, ["PanelsLIME"] = 0.970, ["PanelsMOSS"] = 0.717, ["PanelsMOSSY"] = 0.720, ["PanelsOCHRE"] = 0.790, ["PanelsOLIVE"] = 0.496, ["PanelsOLIVEPAINT"] = 1.010, ["PanelsPAINTED"] = 0.445, ["PanelsPALETEAL"] = 0.370, ["PanelsPATCH"] = 0.580, ["PanelsPEACH"] = 0.450, ["PanelsRUST"] = 0.549, ["PanelsSAGE"] = 0.740, ["PanelsSAND"] = 0.450, ["PanelsSKYBAND"] = 0.440, ["PanelsSLATE"] = 0.540, ["PanelsSOOT"] = 1.085, ["PanelsSWAMP"] = 0.530, ["PanelsTAR"] = 0.580, ["PanelsTIN"] = 0.656, ["PanelsVERDIGRIS"] = 0.510, ["PanelsYELLOW"] = 0.830, ["Paper"] = 0.030, ["PartsBins"] = 0.460, ["Patch"] = 0.180, ["Paving_-1_-1_0"] = 1.420, ["Paving_-1_0_0"] = 1.420, ["Paving_0_-1_0"] = 1.300, ["Paving_0_0_0"] = 2.310, ["Pebbles_-1_-4_-1"] = 0.680, ["Pebbles_-1_-5_-1"] = 0.050, ["Pebbles_-1_-5_0"] = 0.220, ["Pebbles_-1_2_-2"] = 0.370, ["Pebbles_-1_3_-1"] = 0.880, ["Pebbles_-2_-2_-1"] = 0.480, ["Pebbles_-2_-4_-1"] = 0.230, ["Pebbles_-2_0_-1"] = 0.170, ["Pebbles_-2_3_-1"] = 0.140, ["Pebbles_-2_4_-1"] = 0.120, ["Pebbles_-3_-1_-1"] = 0.890, ["Pebbles_-3_-2_-1"] = 4.060, ["Pebbles_-3_-3_-1"] = 0.290, ["Pebbles_-3_1_-1"] = 0.160, ["Pebbles_-3_3_-1"] = 0.870, ["Pebbles_-4_-1_-1"] = 0.480, ["Pebbles_-4_-2_-1"] = 0.700, ["Pebbles_-4_-3_-1_100"] = 0.370, ["Pebbles_-4_-3_-1_101"] = 0.130, ["Pebbles_-4_-3_-1_110"] = 3.940, ["Pebbles_-4_2_-1"] = 0.120, ["Pebbles_-4_3_-1"] = 0.590, ["Pebbles_-5_-1_-1"] = 0.400, ["Pebbles_-5_1_-1"] = 0.030, ["Pebbles_-5_1_0"] = 0.100, ["Pebbles_0_3_-1"] = 0.450, ["Pebbles_1_-2_-1"] = 1.330, ["Pebbles_1_0_-1"] = 0.820, ["Pebbles_1_0_-2"] = 0.320, ["Pebbles_1_1_-1"] = 0.440, ["Pebbles_1_3_-1"] = 1.300, ["Pebbles_2_-2_-1"] = 0.130, ["Pebbles_2_-3_-1"] = 0.300, ["Pebbles_2_0_-1"] = 0.480, ["Pebbles_2_1_-1"] = 0.190, ["Pebbles_2_3_-1"] = 0.320, ["Pebbles_3_-1_-1"] = 2.430, ["Pebbles_3_-2_-1"] = 1.390, ["Pebbles_3_-3_-1"] = 0.180, ["Pebbles_3_0_-1"] = 0.230, ["Pebbles_3_1_-1"] = 1.200, ["Pebbles_3_2_-1"] = 2.030, ["Pebbles_4_-1_-1"] = 0.420, ["Pebbles_4_-2_-1"] = 0.520, ["Pebbles_4_1_-1"] = 2.910, ["PeelFaded"] = 0.350, ["PeelLining"] = 0.190, ["PeelOchre"] = 0.520, ["PeelRivets"] = 0.250, ["PeelYellow"] = 0.320, ["Pile"] = 1.240, ["PileJunk"] = 0.240, ["Pipe"] = 0.054, ["PipeStone"] = 0.023, ["Pipes"] = 0.077, ["Planet"] = 0.500, ["Planks"] = 0.100, ["Plate"] = 0.085, ["Platen"] = 0.330, ["Plates"] = 0.093, ["Platform"] = 1.440, ["PlatformDrums"] = 0.960, ["Plinth"] = 1.085, ["Plug"] = 0.240, ["Plungers"] = 0.100, ["Pod"] = 0.060, ["Post"] = 0.100, ["Posts"] = 0.069, ["Power"] = 0.450, ["Press"] = 0.350, ["PressedJunk"] = 0.190, ["PriceBoards"] = 0.040, ["Prongs"] = 0.740, ["Props"] = 0.070, ["Pump"] = 0.150, ["Pupils"] = 0.429, ["Pylons"] = 0.690, ["RackTools"] = 0.050, ["Rafters"] = 0.400, ["Railings"] = 0.424, ["Ram"] = 0.150, ["Rebar"] = 0.100, ["Ribs"] = 0.260, ["Rim"] = 0.110, ["RingALUMINIUM"] = 0.190, ["RingBLUEGREY"] = 0.060, ["RingBRASS"] = 0.050, ["RingENAMEL"] = 0.200, ["RingGALVANISED"] = 0.210, ["RingGUNMETAL"] = 0.070, ["RingOLIVE"] = 0.050, ["RingPAINTED"] = 0.050, ["RingRUST"] = 0.050, ["RingRivets"] = 0.190, ["RingTIN"] = 0.170, ["Rings"] = 0.040, ["Rivets"] = 0.578, ["RoadMarks_-1_-1_0"] = 0.040, ["RoadMarks_-1_0_0"] = 0.060, ["RoadMarks_0_-1_0"] = 0.090, ["RoadMarks_0_0_0"] = 0.100, ["RobotArm"] = 0.070, ["Rockers"] = 0.500, ["Roller"] = 0.070, ["Roof"] = 0.660, ["RoofPosts"] = 0.090, ["Rosetta"] = 0.240, ["Rotors"] = 0.140, ["Roundels"] = 0.580, ["Rubble"] = 0.090, ["Saddle"] = 0.350, ["Screw"] = 0.130, ["Seam"] = 0.060, ["Seat"] = 0.145, ["Shaft"] = 0.220, ["Shank"] = 0.060, ["Shards"] = 0.100, ["Shed"] = 0.820, ["SheetLayers"] = 0.560, ["Sheets"] = 0.119, ["ShelfStock"] = 0.610, ["Shell"] = 0.077, ["Shelves"] = 0.580, ["Shins"] = 0.100, ["ShodFins"] = 0.390, ["ShoeTrim"] = 0.320, ["Shoes"] = 0.300, ["Sign"] = 0.250, ["SignBraces"] = 0.090, ["SignEmblem"] = 0.030, ["Signs"] = 0.030, ["Silencer"] = 0.070, ["Slab"] = 0.172, ["SlabStone"] = 0.018, ["Sliders"] = 0.270, ["Slots"] = 0.300, ["Sneakers"] = 0.710, ["Snout"] = 0.600, ["Socket"] = 0.090, ["Sockets"] = 0.650, ["Soles"] = 0.550, ["Soot"] = 0.105, ["Span"] = 0.615, ["Spatula"] = 0.050, ["SpeakerCones"] = 0.050, ["SpeakerSurrounds"] = 0.030, ["Speakers"] = 0.240, ["Sphere"] = 0.040, ["Spill"] = 0.065, ["Spines"] = 0.170, ["Spools"] = 0.110, ["Spoon"] = 0.120, ["Spout"] = 0.080, ["Stack"] = 0.060, ["Stain"] = 0.170, ["Stairs"] = 0.780, ["StalkClamps"] = 0.210, ["Stalks"] = 0.180, ["Stand"] = 0.110, ["Stars"] = 0.490, ["Stencil"] = 0.040, ["Steps"] = 0.290, ["Sticker"] = 0.280, ["Stitches"] = 0.578, ["StockPiles"] = 0.640, ["Stones"] = 0.366, ["Straps"] = 0.450, ["StreetSigns"] = 0.040, ["Stripe"] = 0.045, ["Stripes"] = 0.080, ["Supplies"] = 0.285, ["Switch"] = 0.950, ["Tag"] = 0.235, ["Tail"] = 0.325, ["TailCore"] = 0.120, ["TailDark"] = 0.170, ["TailFan"] = 0.380, ["TailLight"] = 0.220, ["Tails"] = 0.130, ["Tape"] = 0.627, ["Teeth"] = 0.850, ["Thruster"] = 0.100, ["Ties"] = 0.200, ["Tip"] = 0.070, ["Toast"] = 0.090, ["Toenails"] = 0.610, ["Toes"] = 0.875, ["ToolGrips"] = 0.010, ["ToolRack"] = 0.200, ["Tools"] = 0.100, ["Torch"] = 0.070, ["TorchAndWork"] = 0.100, ["Tracks"] = 1.530, ["Tray"] = 0.110, ["Tread_-1_-1_0_000_000"] = 0.090, ["Tread_-1_-1_0_000_010"] = 0.230, ["Tread_-1_-1_0_000_100"] = 0.190, ["Tread_-1_-1_0_010"] = 0.030, ["Tread_-1_-1_0_100"] = 0.030, ["Tread_-1_-2_0"] = 0.420, ["Tread_-1_0_0_000"] = 0.030, ["Tread_-1_0_0_010_000"] = 0.230, ["Tread_-1_0_0_010_010"] = 0.080, ["Tread_-1_0_0_010_110"] = 0.250, ["Tread_-1_0_0_110"] = 0.030, ["Tread_-1_1_0"] = 0.360, ["Tread_-2_-1_0"] = 0.440, ["Tread_-2_0_0"] = 0.420, ["Tread_0_-1_0_000"] = 0.040, ["Tread_0_-1_0_100_000"] = 0.250, ["Tread_0_-1_0_100_100"] = 0.100, ["Tread_0_-1_0_100_110"] = 0.220, ["Tread_0_-1_0_110"] = 0.030, ["Tread_0_-2_0"] = 0.400, ["Tread_0_0_0_010"] = 0.030, ["Tread_0_0_0_100"] = 0.020, ["Tread_0_0_0_110_010"] = 0.190, ["Tread_0_0_0_110_100"] = 0.190, ["Tread_0_0_0_110_110"] = 0.090, ["Tread_0_1_0"] = 0.430, ["Tread_1_-1_0"] = 0.320, ["Tread_1_0_0"] = 0.300, ["Trigger"] = 0.500, ["Trim"] = 0.093, ["Tripod"] = 0.020, ["Trunk"] = 0.177, ["Truss"] = 0.440, ["TrussTop"] = 0.340, ["Turret"] = 0.110, ["Tusks"] = 0.250, ["TutuBLUSH"] = 0.140, ["TutuCore"] = 0.170, ["TutuPEACH"] = 0.140, ["TutuROSE"] = 0.160, ["TutuRivets"] = 0.230, ["Tyre"] = 0.057, ["TyreCollar"] = 0.070, ["UpperContainer"] = 1.360, ["Vents"] = 1.250, ["Visor"] = 0.280, ["Walks"] = 1.070, ["Wand"] = 0.050, ["WarningSign"] = 0.011, ["WarningSigns"] = 0.040, ["Washer"] = 0.050, ["Welds"] = 0.533, ["Wheels"] = 0.087, ["Whisk"] = 0.050, ["Whiskers"] = 0.050, ["Whistle"] = 0.440, ["Window"] = 0.620, ["Wings"] = 0.320, ["Workbench"] = 0.570,  } local PAINT_DEAL = "37712da2e8f4"
 -- Layout prelude: lets a layout build other models in place. Each model's
 -- script is wrapped as build<Name>(), and place() runs it with every vertex
 -- moved, turned about z, optionally scaled up or down as a whole and
@@ -16,13 +16,53 @@ local paintsPart: (name: string, image: any) -> boolean
 -- its parts can be dealt by texels before any is painted (see ownsPart).
 local RealImage = Image
 local splitImages: { any }? = nil
-Image = setmetatable({
-	new = function(...)
-		local image = RealImage.new(...)
-		if splitImages then
-			table.insert(splitImages, image)
+
+-- While a split model builds, an image is a promise of one: its size is known
+-- at once, for the deal, and its pixels are made when something first paints
+-- or reads them. A shard keeps only its share of a split model's parts, so it
+-- never makes the pixels of the rest.
+local function promisedImage(width: number, height: number, ...)
+	local made = nil
+	local colour = table.pack(...)
+	local function real()
+		if not made then
+			made = RealImage.new(width, height, table.unpack(colour, 1, colour.n))
 		end
-		return image
+		return made
+	end
+	return setmetatable({
+		_real = real,
+		width = function()
+			return width
+		end,
+		height = function()
+			return height
+		end,
+		size = function()
+			return width, height
+		end,
+	}, {
+		__index = function(_, key)
+			return function(_, ...)
+				local image = real()
+				return image[key](image, ...)
+			end
+		end,
+	})
+end
+
+local function unwrapImage(image)
+	return if type(image) == "table" and image._real then image._real() else image
+end
+
+Image = setmetatable({
+	new = function(width, height, ...)
+		if splitImages then
+			local image = promisedImage(width, height, ...)
+			table.insert(splitImages, image)
+			return image
+		end
+		return RealImage.new(width, height, ...)
 	end,
 }, { __index = RealImage })
 
@@ -58,7 +98,10 @@ Mesh = {
 						options[list] = real
 					end
 				end
-				return real:paintShading(image, options)
+				return real:paintShading(unwrapImage(image), options)
+			end,
+			paint = function(_, image, ...)
+				return real:paint(unwrapImage(image), ...)
 			end,
 		}, {
 			__index = function(_, key)
@@ -123,6 +166,20 @@ local slabKeys = {}
 -- sorted largest first and each goes to the share with the fewest texels so
 -- far. Every shard in the split deals the same images the same way. Placing
 -- that model again goes to the same shards, each keeping the same parts.
+--
+-- Texels are a poor guide to paint time (a ground chunk paints seven times
+-- faster than a dirt chunk of the same size), so once paint times have been
+-- measured (PAINT_COSTS, from the assembler's <Layout>PaintCosts.txt, which
+-- scripts/paint-costs.sh writes from a build's logs) parts are dealt by those
+-- instead. A chunk's paint also shades the chunks next to it unless this
+-- shard has shaded them already (bake.rs), so neighbours belong on one shard:
+-- the measured parts named for a place on the chunk grid (<Kind>_<x>_<y>_<z>,
+-- as chunkedPart names them) are put in order by 2 x 2 block of cells, then
+-- cell, and that line is cut into one run of equal paint time per share
+-- (plannedShares). Any other part, as its paint is asked for, goes to the
+-- share with the least paint time so far; one with no measured time counts as
+-- its texels at the measured average rate. Every shard asks for the same
+-- paints in the same order, so they still deal alike.
 local REPEAT_COST = 0.01
 -- Pieces are about this much of an even share; a model splits once it costs
 -- a quarter more than one piece.
@@ -157,7 +214,55 @@ local function texelsOf(image: any): number
 	return width * height
 end
 
--- Gives an image to the share with the fewest texels so far.
+local paintRate: number? = PAINT_COSTS["#rate"]
+
+-- What a part's paint weighs in the deal: its measured seconds, or its texels
+-- when no paint times have been measured.
+local function paintWeight(name: string?, image: any): number
+	if not paintRate then
+		return texelsOf(image)
+	end
+	return (name and PAINT_COSTS[name]) or texelsOf(image) * paintRate
+end
+
+-- The measured chunk parts' shares for a split into `count`, by name, and the
+-- paint time each share is given by them.
+local sharePlans: { [number]: { owners: { [string]: number }, loads: { number } } } = {}
+local function plannedShares(count: number)
+	if sharePlans[count] then
+		return sharePlans[count]
+	end
+	local chunks, total = {}, 0
+	for name, seconds in PAINT_COSTS do
+		local x, y, z = string.match(name, "^%a+_(%-?%d+)_(%-?%d+)_(%-?%d+)")
+		if x then
+			x, y, z = tonumber(x) :: number, tonumber(y) :: number, tonumber(z) :: number
+			table.insert(chunks, { name = name, seconds = seconds, key = { x // 2, y // 2, x, y, z } })
+			total += seconds
+		end
+	end
+	table.sort(chunks, function(a, b)
+		for i = 1, 5 do
+			if a.key[i] ~= b.key[i] then
+				return a.key[i] < b.key[i]
+			end
+		end
+		return a.name < b.name
+	end)
+	local plan = { owners = {}, loads = table.create(count, 0) }
+	local before = 0
+	for _, chunk in chunks do
+		-- By the middle of its own time, so a long paint lands on the run it mostly lies in.
+		local share = math.min(count, (before + chunk.seconds / 2) * count // total + 1)
+		plan.owners[chunk.name] = share
+		plan.loads[share] += chunk.seconds
+		before += chunk.seconds
+	end
+	sharePlans[count] = plan
+	return plan
+end
+
+-- Gives an image to the share with the least weight (texels, or seconds) so far.
 local function dealImage(share: PartShare, image: any, texels: number): number
 	local lightest = 1
 	for index = 2, share.count do
@@ -195,9 +300,26 @@ local function ownsPart(name: string, image: any?): boolean
 	end
 	if image then
 		if not partShare.owners then
-			dealImages(partShare)
+			if paintRate then
+				-- By measured paint time: the chunk parts' runs are planned,
+				-- and the rest are dealt one by one, as each is asked for.
+				partShare.owners = {}
+				partShare.texels = table.clone(plannedShares(partShare.count).loads)
+			else
+				dealImages(partShare)
+			end
 		end
-		local owner = (partShare.owners :: { [any]: number })[image] or dealImage(partShare, image, texelsOf(image))
+		local owners = partShare.owners :: { [any]: number }
+		local owner = owners[image]
+		if not owner then
+			local planned = if paintRate then plannedShares(partShare.count).owners[name] else nil
+			if planned then
+				owners[image] = planned
+				owner = planned
+			else
+				owner = dealImage(partShare, image, paintWeight(name, image))
+			end
+		end
 		return owner == partShare.index
 	end
 	local hash = 5381
@@ -314,10 +436,10 @@ model.part = function(name, mesh, image, options)
 		if skipPart(name) or not ownsPart(name, image) then
 			return
 		end
-		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = image, preview = preview, emissive = options and options.emissive })
+		table.insert(builtParts, { name = name, mesh = unwrapMesh(mesh), image = unwrapImage(image), preview = preview, emissive = options and options.emissive })
 		return
 	end
-	addPart(name, unwrapMesh(mesh), image, preview, options and options.emissive)
+	addPart(name, unwrapMesh(mesh), unwrapImage(image), preview, options and options.emissive)
 end
 
 -- Says which object a placement is, for the upload (scripts/export-objects.py
@@ -376,6 +498,10 @@ local function place(label: string, build: () -> (), x: number, y: number, z: nu
 	-- texel deal follows from the model's source, already in the key.
 	if share then
 		key = `{key} part {share}/{shares}`
+		-- The deal by measured paint times follows from those too.
+		if PAINT_DEAL ~= "" then
+			key = `{key} deal {PAINT_DEAL}`
+		end
 	end
 	tellPlacement(label, turn or 0, key)
 	local x0, y0, z0, turn0 = placeX, placeY, placeZ, placeTurn
@@ -1300,8 +1426,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -1317,10 +1445,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -1332,6 +1469,8 @@ local function finishParts()
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
@@ -1345,6 +1484,18 @@ local function finishParts()
 			rubber = entry.rubber,
 			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
 			highlightUnevenStep = entry.litUnevenStep,
@@ -1394,12 +1545,17 @@ local SMALL_MARKS = {
 -- pieces each lit from above) and `stain` (how far a short part's steps wander
 -- as blotches instead of bands; high values fleck a dark surface).
 local PRESETS = {
-	-- Steel standing alone on open ground.
-	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Steel standing alone on open ground. Its coat is paint over metal: the
+	-- roughness map polishes the worn rims and roughens creases and rust, and
+	-- the metalness map shows bare metal where the edge wear cuts through,
+	-- never under the rust.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 }, roughness = { base = 0.7, edge = -0.6, crease = 0.15, wear = 0.25 }, metalness = { base = 0.05, edge = 0.85, crease = 0, wear = -0.3 } },
 	-- Concrete footings and plinths.
 	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
 	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
-	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Stone's edges tilt hard in the normal map, along the highlight strokes,
+	-- and its roughness map polishes those worn rims while the creases stay matte.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 }, bevel = { tilt = 8 }, roughness = { base = 0.85, edge = -0.7, crease = 0.1, wear = 0 } },
 	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
 	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
 	-- The earth body of a heap: it darkens well under everything resting on it.
@@ -1474,15 +1630,38 @@ local function applyPreset(entry, preset)
 	if preset.softLit then
 		entry.softLit = preset.softLit
 	end
+	-- The normal map's bevel field, where the material shapes it.
+	if preset.bevel then
+		entry.bevelReach = entry.bevelReach or preset.bevel.reach
+		entry.bevelFold = entry.bevelFold or preset.bevel.fold
+		entry.bevelTilt = entry.bevelTilt or preset.bevel.tilt
+	end
+	-- The roughness map, from the material's base and the layers already baked.
+	if preset.roughness then
+		entry.roughnessBase = entry.roughnessBase or preset.roughness.base
+		entry.roughnessEdge = entry.roughnessEdge or preset.roughness.edge
+		entry.roughnessCrease = entry.roughnessCrease or preset.roughness.crease
+		entry.roughnessWear = entry.roughnessWear or preset.roughness.wear
+	end
+	if preset.metalness then
+		entry.metalnessBase = entry.metalnessBase or preset.metalness.base
+		entry.metalnessEdge = entry.metalnessEdge or preset.metalness.edge
+		entry.metalnessCrease = entry.metalnessCrease or preset.metalness.crease
+		entry.metalnessWear = entry.metalnessWear or preset.metalness.wear
+	end
 	entry.handTune = SMALL_MARKS
 	paintStepBands(entry, preset.bands)
 end
 
 local function handFinish(coats, plain, finish)
+	-- Every chunk of one part must come out with the same finish; a chunk
+	-- that doesn't is a seam in the paint, so it stops the build.
+	local finishes: { [string]: string } = {}
 	for _, entry in parts do
-		-- A chunked part takes the coat of the name it was built under.
-		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
-		if plain[name] then
+		-- A chunked part takes the coat of the part it was built under
+		-- (chunkedPart tags each chunk with it), not whatever its own name parses to.
+		local name = entry.chunkOf or entry.name
+		if plain[name] or plain[entry.name] then
 			continue
 		end
 		entry.hand = coats[name]
@@ -1500,10 +1679,15 @@ local function handFinish(coats, plain, finish)
 		if presetName then
 			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
 		end
+		local signature = `{entry.hand or "-"}/{presetName or "-"}`
+		if finishes[name] and finishes[name] ~= signature then
+			error(`chunks of {name} would wear different finishes ({finishes[name]} and {signature}); the paint would seam`)
+		end
+		finishes[name] = signature
 	end
 end
 function buildMainIsland()
-local CACHE_KEY = "MainIsland-43404b9dd9aef88d"
+local CACHE_KEY = "MainIsland-28c6f55359950c87"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -2362,8 +2546,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -2379,10 +2565,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -2394,6 +2589,8 @@ local function finishParts()
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
@@ -2407,6 +2604,18 @@ local function finishParts()
 			rubber = entry.rubber,
 			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
 			highlightUnevenStep = entry.litUnevenStep,
@@ -3790,7 +3999,9 @@ local function addCrack(points, normal, width: number)
 		local along = { (b[1] - a[1]) / length, (b[2] - a[2]) / length, -(b[3] - a[3]) / length }
 		local facing = { normal[1], normal[2], -normal[3] }
 		local function stroke(at, width: number, color)
-			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color })
+			-- Its place in the whole list is its seed, so it is drawn the same
+			-- whichever chunks are handed it.
+			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color, seed = #crackStrokes })
 		end
 		-- The lip sits on the crack's lower side, half a crack's width over.
 		local across = cross(facing, along)
@@ -4203,13 +4414,55 @@ local chunks = {}
 for _, entry in parts do
 	table.insert(chunks, entry.mesh)
 end
+-- The bake paints a chunk with every chunk of its group, itself included and
+-- in this order, each with its texture size and the chunk's own place in the
+-- list (as finishParts does in common.luau).
+local chunkSizes = {}
 for _, entry in parts do
-	local group = {}
-	for _, other in parts do
-		if other ~= entry then
-			table.insert(group, other.mesh)
+	table.insert(chunkSizes, { entry.image:width(), entry.image:height() })
+end
+
+-- A dirt chunk is handed only the cracks that could lie on it, not the whole
+-- island's: the bake reads every stroke it is given, for every chunk. Cracks
+-- are filed by the cell their start lies in, and a chunk takes those within
+-- its own radius plus the stroke's reach and some slack for the bake's
+-- stroke grid, in the order they were made.
+local CRACK_CELL = 32
+local CRACK_SLACK = 8
+local crackCells = {}
+local crackReach = 0
+for index, stroke in crackStrokes do
+	local key = `{math.floor(stroke.start[1] / CRACK_CELL)}_{math.floor(stroke.start[2] / CRACK_CELL)}_{math.floor(stroke.start[3] / CRACK_CELL)}`
+	crackCells[key] = crackCells[key] or {}
+	table.insert(crackCells[key], index)
+	crackReach = math.max(crackReach, stroke.length + stroke.width)
+end
+local function cracksNear(mesh)
+	local cx, cy, cz, radius = mesh:bounds()
+	local widest = radius + crackReach + CRACK_SLACK
+	local found = {}
+	for x = math.floor((cx - widest) / CRACK_CELL), math.floor((cx + widest) / CRACK_CELL) do
+		for y = math.floor((cy - widest) / CRACK_CELL), math.floor((cy + widest) / CRACK_CELL) do
+			for z = math.floor((cz - widest) / CRACK_CELL), math.floor((cz + widest) / CRACK_CELL) do
+				for _, index in crackCells[`{x}_{y}_{z}`] or {} do
+					local stroke = crackStrokes[index]
+					local dx, dy, dz = stroke.start[1] - cx, stroke.start[2] - cy, stroke.start[3] - cz
+					local far = radius + stroke.length + stroke.width + CRACK_SLACK
+					if dx * dx + dy * dy + dz * dz <= far * far then
+						table.insert(found, index)
+					end
+				end
+			end
 		end
 	end
+	table.sort(found)
+	local near = {}
+	for i, index in found do
+		near[i] = crackStrokes[index]
+	end
+	return near
+end
+for index, entry in parts do
 	local kind = string.match(entry.name, "^%a+")
 	local soft = kind == "Grass" or kind == "Dirt"
 	entry.mesh:paintShading(entry.image, {
@@ -4217,7 +4470,9 @@ for _, entry in parts do
 		shadow = if soft then CONTACT_SHADOW * SOFT_SHADING else CONTACT_SHADOW,
 		gradient = GRADIENT,
 		blend = EDGE_BLEND,
-		group = group,
+		group = chunks,
+		groupSizes = chunkSizes,
+		groupIndex = index,
 		name = entry.name,
 		paint = entry.paint,
 		-- The rock paint is cached under the item's key, since its code is not hashed.
@@ -4228,12 +4483,12 @@ for _, entry in parts do
 		highlightWidth = HIGHLIGHT_WIDTH,
 		cornerTaper = CORNER_TAPER,
 		heightRange = entry.heightRange,
-		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then crackStrokes else nil,
+		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then cracksNear(entry.mesh) else nil,
 	})
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildMainIsland] = "MainIsland-f8b29761b5cbce6e"
+buildKeys[buildMainIsland] = "MainIsland-41872942eb813a99"
 function buildCapsuleLoop()
 local CACHE_KEY = "CapsuleLoop-2eff1653a67db3ac"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -8442,9 +8697,9 @@ for _, entry in parts do
 end
 finishParts()
 end
-buildKeys[buildCapsuleLoop] = "CapsuleLoop-d5670c2ac9aba453"
+buildKeys[buildCapsuleLoop] = "CapsuleLoop-e122c768981a2fcf"
 function buildRebirthPress()
-local CACHE_KEY = "RebirthPress-d4815f7b07795958"
+local CACHE_KEY = "RebirthPress-41e66676e20187d2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -9303,8 +9558,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -9320,10 +9577,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -9335,6 +9601,8 @@ local function finishParts()
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
@@ -9348,6 +9616,18 @@ local function finishParts()
 			rubber = entry.rubber,
 			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
 			highlightUnevenStep = entry.litUnevenStep,
@@ -9404,12 +9684,17 @@ local SMALL_MARKS = {
 -- pieces each lit from above) and `stain` (how far a short part's steps wander
 -- as blotches instead of bands; high values fleck a dark surface).
 local PRESETS = {
-	-- Steel standing alone on open ground.
-	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Steel standing alone on open ground. Its coat is paint over metal: the
+	-- roughness map polishes the worn rims and roughens creases and rust, and
+	-- the metalness map shows bare metal where the edge wear cuts through,
+	-- never under the rust.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 }, roughness = { base = 0.7, edge = -0.6, crease = 0.15, wear = 0.25 }, metalness = { base = 0.05, edge = 0.85, crease = 0, wear = -0.3 } },
 	-- Concrete footings and plinths.
 	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
 	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
-	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Stone's edges tilt hard in the normal map, along the highlight strokes,
+	-- and its roughness map polishes those worn rims while the creases stay matte.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 }, bevel = { tilt = 8 }, roughness = { base = 0.85, edge = -0.7, crease = 0.1, wear = 0 } },
 	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
 	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
 	-- The earth body of a heap: it darkens well under everything resting on it.
@@ -9484,15 +9769,38 @@ local function applyPreset(entry, preset)
 	if preset.softLit then
 		entry.softLit = preset.softLit
 	end
+	-- The normal map's bevel field, where the material shapes it.
+	if preset.bevel then
+		entry.bevelReach = entry.bevelReach or preset.bevel.reach
+		entry.bevelFold = entry.bevelFold or preset.bevel.fold
+		entry.bevelTilt = entry.bevelTilt or preset.bevel.tilt
+	end
+	-- The roughness map, from the material's base and the layers already baked.
+	if preset.roughness then
+		entry.roughnessBase = entry.roughnessBase or preset.roughness.base
+		entry.roughnessEdge = entry.roughnessEdge or preset.roughness.edge
+		entry.roughnessCrease = entry.roughnessCrease or preset.roughness.crease
+		entry.roughnessWear = entry.roughnessWear or preset.roughness.wear
+	end
+	if preset.metalness then
+		entry.metalnessBase = entry.metalnessBase or preset.metalness.base
+		entry.metalnessEdge = entry.metalnessEdge or preset.metalness.edge
+		entry.metalnessCrease = entry.metalnessCrease or preset.metalness.crease
+		entry.metalnessWear = entry.metalnessWear or preset.metalness.wear
+	end
 	entry.handTune = SMALL_MARKS
 	paintStepBands(entry, preset.bands)
 end
 
 local function handFinish(coats, plain, finish)
+	-- Every chunk of one part must come out with the same finish; a chunk
+	-- that doesn't is a seam in the paint, so it stops the build.
+	local finishes: { [string]: string } = {}
 	for _, entry in parts do
-		-- A chunked part takes the coat of the name it was built under.
-		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
-		if plain[name] then
+		-- A chunked part takes the coat of the part it was built under
+		-- (chunkedPart tags each chunk with it), not whatever its own name parses to.
+		local name = entry.chunkOf or entry.name
+		if plain[name] or plain[entry.name] then
 			continue
 		end
 		entry.hand = coats[name]
@@ -9510,6 +9818,11 @@ local function handFinish(coats, plain, finish)
 		if presetName then
 			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
 		end
+		local signature = `{entry.hand or "-"}/{presetName or "-"}`
+		if finishes[name] and finishes[name] ~= signature then
+			error(`chunks of {name} would wear different finishes ({finishes[name]} and {signature}); the paint would seam`)
+		end
+		finishes[name] = signature
 	end
 end
 
@@ -10145,9 +10458,9 @@ handFinish({
 }, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildRebirthPress] = "RebirthPress-68bffec05b017d66"
+buildKeys[buildRebirthPress] = "RebirthPress-eb89d35bed00ee95"
 function buildBuildBay()
-local CACHE_KEY = "BuildBay-53489079ec725d33"
+local CACHE_KEY = "BuildBay-556338a6315afce1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -11006,8 +11319,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -11023,10 +11338,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -11038,6 +11362,8 @@ local function finishParts()
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
@@ -11051,6 +11377,18 @@ local function finishParts()
 			rubber = entry.rubber,
 			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
 			highlightUnevenStep = entry.litUnevenStep,
@@ -11854,7 +12192,7 @@ end
 
 finishParts()
 end
-buildKeys[buildBuildBay] = "BuildBay-e350ca07c20253cf"
+buildKeys[buildBuildBay] = "BuildBay-90503c33a909204f"
 function buildYardFence()
 local CACHE_KEY = "YardFence-ed9cc0a50c9a990b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -12977,7 +13315,7 @@ for _, entry in parts do
 end
 finishParts()
 end
-buildKeys[buildYardFence] = "YardFence-886ab0c6a9ab76d5"
+buildKeys[buildYardFence] = "YardFence-ae9c0061f8170496"
 function buildYardFenceHalf()
 local CACHE_KEY = "YardFenceHalf-44c06fd6c7d585e3"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -14099,7 +14437,7 @@ for _, entry in parts do
 end
 finishParts()
 end
-buildKeys[buildYardFenceHalf] = "YardFenceHalf-be79ee5d70226771"
+buildKeys[buildYardFenceHalf] = "YardFenceHalf-ca23e4e88ebebfbf"
 function buildYardFooting()
 local CACHE_KEY = "YardFooting-e42c4d0ae1d767cd"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -15185,7 +15523,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildYardFooting] = "YardFooting-f4adf27d60b77d68"
+buildKeys[buildYardFooting] = "YardFooting-ce1698371f70b42a"
 function buildYardGate()
 local CACHE_KEY = "YardGate-3d1b6f3f9e976258"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -16323,7 +16661,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildYardGate] = "YardGate-77592f166aa97f3a"
+buildKeys[buildYardGate] = "YardGate-bf1807569edc0b36"
 function buildPlotMarker()
 local CACHE_KEY = "PlotMarker-3541a7472aa1d9be"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -17444,9 +17782,9 @@ handFinish({
 }, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildPlotMarker] = "PlotMarker-1c3c3808c9f14059"
+buildKeys[buildPlotMarker] = "PlotMarker-9172bd0ab180a2a2"
 function buildHubShop()
-local CACHE_KEY = "HubShop-d28bf4508d6bb561"
+local CACHE_KEY = "HubShop-60f775a57a686e0d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -18305,8 +18643,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -18322,10 +18662,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -18337,6 +18686,8 @@ local function finishParts()
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
@@ -18350,6 +18701,18 @@ local function finishParts()
 			rubber = entry.rubber,
 			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
 			highlightUnevenStep = entry.litUnevenStep,
@@ -18402,12 +18765,17 @@ local SMALL_MARKS = {
 -- pieces each lit from above) and `stain` (how far a short part's steps wander
 -- as blotches instead of bands; high values fleck a dark surface).
 local PRESETS = {
-	-- Steel standing alone on open ground.
-	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Steel standing alone on open ground. Its coat is paint over metal: the
+	-- roughness map polishes the worn rims and roughens creases and rust, and
+	-- the metalness map shows bare metal where the edge wear cuts through,
+	-- never under the rust.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 }, roughness = { base = 0.7, edge = -0.6, crease = 0.15, wear = 0.25 }, metalness = { base = 0.05, edge = 0.85, crease = 0, wear = -0.3 } },
 	-- Concrete footings and plinths.
 	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
 	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
-	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Stone's edges tilt hard in the normal map, along the highlight strokes,
+	-- and its roughness map polishes those worn rims while the creases stay matte.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 }, bevel = { tilt = 8 }, roughness = { base = 0.85, edge = -0.7, crease = 0.1, wear = 0 } },
 	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
 	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
 	-- The earth body of a heap: it darkens well under everything resting on it.
@@ -18482,15 +18850,38 @@ local function applyPreset(entry, preset)
 	if preset.softLit then
 		entry.softLit = preset.softLit
 	end
+	-- The normal map's bevel field, where the material shapes it.
+	if preset.bevel then
+		entry.bevelReach = entry.bevelReach or preset.bevel.reach
+		entry.bevelFold = entry.bevelFold or preset.bevel.fold
+		entry.bevelTilt = entry.bevelTilt or preset.bevel.tilt
+	end
+	-- The roughness map, from the material's base and the layers already baked.
+	if preset.roughness then
+		entry.roughnessBase = entry.roughnessBase or preset.roughness.base
+		entry.roughnessEdge = entry.roughnessEdge or preset.roughness.edge
+		entry.roughnessCrease = entry.roughnessCrease or preset.roughness.crease
+		entry.roughnessWear = entry.roughnessWear or preset.roughness.wear
+	end
+	if preset.metalness then
+		entry.metalnessBase = entry.metalnessBase or preset.metalness.base
+		entry.metalnessEdge = entry.metalnessEdge or preset.metalness.edge
+		entry.metalnessCrease = entry.metalnessCrease or preset.metalness.crease
+		entry.metalnessWear = entry.metalnessWear or preset.metalness.wear
+	end
 	entry.handTune = SMALL_MARKS
 	paintStepBands(entry, preset.bands)
 end
 
 local function handFinish(coats, plain, finish)
+	-- Every chunk of one part must come out with the same finish; a chunk
+	-- that doesn't is a seam in the paint, so it stops the build.
+	local finishes: { [string]: string } = {}
 	for _, entry in parts do
-		-- A chunked part takes the coat of the name it was built under.
-		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
-		if plain[name] then
+		-- A chunked part takes the coat of the part it was built under
+		-- (chunkedPart tags each chunk with it), not whatever its own name parses to.
+		local name = entry.chunkOf or entry.name
+		if plain[name] or plain[entry.name] then
 			continue
 		end
 		entry.hand = coats[name]
@@ -18508,40 +18899,92 @@ local function handFinish(coats, plain, finish)
 		if presetName then
 			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
 		end
+		local signature = `{entry.hand or "-"}/{presetName or "-"}`
+		if finishes[name] and finishes[name] ~= signature then
+			error(`chunks of {name} would wear different finishes ({finishes[name]} and {signature}); the paint would seam`)
+		end
+		finishes[name] = signature
 	end
 end
--- Small props and fittings shared by the town pieces. Each takes the mesh and
--- stands at its base height `z`.
+-- Small props and fittings shared by the town pieces. Each takes the mesh,
+-- stands at its base height `z` and returns its bounds, { x0, y0, z0, x1, y1, z1 }.
 local SUPPLY_TONES = { { 0.64, 0.36, 0.2 }, { 0.3, 0.44, 0.52 }, { 0.72, 0.56, 0.2 }, { 0.5, 0.5, 0.48 }, { 0.32, 0.42, 0.3 }, { 0.58, 0.24, 0.2 } }
 
--- A paint that gives each prop its own colour, so a clutter part isn't one tone.
-local function supplyTones(x: number, y: number, z: number): (number, number, number)
-	local tone = SUPPLY_TONES[(math.floor(x * 0.32) * 3 + math.floor(y * 0.32) * 5 + math.floor(z * 0.22)) % #SUPPLY_TONES + 1]
-	return tone[1], tone[2], tone[3]
+type Bounds = { number }
+
+-- Colour by object, never by region of space: each prop in a clutter part is
+-- registered with `prop(bounds, tone?)` as it is built, and `paint` gives a
+-- point the tone of the smallest prop holding it (the nearest, for a point
+-- just outside every one). A prop without its own tone takes the next in
+-- SUPPLY_TONES, so neighbours built one after another differ. Make one pair
+-- per part, before the part, and pass `paint` as its paint.
+local function supplyTones(): ((Bounds, { number }?) -> (), (number, number, number) -> (number, number, number))
+	local props: { { bounds: Bounds, tone: { number } } } = {}
+	local function prop(bounds: Bounds, tone: { number }?)
+		table.insert(props, { bounds = bounds, tone = tone or SUPPLY_TONES[#props % #SUPPLY_TONES + 1] })
+	end
+	local function paint(x: number, y: number, z: number): (number, number, number)
+		local best, bestScore = props[1], math.huge
+		for _, entry in props do
+			local b = entry.bounds
+			-- Distance outside the box (0 inside), then size, so the smallest
+			-- holder wins over a larger one it rests against.
+			local dx = math.max(b[1] - x, 0, x - b[4])
+			local dy = math.max(b[2] - y, 0, y - b[5])
+			local dz = math.max(b[3] - z, 0, z - b[6])
+			local score = math.sqrt(dx * dx + dy * dy + dz * dz) * 1000 + (b[4] - b[1]) * (b[5] - b[2]) * (b[6] - b[3])
+			if score < bestScore then
+				best, bestScore = entry, score
+			end
+		end
+		return best.tone[1], best.tone[2], best.tone[3]
+	end
+	return prop, paint
 end
 
-local function barrel(mesh, x: number, y: number, z: number)
-	cylinder(mesh, x, y, z + 0.9, 0.6, 1.8, "z", 14)
+-- A box() as a prop, returning its bounds.
+local function boxProp(mesh, x: number, y: number, z: number, wide: number, deep: number, high: number): Bounds
+	box(mesh, x, y, z, wide, deep, high)
+	return { x - wide / 2, y - deep / 2, z, x + wide / 2, y + deep / 2, z + high }
+end
+
+-- A strut() as a prop, returning its bounds.
+local function strutProp(mesh, x0: number, y0: number, z0: number, x1: number, y1: number, z1: number, thick: number): Bounds
+	strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local half = thick / 2
+	return { math.min(x0, x1) - half, math.min(y0, y1) - half, math.min(z0, z1) - half, math.max(x0, x1) + half, math.max(y0, y1) + half, math.max(z0, z1) + half }
+end
+
+-- An upright barrel; its bung sits `bungTurn` radians round from +x, so a
+-- stack can keep bungs clear of the barrel above. A barrel stacked on others
+-- stands at their z + BARREL_HIGH.
+local BARREL_HIGH = 1.8
+local function barrel(mesh, x: number, y: number, z: number, bungTurn: number?): Bounds
+	cylinder(mesh, x, y, z + BARREL_HIGH / 2, 0.6, BARREL_HIGH, "z", 14)
 	for _, h in { 0.08, 0.62, 1.2, 1.74 } do
 		cylinder(mesh, x, y, z + h, 0.66, 0.1, "z", 14)
 	end
-	cylinder(mesh, x + 0.25, y, z + 1.86, 0.1, 0.12, "z", 8)
+	local turn = bungTurn or 0
+	cylinder(mesh, x + math.cos(turn) * 0.25, y + math.sin(turn) * 0.25, z + 1.86, 0.1, 0.12, "z", 8)
+	return { x - 0.66, y - 0.66, z, x + 0.66, y + 0.66, z + 1.92 }
 end
 
-local function gasBottle(mesh, x: number, y: number, z: number)
+local function gasBottle(mesh, x: number, y: number, z: number): Bounds
 	cylinder(mesh, x, y, z + 1.3, 0.29, 2.6, "z", 12)
 	sphere(mesh, x, y, z + 2.6, 0.27, 0.27, 0.2, 4, 12)
 	cylinder(mesh, x, y, z + 2.88, 0.08, 0.3, "z", 8)
 	cylinder(mesh, x, y, z + 3.05, 0.17, 0.08, "z", 8)
+	return { x - 0.29, y - 0.29, z, x + 0.29, y + 0.29, z + 3.09 }
 end
 
-local function tyres(mesh, x: number, y: number, z: number, count: number)
+local function tyres(mesh, x: number, y: number, z: number, count: number): Bounds
 	for n = 0, count - 1 do
 		ring(mesh, x + (n * 7 % 3 - 1) * 0.1, y + (n * 5 % 3 - 1) * 0.1, z + 0.22 + n * 0.44, 0.42, 0.95, 0.44, "z", 16)
 	end
+	return { x - 1.05, y - 1.05, z, x + 1.05, y + 1.05, z + count * 0.44 }
 end
 
-local function toolChest(mesh, x: number, y: number, z: number)
+local function toolChest(mesh, x: number, y: number, z: number): Bounds
 	box(mesh, x, y, z + 0.28, 2.3, 1.5, 2.3)
 	for row = 0, 4 do
 		box(mesh, x, y - 0.78, z + 0.42 + row * 0.42, 2.06, 0.08, 0.36)
@@ -18552,6 +18995,7 @@ local function toolChest(mesh, x: number, y: number, z: number)
 			cylinder(mesh, x + cx, y + cy, z + 0.16, 0.16, 0.34, "z", 8)
 		end
 	end
+	return { x - 1.15, y - 0.91, z, x + 1.15, y + 0.75, z + 2.58 }
 end
 
 -- A ladder along z, standing off a wall by `off` (negative for a wall on the
@@ -18903,9 +19347,13 @@ part("CraneHook", nil, PIPE, function(mesh)
 	tube(mesh, { { CRANE_X, -6.5, JIB_Z + 0.62 }, { CRANE_X, 5.9, JIB_Z + 1.3 } }, 0.05, 6)
 end, nil, 0.1)
 
+-- Each stack its own weathered timber or rusted sheet: coloured per piece
+-- (supplyTones), never by where in space it stands.
+local TALL_CRATE, SMALL_CRATE, LEFT_CRATE, SHEET = { 0.62, 0.36, 0.2 }, { 0.42, 0.34, 0.26 }, { 0.5, 0.3, 0.16 }, { 0.46, 0.44, 0.42 }
+local stockPiece, stockPaint = supplyTones()
 part("StockPiles", nil, CONTAINER_RUST, function(mesh)
 	-- Slatted crates on the right; a sagging stack and torn sheet on the left.
-	local function crate(x, y, wide, deep, high)
+	local function crate(x, y, wide, deep, high, tone)
 		box(mesh, x, y, FLOOR, wide, deep, high)
 		for z = FLOOR + 0.3, FLOOR + high - 0.2, 0.42 do
 			box(mesh, x, y, z, wide + 0.08, deep + 0.08, 0.12)
@@ -18913,31 +19361,22 @@ part("StockPiles", nil, CONTAINER_RUST, function(mesh)
 		for _, side in { -1, 1 } do
 			box(mesh, x + side * (wide / 2 - 0.1), y - deep / 2 - 0.04, FLOOR, 0.2, 0.1, high)
 		end
+		stockPiece({ x - wide / 2 - 0.04, y - deep / 2 - 0.09, FLOOR, x + wide / 2 + 0.04, y + deep / 2 + 0.04, FLOOR + high }, tone)
 	end
-	crate(13.8, -6.6, 2, 2.1, 2.2)
-	crate(11.1, -7.1, 1.5, 1.7, 1.3)
-	crate(-13.7, -6.4, 2, 2.2, 1.7)
-	box(mesh, -13.8, -6.3, FLOOR + 1.7, 1.2, 1.2, 0.5)
-	strut(mesh, -11.9, -7.4, FLOOR, -10.4, -6, FLOOR + 1.3, 0.3)
-	strut(mesh, -10.5, -7.8, FLOOR, -9.8, -6.3, FLOOR + 0.7, 0.2)
+	crate(13.8, -6.6, 2, 2.1, 2.2, TALL_CRATE)
+	crate(11.1, -7.1, 1.5, 1.7, 1.3, SMALL_CRATE)
+	crate(-13.7, -6.4, 2, 2.2, 1.7, LEFT_CRATE)
+	stockPiece(boxProp(mesh, -13.8, -6.3, FLOOR + 1.7, 1.2, 1.2, 0.5), LEFT_CRATE)
+	stockPiece(strutProp(mesh, -11.9, -7.4, FLOOR, -10.4, -6, FLOOR + 1.3, 0.3), SHEET)
+	stockPiece(strutProp(mesh, -10.5, -7.8, FLOOR, -9.8, -6.3, FLOOR + 0.7, 0.2), SHEET)
 	-- Torn sheet and bent lengths thrown against the left-hand stack.
-	strut(mesh, -12.1, -8, FLOOR, -11.7, -7.7, FLOOR + 1.8, 0.8)
-	strut(mesh, -14.8, -7.9, FLOOR, -14.5, -7.65, FLOOR + 1.5, 0.55)
+	stockPiece(strutProp(mesh, -12.1, -8, FLOOR, -11.7, -7.7, FLOOR + 1.8, 0.8), SHEET)
+	stockPiece(strutProp(mesh, -14.8, -7.9, FLOOR, -14.5, -7.65, FLOOR + 1.5, 0.55), LEFT_CRATE)
 	-- Torn sheet and bent bar leaning on the right-hand crates.
-	strut(mesh, 15, -7.9, FLOOR, 14.4, -7.75, FLOOR + 2.1, 0.85)
-	strut(mesh, 12.3, -8.3, FLOOR, 12.5, -7.2, FLOOR + 1.5, 0.3)
-	strut(mesh, 10.2, -7.7, FLOOR, 10.9, -8.2, FLOOR + 0.8, 0.2)
-end, nil, rusting(0.1, function(x, _y, _z)
-	-- Each stack its own weathered timber or rusted sheet.
-	if x > 13 then
-		return 0.62, 0.36, 0.2
-	elseif x > 9 then
-		return 0.42, 0.34, 0.26
-	elseif x < -12.4 then
-		return 0.5, 0.3, 0.16
-	end
-	return 0.46, 0.44, 0.42
-end))
+	stockPiece(strutProp(mesh, 15, -7.9, FLOOR, 14.4, -7.75, FLOOR + 2.1, 0.85), TALL_CRATE)
+	stockPiece(strutProp(mesh, 12.3, -8.3, FLOOR, 12.5, -7.2, FLOOR + 1.5, 0.3), SMALL_CRATE)
+	stockPiece(strutProp(mesh, 10.2, -7.7, FLOOR, 10.9, -8.2, FLOOR + 0.8, 0.2), SMALL_CRATE)
+end, nil, rusting(0.1, stockPaint))
 
 -- The lived-in layer: door hardware, roof plant, a ladder, conduit, strings of
 -- bulbs, price boards and supplies stacked round the shop.
@@ -19096,24 +19535,29 @@ end, nil, function(x, _y, z)
 end)
 parts[#parts].crisp = true
 
+local supply, supplyPaint = supplyTones()
 part("Supplies", nil, { 0.5, 0.45, 0.3 }, function(mesh)
-	barrel(mesh, -16, 2.6, FLOOR)
-	barrel(mesh, -16, 4.1, FLOOR)
-	barrel(mesh, -15.9, 3.4, FLOOR + 1.86)
-	gasBottle(mesh, -16.1, 6.2, FLOOR)
-	gasBottle(mesh, -16.1, 7.2, FLOOR)
-	tyres(mesh, 16, 1.6, FLOOR, 3)
+	-- Two barrels with a third stood on their rims, bungs turned out from under it.
+	supply(barrel(mesh, -16, 2.6, FLOOR, -math.pi / 2))
+	supply(barrel(mesh, -16, 4.1, FLOOR, math.pi / 2))
+	supply(barrel(mesh, -15.9, 3.4, FLOOR + BARREL_HIGH))
+	supply(gasBottle(mesh, -16.1, 6.2, FLOOR))
+	supply(gasBottle(mesh, -16.1, 7.2, FLOOR))
+	supply(tyres(mesh, 16, 1.6, FLOOR, 3))
 	-- Goods out on the counter.
-	box(mesh, 5.4, COUNTER_Y, 3.4, 1.4, 1, 0.6)
-	box(mesh, 7.2, COUNTER_Y + 0.2, 3.4, 0.9, 0.7, 0.4)
+	supply(boxProp(mesh, 5.4, COUNTER_Y, 3.4, 1.4, 1, 0.6))
+	supply(boxProp(mesh, 7.2, COUNTER_Y + 0.2, 3.4, 0.9, 0.7, 0.4))
 	gear(mesh, 2, COUNTER_Y, 3.5, 0.55, 0.2, 9, "z")
+	supply({ 1.3, COUNTER_Y - 0.7, 3.4, 2.7, COUNTER_Y + 0.7, 3.6 })
 	cylinder(mesh, -6, COUNTER_Y, 3.65, 0.3, 0.5, "z", 10)
+	supply({ -6.3, COUNTER_Y - 0.3, 3.4, -5.7, COUNTER_Y + 0.3, 3.9 })
 	-- Stored on the lower roof.
-	box(mesh, 9, 7.2, LOWER_TOP - 0.12, 2.2, 1.8, 1)
+	supply(boxProp(mesh, 9, 7.2, LOWER_TOP - 0.12, 2.2, 1.8, 1))
 	for n = 0, 2 do
 		cylinder(mesh, 8.8, 1 + n * 0.5, LOWER_TOP - 0.12 + 0.2, 0.22, 4.2, "x", 8)
+		supply({ 6.7, 0.78 + n * 0.5, LOWER_TOP - 0.12 - 0.02, 10.9, 1.22 + n * 0.5, LOWER_TOP - 0.12 + 0.42 })
 	end
-end, nil, supplyTones)
+end, nil, supplyPaint)
 
 part("Cables", nil, { 0.08, 0.08, 0.1 }, function(mesh)
 	local z = 7.9
@@ -19166,9 +19610,9 @@ end
 
 finishParts()
 end
-buildKeys[buildHubShop] = "HubShop-350bbc2c45edc62c"
+buildKeys[buildHubShop] = "HubShop-fdd558d62a7f8906"
 function buildHubTinkerer()
-local CACHE_KEY = "HubTinkerer-0c574345159805fc"
+local CACHE_KEY = "HubTinkerer-955dc759a879d419"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -20027,8 +20471,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -20044,10 +20490,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -20059,6 +20514,8 @@ local function finishParts()
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
@@ -20072,6 +20529,18 @@ local function finishParts()
 			rubber = entry.rubber,
 			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
 			highlightUnevenStep = entry.litUnevenStep,
@@ -20124,12 +20593,17 @@ local SMALL_MARKS = {
 -- pieces each lit from above) and `stain` (how far a short part's steps wander
 -- as blotches instead of bands; high values fleck a dark surface).
 local PRESETS = {
-	-- Steel standing alone on open ground.
-	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Steel standing alone on open ground. Its coat is paint over metal: the
+	-- roughness map polishes the worn rims and roughens creases and rust, and
+	-- the metalness map shows bare metal where the edge wear cuts through,
+	-- never under the rust.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 }, roughness = { base = 0.7, edge = -0.6, crease = 0.15, wear = 0.25 }, metalness = { base = 0.05, edge = 0.85, crease = 0, wear = -0.3 } },
 	-- Concrete footings and plinths.
 	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
 	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
-	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Stone's edges tilt hard in the normal map, along the highlight strokes,
+	-- and its roughness map polishes those worn rims while the creases stay matte.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 }, bevel = { tilt = 8 }, roughness = { base = 0.85, edge = -0.7, crease = 0.1, wear = 0 } },
 	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
 	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
 	-- The earth body of a heap: it darkens well under everything resting on it.
@@ -20204,15 +20678,38 @@ local function applyPreset(entry, preset)
 	if preset.softLit then
 		entry.softLit = preset.softLit
 	end
+	-- The normal map's bevel field, where the material shapes it.
+	if preset.bevel then
+		entry.bevelReach = entry.bevelReach or preset.bevel.reach
+		entry.bevelFold = entry.bevelFold or preset.bevel.fold
+		entry.bevelTilt = entry.bevelTilt or preset.bevel.tilt
+	end
+	-- The roughness map, from the material's base and the layers already baked.
+	if preset.roughness then
+		entry.roughnessBase = entry.roughnessBase or preset.roughness.base
+		entry.roughnessEdge = entry.roughnessEdge or preset.roughness.edge
+		entry.roughnessCrease = entry.roughnessCrease or preset.roughness.crease
+		entry.roughnessWear = entry.roughnessWear or preset.roughness.wear
+	end
+	if preset.metalness then
+		entry.metalnessBase = entry.metalnessBase or preset.metalness.base
+		entry.metalnessEdge = entry.metalnessEdge or preset.metalness.edge
+		entry.metalnessCrease = entry.metalnessCrease or preset.metalness.crease
+		entry.metalnessWear = entry.metalnessWear or preset.metalness.wear
+	end
 	entry.handTune = SMALL_MARKS
 	paintStepBands(entry, preset.bands)
 end
 
 local function handFinish(coats, plain, finish)
+	-- Every chunk of one part must come out with the same finish; a chunk
+	-- that doesn't is a seam in the paint, so it stops the build.
+	local finishes: { [string]: string } = {}
 	for _, entry in parts do
-		-- A chunked part takes the coat of the name it was built under.
-		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
-		if plain[name] then
+		-- A chunked part takes the coat of the part it was built under
+		-- (chunkedPart tags each chunk with it), not whatever its own name parses to.
+		local name = entry.chunkOf or entry.name
+		if plain[name] or plain[entry.name] then
 			continue
 		end
 		entry.hand = coats[name]
@@ -20230,40 +20727,92 @@ local function handFinish(coats, plain, finish)
 		if presetName then
 			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
 		end
+		local signature = `{entry.hand or "-"}/{presetName or "-"}`
+		if finishes[name] and finishes[name] ~= signature then
+			error(`chunks of {name} would wear different finishes ({finishes[name]} and {signature}); the paint would seam`)
+		end
+		finishes[name] = signature
 	end
 end
--- Small props and fittings shared by the town pieces. Each takes the mesh and
--- stands at its base height `z`.
+-- Small props and fittings shared by the town pieces. Each takes the mesh,
+-- stands at its base height `z` and returns its bounds, { x0, y0, z0, x1, y1, z1 }.
 local SUPPLY_TONES = { { 0.64, 0.36, 0.2 }, { 0.3, 0.44, 0.52 }, { 0.72, 0.56, 0.2 }, { 0.5, 0.5, 0.48 }, { 0.32, 0.42, 0.3 }, { 0.58, 0.24, 0.2 } }
 
--- A paint that gives each prop its own colour, so a clutter part isn't one tone.
-local function supplyTones(x: number, y: number, z: number): (number, number, number)
-	local tone = SUPPLY_TONES[(math.floor(x * 0.32) * 3 + math.floor(y * 0.32) * 5 + math.floor(z * 0.22)) % #SUPPLY_TONES + 1]
-	return tone[1], tone[2], tone[3]
+type Bounds = { number }
+
+-- Colour by object, never by region of space: each prop in a clutter part is
+-- registered with `prop(bounds, tone?)` as it is built, and `paint` gives a
+-- point the tone of the smallest prop holding it (the nearest, for a point
+-- just outside every one). A prop without its own tone takes the next in
+-- SUPPLY_TONES, so neighbours built one after another differ. Make one pair
+-- per part, before the part, and pass `paint` as its paint.
+local function supplyTones(): ((Bounds, { number }?) -> (), (number, number, number) -> (number, number, number))
+	local props: { { bounds: Bounds, tone: { number } } } = {}
+	local function prop(bounds: Bounds, tone: { number }?)
+		table.insert(props, { bounds = bounds, tone = tone or SUPPLY_TONES[#props % #SUPPLY_TONES + 1] })
+	end
+	local function paint(x: number, y: number, z: number): (number, number, number)
+		local best, bestScore = props[1], math.huge
+		for _, entry in props do
+			local b = entry.bounds
+			-- Distance outside the box (0 inside), then size, so the smallest
+			-- holder wins over a larger one it rests against.
+			local dx = math.max(b[1] - x, 0, x - b[4])
+			local dy = math.max(b[2] - y, 0, y - b[5])
+			local dz = math.max(b[3] - z, 0, z - b[6])
+			local score = math.sqrt(dx * dx + dy * dy + dz * dz) * 1000 + (b[4] - b[1]) * (b[5] - b[2]) * (b[6] - b[3])
+			if score < bestScore then
+				best, bestScore = entry, score
+			end
+		end
+		return best.tone[1], best.tone[2], best.tone[3]
+	end
+	return prop, paint
 end
 
-local function barrel(mesh, x: number, y: number, z: number)
-	cylinder(mesh, x, y, z + 0.9, 0.6, 1.8, "z", 14)
+-- A box() as a prop, returning its bounds.
+local function boxProp(mesh, x: number, y: number, z: number, wide: number, deep: number, high: number): Bounds
+	box(mesh, x, y, z, wide, deep, high)
+	return { x - wide / 2, y - deep / 2, z, x + wide / 2, y + deep / 2, z + high }
+end
+
+-- A strut() as a prop, returning its bounds.
+local function strutProp(mesh, x0: number, y0: number, z0: number, x1: number, y1: number, z1: number, thick: number): Bounds
+	strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local half = thick / 2
+	return { math.min(x0, x1) - half, math.min(y0, y1) - half, math.min(z0, z1) - half, math.max(x0, x1) + half, math.max(y0, y1) + half, math.max(z0, z1) + half }
+end
+
+-- An upright barrel; its bung sits `bungTurn` radians round from +x, so a
+-- stack can keep bungs clear of the barrel above. A barrel stacked on others
+-- stands at their z + BARREL_HIGH.
+local BARREL_HIGH = 1.8
+local function barrel(mesh, x: number, y: number, z: number, bungTurn: number?): Bounds
+	cylinder(mesh, x, y, z + BARREL_HIGH / 2, 0.6, BARREL_HIGH, "z", 14)
 	for _, h in { 0.08, 0.62, 1.2, 1.74 } do
 		cylinder(mesh, x, y, z + h, 0.66, 0.1, "z", 14)
 	end
-	cylinder(mesh, x + 0.25, y, z + 1.86, 0.1, 0.12, "z", 8)
+	local turn = bungTurn or 0
+	cylinder(mesh, x + math.cos(turn) * 0.25, y + math.sin(turn) * 0.25, z + 1.86, 0.1, 0.12, "z", 8)
+	return { x - 0.66, y - 0.66, z, x + 0.66, y + 0.66, z + 1.92 }
 end
 
-local function gasBottle(mesh, x: number, y: number, z: number)
+local function gasBottle(mesh, x: number, y: number, z: number): Bounds
 	cylinder(mesh, x, y, z + 1.3, 0.29, 2.6, "z", 12)
 	sphere(mesh, x, y, z + 2.6, 0.27, 0.27, 0.2, 4, 12)
 	cylinder(mesh, x, y, z + 2.88, 0.08, 0.3, "z", 8)
 	cylinder(mesh, x, y, z + 3.05, 0.17, 0.08, "z", 8)
+	return { x - 0.29, y - 0.29, z, x + 0.29, y + 0.29, z + 3.09 }
 end
 
-local function tyres(mesh, x: number, y: number, z: number, count: number)
+local function tyres(mesh, x: number, y: number, z: number, count: number): Bounds
 	for n = 0, count - 1 do
 		ring(mesh, x + (n * 7 % 3 - 1) * 0.1, y + (n * 5 % 3 - 1) * 0.1, z + 0.22 + n * 0.44, 0.42, 0.95, 0.44, "z", 16)
 	end
+	return { x - 1.05, y - 1.05, z, x + 1.05, y + 1.05, z + count * 0.44 }
 end
 
-local function toolChest(mesh, x: number, y: number, z: number)
+local function toolChest(mesh, x: number, y: number, z: number): Bounds
 	box(mesh, x, y, z + 0.28, 2.3, 1.5, 2.3)
 	for row = 0, 4 do
 		box(mesh, x, y - 0.78, z + 0.42 + row * 0.42, 2.06, 0.08, 0.36)
@@ -20274,6 +20823,7 @@ local function toolChest(mesh, x: number, y: number, z: number)
 			cylinder(mesh, x + cx, y + cy, z + 0.16, 0.16, 0.34, "z", 8)
 		end
 	end
+	return { x - 1.15, y - 0.91, z, x + 1.15, y + 0.75, z + 2.58 }
 end
 
 -- A ladder along z, standing off a wall by `off` (negative for a wall on the
@@ -20636,23 +21186,26 @@ end, nil, function(_x, _y, z)
 	return 0.2, 0.36, 0.6
 end)
 
+local supply, supplyPaint = supplyTones()
 part("Supplies", nil, { 0.5, 0.45, 0.3 }, function(mesh)
-	toolChest(mesh, 7.2, -1.4, FLOOR)
-	gasBottle(mesh, 7.3, 2.5, FLOOR)
-	gasBottle(mesh, 7.4, 3.3, FLOOR)
-	barrel(mesh, -7.5, 4.3, FLOOR)
-	box(mesh, -7.2, 6, FLOOR, 1.7, 1.5, 1.3)
+	supply(toolChest(mesh, 7.2, -1.4, FLOOR))
+	supply(gasBottle(mesh, 7.3, 2.5, FLOOR))
+	supply(gasBottle(mesh, 7.4, 3.3, FLOOR))
+	supply(barrel(mesh, -7.5, 4.3, FLOOR))
+	supply(boxProp(mesh, -7.2, 6, FLOOR, 1.7, 1.5, 1.3))
 	-- Stock on the bench's lower shelf, and offcuts where the anvil's been used.
-	box(mesh, -4.6, 3.5, 1.42, 1.8, 1.6, 0.8)
-	box(mesh, -4.7, 3.5, 2.22, 1.3, 1.1, 0.42)
-	box(mesh, -2.9, 3.7, 1.42, 1, 1.2, 0.5)
+	supply(boxProp(mesh, -4.6, 3.5, 1.42, 1.8, 1.6, 0.8))
+	supply(boxProp(mesh, -4.7, 3.5, 2.22, 1.3, 1.1, 0.42))
+	supply(boxProp(mesh, -2.9, 3.7, 1.42, 1, 1.2, 0.5))
 	cylinder(mesh, 2.2, 3.5, 1.82, 0.42, 0.8, "z", 10)
+	supply({ 1.78, 3.08, 1.42, 2.62, 3.92, 2.22 })
 	cylinder(mesh, 3.2, 3.2, 1.72, 0.3, 0.6, "z", 10)
-	strut(mesh, 2.4, -3.4, FLOOR + 0.02, 3.3, -2.5, FLOOR + 0.1, 0.16)
-	strut(mesh, 2.1, -4.6, FLOOR + 0.02, 3, -4.4, FLOOR + 0.08, 0.13)
-	box(mesh, -3.2, -5, FLOOR, 1.6, 1.1, 0.18)
-	strut(mesh, -6.5, -2.6, FLOOR, -4.9, -3.5, FLOOR + 0.2, 0.2)
-end, nil, supplyTones)
+	supply({ 2.9, 2.9, 1.42, 3.5, 3.5, 2.02 })
+	supply(strutProp(mesh, 2.4, -3.4, FLOOR + 0.02, 3.3, -2.5, FLOOR + 0.1, 0.16))
+	supply(strutProp(mesh, 2.1, -4.6, FLOOR + 0.02, 3, -4.4, FLOOR + 0.08, 0.13))
+	supply(boxProp(mesh, -3.2, -5, FLOOR, 1.6, 1.1, 0.18))
+	supply(strutProp(mesh, -6.5, -2.6, FLOOR, -4.9, -3.5, FLOOR + 0.2, 0.2))
+end, nil, supplyPaint)
 
 part("Cables", nil, { 0.08, 0.08, 0.1 }, function(mesh)
 	-- Power to the junction box, and the torch hose from the bottles.
@@ -20695,9 +21248,9 @@ handFinish({
 
 finishParts()
 end
-buildKeys[buildHubTinkerer] = "HubTinkerer-a3812e490488c94c"
+buildKeys[buildHubTinkerer] = "HubTinkerer-038c18228d3c7a3d"
 function buildHubBeacon()
-local CACHE_KEY = "HubBeacon-5c136ecd6fc092b2"
+local CACHE_KEY = "HubBeacon-19cae29002f95cb0"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -21556,8 +22109,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -21573,10 +22128,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -21588,6 +22152,8 @@ local function finishParts()
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
@@ -21601,6 +22167,18 @@ local function finishParts()
 			rubber = entry.rubber,
 			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
 			highlightUnevenStep = entry.litUnevenStep,
@@ -21652,12 +22230,17 @@ local SMALL_MARKS = {
 -- pieces each lit from above) and `stain` (how far a short part's steps wander
 -- as blotches instead of bands; high values fleck a dark surface).
 local PRESETS = {
-	-- Steel standing alone on open ground.
-	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Steel standing alone on open ground. Its coat is paint over metal: the
+	-- roughness map polishes the worn rims and roughens creases and rust, and
+	-- the metalness map shows bare metal where the edge wear cuts through,
+	-- never under the rust.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 }, roughness = { base = 0.7, edge = -0.6, crease = 0.15, wear = 0.25 }, metalness = { base = 0.05, edge = 0.85, crease = 0, wear = -0.3 } },
 	-- Concrete footings and plinths.
 	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
 	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
-	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Stone's edges tilt hard in the normal map, along the highlight strokes,
+	-- and its roughness map polishes those worn rims while the creases stay matte.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 }, bevel = { tilt = 8 }, roughness = { base = 0.85, edge = -0.7, crease = 0.1, wear = 0 } },
 	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
 	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
 	-- The earth body of a heap: it darkens well under everything resting on it.
@@ -21732,15 +22315,38 @@ local function applyPreset(entry, preset)
 	if preset.softLit then
 		entry.softLit = preset.softLit
 	end
+	-- The normal map's bevel field, where the material shapes it.
+	if preset.bevel then
+		entry.bevelReach = entry.bevelReach or preset.bevel.reach
+		entry.bevelFold = entry.bevelFold or preset.bevel.fold
+		entry.bevelTilt = entry.bevelTilt or preset.bevel.tilt
+	end
+	-- The roughness map, from the material's base and the layers already baked.
+	if preset.roughness then
+		entry.roughnessBase = entry.roughnessBase or preset.roughness.base
+		entry.roughnessEdge = entry.roughnessEdge or preset.roughness.edge
+		entry.roughnessCrease = entry.roughnessCrease or preset.roughness.crease
+		entry.roughnessWear = entry.roughnessWear or preset.roughness.wear
+	end
+	if preset.metalness then
+		entry.metalnessBase = entry.metalnessBase or preset.metalness.base
+		entry.metalnessEdge = entry.metalnessEdge or preset.metalness.edge
+		entry.metalnessCrease = entry.metalnessCrease or preset.metalness.crease
+		entry.metalnessWear = entry.metalnessWear or preset.metalness.wear
+	end
 	entry.handTune = SMALL_MARKS
 	paintStepBands(entry, preset.bands)
 end
 
 local function handFinish(coats, plain, finish)
+	-- Every chunk of one part must come out with the same finish; a chunk
+	-- that doesn't is a seam in the paint, so it stops the build.
+	local finishes: { [string]: string } = {}
 	for _, entry in parts do
-		-- A chunked part takes the coat of the name it was built under.
-		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
-		if plain[name] then
+		-- A chunked part takes the coat of the part it was built under
+		-- (chunkedPart tags each chunk with it), not whatever its own name parses to.
+		local name = entry.chunkOf or entry.name
+		if plain[name] or plain[entry.name] then
 			continue
 		end
 		entry.hand = coats[name]
@@ -21758,40 +22364,92 @@ local function handFinish(coats, plain, finish)
 		if presetName then
 			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
 		end
+		local signature = `{entry.hand or "-"}/{presetName or "-"}`
+		if finishes[name] and finishes[name] ~= signature then
+			error(`chunks of {name} would wear different finishes ({finishes[name]} and {signature}); the paint would seam`)
+		end
+		finishes[name] = signature
 	end
 end
--- Small props and fittings shared by the town pieces. Each takes the mesh and
--- stands at its base height `z`.
+-- Small props and fittings shared by the town pieces. Each takes the mesh,
+-- stands at its base height `z` and returns its bounds, { x0, y0, z0, x1, y1, z1 }.
 local SUPPLY_TONES = { { 0.64, 0.36, 0.2 }, { 0.3, 0.44, 0.52 }, { 0.72, 0.56, 0.2 }, { 0.5, 0.5, 0.48 }, { 0.32, 0.42, 0.3 }, { 0.58, 0.24, 0.2 } }
 
--- A paint that gives each prop its own colour, so a clutter part isn't one tone.
-local function supplyTones(x: number, y: number, z: number): (number, number, number)
-	local tone = SUPPLY_TONES[(math.floor(x * 0.32) * 3 + math.floor(y * 0.32) * 5 + math.floor(z * 0.22)) % #SUPPLY_TONES + 1]
-	return tone[1], tone[2], tone[3]
+type Bounds = { number }
+
+-- Colour by object, never by region of space: each prop in a clutter part is
+-- registered with `prop(bounds, tone?)` as it is built, and `paint` gives a
+-- point the tone of the smallest prop holding it (the nearest, for a point
+-- just outside every one). A prop without its own tone takes the next in
+-- SUPPLY_TONES, so neighbours built one after another differ. Make one pair
+-- per part, before the part, and pass `paint` as its paint.
+local function supplyTones(): ((Bounds, { number }?) -> (), (number, number, number) -> (number, number, number))
+	local props: { { bounds: Bounds, tone: { number } } } = {}
+	local function prop(bounds: Bounds, tone: { number }?)
+		table.insert(props, { bounds = bounds, tone = tone or SUPPLY_TONES[#props % #SUPPLY_TONES + 1] })
+	end
+	local function paint(x: number, y: number, z: number): (number, number, number)
+		local best, bestScore = props[1], math.huge
+		for _, entry in props do
+			local b = entry.bounds
+			-- Distance outside the box (0 inside), then size, so the smallest
+			-- holder wins over a larger one it rests against.
+			local dx = math.max(b[1] - x, 0, x - b[4])
+			local dy = math.max(b[2] - y, 0, y - b[5])
+			local dz = math.max(b[3] - z, 0, z - b[6])
+			local score = math.sqrt(dx * dx + dy * dy + dz * dz) * 1000 + (b[4] - b[1]) * (b[5] - b[2]) * (b[6] - b[3])
+			if score < bestScore then
+				best, bestScore = entry, score
+			end
+		end
+		return best.tone[1], best.tone[2], best.tone[3]
+	end
+	return prop, paint
 end
 
-local function barrel(mesh, x: number, y: number, z: number)
-	cylinder(mesh, x, y, z + 0.9, 0.6, 1.8, "z", 14)
+-- A box() as a prop, returning its bounds.
+local function boxProp(mesh, x: number, y: number, z: number, wide: number, deep: number, high: number): Bounds
+	box(mesh, x, y, z, wide, deep, high)
+	return { x - wide / 2, y - deep / 2, z, x + wide / 2, y + deep / 2, z + high }
+end
+
+-- A strut() as a prop, returning its bounds.
+local function strutProp(mesh, x0: number, y0: number, z0: number, x1: number, y1: number, z1: number, thick: number): Bounds
+	strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local half = thick / 2
+	return { math.min(x0, x1) - half, math.min(y0, y1) - half, math.min(z0, z1) - half, math.max(x0, x1) + half, math.max(y0, y1) + half, math.max(z0, z1) + half }
+end
+
+-- An upright barrel; its bung sits `bungTurn` radians round from +x, so a
+-- stack can keep bungs clear of the barrel above. A barrel stacked on others
+-- stands at their z + BARREL_HIGH.
+local BARREL_HIGH = 1.8
+local function barrel(mesh, x: number, y: number, z: number, bungTurn: number?): Bounds
+	cylinder(mesh, x, y, z + BARREL_HIGH / 2, 0.6, BARREL_HIGH, "z", 14)
 	for _, h in { 0.08, 0.62, 1.2, 1.74 } do
 		cylinder(mesh, x, y, z + h, 0.66, 0.1, "z", 14)
 	end
-	cylinder(mesh, x + 0.25, y, z + 1.86, 0.1, 0.12, "z", 8)
+	local turn = bungTurn or 0
+	cylinder(mesh, x + math.cos(turn) * 0.25, y + math.sin(turn) * 0.25, z + 1.86, 0.1, 0.12, "z", 8)
+	return { x - 0.66, y - 0.66, z, x + 0.66, y + 0.66, z + 1.92 }
 end
 
-local function gasBottle(mesh, x: number, y: number, z: number)
+local function gasBottle(mesh, x: number, y: number, z: number): Bounds
 	cylinder(mesh, x, y, z + 1.3, 0.29, 2.6, "z", 12)
 	sphere(mesh, x, y, z + 2.6, 0.27, 0.27, 0.2, 4, 12)
 	cylinder(mesh, x, y, z + 2.88, 0.08, 0.3, "z", 8)
 	cylinder(mesh, x, y, z + 3.05, 0.17, 0.08, "z", 8)
+	return { x - 0.29, y - 0.29, z, x + 0.29, y + 0.29, z + 3.09 }
 end
 
-local function tyres(mesh, x: number, y: number, z: number, count: number)
+local function tyres(mesh, x: number, y: number, z: number, count: number): Bounds
 	for n = 0, count - 1 do
 		ring(mesh, x + (n * 7 % 3 - 1) * 0.1, y + (n * 5 % 3 - 1) * 0.1, z + 0.22 + n * 0.44, 0.42, 0.95, 0.44, "z", 16)
 	end
+	return { x - 1.05, y - 1.05, z, x + 1.05, y + 1.05, z + count * 0.44 }
 end
 
-local function toolChest(mesh, x: number, y: number, z: number)
+local function toolChest(mesh, x: number, y: number, z: number): Bounds
 	box(mesh, x, y, z + 0.28, 2.3, 1.5, 2.3)
 	for row = 0, 4 do
 		box(mesh, x, y - 0.78, z + 0.42 + row * 0.42, 2.06, 0.08, 0.36)
@@ -21802,6 +22460,7 @@ local function toolChest(mesh, x: number, y: number, z: number)
 			cylinder(mesh, x + cx, y + cy, z + 0.16, 0.16, 0.34, "z", 8)
 		end
 	end
+	return { x - 1.15, y - 0.91, z, x + 1.15, y + 0.75, z + 2.58 }
 end
 
 -- A ladder along z, standing off a wall by `off` (negative for a wall on the
@@ -22211,17 +22870,19 @@ part("Fittings", nil, { 0.3, 0.32, 0.36 }, function(mesh)
 	end
 end, nil, 0.1)
 
+local supply, supplyPaint = supplyTones()
 part("Supplies", nil, { 0.5, 0.45, 0.3 }, function(mesh)
 	-- Scrap heaped in one corner at the foot of the tower.
 	-- Worn tracks and a crate round the back of the plinth.
-	box(mesh, 2.4, 7.25, 1, 1.5, 1, 0.7)
-	box(mesh, 3.4, 7.3, 1, 0.8, 0.8, 1.1)
-	barrel(mesh, 7.25, 5.6, 1)
-	box(mesh, 7.25, 4.1, 1, 1.2, 1.3, 0.8)
-	strut(mesh, 7.7, 3.4, 1, 6.9, 4.8, 2.4, 0.5)
+	supply(boxProp(mesh, 2.4, 7.25, 1, 1.5, 1, 0.7))
+	supply(boxProp(mesh, 3.4, 7.3, 1, 0.8, 0.8, 1.1))
+	supply(barrel(mesh, 7.25, 5.6, 1))
+	supply(boxProp(mesh, 7.25, 4.1, 1, 1.2, 1.3, 0.8))
+	supply(strutProp(mesh, 7.7, 3.4, 1, 6.9, 4.8, 2.4, 0.5))
 	gear(mesh, 7.25, 3.9, 1.9, 0.6, 0.2, 9, "x")
-	strut(mesh, 6.9, 2.6, 1, 7.6, 3.5, 1.5, 0.2)
-end, nil, supplyTones)
+	supply({ 7.15, 3.2, 1.2, 7.35, 4.6, 2.6 })
+	supply(strutProp(mesh, 6.9, 2.6, 1, 7.6, 3.5, 1.5, 0.2))
+end, nil, supplyPaint)
 
 part("Cables", nil, { 0.08, 0.08, 0.1 }, function(mesh)
 	tube(mesh, sagging(-7.2, -7.2, 2, 7.2, -7.2, 2, 0.42, 12), 0.05, 5)
@@ -22263,9 +22924,9 @@ end
 
 finishParts()
 end
-buildKeys[buildHubBeacon] = "HubBeacon-c23008aba590234c"
+buildKeys[buildHubBeacon] = "HubBeacon-a67a16f201f6b570"
 function buildHubStage()
-local CACHE_KEY = "HubStage-2716653c17d04ee2"
+local CACHE_KEY = "HubStage-5b94a6f67659667f"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -23124,8 +23785,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -23141,10 +23804,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -23156,6 +23828,8 @@ local function finishParts()
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
@@ -23169,6 +23843,18 @@ local function finishParts()
 			rubber = entry.rubber,
 			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
 			highlightUnevenStep = entry.litUnevenStep,
@@ -23221,12 +23907,17 @@ local SMALL_MARKS = {
 -- pieces each lit from above) and `stain` (how far a short part's steps wander
 -- as blotches instead of bands; high values fleck a dark surface).
 local PRESETS = {
-	-- Steel standing alone on open ground.
-	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Steel standing alone on open ground. Its coat is paint over metal: the
+	-- roughness map polishes the worn rims and roughens creases and rust, and
+	-- the metalness map shows bare metal where the edge wear cuts through,
+	-- never under the rust.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 }, roughness = { base = 0.7, edge = -0.6, crease = 0.15, wear = 0.25 }, metalness = { base = 0.05, edge = 0.85, crease = 0, wear = -0.3 } },
 	-- Concrete footings and plinths.
 	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
 	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
-	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Stone's edges tilt hard in the normal map, along the highlight strokes,
+	-- and its roughness map polishes those worn rims while the creases stay matte.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 }, bevel = { tilt = 8 }, roughness = { base = 0.85, edge = -0.7, crease = 0.1, wear = 0 } },
 	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
 	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
 	-- The earth body of a heap: it darkens well under everything resting on it.
@@ -23301,15 +23992,38 @@ local function applyPreset(entry, preset)
 	if preset.softLit then
 		entry.softLit = preset.softLit
 	end
+	-- The normal map's bevel field, where the material shapes it.
+	if preset.bevel then
+		entry.bevelReach = entry.bevelReach or preset.bevel.reach
+		entry.bevelFold = entry.bevelFold or preset.bevel.fold
+		entry.bevelTilt = entry.bevelTilt or preset.bevel.tilt
+	end
+	-- The roughness map, from the material's base and the layers already baked.
+	if preset.roughness then
+		entry.roughnessBase = entry.roughnessBase or preset.roughness.base
+		entry.roughnessEdge = entry.roughnessEdge or preset.roughness.edge
+		entry.roughnessCrease = entry.roughnessCrease or preset.roughness.crease
+		entry.roughnessWear = entry.roughnessWear or preset.roughness.wear
+	end
+	if preset.metalness then
+		entry.metalnessBase = entry.metalnessBase or preset.metalness.base
+		entry.metalnessEdge = entry.metalnessEdge or preset.metalness.edge
+		entry.metalnessCrease = entry.metalnessCrease or preset.metalness.crease
+		entry.metalnessWear = entry.metalnessWear or preset.metalness.wear
+	end
 	entry.handTune = SMALL_MARKS
 	paintStepBands(entry, preset.bands)
 end
 
 local function handFinish(coats, plain, finish)
+	-- Every chunk of one part must come out with the same finish; a chunk
+	-- that doesn't is a seam in the paint, so it stops the build.
+	local finishes: { [string]: string } = {}
 	for _, entry in parts do
-		-- A chunked part takes the coat of the name it was built under.
-		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
-		if plain[name] then
+		-- A chunked part takes the coat of the part it was built under
+		-- (chunkedPart tags each chunk with it), not whatever its own name parses to.
+		local name = entry.chunkOf or entry.name
+		if plain[name] or plain[entry.name] then
 			continue
 		end
 		entry.hand = coats[name]
@@ -23327,6 +24041,11 @@ local function handFinish(coats, plain, finish)
 		if presetName then
 			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
 		end
+		local signature = `{entry.hand or "-"}/{presetName or "-"}`
+		if finishes[name] and finishes[name] ~= signature then
+			error(`chunks of {name} would wear different finishes ({finishes[name]} and {signature}); the paint would seam`)
+		end
+		finishes[name] = signature
 	end
 end
 -- A mesh that moves every vertex built into it through `move`, for tilting,
@@ -23342,38 +24061,85 @@ local function warped(mesh, move)
 		end,
 	}
 end
--- Small props and fittings shared by the town pieces. Each takes the mesh and
--- stands at its base height `z`.
+-- Small props and fittings shared by the town pieces. Each takes the mesh,
+-- stands at its base height `z` and returns its bounds, { x0, y0, z0, x1, y1, z1 }.
 local SUPPLY_TONES = { { 0.64, 0.36, 0.2 }, { 0.3, 0.44, 0.52 }, { 0.72, 0.56, 0.2 }, { 0.5, 0.5, 0.48 }, { 0.32, 0.42, 0.3 }, { 0.58, 0.24, 0.2 } }
 
--- A paint that gives each prop its own colour, so a clutter part isn't one tone.
-local function supplyTones(x: number, y: number, z: number): (number, number, number)
-	local tone = SUPPLY_TONES[(math.floor(x * 0.32) * 3 + math.floor(y * 0.32) * 5 + math.floor(z * 0.22)) % #SUPPLY_TONES + 1]
-	return tone[1], tone[2], tone[3]
+type Bounds = { number }
+
+-- Colour by object, never by region of space: each prop in a clutter part is
+-- registered with `prop(bounds, tone?)` as it is built, and `paint` gives a
+-- point the tone of the smallest prop holding it (the nearest, for a point
+-- just outside every one). A prop without its own tone takes the next in
+-- SUPPLY_TONES, so neighbours built one after another differ. Make one pair
+-- per part, before the part, and pass `paint` as its paint.
+local function supplyTones(): ((Bounds, { number }?) -> (), (number, number, number) -> (number, number, number))
+	local props: { { bounds: Bounds, tone: { number } } } = {}
+	local function prop(bounds: Bounds, tone: { number }?)
+		table.insert(props, { bounds = bounds, tone = tone or SUPPLY_TONES[#props % #SUPPLY_TONES + 1] })
+	end
+	local function paint(x: number, y: number, z: number): (number, number, number)
+		local best, bestScore = props[1], math.huge
+		for _, entry in props do
+			local b = entry.bounds
+			-- Distance outside the box (0 inside), then size, so the smallest
+			-- holder wins over a larger one it rests against.
+			local dx = math.max(b[1] - x, 0, x - b[4])
+			local dy = math.max(b[2] - y, 0, y - b[5])
+			local dz = math.max(b[3] - z, 0, z - b[6])
+			local score = math.sqrt(dx * dx + dy * dy + dz * dz) * 1000 + (b[4] - b[1]) * (b[5] - b[2]) * (b[6] - b[3])
+			if score < bestScore then
+				best, bestScore = entry, score
+			end
+		end
+		return best.tone[1], best.tone[2], best.tone[3]
+	end
+	return prop, paint
 end
 
-local function barrel(mesh, x: number, y: number, z: number)
-	cylinder(mesh, x, y, z + 0.9, 0.6, 1.8, "z", 14)
+-- A box() as a prop, returning its bounds.
+local function boxProp(mesh, x: number, y: number, z: number, wide: number, deep: number, high: number): Bounds
+	box(mesh, x, y, z, wide, deep, high)
+	return { x - wide / 2, y - deep / 2, z, x + wide / 2, y + deep / 2, z + high }
+end
+
+-- A strut() as a prop, returning its bounds.
+local function strutProp(mesh, x0: number, y0: number, z0: number, x1: number, y1: number, z1: number, thick: number): Bounds
+	strut(mesh, x0, y0, z0, x1, y1, z1, thick)
+	local half = thick / 2
+	return { math.min(x0, x1) - half, math.min(y0, y1) - half, math.min(z0, z1) - half, math.max(x0, x1) + half, math.max(y0, y1) + half, math.max(z0, z1) + half }
+end
+
+-- An upright barrel; its bung sits `bungTurn` radians round from +x, so a
+-- stack can keep bungs clear of the barrel above. A barrel stacked on others
+-- stands at their z + BARREL_HIGH.
+local BARREL_HIGH = 1.8
+local function barrel(mesh, x: number, y: number, z: number, bungTurn: number?): Bounds
+	cylinder(mesh, x, y, z + BARREL_HIGH / 2, 0.6, BARREL_HIGH, "z", 14)
 	for _, h in { 0.08, 0.62, 1.2, 1.74 } do
 		cylinder(mesh, x, y, z + h, 0.66, 0.1, "z", 14)
 	end
-	cylinder(mesh, x + 0.25, y, z + 1.86, 0.1, 0.12, "z", 8)
+	local turn = bungTurn or 0
+	cylinder(mesh, x + math.cos(turn) * 0.25, y + math.sin(turn) * 0.25, z + 1.86, 0.1, 0.12, "z", 8)
+	return { x - 0.66, y - 0.66, z, x + 0.66, y + 0.66, z + 1.92 }
 end
 
-local function gasBottle(mesh, x: number, y: number, z: number)
+local function gasBottle(mesh, x: number, y: number, z: number): Bounds
 	cylinder(mesh, x, y, z + 1.3, 0.29, 2.6, "z", 12)
 	sphere(mesh, x, y, z + 2.6, 0.27, 0.27, 0.2, 4, 12)
 	cylinder(mesh, x, y, z + 2.88, 0.08, 0.3, "z", 8)
 	cylinder(mesh, x, y, z + 3.05, 0.17, 0.08, "z", 8)
+	return { x - 0.29, y - 0.29, z, x + 0.29, y + 0.29, z + 3.09 }
 end
 
-local function tyres(mesh, x: number, y: number, z: number, count: number)
+local function tyres(mesh, x: number, y: number, z: number, count: number): Bounds
 	for n = 0, count - 1 do
 		ring(mesh, x + (n * 7 % 3 - 1) * 0.1, y + (n * 5 % 3 - 1) * 0.1, z + 0.22 + n * 0.44, 0.42, 0.95, 0.44, "z", 16)
 	end
+	return { x - 1.05, y - 1.05, z, x + 1.05, y + 1.05, z + count * 0.44 }
 end
 
-local function toolChest(mesh, x: number, y: number, z: number)
+local function toolChest(mesh, x: number, y: number, z: number): Bounds
 	box(mesh, x, y, z + 0.28, 2.3, 1.5, 2.3)
 	for row = 0, 4 do
 		box(mesh, x, y - 0.78, z + 0.42 + row * 0.42, 2.06, 0.08, 0.36)
@@ -23384,6 +24150,7 @@ local function toolChest(mesh, x: number, y: number, z: number)
 			cylinder(mesh, x + cx, y + cy, z + 0.16, 0.16, 0.34, "z", 8)
 		end
 	end
+	return { x - 1.15, y - 0.91, z, x + 1.15, y + 0.75, z + 2.58 }
 end
 
 -- A ladder along z, standing off a wall by `off` (negative for a wall on the
@@ -23766,20 +24533,27 @@ end, nil, function(x, y, z)
 end)
 parts[#parts].crisp = true
 
+local supply, supplyPaint = supplyTones()
+local SANDBAG = { 0.52, 0.47, 0.34 }
 part("Supplies", nil, { 0.5, 0.45, 0.3 }, function(mesh)
 	-- Road cases stacked stage right, a crate and sandbags on the tower feet.
 	for _, case in { { 8.6, -5, 0, 2.4, 1.6, 1.3 }, { 8.9, -5, 1.3, 1.8, 1.3, 0.9 }, { 5, 11, 0, 2.4, 1.6, 1.5 } } do
-		box(mesh, case[1], case[2], DECK_TOP + case[3], case[4], case[5], case[6])
+		local bounds = boxProp(mesh, case[1], case[2], DECK_TOP + case[3], case[4], case[5], case[6])
 		box(mesh, case[1], case[2] - case[5] / 2 - 0.03, DECK_TOP + case[3] + case[6] * 0.55, case[4] * 0.3, 0.08, 0.14)
+		bounds[2] -= 0.07
+		supply(bounds)
 	end
-	barrel(mesh, 3.1, 11.7, DECK_TOP)
-	gasBottle(mesh, 3.5, 10.5, DECK_TOP)
-	box(mesh, 6.4, 10.2, DECK_TOP, 1.4, 1.2, 0.9)
-	-- Ballast heaped unevenly on the tower feet, inside the deck edge.
+	supply(barrel(mesh, 3.1, 11.7, DECK_TOP))
+	supply(gasBottle(mesh, 3.5, 10.5, DECK_TOP))
+	supply(boxProp(mesh, 6.4, 10.2, DECK_TOP, 1.4, 1.2, 0.9))
+	-- Ballast heaped unevenly on the tower feet, inside the deck edge: all one
+	-- sacking, each bag its own piece.
 	for _, bag in { { -1, -0.5, 7, 0 }, { -1, 0.5, 7.1, 0 }, { -1, 0, 7, 1 }, { 1, -0.7, 6.9, 0 }, { 1, 0.2, 7.2, 0 }, { 1, -0.3, 7.1, 1 }, { 1, 0.3, 6.95, 2 } } do
-		sphere(mesh, bag[1] * (TRUSS_X - 0.25) + bag[2], bag[3] - 0.6, DECK_TOP + 0.2 + bag[4] * 0.32, 0.46, 0.3, 0.22, 4, 10)
+		local x, y, z = bag[1] * (TRUSS_X - 0.25) + bag[2], bag[3] - 0.6, DECK_TOP + 0.2 + bag[4] * 0.32
+		sphere(mesh, x, y, z, 0.46, 0.3, 0.22, 4, 10)
+		supply({ x - 0.46, y - 0.3, z - 0.22, x + 0.46, y + 0.3, z + 0.22 }, SANDBAG)
 	end
-end, nil, supplyTones)
+end, nil, supplyPaint)
 
 part("Cables", nil, { 0.08, 0.08, 0.1 }, function(mesh)
 	local z = DECK_TOP + 0.05
@@ -23803,7 +24577,7 @@ handFinish({
 
 finishParts()
 end
-buildKeys[buildHubStage] = "HubStage-7ba8cdd6fa86707b"
+buildKeys[buildHubStage] = "HubStage-3842df215ab40965"
 function buildBeltCrossing()
 local CACHE_KEY = "BeltCrossing-5cb6aefa8e95af10"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -25201,7 +25975,7 @@ handFinish({ Fittings = "metal", Span = "metal", Railings = "metal", Legs = "met
 
 finishParts()
 end
-buildKeys[buildBeltCrossing] = "BeltCrossing-7662f957ab2603b0"
+buildKeys[buildBeltCrossing] = "BeltCrossing-eee6b0e8964a303c"
 function buildJunkMound()
 local CACHE_KEY = "JunkMound-0c304b50c56a837c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -26482,7 +27256,7 @@ handFinish({
 }, {}, { Heap = "heapBody", metal = "heapPiece", rock = "heapPiece" })
 finishParts()
 end
-buildKeys[buildJunkMound] = "JunkMound-7bbdef0fd1775b2f"
+buildKeys[buildJunkMound] = "JunkMound-fb80758d0e577fda"
 function buildScrapPalm()
 local CACHE_KEY = "ScrapPalm-f0897f0739e1b1dc"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -27716,7 +28490,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapPalm] = "ScrapPalm-4bb6bd416566bb39"
+buildKeys[buildScrapPalm] = "ScrapPalm-46e4c25337945eb1"
 function buildScrapTreeAntenna()
 local CACHE_KEY = "ScrapTreeAntenna-0cf69011a11142c9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -28849,9 +29623,9 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapTreeAntenna] = "ScrapTreeAntenna-4da8b04636649bdf"
+buildKeys[buildScrapTreeAntenna] = "ScrapTreeAntenna-a9248507734dd9c4"
 function buildScrapTreeExhaust()
-local CACHE_KEY = "ScrapTreeExhaust-83cdaeb809967dab"
+local CACHE_KEY = "ScrapTreeExhaust-0721066c009011f1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -29710,8 +30484,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -29755,6 +30531,18 @@ local function finishParts()
 			rubber = entry.rubber,
 			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
 			highlightUneven = entry.litUneven,
 			highlightUnevenStep = entry.litUnevenStep,
@@ -29807,12 +30595,17 @@ local SMALL_MARKS = {
 -- pieces each lit from above) and `stain` (how far a short part's steps wander
 -- as blotches instead of bands; high values fleck a dark surface).
 local PRESETS = {
-	-- Steel standing alone on open ground.
-	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
+	-- Steel standing alone on open ground. Its coat is paint over metal: the
+	-- roughness map polishes the worn rims and roughens creases and rust, and
+	-- the metalness map shows bare metal where the edge wear cuts through,
+	-- never under the rust.
+	propMetal = { gradient = 0.2, shade = 2, rustEdges = true, edge = 0.3, lit = 1.6, litUneven = 0.85, bands = { drop = 0.48, top = 1 }, roughness = { base = 0.7, edge = -0.4, crease = 0.15, wear = 0.25 }, metalness = { base = 0.05, edge = 0.85, crease = 0, wear = -0.3 } },
 	-- Concrete footings and plinths.
 	propConcrete = { gradient = 0.4, shade = 2, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { drop = 0.48, top = 1 } },
 	-- Stones on the map, banded from the turf up by the bandDepth the layout gives them.
-	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 } },
+	-- Stone's edges tilt hard in the normal map, along the highlight strokes,
+	-- and its roughness map polishes those worn rims while the creases stay matte.
+	rock = { gradient = 0.4, shade = 1, rustEdges = true, edge = 0.3, lit = 1.28, litUneven = 0.85, bands = { steps = 4, drop = 0.32, top = 1 }, bevel = { tilt = 1.5 }, roughness = { base = 0.85, edge = -0.45, crease = 0.1, wear = 0 } },
 	-- Loose pieces lying on a heap, each banded on its own from the model's bandPieces.
 	heapPiece = { gradient = 0.2, shade = 1.4, rustEdges = true, edge = 0.3, lit = 1.8, litUneven = 0.85, bands = { steps = 4, drop = 0.58, top = 1, facing = true } },
 	-- The earth body of a heap: it darkens well under everything resting on it.
@@ -29887,15 +30680,38 @@ local function applyPreset(entry, preset)
 	if preset.softLit then
 		entry.softLit = preset.softLit
 	end
+	-- The normal map's bevel field, where the material shapes it.
+	if preset.bevel then
+		entry.bevelReach = entry.bevelReach or preset.bevel.reach
+		entry.bevelFold = entry.bevelFold or preset.bevel.fold
+		entry.bevelTilt = entry.bevelTilt or preset.bevel.tilt
+	end
+	-- The roughness map, from the material's base and the layers already baked.
+	if preset.roughness then
+		entry.roughnessBase = entry.roughnessBase or preset.roughness.base
+		entry.roughnessEdge = entry.roughnessEdge or preset.roughness.edge
+		entry.roughnessCrease = entry.roughnessCrease or preset.roughness.crease
+		entry.roughnessWear = entry.roughnessWear or preset.roughness.wear
+	end
+	if preset.metalness then
+		entry.metalnessBase = entry.metalnessBase or preset.metalness.base
+		entry.metalnessEdge = entry.metalnessEdge or preset.metalness.edge
+		entry.metalnessCrease = entry.metalnessCrease or preset.metalness.crease
+		entry.metalnessWear = entry.metalnessWear or preset.metalness.wear
+	end
 	entry.handTune = SMALL_MARKS
 	paintStepBands(entry, preset.bands)
 end
 
 local function handFinish(coats, plain, finish)
+	-- Every chunk of one part must come out with the same finish; a chunk
+	-- that doesn't is a seam in the paint, so it stops the build.
+	local finishes: { [string]: string } = {}
 	for _, entry in parts do
-		-- A chunked part takes the coat of the name it was built under.
-		local name = string.match(entry.name, "^(.-)_%-?%d+_%-?%d+_%-?%d+$") or entry.name
-		if plain[name] then
+		-- A chunked part takes the coat of the part it was built under
+		-- (chunkedPart tags each chunk with it), not whatever its own name parses to.
+		local name = entry.chunkOf or entry.name
+		if plain[name] or plain[entry.name] then
 			continue
 		end
 		entry.hand = coats[name]
@@ -29913,6 +30729,11 @@ local function handFinish(coats, plain, finish)
 		if presetName then
 			applyPreset(entry, PRESETS[presetName] or error(`no finish preset {presetName}`))
 		end
+		local signature = `{entry.hand or "-"}/{presetName or "-"}`
+		if finishes[name] and finishes[name] ~= signature then
+			error(`chunks of {name} would wear different finishes ({finishes[name]} and {signature}); the paint would seam`)
+		end
+		finishes[name] = signature
 	end
 end
 local CONCRETE = { 0.5, 0.48, 0.44 }
@@ -30047,7 +30868,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapTreeExhaust] = "ScrapTreeExhaust-79ef1f0acda2af91"
+buildKeys[buildScrapTreeExhaust] = "ScrapTreeExhaust-6971958a5110f5e4"
 function buildScrapTreeLamppost()
 local CACHE_KEY = "ScrapTreeLamppost-a4f045cef97604b9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -31250,7 +32071,7 @@ handFinish({
 }, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapTreeLamppost] = "ScrapTreeLamppost-ce32cfd63f66a229"
+buildKeys[buildScrapTreeLamppost] = "ScrapTreeLamppost-b598ef50948d0308"
 function buildScrapTreeRebar()
 local CACHE_KEY = "ScrapTreeRebar-402cb4318f5198e6"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -32388,7 +33209,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapTreeRebar] = "ScrapTreeRebar-faecca9350d53dad"
+buildKeys[buildScrapTreeRebar] = "ScrapTreeRebar-173c33daa1f9b61c"
 function buildScrapTreeSignpost()
 local CACHE_KEY = "ScrapTreeSignpost-de643e4e0ef172b9"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -33556,7 +34377,7 @@ handFinish({
 }, {}, PROP_FINISH)
 finishParts()
 end
-buildKeys[buildScrapTreeSignpost] = "ScrapTreeSignpost-33802aec7df5560d"
+buildKeys[buildScrapTreeSignpost] = "ScrapTreeSignpost-095cc13fc7d72ba7"
 function buildRockBoulderPile()
 local CACHE_KEY = "RockBoulderPile-255727f46d4ef30e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -34763,9 +35584,9 @@ handFinish({
 }, {}, { Mound = "heapBody", metal = "heapPiece" })
 finishParts()
 end
-buildKeys[buildRockBoulderPile] = "RockBoulderPile-eff3d5b047e416d1"
+buildKeys[buildRockBoulderPile] = "RockBoulderPile-9f587297437e5ec1"
 function buildHubSectionA()
-local CACHE_KEY = "HubSectionA-9e178aacbb8e0c13"
+local CACHE_KEY = "HubSectionA-363616860ae1ebb3"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -34795,9 +35616,13 @@ local GRID = 0.4
 -- instead of the fixed TEXTURE, so a layout reads at one texel density.
 -- A part's own `texture` size still wins.
 local texelDensity: number? = nil
+-- The density the layout asked for, before TEXEL_SCALE: chunk sizes follow
+-- this one, so a max-detail preview keeps the chunks it would ship with.
+local layoutDensity: number? = nil
 
 -- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
 local function useTexelDensity(pixelsPerStud: number)
+	layoutDensity = pixelsPerStud
 	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
 end
 
@@ -35066,15 +35891,57 @@ end
 -- strands, and bolts on curved faces.
 local function tube(mesh, points, radius, sides)
 	sides = sides or 8
+	local function unit(a, b)
+		local x, y, z = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local length = math.sqrt(x * x + y * y + z * z)
+		if length < 1e-6 then
+			return nil
+		end
+		return { x / length, y / length, z / length }
+	end
 	local rings = {}
+	local carried
 	for i, p in points do
-		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
-		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local before, after = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local into, out = i > 1 and unit(before, p) or nil, i < #points and unit(p, after) or nil
+		-- Each ring lies across the bisector of its bend.
+		local dx, dy, dz = after[1] - before[1], after[2] - before[2], after[3] - before[3]
+		if into and out then
+			local x, y, z = into[1] + out[1], into[2] + out[2], into[3] + out[3]
+			if x * x + y * y + z * z > 1e-6 then
+				dx, dy, dz = x, y, z
+			end
+		end
+		local tx, ty, tz, ux, uy, uz, vx, vy, vz = crossFrame(dx, dy, dz)
+		-- Carry the last ring's frame round the bend, so the tube can't twist.
+		if carried then
+			local along = carried[1] * tx + carried[2] * ty + carried[3] * tz
+			local x, y, z = carried[1] - tx * along, carried[2] - ty * along, carried[3] - tz * along
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				ux, uy, uz = x / length, y / length, z / length
+				vx, vy, vz = ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+			end
+		end
+		carried = { ux, uy, uz }
+		-- A ring across a bend is widened toward the bend's outside, or the tube
+		-- would pinch there.
+		local stretch, bx, by, bz = 1, 0, 0, 0
+		if into and out then
+			local x, y, z = out[1] - into[1], out[2] - into[2], out[3] - into[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				bx, by, bz = x / length, y / length, z / length
+				stretch = 1 / math.max(tx * out[1] + ty * out[2] + tz * out[3], 0.5)
+			end
+		end
 		local ring = {}
 		for k = 0, sides - 1 do
 			local t = k / sides * TAU
 			local c, n = math.cos(t) * radius, math.sin(t) * radius
-			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+			local x, y, z = ux * c + vx * n, uy * c + vy * n, uz * c + vz * n
+			local extra = (x * bx + y * by + z * bz) * (stretch - 1)
+			ring[k + 1] = mesh:vertex(p[1] + x + bx * extra, p[2] + y + by * extra, p[3] + z + bz * extra)
 		end
 		rings[i] = ring
 	end
@@ -35091,6 +35958,34 @@ local function tube(mesh, points, radius, sides)
 	end
 	mesh:face(cap)
 	mesh:face(rings[#rings])
+end
+
+-- `points` with each inner corner replaced by a curve starting up to `reach`
+-- studs before it, for wires and hoses that shouldn't have sharp elbows.
+local function roundedPath(points, reach, steps)
+	steps = steps or 4
+	local path = { points[1] }
+	for i = 2, #points - 1 do
+		local a, p, b = points[i - 1], points[i], points[i + 1]
+		local function towards(q)
+			local x, y, z = q[1] - p[1], q[2] - p[2], q[3] - p[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			local r = math.min(reach, length / 2) / length
+			return { p[1] + x * r, p[2] + y * r, p[3] + z * r }
+		end
+		local first, last = towards(a), towards(b)
+		for s = 0, steps do
+			local t = s / steps
+			local m0, m1, m2 = (1 - t) ^ 2, 2 * t * (1 - t), t * t
+			table.insert(path, {
+				first[1] * m0 + p[1] * m1 + last[1] * m2,
+				first[2] * m0 + p[2] * m1 + last[2] * m2,
+				first[3] * m0 + p[3] * m1 + last[3] * m2,
+			})
+		end
+	end
+	table.insert(path, points[#points])
+	return path
 end
 
 -- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
@@ -35366,6 +36261,8 @@ local function setLook(entry, color, rust)
 	entry.rubber = rust == RUBBER
 end
 
+local HAND_EDGE_MOTION = { rock = "feather", wood = "flick", metal = "worn" }
+
 -- `rust` can also be a paint fn for surfaces with their own look.
 -- `texture` overrides the texture size for parts that need more detail.
 -- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
@@ -35376,7 +36273,29 @@ end
 -- heavier shadow than the standard wear. `lit` scales the highlight strength
 -- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
 -- to paint its highlights as bold, fully loaded strokes instead of dry ones,
--- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+-- `blend` (0-1) to tint them from cream toward a lighter part colour, and
+-- `taper` (studs) to run them full width at corners, thinning along each edge.
+-- `softLit` (0-1) adds a wide, very soft highlight under the strokes, fading
+-- out over `softEdge` studs from each edge; `softUneven` (0-1) makes its width
+-- wander along the edge and `softTaper` (studs) thins it away from corners.
+-- `softToZero` lets that thinning reach nothing, and `softPower` steepens the fade.
+-- `strokes` lists brush strokes painted over the coat ({start, along, normal,
+-- length, width, tail, color, brush}, color in sRGB), such as cracks or dabs;
+-- `brush` is "taper" (crisp lines, the default), "round" or "sponge".
+-- `stamps` lays the coat with scanned stroke shapes instead of the flat brush.
+-- `hand` ("rock", "wood" or "metal") paints the coat the way a hand would, and
+-- `handFocus` ({x, y, z, radius}) is where it gathers its finest strokes.
+-- `handTune` sets any of its numbers by name (settings! in tools/modelkit/src/hand.rs).
+-- `litMotion` draws the hard edge highlight with a moving hand, `litTune` sets its
+-- numbers by name (tools/modelkit/src/marks.rs). A hand-painted part gets its
+-- material's motion unless it names another, or `false` for the default strokes.
+-- `brushes` draws any layer with a motion: edge, shade, soft, coat, grime, rust,
+-- drip or scratch, each {motion = "press", tune = {name = value}}. A `strokes`
+-- entry takes `motion` and `tune` the same way.
+-- With `hand` as well, `crisp` keeps the shapes exact and takes only the brushwork's tone.
+-- `crisp` lays the coat on texel by texel in the paint fn's exact colours
+-- instead of brush strokes, for machine finishes (hazard tape, ribbed
+-- rubber) that strokes would smear; shading still goes over it.
 local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
@@ -35405,7 +36324,7 @@ end
 -- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
 -- on across chunks instead of restarting in each (a flat chunk would go dark).
 local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
-	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	local CHUNK = if layoutDensity then math.min(128, 1024 / layoutDensity) else 128
 	-- Smallest cell a chunk is halved down to while looking for a split.
 	local MIN_CELL = 2
 	local positions, faces = {}, {}
@@ -35471,7 +36390,9 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		if texelDensity then
 			local mesh = chunkMesh(chunkFaces)
 			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
-			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			-- Split by the layout's density; the scale only sizes the texture.
+			local unwrap = mesh:unwrap()
+			local needed = math.ceil((layoutDensity or texelDensity) / unwrap / 4) * 4
 			if needed > 1024 and #chunkFaces > 1 then
 				local half = size / 2
 				local octants, octantOrder = {}, {}
@@ -35503,7 +36424,7 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 					return
 				end
 			end
-			texture = math.clamp(needed, 16, 1024)
+			texture = math.clamp(math.ceil(texelDensity / unwrap / 4) * 4, 16, 1024)
 		end
 		part(label, bone, color, function(mesh)
 			local handles = {}
@@ -35524,8 +36445,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -35541,10 +36464,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -35552,21 +36484,57 @@ local function finishParts()
 		entry.mesh:paintShading(entry.image, {
 			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
 			shadow = CONTACT_SHADOW * (entry.shade or 1),
-			gradient = GRADIENT,
+			gradient = entry.gradient or GRADIENT,
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
 			custom = entry.custom,
 			salt = if entry.custom then CACHE_KEY else nil,
 			rust = entry.rust * WEAR,
+			stamps = entry.stamps,
+			hand = entry.hand,
+			handFocus = entry.handFocus,
+			handTune = entry.handTune,
 			rubber = entry.rubber,
+			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
+			highlightUneven = entry.litUneven,
+			highlightUnevenStep = entry.litUnevenStep,
+			highlightMotion = if entry.litMotion == nil then (entry.hand and HAND_EDGE_MOTION[entry.hand]) else (entry.litMotion or nil),
+			highlightMotionTune = entry.litTune,
+			highlightToZero = entry.litToZero,
+			highlightEnd = entry.litEnd,
 			paintedHighlights = entry.painted,
+			cornerTaper = entry.taper,
+			softHighlight = entry.softLit,
+			softReach = entry.softEdge,
+			softUneven = entry.softUneven,
+			softTaper = entry.softTaper,
+			softToZero = entry.softToZero,
+			softPower = entry.softPower,
+			softEnd = entry.softEnd,
+			strokes = entry.strokes,
+			brushes = entry.brushes,
 			heightRange = entry.heightRange,
+			crisp = entry.crisp,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
@@ -35824,6 +36792,7 @@ local DRIP_SHADE = 0.35
 local GRASS_OLIVE = { 0.6, 0.57, 0.35 }
 local GRASS_OLIVE_COVER = 0.3
 local GRASS_PATCH_SIZE = 6 * DETAIL
+local GRASS_SPLOTCH = 0.25
 -- Within about APRON_WIDTH studs of what stands on the top (wornDistance)
 -- the grass is worn down to TRODDEN dirt and gravel, in patches toward the
 -- outside. These follow what stands there, not the stones, so DETAIL leaves
@@ -36909,7 +37878,9 @@ local function addCrack(points, normal, width: number)
 		local along = { (b[1] - a[1]) / length, (b[2] - a[2]) / length, -(b[3] - a[3]) / length }
 		local facing = { normal[1], normal[2], -normal[3] }
 		local function stroke(at, width: number, color)
-			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color })
+			-- Its place in the whole list is its seed, so it is drawn the same
+			-- whichever chunks are handed it.
+			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color, seed = #crackStrokes })
 		end
 		-- The lip sits on the crack's lower side, half a crack's width over.
 		local across = cross(facing, along)
@@ -37161,25 +38132,38 @@ local GRASS_DEEPEST = GRASS_LIP[1] + DRIP_LENGTH[2]
 local paintGrass = rusting(0, function(x, y, z)
 	local shade = 1 - DRIP_SHADE * math.clamp(-z / GRASS_DEEPEST, 0, 1)
 	local tone, warm = splotchAt(x, y, z)
+	-- On a big open island splotches read as hard discs, so grass takes a trace.
+	if SOFT_GRASS then
+		tone, warm = tone * GRASS_SPLOTCH, warm * GRASS_SPLOTCH
+	end
 	shade *= 1 + tone
 	-- Patch strength from soft noise: 0 outside, 1 well inside a patch
 	-- covering `cover` of the grass.
 	local function patch(cover: number, seed: number): number
 		local u, v = x / GRASS_PATCH_SIZE + seed, y / GRASS_PATCH_SIZE
 		local n = 0.5 + math.noise(u, v, seed) + 0.3 * math.noise(u * 3, v * 3, seed + 5)
-		return math.clamp((n - (1 - cover)) / 0.12, 0, 1)
+		return math.clamp((n - (1 - cover)) / (if SOFT_GRASS then 0.4 else 0.12), 0, 1)
 	end
 	local function toward(r, g, b, c, t)
 		return r + (c[1] - r) * t, g + (c[2] - g) * t, b + (c[3] - b) * t
 	end
 	local r, g, b = toward(GRASS[1], GRASS[2], GRASS[3], GRASS_OLIVE, patch(GRASS_OLIVE_COVER, 11.3))
+	-- Broad darker drifts of bare soil, so open ground isn't one even tone.
+	if SOFT_GRASS then
+		local drift = math.clamp((math.noise(x * 0.018, y * 0.018, 63.1) + 0.35 * math.noise(x * 0.07, y * 0.07, 12.4) - 0.28) / 0.45, 0, 1)
+		r, g, b = toward(r, g, b, TRODDEN, drift * 0.42)
+	end
 	-- The worn apron round what stands on the top.
 	local outside = wornDistance(x, y)
 	local wobble = 0.4 * APRON_WIDTH * math.noise(x * 0.3, y * 0.3, 71.3)
 	local wear = math.clamp(1 - (outside + wobble) / APRON_WIDTH, 0, 1)
 	if wear > 0 then
 		local patchy = 0.5 + 0.6 * math.noise(x * 0.55, y * 0.55, 93.1)
-		local worn = math.clamp((wear - 0.75 * (1 - patchy)) / 0.2, 0, 1)
+		local worn = math.clamp((wear - 0.75 * (1 - patchy)) / (if SOFT_GRASS then 0.55 else 0.2), 0, 1)
+		if SOFT_GRASS then
+			-- Wear gathers in stretches, not as an even ring round everything.
+			worn *= math.clamp(0.55 + 1.3 * math.noise(x * 0.09, y * 0.09, 41.7), 0, 1)
+		end
 		local grit = 0.9 + 0.2 * math.noise(x * 1.7, y * 1.7, 17.9)
 		r, g, b = toward(r, g, b, { TRODDEN[1] * grit, TRODDEN[2] * grit, TRODDEN[3] * grit }, worn)
 	end
@@ -37309,13 +38293,55 @@ local chunks = {}
 for _, entry in parts do
 	table.insert(chunks, entry.mesh)
 end
+-- The bake paints a chunk with every chunk of its group, itself included and
+-- in this order, each with its texture size and the chunk's own place in the
+-- list (as finishParts does in common.luau).
+local chunkSizes = {}
 for _, entry in parts do
-	local group = {}
-	for _, other in parts do
-		if other ~= entry then
-			table.insert(group, other.mesh)
+	table.insert(chunkSizes, { entry.image:width(), entry.image:height() })
+end
+
+-- A dirt chunk is handed only the cracks that could lie on it, not the whole
+-- island's: the bake reads every stroke it is given, for every chunk. Cracks
+-- are filed by the cell their start lies in, and a chunk takes those within
+-- its own radius plus the stroke's reach and some slack for the bake's
+-- stroke grid, in the order they were made.
+local CRACK_CELL = 32
+local CRACK_SLACK = 8
+local crackCells = {}
+local crackReach = 0
+for index, stroke in crackStrokes do
+	local key = `{math.floor(stroke.start[1] / CRACK_CELL)}_{math.floor(stroke.start[2] / CRACK_CELL)}_{math.floor(stroke.start[3] / CRACK_CELL)}`
+	crackCells[key] = crackCells[key] or {}
+	table.insert(crackCells[key], index)
+	crackReach = math.max(crackReach, stroke.length + stroke.width)
+end
+local function cracksNear(mesh)
+	local cx, cy, cz, radius = mesh:bounds()
+	local widest = radius + crackReach + CRACK_SLACK
+	local found = {}
+	for x = math.floor((cx - widest) / CRACK_CELL), math.floor((cx + widest) / CRACK_CELL) do
+		for y = math.floor((cy - widest) / CRACK_CELL), math.floor((cy + widest) / CRACK_CELL) do
+			for z = math.floor((cz - widest) / CRACK_CELL), math.floor((cz + widest) / CRACK_CELL) do
+				for _, index in crackCells[`{x}_{y}_{z}`] or {} do
+					local stroke = crackStrokes[index]
+					local dx, dy, dz = stroke.start[1] - cx, stroke.start[2] - cy, stroke.start[3] - cz
+					local far = radius + stroke.length + stroke.width + CRACK_SLACK
+					if dx * dx + dy * dy + dz * dz <= far * far then
+						table.insert(found, index)
+					end
+				end
+			end
 		end
 	end
+	table.sort(found)
+	local near = {}
+	for i, index in found do
+		near[i] = crackStrokes[index]
+	end
+	return near
+end
+for index, entry in parts do
 	local kind = string.match(entry.name, "^%a+")
 	local soft = kind == "Grass" or kind == "Dirt"
 	entry.mesh:paintShading(entry.image, {
@@ -37323,7 +38349,9 @@ for _, entry in parts do
 		shadow = if soft then CONTACT_SHADOW * SOFT_SHADING else CONTACT_SHADOW,
 		gradient = GRADIENT,
 		blend = EDGE_BLEND,
-		group = group,
+		group = chunks,
+		groupSizes = chunkSizes,
+		groupIndex = index,
 		name = entry.name,
 		paint = entry.paint,
 		-- The rock paint is cached under the item's key, since its code is not hashed.
@@ -37334,14 +38362,14 @@ for _, entry in parts do
 		highlightWidth = HIGHLIGHT_WIDTH,
 		cornerTaper = CORNER_TAPER,
 		heightRange = entry.heightRange,
-		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then crackStrokes else nil,
+		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then cracksNear(entry.mesh) else nil,
 	})
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildHubSectionA] = "HubSectionA-b14008da39185e3a"
+buildKeys[buildHubSectionA] = "HubSectionA-5d123cbb1882ea8e"
 function buildHubSectionB()
-local CACHE_KEY = "HubSectionB-dd31c3a9342d2ebb"
+local CACHE_KEY = "HubSectionB-8c4879188ca2c3a5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -37371,9 +38399,13 @@ local GRID = 0.4
 -- instead of the fixed TEXTURE, so a layout reads at one texel density.
 -- A part's own `texture` size still wins.
 local texelDensity: number? = nil
+-- The density the layout asked for, before TEXEL_SCALE: chunk sizes follow
+-- this one, so a max-detail preview keeps the chunks it would ship with.
+local layoutDensity: number? = nil
 
 -- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
 local function useTexelDensity(pixelsPerStud: number)
+	layoutDensity = pixelsPerStud
 	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
 end
 
@@ -37642,15 +38674,57 @@ end
 -- strands, and bolts on curved faces.
 local function tube(mesh, points, radius, sides)
 	sides = sides or 8
+	local function unit(a, b)
+		local x, y, z = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local length = math.sqrt(x * x + y * y + z * z)
+		if length < 1e-6 then
+			return nil
+		end
+		return { x / length, y / length, z / length }
+	end
 	local rings = {}
+	local carried
 	for i, p in points do
-		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
-		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local before, after = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local into, out = i > 1 and unit(before, p) or nil, i < #points and unit(p, after) or nil
+		-- Each ring lies across the bisector of its bend.
+		local dx, dy, dz = after[1] - before[1], after[2] - before[2], after[3] - before[3]
+		if into and out then
+			local x, y, z = into[1] + out[1], into[2] + out[2], into[3] + out[3]
+			if x * x + y * y + z * z > 1e-6 then
+				dx, dy, dz = x, y, z
+			end
+		end
+		local tx, ty, tz, ux, uy, uz, vx, vy, vz = crossFrame(dx, dy, dz)
+		-- Carry the last ring's frame round the bend, so the tube can't twist.
+		if carried then
+			local along = carried[1] * tx + carried[2] * ty + carried[3] * tz
+			local x, y, z = carried[1] - tx * along, carried[2] - ty * along, carried[3] - tz * along
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				ux, uy, uz = x / length, y / length, z / length
+				vx, vy, vz = ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+			end
+		end
+		carried = { ux, uy, uz }
+		-- A ring across a bend is widened toward the bend's outside, or the tube
+		-- would pinch there.
+		local stretch, bx, by, bz = 1, 0, 0, 0
+		if into and out then
+			local x, y, z = out[1] - into[1], out[2] - into[2], out[3] - into[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				bx, by, bz = x / length, y / length, z / length
+				stretch = 1 / math.max(tx * out[1] + ty * out[2] + tz * out[3], 0.5)
+			end
+		end
 		local ring = {}
 		for k = 0, sides - 1 do
 			local t = k / sides * TAU
 			local c, n = math.cos(t) * radius, math.sin(t) * radius
-			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+			local x, y, z = ux * c + vx * n, uy * c + vy * n, uz * c + vz * n
+			local extra = (x * bx + y * by + z * bz) * (stretch - 1)
+			ring[k + 1] = mesh:vertex(p[1] + x + bx * extra, p[2] + y + by * extra, p[3] + z + bz * extra)
 		end
 		rings[i] = ring
 	end
@@ -37667,6 +38741,34 @@ local function tube(mesh, points, radius, sides)
 	end
 	mesh:face(cap)
 	mesh:face(rings[#rings])
+end
+
+-- `points` with each inner corner replaced by a curve starting up to `reach`
+-- studs before it, for wires and hoses that shouldn't have sharp elbows.
+local function roundedPath(points, reach, steps)
+	steps = steps or 4
+	local path = { points[1] }
+	for i = 2, #points - 1 do
+		local a, p, b = points[i - 1], points[i], points[i + 1]
+		local function towards(q)
+			local x, y, z = q[1] - p[1], q[2] - p[2], q[3] - p[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			local r = math.min(reach, length / 2) / length
+			return { p[1] + x * r, p[2] + y * r, p[3] + z * r }
+		end
+		local first, last = towards(a), towards(b)
+		for s = 0, steps do
+			local t = s / steps
+			local m0, m1, m2 = (1 - t) ^ 2, 2 * t * (1 - t), t * t
+			table.insert(path, {
+				first[1] * m0 + p[1] * m1 + last[1] * m2,
+				first[2] * m0 + p[2] * m1 + last[2] * m2,
+				first[3] * m0 + p[3] * m1 + last[3] * m2,
+			})
+		end
+	end
+	table.insert(path, points[#points])
+	return path
 end
 
 -- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
@@ -37942,6 +39044,8 @@ local function setLook(entry, color, rust)
 	entry.rubber = rust == RUBBER
 end
 
+local HAND_EDGE_MOTION = { rock = "feather", wood = "flick", metal = "worn" }
+
 -- `rust` can also be a paint fn for surfaces with their own look.
 -- `texture` overrides the texture size for parts that need more detail.
 -- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
@@ -37952,7 +39056,29 @@ end
 -- heavier shadow than the standard wear. `lit` scales the highlight strength
 -- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
 -- to paint its highlights as bold, fully loaded strokes instead of dry ones,
--- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+-- `blend` (0-1) to tint them from cream toward a lighter part colour, and
+-- `taper` (studs) to run them full width at corners, thinning along each edge.
+-- `softLit` (0-1) adds a wide, very soft highlight under the strokes, fading
+-- out over `softEdge` studs from each edge; `softUneven` (0-1) makes its width
+-- wander along the edge and `softTaper` (studs) thins it away from corners.
+-- `softToZero` lets that thinning reach nothing, and `softPower` steepens the fade.
+-- `strokes` lists brush strokes painted over the coat ({start, along, normal,
+-- length, width, tail, color, brush}, color in sRGB), such as cracks or dabs;
+-- `brush` is "taper" (crisp lines, the default), "round" or "sponge".
+-- `stamps` lays the coat with scanned stroke shapes instead of the flat brush.
+-- `hand` ("rock", "wood" or "metal") paints the coat the way a hand would, and
+-- `handFocus` ({x, y, z, radius}) is where it gathers its finest strokes.
+-- `handTune` sets any of its numbers by name (settings! in tools/modelkit/src/hand.rs).
+-- `litMotion` draws the hard edge highlight with a moving hand, `litTune` sets its
+-- numbers by name (tools/modelkit/src/marks.rs). A hand-painted part gets its
+-- material's motion unless it names another, or `false` for the default strokes.
+-- `brushes` draws any layer with a motion: edge, shade, soft, coat, grime, rust,
+-- drip or scratch, each {motion = "press", tune = {name = value}}. A `strokes`
+-- entry takes `motion` and `tune` the same way.
+-- With `hand` as well, `crisp` keeps the shapes exact and takes only the brushwork's tone.
+-- `crisp` lays the coat on texel by texel in the paint fn's exact colours
+-- instead of brush strokes, for machine finishes (hazard tape, ribbed
+-- rubber) that strokes would smear; shading still goes over it.
 local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
@@ -37981,7 +39107,7 @@ end
 -- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
 -- on across chunks instead of restarting in each (a flat chunk would go dark).
 local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
-	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	local CHUNK = if layoutDensity then math.min(128, 1024 / layoutDensity) else 128
 	-- Smallest cell a chunk is halved down to while looking for a split.
 	local MIN_CELL = 2
 	local positions, faces = {}, {}
@@ -38047,7 +39173,9 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		if texelDensity then
 			local mesh = chunkMesh(chunkFaces)
 			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
-			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			-- Split by the layout's density; the scale only sizes the texture.
+			local unwrap = mesh:unwrap()
+			local needed = math.ceil((layoutDensity or texelDensity) / unwrap / 4) * 4
 			if needed > 1024 and #chunkFaces > 1 then
 				local half = size / 2
 				local octants, octantOrder = {}, {}
@@ -38079,7 +39207,7 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 					return
 				end
 			end
-			texture = math.clamp(needed, 16, 1024)
+			texture = math.clamp(math.ceil(texelDensity / unwrap / 4) * 4, 16, 1024)
 		end
 		part(label, bone, color, function(mesh)
 			local handles = {}
@@ -38100,8 +39228,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -38117,10 +39247,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -38128,21 +39267,57 @@ local function finishParts()
 		entry.mesh:paintShading(entry.image, {
 			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
 			shadow = CONTACT_SHADOW * (entry.shade or 1),
-			gradient = GRADIENT,
+			gradient = entry.gradient or GRADIENT,
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
 			custom = entry.custom,
 			salt = if entry.custom then CACHE_KEY else nil,
 			rust = entry.rust * WEAR,
+			stamps = entry.stamps,
+			hand = entry.hand,
+			handFocus = entry.handFocus,
+			handTune = entry.handTune,
 			rubber = entry.rubber,
+			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
+			highlightUneven = entry.litUneven,
+			highlightUnevenStep = entry.litUnevenStep,
+			highlightMotion = if entry.litMotion == nil then (entry.hand and HAND_EDGE_MOTION[entry.hand]) else (entry.litMotion or nil),
+			highlightMotionTune = entry.litTune,
+			highlightToZero = entry.litToZero,
+			highlightEnd = entry.litEnd,
 			paintedHighlights = entry.painted,
+			cornerTaper = entry.taper,
+			softHighlight = entry.softLit,
+			softReach = entry.softEdge,
+			softUneven = entry.softUneven,
+			softTaper = entry.softTaper,
+			softToZero = entry.softToZero,
+			softPower = entry.softPower,
+			softEnd = entry.softEnd,
+			strokes = entry.strokes,
+			brushes = entry.brushes,
 			heightRange = entry.heightRange,
+			crisp = entry.crisp,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
@@ -38400,6 +39575,7 @@ local DRIP_SHADE = 0.35
 local GRASS_OLIVE = { 0.6, 0.57, 0.35 }
 local GRASS_OLIVE_COVER = 0.3
 local GRASS_PATCH_SIZE = 6 * DETAIL
+local GRASS_SPLOTCH = 0.25
 -- Within about APRON_WIDTH studs of what stands on the top (wornDistance)
 -- the grass is worn down to TRODDEN dirt and gravel, in patches toward the
 -- outside. These follow what stands there, not the stones, so DETAIL leaves
@@ -39485,7 +40661,9 @@ local function addCrack(points, normal, width: number)
 		local along = { (b[1] - a[1]) / length, (b[2] - a[2]) / length, -(b[3] - a[3]) / length }
 		local facing = { normal[1], normal[2], -normal[3] }
 		local function stroke(at, width: number, color)
-			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color })
+			-- Its place in the whole list is its seed, so it is drawn the same
+			-- whichever chunks are handed it.
+			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color, seed = #crackStrokes })
 		end
 		-- The lip sits on the crack's lower side, half a crack's width over.
 		local across = cross(facing, along)
@@ -39737,25 +40915,38 @@ local GRASS_DEEPEST = GRASS_LIP[1] + DRIP_LENGTH[2]
 local paintGrass = rusting(0, function(x, y, z)
 	local shade = 1 - DRIP_SHADE * math.clamp(-z / GRASS_DEEPEST, 0, 1)
 	local tone, warm = splotchAt(x, y, z)
+	-- On a big open island splotches read as hard discs, so grass takes a trace.
+	if SOFT_GRASS then
+		tone, warm = tone * GRASS_SPLOTCH, warm * GRASS_SPLOTCH
+	end
 	shade *= 1 + tone
 	-- Patch strength from soft noise: 0 outside, 1 well inside a patch
 	-- covering `cover` of the grass.
 	local function patch(cover: number, seed: number): number
 		local u, v = x / GRASS_PATCH_SIZE + seed, y / GRASS_PATCH_SIZE
 		local n = 0.5 + math.noise(u, v, seed) + 0.3 * math.noise(u * 3, v * 3, seed + 5)
-		return math.clamp((n - (1 - cover)) / 0.12, 0, 1)
+		return math.clamp((n - (1 - cover)) / (if SOFT_GRASS then 0.4 else 0.12), 0, 1)
 	end
 	local function toward(r, g, b, c, t)
 		return r + (c[1] - r) * t, g + (c[2] - g) * t, b + (c[3] - b) * t
 	end
 	local r, g, b = toward(GRASS[1], GRASS[2], GRASS[3], GRASS_OLIVE, patch(GRASS_OLIVE_COVER, 11.3))
+	-- Broad darker drifts of bare soil, so open ground isn't one even tone.
+	if SOFT_GRASS then
+		local drift = math.clamp((math.noise(x * 0.018, y * 0.018, 63.1) + 0.35 * math.noise(x * 0.07, y * 0.07, 12.4) - 0.28) / 0.45, 0, 1)
+		r, g, b = toward(r, g, b, TRODDEN, drift * 0.42)
+	end
 	-- The worn apron round what stands on the top.
 	local outside = wornDistance(x, y)
 	local wobble = 0.4 * APRON_WIDTH * math.noise(x * 0.3, y * 0.3, 71.3)
 	local wear = math.clamp(1 - (outside + wobble) / APRON_WIDTH, 0, 1)
 	if wear > 0 then
 		local patchy = 0.5 + 0.6 * math.noise(x * 0.55, y * 0.55, 93.1)
-		local worn = math.clamp((wear - 0.75 * (1 - patchy)) / 0.2, 0, 1)
+		local worn = math.clamp((wear - 0.75 * (1 - patchy)) / (if SOFT_GRASS then 0.55 else 0.2), 0, 1)
+		if SOFT_GRASS then
+			-- Wear gathers in stretches, not as an even ring round everything.
+			worn *= math.clamp(0.55 + 1.3 * math.noise(x * 0.09, y * 0.09, 41.7), 0, 1)
+		end
 		local grit = 0.9 + 0.2 * math.noise(x * 1.7, y * 1.7, 17.9)
 		r, g, b = toward(r, g, b, { TRODDEN[1] * grit, TRODDEN[2] * grit, TRODDEN[3] * grit }, worn)
 	end
@@ -39885,13 +41076,55 @@ local chunks = {}
 for _, entry in parts do
 	table.insert(chunks, entry.mesh)
 end
+-- The bake paints a chunk with every chunk of its group, itself included and
+-- in this order, each with its texture size and the chunk's own place in the
+-- list (as finishParts does in common.luau).
+local chunkSizes = {}
 for _, entry in parts do
-	local group = {}
-	for _, other in parts do
-		if other ~= entry then
-			table.insert(group, other.mesh)
+	table.insert(chunkSizes, { entry.image:width(), entry.image:height() })
+end
+
+-- A dirt chunk is handed only the cracks that could lie on it, not the whole
+-- island's: the bake reads every stroke it is given, for every chunk. Cracks
+-- are filed by the cell their start lies in, and a chunk takes those within
+-- its own radius plus the stroke's reach and some slack for the bake's
+-- stroke grid, in the order they were made.
+local CRACK_CELL = 32
+local CRACK_SLACK = 8
+local crackCells = {}
+local crackReach = 0
+for index, stroke in crackStrokes do
+	local key = `{math.floor(stroke.start[1] / CRACK_CELL)}_{math.floor(stroke.start[2] / CRACK_CELL)}_{math.floor(stroke.start[3] / CRACK_CELL)}`
+	crackCells[key] = crackCells[key] or {}
+	table.insert(crackCells[key], index)
+	crackReach = math.max(crackReach, stroke.length + stroke.width)
+end
+local function cracksNear(mesh)
+	local cx, cy, cz, radius = mesh:bounds()
+	local widest = radius + crackReach + CRACK_SLACK
+	local found = {}
+	for x = math.floor((cx - widest) / CRACK_CELL), math.floor((cx + widest) / CRACK_CELL) do
+		for y = math.floor((cy - widest) / CRACK_CELL), math.floor((cy + widest) / CRACK_CELL) do
+			for z = math.floor((cz - widest) / CRACK_CELL), math.floor((cz + widest) / CRACK_CELL) do
+				for _, index in crackCells[`{x}_{y}_{z}`] or {} do
+					local stroke = crackStrokes[index]
+					local dx, dy, dz = stroke.start[1] - cx, stroke.start[2] - cy, stroke.start[3] - cz
+					local far = radius + stroke.length + stroke.width + CRACK_SLACK
+					if dx * dx + dy * dy + dz * dz <= far * far then
+						table.insert(found, index)
+					end
+				end
+			end
 		end
 	end
+	table.sort(found)
+	local near = {}
+	for i, index in found do
+		near[i] = crackStrokes[index]
+	end
+	return near
+end
+for index, entry in parts do
 	local kind = string.match(entry.name, "^%a+")
 	local soft = kind == "Grass" or kind == "Dirt"
 	entry.mesh:paintShading(entry.image, {
@@ -39899,7 +41132,9 @@ for _, entry in parts do
 		shadow = if soft then CONTACT_SHADOW * SOFT_SHADING else CONTACT_SHADOW,
 		gradient = GRADIENT,
 		blend = EDGE_BLEND,
-		group = group,
+		group = chunks,
+		groupSizes = chunkSizes,
+		groupIndex = index,
 		name = entry.name,
 		paint = entry.paint,
 		-- The rock paint is cached under the item's key, since its code is not hashed.
@@ -39910,14 +41145,14 @@ for _, entry in parts do
 		highlightWidth = HIGHLIGHT_WIDTH,
 		cornerTaper = CORNER_TAPER,
 		heightRange = entry.heightRange,
-		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then crackStrokes else nil,
+		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then cracksNear(entry.mesh) else nil,
 	})
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildHubSectionB] = "HubSectionB-a37adca50998542c"
+buildKeys[buildHubSectionB] = "HubSectionB-2f3f3215b1719645"
 function buildHubSectionEnd()
-local CACHE_KEY = "HubSectionEnd-136fa7952b3f42be"
+local CACHE_KEY = "HubSectionEnd-380ec9b5975a01b7"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -39947,9 +41182,13 @@ local GRID = 0.4
 -- instead of the fixed TEXTURE, so a layout reads at one texel density.
 -- A part's own `texture` size still wins.
 local texelDensity: number? = nil
+-- The density the layout asked for, before TEXEL_SCALE: chunk sizes follow
+-- this one, so a max-detail preview keeps the chunks it would ship with.
+local layoutDensity: number? = nil
 
 -- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
 local function useTexelDensity(pixelsPerStud: number)
+	layoutDensity = pixelsPerStud
 	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
 end
 
@@ -40218,15 +41457,57 @@ end
 -- strands, and bolts on curved faces.
 local function tube(mesh, points, radius, sides)
 	sides = sides or 8
+	local function unit(a, b)
+		local x, y, z = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local length = math.sqrt(x * x + y * y + z * z)
+		if length < 1e-6 then
+			return nil
+		end
+		return { x / length, y / length, z / length }
+	end
 	local rings = {}
+	local carried
 	for i, p in points do
-		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
-		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local before, after = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local into, out = i > 1 and unit(before, p) or nil, i < #points and unit(p, after) or nil
+		-- Each ring lies across the bisector of its bend.
+		local dx, dy, dz = after[1] - before[1], after[2] - before[2], after[3] - before[3]
+		if into and out then
+			local x, y, z = into[1] + out[1], into[2] + out[2], into[3] + out[3]
+			if x * x + y * y + z * z > 1e-6 then
+				dx, dy, dz = x, y, z
+			end
+		end
+		local tx, ty, tz, ux, uy, uz, vx, vy, vz = crossFrame(dx, dy, dz)
+		-- Carry the last ring's frame round the bend, so the tube can't twist.
+		if carried then
+			local along = carried[1] * tx + carried[2] * ty + carried[3] * tz
+			local x, y, z = carried[1] - tx * along, carried[2] - ty * along, carried[3] - tz * along
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				ux, uy, uz = x / length, y / length, z / length
+				vx, vy, vz = ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+			end
+		end
+		carried = { ux, uy, uz }
+		-- A ring across a bend is widened toward the bend's outside, or the tube
+		-- would pinch there.
+		local stretch, bx, by, bz = 1, 0, 0, 0
+		if into and out then
+			local x, y, z = out[1] - into[1], out[2] - into[2], out[3] - into[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				bx, by, bz = x / length, y / length, z / length
+				stretch = 1 / math.max(tx * out[1] + ty * out[2] + tz * out[3], 0.5)
+			end
+		end
 		local ring = {}
 		for k = 0, sides - 1 do
 			local t = k / sides * TAU
 			local c, n = math.cos(t) * radius, math.sin(t) * radius
-			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+			local x, y, z = ux * c + vx * n, uy * c + vy * n, uz * c + vz * n
+			local extra = (x * bx + y * by + z * bz) * (stretch - 1)
+			ring[k + 1] = mesh:vertex(p[1] + x + bx * extra, p[2] + y + by * extra, p[3] + z + bz * extra)
 		end
 		rings[i] = ring
 	end
@@ -40243,6 +41524,34 @@ local function tube(mesh, points, radius, sides)
 	end
 	mesh:face(cap)
 	mesh:face(rings[#rings])
+end
+
+-- `points` with each inner corner replaced by a curve starting up to `reach`
+-- studs before it, for wires and hoses that shouldn't have sharp elbows.
+local function roundedPath(points, reach, steps)
+	steps = steps or 4
+	local path = { points[1] }
+	for i = 2, #points - 1 do
+		local a, p, b = points[i - 1], points[i], points[i + 1]
+		local function towards(q)
+			local x, y, z = q[1] - p[1], q[2] - p[2], q[3] - p[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			local r = math.min(reach, length / 2) / length
+			return { p[1] + x * r, p[2] + y * r, p[3] + z * r }
+		end
+		local first, last = towards(a), towards(b)
+		for s = 0, steps do
+			local t = s / steps
+			local m0, m1, m2 = (1 - t) ^ 2, 2 * t * (1 - t), t * t
+			table.insert(path, {
+				first[1] * m0 + p[1] * m1 + last[1] * m2,
+				first[2] * m0 + p[2] * m1 + last[2] * m2,
+				first[3] * m0 + p[3] * m1 + last[3] * m2,
+			})
+		end
+	end
+	table.insert(path, points[#points])
+	return path
 end
 
 -- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
@@ -40518,6 +41827,8 @@ local function setLook(entry, color, rust)
 	entry.rubber = rust == RUBBER
 end
 
+local HAND_EDGE_MOTION = { rock = "feather", wood = "flick", metal = "worn" }
+
 -- `rust` can also be a paint fn for surfaces with their own look.
 -- `texture` overrides the texture size for parts that need more detail.
 -- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
@@ -40528,7 +41839,29 @@ end
 -- heavier shadow than the standard wear. `lit` scales the highlight strength
 -- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
 -- to paint its highlights as bold, fully loaded strokes instead of dry ones,
--- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+-- `blend` (0-1) to tint them from cream toward a lighter part colour, and
+-- `taper` (studs) to run them full width at corners, thinning along each edge.
+-- `softLit` (0-1) adds a wide, very soft highlight under the strokes, fading
+-- out over `softEdge` studs from each edge; `softUneven` (0-1) makes its width
+-- wander along the edge and `softTaper` (studs) thins it away from corners.
+-- `softToZero` lets that thinning reach nothing, and `softPower` steepens the fade.
+-- `strokes` lists brush strokes painted over the coat ({start, along, normal,
+-- length, width, tail, color, brush}, color in sRGB), such as cracks or dabs;
+-- `brush` is "taper" (crisp lines, the default), "round" or "sponge".
+-- `stamps` lays the coat with scanned stroke shapes instead of the flat brush.
+-- `hand` ("rock", "wood" or "metal") paints the coat the way a hand would, and
+-- `handFocus` ({x, y, z, radius}) is where it gathers its finest strokes.
+-- `handTune` sets any of its numbers by name (settings! in tools/modelkit/src/hand.rs).
+-- `litMotion` draws the hard edge highlight with a moving hand, `litTune` sets its
+-- numbers by name (tools/modelkit/src/marks.rs). A hand-painted part gets its
+-- material's motion unless it names another, or `false` for the default strokes.
+-- `brushes` draws any layer with a motion: edge, shade, soft, coat, grime, rust,
+-- drip or scratch, each {motion = "press", tune = {name = value}}. A `strokes`
+-- entry takes `motion` and `tune` the same way.
+-- With `hand` as well, `crisp` keeps the shapes exact and takes only the brushwork's tone.
+-- `crisp` lays the coat on texel by texel in the paint fn's exact colours
+-- instead of brush strokes, for machine finishes (hazard tape, ribbed
+-- rubber) that strokes would smear; shading still goes over it.
 local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
@@ -40557,7 +41890,7 @@ end
 -- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
 -- on across chunks instead of restarting in each (a flat chunk would go dark).
 local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
-	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	local CHUNK = if layoutDensity then math.min(128, 1024 / layoutDensity) else 128
 	-- Smallest cell a chunk is halved down to while looking for a split.
 	local MIN_CELL = 2
 	local positions, faces = {}, {}
@@ -40623,7 +41956,9 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		if texelDensity then
 			local mesh = chunkMesh(chunkFaces)
 			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
-			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			-- Split by the layout's density; the scale only sizes the texture.
+			local unwrap = mesh:unwrap()
+			local needed = math.ceil((layoutDensity or texelDensity) / unwrap / 4) * 4
 			if needed > 1024 and #chunkFaces > 1 then
 				local half = size / 2
 				local octants, octantOrder = {}, {}
@@ -40655,7 +41990,7 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 					return
 				end
 			end
-			texture = math.clamp(needed, 16, 1024)
+			texture = math.clamp(math.ceil(texelDensity / unwrap / 4) * 4, 16, 1024)
 		end
 		part(label, bone, color, function(mesh)
 			local handles = {}
@@ -40676,8 +42011,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -40693,10 +42030,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -40704,21 +42050,57 @@ local function finishParts()
 		entry.mesh:paintShading(entry.image, {
 			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
 			shadow = CONTACT_SHADOW * (entry.shade or 1),
-			gradient = GRADIENT,
+			gradient = entry.gradient or GRADIENT,
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
 			custom = entry.custom,
 			salt = if entry.custom then CACHE_KEY else nil,
 			rust = entry.rust * WEAR,
+			stamps = entry.stamps,
+			hand = entry.hand,
+			handFocus = entry.handFocus,
+			handTune = entry.handTune,
 			rubber = entry.rubber,
+			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
+			highlightUneven = entry.litUneven,
+			highlightUnevenStep = entry.litUnevenStep,
+			highlightMotion = if entry.litMotion == nil then (entry.hand and HAND_EDGE_MOTION[entry.hand]) else (entry.litMotion or nil),
+			highlightMotionTune = entry.litTune,
+			highlightToZero = entry.litToZero,
+			highlightEnd = entry.litEnd,
 			paintedHighlights = entry.painted,
+			cornerTaper = entry.taper,
+			softHighlight = entry.softLit,
+			softReach = entry.softEdge,
+			softUneven = entry.softUneven,
+			softTaper = entry.softTaper,
+			softToZero = entry.softToZero,
+			softPower = entry.softPower,
+			softEnd = entry.softEnd,
+			strokes = entry.strokes,
+			brushes = entry.brushes,
 			heightRange = entry.heightRange,
+			crisp = entry.crisp,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
@@ -40979,6 +42361,7 @@ local DRIP_SHADE = 0.35
 local GRASS_OLIVE = { 0.6, 0.57, 0.35 }
 local GRASS_OLIVE_COVER = 0.3
 local GRASS_PATCH_SIZE = 6 * DETAIL
+local GRASS_SPLOTCH = 0.25
 -- Within about APRON_WIDTH studs of what stands on the top (wornDistance)
 -- the grass is worn down to TRODDEN dirt and gravel, in patches toward the
 -- outside. These follow what stands there, not the stones, so DETAIL leaves
@@ -42064,7 +43447,9 @@ local function addCrack(points, normal, width: number)
 		local along = { (b[1] - a[1]) / length, (b[2] - a[2]) / length, -(b[3] - a[3]) / length }
 		local facing = { normal[1], normal[2], -normal[3] }
 		local function stroke(at, width: number, color)
-			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color })
+			-- Its place in the whole list is its seed, so it is drawn the same
+			-- whichever chunks are handed it.
+			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color, seed = #crackStrokes })
 		end
 		-- The lip sits on the crack's lower side, half a crack's width over.
 		local across = cross(facing, along)
@@ -42316,25 +43701,38 @@ local GRASS_DEEPEST = GRASS_LIP[1] + DRIP_LENGTH[2]
 local paintGrass = rusting(0, function(x, y, z)
 	local shade = 1 - DRIP_SHADE * math.clamp(-z / GRASS_DEEPEST, 0, 1)
 	local tone, warm = splotchAt(x, y, z)
+	-- On a big open island splotches read as hard discs, so grass takes a trace.
+	if SOFT_GRASS then
+		tone, warm = tone * GRASS_SPLOTCH, warm * GRASS_SPLOTCH
+	end
 	shade *= 1 + tone
 	-- Patch strength from soft noise: 0 outside, 1 well inside a patch
 	-- covering `cover` of the grass.
 	local function patch(cover: number, seed: number): number
 		local u, v = x / GRASS_PATCH_SIZE + seed, y / GRASS_PATCH_SIZE
 		local n = 0.5 + math.noise(u, v, seed) + 0.3 * math.noise(u * 3, v * 3, seed + 5)
-		return math.clamp((n - (1 - cover)) / 0.12, 0, 1)
+		return math.clamp((n - (1 - cover)) / (if SOFT_GRASS then 0.4 else 0.12), 0, 1)
 	end
 	local function toward(r, g, b, c, t)
 		return r + (c[1] - r) * t, g + (c[2] - g) * t, b + (c[3] - b) * t
 	end
 	local r, g, b = toward(GRASS[1], GRASS[2], GRASS[3], GRASS_OLIVE, patch(GRASS_OLIVE_COVER, 11.3))
+	-- Broad darker drifts of bare soil, so open ground isn't one even tone.
+	if SOFT_GRASS then
+		local drift = math.clamp((math.noise(x * 0.018, y * 0.018, 63.1) + 0.35 * math.noise(x * 0.07, y * 0.07, 12.4) - 0.28) / 0.45, 0, 1)
+		r, g, b = toward(r, g, b, TRODDEN, drift * 0.42)
+	end
 	-- The worn apron round what stands on the top.
 	local outside = wornDistance(x, y)
 	local wobble = 0.4 * APRON_WIDTH * math.noise(x * 0.3, y * 0.3, 71.3)
 	local wear = math.clamp(1 - (outside + wobble) / APRON_WIDTH, 0, 1)
 	if wear > 0 then
 		local patchy = 0.5 + 0.6 * math.noise(x * 0.55, y * 0.55, 93.1)
-		local worn = math.clamp((wear - 0.75 * (1 - patchy)) / 0.2, 0, 1)
+		local worn = math.clamp((wear - 0.75 * (1 - patchy)) / (if SOFT_GRASS then 0.55 else 0.2), 0, 1)
+		if SOFT_GRASS then
+			-- Wear gathers in stretches, not as an even ring round everything.
+			worn *= math.clamp(0.55 + 1.3 * math.noise(x * 0.09, y * 0.09, 41.7), 0, 1)
+		end
 		local grit = 0.9 + 0.2 * math.noise(x * 1.7, y * 1.7, 17.9)
 		r, g, b = toward(r, g, b, { TRODDEN[1] * grit, TRODDEN[2] * grit, TRODDEN[3] * grit }, worn)
 	end
@@ -42464,13 +43862,55 @@ local chunks = {}
 for _, entry in parts do
 	table.insert(chunks, entry.mesh)
 end
+-- The bake paints a chunk with every chunk of its group, itself included and
+-- in this order, each with its texture size and the chunk's own place in the
+-- list (as finishParts does in common.luau).
+local chunkSizes = {}
 for _, entry in parts do
-	local group = {}
-	for _, other in parts do
-		if other ~= entry then
-			table.insert(group, other.mesh)
+	table.insert(chunkSizes, { entry.image:width(), entry.image:height() })
+end
+
+-- A dirt chunk is handed only the cracks that could lie on it, not the whole
+-- island's: the bake reads every stroke it is given, for every chunk. Cracks
+-- are filed by the cell their start lies in, and a chunk takes those within
+-- its own radius plus the stroke's reach and some slack for the bake's
+-- stroke grid, in the order they were made.
+local CRACK_CELL = 32
+local CRACK_SLACK = 8
+local crackCells = {}
+local crackReach = 0
+for index, stroke in crackStrokes do
+	local key = `{math.floor(stroke.start[1] / CRACK_CELL)}_{math.floor(stroke.start[2] / CRACK_CELL)}_{math.floor(stroke.start[3] / CRACK_CELL)}`
+	crackCells[key] = crackCells[key] or {}
+	table.insert(crackCells[key], index)
+	crackReach = math.max(crackReach, stroke.length + stroke.width)
+end
+local function cracksNear(mesh)
+	local cx, cy, cz, radius = mesh:bounds()
+	local widest = radius + crackReach + CRACK_SLACK
+	local found = {}
+	for x = math.floor((cx - widest) / CRACK_CELL), math.floor((cx + widest) / CRACK_CELL) do
+		for y = math.floor((cy - widest) / CRACK_CELL), math.floor((cy + widest) / CRACK_CELL) do
+			for z = math.floor((cz - widest) / CRACK_CELL), math.floor((cz + widest) / CRACK_CELL) do
+				for _, index in crackCells[`{x}_{y}_{z}`] or {} do
+					local stroke = crackStrokes[index]
+					local dx, dy, dz = stroke.start[1] - cx, stroke.start[2] - cy, stroke.start[3] - cz
+					local far = radius + stroke.length + stroke.width + CRACK_SLACK
+					if dx * dx + dy * dy + dz * dz <= far * far then
+						table.insert(found, index)
+					end
+				end
+			end
 		end
 	end
+	table.sort(found)
+	local near = {}
+	for i, index in found do
+		near[i] = crackStrokes[index]
+	end
+	return near
+end
+for index, entry in parts do
 	local kind = string.match(entry.name, "^%a+")
 	local soft = kind == "Grass" or kind == "Dirt"
 	entry.mesh:paintShading(entry.image, {
@@ -42478,7 +43918,9 @@ for _, entry in parts do
 		shadow = if soft then CONTACT_SHADOW * SOFT_SHADING else CONTACT_SHADOW,
 		gradient = GRADIENT,
 		blend = EDGE_BLEND,
-		group = group,
+		group = chunks,
+		groupSizes = chunkSizes,
+		groupIndex = index,
 		name = entry.name,
 		paint = entry.paint,
 		-- The rock paint is cached under the item's key, since its code is not hashed.
@@ -42489,14 +43931,14 @@ for _, entry in parts do
 		highlightWidth = HIGHLIGHT_WIDTH,
 		cornerTaper = CORNER_TAPER,
 		heightRange = entry.heightRange,
-		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then crackStrokes else nil,
+		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then cracksNear(entry.mesh) else nil,
 	})
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildHubSectionEnd] = "HubSectionEnd-35998d3955bcd931"
+buildKeys[buildHubSectionEnd] = "HubSectionEnd-3ea0688f1d3344f1"
 function buildYardIsland()
-local CACHE_KEY = "YardIsland-a20f5454b9eeafc4"
+local CACHE_KEY = "YardIsland-693a9a144b48f325"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
 -- legendary.
 local COMMON = { 0.62, 0.62, 0.6 }
@@ -42526,9 +43968,13 @@ local GRID = 0.4
 -- instead of the fixed TEXTURE, so a layout reads at one texel density.
 -- A part's own `texture` size still wins.
 local texelDensity: number? = nil
+-- The density the layout asked for, before TEXEL_SCALE: chunk sizes follow
+-- this one, so a max-detail preview keeps the chunks it would ship with.
+local layoutDensity: number? = nil
 
 -- Previews build at a fraction of the density the layout asks for (TEXEL_SCALE).
 local function useTexelDensity(pixelsPerStud: number)
+	layoutDensity = pixelsPerStud
 	texelDensity = pixelsPerStud * (TEXEL_SCALE or 1)
 end
 
@@ -42797,15 +44243,57 @@ end
 -- strands, and bolts on curved faces.
 local function tube(mesh, points, radius, sides)
 	sides = sides or 8
+	local function unit(a, b)
+		local x, y, z = b[1] - a[1], b[2] - a[2], b[3] - a[3]
+		local length = math.sqrt(x * x + y * y + z * z)
+		if length < 1e-6 then
+			return nil
+		end
+		return { x / length, y / length, z / length }
+	end
 	local rings = {}
+	local carried
 	for i, p in points do
-		local a, b = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
-		local _, _, _, ux, uy, uz, vx, vy, vz = crossFrame(b[1] - a[1], b[2] - a[2], b[3] - a[3])
+		local before, after = points[math.max(i - 1, 1)], points[math.min(i + 1, #points)]
+		local into, out = i > 1 and unit(before, p) or nil, i < #points and unit(p, after) or nil
+		-- Each ring lies across the bisector of its bend.
+		local dx, dy, dz = after[1] - before[1], after[2] - before[2], after[3] - before[3]
+		if into and out then
+			local x, y, z = into[1] + out[1], into[2] + out[2], into[3] + out[3]
+			if x * x + y * y + z * z > 1e-6 then
+				dx, dy, dz = x, y, z
+			end
+		end
+		local tx, ty, tz, ux, uy, uz, vx, vy, vz = crossFrame(dx, dy, dz)
+		-- Carry the last ring's frame round the bend, so the tube can't twist.
+		if carried then
+			local along = carried[1] * tx + carried[2] * ty + carried[3] * tz
+			local x, y, z = carried[1] - tx * along, carried[2] - ty * along, carried[3] - tz * along
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				ux, uy, uz = x / length, y / length, z / length
+				vx, vy, vz = ty * uz - tz * uy, tz * ux - tx * uz, tx * uy - ty * ux
+			end
+		end
+		carried = { ux, uy, uz }
+		-- A ring across a bend is widened toward the bend's outside, or the tube
+		-- would pinch there.
+		local stretch, bx, by, bz = 1, 0, 0, 0
+		if into and out then
+			local x, y, z = out[1] - into[1], out[2] - into[2], out[3] - into[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			if length > 1e-6 then
+				bx, by, bz = x / length, y / length, z / length
+				stretch = 1 / math.max(tx * out[1] + ty * out[2] + tz * out[3], 0.5)
+			end
+		end
 		local ring = {}
 		for k = 0, sides - 1 do
 			local t = k / sides * TAU
 			local c, n = math.cos(t) * radius, math.sin(t) * radius
-			ring[k + 1] = mesh:vertex(p[1] + ux * c + vx * n, p[2] + uy * c + vy * n, p[3] + uz * c + vz * n)
+			local x, y, z = ux * c + vx * n, uy * c + vy * n, uz * c + vz * n
+			local extra = (x * bx + y * by + z * bz) * (stretch - 1)
+			ring[k + 1] = mesh:vertex(p[1] + x + bx * extra, p[2] + y + by * extra, p[3] + z + bz * extra)
 		end
 		rings[i] = ring
 	end
@@ -42822,6 +44310,34 @@ local function tube(mesh, points, radius, sides)
 	end
 	mesh:face(cap)
 	mesh:face(rings[#rings])
+end
+
+-- `points` with each inner corner replaced by a curve starting up to `reach`
+-- studs before it, for wires and hoses that shouldn't have sharp elbows.
+local function roundedPath(points, reach, steps)
+	steps = steps or 4
+	local path = { points[1] }
+	for i = 2, #points - 1 do
+		local a, p, b = points[i - 1], points[i], points[i + 1]
+		local function towards(q)
+			local x, y, z = q[1] - p[1], q[2] - p[2], q[3] - p[3]
+			local length = math.sqrt(x * x + y * y + z * z)
+			local r = math.min(reach, length / 2) / length
+			return { p[1] + x * r, p[2] + y * r, p[3] + z * r }
+		end
+		local first, last = towards(a), towards(b)
+		for s = 0, steps do
+			local t = s / steps
+			local m0, m1, m2 = (1 - t) ^ 2, 2 * t * (1 - t), t * t
+			table.insert(path, {
+				first[1] * m0 + p[1] * m1 + last[1] * m2,
+				first[2] * m0 + p[2] * m1 + last[2] * m2,
+				first[3] * m0 + p[3] * m1 + last[3] * m2,
+			})
+		end
+	end
+	table.insert(path, points[#points])
+	return path
 end
 
 -- Point in the plane across `axis` at centre (cx, cy, cz): radius r, angle t,
@@ -43097,6 +44613,8 @@ local function setLook(entry, color, rust)
 	entry.rubber = rust == RUBBER
 end
 
+local HAND_EDGE_MOTION = { rock = "feather", wood = "flick", metal = "worn" }
+
 -- `rust` can also be a paint fn for surfaces with their own look.
 -- `texture` overrides the texture size for parts that need more detail.
 -- `emissive` is a glow strength (like SurfaceAppearance.EmissiveStrength);
@@ -43107,7 +44625,29 @@ end
 -- heavier shadow than the standard wear. `lit` scales the highlight strength
 -- and `wide` the width of the highlight brush strokes. Set `painted` on an entry
 -- to paint its highlights as bold, fully loaded strokes instead of dry ones,
--- and `blend` (0-1) to tint them from cream toward a lighter part colour.
+-- `blend` (0-1) to tint them from cream toward a lighter part colour, and
+-- `taper` (studs) to run them full width at corners, thinning along each edge.
+-- `softLit` (0-1) adds a wide, very soft highlight under the strokes, fading
+-- out over `softEdge` studs from each edge; `softUneven` (0-1) makes its width
+-- wander along the edge and `softTaper` (studs) thins it away from corners.
+-- `softToZero` lets that thinning reach nothing, and `softPower` steepens the fade.
+-- `strokes` lists brush strokes painted over the coat ({start, along, normal,
+-- length, width, tail, color, brush}, color in sRGB), such as cracks or dabs;
+-- `brush` is "taper" (crisp lines, the default), "round" or "sponge".
+-- `stamps` lays the coat with scanned stroke shapes instead of the flat brush.
+-- `hand` ("rock", "wood" or "metal") paints the coat the way a hand would, and
+-- `handFocus` ({x, y, z, radius}) is where it gathers its finest strokes.
+-- `handTune` sets any of its numbers by name (settings! in tools/modelkit/src/hand.rs).
+-- `litMotion` draws the hard edge highlight with a moving hand, `litTune` sets its
+-- numbers by name (tools/modelkit/src/marks.rs). A hand-painted part gets its
+-- material's motion unless it names another, or `false` for the default strokes.
+-- `brushes` draws any layer with a motion: edge, shade, soft, coat, grime, rust,
+-- drip or scratch, each {motion = "press", tune = {name = value}}. A `strokes`
+-- entry takes `motion` and `tune` the same way.
+-- With `hand` as well, `crisp` keeps the shapes exact and takes only the brushwork's tone.
+-- `crisp` lays the coat on texel by texel in the paint fn's exact colours
+-- instead of brush strokes, for machine finishes (hazard tape, ribbed
+-- rubber) that strokes would smear; shading still goes over it.
 local function part(name, bone, color, build, smooth, rust, texture: number?, emissive: number?, flat: boolean?, edge: number?, shade: number?, lit: number?, wide: number?)
 	local mesh = Mesh.new()
 	build(if rust == 0 or flat then mesh else imperfect(mesh, name))
@@ -43136,7 +44676,7 @@ end
 -- mesh's z-range or the `heightRange` {bottom, top} given, so the gradient runs
 -- on across chunks instead of restarting in each (a flat chunk would go dark).
 local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean?, edge: number?, shade: number?, lit: number?, heightRange: { number }?)
-	local CHUNK = if texelDensity then math.min(128, 1024 / texelDensity) else 128
+	local CHUNK = if layoutDensity then math.min(128, 1024 / layoutDensity) else 128
 	-- Smallest cell a chunk is halved down to while looking for a split.
 	local MIN_CELL = 2
 	local positions, faces = {}, {}
@@ -43202,7 +44742,9 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		if texelDensity then
 			local mesh = chunkMesh(chunkFaces)
 			mesh:setSmooth(if smooth ~= nil then smooth else SMOOTH_ANGLE)
-			local needed = math.ceil(texelDensity / mesh:unwrap() / 4) * 4
+			-- Split by the layout's density; the scale only sizes the texture.
+			local unwrap = mesh:unwrap()
+			local needed = math.ceil((layoutDensity or texelDensity) / unwrap / 4) * 4
 			if needed > 1024 and #chunkFaces > 1 then
 				local half = size / 2
 				local octants, octantOrder = {}, {}
@@ -43234,7 +44776,7 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 					return
 				end
 			end
-			texture = math.clamp(needed, 16, 1024)
+			texture = math.clamp(math.ceil(texelDensity / unwrap / 4) * 4, 16, 1024)
 		end
 		part(label, bone, color, function(mesh)
 			local handles = {}
@@ -43255,8 +44797,10 @@ local function chunkedPart(name, bone, color, build, smooth, rust, flat: boolean
 		end, smooth, 0, texture, nil, nil, edge, shade, lit)
 		-- The warp was applied while recording; the chunk still wears the look.
 		setLook(parts[#parts], color, rust)
-		-- Chunks of one part share a group, so their edges count as its own.
+		-- Chunks of one part share a group, so their edges count as its own,
+		-- and carry the part's name, so a finish never has to parse theirs.
 		parts[#parts].group = name
+		parts[#parts].chunkOf = name
 		parts[#parts].heightRange = heightRange
 	end
 	for _, key in order do
@@ -43272,10 +44816,19 @@ local function finishParts()
 			model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true, emissive = entry.emissive })
 			continue
 		end
-		local occluders, group = {}, {}
+		-- A grouped part (the chunks of one chunkedPart) is painted with every
+		-- member of its group, itself included and in this order, so the bake
+		-- lays one set of strokes over the whole part and each chunk takes the
+		-- ones that fall on it; each member's texture size goes along for its
+		-- shade layer.
+		local occluders, group, groupSizes, groupIndex = {}, {}, {}, nil
 		for _, other in parts do
-			if other ~= entry and entry.group and other.group == entry.group then
+			if entry.group and other.group == entry.group then
 				table.insert(group, other.mesh)
+				table.insert(groupSizes, { other.image:width(), other.image:height() })
+				if other == entry then
+					groupIndex = #group
+				end
 			elseif other ~= entry then
 				table.insert(occluders, other.mesh)
 			end
@@ -43283,21 +44836,57 @@ local function finishParts()
 		entry.mesh:paintShading(entry.image, {
 			highlight = EDGE_HIGHLIGHT * (entry.lit or 1),
 			shadow = CONTACT_SHADOW * (entry.shade or 1),
-			gradient = GRADIENT,
+			gradient = entry.gradient or GRADIENT,
 			blend = entry.blend or EDGE_BLEND,
 			occluders = occluders,
 			group = group,
+			groupSizes = groupSizes,
+			groupIndex = groupIndex,
 			name = entry.name,
 			paint = entry.paint,
 			-- A custom paint fn is cached under the item's key, since its code is not hashed.
 			custom = entry.custom,
 			salt = if entry.custom then CACHE_KEY else nil,
 			rust = entry.rust * WEAR,
+			stamps = entry.stamps,
+			hand = entry.hand,
+			handFocus = entry.handFocus,
+			handTune = entry.handTune,
 			rubber = entry.rubber,
+			rustEdges = entry.rustEdges,
 			reach = entry.edge,
+			bevelReach = entry.bevelReach,
+			bevelFold = entry.bevelFold,
+			bevelTilt = entry.bevelTilt,
+			roughnessBase = entry.roughnessBase,
+			roughnessEdge = entry.roughnessEdge,
+			roughnessCrease = entry.roughnessCrease,
+			roughnessWear = entry.roughnessWear,
+			metalnessOn = entry.metalnessBase ~= nil,
+			metalnessBase = entry.metalnessBase,
+			metalnessEdge = entry.metalnessEdge,
+			metalnessCrease = entry.metalnessCrease,
+			metalnessWear = entry.metalnessWear,
 			highlightWidth = entry.wide,
+			highlightUneven = entry.litUneven,
+			highlightUnevenStep = entry.litUnevenStep,
+			highlightMotion = if entry.litMotion == nil then (entry.hand and HAND_EDGE_MOTION[entry.hand]) else (entry.litMotion or nil),
+			highlightMotionTune = entry.litTune,
+			highlightToZero = entry.litToZero,
+			highlightEnd = entry.litEnd,
 			paintedHighlights = entry.painted,
+			cornerTaper = entry.taper,
+			softHighlight = entry.softLit,
+			softReach = entry.softEdge,
+			softUneven = entry.softUneven,
+			softTaper = entry.softTaper,
+			softToZero = entry.softToZero,
+			softPower = entry.softPower,
+			softEnd = entry.softEnd,
+			strokes = entry.strokes,
+			brushes = entry.brushes,
 			heightRange = entry.heightRange,
+			crisp = entry.crisp,
 		})
 		model.part(entry.name, entry.mesh, entry.image, { bone = entry.bone, preview = true })
 	end
@@ -43566,6 +45155,7 @@ local DRIP_SHADE = 0.35
 local GRASS_OLIVE = { 0.6, 0.57, 0.35 }
 local GRASS_OLIVE_COVER = 0.3
 local GRASS_PATCH_SIZE = 6 * DETAIL
+local GRASS_SPLOTCH = 0.25
 -- Within about APRON_WIDTH studs of what stands on the top (wornDistance)
 -- the grass is worn down to TRODDEN dirt and gravel, in patches toward the
 -- outside. These follow what stands there, not the stones, so DETAIL leaves
@@ -44651,7 +46241,9 @@ local function addCrack(points, normal, width: number)
 		local along = { (b[1] - a[1]) / length, (b[2] - a[2]) / length, -(b[3] - a[3]) / length }
 		local facing = { normal[1], normal[2], -normal[3] }
 		local function stroke(at, width: number, color)
-			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color })
+			-- Its place in the whole list is its seed, so it is drawn the same
+			-- whichever chunks are handed it.
+			table.insert(crackStrokes, { start = at, along = along, normal = facing, length = length, width = width, tail = widthB / widthA, color = color, seed = #crackStrokes })
 		end
 		-- The lip sits on the crack's lower side, half a crack's width over.
 		local across = cross(facing, along)
@@ -44903,25 +46495,38 @@ local GRASS_DEEPEST = GRASS_LIP[1] + DRIP_LENGTH[2]
 local paintGrass = rusting(0, function(x, y, z)
 	local shade = 1 - DRIP_SHADE * math.clamp(-z / GRASS_DEEPEST, 0, 1)
 	local tone, warm = splotchAt(x, y, z)
+	-- On a big open island splotches read as hard discs, so grass takes a trace.
+	if SOFT_GRASS then
+		tone, warm = tone * GRASS_SPLOTCH, warm * GRASS_SPLOTCH
+	end
 	shade *= 1 + tone
 	-- Patch strength from soft noise: 0 outside, 1 well inside a patch
 	-- covering `cover` of the grass.
 	local function patch(cover: number, seed: number): number
 		local u, v = x / GRASS_PATCH_SIZE + seed, y / GRASS_PATCH_SIZE
 		local n = 0.5 + math.noise(u, v, seed) + 0.3 * math.noise(u * 3, v * 3, seed + 5)
-		return math.clamp((n - (1 - cover)) / 0.12, 0, 1)
+		return math.clamp((n - (1 - cover)) / (if SOFT_GRASS then 0.4 else 0.12), 0, 1)
 	end
 	local function toward(r, g, b, c, t)
 		return r + (c[1] - r) * t, g + (c[2] - g) * t, b + (c[3] - b) * t
 	end
 	local r, g, b = toward(GRASS[1], GRASS[2], GRASS[3], GRASS_OLIVE, patch(GRASS_OLIVE_COVER, 11.3))
+	-- Broad darker drifts of bare soil, so open ground isn't one even tone.
+	if SOFT_GRASS then
+		local drift = math.clamp((math.noise(x * 0.018, y * 0.018, 63.1) + 0.35 * math.noise(x * 0.07, y * 0.07, 12.4) - 0.28) / 0.45, 0, 1)
+		r, g, b = toward(r, g, b, TRODDEN, drift * 0.42)
+	end
 	-- The worn apron round what stands on the top.
 	local outside = wornDistance(x, y)
 	local wobble = 0.4 * APRON_WIDTH * math.noise(x * 0.3, y * 0.3, 71.3)
 	local wear = math.clamp(1 - (outside + wobble) / APRON_WIDTH, 0, 1)
 	if wear > 0 then
 		local patchy = 0.5 + 0.6 * math.noise(x * 0.55, y * 0.55, 93.1)
-		local worn = math.clamp((wear - 0.75 * (1 - patchy)) / 0.2, 0, 1)
+		local worn = math.clamp((wear - 0.75 * (1 - patchy)) / (if SOFT_GRASS then 0.55 else 0.2), 0, 1)
+		if SOFT_GRASS then
+			-- Wear gathers in stretches, not as an even ring round everything.
+			worn *= math.clamp(0.55 + 1.3 * math.noise(x * 0.09, y * 0.09, 41.7), 0, 1)
+		end
 		local grit = 0.9 + 0.2 * math.noise(x * 1.7, y * 1.7, 17.9)
 		r, g, b = toward(r, g, b, { TRODDEN[1] * grit, TRODDEN[2] * grit, TRODDEN[3] * grit }, worn)
 	end
@@ -45051,13 +46656,55 @@ local chunks = {}
 for _, entry in parts do
 	table.insert(chunks, entry.mesh)
 end
+-- The bake paints a chunk with every chunk of its group, itself included and
+-- in this order, each with its texture size and the chunk's own place in the
+-- list (as finishParts does in common.luau).
+local chunkSizes = {}
 for _, entry in parts do
-	local group = {}
-	for _, other in parts do
-		if other ~= entry then
-			table.insert(group, other.mesh)
+	table.insert(chunkSizes, { entry.image:width(), entry.image:height() })
+end
+
+-- A dirt chunk is handed only the cracks that could lie on it, not the whole
+-- island's: the bake reads every stroke it is given, for every chunk. Cracks
+-- are filed by the cell their start lies in, and a chunk takes those within
+-- its own radius plus the stroke's reach and some slack for the bake's
+-- stroke grid, in the order they were made.
+local CRACK_CELL = 32
+local CRACK_SLACK = 8
+local crackCells = {}
+local crackReach = 0
+for index, stroke in crackStrokes do
+	local key = `{math.floor(stroke.start[1] / CRACK_CELL)}_{math.floor(stroke.start[2] / CRACK_CELL)}_{math.floor(stroke.start[3] / CRACK_CELL)}`
+	crackCells[key] = crackCells[key] or {}
+	table.insert(crackCells[key], index)
+	crackReach = math.max(crackReach, stroke.length + stroke.width)
+end
+local function cracksNear(mesh)
+	local cx, cy, cz, radius = mesh:bounds()
+	local widest = radius + crackReach + CRACK_SLACK
+	local found = {}
+	for x = math.floor((cx - widest) / CRACK_CELL), math.floor((cx + widest) / CRACK_CELL) do
+		for y = math.floor((cy - widest) / CRACK_CELL), math.floor((cy + widest) / CRACK_CELL) do
+			for z = math.floor((cz - widest) / CRACK_CELL), math.floor((cz + widest) / CRACK_CELL) do
+				for _, index in crackCells[`{x}_{y}_{z}`] or {} do
+					local stroke = crackStrokes[index]
+					local dx, dy, dz = stroke.start[1] - cx, stroke.start[2] - cy, stroke.start[3] - cz
+					local far = radius + stroke.length + stroke.width + CRACK_SLACK
+					if dx * dx + dy * dy + dz * dz <= far * far then
+						table.insert(found, index)
+					end
+				end
+			end
 		end
 	end
+	table.sort(found)
+	local near = {}
+	for i, index in found do
+		near[i] = crackStrokes[index]
+	end
+	return near
+end
+for index, entry in parts do
 	local kind = string.match(entry.name, "^%a+")
 	local soft = kind == "Grass" or kind == "Dirt"
 	entry.mesh:paintShading(entry.image, {
@@ -45065,7 +46712,9 @@ for _, entry in parts do
 		shadow = if soft then CONTACT_SHADOW * SOFT_SHADING else CONTACT_SHADOW,
 		gradient = GRADIENT,
 		blend = EDGE_BLEND,
-		group = group,
+		group = chunks,
+		groupSizes = chunkSizes,
+		groupIndex = index,
 		name = entry.name,
 		paint = entry.paint,
 		-- The rock paint is cached under the item's key, since its code is not hashed.
@@ -45076,12 +46725,12 @@ for _, entry in parts do
 		highlightWidth = HIGHLIGHT_WIDTH,
 		cornerTaper = CORNER_TAPER,
 		heightRange = entry.heightRange,
-		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then crackStrokes else nil,
+		strokes = if string.sub(entry.name, 1, 4) == "Dirt" then cracksNear(entry.mesh) else nil,
 	})
 	model.part(entry.name, entry.mesh, entry.image, { preview = true })
 end
 end
-buildKeys[buildYardIsland] = "YardIsland-c11a4756436b4dec"
+buildKeys[buildYardIsland] = "YardIsland-44903ecdaa357ee9"
 function buildPadKitchen()
 local CACHE_KEY = "PadKitchen-c76f1c6cf26e3512"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -45932,7 +47581,7 @@ part("Hardware", nil, STEEL, function(mesh)
 end, nil, 0.45)
 finishParts()
 end
-buildKeys[buildPadKitchen] = "PadKitchen-412262d2e40ad03b"
+buildKeys[buildPadKitchen] = "PadKitchen-ec71f489a049d2af"
 function buildPadGarage()
 local CACHE_KEY = "PadGarage-d5708ad48748d33b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -46783,7 +48432,7 @@ part("Hardware", nil, STEEL, function(mesh)
 end, nil, 0.45)
 finishParts()
 end
-buildKeys[buildPadGarage] = "PadGarage-48d03c341d05ec90"
+buildKeys[buildPadGarage] = "PadGarage-89b5d290e5d87e2d"
 function buildPadGadget()
 local CACHE_KEY = "PadGadget-48988de9245004f8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -47634,7 +49283,7 @@ part("Hardware", nil, STEEL, function(mesh)
 end, nil, 0.45)
 finishParts()
 end
-buildKeys[buildPadGadget] = "PadGadget-7932e6fcfd1feec3"
+buildKeys[buildPadGadget] = "PadGadget-cb240e3b32ee2bc5"
 function buildScrapCrate()
 local CACHE_KEY = "ScrapCrate-29302168875da9ff"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -48491,7 +50140,7 @@ part("Bits", nil, STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildScrapCrate] = "ScrapCrate-ee16f513aa3ccaf5"
+buildKeys[buildScrapCrate] = "ScrapCrate-f83a4190e411eda4"
 function buildCapsuleScrap()
 local CACHE_KEY = "CapsuleScrap-4fd4e85152e70de0"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -49326,7 +50975,7 @@ part("Handle", nil, DARK_STEEL, function(mesh)
 end, nil, 0.6)
 finishParts()
 end
-buildKeys[buildCapsuleScrap] = "CapsuleScrap-f5865626bbc861a8"
+buildKeys[buildCapsuleScrap] = "CapsuleScrap-5c8d99bcabd6ec3a"
 function buildCapsuleSalvaged()
 local CACHE_KEY = "CapsuleSalvaged-a22b31bf9e05c3ba"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -50164,7 +51813,7 @@ part("Handle", nil, DARK_STEEL, function(mesh)
 end, nil, 0.5)
 finishParts()
 end
-buildKeys[buildCapsuleSalvaged] = "CapsuleSalvaged-97a264f4df2d8ad6"
+buildKeys[buildCapsuleSalvaged] = "CapsuleSalvaged-7b96a534e82dbc68"
 function buildCapsuleRefurbished()
 local CACHE_KEY = "CapsuleRefurbished-87de8628bbe15cb0"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -51000,7 +52649,7 @@ part("Handle", nil, BARE_METAL, function(mesh)
 end, nil, 0.1)
 finishParts()
 end
-buildKeys[buildCapsuleRefurbished] = "CapsuleRefurbished-700a44d02273b3b1"
+buildKeys[buildCapsuleRefurbished] = "CapsuleRefurbished-534156bd2f7802d7"
 function buildCapsuleFactory()
 local CACHE_KEY = "CapsuleFactory-77a50855066ef57d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -51840,7 +53489,7 @@ part("Label", nil, LABEL_WHITE, function(mesh)
 end, nil, 0)
 finishParts()
 end
-buildKeys[buildCapsuleFactory] = "CapsuleFactory-b6168f42c74b04de"
+buildKeys[buildCapsuleFactory] = "CapsuleFactory-60694d3d77ed9d5a"
 function buildCapsulePrecision()
 local CACHE_KEY = "CapsulePrecision-f0fd7da3c3e1c134"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -52691,7 +54340,7 @@ part("Clasps", nil, BARE_METAL, function(mesh)
 end, nil, 0.05)
 finishParts()
 end
-buildKeys[buildCapsulePrecision] = "CapsulePrecision-92c9158398b1b297"
+buildKeys[buildCapsulePrecision] = "CapsulePrecision-3d557e0f40945171"
 function buildCapsulePrototype()
 local CACHE_KEY = "CapsulePrototype-83a52d1637ac492b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -53528,7 +55177,7 @@ part("Tag", nil, TAG_ORANGE, function(mesh)
 end, nil, 0)
 finishParts()
 end
-buildKeys[buildCapsulePrototype] = "CapsulePrototype-84371941735a84a9"
+buildKeys[buildCapsulePrototype] = "CapsulePrototype-9a281c1af5b3a891"
 function buildCapsuleSecret()
 local CACHE_KEY = "CapsuleSecret-a36bc0a8b8574b40"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -54349,7 +55998,7 @@ part("Seam", nil, SEAM_GLOW, function(mesh)
 end, nil, 0, nil, 2.2, true)
 finishParts()
 end
-buildKeys[buildCapsuleSecret] = "CapsuleSecret-20676f6bd6f64f1d"
+buildKeys[buildCapsuleSecret] = "CapsuleSecret-dece8d5925a51c32"
 function buildJunkrotCanettoRustini()
 local CACHE_KEY = "JunkrotCanettoRustini-4edbec9d7b5f5796"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -58023,7 +59672,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotCanettoRustini] = "JunkrotCanettoRustini-1c295432923a7d59"
+buildKeys[buildJunkrotCanettoRustini] = "JunkrotCanettoRustini-a064498d48b05d3e"
 function buildJunkrotSpoonzoBentolo()
 local CACHE_KEY = "JunkrotSpoonzoBentolo-5e7d43f4fc4d5850"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -61674,7 +63323,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotSpoonzoBentolo] = "JunkrotSpoonzoBentolo-e35dc1b94e3d24ff"
+buildKeys[buildJunkrotSpoonzoBentolo] = "JunkrotSpoonzoBentolo-4e1ab35a0ea27e1c"
 function buildJunkrotKettlinaDentata()
 local CACHE_KEY = "JunkrotKettlinaDentata-181b8ccb5e0016ab"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -65343,7 +66992,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotKettlinaDentata] = "JunkrotKettlinaDentata-1286d0d40acb7bb5"
+buildKeys[buildJunkrotKettlinaDentata] = "JunkrotKettlinaDentata-f1db44ca6d420d18"
 function buildJunkrotTyroFlattino()
 local CACHE_KEY = "JunkrotTyroFlattino-da48c6d69ddf15cd"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -69017,7 +70666,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTyroFlattino] = "JunkrotTyroFlattino-5d99368a4b2b7f7a"
+buildKeys[buildJunkrotTyroFlattino] = "JunkrotTyroFlattino-b1e5d34174038c46"
 function buildJunkrotBoltoloLonelo()
 local CACHE_KEY = "JunkrotBoltoloLonelo-1f23ec979bf31130"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -72664,7 +74313,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotBoltoloLonelo] = "JunkrotBoltoloLonelo-bd4e9fad7228b9d6"
+buildKeys[buildJunkrotBoltoloLonelo] = "JunkrotBoltoloLonelo-4c031a36c88faa1e"
 function buildJunkrotHubcappaWobbla()
 local CACHE_KEY = "JunkrotHubcappaWobbla-d659c65767a877be"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -76333,7 +77982,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotHubcappaWobbla] = "JunkrotHubcappaWobbla-3e8b3e72ad157e87"
+buildKeys[buildJunkrotHubcappaWobbla] = "JunkrotHubcappaWobbla-8e54228015c122eb"
 function buildJunkrotRemotinoMuto()
 local CACHE_KEY = "JunkrotRemotinoMuto-7038399fce0302a6"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -80002,7 +81651,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotRemotinoMuto] = "JunkrotRemotinoMuto-a1d86fa20d9cab82"
+buildKeys[buildJunkrotRemotinoMuto] = "JunkrotRemotinoMuto-dbb56c8f360f31d9"
 function buildJunkrotCabloTanglino()
 local CACHE_KEY = "JunkrotCabloTanglino-04fdc5e8600917fd"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -83666,7 +85315,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotCabloTanglino] = "JunkrotCabloTanglino-4f969efcb69aa52e"
+buildKeys[buildJunkrotCabloTanglino] = "JunkrotCabloTanglino-327a046f68912b00"
 function buildJunkrotBulboFulminato()
 local CACHE_KEY = "JunkrotBulboFulminato-6c23c6cc3eb9e59a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -87332,7 +88981,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotBulboFulminato] = "JunkrotBulboFulminato-4b2c162db58f942d"
+buildKeys[buildJunkrotBulboFulminato] = "JunkrotBulboFulminato-01ba25f2d9961d25"
 function buildJunkrotCrumboPoppalot()
 local CACHE_KEY = "JunkrotCrumboPoppalot-67aaced0972168d7"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -90997,7 +92646,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotCrumboPoppalot] = "JunkrotCrumboPoppalot-fa4f00ea5b5d0a8e"
+buildKeys[buildJunkrotCrumboPoppalot] = "JunkrotCrumboPoppalot-58ec313829484869"
 function buildJunkrotPannettoPatchato()
 local CACHE_KEY = "JunkrotPannettoPatchato-28485e328fd1b2b8"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -94643,7 +96292,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotPannettoPatchato] = "JunkrotPannettoPatchato-22d3020db187cfd7"
+buildKeys[buildJunkrotPannettoPatchato] = "JunkrotPannettoPatchato-0b7101933fb4837c"
 function buildJunkrotBlendroCigolante()
 local CACHE_KEY = "JunkrotBlendroCigolante-95038ccc37324389"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -98306,7 +99955,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotBlendroCigolante] = "JunkrotBlendroCigolante-ffe2ae01b2420b35"
+buildKeys[buildJunkrotBlendroCigolante] = "JunkrotBlendroCigolante-dc460f67bbaa5b5d"
 function buildJunkrotJackoloCrickato()
 local CACHE_KEY = "JunkrotJackoloCrickato-8f5f3a774a24bb30"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -101976,7 +103625,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotJackoloCrickato] = "JunkrotJackoloCrickato-4e976f8e59d42954"
+buildKeys[buildJunkrotJackoloCrickato] = "JunkrotJackoloCrickato-c4d46b4e17d60a5c"
 function buildJunkrotOilcannaGluglu()
 local CACHE_KEY = "JunkrotOilcannaGluglu-703a93dfb5452f36"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -105633,7 +107282,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotOilcannaGluglu] = "JunkrotOilcannaGluglu-93d13fcf92ce181f"
+buildKeys[buildJunkrotOilcannaGluglu] = "JunkrotOilcannaGluglu-6ff6832104c382de"
 function buildJunkrotMuffleroTossetto()
 local CACHE_KEY = "JunkrotMuffleroTossetto-f7e9f4ca754d1011"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -109296,7 +110945,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotMuffleroTossetto] = "JunkrotMuffleroTossetto-95f4a003036f36ec"
+buildKeys[buildJunkrotMuffleroTossetto] = "JunkrotMuffleroTossetto-7c86cf3991f5ba14"
 function buildJunkrotRadioloFruscio()
 local CACHE_KEY = "JunkrotRadioloFruscio-4bc37f2678f66aaf"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -112968,7 +114617,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotRadioloFruscio] = "JunkrotRadioloFruscio-201fe73e312b50f6"
+buildKeys[buildJunkrotRadioloFruscio] = "JunkrotRadioloFruscio-7944dbde3ea3df0f"
 function buildJunkrotFanettoWobblino()
 local CACHE_KEY = "JunkrotFanettoWobblino-bd7c7d848d1d4a66"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -116669,7 +118318,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotFanettoWobblino] = "JunkrotFanettoWobblino-e69e0c5d42a73b5b"
+buildKeys[buildJunkrotFanettoWobblino] = "JunkrotFanettoWobblino-57bdb48872b1ae2b"
 function buildJunkrotClockoTictacco()
 local CACHE_KEY = "JunkrotClockoTictacco-3cef37e91f5e22d5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -120352,7 +122001,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotClockoTictacco] = "JunkrotClockoTictacco-cf92bc712ddf24dc"
+buildKeys[buildJunkrotClockoTictacco] = "JunkrotClockoTictacco-5869215acba377a6"
 function buildJunkrotFrostboxGelatone()
 local CACHE_KEY = "JunkrotFrostboxGelatone-89f12efffdffc5e4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -124027,7 +125676,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotFrostboxGelatone] = "JunkrotFrostboxGelatone-cfd36b2d51002789"
+buildKeys[buildJunkrotFrostboxGelatone] = "JunkrotFrostboxGelatone-08f95db89e78e772"
 function buildJunkrotMicrondoBippetto()
 local CACHE_KEY = "JunkrotMicrondoBippetto-dcb2810cded30ac2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -127704,7 +129353,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotMicrondoBippetto] = "JunkrotMicrondoBippetto-a34e2153fc20e939"
+buildKeys[buildJunkrotMicrondoBippetto] = "JunkrotMicrondoBippetto-adc516e2dd5e72c3"
 function buildJunkrotMixerellaVroom()
 local CACHE_KEY = "JunkrotMixerellaVroom-4012ed5cb152af20"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -131373,7 +133022,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotMixerellaVroom] = "JunkrotMixerellaVroom-6f5836bb51f332b2"
+buildKeys[buildJunkrotMixerellaVroom] = "JunkrotMixerellaVroom-548a9f57cd079e9c"
 function buildJunkrotMopaMopetta()
 local CACHE_KEY = "JunkrotMopaMopetta-720bf564f79c63d4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -135061,7 +136710,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotMopaMopetta] = "JunkrotMopaMopetta-aef5a031b3c547e3"
+buildKeys[buildJunkrotMopaMopetta] = "JunkrotMopaMopetta-4c59984c0fc86318"
 function buildJunkrotDrilloTrapanino()
 local CACHE_KEY = "JunkrotDrilloTrapanino-4c3d7682e71cad6d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -138729,7 +140378,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotDrilloTrapanino] = "JunkrotDrilloTrapanino-2415ae85aac8af71"
+buildKeys[buildJunkrotDrilloTrapanino] = "JunkrotDrilloTrapanino-860a6e23307a027b"
 function buildJunkrotGrindellaScintilla()
 local CACHE_KEY = "JunkrotGrindellaScintilla-9cce7c1fe9e7b540"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -142409,7 +144058,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotGrindellaScintilla] = "JunkrotGrindellaScintilla-1b2f70e8ddabf760"
+buildKeys[buildJunkrotGrindellaScintilla] = "JunkrotGrindellaScintilla-c9f1dceb3fdeb85d"
 function buildJunkrotTelefonoRingaling()
 local CACHE_KEY = "JunkrotTelefonoRingaling-370d5aefe711bb96"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -146091,7 +147740,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTelefonoRingaling] = "JunkrotTelefonoRingaling-a3b4ae45b8e6a063"
+buildKeys[buildJunkrotTelefonoRingaling] = "JunkrotTelefonoRingaling-af36e7dc8974b07a"
 function buildJunkrotTypewrittoClackini()
 local CACHE_KEY = "JunkrotTypewrittoClackini-3ec2a62af96c898e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -149769,7 +151418,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTypewrittoClackini] = "JunkrotTypewrittoClackini-440f8a7b6bf85d4d"
+buildKeys[buildJunkrotTypewrittoClackini] = "JunkrotTypewrittoClackini-c21609d314f8119b"
 function buildJunkrotCamerinoFlashetto()
 local CACHE_KEY = "JunkrotCamerinoFlashetto-b0f5626bf68eadb4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -153448,7 +155097,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotCamerinoFlashetto] = "JunkrotCamerinoFlashetto-33dfeb99c33388a3"
+buildKeys[buildJunkrotCamerinoFlashetto] = "JunkrotCamerinoFlashetto-a8681520aa85dee1"
 function buildJunkrotDrippiDroppi()
 local CACHE_KEY = "JunkrotDrippiDroppi-b250a319254a1dad"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -157986,7 +159635,7 @@ local panels = Scrap.panels(L, {
 Scrap.panelParts(L, panels, { rivetsUpTo = 1.9 })
 finishParts()
 end
-buildKeys[buildJunkrotDrippiDroppi] = "JunkrotDrippiDroppi-e271cb5ccc5a5d5c"
+buildKeys[buildJunkrotDrippiDroppi] = "JunkrotDrippiDroppi-20cfa409ff18e1c4"
 function buildJunkrotDingDingDingDongo()
 local CACHE_KEY = "JunkrotDingDingDingDongo-ffbcb0d39817badb"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -162526,7 +164175,7 @@ local panels = Scrap.panels(L, {
 Scrap.panelParts(L, panels, { rivetsUpTo = 1.3 })
 finishParts()
 end
-buildKeys[buildJunkrotDingDingDingDongo] = "JunkrotDingDingDingDongo-c2b9da511f1b1bbc"
+buildKeys[buildJunkrotDingDingDingDongo] = "JunkrotDingDingDingDongo-34969d0fecb5cb5b"
 function buildJunkrotGrindoBeanbasher()
 local CACHE_KEY = "JunkrotGrindoBeanbasher-afd5ad08e212d882"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -166203,7 +167852,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotGrindoBeanbasher] = "JunkrotGrindoBeanbasher-2779b556e1fe0000"
+buildKeys[buildJunkrotGrindoBeanbasher] = "JunkrotGrindoBeanbasher-638341bf871e5b9b"
 function buildJunkrotAirfryoCroccante()
 local CACHE_KEY = "JunkrotAirfryoCroccante-93286196d7e6b700"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -169882,7 +171531,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotAirfryoCroccante] = "JunkrotAirfryoCroccante-5959890986891dd4"
+buildKeys[buildJunkrotAirfryoCroccante] = "JunkrotAirfryoCroccante-7358ee385dce7619"
 function buildJunkrotDishwashinoSplashetto()
 local CACHE_KEY = "JunkrotDishwashinoSplashetto-7cba577a599f5b23"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -173568,7 +175217,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotDishwashinoSplashetto] = "JunkrotDishwashinoSplashetto-c4a2bd3c4f2e0ae6"
+buildKeys[buildJunkrotDishwashinoSplashetto] = "JunkrotDishwashinoSplashetto-e379f1ace446e681"
 function buildJunkrotLawnmowoRuggito()
 local CACHE_KEY = "JunkrotLawnmowoRuggito-85b1914e73ec5d7c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -177248,7 +178897,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotLawnmowoRuggito] = "JunkrotLawnmowoRuggito-a1fdd43f2da5ce87"
+buildKeys[buildJunkrotLawnmowoRuggito] = "JunkrotLawnmowoRuggito-b1f3acb7c672f255"
 function buildJunkrotLeafblowaWhooshini()
 local CACHE_KEY = "JunkrotLeafblowaWhooshini-1bde1d1c54b1296b"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -180912,7 +182561,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotLeafblowaWhooshini] = "JunkrotLeafblowaWhooshini-ba1cbafd438fb448"
+buildKeys[buildJunkrotLeafblowaWhooshini] = "JunkrotLeafblowaWhooshini-57d992fb6a703810"
 function buildJunkrotPressurwashoSprizzo()
 local CACHE_KEY = "JunkrotPressurwashoSprizzo-60fef4c3777aab33"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -184593,7 +186242,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotPressurwashoSprizzo] = "JunkrotPressurwashoSprizzo-5569dc707a12f171"
+buildKeys[buildJunkrotPressurwashoSprizzo] = "JunkrotPressurwashoSprizzo-a760c62cdd6b8912"
 function buildJunkrotConsoloJoypaddino()
 local CACHE_KEY = "JunkrotConsoloJoypaddino-aca465be178d6742"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -188291,7 +189940,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotConsoloJoypaddino] = "JunkrotConsoloJoypaddino-26ac9840879c3e12"
+buildKeys[buildJunkrotConsoloJoypaddino] = "JunkrotConsoloJoypaddino-d7db424afedd777c"
 function buildJunkrotSpeakeroneBoomba()
 local CACHE_KEY = "JunkrotSpeakeroneBoomba-fbfbe03d79eb9318"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -191964,7 +193613,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotSpeakeroneBoomba] = "JunkrotSpeakeroneBoomba-227da99600e1928e"
+buildKeys[buildJunkrotSpeakeroneBoomba] = "JunkrotSpeakeroneBoomba-9b6dfbe5a05da0d6"
 function buildJunkrotRobovaccoGirotondo()
 local CACHE_KEY = "JunkrotRobovaccoGirotondo-e710f00f87ba5038"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -195637,7 +197286,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotRobovaccoGirotondo] = "JunkrotRobovaccoGirotondo-ad65190945dfdc40"
+buildKeys[buildJunkrotRobovaccoGirotondo] = "JunkrotRobovaccoGirotondo-481a05e20ca06a5e"
 function buildJunkrotClankClankClankScrapur()
 local CACHE_KEY = "JunkrotClankClankClankScrapur-18da0e49ac17fa63"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -200134,7 +201783,7 @@ local panels = Scrap.panels(W, {
 Scrap.panelParts(W, panels, { rivetsUpTo = TOP })
 finishParts()
 end
-buildKeys[buildJunkrotClankClankClankScrapur] = "JunkrotClankClankClankScrapur-261fdf11214253f0"
+buildKeys[buildJunkrotClankClankClankScrapur] = "JunkrotClankClankClankScrapur-1b81f6c50475ab9b"
 function buildJunkrotVrrVrrPatatrim()
 local CACHE_KEY = "JunkrotVrrVrrPatatrim-06473d3a2caeca87"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -204831,7 +206480,7 @@ end
 Scrap.panelParts(BODY, PANELS, {})
 finishParts()
 end
-buildKeys[buildJunkrotVrrVrrPatatrim] = "JunkrotVrrVrrPatatrim-267117977aed97a5"
+buildKeys[buildJunkrotVrrVrrPatatrim] = "JunkrotVrrVrrPatatrim-778e54cb919b38f3"
 function buildJunkrotChimneyziniSpannerini()
 local CACHE_KEY = "JunkrotChimneyziniSpannerini-8b4adf173ba25ee4"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -209372,7 +211021,7 @@ end
 Scrap.panelParts(T, panels)
 finishParts()
 end
-buildKeys[buildJunkrotChimneyziniSpannerini] = "JunkrotChimneyziniSpannerini-8ae76d025fb0f55a"
+buildKeys[buildJunkrotChimneyziniSpannerini] = "JunkrotChimneyziniSpannerini-20f0fdb6af9d19c6"
 function buildJunkrotRusteliRustela()
 local CACHE_KEY = "JunkrotRusteliRustela-759974148fb14aa2"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -213921,7 +215570,7 @@ local panels = Scrap.panels(W, {
 Scrap.panelParts(W, panels, { rust = { CACTUS = 0.2, DEEPGREEN = 0.2, SAGE = 0.2, MOSSY = 0.3, HIDE = 0.2, SLATE = 0.2, ASH = 0.2 } })
 finishParts()
 end
-buildKeys[buildJunkrotRusteliRustela] = "JunkrotRusteliRustela-3cdde7fb7f1d76e4"
+buildKeys[buildJunkrotRusteliRustela] = "JunkrotRusteliRustela-4b6b3a1bd8910ae7"
 function buildJunkrotBallerinaTincuppina()
 local CACHE_KEY = "JunkrotBallerinaTincuppina-1b59351ad06f9988"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -218465,7 +220114,7 @@ local panels = Scrap.panels(Cup, {
 Scrap.panelParts(Cup, panels, { rust = { CHINA = 0, ENAMEL = 0.1, TIN = 0.15, ALUMINIUM = 0.1, GALVANISED = 0.15 } })
 finishParts()
 end
-buildKeys[buildJunkrotBallerinaTincuppina] = "JunkrotBallerinaTincuppina-5b190ed64e411d2c"
+buildKeys[buildJunkrotBallerinaTincuppina] = "JunkrotBallerinaTincuppina-91cf3f497e7e7a74"
 function buildJunkrotTrashaleroTrashala()
 local CACHE_KEY = "JunkrotTrashaleroTrashala-f146a1bb6da69909"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -223039,7 +224688,7 @@ local panels = Scrap.panels(L, {
 Scrap.panelParts(L, panels, { rivetsUpTo = 1.95 })
 finishParts()
 end
-buildKeys[buildJunkrotTrashaleroTrashala] = "JunkrotTrashaleroTrashala-e3f91ab3e49a913b"
+buildKeys[buildJunkrotTrashaleroTrashala] = "JunkrotTrashaleroTrashala-d8667e95896b9986"
 function buildJunkrotSockettoSeiSette()
 local CACHE_KEY = "JunkrotSockettoSeiSette-d0a2f449b8a5fac5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -227614,7 +229263,7 @@ local panels = Scrap.panels(L, {
 Scrap.panelParts(L, panels, { rivetsUpTo = 3.0 })
 finishParts()
 end
-buildKeys[buildJunkrotSockettoSeiSette] = "JunkrotSockettoSeiSette-38c07af04317a356"
+buildKeys[buildJunkrotSockettoSeiSette] = "JunkrotSockettoSeiSette-d47dc2e74ac7ce8b"
 function buildJunkrotChefbotPrecisio()
 local CACHE_KEY = "JunkrotChefbotPrecisio-ff3ce59adcaaeada"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -231286,7 +232935,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotChefbotPrecisio] = "JunkrotChefbotPrecisio-90469ede79277582"
+buildKeys[buildJunkrotChefbotPrecisio] = "JunkrotChefbotPrecisio-aaec862713eb929e"
 function buildJunkrotSousvideSilvano()
 local CACHE_KEY = "JunkrotSousvideSilvano-d7f52cb16f32455a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -234949,7 +236598,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotSousvideSilvano] = "JunkrotSousvideSilvano-48fce292d0c5e0d2"
+buildKeys[buildJunkrotSousvideSilvano] = "JunkrotSousvideSilvano-0e51ca3c5109ec2c"
 function buildJunkrotKnifeblockSlicetta()
 local CACHE_KEY = "JunkrotKnifeblockSlicetta-0b3ee48dbdd88557"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -238622,7 +240271,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotKnifeblockSlicetta] = "JunkrotKnifeblockSlicetta-e46a27324c52de28"
+buildKeys[buildJunkrotKnifeblockSlicetta] = "JunkrotKnifeblockSlicetta-ce4f7db091df93de"
 function buildJunkrotTorquoWrenchelli()
 local CACHE_KEY = "JunkrotTorquoWrenchelli-04385b601683f3d5"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -242295,7 +243944,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTorquoWrenchelli] = "JunkrotTorquoWrenchelli-a9aec298bff600f8"
+buildKeys[buildJunkrotTorquoWrenchelli] = "JunkrotTorquoWrenchelli-bfad669b4c49b133"
 function buildJunkrotLaserlevelLineo()
 local CACHE_KEY = "JunkrotLaserlevelLineo-56b00ea33a8c0f18"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -245952,7 +247601,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotLaserlevelLineo] = "JunkrotLaserlevelLineo-2e8afdbaedad74df"
+buildKeys[buildJunkrotLaserlevelLineo] = "JunkrotLaserlevelLineo-ea231812a0f7a247"
 function buildJunkrotWeldettaSparkalot()
 local CACHE_KEY = "JunkrotWeldettaSparkalot-f3a64b6d965fabb1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -249653,7 +251302,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotWeldettaSparkalot] = "JunkrotWeldettaSparkalot-a2b7d4a67f976877"
+buildKeys[buildJunkrotWeldettaSparkalot] = "JunkrotWeldettaSparkalot-e2fb68fd3628fee8"
 function buildJunkrotDronettoBuzzatti()
 local CACHE_KEY = "JunkrotDronettoBuzzatti-f9811f3f0cd92e0a"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -253333,7 +254982,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotDronettoBuzzatti] = "JunkrotDronettoBuzzatti-de05a6e94b6fc1d8"
+buildKeys[buildJunkrotDronettoBuzzatti] = "JunkrotDronettoBuzzatti-2f52d676b6731f9d"
 function buildJunkrotTickworthPocketti()
 local CACHE_KEY = "JunkrotTickworthPocketti-12d90e6dd1df7575"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -257018,7 +258667,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotTickworthPocketti] = "JunkrotTickworthPocketti-a23ba480046d97df"
+buildKeys[buildJunkrotTickworthPocketti] = "JunkrotTickworthPocketti-3824cbc1375aadc1"
 function buildJunkrotHeadphonoBassimo()
 local CACHE_KEY = "JunkrotHeadphonoBassimo-4a3186e3553e8b5c"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -260687,7 +262336,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotHeadphonoBassimo] = "JunkrotHeadphonoBassimo-12f9bdeb52a00421"
+buildKeys[buildJunkrotHeadphonoBassimo] = "JunkrotHeadphonoBassimo-825442a133f62371"
 function buildJunkrotGascaniniHonkini()
 local CACHE_KEY = "JunkrotGascaniniHonkini-de0d9323510cd64e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -265300,7 +266949,7 @@ local panels = Scrap.panels(L, {
 Scrap.panelParts(L, panels, {})
 finishParts()
 end
-buildKeys[buildJunkrotGascaniniHonkini] = "JunkrotGascaniniHonkini-9757c84f3a1c3f3e"
+buildKeys[buildJunkrotGascaniniHonkini] = "JunkrotGascaniniHonkini-43b3e42d9b976421"
 function buildJunkrotPercolattoNinjatto()
 local CACHE_KEY = "JunkrotPercolattoNinjatto-98df2a7b223242f3"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -269860,7 +271509,7 @@ part("Hilts", nil, { 0.25, 0.08, 0.08 }, function(mesh)
 end, 50, 0.2)
 finishParts()
 end
-buildKeys[buildJunkrotPercolattoNinjatto] = "JunkrotPercolattoNinjatto-69ad4c86bf07ed82"
+buildKeys[buildJunkrotPercolattoNinjatto] = "JunkrotPercolattoNinjatto-ac69fa142973c325"
 function buildJunkrotBoilerdiroCrockpotilo()
 local CACHE_KEY = "JunkrotBoilerdiroCrockpotilo-af1fde3030d2257e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -274457,7 +276106,7 @@ local panels = Scrap.panels(L, {
 Scrap.panelParts(L, panels, { rivetsUpTo = 3.1 })
 finishParts()
 end
-buildKeys[buildJunkrotBoilerdiroCrockpotilo] = "JunkrotBoilerdiroCrockpotilo-510963c602a9035f"
+buildKeys[buildJunkrotBoilerdiroCrockpotilo] = "JunkrotBoilerdiroCrockpotilo-6812586e31713b96"
 function buildJunkrotSnackomaticPrototipo()
 local CACHE_KEY = "JunkrotSnackomaticPrototipo-c85bf7afa38e52c1"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -278131,7 +279780,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotSnackomaticPrototipo] = "JunkrotSnackomaticPrototipo-215f2899be7914f5"
+buildKeys[buildJunkrotSnackomaticPrototipo] = "JunkrotSnackomaticPrototipo-26288fa6a11388ac"
 function buildJunkrotHoverbikkoZoomzoom()
 local CACHE_KEY = "JunkrotHoverbikkoZoomzoom-87108aebe6d3ebad"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -281816,7 +283465,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotHoverbikkoZoomzoom] = "JunkrotHoverbikkoZoomzoom-53f62bf01f1212b3"
+buildKeys[buildJunkrotHoverbikkoZoomzoom] = "JunkrotHoverbikkoZoomzoom-db972d323ae0db64"
 function buildJunkrotHolofonoShimmerra()
 local CACHE_KEY = "JunkrotHolofonoShimmerra-5e11d99f081a2b88"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -285487,7 +287136,7 @@ part("Legs", nil, RUBBER_BLACK, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildJunkrotHolofonoShimmerra] = "JunkrotHolofonoShimmerra-9d9121ce649c2898"
+buildKeys[buildJunkrotHolofonoShimmerra] = "JunkrotHolofonoShimmerra-65c71b022df346dc"
 function buildJunkrotLaVacuumaSaturnita()
 local CACHE_KEY = "JunkrotLaVacuumaSaturnita-3b4fe6eaafb7857d"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -290118,7 +291767,7 @@ part("Nostrils", nil, { 0.35, 0.15, 0.17 }, function(mesh)
 end, true, 0)
 finishParts()
 end
-buildKeys[buildJunkrotLaVacuumaSaturnita] = "JunkrotLaVacuumaSaturnita-c66936a36963a736"
+buildKeys[buildJunkrotLaVacuumaSaturnita] = "JunkrotLaVacuumaSaturnita-73c8cdfcf36de575"
 function buildJunkrotTheMonolito()
 local CACHE_KEY = "JunkrotTheMonolito-2c6695c03bdf3196"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -293683,7 +295332,7 @@ part("Hum", nil, { 0.5, 0.3, 0.9 }, function(mesh)
 end, true, 0, nil, 1.5, true)
 finishParts()
 end
-buildKeys[buildJunkrotTheMonolito] = "JunkrotTheMonolito-3f7e70d4ae0623c1"
+buildKeys[buildJunkrotTheMonolito] = "JunkrotTheMonolito-71c8928879741ca4"
 function buildJunkrotUnitZero()
 local CACHE_KEY = "JunkrotUnitZero-35a097ddc3bbb021"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -297259,7 +298908,7 @@ part("Shadow", nil, { 0.5, 0.8, 1.0 }, function(mesh)
 end, true, 0, nil, 1.2, true)
 finishParts()
 end
-buildKeys[buildJunkrotUnitZero] = "JunkrotUnitZero-9c855b563ebd143f"
+buildKeys[buildJunkrotUnitZero] = "JunkrotUnitZero-2fd55b80153e9ff1"
 function buildProofToaster()
 local CACHE_KEY = "ProofToaster-a9618b4a08e31118"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -300712,7 +302361,7 @@ part("Toast", nil, BREAD, function(mesh)
 end, nil, RUBBER)
 finishParts()
 end
-buildKeys[buildProofToaster] = "ProofToaster-39187b35ced582a5"
+buildKeys[buildProofToaster] = "ProofToaster-5f89e6721e662e90"
 function buildProofKettle()
 local CACHE_KEY = "ProofKettle-515ddb4e8083616e"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -304179,7 +305828,7 @@ part("Body", nil, ENAMEL, function(mesh)
 end, nil, 0.25)
 finishParts()
 end
-buildKeys[buildProofKettle] = "ProofKettle-1eb6d2c104c0d0cd"
+buildKeys[buildProofKettle] = "ProofKettle-51846c3931c745a0"
 function buildProofShark()
 local CACHE_KEY = "ProofShark-ebde7dbef1c77450"
 -- Rarity accents, in sRGB: grey common, green uncommon, blue rare, gold
@@ -307641,16 +309290,17 @@ part("Body", nil, SHARK, function(mesh)
 end, nil, 0.2)
 finishParts()
 end
-buildKeys[buildProofShark] = "ProofShark-7e3b2d6b25523b9f"
-slabKeys[307820] = "1dcc2253c5c302f0-7ec5bfa1fe5329ef"
-slabKeys[307984] = "1dcc2253c5c302f0-6ad7b70c6ecee2a9"
-slabKeys[308063] = "1dcc2253c5c302f0-1439853d85f21bad"
-slabKeys[308071] = "1dcc2253c5c302f0-dbd59378b4f53cfc"
-slabKeys[308111] = "1dcc2253c5c302f0-68e8156566c13d8e"
-slabKeys[308221] = "1dcc2253c5c302f0-09a6759228b03a28"
-slabKeys[308230] = "1dcc2253c5c302f0-4bed7244ea680ec2"
-slabKeys[308257] = "1dcc2253c5c302f0-2f5b4070ee3aa512"
-slabKeys[308298] = "1dcc2253c5c302f0-61d86411205cd0df"
+buildKeys[buildProofShark] = "ProofShark-4a36e81578067610"
+slabKeys[309467] = "8406ad681d096eb3-3fdae4e14ff3605c"
+slabKeys[309626] = "8406ad681d096eb3-6ad7b70c6ecee2a9"
+slabKeys[309705] = "8406ad681d096eb3-1439853d85f21bad"
+slabKeys[309713] = "8406ad681d096eb3-dbd59378b4f53cfc"
+slabKeys[309753] = "8406ad681d096eb3-e6328242ecab9497"
+slabKeys[309862] = "8406ad681d096eb3-09a6759228b03a28"
+slabKeys[309871] = "8406ad681d096eb3-4bed7244ea680ec2"
+slabKeys[309898] = "8406ad681d096eb3-2f5b4070ee3aa512"
+slabKeys[309929] = "8406ad681d096eb3-7e2639cb9124201d"
+slabKeys[309958] = "8406ad681d096eb3-0e10b2c0f9b2dae7"
 -- uses: MainIsland CapsuleLoop RebirthPress BuildBay YardFence YardFenceHalf YardFooting YardGate PlotMarker HubShop HubTinkerer HubBeacon HubStage BeltCrossing JunkMound ScrapPalm ScrapTreeAntenna ScrapTreeExhaust ScrapTreeLamppost ScrapTreeRebar ScrapTreeSignpost RockBoulderPile HubSectionA HubSectionB HubSectionEnd YardIsland PadKitchen PadGarage PadGadget ScrapCrate CapsuleScrap CapsuleSalvaged CapsuleRefurbished CapsuleFactory CapsulePrecision CapsulePrototype CapsuleSecret JunkrotCanettoRustini JunkrotSpoonzoBentolo JunkrotKettlinaDentata JunkrotTyroFlattino JunkrotBoltoloLonelo JunkrotHubcappaWobbla JunkrotRemotinoMuto JunkrotCabloTanglino JunkrotBulboFulminato JunkrotCrumboPoppalot JunkrotPannettoPatchato JunkrotBlendroCigolante JunkrotJackoloCrickato JunkrotOilcannaGluglu JunkrotMuffleroTossetto JunkrotRadioloFruscio JunkrotFanettoWobblino JunkrotClockoTictacco JunkrotFrostboxGelatone JunkrotMicrondoBippetto JunkrotMixerellaVroom JunkrotMopaMopetta JunkrotDrilloTrapanino JunkrotGrindellaScintilla JunkrotTelefonoRingaling JunkrotTypewrittoClackini JunkrotCamerinoFlashetto JunkrotDrippiDroppi JunkrotDingDingDingDongo JunkrotGrindoBeanbasher JunkrotAirfryoCroccante JunkrotDishwashinoSplashetto JunkrotLawnmowoRuggito JunkrotLeafblowaWhooshini JunkrotPressurwashoSprizzo JunkrotConsoloJoypaddino JunkrotSpeakeroneBoomba JunkrotRobovaccoGirotondo JunkrotClankClankClankScrapur JunkrotVrrVrrPatatrim JunkrotChimneyziniSpannerini JunkrotRusteliRustela JunkrotBallerinaTincuppina JunkrotTrashaleroTrashala JunkrotSockettoSeiSette JunkrotChefbotPrecisio JunkrotSousvideSilvano JunkrotKnifeblockSlicetta JunkrotTorquoWrenchelli JunkrotLaserlevelLineo JunkrotWeldettaSparkalot JunkrotDronettoBuzzatti JunkrotTickworthPocketti JunkrotHeadphonoBassimo JunkrotGascaniniHonkini JunkrotPercolattoNinjatto JunkrotBoilerdiroCrockpotilo JunkrotSnackomaticPrototipo JunkrotHoverbikkoZoomzoom JunkrotHolofonoShimmerra JunkrotLaVacuumaSaturnita JunkrotTheMonolito JunkrotUnitZero ProofToaster ProofKettle ProofShark
 -- include: HandFinish
 -- Server Map: the floating-island server map from
@@ -307661,7 +309311,7 @@ slabKeys[308298] = "1dcc2253c5c302f0-61d86411205cd0df"
 -- origin: an open hub with a minecart loop round it, eight fenced yards on a
 -- ring near the rim with their gates facing the hub, and open ground
 -- between with rough ground in the gaps, and a town inside the belt.
--- Labels: Island, Plaza, Rough1-Rough10, Streets, Plot1-Plot8 with Yard1_<piece>-
+-- Labels: Island, Plaza, Rough1-Rough10, Lamps, Path1-Path8, Plot1-Plot8 with Yard1_<piece>-
 -- Yard8_<piece>, CapsuleLoop, Spawn, Market, Tinkerer, Landmark, EventStage
 -- and Crossing1-Crossing8.
 
@@ -307675,14 +309325,13 @@ local YARD_TIER = DECK
 local PLOT_WIDTH, PLOT_DEPTH = 96, 112
 -- Yards stand on a ring this far out, yard i at (i - 0.5) * 45 degrees.
 local YARD_RADIUS = 210
--- The hub: paved plaza to HUB_PAVED, then the ring road to HUB_ROAD.
-local HUB_PAVED, HUB_ROAD = 84, 101
+-- The hub's concrete plaza reaches this far out; dirt paths run on to the yards.
+local HUB_EDGE = 101
 -- MainIsland's turf thickness: the column generator's GRASS_HEIGHT, 0.45 of
 -- its DETAIL (0.34 * RADIUS / 4.5) for a RADIUS of 278.
 local ISLAND_TURF = 0.45 * 0.34 * 278 / 4.5
 
 local CONCRETE = { 0.55, 0.54, 0.5 }
-local ROAD = { 0.42, 0.41, 0.4 }
 local DIRT = { 0.47, 0.4, 0.31 }
 local ROCK = { 0.56, 0.5, 0.42 }
 local MARK = { 0.85, 0.65, 0.15 }
@@ -307705,11 +309354,6 @@ local SLAB_COATS = {
 	Pipe = "metal",
 	Slab = "rock",
 	SlabStone = "rock",
-	Walks = "rock",
-	Tracks = "rock",
-	Kerbs = "rock",
-	Drains = "metal",
-	Conduits = "metal",
 	LampPosts = "metal",
 }
 local ROCK_PARTS = { Stones = true, Grit = true, PipeStone = true, SlabStone = true }
@@ -307718,8 +309362,10 @@ local FOOTING_REACH = 0.75
 -- What stands on the sand in the slab being built: { x, y, radius x, radius y, seed }.
 local groundFeet = {}
 local SHADE = { 0.13, 0.09, 0.07 }
--- The turf stands proud of DECK; the shadow sheets lie just above it.
-local SHADE_Z = DECK + 0.85
+-- The island's top is flat at DECK (measured in Studio: sand 2.00, yard dirt
+-- 2.03); the shadow sheets lie 0.01 over it, the most a shade may stand off
+-- the ground.
+local SHADE_Z = DECK + 0.01
 -- A contact shadow is ambient occlusion, not a cast shadow (the game lights the
 -- world itself): a thin stepped line hugging the foot, whatever the object's
 -- size. `past` is studs outside the foot's edge.
@@ -307815,17 +309461,18 @@ end
 -- The island itself, its turf top at DECK.
 placeModel("Island", buildMainIsland, 0, 0, DECK - ISLAND_TURF)
 
--- The hub's paving: concrete slabs on the plaza, asphalt on the ring road,
--- a hair over the turf.
+-- The hub's floor: one plain, weathered concrete plaza out to HUB_EDGE, a
+-- hair over the turf. No joints or markings: a square grid would sit square
+-- to the world, not to the round hub.
 slab("Plaza", function()
 	chunkedPart("Paving", nil, CONCRETE, function(mesh)
 		local STEPS = 128
 		local rings = {}
-		for r = 4, HUB_ROAD, 4 do
+		for r = 4, HUB_EDGE, 4 do
 			table.insert(rings, r)
 		end
-		if rings[#rings] ~= HUB_ROAD then
-			table.insert(rings, HUB_ROAD)
+		if rings[#rings] ~= HUB_EDGE then
+			table.insert(rings, HUB_EDGE)
 		end
 		local middle = mesh:vertex(0, 0, DECK + 0.05)
 		local grid = {}
@@ -307843,19 +309490,14 @@ slab("Plaza", function()
 			end
 		end
 	end, nil, function(x, y)
+		-- Weathering: broad stains over a fine mottle, and dust blown in
+		-- toward the edge where it meets the turf.
 		local r = math.sqrt(x * x + y * y)
-		if r < HUB_PAVED then
-			local k = 1 + fbm(x / 4, y / 4, 120) * 0.12
-			if math.min(x % 6, 6 - x % 6, y % 6, 6 - y % 6) < 0.08 then
-				k -= 0.2
-			end
-			return CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * k
-		end
-		local k = 1 + fbm(x / 2, y / 2, 50) * 0.15
-		if r > HUB_ROAD - 1 or (r > HUB_PAVED and r < HUB_PAVED + 1) then
-			return MARK[1], MARK[2], MARK[3]
-		end
-		return ROAD[1] * k, ROAD[2] * k, ROAD[3] * k
+		local stain = smooth(0.1, 0.35, fbm(x / 14, y / 14, 121))
+		local dust = smooth(HUB_EDGE - 10, HUB_EDGE, r + fbm(x / 5, y / 5, 122) * 4)
+		local k = (1 + fbm(x / 4, y / 4, 120) * 0.12) * (1 - 0.1 * stain)
+		local red, green, blue = CONCRETE[1] * k, CONCRETE[2] * k, CONCRETE[3] * k
+		return red + (DIRT[1] - red) * dust * 0.45, green + (DIRT[2] - green) * dust * 0.45, blue + (DIRT[3] - blue) * dust * 0.45
 	end, true)
 end, 0, 0)
 
@@ -308133,13 +309775,14 @@ for n, spot in LONE_WRECKS do
 				boulder(mesh, 0, side * 3.6, DECK, 2.4, n * 9, 0.8)
 			end, nil, rockColour, nil, nil, true)
 			part("Pipe", nil, { 0.46, 0.28, 0.17 }, function(mesh)
-				-- Bent where it was dropped, flanged at one end, and a sheared-off length beside it.
-				for _, spot in { { -4.4, -0.4 }, { -2.2, 0 }, { 0.3, side * 1.2 }, { 3.1, side * 2.6 }, { 1.6, -2.2 * side }, { 4.2, -2.9 * side } } do
+				-- A straight run into a right-angle elbow, flanged at one end, and a
+				-- sheared-off length beside it.
+				for _, spot in { { -4.4, -0.4 }, { -2, -0.4 }, { 0.5, -0.4 }, { 2.6, -0.1 * side }, { 3, side * 1.4 }, { 3, side * 2.8 }, { 1.6, -2.6 * side }, { 4.2, -3.3 * side } } do
 					table.insert(groundFeet, { spot[1], spot[2], 0.9, 0.9, n })
 				end
-				tube(mesh, { { -4.4, -0.4, DECK + 0.65 }, { -0.4, side * 0.4, DECK + 1.0 }, { 3.1, side * 2.6, DECK + 0.55 } }, 1.1, 12)
+				tube(mesh, roundedPath({ { -4.4, -0.4, DECK + 0.65 }, { 3, -0.4, DECK + 0.65 }, { 3, side * 2.8, DECK + 0.65 } }, 1.7, 6), 1.1, 12)
 				ring(mesh, -4.5, -0.4, DECK + 0.65, 0.7, 1.55, 0.22, "x", 14)
-				tube(mesh, { { 1.6, -2.2 * side, DECK + 0.45 }, { 4.2, -2.9 * side, DECK + 0.5 } }, 0.8, 10)
+				tube(mesh, { { 1.6, -2.6 * side, DECK + 0.45 }, { 4.2, -3.3 * side, DECK + 0.5 } }, 0.8, 10)
 			end, nil, 0.8)
 		else
 			part("Slab", nil, { 0.56, 0.55, 0.52 }, function(mesh)
@@ -308170,8 +309813,9 @@ local function yardGround(u: number, v: number, seed: number): (number, number, 
 	local yardWork = smooth(reach, reach * 0.35, math.sqrt(du * du + dv * dv * 1.4) + fbm(u / 5, v / 5, seed + 4) * 8)
 	local packed = math.max(lane * 0.85, yardWork * (0.6 + (seed % 3) * 0.15))
 	local k = 1 + fbm(u / 3, v / 3, seed) * 0.2 + fbm(u * 2, v * 2, seed + 1) * 0.08
-	local r, g, b = YARD_DIRT[1] * k, YARD_DIRT[2] * k, YARD_DIRT[3] * k
-	return r + (0.54 * k - r) * packed, g + (0.53 * k - g) * packed, b + (0.5 * k - b) * packed
+	-- Trodden dirt packs a shade darker; it never bleaches.
+	local firm = k * (1 - 0.14 * packed)
+	return YARD_DIRT[1] * firm, YARD_DIRT[2] * firm, YARD_DIRT[3] * firm
 end
 
 -- A yard's shell on the plot at (x, y), turned so its gate (local -y) faces
@@ -308206,11 +309850,8 @@ local function yardShell(index: number, x: number, y: number, turn: number)
 	end
 	piece("Gate", buildYardGate, FENCE, 0, -PLOT_DEPTH / 2)
 	piece("PlotMarker", buildPlotMarker, FENCE, 9, -PLOT_DEPTH / 2 - 2.25)
-	-- The yard's remade props on their starter spots (STARTER_LAYOUT in
-	-- Config/Yard), turned to face into the yard: the fence is too close in
-	-- front of them for a player to stand there.
-	piece("Bay", buildBuildBay, 1, -19, -49, 0, 180)
-	piece("Press", buildRebirthPress, 1, 18, -48, 0, 180)
+	-- No Bay or Press here: the game clones the real, movable ones from the
+	-- kit into each yard at runtime (PlotService), so map copies would double them.
 end
 
 for i = 1, 8 do
@@ -308253,7 +309894,7 @@ end
 -- The capsule belt and its factory (CapsuleLoop), on the plaza.
 placeModel("CapsuleLoop", buildCapsuleLoop, 0, 0, DECK + 0.05)
 
--- New players start on a ring painted on the plaza.
+-- New players start on a ring painted on the plaza, resting on its top.
 slab("Spawn", function()
 	part("Pad", nil, MARK, function(mesh)
 		ring(mesh, 0, 0, DECK + 0.05, 8, 9, 0.1, "z", 48)
@@ -308267,178 +309908,70 @@ placeModel("Tinkerer", buildHubTinkerer, -48, 0, TOWN_Z, 90)
 placeModel("Landmark", buildHubBeacon, 0, 0, TOWN_Z)
 placeModel("EventStage", buildHubStage, math.cos(math.rad(-45)) * 46, math.sin(math.rad(-45)) * 46, TOWN_Z, 225)
 
--- The hub's streets. A promenade just inside the belt meets every bridge,
--- walks tie it to the landmark and the buildings, and a kerbed track runs from
--- each gate to the ring road.
-local PROMENADE_INNER, PROMENADE_OUTER = 60.5, 67
-local WALK = { 0.47, 0.46, 0.43 }
-local KERB = { 0.62, 0.6, 0.55 }
-local TRACK = { 0.3, 0.26, 0.21 }
-local TRACK_END = YARD_RADIUS - PLOT_DEPTH / 2
--- The turf stands proud of DECK, so a track is laid up on top of it.
-local TRACK_TOP = DECK + 0.8
-local WALK_BEARINGS = { 22.5, 157.5, 247.5, 292.5 }
--- A building's front toward the landmark: bearing and where the walk stops.
-local BUILDING_WALKS = { { 90, 33 }, { 180, 39 }, { -45, 33 } }
+-- The hub's lamp posts, round the plaza just inside the belt, each turned to
+-- face along its bearing so it sits square to the circle, not to the world.
+local LAMP_RADIUS = 67.8
 local function polar(degrees: number, r: number): (number, number)
 	return math.cos(math.rad(degrees)) * r, math.sin(math.rad(degrees)) * r
 end
-local function flatRing(mesh, inner: number, outer: number, z: number)
-	local STEPS = 96
-	for a = 0, STEPS - 1 do
-		local t0, t1 = 2 * math.pi * a / STEPS, 2 * math.pi * (a + 1) / STEPS
-		mesh:face({
-			mesh:vertex(math.cos(t0) * outer, math.sin(t0) * outer, z),
-			mesh:vertex(math.cos(t1) * outer, math.sin(t1) * outer, z),
-			mesh:vertex(math.cos(t1) * inner, math.sin(t1) * inner, z),
-			mesh:vertex(math.cos(t0) * inner, math.sin(t0) * inner, z),
-		})
-	end
+-- A mesh whose local x runs out along `degrees` from (cx, cy).
+local function facing(mesh, cx: number, cy: number, degrees: number)
+	local c, s = math.cos(math.rad(degrees)), math.sin(math.rad(degrees))
+	return {
+		vertex = function(_self, x: number, y: number, z: number)
+			return mesh:vertex(cx + x * c - y * s, cy + x * s + y * c, z)
+		end,
+		face = function(_self, face)
+			return mesh:face(face)
+		end,
+	}
 end
-slab("Streets", function()
-	local STREET_Z = DECK + 0.1
-	part("Walks", nil, WALK, function(mesh)
-		flatRing(mesh, PROMENADE_INNER, PROMENADE_OUTER, STREET_Z)
-		flatRing(mesh, 9, 12.5, STREET_Z)
-		for _, bearing in WALK_BEARINGS do
-			local x0, y0 = polar(bearing, 12)
-			local x1, y1 = polar(bearing, PROMENADE_INNER)
-			run(mesh, x0, y0, STREET_Z, x1, y1, STREET_Z, 2.5, DECK)
-		end
-		for _, building in BUILDING_WALKS do
-			local x0, y0 = polar(building[1], 12)
-			local x1, y1 = polar(building[1], building[2])
-			run(mesh, x0, y0, STREET_Z, x1, y1, STREET_Z, 2.5, DECK)
-		end
-	end, nil, function(x, y)
-		-- Trodden darker down the middle of the promenade.
-		local r = math.sqrt(x * x + y * y)
-		local trodden = 1 - 0.28 * math.exp(-((r - 63.75) / 2.6) ^ 2)
-		local k = (1 + fbm(x / 3, y / 3, 140) * 0.1) * trodden
-		return WALK[1] * k, WALK[2] * k, WALK[3] * k
-	end, nil, nil, true)
-	part("LaneMarks", nil, { 0.86, 0.7, 0.16 }, function(mesh)
-		-- Painted dashes round the promenade and along the walks, for the carts.
-		local PAINT_Z = STREET_Z + 0.02
-		for a = 0, 39 do
-			local t0, t1 = a * 9, a * 9 + 6
-			local x0, y0 = polar(t0, PROMENADE_INNER + 0.7)
-			local x1, y1 = polar(t1, PROMENADE_INNER + 0.7)
-			run(mesh, x0, y0, PAINT_Z, x1, y1, PAINT_Z, 0.32, DECK)
-		end
-		for _, bearing in WALK_BEARINGS do
-			local r = 15
-			while r < PROMENADE_INNER - 2 do
-				local x0, y0 = polar(bearing, r)
-				local x1, y1 = polar(bearing, r + 3)
-				run(mesh, x0, y0, PAINT_Z, x1, y1, PAINT_Z, 0.26, DECK)
-				r += 5
-			end
-		end
-	end, nil, 0.5, nil, nil, true)
-	part("Drains", nil, { 0.16, 0.16, 0.18 }, function(mesh)
-		-- A barred drain every so often round the promenade, flush with the walk.
-		local DRAIN_Z = STREET_Z + 0.02
-		for a = 1, 8 do
-			local cx, cy = polar(a * 45 - 8, PROMENADE_OUTER - 0.9)
-			box(mesh, cx, cy, DECK, 2.6, 2.6, DRAIN_Z - DECK)
-		end
-		-- And one at the foot of each walk into the town.
-		for _, bearing in WALK_BEARINGS do
-			local cx, cy = polar(bearing, 14.6)
-			box(mesh, cx, cy, DECK, 1.2, 1.2, DRAIN_Z - DECK)
-		end
-	end, nil, 0.4, nil, nil, true)
-	part("Tracks", nil, TRACK, function(mesh)
-		for i = 1, 8 do
-			local degrees = (i - 0.5) * 45
-			local x0, y0 = polar(degrees, HUB_ROAD - 0.5)
-			local x1, y1 = polar(degrees, TRACK_END + 1)
-			run(mesh, x0, y0, TRACK_TOP, x1, y1, TRACK_TOP, 4.75, DECK - 0.2)
-		end
-	end, nil, function(x, y)
-		local k = 1 + fbm(x / 2, y / 2, 150) * 0.16
-		return TRACK[1] * k, TRACK[2] * k, TRACK[3] * k
-	end, nil, nil, true)
-	part("Kerbs", nil, KERB, function(mesh)
-		local SEGMENT = 3
-		-- The pale bars over each drain, standing out on its dark pit.
-		for a = 1, 8 do
-			local cx, cy = polar(a * 45 - 8, PROMENADE_OUTER - 0.9)
-			for s = -3, 3 do
-				box(mesh, cx + s * 0.36, cy, STREET_Z + 0.02, 0.2, 2.4, 0.05)
-			end
-		end
-		for i = 1, 8 do
-			local degrees = (i - 0.5) * 45
-			local across = math.rad(degrees + 90)
-			for _, side in { -5, 5 } do
-				local ox, oy = math.cos(across) * side, math.sin(across) * side
-				local r = HUB_ROAD
-				while r + SEGMENT <= TRACK_END do
-					local x0, y0 = polar(degrees, r)
-					local x1, y1 = polar(degrees, r + SEGMENT - 0.15)
-					run(mesh, x0 + ox, y0 + oy, TRACK_TOP + 0.22, x1 + ox, y1 + oy, TRACK_TOP + 0.22, 0.3, DECK - 0.2)
-					r += SEGMENT
-				end
-			end
-		end
-	end, nil, function(x, y)
-		local k = 1 + fbm(x, y, 160) * 0.14
-		return KERB[1] * k, KERB[2] * k, KERB[3] * k
-	end, nil, nil, true)
-	part("Conduits", nil, { 0.24, 0.24, 0.26 }, function(mesh)
-		local CONDUIT_TOP, COVER_TOP = DECK + 0.4, DECK + 0.46
-		-- A run from a to b with clamps, and a riser into the building at b.
-		local function conduit(ax: number, ay: number, bx: number, by: number)
-			run(mesh, ax, ay, CONDUIT_TOP, bx, by, CONDUIT_TOP, 0.2, DECK)
-			local dx, dy = bx - ax, by - ay
-			local length = math.sqrt(dx * dx + dy * dy)
-			local ux, uy = dx / length, dy / length
-			local along = 5
-			while along < length - 2 do
-				local cx, cy = ax + ux * along, ay + uy * along
-				run(mesh, cx - uy * 0.42, cy + ux * 0.42, DECK + 0.5, cx + uy * 0.42, cy - ux * 0.42, DECK + 0.5, 0.14, DECK)
-				along += 5
-			end
-		end
-		-- A plate players walk over where a conduit crosses the landmark's ring.
-		local function cover(ax: number, ay: number, bx: number, by: number)
-			run(mesh, ax, ay, COVER_TOP, bx, by, COVER_TOP, 0.75, DECK)
-		end
-		-- The market's goes round the spawn ring, on the ring's +X side.
-		conduit(7.6, 6, 11, 6)
-		conduit(11, 6, 11, 33)
-		cover(7.6, 6, 11.4, 6)
-		box(mesh, 11, 33, DECK, 1, 1, 1.1)
-		-- The Tinkerer's and the Stage's run straight from the plinth.
-		for _, building in { { 180, 39 }, { -45, 33 } } do
-			local across = math.rad(building[1] + 90)
-			local ox, oy = math.cos(across) * 3.1, math.sin(across) * 3.1
-			local x0, y0 = polar(building[1], 7.5)
-			local x1, y1 = polar(building[1], building[2])
-			conduit(x0 + ox, y0 + oy, x1 + ox, y1 + oy)
-			local cx0, cy0 = polar(building[1], 8.6)
-			local cx1, cy1 = polar(building[1], 12.9)
-			cover(cx0 + ox, cy0 + oy, cx1 + ox, cy1 + oy)
-			box(mesh, x1 + ox, y1 + oy, DECK, 1, 1, 1.1)
-		end
-	end, nil, 0.2)
+slab("Lamps", function()
 	part("LampPosts", nil, { 0.2, 0.21, 0.23 }, function(mesh)
 		for n = 1, 7 do
-			local x, y = polar(n * 45, PROMENADE_OUTER + 0.8)
-			box(mesh, x, y, DECK, 0.9, 0.9, 0.5)
-			box(mesh, x, y, DECK + 0.5, 0.36, 0.36, 7)
-			box(mesh, x, y, DECK + 7.5, 1.5, 1.5, 0.3)
+			local x, y = polar(n * 45, LAMP_RADIUS)
+			local lamp = facing(mesh, x, y, n * 45)
+			box(lamp, 0, 0, TOWN_Z, 0.9, 0.9, 0.5)
+			box(lamp, 0, 0, TOWN_Z + 0.5, 0.36, 0.36, 7)
+			box(lamp, 0, 0, TOWN_Z + 7.5, 1.5, 1.5, 0.3)
 		end
 	end, nil, 0.2)
 	part("LampGlow", nil, { 1, 0.86, 0.55 }, function(mesh)
 		for n = 1, 7 do
-			local x, y = polar(n * 45, PROMENADE_OUTER + 0.8)
-			box(mesh, x, y, DECK + 6.9, 1.1, 1.1, 0.6)
+			local x, y = polar(n * 45, LAMP_RADIUS)
+			box(facing(mesh, x, y, n * 45), 0, 0, TOWN_Z + 6.9, 1.1, 1.1, 0.6)
 		end
 	end, nil, 0, nil, 1.6)
 end, 0, 0)
+
+-- A dirt path trodden from each yard's gate in to the plaza: painted on a
+-- see-through sheet a hair over the turf, nothing raised to trip on. Each
+-- runs under the plaza's edge at one end and the yard's floor at the other.
+local PATH_Z = SHADE_Z
+local PATH_HALF = 7
+local PATH_FROM, PATH_TO = HUB_EDGE - 2, YARD_RADIUS - PLOT_DEPTH / 2 + 1
+for i = 1, 8 do
+	local degrees = (i - 0.5) * 45
+	local turn = degrees - 90
+	local x, y = polar(degrees, (PATH_FROM + PATH_TO) / 2)
+	local c, s = math.cos(math.rad(turn)), math.sin(math.rad(turn))
+	slab(`Path{i}`, function()
+		part("Path", nil, DIRT, function(mesh)
+			local half = (PATH_TO - PATH_FROM) / 2
+			mesh:face({ mesh:vertex(-PATH_HALF, -half, PATH_Z), mesh:vertex(PATH_HALF, -half, PATH_Z), mesh:vertex(PATH_HALF, half, PATH_Z), mesh:vertex(-PATH_HALF, half, PATH_Z) })
+		end, nil, function(px: number, py: number)
+			-- u runs across the path, v along it toward the yard.
+			local u, v = (px - x) * c + (py - y) * s, (py - y) * c - (px - x) * s
+			local wander = fbm(v / 14, i, 170) * 2.2
+			local edge = math.abs(u - wander) + fbm(px / 2, py / 2, 171) * 1.4
+			local alpha = smooth(PATH_HALF - 0.5, PATH_HALF - 3, edge)
+			-- Trodden darker down the middle, in two worn ruts.
+			local rut = math.max(smooth(1.6, 0.4, math.abs(u - wander - 1.6)), smooth(1.6, 0.4, math.abs(u - wander + 1.6)))
+			local k = (1 + fbm(px / 3, py / 3, 172) * 0.16) * (1 - 0.12 * rut)
+			return DIRT[1] * k, DIRT[2] * k, DIRT[3] * k, alpha
+		end, nil, 0, true)
+	end, x, y, turn)
+end
 
 -- Crossings over the belt, whose middle runs at radius 72, one on each
 -- yard's path so the walk to the hub runs straight over.
