@@ -1,0 +1,86 @@
+[    0.0s] running HubTinkerer/model.luau
+[    0.8s] TIMING script: 0.8s
+[    1.3s] baking on CPU (no GPU)
+[    1.6s] shaded Cables 1024×1024 in 0.29s
+[    2.9s] shaded Fittings 1024×1024 in 0.93s
+[    5.1s] shaded TorchAndWork 1024×1024 in 1.88s
+[    9.9s] shaded ToolRack 1024×1024 in 4.05s
+[   10.0s] baked every chunk this machine claimed
+[   10.0s] TIMING claimed bakes: 4 paints in 25 of 128 chunks, 9.2s with the waits to claim; layers 0 loaded in 0.0s and 15 baked in 6.1s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.1s, merging chunks 0.0s, colour samplers 0.3s
+[   42.6s] TIMING swap: 32.7s pushing, waiting for the other machines and fetching
+[   43.0s] shaded PartsBins 1024×1024 in 0.27s
+[   43.3s] shaded HangingSign 1024×1024 in 0.23s
+[   43.6s] shaded RoofPosts 1024×1024 in 0.21s
+[   43.9s] shaded Workbench 1024×1024 in 0.22s
+[   44.2s] shaded ToolGrips 1024×1024 in 0.21s
+[   44.6s] shaded Blueprint 1024×1024 in 0.21s
+[   44.9s] shaded Anvil 1024×1024 in 0.24s
+[   45.2s] shaded Roof 1024×1024 in 0.26s
+[   45.5s] shaded BackWall 1024×1024 in 0.22s
+[   45.9s] shaded LampShade 1024×1024 in 0.22s
+[   46.2s] shaded RobotArm 1024×1024 in 0.22s
+[   46.5s] shaded RackTools 1024×1024 in 0.19s
+[   46.7s] shaded SignEmblem 1024×1024 in 0.21s
+[   47.1s] shaded Deck 1024×1024 in 0.25s
+[   47.4s] shaded Supplies 1024×1024 in 0.21s
+[   47.7s] shaded BinParts 1024×1024 in 0.22s
+[   47.9s] shaded Rafters 1024×1024 in 0.18s
+[   47.9s] TIMING paints after the swap: 17 paints, 5.3s; layers 65 loaded in 0.8s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.4s, merging chunks 0.0s, colour samplers 1.5s (baked here means a layer that did not arrive)
+[   47.9s] TIMING whole-part saves: 0 in 0.0s
+[   47.9s] writing HubTinkerer.glb and 22 textures
+[   48.4s] TIMING HubTinkerer.glb and 22 parts' texture files written: 0.5s
+[   48.4s] rendering preview.png of 22 parts
+[   48.9s] TIMING render preview.png: drawn in 0.2s, 0.5s with its save
+[   49.0s] rendering parts.png of 22 parts
+[   49.2s] TIMING render parts.png: drawn in 0.2s, 0.3s with its save
+[   49.3s] rendering turntable/0001.png of 22 parts
+[   49.7s] TIMING render turntable/0001.png: drawn in 0.2s, 0.4s with its save
+[   49.8s] rendering eye_2.png of 22 parts
+[   50.1s] TIMING render eye_2.png: drawn in 0.2s, 0.3s with its save
+[   50.2s] rendering eye_6.png of 22 parts
+[   51.0s] TIMING render eye_6.png: drawn in 0.3s, 0.8s with its save
+[   51.1s] TIMING renders: 5 of 14 jobs made here, 2.7s with the waits to claim
+HubTinkerer: 22 parts, script 47.92s, total 51.11s
+  shade (creases, contact): 4.48s
+  coat: 1.46s
+  wear: 0.53s
+  combine: 0.32s
+  shade, surfaces, grid and texels: 0.95s
+  shade, neighbourhoods: 0.31s
+  shade, spreading over seams: 0.29s
+  coat, painting texels: 0.01s
+#f23d3d Deck
+#85a5f2 BackWall
+#7bb32d ToolRack
+#b362a8 RackTools
+#3df2d4 ToolGrips
+#f2c085 Roof
+#4e2db3 Rafters
+#66b362 RoofPosts
+#f23d79 Workbench
+#85c9f2 RobotArm
+#a8b32d TorchAndWork
+#a262b3 PartsBins
+#3df297 BinParts
+#f29c85 HangingSign
+#2d38b3 SignEmblem
+#80b362 Anvil
+#f23db6 Fittings
+#85eef2 Blueprint
+#b3912d Supplies
+#8762b3 Cables
+#3df25a LampShade
+#f28593 Bulbs
+TIMING script: 0.8s
+TIMING claimed bakes: 4 paints in 25 of 128 chunks, 9.2s with the waits to claim; layers 0 loaded in 0.0s and 15 baked in 6.1s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.1s, merging chunks 0.0s, colour samplers 0.3s
+TIMING swap: 32.7s pushing, waiting for the other machines and fetching
+TIMING paints after the swap: 17 paints, 5.3s; layers 65 loaded in 0.8s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.4s, merging chunks 0.0s, colour samplers 1.5s (baked here means a layer that did not arrive)
+TIMING whole-part saves: 0 in 0.0s
+TIMING HubTinkerer.glb and 22 parts' texture files written: 0.5s
+TIMING render preview.png: drawn in 0.2s, 0.5s with its save
+TIMING render parts.png: drawn in 0.2s, 0.3s with its save
+TIMING render turntable/0001.png: drawn in 0.2s, 0.4s with its save
+TIMING render eye_2.png: drawn in 0.2s, 0.3s with its save
+TIMING render eye_6.png: drawn in 0.3s, 0.8s with its save
+TIMING renders: 5 of 14 jobs made here, 2.7s with the waits to claim
+TIMING HubTinkerer: 22 parts, total 51.1s; shade (creases, contact) 4.5s, coat 1.5s, wear 0.5s, combine 0.3s, shade, surfaces, grid and texels 1.0s, shade, neighbourhoods 0.3s, shade, spreading over seams 0.3s, coat, painting texels 0.0s
