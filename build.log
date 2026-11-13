@@ -1,0 +1,104 @@
+[    0.0s] running HubShop/model.luau
+[    0.8s] TIMING script: 0.8s
+[    1.3s] baking on CPU (no GPU)
+[    1.4s] shaded SignBraces 1024×1024 in 0.46s
+[    3.0s] shaded Sign 1024×1024 in 0.86s
+[    3.4s] shaded CraneHook 1024×1024 in 0.28s
+[    6.2s] shaded Slab 1024×1024 in 1.11s
+[    7.2s] shaded Shelves 1024×1024 in 0.79s
+[    8.2s] shaded Stencil 1024×1024 in 0.85s
+[    8.8s] shaded Cables 1024×1024 in 0.29s
+[   10.6s] shaded ShelfStock 1024×1024 in 1.31s
+[   12.3s] shaded UpperContainer 1024×1024 in 1.17s
+[   12.3s] baked every chunk this machine claimed
+[   12.3s] TIMING claimed bakes: 9 paints in 51 of 128 chunks, 11.5s with the waits to claim; layers 0 loaded in 0.0s and 34 baked in 4.5s; layer keys 0.2s, merging chunks 0.0s, colour samplers 0.8s
+[   70.4s] TIMING swap: 58.1s pushing, waiting for the other machines and fetching
+[   71.1s] shaded CounterDrums 1024×1024 in 0.57s
+[   71.6s] shaded Fittings 1024×1024 in 0.34s
+[   71.9s] shaded Awning 1024×1024 in 0.27s
+[   72.3s] shaded AwningPosts 1024×1024 in 0.33s
+[   72.7s] shaded StockPiles 1024×1024 in 0.27s
+[   72.9s] shaded Crane 1024×1024 in 0.19s
+[   73.4s] shaded LowerContainers 1024×1024 in 0.41s
+[   74.6s] shaded CraneWeight 1024×1024 in 0.99s
+[   74.9s] shaded Counter 1024×1024 in 0.23s
+[   75.3s] shaded PriceBoards 1024×1024 in 0.23s
+[   75.6s] shaded Supplies 1024×1024 in 0.28s
+[   76.2s] shaded AwningPatches 1024×1024 in 0.50s
+[   76.2s] TIMING paints after the swap: 12 paints, 5.8s; layers 40 loaded in 0.6s and 7 baked in 1.4s; layer keys 0.3s, merging chunks 0.0s, colour samplers 1.1s (baked here means a layer that did not arrive)
+[   76.2s] TIMING whole-part saves: 0 in 0.0s
+[   76.2s] writing HubShop.glb and 22 textures
+[   76.8s] TIMING HubShop.glb and 22 parts' texture files written: 0.6s
+[   76.8s] rendering preview.png of 22 parts
+[   77.2s] TIMING render preview.png: drawn in 0.2s, 0.4s with its save
+[   77.3s] rendering parts.png of 22 parts
+[   77.5s] TIMING render parts.png: drawn in 0.2s, 0.2s with its save
+[   77.6s] rendering turntable/0000.png of 22 parts
+[   78.0s] TIMING render turntable/0000.png: drawn in 0.2s, 0.4s with its save
+[   78.0s] rendering turntable/0001.png of 22 parts
+[   78.3s] TIMING render turntable/0001.png: drawn in 0.2s, 0.3s with its save
+[   78.4s] rendering turntable/0002.png of 22 parts
+[   78.7s] TIMING render turntable/0002.png: drawn in 0.2s, 0.3s with its save
+[   78.8s] rendering turntable/0003.png of 22 parts
+[   79.1s] TIMING render turntable/0003.png: drawn in 0.2s, 0.3s with its save
+[   79.2s] rendering closeup_2.png of 22 parts
+[   79.8s] TIMING render closeup_2.png: drawn in 0.2s, 0.6s with its save
+[   79.9s] rendering eye_2.png of 22 parts
+[   80.3s] TIMING render eye_2.png: drawn in 0.2s, 0.4s with its save
+[   80.3s] rendering eye_3.png of 22 parts
+[   80.7s] TIMING render eye_3.png: drawn in 0.2s, 0.4s with its save
+[   80.8s] rendering eye_5.png of 22 parts
+[   81.2s] TIMING render eye_5.png: drawn in 0.2s, 0.4s with its save
+[   81.2s] rendering eye_7.png of 22 parts
+[   81.7s] TIMING render eye_7.png: drawn in 0.1s, 0.4s with its save
+[   81.7s] TIMING renders: 11 of 15 jobs made here, 4.9s with the waits to claim
+HubShop: 22 parts, script 76.21s, total 81.66s
+  shade (creases, contact): 2.54s
+  coat: 2.85s
+  wear: 1.40s
+  combine: 0.32s
+  shade, surfaces, grid and texels: 0.99s
+  shade, neighbourhoods: 0.73s
+  shade, spreading over seams: 0.28s
+  coat, painting texels: 0.14s
+#f23d3d Slab
+#85a5f2 LowerContainers
+#7bb32d Shelves
+#b362a8 ShelfStock
+#3df2d4 UpperContainer
+#f2c085 Counter
+#4e2db3 CounterDrums
+#66b362 Awning
+#f23d79 AwningPatches
+#85c9f2 AwningPosts
+#a8b32d Sign
+#a262b3 SignBraces
+#3df297 Crane
+#f29c85 CraneWeight
+#2d38b3 CraneHook
+#80b362 StockPiles
+#f23db6 Fittings
+#85eef2 Stencil
+#b3912d PriceBoards
+#8762b3 Supplies
+#3df25a Cables
+#f28593 Bulbs
+TIMING script: 0.8s
+TIMING claimed bakes: 9 paints in 51 of 128 chunks, 11.5s with the waits to claim; layers 0 loaded in 0.0s and 34 baked in 4.5s; layer keys 0.2s, merging chunks 0.0s, colour samplers 0.8s
+TIMING swap: 58.1s pushing, waiting for the other machines and fetching
+TIMING paints after the swap: 12 paints, 5.8s; layers 40 loaded in 0.6s and 7 baked in 1.4s; layer keys 0.3s, merging chunks 0.0s, colour samplers 1.1s (baked here means a layer that did not arrive)
+TIMING whole-part saves: 0 in 0.0s
+TIMING HubShop.glb and 22 parts' texture files written: 0.6s
+TIMING render preview.png: drawn in 0.2s, 0.4s with its save
+TIMING render parts.png: drawn in 0.2s, 0.2s with its save
+TIMING render turntable/0000.png: drawn in 0.2s, 0.4s with its save
+TIMING render turntable/0001.png: drawn in 0.2s, 0.3s with its save
+TIMING render turntable/0002.png: drawn in 0.2s, 0.3s with its save
+TIMING render turntable/0003.png: drawn in 0.2s, 0.3s with its save
+TIMING render closeup_2.png: drawn in 0.2s, 0.6s with its save
+TIMING render eye_2.png: drawn in 0.2s, 0.4s with its save
+TIMING render eye_3.png: drawn in 0.2s, 0.4s with its save
+TIMING render eye_5.png: drawn in 0.2s, 0.4s with its save
+TIMING render eye_7.png: drawn in 0.1s, 0.4s with its save
+TIMING renders: 11 of 15 jobs made here, 4.9s with the waits to claim
+TIMING HubShop: 22 parts, total 81.7s; shade (creases, contact) 2.5s, coat 2.8s, wear 1.4s, combine 0.3s, shade, surfaces, grid and texels 1.0s, shade, neighbourhoods 0.7s, shade, spreading over seams 0.3s, coat, painting texels 0.1s
