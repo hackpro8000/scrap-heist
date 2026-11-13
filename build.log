@@ -1,0 +1,103 @@
+[    0.0s] running HubTinkerer/model.luau
+[    1.2s] shaded Deck 1024×1024 in 0.32s
+[    1.7s] shaded BackWall 1024×1024 in 0.39s
+[    2.2s] shaded ToolRack 1024×1024 in 0.34s
+[    2.5s] shaded RackTools 1024×1024 in 0.27s
+[    2.9s] shaded ToolGrips 1024×1024 in 0.27s
+[    3.3s] shaded Roof 1024×1024 in 0.34s
+[    3.6s] shaded Rafters 1024×1024 in 0.26s
+[    3.9s] shaded RoofPosts 1024×1024 in 0.27s
+[    4.3s] shaded Workbench 1024×1024 in 0.27s
+[    4.7s] shaded RobotArm 1024×1024 in 0.29s
+[    5.0s] shaded TorchAndWork 1024×1024 in 0.28s
+[    5.5s] shaded PartsBins 1024×1024 in 0.32s
+[    5.9s] shaded BinParts 1024×1024 in 0.28s
+[    6.2s] shaded HangingSign 1024×1024 in 0.28s
+[    6.6s] shaded SignEmblem 1024×1024 in 0.26s
+[    7.0s] shaded Anvil 1024×1024 in 0.29s
+[    7.3s] shaded Fittings 1024×1024 in 0.27s
+[    7.7s] shaded Blueprint 1024×1024 in 0.27s
+[    8.0s] shaded Supplies 1024×1024 in 0.28s
+[    8.3s] shaded Cables 1024×1024 in 0.23s
+[    8.7s] shaded LampShade 1024×1024 in 0.33s
+[    8.7s] TIMING script: 8.8s
+[    8.8s] writing HubTinkerer.glb and 22 textures
+[    9.4s] TIMING HubTinkerer.glb and 22 parts' texture files written: 0.6s
+[    9.4s] rendering preview.png of 22 parts
+[    9.8s] TIMING render preview.png: drawn in 0.2s, 0.5s with its save
+[    9.8s] rendering parts.png of 22 parts
+[   10.0s] TIMING render parts.png: drawn in 0.1s, 0.2s with its save
+[   10.0s] rendering turntable/0000.png of 22 parts
+[   10.4s] TIMING render turntable/0000.png: drawn in 0.2s, 0.4s with its save
+[   10.4s] rendering turntable/0001.png of 22 parts
+[   10.9s] TIMING render turntable/0001.png: drawn in 0.2s, 0.5s with its save
+[   10.9s] rendering turntable/0002.png of 22 parts
+[   11.3s] TIMING render turntable/0002.png: drawn in 0.2s, 0.4s with its save
+[   11.3s] rendering turntable/0003.png of 22 parts
+[   11.6s] TIMING render turntable/0003.png: drawn in 0.2s, 0.4s with its save
+[   11.6s] rendering eye_1.png of 22 parts
+[   12.0s] TIMING render eye_1.png: drawn in 0.2s, 0.4s with its save
+[   12.0s] rendering eye_2.png of 22 parts
+[   12.4s] TIMING render eye_2.png: drawn in 0.2s, 0.3s with its save
+[   12.4s] rendering eye_3.png of 22 parts
+[   12.8s] TIMING render eye_3.png: drawn in 0.2s, 0.4s with its save
+[   12.8s] rendering eye_4.png of 22 parts
+[   13.8s] TIMING render eye_4.png: drawn in 0.3s, 1.0s with its save
+[   13.8s] rendering eye_5.png of 22 parts
+[   14.6s] TIMING render eye_5.png: drawn in 0.3s, 0.8s with its save
+[   14.6s] rendering eye_6.png of 22 parts
+[   15.4s] TIMING render eye_6.png: drawn in 0.2s, 0.7s with its save
+[   15.4s] rendering eye_7.png of 22 parts
+[   15.9s] TIMING render eye_7.png: drawn in 0.2s, 0.5s with its save
+[   15.9s] rendering eye_8.png of 22 parts
+[   16.2s] TIMING render eye_8.png: drawn in 0.1s, 0.3s with its save
+[   16.2s] TIMING renders: 14 of 14 jobs made here, 6.9s with the waits to claim
+HubTinkerer: 22 parts, script 8.75s, total 16.24s
+  shade (creases, contact): 0.61s
+  coat: 0.39s
+  wear: 0.93s
+  combine: 0.37s
+  shade, surfaces, grid and texels: 0.98s
+  shade, neighbourhoods: 0.53s
+  shade, spreading over seams: 0.34s
+  coat, painting texels: 0.00s
+#f23d3d Deck
+#85a5f2 BackWall
+#7bb32d ToolRack
+#b362a8 RackTools
+#3df2d4 ToolGrips
+#f2c085 Roof
+#4e2db3 Rafters
+#66b362 RoofPosts
+#f23d79 Workbench
+#85c9f2 RobotArm
+#a8b32d TorchAndWork
+#a262b3 PartsBins
+#3df297 BinParts
+#f29c85 HangingSign
+#2d38b3 SignEmblem
+#80b362 Anvil
+#f23db6 Fittings
+#85eef2 Blueprint
+#b3912d Supplies
+#8762b3 Cables
+#3df25a LampShade
+#f28593 Bulbs
+TIMING script: 8.8s
+TIMING HubTinkerer.glb and 22 parts' texture files written: 0.6s
+TIMING render preview.png: drawn in 0.2s, 0.5s with its save
+TIMING render parts.png: drawn in 0.1s, 0.2s with its save
+TIMING render turntable/0000.png: drawn in 0.2s, 0.4s with its save
+TIMING render turntable/0001.png: drawn in 0.2s, 0.5s with its save
+TIMING render turntable/0002.png: drawn in 0.2s, 0.4s with its save
+TIMING render turntable/0003.png: drawn in 0.2s, 0.4s with its save
+TIMING render eye_1.png: drawn in 0.2s, 0.4s with its save
+TIMING render eye_2.png: drawn in 0.2s, 0.3s with its save
+TIMING render eye_3.png: drawn in 0.2s, 0.4s with its save
+TIMING render eye_4.png: drawn in 0.3s, 1.0s with its save
+TIMING render eye_5.png: drawn in 0.3s, 0.8s with its save
+TIMING render eye_6.png: drawn in 0.2s, 0.7s with its save
+TIMING render eye_7.png: drawn in 0.2s, 0.5s with its save
+TIMING render eye_8.png: drawn in 0.1s, 0.3s with its save
+TIMING renders: 14 of 14 jobs made here, 6.9s with the waits to claim
+TIMING HubTinkerer: 22 parts, total 16.2s; shade (creases, contact) 0.6s, coat 0.4s, wear 0.9s, combine 0.4s, shade, surfaces, grid and texels 1.0s, shade, neighbourhoods 0.5s, shade, spreading over seams 0.3s, coat, painting texels 0.0s
