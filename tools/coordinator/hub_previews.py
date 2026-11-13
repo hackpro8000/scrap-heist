@@ -123,7 +123,8 @@ class PreviewJobs:
 		send-build knows it has a preview) and says so."""
 		model = os.path.join(ROOT, "art", "models", name)
 		if not os.path.isfile(os.path.join(source, "preview.png")):
-			await self.emit({"type": "preview", "task": task.id, "name": name, "path": f"FAILED, see {os.path.join(source, 'build.log')}"})
+			task.shown[name] = f"FAILED, see {os.path.join(source, 'build.log')}"
+			await self.emit({"type": "preview", "task": task.id, "name": name, "path": task.shown[name]})
 			return
 		os.makedirs(model, exist_ok=True)
 		shutil.copy(os.path.join(source, "preview.png"), os.path.join(model, "preview.png"))
@@ -139,7 +140,24 @@ class PreviewJobs:
 			if os.path.isfile(os.path.join(model, stored)):
 				await self.relay(task, "repo", os.path.relpath(os.path.join(model, stored), ROOT))
 		shown = sheet if os.path.isfile(sheet) else os.path.join(model, "preview.png")
-		await self.emit({"type": "preview", "task": task.id, "name": name, "path": os.path.relpath(shown, ROOT)})
+		task.shown[name] = os.path.relpath(shown, ROOT)
+		await self.emit({"type": "preview", "task": task.id, "name": name, "path": task.shown[name]})
+
+	async def replay_previews(self, task, socket):
+		"""For a session that comes back to a task (watch-task): what it may
+		have missed while its connection was down. Every preview published so
+		far, stored files and event, and every unit that is over, so it
+		neither waits for nor reports as stalled what already ended."""
+		for name, path in list(task.shown.items()):
+			model = os.path.join(ROOT, "art", "models", name)
+			for stored in ("preview.png", "views.png", "previewed.txt"):
+				if not path.startswith("FAILED") and os.path.isfile(os.path.join(model, stored)):
+					await self.relay(task, "repo", os.path.relpath(os.path.join(model, stored), ROOT), to=socket)
+			await socket.send(json.dumps({"type": "preview", "task": task.id, "name": name, "path": path}))
+		for shard in range(1, task.count + 1):
+			if task.unit_over(shard):
+				await socket.send(json.dumps({"type": "progress", "task": task.id, "shard": shard, "machine": "", "stage": "done",
+					"model": "", "line": "", "quiet": 0, "seconds": 0}))
 
 	@staticmethod
 	def preview_model(task, shard, unit):

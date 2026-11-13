@@ -830,6 +830,17 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], group_sizes: &[(usize, usize)
 	let coat_numbers = [&[look.gradient, look.brush, f64::from(u8::from(shading.crisp))][..], &style_numbers, &coat_marks, &range_key, &drawn_key, &shade_size, &[STROKE_LAYOUT_VERSION]].concat();
 	let coat_path = cache::layer_path("coat", mesh, &neighbours, false, &coat_numbers, Some(&*image), source);
 	let shade_path = shade_layer_path(mesh, width, height, group, occluders, shading, source, reach, width_scale, bevel_reach, bevel_fold);
+	// The wear's key reads the same untouched image as the coat's, so both
+	// layers are looked for, and loaded when cached, before anything is shaded.
+	let wear_numbers = [&[look.rust, f64::from(u8::from(look.rubber)), f64::from(u8::from(look.rust_edges)), look.gradient, look.brush][..], &range_key, &look.brushes.wear_numbers(), &shade_size, &[STROKE_LAYOUT_VERSION]].concat();
+	let wear_path = cache::layer_path("wear", mesh, &neighbours, true, &wear_numbers, Some(&*image), source);
+	let coat_loaded = profiled(1, || load_cached(&coat_path));
+	let wear_loaded = profiled(2, || load_cached(&wear_path));
+	// The siblings' edge fields are read by the coat's and the wear's strokes
+	// and by nothing else, so with both layers loaded no sibling is shaded: on
+	// a build machine after the swap, that is every sibling pass of every paint.
+	let read_siblings = coat_loaded.is_none() || wear_loaded.is_none();
+	let mut siblings_skipped = 0u64;
 	// A stroke reads the field of the chunk its spot lies on, and only near
 	// spots are drawn, so a sibling wholly outside the near box is never
 	// read: it keeps an empty field and is not shaded here. A near sibling
@@ -845,6 +856,10 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], group_sizes: &[(usize, usize)
 		if (0..3).any(|axis| chunk_high[axis] < near_low[axis] - coat::NEAR_SLACK || chunk_low[axis] > near_high[axis] + coat::NEAR_SLACK) {
 			continue;
 		}
+		if !read_siblings {
+			siblings_skipped += 1;
+			continue;
+		}
 		let (w, h) = group_sizes.get(k).copied().unwrap_or((width, height));
 		match sibling_ready(chunk, w, h, (near_low, near_high)) {
 			Some(field) => fields[k] = field,
@@ -852,6 +867,7 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], group_sizes: &[(usize, usize)
 			None => to_shade.push((k, *chunk, w, h, shade_layer_path(chunk, w, h, group, occluders, shading, source, reach, width_scale, bevel_reach, bevel_fold))),
 		}
 	}
+	cache::siblings_skipped(siblings_skipped);
 	let shade_all = move || {
 		let pass = shade_pass(mesh, width, height, group, occluders, shading, source, reach, width_scale, bevel_reach, bevel_fold, grid_reach, bevel_min_cos, shade_path, None);
 		let siblings: Vec<(usize, Arc<ChunkField>)> = to_shade.into_iter().map(|(k, chunk, w, h, path)| (k, sibling_field(chunk, w, h, group, occluders, shading, source, reach, width_scale, bevel_reach, bevel_fold, grid_reach, bevel_min_cos, path, (near_low, near_high)))).collect();
@@ -861,7 +877,7 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], group_sizes: &[(usize, usize)
 	// side by side: the shade passes fill the other threads while this one
 	// lays the coat's strokes, whose colours come from the script and so can
 	// only be asked here. Those strokes read nothing the shade passes make.
-	let coat_early = look.hand.is_none() && !shading.crisp && coat_path.as_ref().map_or(true, |path| !path.exists());
+	let coat_early = look.hand.is_none() && !shading.crisp && coat_loaded.is_none();
 	let ((pass, siblings), mut early_canvas) = if coat_early {
 		let unread = |_: usize, _: [f64; 2]| -> f64 { unreachable!("the coat's strokes read no edge field") };
 		let early_wear = coat::Wear { edge: &unread, crease: &unread, low: &low_wear, near: &near, own_box: Some(own_box), tri_chunk: &tri_chunk, face_chunk: &face_chunk };
@@ -891,7 +907,7 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], group_sizes: &[(usize, usize)
 	let crease_wear = |chunk: usize, uv: [f64; 2]| (field_at(chunk, uv, 0) * 2.5).min(1.0);
 	let wear = coat::Wear { edge: &edge_wear, crease: &crease_wear, low: &low_wear, near: &near, own_box: Some(own_box), tri_chunk: &tri_chunk, face_chunk: &face_chunk };
 	let (coat_layer, wear_layer) = {
-		let coat_layer = profiled(1, || cached_layer(coat_path, || {
+		let coat_layer = coat_loaded.unwrap_or_else(|| profiled(1, || cached_layer(coat_path, || {
 			if let Some(hand) = look.hand {
 				let tuning = look.tuning.as_ref().expect("hand coat has tuning");
 				if shading.crisp {
@@ -937,15 +953,14 @@ pub fn paint_shading(mesh: &Mesh, group: &[&Mesh], group_sizes: &[(usize, usize)
 			};
 			timed(7, stage);
 			vec![layer_image(width, height, &full, &colours)]
-		}));
-		let wear_numbers = [&[look.rust, f64::from(u8::from(look.rubber)), f64::from(u8::from(look.rust_edges)), look.gradient, look.brush][..], &range_key, &look.brushes.wear_numbers(), &shade_size, &[STROKE_LAYOUT_VERSION]].concat();
-		let wear_layer = profiled(2, || cached_layer(cache::layer_path("wear", mesh, &neighbours, true, &wear_numbers, Some(&*image), source), || {
+		})));
+		let wear_layer = wear_loaded.unwrap_or_else(|| profiled(2, || cached_layer(wear_path, || {
 			let canvas = coat::wear(&whole, look, &wear, base);
 			let over = gpu::canvas(&canvas, &full, true).unwrap_or_else(|| parallel(&full, |t| canvas.over(t.position, t.face_normal)));
 			let colour: Vec<[f32; 3]> = over.iter().map(|(c, _)| to_f32(*c)).collect();
 			let cover: Vec<[f32; 3]> = over.iter().map(|(_, a)| [*a as f32, 0.0, 0.0]).collect();
 			vec![layer_image(width, height, &full, &colour), layer_image(width, height, &full, &cover)]
-		}));
+		})));
 		(coat_layer, wear_layer)
 	};
 
@@ -1450,7 +1465,8 @@ fn shade_pass(target: &Mesh, width: usize, height: usize, group: &[&Mesh], occlu
 		let loaded = shade_path.as_deref().and_then(cache::load_layers);
 		let found = loaded.is_some();
 		let layers = loaded.unwrap_or_else(bake_shade);
-		cache::layer_done(found, started);
+		// A sibling's pass, counted apart from the layers that are cached.
+		cache::sibling_done(found, started);
 		layers
 	});
 	let mut edge_field = layers[0].pixels.clone();
@@ -1670,6 +1686,15 @@ pub fn set_roughness(roughness: f64) {
 pub fn roughness() -> f64 {
 	let value = f64::from_bits(ROUGHNESS.load(Ordering::Relaxed));
 	if value > 0.0 { value } else { 1.0 }
+}
+
+// A layer's images when they are cached, counted as loaded. None leaves the
+// build, and its count, to cached_layer.
+fn load_cached(path: &Option<PathBuf>) -> Option<Vec<Image>> {
+	let started = Instant::now();
+	let images = path.as_deref().and_then(cache::load_layers)?;
+	cache::layer_done(true, started);
+	Some(images)
 }
 
 // Returns a layer's images from the cache when present, else builds them and

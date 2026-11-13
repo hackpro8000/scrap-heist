@@ -22,9 +22,10 @@ def cases(q):
 		"""A machine on one share of a model: `bake` seconds a chunk, `paint`
 		seconds between the swap and its first render claim."""
 
-		def __init__(self, at, name, bake=0.05, paint=0.05):
+		def __init__(self, at, name, bake=0.05, paint=0.05, freeze=False):
 			super().__init__(at, name)
 			self.bake, self.paint = bake, paint
+			self.freeze = freeze  # goes silent holding its first render claim, once
 			self.answers = {}  # claim number -> future for its job
 			self.asked = 0
 			self.baked, self.rendered = [], []
@@ -78,6 +79,10 @@ def cases(q):
 				self.swap_over = time.time()
 				await asyncio.sleep(self.paint)
 				while (job := await self.claim(unit, model, "render", RENDERS, lease)) >= 0:
+					if self.freeze:
+						self.freeze = False
+						beating.cancel()
+						await asyncio.sleep(3600)
 					self.rendered.append(job)
 					await asyncio.sleep(0.05)
 				await self.send_file(unit, f"previews/{share}/build.log", b"built\n")
@@ -192,4 +197,71 @@ def cases(q):
 		finally:
 			await end(at, fakes)
 
-	return [("p", case_p), ("q", case_q), ("r", case_r), ("s", case_s)]
+	async def case_t():
+		"""A machine goes silent holding a render claim: nothing is published
+		on the other share's renders alone; its unit is re-dealt, the job is
+		rendered by the replacement, and only then is the preview out."""
+		at, fakes, watch, model = await begin([("g1", {"paint": 0.6}), ("g2", {"freeze": True})], 2)
+		try:
+			await q.until(lambda: watch.of("redealt"), timeout=8)
+			q.check(fakes[0].finished and not watch.of("preview"), "published before the silent machine's render job had a result")
+			q.check(not os.path.isfile(os.path.join(model, "preview.png")), "a preview was stored with a render job missing")
+			await published(at, watch, model)
+			return f"silent holder of render job 0 re-dealt ({watch.of('redealt')[0]['reason']}); published only after its replacement rendered it"
+		finally:
+			await end(at, fakes)
+
+	async def case_u():
+		"""A session whose connection was down while a preview was published
+		gets it again when it watches the task again, with the units that
+		ended and the count of previews still waiting as it is now."""
+		at, fakes, watch, model = await begin([("g1", {}), ("g2", {})], 2)
+		try:
+			await watch.close()
+			await q.until(lambda: watch.task not in at.c.tasks and at.task(watch.task).shown, timeout=8)
+			socket = await q.websockets.connect(at.control_url, max_size=q.hub.MAX_MESSAGE)
+			await socket.send(json.dumps({"type": "watch-task", "task": watch.task}))
+			events = []
+			try:
+				while True:
+					message = await asyncio.wait_for(socket.recv(), 0.5)
+					events.append(json.loads(message) if isinstance(message, str) else {"type": "file"})
+			except asyncio.TimeoutError:
+				pass
+			await socket.close()
+			previews = [event["path"] for event in events if event["type"] == "preview"]
+			q.check(len(previews) == 1 and "FAILED" not in previews[0], f"previews sent again: {previews}")
+			over = sorted(event["shard"] for event in events if event["type"] == "progress" and event["stage"] == "done")
+			q.check(over == [1, 2], f"units told as over: {over}")
+			finished = [event for event in events if event["type"] == "finished"]
+			q.check(len(finished) == 1 and finished[0]["previews_waiting"] == 0, "the finished event did not say no preview is waiting now")
+			return "a preview published while the session was away was sent again, with both units over and 0 previews waiting"
+		finally:
+			await end(at, fakes)
+
+	async def case_v():
+		"""A model's render jobs are in only when their count is known, every
+		one has been handed out, none has come back, and each claimant has delivered."""
+		at = await q.Hub().start()
+		try:
+			task = q.hub.Task("tjobs", "abc", False, 2, ["Model"], results=os.path.join(at.folder, "results"))
+			first, second = q.hub.Lease(1, "g1"), q.hub.Lease(2, "g2")
+			task.leases = {1: first, 2: second}
+			key = ("Model", "render")
+			claim = lambda lease, number: at.c.next_job(task, lease, {"name": "Model", "kind": "render", "total": 2, "id": number})
+			q.check(not at.c.jobs_in(task, key), "in before any claim said how many jobs there are")
+			q.check(claim(first, 1) == 0 and not at.c.jobs_in(task, key), "in with a job never handed out")
+			at.c.settle(first, "Model")
+			q.check(not at.c.jobs_in(task, key), "in with one job delivered and one never handed out")
+			q.check(claim(second, 1) == 1 and not at.c.jobs_in(task, key), "in with a job claimed and not delivered")
+			task.returned[key] = [1]
+			second.claims.clear()
+			q.check(not at.c.jobs_in(task, key), "in with a job given back by a lost lease")
+			task.returned[key] = []
+			second.claims.append([key, 1, True])
+			q.check(at.c.jobs_in(task, key), "not in with both jobs delivered")
+			return "render jobs count as in only with the total known, all handed out, none returned, each delivered"
+		finally:
+			await at.stop()
+
+	return [("p", case_p), ("q", case_q), ("r", case_r), ("s", case_s), ("t", case_t), ("u", case_u), ("v", case_v)]

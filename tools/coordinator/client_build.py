@@ -46,6 +46,17 @@ async def follow(url, ref, wait, first):
 		last_news = started
 		received = {"files": 0, "bytes": 0}
 		reconnects, reconnecting = 0, 0.0
+		wanted, shown = set(), {}  # models whose previews were asked for; model -> the path its preview event gave
+
+		def over(code):
+			"""The exit code once the task and its previews are over: not 0
+			while a model asked for has no preview (the hub sends them again
+			after a reconnect, so one missing here was never published)."""
+			lacking = sorted(name for name in wanted if shown.get(name, "FAILED").startswith("FAILED"))
+			if lacking:
+				print(f"no preview published for {', '.join(lacking)}; FAILED", flush=True)
+			return 1 if lacking else code
+
 		while True:
 			try:
 				message = await asyncio.wait_for(socket.recv(), TICK_SECONDS)
@@ -103,6 +114,7 @@ async def follow(url, ref, wait, first):
 				# The idle limit is left out: a task under way keeps restarting it.
 				progress = Progress(event["count"], event.get("up"), {**event, "idle_minutes": None})
 				relayed = bool(event.get("relayed"))
+				wanted = {unit.split("@")[0] for unit in event.get("units") or [] if isinstance(unit, str)}
 				print(f"posted task {task} ({ref[:7]}): {event['count']} units for {event['up']} machines"
 					+ (f"; previews {','.join(event['units'])}" if event.get("units") else ""), file=sys.stderr)
 			elif kind == "redealt":
@@ -132,9 +144,14 @@ async def follow(url, ref, wait, first):
 				print(f"upload {event['done']}/{event['of']}: {event['label']} {state}", flush=True)
 				failed = failed or not event.get("asset")
 			elif kind == "preview":
-				print(f"preview {event['name']} after {time.time() - started:.0f}s: {event['path']}", flush=True)
+				# Sent again after a reconnect: printed once.
+				if shown.get(event["name"]) != event["path"]:
+					print(f"preview {event['name']} after {time.time() - started:.0f}s: {event['path']}", flush=True)
+				if not str(shown.get(event["name"], "FAILED")).startswith("FAILED") and str(event["path"]).startswith("FAILED"):
+					continue  # one share's failure after the model's preview came
+				shown[event["name"]] = str(event["path"])
 			elif kind == "previews-done" and event["left"] == 0 and finished is not None:
-				return finished
+				return over(finished)
 			elif kind == "warning":
 				print(f"warning: {event['text']}", flush=True)
 			elif kind == "log" and event["text"].startswith(("ALERT ", "CLEARED ")):
@@ -181,7 +198,7 @@ async def follow(url, ref, wait, first):
 				finished = 1 if failed else 0
 				# Previews come after each machine's result; wait for the last.
 				if not event.get("previews_waiting"):
-					return finished
+					return over(finished)
 				print(f"waiting for previews from {event['previews_waiting']} machines", flush=True)
 	finally:
 		save_preview_seconds(shares)

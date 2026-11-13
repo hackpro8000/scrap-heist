@@ -56,7 +56,17 @@ pub const BAKE_MICROS: usize = 3;
 pub const KEY_MICROS: usize = 4;
 pub const MERGE_MICROS: usize = 5;
 pub const SAMPLER_MICROS: usize = 6;
-static TALLY: [AtomicU64; 7] = [AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0)];
+// A chunk's siblings shaded for their edge fields (bake.rs sibling_field):
+// never saved, so counted apart: found whole in the cache, baked in part, or
+// skipped because the coat and wear that read them were cached.
+pub const SIBLING_LOADED: usize = 7;
+pub const SIBLING_BAKED: usize = 8;
+pub const SIBLING_MICROS: usize = 9;
+pub const SIBLINGS_SKIPPED: usize = 10;
+static TALLY: [AtomicU64; 11] = [
+	AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0),
+	AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0), AtomicU64::new(0),
+];
 
 pub fn spent(slot: usize, since: Instant) {
 	TALLY[slot].fetch_add(since.elapsed().as_micros() as u64, Ordering::Relaxed);
@@ -69,19 +79,31 @@ pub fn layer_done(loaded: bool, since: Instant) {
 	spent(micros, since);
 }
 
-pub fn tally() -> [u64; 7] {
+// One sibling pass: its whole layer loaded from the cache, or baked in part.
+pub fn sibling_done(loaded: bool, since: Instant) {
+	TALLY[if loaded { SIBLING_LOADED } else { SIBLING_BAKED }].fetch_add(1, Ordering::Relaxed);
+	spent(SIBLING_MICROS, since);
+}
+
+pub fn siblings_skipped(count: u64) {
+	TALLY[SIBLINGS_SKIPPED].fetch_add(count, Ordering::Relaxed);
+}
+
+pub fn tally() -> [u64; 11] {
 	std::array::from_fn(|slot| TALLY[slot].load(Ordering::Relaxed))
 }
 
 // What the tally grew by since `before`, in words. Layers of one part load and
 // bake on two threads at once, so their seconds can overlap.
-pub fn tally_since(before: [u64; 7]) -> String {
+pub fn tally_since(before: [u64; 11]) -> String {
 	let now = tally();
 	let grew = |slot: usize| now[slot] - before[slot];
 	let seconds = |slot: usize| grew(slot) as f64 / 1e6;
 	format!(
-		"layers {} loaded in {:.1}s and {} baked in {:.1}s; layer keys {:.1}s, merging chunks {:.1}s, colour samplers {:.1}s",
-		grew(LOADED), seconds(LOAD_MICROS), grew(BAKED), seconds(BAKE_MICROS), seconds(KEY_MICROS), seconds(MERGE_MICROS), seconds(SAMPLER_MICROS)
+		"layers {} loaded in {:.1}s and {} baked in {:.1}s; sibling passes {} loaded and {} baked in {:.1}s, {} skipped; layer keys {:.1}s, merging chunks {:.1}s, colour samplers {:.1}s",
+		grew(LOADED), seconds(LOAD_MICROS), grew(BAKED), seconds(BAKE_MICROS),
+		grew(SIBLING_LOADED), grew(SIBLING_BAKED), seconds(SIBLING_MICROS), grew(SIBLINGS_SKIPPED),
+		seconds(KEY_MICROS), seconds(MERGE_MICROS), seconds(SAMPLER_MICROS)
 	)
 }
 

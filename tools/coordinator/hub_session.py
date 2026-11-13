@@ -115,8 +115,11 @@ class SessionControl:
 					folders[:] = [folder for folder in folders if not folder.startswith(".")]
 					for name in sorted(names):
 						await self.relay(task, "results", os.path.relpath(os.path.join(directory, name), task.out), to=socket)
+			# Previews published and units ended while it was gone.
+			await self.replay_previews(task, socket)
 			if ended and ended[0] is task:
-				await socket.send(json.dumps(ended[1]))
+				# With the previews still waiting now, not when it finished.
+				await socket.send(json.dumps({**ended[1], "previews_waiting": len(task.previews_waiting)}))
 			try:
 				async for _ in socket:
 					pass

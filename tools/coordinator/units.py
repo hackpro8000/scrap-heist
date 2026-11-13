@@ -101,6 +101,7 @@ class Task:
 		self.bake_commits = {}  # model -> every commit of baked textures pushed, in order
 		self.totals = {}  # (model, kind) -> how many jobs there are, as the claims say
 		self.published = set()  # models whose preview is out
+		self.shown = {}  # model -> the path (or FAILED line) its preview event said, for a session that comes back
 		# Units still queued when their model's preview came out: they build, but render nothing.
 		self.skipped = set()
 		self.previews_waiting = set(range(1, count + 1)) if self.previews else set()
