@@ -1,0 +1,92 @@
+[    0.0s] running HubStage/model.luau
+[    1.8s] baking on CPU (no GPU)
+[    2.0s] shaded Platform 1024×1024 in 1.12s
+[    3.4s] shaded PlatformDrums 1024×1024 in 1.28s
+[    4.5s] shaded Steps 1024×1024 in 1.03s
+[    5.2s] shaded Truss 1024×1024 in 0.66s
+[    5.9s] shaded TrussTop 1024×1024 in 0.60s
+[    7.2s] shaded Backdrop 1024×1024 in 1.22s
+[    8.2s] shaded BackdropRivets 1024×1024 in 0.90s
+[    9.6s] shaded Speakers 1024×1024 in 1.21s
+[   10.2s] shaded SpeakerSurrounds 1024×1024 in 0.63s
+[   11.7s] shaded SpeakerCones 1024×1024 in 1.37s
+[   12.5s] shaded LampHousings 1024×1024 in 0.71s
+[   13.4s] shaded Fittings 1024×1024 in 0.85s
+[   13.9s] shaded Banner 1024×1024 in 0.46s
+[   15.5s] shaded Supplies 1024×1024 in 1.44s
+[   15.8s] shaded Cables 1024×1024 in 0.26s
+[   15.8s] TIMING script: 15.8s
+[   15.8s] writing HubStage.glb and 16 textures
+[   16.2s] TIMING HubStage.glb and 16 parts' texture files written: 0.4s
+[   16.2s] rendering preview.png of 16 parts
+[   16.6s] TIMING render preview.png: drawn in 0.2s, 0.5s with its save
+[   16.6s] rendering parts.png of 16 parts
+[   16.9s] TIMING render parts.png: drawn in 0.1s, 0.2s with its save
+[   16.9s] rendering turntable/0000.png of 16 parts
+[   17.3s] TIMING render turntable/0000.png: drawn in 0.2s, 0.4s with its save
+[   17.3s] rendering turntable/0001.png of 16 parts
+[   17.6s] TIMING render turntable/0001.png: drawn in 0.1s, 0.3s with its save
+[   17.6s] rendering turntable/0002.png of 16 parts
+[   18.0s] TIMING render turntable/0002.png: drawn in 0.1s, 0.3s with its save
+[   18.0s] rendering turntable/0003.png of 16 parts
+[   18.4s] TIMING render turntable/0003.png: drawn in 0.1s, 0.4s with its save
+[   18.4s] rendering closeup_1.png of 16 parts
+[   19.4s] TIMING render closeup_1.png: drawn in 0.2s, 1.0s with its save
+[   19.4s] rendering eye_1.png of 16 parts
+[   19.7s] TIMING render eye_1.png: drawn in 0.1s, 0.3s with its save
+[   19.7s] rendering eye_2.png of 16 parts
+[   20.0s] TIMING render eye_2.png: drawn in 0.2s, 0.3s with its save
+[   20.0s] rendering eye_3.png of 16 parts
+[   20.3s] TIMING render eye_3.png: drawn in 0.2s, 0.3s with its save
+[   20.3s] rendering eye_4.png of 16 parts
+[   21.5s] TIMING render eye_4.png: drawn in 0.2s, 1.1s with its save
+[   21.5s] rendering eye_5.png of 16 parts
+[   21.9s] TIMING render eye_5.png: drawn in 0.1s, 0.4s with its save
+[   21.9s] rendering eye_6.png of 16 parts
+[   22.3s] TIMING render eye_6.png: drawn in 0.2s, 0.5s with its save
+[   22.3s] rendering eye_7.png of 16 parts
+[   22.7s] TIMING render eye_7.png: drawn in 0.2s, 0.4s with its save
+[   22.7s] TIMING renders: 14 of 14 jobs made here, 6.5s with the waits to claim
+HubStage: 16 parts, script 15.76s, total 22.72s
+  shade (creases, contact): 5.05s
+  coat: 3.47s
+  wear: 1.34s
+  combine: 0.19s
+  shade, surfaces, grid and texels: 0.71s
+  shade, neighbourhoods: 0.40s
+  shade, spreading over seams: 0.21s
+  coat, painting texels: 0.35s
+#f23d3d Platform
+#85a5f2 PlatformDrums
+#7bb32d Steps
+#b362a8 Truss
+#3df2d4 TrussTop
+#f2c085 Backdrop
+#4e2db3 BackdropRivets
+#66b362 Speakers
+#f23d79 SpeakerSurrounds
+#85c9f2 SpeakerCones
+#a8b32d LampHousings
+#a262b3 Lamps
+#3df297 Fittings
+#f29c85 Banner
+#2d38b3 Supplies
+#80b362 Cables
+TIMING script: 15.8s
+TIMING HubStage.glb and 16 parts' texture files written: 0.4s
+TIMING render preview.png: drawn in 0.2s, 0.5s with its save
+TIMING render parts.png: drawn in 0.1s, 0.2s with its save
+TIMING render turntable/0000.png: drawn in 0.2s, 0.4s with its save
+TIMING render turntable/0001.png: drawn in 0.1s, 0.3s with its save
+TIMING render turntable/0002.png: drawn in 0.1s, 0.3s with its save
+TIMING render turntable/0003.png: drawn in 0.1s, 0.4s with its save
+TIMING render closeup_1.png: drawn in 0.2s, 1.0s with its save
+TIMING render eye_1.png: drawn in 0.1s, 0.3s with its save
+TIMING render eye_2.png: drawn in 0.2s, 0.3s with its save
+TIMING render eye_3.png: drawn in 0.2s, 0.3s with its save
+TIMING render eye_4.png: drawn in 0.2s, 1.1s with its save
+TIMING render eye_5.png: drawn in 0.1s, 0.4s with its save
+TIMING render eye_6.png: drawn in 0.2s, 0.5s with its save
+TIMING render eye_7.png: drawn in 0.2s, 0.4s with its save
+TIMING renders: 14 of 14 jobs made here, 6.5s with the waits to claim
+TIMING HubStage: 16 parts, total 22.7s; shade (creases, contact) 5.0s, coat 3.5s, wear 1.3s, combine 0.2s, shade, surfaces, grid and texels 0.7s, shade, neighbourhoods 0.4s, shade, spreading over seams 0.2s, coat, painting texels 0.4s
