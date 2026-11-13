@@ -1,0 +1,41 @@
+[    0.0s] running HubBeacon/model.luau
+[    1.6s] TIMING script: 1.6s
+[    1.9s] baking on CPU (no GPU)
+[    2.2s] shaded Cable 1024×1024 in 0.31s
+[    3.0s] shaded BaleStraps 1024×1024 in 0.80s
+[    3.8s] shaded Mast 1024×1024 in 0.70s
+[    5.5s] shaded Plinth 1024×1024 in 0.99s
+[    7.5s] baked every chunk this machine claimed
+[    7.5s] TIMING claimed bakes: 4 paints in 51 of 128 chunks, 5.9s with the waits to claim; layers 0 loaded in 0.0s and 15 baked in 1.7s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.1s, merging chunks 0.0s, colour samplers 0.2s
+[   46.6s] TIMING swap: 39.0s pushing, waiting for the other machines and fetching
+[   47.2s] shaded CrushedBlocks 1024×1024 in 0.50s
+[   47.5s] shaded SheetLayers 1024×1024 in 0.30s
+[   47.8s] shaded Supplies 1024×1024 in 0.22s
+[   48.0s] shaded PressedJunk 1024×1024 in 0.20s
+[   48.3s] shaded Fittings 1024×1024 in 0.24s
+[   48.5s] shaded Pipes 1024×1024 in 0.18s
+[   48.7s] shaded Cables 1024×1024 in 0.20s
+[   49.0s] shaded BigCog 1024×1024 in 0.23s
+[   49.4s] shaded CogBoss 1024×1024 in 0.23s
+[   49.4s] TIMING paints after the swap: 9 paints, 2.8s; layers 34 loaded in 0.4s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.2s, merging chunks 0.0s, colour samplers 0.5s (baked here means a layer that did not arrive)
+[   49.4s] TIMING whole-part saves: 0 in 0.0s
+[   49.4s] writing HubBeacon.glb and 16 textures
+[   49.7s] TIMING HubBeacon.glb and 16 parts' texture files written: 0.3s
+[   49.8s] TIMING renders: 0 of 14 jobs made here, 0.1s with the waits to claim
+HubBeacon: 16 parts, script 49.37s, total 49.77s
+  shade (creases, contact): 0.98s
+  coat: 0.66s
+  wear: 0.40s
+  combine: 0.14s
+  shade, surfaces, grid and texels: 0.66s
+  shade, neighbourhoods: 0.56s
+  shade, spreading over seams: 0.16s
+  coat, painting texels: 0.01s
+TIMING script: 1.6s
+TIMING claimed bakes: 4 paints in 51 of 128 chunks, 5.9s with the waits to claim; layers 0 loaded in 0.0s and 15 baked in 1.7s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.1s, merging chunks 0.0s, colour samplers 0.2s
+TIMING swap: 39.0s pushing, waiting for the other machines and fetching
+TIMING paints after the swap: 9 paints, 2.8s; layers 34 loaded in 0.4s and 0 baked in 0.0s; sibling passes 0 loaded and 0 baked in 0.0s, 0 skipped; layer keys 0.2s, merging chunks 0.0s, colour samplers 0.5s (baked here means a layer that did not arrive)
+TIMING whole-part saves: 0 in 0.0s
+TIMING HubBeacon.glb and 16 parts' texture files written: 0.3s
+TIMING renders: 0 of 14 jobs made here, 0.1s with the waits to claim
+TIMING HubBeacon: 16 parts, total 49.8s; shade (creases, contact) 1.0s, coat 0.7s, wear 0.4s, combine 0.1s, shade, surfaces, grid and texels 0.7s, shade, neighbourhoods 0.6s, shade, spreading over seams 0.2s, coat, painting texels 0.0s
