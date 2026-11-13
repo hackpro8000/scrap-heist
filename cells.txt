@@ -1,0 +1,37 @@
+bounds: 289,195,735,921
+A1: -
+B1: -
+C1: Mast 16%, BeaconLamp 5%
+D1: Mast 15%, BeaconLamp 5%
+E1: -
+F1: -
+A2: -
+B2: BigCog 31%
+C2: BigCog 63%, CogBoss 11%, Mast 7%
+D2: Mast 24%, BigCog 16%, Fittings 3%
+E2: -
+F2: -
+A3: -
+B3: BigCog 7%, Mast 3%
+C3: BigCog 48%, Mast 17%, CogBoss 7%, CrushedBlocks 6%
+D3: BigCog 28%, Mast 20%, Fittings 4%, CrushedBlocks 3%
+E3: Mast 2%
+F3: -
+A4: -
+B4: Mast 34%, Pipes 14%, SheetLayers 10%, CrushedBlocks 8%, Fittings 5%, PressedJunk 3%
+C4: SheetLayers 34%, Mast 30%, CrushedBlocks 26%, PressedJunk 5%, Cable 4%
+D4: Mast 34%, SheetLayers 32%, CrushedBlocks 25%, Fittings 7%
+E4: Mast 35%, SheetLayers 16%, Fittings 14%, CrushedBlocks 5%
+F4: -
+A5: Plinth 12%, Fittings 2%
+B5: SheetLayers 22%, Plinth 22%, Pipes 16%, Mast 16%, PressedJunk 6%, CrushedBlocks 5%
+C5: SheetLayers 61%, Mast 11%, CrushedBlocks 11%, Cable 7%, PressedJunk 4%, Plinth 4%
+D5: SheetLayers 63%, Mast 25%, CrushedBlocks 11%
+E5: SheetLayers 38%, Mast 20%, Plinth 12%, Supplies 8%, CrushedBlocks 6%, Fittings 3%
+F5: Plinth 7%, Supplies 5%, Fittings 3%
+A6: Plinth 3%
+B6: Plinth 24%, Fittings 3%
+C6: Plinth 47%, Fittings 5%, Cable 2%
+D6: Plinth 42%, SheetLayers 8%, Mast 4%
+E6: Plinth 25%
+F6: Plinth 3%
