@@ -1,0 +1,37 @@
+bounds: 8,141,1017,918
+A1: -
+B1: Roof 2%
+C1: Roof 42%
+D1: Roof 29%
+E1: -
+F1: -
+A2: Roof 4%
+B2: Roof 80%, RoofPosts 3%
+C2: Roof 100%
+D2: Roof 100%
+E2: Roof 65%
+F2: Roof 9%
+A3: RoofPosts 3%
+B3: Roof 11%, Deck 8%, RoofPosts 8%
+C3: Roof 69%, Workbench 11%, Deck 9%, HangingSign 9%
+D3: Roof 100%
+E3: Roof 76%, PartsBins 19%, BinParts 2%
+F3: Roof 19%, PartsBins 14%, BackWall 14%
+A4: Deck 31%, RoofPosts 2%
+B4: Deck 82%, Supplies 8%, RoofPosts 5%
+C4: Deck 86%, Fittings 7%, Anvil 3%, Workbench 3%
+D4: Deck 31%, Workbench 25%, Roof 18%, RoofPosts 9%, Supplies 7%, Anvil 5%, TorchAndWork 4%
+E4: Workbench 45%, Deck 16%, Supplies 12%, BackWall 10%, PartsBins 7%, TorchAndWork 3%, Cables 3%, Fittings 2%
+F4: BackWall 28%, Deck 17%, PartsBins 7%
+A5: Deck 11%
+B5: Deck 68%
+C5: Deck 93%, Anvil 5%
+D5: Deck 51%, Supplies 26%, Anvil 12%, RoofPosts 11%
+E5: Deck 50%, Supplies 17%, Workbench 2%
+F5: Deck 11%
+A6: -
+B6: -
+C6: Deck 33%
+D6: Deck 32%
+E6: -
+F6: -
