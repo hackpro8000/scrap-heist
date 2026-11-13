@@ -1,0 +1,55 @@
+[    0.0s] running HubBeacon/model.luau
+[    3.2s] baking on CPU (no GPU)
+[    3.5s] shaded BaleStraps 1024×1024 in 1.19s
+[    4.5s] shaded Mast 1024×1024 in 0.99s
+[    6.5s] shaded Plinth 1024×1024 in 1.43s
+[    8.1s] shaded BigCog 1024×1024 in 0.98s
+[    8.2s] baked every chunk this machine claimed
+[   33.8s] shaded CrushedBlocks 1024×1024 in 0.52s
+[   34.0s] shaded Cable 1024×1024 in 0.18s
+[   34.3s] shaded SheetLayers 1024×1024 in 0.29s
+[   34.6s] shaded Supplies 1024×1024 in 0.22s
+[   34.9s] shaded PressedJunk 1024×1024 in 0.23s
+[   35.2s] shaded Fittings 1024×1024 in 0.27s
+[   35.4s] shaded Pipes 1024×1024 in 0.20s
+[   35.6s] shaded Cables 1024×1024 in 0.21s
+[   36.0s] shaded CogBoss 1024×1024 in 0.25s
+[   36.0s] writing HubBeacon.glb and 16 textures
+[   36.3s] rendering preview.png of 16 parts
+[   36.7s] rendering parts.png of 16 parts
+[   37.0s] rendering turntable/0000.png of 16 parts
+[   37.3s] rendering turntable/0001.png of 16 parts
+[   37.6s] rendering turntable/0002.png of 16 parts
+[   38.0s] rendering turntable/0003.png of 16 parts
+[   38.3s] rendering closeup_1.png of 16 parts
+[   39.2s] rendering closeup_2.png of 16 parts
+[   39.6s] rendering eye_1.png of 16 parts
+[   40.0s] rendering eye_2.png of 16 parts
+[   40.3s] rendering eye_3.png of 16 parts
+[   40.7s] rendering eye_4.png of 16 parts
+[   41.6s] rendering eye_5.png of 16 parts
+HubBeacon: 16 parts, script 35.98s, total 41.95s
+  shade (creases, contact): 1.45s
+  coat: 1.42s
+  wear: 0.67s
+  combine: 0.15s
+  shade, surfaces, grid and texels: 0.69s
+  shade, neighbourhoods: 0.50s
+  shade, spreading over seams: 0.24s
+  coat, painting texels: 0.00s
+#f23d3d Plinth
+#85a5f2 CrushedBlocks
+#7bb32d SheetLayers
+#b362a8 BaleStraps
+#3df2d4 PressedJunk
+#f2c085 Mast
+#4e2db3 BigCog
+#66b362 CogBoss
+#f23d79 BeaconLamp
+#85c9f2 Pipes
+#a8b32d Cable
+#a262b3 Fittings
+#3df297 Supplies
+#f29c85 Cables
+#2d38b3 Bulbs
+#80b362 Spotlights
